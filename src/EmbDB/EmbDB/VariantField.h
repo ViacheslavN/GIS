@@ -1,0 +1,56 @@
+#ifndef _EMBEDDED_DATABASE_VARIANT_FIELD_H_
+#define _EMBEDDED_DATABASE_VARIANT_FIELD_H_
+#include "key.h"
+#include "CommonLibrary/general.h"
+#include "IField.h"
+
+namespace embDB
+{
+
+	
+	
+	template <class Type, int FieldType>
+	class IBaseFieldVariant : public IFieldVariant
+	{
+	public:
+		typedef Type TVarType;
+		IBaseFieldVariant() : m_bIsEmpty(true)
+		{}
+		IBaseFieldVariant(const Type& value) : m_Value(value), m_bIsEmpty(true)
+		{}
+
+		virtual bool isEmpty(bool)
+		{
+			return m_bIsEmpty;
+		}
+		virtual bool setEmpty()
+		{
+			m_bIsEmpty = true;
+			return true;
+		}
+		virtual int getType()
+		{
+			return FieldType;
+		}
+		virtual bool set( Type value)
+		{ 
+			m_Value = value;
+			m_bIsEmpty = false;
+			return true;
+		}
+		virtual bool get(Type& value)
+		{ 
+			value = m_Value;
+			return true;
+		}
+		protected:
+			TVarType m_Value;
+			bool m_bIsEmpty;
+	};
+
+
+
+	typedef IBaseFieldVariant<int32, ftInteger32> TFieldINT32;
+	typedef IBaseFieldVariant<int64, ftInteger64> TFieldINT64;
+}
+#endif

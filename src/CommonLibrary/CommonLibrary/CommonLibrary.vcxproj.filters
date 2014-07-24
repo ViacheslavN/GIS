@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="alloc">
+      <UniqueIdentifier>{c1e97f5c-f453-4b44-9d26-31dbce5eab92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="string">
+      <UniqueIdentifier>{fbc33f97-5515-4320-82eb-16850ddf224e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="file">
+      <UniqueIdentifier>{3df52721-f961-4215-b566-39dcf2b21d6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thread">
+      <UniqueIdentifier>{9a089a7d-36de-4f20-8208-fce2bdcb04fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="log">
+      <UniqueIdentifier>{aa6c95a4-632e-4cc4-8960-f82b60b91d49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stream">
+      <UniqueIdentifier>{5588d998-9603-4d88-9206-3230d802b2d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="time">
+      <UniqueIdentifier>{6927862c-551b-488a-a3d5-6301b6ed1e88}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="toupper.incl">
+      <Filter>string</Filter>
+    </None>
+    <None Include="tolower.incl">
+      <Filter>string</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="alloc_t.h">
+      <Filter>alloc</Filter>
+    </ClInclude>
+    <ClInclude Include="str_buffer.h">
+      <Filter>string</Filter>
+    </ClInclude>
+    <ClInclude Include="str_t.h">
+      <Filter>string</Filter>
+    </ClInclude>
+    <ClInclude Include="caseutils.h">
+      <Filter>string</Filter>
+    </ClInclude>
+    <ClInclude Include="multibyte.h">
+      <Filter>string</Filter>
+    </ClInclude>
+    <ClInclude Include="sprintf.h">
+      <Filter>string</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="general.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileWin32.h">
+      <Filter>file</Filter>
+    </ClInclude>
+    <ClInclude Include="File.h">
+      <Filter>file</Filter>
+    </ClInclude>
+    <ClInclude Include="delegate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mutex.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="thread.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="CSSection.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="log.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="stream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedMemoryStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeUtils.h">
+      <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugTime.h">
+      <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoPtr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Nocopy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="alloc_t.cpp">
+      <Filter>alloc</Filter>
+    </ClCompile>
+    <ClCompile Include="str_t.cpp">
+      <Filter>string</Filter>
+    </ClCompile>
+    <ClCompile Include="caseutils.cpp">
+      <Filter>string</Filter>
+    </ClCompile>
+    <ClCompile Include="multibyte.cpp">
+      <Filter>string</Filter>
+    </ClCompile>
+    <ClCompile Include="sprintf.cpp">
+      <Filter>string</Filter>
+    </ClCompile>
+    <ClCompile Include="FileWin32.cpp">
+      <Filter>file</Filter>
+    </ClCompile>
+    <ClCompile Include="thread.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="log.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryStream.cpp">
+      <Filter>stream</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedMemoryStream.cpp">
+      <Filter>stream</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeUtils.cpp">
+      <Filter>time</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugTime.cpp">
+      <Filter>time</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

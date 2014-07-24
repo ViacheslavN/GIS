@@ -1,0 +1,9 @@
+#ifndef _EMBEDDED_DATABASE_DB_CONFIG_H_
+#define _EMBEDDED_DATABASE_DB_CONFIG_H_
+
+
+
+#define DEFAULT_PAGE_SIZE 8192
+
+
+#endif

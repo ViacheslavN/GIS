@@ -1,0 +1,690 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="storage">
+      <UniqueIdentifier>{b737b726-6d9a-4e49-a38c-69997a57e967}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="streams">
+      <UniqueIdentifier>{2a49b6f6-6c4f-4dd3-bf53-cc22a0c976a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB">
+      <UniqueIdentifier>{7e7768b9-cbbe-4f19-963b-ddc4d2c5ca2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK">
+      <UniqueIdentifier>{fab26e56-e743-48b4-9916-73e162b6b33f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\internal">
+      <UniqueIdentifier>{decac7e5-b9e7-4ce2-a20e-2e435039e799}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Fields">
+      <UniqueIdentifier>{a25e0639-0309-49cf-8d6c-0166f227f9ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index">
+      <UniqueIdentifier>{6bc92130-c22f-4075-b6e5-80493240829f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\key">
+      <UniqueIdentifier>{99a5b559-b781-4fa5-982f-0a3f3fa5191f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\memorytree">
+      <UniqueIdentifier>{bdb39542-bd41-48f0-a773-8e29d54efdd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\memorytree\map">
+      <UniqueIdentifier>{dfe11e94-90be-4a80-948e-81f20665fbab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\memorytree\RBTree">
+      <UniqueIdentifier>{10ed0b50-9632-43c3-84cf-b747c2a1313d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\memorytree\set">
+      <UniqueIdentifier>{a3e45df3-f9e9-4f92-92da-ffe985c75f46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BTreePlus">
+      <UniqueIdentifier>{ad9757b9-ead5-4f0d-8492-b4a23d2588c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BTreePlus\Compressors">
+      <UniqueIdentifier>{aad74ec8-5f24-435c-b534-dbc15e77a61a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BTreePlus\BTreePlusReadOnly">
+      <UniqueIdentifier>{ee471c2d-7a54-4249-b1ab-d8dceb11fc0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\backup">
+      <UniqueIdentifier>{447d30bd-4761-42f7-8949-a2afb47b267c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\DBStateManager">
+      <UniqueIdentifier>{60d1e9e7-47cd-494f-8fb9-b608d16f0c6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BTreePlus\Compressors\OIDNodeCompressor">
+      <UniqueIdentifier>{e04b9b25-6546-43cd-b1c9-fb3c0ce7866c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\spatial">
+      <UniqueIdentifier>{3869a2d5-b645-4f3e-a1b8-8d299fb98a42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\spatial\Z-Order">
+      <UniqueIdentifier>{3df8b5c6-d37c-48e8-9dd2-3240511f7645}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\spatial\Grid">
+      <UniqueIdentifier>{0f0cd422-4470-469b-8a94-1d66c37525f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{ac57cdc6-924e-484a-98d2-99f6d2c9c119}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BTreePlus\BPMap">
+      <UniqueIdentifier>{faa6c4a7-1950-45de-94eb-1d879b7db149}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BTreePlus\BPSet">
+      <UniqueIdentifier>{1459df5d-e111-4a4e-932a-8657d2bb3cc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BTreePlus\BPSet\ReadOnly">
+      <UniqueIdentifier>{df547d88-9aaf-4a78-86ac-76f4358f826e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BTreePlus\BPMap\ReadOnly">
+      <UniqueIdentifier>{ea8bcb71-58ad-4e03-9e7a-adc43fa2f449}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\spatial\Z-Order\Point">
+      <UniqueIdentifier>{8f98d0df-5d1e-42af-ba90-5b8b0e822469}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\spatial\Z-Order\Rect">
+      <UniqueIdentifier>{f5263ccf-b092-4151-ab9c-a4c468316411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BtreePlusv2">
+      <UniqueIdentifier>{7aa10ecb-a136-4875-8429-8ab5167ab512}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BtreePlusv2\BPSetv2">
+      <UniqueIdentifier>{032d539d-b5cc-4373-9741-e111a5dcd217}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\transactions">
+      <UniqueIdentifier>{5aaff920-23c0-4a9a-8591-59c16dc5195c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\transactions\readonly">
+      <UniqueIdentifier>{3399dcb5-687e-4c20-a3ef-83e7fa7432e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\transactions\simple_for_debug">
+      <UniqueIdentifier>{5572632d-dc62-4f52-b387-430f23e013cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\transactions\DirectTran">
+      <UniqueIdentifier>{0b3d5f68-2ee7-4511-8b39-2960eca6dc1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BTreeNotUse">
+      <UniqueIdentifier>{439ef40f-5679-40f1-99d2-89988716242c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BTreeNotUse\BTreeNodeLoader">
+      <UniqueIdentifier>{b5175144-d1d5-4d60-9d95-d5eaaa1c8011}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BTreeNotUse\BTreeNodeLoader\Compressors">
+      <UniqueIdentifier>{946574d6-d7ba-4c78-97ea-3c6d28e90e3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BTreeNotUse\BtreeReadOnly">
+      <UniqueIdentifier>{b956d9ef-3293-41e6-905f-153d9d2395b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\BtreePlusv2\Compressors">
+      <UniqueIdentifier>{26678ef3-0e17-4d24-825d-760da2efba78}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseRBTree.h">
+      <Filter>DB\Index\memorytree\RBTree</Filter>
+    </ClInclude>
+    <ClInclude Include="simple_list_iterator.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="simple_stack.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="simple_list.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="RBSet.h">
+      <Filter>DB\Index\memorytree\set</Filter>
+    </ClInclude>
+    <ClInclude Include="RBMuitiSet.h">
+      <Filter>DB\Index\memorytree\set</Filter>
+    </ClInclude>
+    <ClInclude Include="RBMap.h">
+      <Filter>DB\Index\memorytree\map</Filter>
+    </ClInclude>
+    <ClInclude Include="RBSimpleMultiMap.h">
+      <Filter>DB\Index\memorytree\map</Filter>
+    </ClInclude>
+    <ClInclude Include="RBMultiMap.h">
+      <Filter>DB\Index\memorytree\map</Filter>
+    </ClInclude>
+    <ClInclude Include="RBSimpleMuitiSetIterator.h">
+      <Filter>DB\Index\memorytree\set</Filter>
+    </ClInclude>
+    <ClInclude Include="RBMuitiSetIteratorImp.h">
+      <Filter>DB\Index\memorytree\set</Filter>
+    </ClInclude>
+    <ClInclude Include="RBSetIteratorImp.h">
+      <Filter>DB\Index\memorytree\set</Filter>
+    </ClInclude>
+    <ClInclude Include="MapIteratorImp.h">
+      <Filter>DB\Index\memorytree\map</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseRBMultiTree.h">
+      <Filter>DB\Index\memorytree\RBTree</Filter>
+    </ClInclude>
+    <ClInclude Include="RBMuitiMapIteratorImp.h">
+      <Filter>DB\Index\memorytree\map</Filter>
+    </ClInclude>
+    <ClInclude Include="storage.h">
+      <Filter>storage</Filter>
+    </ClInclude>
+    <ClInclude Include="FilePage.h">
+      <Filter>storage</Filter>
+    </ClInclude>
+    <ClInclude Include="List.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreeNode.h">
+      <Filter>DB\Index\BTreeNotUse</Filter>
+    </ClInclude>
+    <ClInclude Include="Key.h">
+      <Filter>DB\Index\key</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseBTree.h">
+      <Filter>DB\Index\BTreeNotUse</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeLoader.h">
+      <Filter>DB\Index\BTreeNotUse\BTreeNodeLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="BitStream.h">
+      <Filter>streams</Filter>
+    </ClInclude>
+    <ClInclude Include="Compressors.h">
+      <Filter>DB\Index\BTreeNotUse\BTreeNodeLoader\Compressors</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleCompessor.h">
+      <Filter>DB\Index\BTreeNotUse\BTreeNodeLoader\Compressors</Filter>
+    </ClInclude>
+    <ClInclude Include="Database.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="Table.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="FilePageType.h">
+      <Filter>storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Schema.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreeIteratorImpl.h">
+      <Filter>DB\Index\BTreeNotUse</Filter>
+    </ClInclude>
+    <ClInclude Include="CacheNodes.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Row.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="FreePageManage.h">
+      <Filter>storage</Filter>
+    </ClInclude>
+    <ClInclude Include="DBMagicSymbol.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="DBConfig.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTransactions.h">
+      <Filter>DB\transactions\simple_for_debug</Filter>
+    </ClInclude>
+    <ClInclude Include="TranCache.h">
+      <Filter>DB\transactions\simple_for_debug</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTranStorage.h">
+      <Filter>DB\transactions\simple_for_debug</Filter>
+    </ClInclude>
+    <ClInclude Include="ITransactions.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="IDBTransactions.h">
+      <Filter>SDK\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="IDBFilePage.h">
+      <Filter>SDK\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="IDBBTreeNode.h">
+      <Filter>SDK\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="OIDField.h">
+      <Filter>DB\Fields</Filter>
+    </ClInclude>
+    <ClInclude Include="DBField.h">
+      <Filter>DB\Fields</Filter>
+    </ClInclude>
+    <ClInclude Include="VariantField.h">
+      <Filter>DB\Fields</Filter>
+    </ClInclude>
+    <ClInclude Include="IField.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreeNodeRO.h">
+      <Filter>DB\Index\BTreeNotUse\BtreeReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseBTreeRO.h">
+      <Filter>DB\Index\BTreeNotUse\BtreeReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="IQuery.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="IDatabase.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="IShema.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="ITable.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Transactions.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="TranStorage.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="TransactionCache.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="IDBTable.h">
+      <Filter>SDK\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="BPCompressors.h">
+      <Filter>DB\Index\BTreePlus\Compressors</Filter>
+    </ClInclude>
+    <ClInclude Include="BPSimpleCompessor.h">
+      <Filter>DB\Index\BTreePlus\Compressors</Filter>
+    </ClInclude>
+    <ClInclude Include="BTBaseNode.h">
+      <Filter>DB\Index\BTreePlus</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeLeafNode.h">
+      <Filter>DB\Index\BTreePlus</Filter>
+    </ClInclude>
+    <ClInclude Include="BPLeafNodeSimpleCompressor.h">
+      <Filter>DB\Index\BTreePlus\Compressors</Filter>
+    </ClInclude>
+    <ClInclude Include="BPInnerNodeSimpleCompressor.h">
+      <Filter>DB\Index\BTreePlus\Compressors</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeInnerNode.h">
+      <Filter>DB\Index\BTreePlus</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseBPTreeRO.h">
+      <Filter>DB\Index\BTreePlus\BTreePlusReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BPNodeRO.h">
+      <Filter>DB\Index\BTreePlus\BTreePlusReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BPIterator.h">
+      <Filter>DB\Index\BTreePlus</Filter>
+    </ClInclude>
+    <ClInclude Include="BPIteratorRO.h">
+      <Filter>DB\Index\BTreePlus\BTreePlusReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BTVector.h">
+      <Filter>DB\Index\BTreePlus\BTreePlusReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>DB\Index\BTreePlus</Filter>
+    </ClInclude>
+    <ClInclude Include="TranLogManager.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="TranUndoPageManager.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="TranLogStateManager.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeInfoPage.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="BPInneOIDNodeCompressor.h">
+      <Filter>DB\Index\BTreePlus\Compressors\OIDNodeCompressor</Filter>
+    </ClInclude>
+    <ClInclude Include="HuffmanOIDComp.h">
+      <Filter>DB\Index\BTreePlus\Compressors\OIDNodeCompressor</Filter>
+    </ClInclude>
+    <ClInclude Include="DBStateManager.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTree.h">
+      <Filter>DB\Index\BTreePlus</Filter>
+    </ClInclude>
+    <ClInclude Include="DBTranManager.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="StorageInfo.h">
+      <Filter>storage</Filter>
+    </ClInclude>
+    <ClInclude Include="IDBStorage.h">
+      <Filter>SDK\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="ListDBPage.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectTransactions.h">
+      <Filter>DB\transactions\DirectTran</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>DB\Index\BTreePlus\Compressors</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeLeafFixedStringNode.h">
+      <Filter>DB\Index\BTreePlus</Filter>
+    </ClInclude>
+    <ClInclude Include="PageID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseBPMap.h">
+      <Filter>DB\Index\BTreePlus\BPMap</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseBPSet.h">
+      <Filter>DB\Index\BTreePlus\BPSet</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeNodeSet.h">
+      <Filter>DB\Index\BTreePlus\BPSet</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeLeafNodeSet.h">
+      <Filter>DB\Index\BTreePlus\BPSet</Filter>
+    </ClInclude>
+    <ClInclude Include="BPLeafNodeSetSimpleCompressor.h">
+      <Filter>DB\Index\BTreePlus\BPSet</Filter>
+    </ClInclude>
+    <ClInclude Include="BPInnerNodeSetSimpleCompressor.h">
+      <Filter>DB\Index\BTreePlus\BPSet</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeInnerNodeSet.h">
+      <Filter>DB\Index\BTreePlus\BPSet</Filter>
+    </ClInclude>
+    <ClInclude Include="BPIteratorSet.h">
+      <Filter>DB\Index\BTreePlus\BPSet</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeNode.h">
+      <Filter>DB\Index\BTreePlus</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeNodeMap.h">
+      <Filter>DB\Index\BTreePlus\BPMap</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeLeafNodeMap.h">
+      <Filter>DB\Index\BTreePlus\BPMap</Filter>
+    </ClInclude>
+    <ClInclude Include="BPLeafNodeMapSimpleCompressor.h">
+      <Filter>DB\Index\BTreePlus\BPMap</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseBPTree.h">
+      <Filter>DB\Index\BTreePlus</Filter>
+    </ClInclude>
+    <ClInclude Include="BPIteratorMap.h">
+      <Filter>DB\Index\BTreePlus\BPMap</Filter>
+    </ClInclude>
+    <ClInclude Include="BPSetTraits.h">
+      <Filter>DB\Index\BTreePlus\BPSet</Filter>
+    </ClInclude>
+    <ClInclude Include="BPMapTraits.h">
+      <Filter>DB\Index\BTreePlus\BPMap</Filter>
+    </ClInclude>
+    <ClInclude Include="simple_vector.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="BPSetROTraits.h">
+      <Filter>DB\Index\BTreePlus\BPSet\ReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BPSetNodeRO.h">
+      <Filter>DB\Index\BTreePlus\BPSet\ReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BPLeafNodeROSetSimpleCompressor.h">
+      <Filter>DB\Index\BTreePlus\BPSet\ReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BPInnerNodeSetROSimpleCompressor.h">
+      <Filter>DB\Index\BTreePlus\BPSet\ReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BPSetIteratorRO.h">
+      <Filter>DB\Index\BTreePlus\BPSet\ReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseBPTreeSetRO.h">
+      <Filter>DB\Index\BTreePlus\BPSet\ReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseBPMapRO.h">
+      <Filter>DB\Index\BTreePlus\BPMap\ReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BPMapNodeRO.h">
+      <Filter>DB\Index\BTreePlus\BPMap\ReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BPLeafNodeMapROSimpleCompressor.h">
+      <Filter>DB\Index\BTreePlus\BPMap\ReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="BPMapIteratorRO.h">
+      <Filter>DB\Index\BTreePlus\BPMap\ReadOnly</Filter>
+    </ClInclude>
+    <ClInclude Include="PointSpatialBPMaTraits.h">
+      <Filter>DB\Index\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="PointSpatialBPMapTree.h">
+      <Filter>DB\Index\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialPointQuery.h">
+      <Filter>DB\Index\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="PoinMapLeafCompressor.h">
+      <Filter>DB\Index\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="PoinMapInnerCompressor.h">
+      <Filter>DB\Index\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="BackTableZPoint16Bit.h">
+      <Filter>DB\Index\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="tableZPoint8Bit.h">
+      <Filter>DB\Index\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="RectSpatialBPMapTree.h">
+      <Filter>DB\Index\spatial\Z-Order\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="BPMapPointSpatialIterator.h">
+      <Filter>DB\Index\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="PoinMapInnerCompressor64.h">
+      <Filter>DB\Index\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="PoinMapLeafCompressor64.h">
+      <Filter>DB\Index\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeSPLeafNodeMap.h">
+      <Filter>DB\Index\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialRectQuery.h">
+      <Filter>DB\Index\spatial\Z-Order\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="tableZRectBack4Bit.h">
+      <Filter>DB\Index\spatial\Z-Order\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="tableZRect16Bit.h">
+      <Filter>DB\Index\spatial\Z-Order\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="tableZRect8Bit.h">
+      <Filter>DB\Index\spatial\Z-Order\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="RectMapInnerCompressor.h">
+      <Filter>DB\Index\spatial\Z-Order\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="RectMapLeafCompressor.h">
+      <Filter>DB\Index\spatial\Z-Order\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialKey.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="ICursor.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="ISpatialQuery.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="IShape.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape.h">
+      <Filter>DB\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressorParams.h">
+      <Filter>DB\Index\BTreePlus\Compressors</Filter>
+    </ClInclude>
+    <ClInclude Include="CRC.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialOIDField.h">
+      <Filter>DB\Fields</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialVariant.h">
+      <Filter>DB\Fields</Filter>
+    </ClInclude>
+    <ClInclude Include="PageVector.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="PageList.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="BitMap.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseBPSetv2.h">
+      <Filter>DB\Index\BtreePlusv2\BPSetv2</Filter>
+    </ClInclude>
+    <ClInclude Include="BPVector.h">
+      <Filter>DB\Index\BtreePlusv2</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeInnerNodeSetv2.h">
+      <Filter>DB\Index\BtreePlusv2\BPSetv2</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeLeafNodeSetv2.h">
+      <Filter>DB\Index\BtreePlusv2\BPSetv2</Filter>
+    </ClInclude>
+    <ClInclude Include="BPInnerNodeSimpleCompressorV2.h">
+      <Filter>DB\Index\BtreePlusv2\Compressors</Filter>
+    </ClInclude>
+    <ClInclude Include="BPLeafNodeSetSimpleCompressorV2.h">
+      <Filter>DB\Index\BtreePlusv2\Compressors</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeNodeSetV2.h">
+      <Filter>DB\Index\BtreePlusv2\BPSetv2</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="simple_list.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="simple_list_iterator.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseRBTree.cpp">
+      <Filter>DB\Index\memorytree\RBTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseRBMultiTree.cpp">
+      <Filter>DB\Index\memorytree\RBTree</Filter>
+    </ClCompile>
+    <ClCompile Include="FilePage.cpp">
+      <Filter>storage</Filter>
+    </ClCompile>
+    <ClCompile Include="storage.cpp">
+      <Filter>storage</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseBTree.cpp">
+      <Filter>DB\Index\BTreeNotUse</Filter>
+    </ClCompile>
+    <ClCompile Include="Database.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="Table.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="Schema.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="FreePageManage.cpp">
+      <Filter>storage</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTransactions.cpp">
+      <Filter>DB\transactions\simple_for_debug</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTranStorage.cpp">
+      <Filter>DB\transactions\simple_for_debug</Filter>
+    </ClCompile>
+    <ClCompile Include="TranCache.cpp">
+      <Filter>DB\transactions\simple_for_debug</Filter>
+    </ClCompile>
+    <ClCompile Include="OIDField.cpp">
+      <Filter>DB\Fields</Filter>
+    </ClCompile>
+    <ClCompile Include="Transactions.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="TranStorage.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="TransactionCache.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="TranUndoPageManager.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="BPTreeInfoPage.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="TranLogStateManager.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="DBStateManager.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="DBTranManager.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="StorageInfo.cpp">
+      <Filter>storage</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectTransactions.cpp">
+      <Filter>DB\transactions\DirectTran</Filter>
+    </ClCompile>
+    <ClCompile Include="SpatialPointQuery.cpp">
+      <Filter>DB\Index\spatial\Z-Order\Point</Filter>
+    </ClCompile>
+    <ClCompile Include="BTreeNode.cpp">
+      <Filter>DB\Index\BTreeNotUse</Filter>
+    </ClCompile>
+    <ClCompile Include="SpatialRectQuery.cpp">
+      <Filter>DB\Index\spatial\Z-Order\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape.cpp">
+      <Filter>DB\Index\spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="CRC.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="BitMap.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
