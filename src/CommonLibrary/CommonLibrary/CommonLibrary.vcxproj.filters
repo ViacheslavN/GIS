@@ -34,6 +34,9 @@
     <Filter Include="time">
       <UniqueIdentifier>{6927862c-551b-488a-a3d5-6301b6ed1e88}</UniqueIdentifier>
     </Filter>
+    <Filter Include="thread\Wait For Graph">
+      <UniqueIdentifier>{d9cc7b27-e426-4ff1-ac4a-a89b78b38da7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -120,6 +123,9 @@
     <ClInclude Include="Nocopy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WaitForGraph.h">
+      <Filter>thread\Wait For Graph</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -160,6 +166,9 @@
     </ClCompile>
     <ClCompile Include="DebugTime.cpp">
       <Filter>time</Filter>
+    </ClCompile>
+    <ClCompile Include="WaitForGraph.cpp">
+      <Filter>thread\Wait For Graph</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
