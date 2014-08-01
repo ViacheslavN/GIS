@@ -22,10 +22,11 @@ namespace embDB
 		typedef _TCompressor TCompressor;
 		typedef  TBPVector<TKey> TKeyMemSet;
 		typedef  TBPVector<TLink> TLinkMemSet;
+
 	public:
 		
 		BPTreeInnerNodeSetv2( CommonLib::alloc_t *pAlloc,  bool bMulti) :
-		  m_pCompressor(0), m_nLess(-1),  m_innerKeyMemSet(pAlloc), m_innerLinkMemSet(pAlloc)
+		  m_pCompressor(0), m_nLess(-1),  m_innerKeyMemSet(pAlloc), m_innerLinkMemSet(pAlloc), m_bMulti(bMulti)
 		{
 			
 		}
@@ -70,8 +71,63 @@ namespace embDB
 		virtual bool Load(CommonLib::FxMemoryReadStream& stream)
 		{
 			 stream.read(m_nLess); 
-			return m_pCompressor->Load(m_innerMemSet, m_innerLinkMemSet,  stream);
+			return m_pCompressor->Load(m_innerKeyMemSet, m_innerLinkMemSet,  stream);
 		}
+		size_t tupleSize() const
+		{
+			return m_pCompressor->tupleSize();
+		}
+		TLink upper_bound(const TKey& key, int32& nIndex )
+		{
+			nIndex = m_innerKeyMemSet.upper_bound(key, m_comp);
+			if(nIndex == 0) //меньше всех ключей
+			{
+				nIndex = -1;
+				return m_nLess;
+			}
+			return m_innerLinkMemSet[nIndex - 1]; 
+		}
+		TLink lower_bound(const TKey& key, int32& nIndex )
+		{
+			short nType = 0;
+			nIndex = m_innerKeyMemSet.lower_bound(key, nType, m_comp);
+			if(nType == FIND_KEY)
+				return m_innerLinkMemSet[nIndex];
+
+			if(nIndex == 0) //меньше всех ключей
+			{
+				nIndex = -1;
+				return m_nLess;
+			}
+
+			return m_innerLinkMemSet.[nIndex - 1]; 
+		}
+	
+
+		TLink findNodeForBTree(const TKey& key)
+		{
+			assert(m_nLess != -1);
+			
+			int32 nIndex = -1;
+			short nType = 0;
+			if(m_bMulti)
+			{
+				nIndex = m_innerKeyMemSet.upper_bound(key, m_comp);
+				if(nIndex == 0) //меньше всех ключей
+					return m_nLess;
+				return m_innerLinkMemSet[nIndex - 1]; 
+			}
+		
+			nIndex  = m_innerKeyMemSet.lower_bound(key, nType, m_comp);
+			if(nType == FIND_KEY)
+				return m_innerLinkMemSet.[nIndex];
+
+			if(nIndex == 0) //меньше всех ключей
+				return m_nLess;
+			
+			return m_innerLinkMemSet.[nIndex - 1];
+		}
+
 		virtual bool insert(const TKey& key, TLink nLink)
 		{
 			uint32 nIndex = -1;
@@ -84,18 +140,20 @@ namespace embDB
 			}
 			else
 			{
+				short nType = 0;
 				if(m_bMulti)
-					nIndex = m_innerKeyMemSet.upper_bound(nIndex, nType, TComporator());
+					nIndex = m_innerKeyMemSet.upper_bound(key, m_comp);
 				else
 				{
-					nIndex = m_innerKeyMemSet.upper_bound(nIndex, nType, TComporator());
+					nIndex = m_innerKeyMemSet.lower_bound(key, nType, m_comp);
 					if(nType == FIND_KEY)
 					{
-						//TO DO logs
+						//TO LOGs
 						return false;
 					}
 				}
-
+			
+			
 				m_innerKeyMemSet.insert(key, nIndex);
 				m_innerLinkMemSet.insert(nLink, nIndex);
 			}
@@ -111,12 +169,20 @@ namespace embDB
 			uint32 nIndex = -1;
 			short nType = 0;
 			if(m_bMulti)
-				nIndex = m_innerKeyMemSet.upper_bound(nIndex, nType, TComporator());
+			{
+				
+				nIndex = m_innerKeyMemSet.upper_bound(key, m_comp);
+				if(nIndex && m_comp.EQ(key, m_innerKeyMemSet[nIndex - 1]))
+				{
+					nType = FIND_KEY;
+					nIndex -= 1;
+				}
+			}
 			else
 			{
-				nIndex = m_innerKeyMemSet.upper_bound(nIndex, nType, TComporator());
-			
+				nIndex = m_innerKeyMemSet.lower_bound(key, nType, m_comp);
 			}
+	
 			if(nType != FIND_KEY)
 			{
 				return false;
@@ -125,37 +191,41 @@ namespace embDB
 			m_pCompressor->remove(m_innerKeyMemSet[nIndex], m_innerLinkMemSet[nIndex]);
 			m_innerKeyMemSet.remove(nIndex);
 			m_innerLinkMemSet.remove(nIndex);
-			assert(m_pCompressor->count() == m_innerMemSet.size());
+			assert(m_pCompressor->count() == m_innerKeyMemSet.size());
 			return true;
 		}
 
-		bool SplitIn(BPTreeInnerNodeSetv2 *pNode, int32& nMediankey)
+		bool SplitIn(BPTreeInnerNodeSetv2 *pNode, TKey* pSplitKey)
 		{
 
-			TLeafMemSet& newNodeKeySet = pNode->m_innerKeyMemSet;
-			TLeafMemSet& newNodeLinkSet = pNode->m_innerLinkMemSet;
+			TKeyMemSet& newNodeKeySet = pNode->m_innerKeyMemSet;
+			TLinkMemSet& newNodeLinkSet = pNode->m_innerLinkMemSet;
 			TCompressor* pNewNodeComp = pNode->m_pCompressor;
-			size_t nSize = m_leafMemSet.size()/2;
+			size_t nSize = m_innerKeyMemSet.size()/2;
 
 			//bool bOne = (m_leafMemSet.size() < 3);
-			newNodeKeySet.copy(m_innerKeyMemSet, nSize,  m_innerKeyMemSet.size());
-			newNodeLinkSet.copy(m_innerLinkMemSet, nSize,  m_innerLinkMemSet.size());
-			nMediankey = nSize;
-			while(nSize < m_leafMemSet.size())
+			newNodeKeySet.copy(m_innerKeyMemSet, 0, nSize,  m_innerKeyMemSet.size());
+			newNodeLinkSet.copy(m_innerLinkMemSet, 0, nSize,  m_innerLinkMemSet.size());
+			size_t nNewSize = nSize;
+			while(nSize < m_innerKeyMemSet.size())
 			{						 
 				m_pCompressor->remove(m_innerKeyMemSet[nSize], m_innerLinkMemSet[nSize]);
 				pNewNodeComp->insert(m_innerKeyMemSet[nSize], m_innerLinkMemSet[nSize]);
 				++nSize;
 			}	
-			m_innerKeyMemSet.resize(nSize - 1);
-			m_innerLinkMemSet.resize(nSize - 1);
+			m_innerKeyMemSet.resize(nNewSize);
+			m_innerLinkMemSet.resize(nNewSize);
+			pSplitKey = &newNodeKeySet[0];
 			return true;
 		}
 	public:
-
+		TLink m_nLess;
 		TKeyMemSet m_innerKeyMemSet;
 		TLinkMemSet m_innerLinkMemSet;
 		bool m_bMulti;
-		m_pCompressor;
+		TComporator m_comp;
+		TCompressor *m_pCompressor;
 	};	
 }
+
+#endif

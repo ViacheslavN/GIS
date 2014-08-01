@@ -10,23 +10,24 @@ namespace embDB
 
 
 
-	template<class _Transaction, class _TKey, class _TLink, class _TComp,
+	template<class _TKey, class _TLink, class _TComp, class _Transaction, 
 	class _TInnerCompressor, class _TLeafCompressor>
 	class BPTreeNodeSetv2
 	{
 	public:
-		typedef _TInnerNode  TInnerNode;
-		typedef _TLeafNode   TLeafNode;
-		typedef typename TInnerNode::TKey TKey;
-		typedef typename TInnerNode::TLink TLink;
+
+		typedef _TKey TKey;
+		typedef _TLink TLink;
+		typedef _TComp TComp;
 		typedef	_Transaction  Transaction;
-		typedef typename TInnerNode::TInnerMemSet  TInnerMemSet;
-		typedef typename TLeafNode::TLeafMemSet   TLeafMemSet;
+		typedef _TInnerCompressor TInnerCompressor;
+		typedef _TLeafCompressor TLeafCompressor;
 
-		typedef typename TInnerMemSet::TTreeNode TInnerMemSetNode;
-		typedef typename TLeafMemSet::TTreeNode TLeafMemSetNode;
+		typedef BPTreeInnerNodeSetv2<TKey, TLink, TComp, Transaction, TInnerCompressor> TInnerNode;
+		typedef BPTreeLeafNodeSetv2<TKey, TLink, TComp, Transaction,TLeafCompressor> TLeafNode;
 
-		BPTreeNodeSet(int64 nParentAddr, CommonLib::alloc_t *pAlloc, int64 nPageAddr, bool bMulti, bool  bIsLeaf, bool bCheckCRC32,
+
+		BPTreeNodeSetv2(int64 nParentAddr, CommonLib::alloc_t *pAlloc, int64 nPageAddr, bool bMulti, bool  bIsLeaf, bool bCheckCRC32,
 			ICompressorParams *pInnerCompParams = NULL, ICompressorParams *pLeafCompParams = NULL) :
 		m_bIsLeaf(bIsLeaf)
 			,m_nPageAddr(nPageAddr)
@@ -36,7 +37,7 @@ namespace embDB
 			,m_pBaseNode(0)
 			,m_LeafNode(pAlloc,  bMulti)
 			,m_InnerNode(pAlloc, bMulti)
-			,m_pParrentMemsetNode(0)
+			,m_nFoundIndex(-1)
 			,m_nType(0)
 			,m_bValidNextKey(false)
 			,m_pInnerCompParams(pInnerCompParams)
@@ -46,7 +47,7 @@ namespace embDB
 		{
 
 		}
-		~BPTreeNodeSet()
+		~BPTreeNodeSetv2()
 		{
 
 		}
@@ -191,45 +192,33 @@ namespace embDB
 		TLink findNodeInsert(const TKey& key)
 		{
 			assert(!m_bIsLeaf);
-			return m_InnerNode.findNodeForBTree(key);
+			int32 nIndex = -1;
+			return m_InnerNode.upper_bound(key, nIndex);
 		}
-		TLink findNext(const TKey& key, TInnerMemSetNode** pMemSetNode )
+		TLink findNext(const TKey& key , int32& nIndex)
 		{
 			assert(!m_bIsLeaf);
-			return m_InnerNode.findNext(key, pMemSetNode);
+			return m_InnerNode.findNext(key, nIndex);
 		}
-
-		TLink findNextForDelete(const TKey& key, TInnerMemSetNode** pNode, short& nType)
+		TLink inner_lower_bound(const TKey& key, short& nType, int32& nIndex )
 		{
 			assert(!m_bIsLeaf);
-			return m_InnerNode.findNextForDelete(key, pNode, nType);
+			return m_InnerNode.lower_bound(key, nType, nIndex);
 		}
-
-		bool splitIn(BPTreeNodeSet *pNewNode, TKey* pSplitKey)
+		TLink  inner_upper_bound(const TKey& key, int32& nIndex )
 		{
-			if(m_bIsLeaf)
-				return m_LeafNode.SplitIn(&pNewNode->m_LeafNode, pSplitKey);
-			return m_InnerNode.SplitIn(&pNewNode->m_InnerNode, pSplitKey);
+			assert(!m_bIsLeaf);
+			return m_InnerNode.upper_bound(key, nIndex);
 		}
-
-		TLeafMemSetNode* findNode(const TKey& key, TLeafMemSetNode* pFromNode = NULL)
+		int32 leaf_lower_bound(const TKey& key, short& nType)
 		{
 			assert(m_bIsLeaf);
-			TLeafMemSetNode* pNode = m_LeafNode.m_leafMemSet.findNode(key, pFromNode);
-			if(m_LeafNode.m_leafMemSet.isNull(pNode))
-				return NULL;
-			return pNode;
+			return m_LeafNode.lower_bound(key, nType);
 		}
-		TLeafMemSetNode *findLessOrEQNode(const TKey& key, TLeafMemSetNode* pFromNode = NULL)
+		int32  leaf_upper_bound(const TKey& key)
 		{
 			assert(m_bIsLeaf);
-			short nTypeRet = 0;
-			TLeafMemSetNode* pNode = m_LeafNode.m_leafMemSet.findLessOrEQNode(key, nTypeRet, pFromNode);
-			if(m_LeafNode.m_leafMemSet.isNull(pNode))
-				return NULL;
-			if(nTypeRet == LQ_KEY)
-				return NULL;
-			return  pNode;
+			return m_LeafNode.upper_bound(key);
 		}
 		int64 less()
 		{
@@ -261,65 +250,6 @@ namespace embDB
 			assert(m_bIsLeaf);
 			m_LeafNode.m_nPrev = nPrevAddr;
 		}
-
-		bool removeRBLeafNode(TLeafMemSetNode* pNode)
-		{
-			assert(m_bIsLeaf);
-			m_LeafNode.deleteNode(pNode, true, true);
-			return true;
-		}
-
-		TInnerMemSetNode *findLessOrEQInnerNode(const TKey& key)
-		{
-			assert(!m_bIsLeaf);
-			return m_InnerNode.findLessOrEQNode(key);
-		}
-		TLink first()
-		{
-			assert(!m_bIsLeaf);
-			return m_InnerNode.first();
-		}
-		TLink last()
-		{
-			assert(!m_bIsLeaf);
-			return m_InnerNode.last();
-		}
-		TKey& firstKey()
-		{
-			if(m_bIsLeaf)
-				return m_LeafNode.firstKey();
-			else 
-				return m_InnerNode.firstKey();
-		}
-
-		bool remove(const TKey& key)
-		{
-			if(m_bIsLeaf)
-				return m_LeafNode.remove(key);
-			return m_InnerNode.remove(key);
-		}
-		bool removeRBInnerNode(TInnerMemSetNode* pRBNode)
-		{
-			assert(!m_bIsLeaf);
-			m_InnerNode.deleteNode(pRBNode, true, true);
-			return true;
-		}
-		bool AlignmentOf(BPTreeNodeSet *pNode, bool bFromLeft)
-		{
-			return m_LeafNode.AlignmentOf(&pNode->m_LeafNode, bFromLeft);
-		}
-		bool AlignmentInnerNodeOf(BPTreeNodeSet *pNode, bool bFromLeft, TKey& lastKey, TLink& nLastLink)
-		{
-			assert(!m_InnerNode.isLeaf());
-			return m_InnerNode.AlignmentOf(&pNode->m_InnerNode, bFromLeft, lastKey, nLastLink);
-		}
-
-		bool UnionWith(BPTreeNodeSet* pNode)
-		{
-			if(m_bIsLeaf)
-				return m_LeafNode.UnionWith(&pNode->m_LeafNode);
-			return m_InnerNode.UnionWith(&pNode->m_InnerNode);
-		}
 		size_t count() const
 		{
 			if(m_bIsLeaf)
@@ -330,42 +260,21 @@ namespace embDB
 		{
 			return m_nPageAddr;
 		}
-		TLeafMemSetNode* firstLeftMemSetNode()
-		{
-			assert(m_bIsLeaf);
-			return m_LeafNode.firstNode();
-		}
-		TLeafMemSetNode* lastLeftMemSetNode()
-		{
-			assert(m_bIsLeaf);
-			return m_LeafNode.lastNode();
-		}
-		TInnerMemSetNode* lastInnerMemSetNode()
-		{
-			assert(!m_bIsLeaf);
-			return m_InnerNode.lastNode();
-		}
-		TInnerMemSetNode* firstInnerMemSetNode()
-		{
-			assert(!m_bIsLeaf);
-			return m_InnerNode.firstNode();
-		}
 
-		TLink lastPage()
+		bool splitIn(BPTreeNodeSetv2 *pNewNode, TKey* pSplitKey)
 		{
-			assert(!m_bIsLeaf);
-			return m_InnerNode.lastPage();
+			if(m_bIsLeaf)
+				return m_LeafNode.SplitIn(&pNewNode->m_LeafNode, pSplitKey);
+			return m_InnerNode.SplitIn(&pNewNode->m_InnerNode, pSplitKey);
 		}
-
-		bool isLeamMemsetNodeNull(TLeafMemSetNode *pLeafNode)
+		int32 search(const TKey& key)
 		{
 			assert(m_bIsLeaf);
-			return m_LeafNode.isNull(pLeafNode);
-		}
-		bool isInnerMemsetNodeNull(TInnerMemSetNode *pInnerNode)
-		{
-			assert(!m_bIsLeaf);
-			return m_InnerNode.isNull(pInnerNode);
+			if(m_bIsLeaf)
+			{
+				return m_LeafNode.binary_search(key);
+			}
+			return -1;
 		}
 	public:
 		BPBaseTreeNode* m_pBaseNode;
@@ -378,7 +287,7 @@ namespace embDB
 		CommonLib::alloc_t* m_pAlloc;
 		//for removing
 		TLink m_nParent;
-		TInnerMemSetNode* m_pParrentMemsetNode;//Родительская  нода указывающая на данную
+		int32 m_nFoundIndex;
 		short m_nType; // найдена по ключу?
 		//for spatial search
 		TKey m_NextLeafKey;

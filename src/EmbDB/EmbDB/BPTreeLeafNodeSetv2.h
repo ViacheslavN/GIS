@@ -20,10 +20,10 @@ namespace embDB
 		typedef _Transaction Transaction;
 		typedef _TComp		 TComporator;
 		typedef _TCompressor TCompressor;
-		typedef  TBPVector<TKey> TKeyMemSet;
+		typedef  TBPVector<TKey> TLeafMemSet;
 
 		BPTreeLeafNodeSetv2( CommonLib::alloc_t *pAlloc, bool bMulti) :
-		m_leafMemSet(pAlloc),  m_pCompressor(0),	m_nNext(-1), m_nPrev(-1)
+		m_leafMemSet(pAlloc),  m_pCompressor(0),	m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti)
 
 		{
 		
@@ -86,10 +86,10 @@ namespace embDB
 			else
 			{
 				if(m_bMulti)
-					nIndex = m_leafMemSet.upper_bound(nIndex, nType, TComporator());
+					nIndex = m_leafMemSet.upper_bound(key, m_comp);
 				else
 				{
-					nIndex = m_leafMemSet.upper_bound(nIndex, nType, TComporator());
+					nIndex = m_leafMemSet.lower_bound(key, nType, m_comp);
 					if(nType == FIND_KEY)
 					{
 						//TO DO logs
@@ -102,6 +102,20 @@ namespace embDB
 			bool bRet = m_pCompressor->insert(key);
 			return bRet;
 		}
+
+		uint32 upper_bound(const TKey& key)
+		{
+			return  m_leafMemSet.upper_bound(key, m_comp);
+		}
+		uint32 lower_bound(const TKey& key, short& nType)
+		{
+			return m_leafMemSet.lower_bound(key, nType, m_comp);
+		}
+		uint32 binary_search(const TKey& key)
+		{
+			return m_leafMemSet.binary_search(key, m_comp);
+		}
+
 		virtual bool update(const TKey& key)
 		{
 			return true;
@@ -111,12 +125,17 @@ namespace embDB
 			uint32 nIndex = -1;
 			short nType = 0;
 			if(m_bMulti)
-				nIndex = m_leafMemSet.upper_bound(nIndex, nType, TComporator());
-			else
 			{
-				nIndex = m_leafMemSet.upper_bound(nIndex, nType, TComporator());
-
+				nIndex = m_leafMemSet.upper_bound(nIndex,  m_comp);
+				if(nIndex && m_comp.EQ(key, m_leafMemSet[nIndex - 1]))
+				{
+					nType = FIND_KEY;
+					nIndex -= 1;
+				}
 			}
+			else
+				nIndex = m_leafMemSet.lower_bound(nIndex, nType, m_comp);
+					
 			if(nType != FIND_KEY)
 			{
 				return false;
@@ -126,7 +145,7 @@ namespace embDB
 			m_leafMemSet.remove(nIndex);
 			return true;
 		}
-		bool SplitIn(BPTreeLeafNodeSetv2 *pNode, int32& nMediankey)
+		bool SplitIn(BPTreeLeafNodeSetv2 *pNode, TKey* pSplitKey)
 		{
 	
 			TLeafMemSet& newNodeMemSet = pNode->m_leafMemSet;
@@ -134,15 +153,16 @@ namespace embDB
 			size_t nSize = m_leafMemSet.size()/2;
 		 
 			//bool bOne = (m_leafMemSet.size() < 3);
-			newNodeMemSet.copy(m_leafMemSet, nSize,  m_leafMemSet.size());
-			nMediankey = nSize;
+			newNodeMemSet.copy(m_leafMemSet, 0, nSize, m_leafMemSet.size());
+			int32 nNewSize = nSize;
 			while(nSize < m_leafMemSet.size())
 			{						 
 				m_pCompressor->remove(m_leafMemSet[nSize]);
 				pNewNodeComp->insert(m_leafMemSet[nSize]);
 				++nSize;
 			}	
-			newNodeMemSet.resize(nSize - 1);
+			m_leafMemSet.resize(nNewSize);
+			pSplitKey = &newNodeMemSet[0];
 			return true;
 		}
 		size_t count() const 
@@ -159,6 +179,7 @@ namespace embDB
 		TLink m_nNext;
 		TLink m_nPrev;
 		bool m_bMulti;
+		TComporator m_comp;
 	};
 	
 }

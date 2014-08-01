@@ -14,15 +14,14 @@ namespace embDB
 	{
 	public:
 
-		typedef TKey TKey;
-		typedef TLink TLink;
-		typedef TComp TComp;
+		typedef _TKey TKey;
+		typedef _TLink TLink;
 		typedef  TBPVector<TKey> TKeyMemSet;
 		typedef  TBPVector<TLink> TLinkMemSet;
 
 		BPInnerNodeSimpleCompressorV2(ICompressorParams *pParams = NULL) : m_nSize(0)
 		{}
-		virtual ~BPInnerNodeSimpleCompressor(){}
+		virtual ~BPInnerNodeSimpleCompressorV2(){}
 		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;

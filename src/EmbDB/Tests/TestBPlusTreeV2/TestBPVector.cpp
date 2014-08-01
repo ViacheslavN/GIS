@@ -24,12 +24,19 @@ void TestBPVector()
 
 	vec1.push_back(0);
 	vec1.push_back(1);
+	vec1.push_back(2);
+	vec1.push_back(2);
+	vec1.push_back(2);
 	vec1.push_back(5);
 	vec1.push_back(7);
+	vec1.push_back(7);
 	short nType = 0;
-	int index = vec1.lower_bound(6, nType, comp<int32>());
-	int indexmr = vec1.upper_bound(6, nType, comp<int32>());
-	int index1 = vec1.binary_search(5, comp<int32>());
+	int index = vec1.upper_bound(-1, comp<int32>());
+	vec1.insert(2, index);
+
+	index = vec1.lower_bound(6, nType, comp<int32>());
+	int indexmr = vec1.lower_bound(6, nType, comp<int32>());
+	int index1 = vec1.binary_search(0, comp<int32>());
 	vec1.insert(6, index);
 	vec1.insert(6, index);
 	vec1.insert(6, index);
@@ -37,8 +44,8 @@ void TestBPVector()
 	vec1.insert(6, index);
 
 	indexmr = vec1.lower_bound(6, nType, comp<int32>());
-	index = vec1.upper_bound(6, nType, comp<int32>());
-	indexmr = vec1.upper_bound(8, nType, comp<int32>());
+	index = vec1.upper_bound(6, comp<int32>());
+	indexmr = vec1.upper_bound(8, comp<int32>());
 	indexmr = vec1.lower_bound(8, nType, comp<int32>());
  
 	for (size_t i = 0, sz = vec1.size(); i < sz; ++i)

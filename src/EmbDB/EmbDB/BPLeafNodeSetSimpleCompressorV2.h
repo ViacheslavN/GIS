@@ -6,12 +6,12 @@
 namespace embDB
 {
 
-	template<typename _TKey, >
+	template<typename _TKey>
 	class BPLeafNodeSetSimpleCompressorV2
 	{
 	public:	
 		typedef _TKey TKey;
-		typedef  TBPVector<TKey> TKeyMemSet;
+		typedef  TBPVector<TKey> TLeafMemSet;
 		BPLeafNodeSetSimpleCompressorV2(ICompressorParams *pParams = NULL) : m_nSize(0)
 		{}
 		virtual ~BPLeafNodeSetSimpleCompressorV2(){}
@@ -71,7 +71,7 @@ namespace embDB
 		}
 		virtual size_t size() const
 		{
-			return sizeof(TKey) *  m_nSize +  2*sizeof(uint32);
+			return sizeof(TKey) *  m_nSize +  2 *sizeof(uint32);
 		}
 		virtual size_t count() const
 		{

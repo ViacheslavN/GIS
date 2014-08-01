@@ -56,11 +56,13 @@ namespace embDB
 		{
 			if(idx > m_nSize)
 				return false;
+
+			if((m_nSize + 1) > m_nCapacity)
+				reserve(2 * m_nCapacity);
 	
 			if(m_nSize == idx)
 				return push_back(value);
-			if((m_nSize + 1) > m_nCapacity)
-				reserve(2 * m_nCapacity);
+		
 			::memmove( m_pData + idx + 1, m_pData + idx, ( m_nSize - idx)*sizeof( TValue ) );
 			m_pData[idx] = value;
 			m_nSize++;
@@ -100,7 +102,7 @@ namespace embDB
 		}
 		bool resize(size_t nSize)
 		{
-			if(m_nCapacity > nSize)
+			if(m_nSize > nSize)
 			{
 				m_nSize = nSize;
 				return true;
@@ -108,17 +110,18 @@ namespace embDB
 			if(!reserve(nSize))
 				return false;
 			m_nSize = nSize;
-
+			return true;
 		}
 		bool copy(const TBPVector& vec, size_t nPos, size_t nBegin, size_t nEnd)
 		{
 			size_t nLen = nEnd - nBegin;
 			if(m_nSize + nPos + nLen >= m_nCapacity)
 			{
-				if(!resize((2 * m_nCapacity) > (m_nSize + nPos + nLen) ? 2 * m_nCapacity :  2 * (m_nSize + nPos + nLen) ))
+				if(!reserve((2 * m_nCapacity) > (m_nSize + nPos + nLen) ? 2 * m_nCapacity :  2 * (m_nSize + nPos + nLen) ))
 					return false;
 			}
 			memcpy(m_pData + nPos, vec.m_pData + nBegin,  nLen);
+			m_nSize += nLen;
 			return true;
 		}
 		template<class _TComp >
@@ -161,10 +164,10 @@ namespace embDB
 
 
 		template<class _TComp >
-		int32 upper_bound(const TValue& val, short& nType, _TComp& comp)  
+		int32 upper_bound(const TValue& val,_TComp& comp)  
 		{
 
-				if(m_nSize == 0)
+			if(m_nSize == 0)
 				return -1;
 
 			int32 nFirst = 0;
@@ -183,9 +186,6 @@ namespace embDB
 				} 
 				else nCount = nStep;
 			}
-
-			if(nFirst < (int32)m_nSize && comp.EQ(val, m_pData[ nFirst ]))
-				nType = FIND_KEY;
 			return nFirst;
 		}
 
