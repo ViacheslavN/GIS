@@ -120,7 +120,7 @@ namespace embDB
 				if(!reserve((2 * m_nCapacity) > (m_nSize + nPos + nLen) ? 2 * m_nCapacity :  2 * (m_nSize + nPos + nLen) ))
 					return false;
 			}
-			memcpy(m_pData + nPos, vec.m_pData + nBegin,  nLen);
+			memcpy(m_pData + nPos, vec.m_pData + nBegin,  nLen * sizeof(TValue));
 			m_nSize += nLen;
 			return true;
 		}
@@ -196,19 +196,32 @@ namespace embDB
 			assert(nIndex < m_nSize);
 			return m_pData[nIndex];
 		}
-
 		TValue& operator [](size_t nIndex) 
 		{
 			assert(nIndex < m_nSize);
 			return m_pData[nIndex];
 		}
 
-			private:
-				TValue*  m_pData;
-				CommonLib::alloc_t* m_pAlloc;
-				size_t m_nCapacity;
-				size_t m_nSize;
-				CommonLib::simple_alloc_t m_simple_alloc;
+		TValue& back() 
+		{
+			assert(m_nSize);
+			return m_pData[m_nSize - 1];
+		}
+
+		const TValue& back() const
+		{
+			assert(m_nSize);
+			return m_pData[m_nSize - 1];
+		}
+
+	
+
+		private:
+			TValue*  m_pData;
+			CommonLib::alloc_t* m_pAlloc;
+			size_t m_nCapacity;
+			size_t m_nSize;
+			CommonLib::simple_alloc_t m_simple_alloc;
 		};
 }
 

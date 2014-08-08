@@ -262,7 +262,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		{
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tranUndoset.data", &storage, 1);
 			tran.begin();
-			insertINBTreeSet <TBtree, TTran,  TKey>(nCacheBPTreeSize, 0, nCount, nStep, &tran, alloc, nTreeRootPage);
+			insertINBTreeSet <TBtree, TTran,  TKey>(nCacheBPTreeSize, nCount, 0, nStep, &tran, alloc, nTreeRootPage);
 		}
 
 		{
@@ -346,7 +346,7 @@ void testBPTreeSet ()
 	//testBPTreeSetImpl<TBTreePlusString, TBTreePlusROString, embDB::CDirectTransactions, sStringStrustTest, int64>(nCount, nPageSize, strTest);
 	//testBPTreeSetImpl<TBTreePlusString, TBTreePlusROString, embDB::CTransactions, sStringStrustTest, int64>(nCount, nPageSize, strTest);
 
-	nCount = 1000000;
+	nCount = 1000000000;
 	testBPTreeSetImpl<TBTreeSet, TBTreeSetRO, embDB::CDirectTransactions, int64>(nCount, nPageSize, 5000, 1000);
 	//testBPTreeSetImpl<TBTreePlus, TBTreePlusRO, embDB::CTransactions, int64, int64>(nCount, nPageSize, nVal);
 

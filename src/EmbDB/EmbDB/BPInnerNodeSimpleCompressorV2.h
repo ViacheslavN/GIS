@@ -34,8 +34,11 @@ namespace embDB
 			keySet.reserve(m_nSize);
 			linkSet.reserve(m_nSize);
 
-			uint32 nKeySize = stream.readInt32();
-			uint32 nLinkSize = stream.readInt32();
+			/*uint32 nKeySize = stream.readInt32();
+			uint32 nLinkSize = stream.readInt32();*/
+
+			uint32 nKeySize =  m_nSize * sizeof(TKey);
+			uint32 nLinkSize =  m_nSize * sizeof(int64);
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
@@ -67,8 +70,8 @@ namespace embDB
 			uint32 nKeySize =  nSize * sizeof(TKey);
 			uint32 nLinkSize =  nSize * sizeof(int64);
 
-			stream.write(nKeySize);
-			stream.write(nLinkSize);
+			/*stream.write(nKeySize);
+			stream.write(nLinkSize);*/
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
@@ -93,7 +96,7 @@ namespace embDB
 		}
 		virtual size_t size() const
 		{
-			return (sizeof(TKey) + sizeof(TLink) ) *  m_nSize + 3* sizeof(uint32) ;
+			return (sizeof(TKey) + sizeof(TLink) ) *  m_nSize + sizeof(uint32) ;
 		}
 		virtual size_t count() const
 		{

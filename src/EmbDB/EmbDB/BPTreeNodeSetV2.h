@@ -276,6 +276,12 @@ namespace embDB
 			}
 			return -1;
 		}
+
+		TLink backLink()
+		{
+			assert(!m_bIsLeaf);
+			return m_InnerNode.m_innerLinkMemSet.back();
+		}
 	public:
 		BPBaseTreeNode* m_pBaseNode;
 		TLeafNode    m_LeafNode;

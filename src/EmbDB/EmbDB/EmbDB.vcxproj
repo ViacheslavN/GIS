@@ -446,6 +446,7 @@
     <ClInclude Include="BPIteratorMap.h" />
     <ClInclude Include="BPIteratorRO.h" />
     <ClInclude Include="BPIteratorSet.h" />
+    <ClInclude Include="BPIteratorSetV2.h" />
     <ClInclude Include="BPLeafNodeMapROSimpleCompressor.h" />
     <ClInclude Include="BPLeafNodeMapSimpleCompressor.h" />
     <ClInclude Include="BPLeafNodeROSetSimpleCompressor.h" />

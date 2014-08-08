@@ -24,17 +24,7 @@ namespace embDB
 	};
 	*/
 
-	enum eBPTState
-	{
-		eBPTNoChange = 1,
-		eBPTChangeLeafNode = 2,
-		eBPTNewLeafNode =4,
-		eBPTDeleteLeafNode = 8,
-		eBPTNewInnerNode =16,
-		eBPTDeleteInnerNode =32,
-		eBPTNewRootNode =64
-	};
-
+	
 
 	template <class _TKey,	class _TLink, class _TComp, class _Transaction,
 	class _TInnerMemSet = RBMap<_TKey, _TLink, _TComp>,	
@@ -47,6 +37,19 @@ namespace embDB
 	class TBPlusTreeSet /*: public IBPTree<_TKey, _TValue>*/
 	{
 	public:
+
+		enum eBPTState
+		{
+			eBPTNoChange = 1,
+			eBPTChangeLeafNode = 2,
+			eBPTNewLeafNode =4,
+			eBPTDeleteLeafNode = 8,
+			eBPTNewInnerNode =16,
+			eBPTDeleteInnerNode =32,
+			eBPTNewRootNode =64
+		};
+
+
 		TBPlusTreeSet(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
 		  m_nPageBTreeInfo(nPageBTreeInfo), m_pTransaction(pTransaction), m_pAlloc(pAlloc), m_nChacheSize(nChacheSize)
 		 ,m_bChangeRoot(false), m_nRootAddr(-1), m_bMulti(bMulti)

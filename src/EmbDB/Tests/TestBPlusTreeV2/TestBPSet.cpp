@@ -29,6 +29,11 @@ void insertINBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 		int64 nCount = nEndStart - nStart;
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
+			if(i == 510)
+			{
+				int dd = 0;
+				++dd;
+			}
 			tree.insert(TKey(i));
 			n++;
 			if(i%nStep == 0)
@@ -123,7 +128,83 @@ void searchINBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 
 }
 
+template<class TBtree, class Tran, class TKey>
+void testOrderINBTreeSet (int32 nCacheBPTreeSize, int64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64& nTreeRootPage , bool bForward)
+{
+	std::cout << "Order Test"  << (bForward ? " Forward" : " Back ") << std::endl;
+	CommonLib::TimeUtils::CDebugTime time;
+	double orderTm  = 0;
+	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	tree.loadBTreeInfo();
+	time.start();
+		int64 nSize = 0;
+		int64 nOrderError = 0;
+		if(bForward)
+		{
+			TBtree::iterator it = tree.begin();
+			bool bFirst = true;
+			TKey nVal = 0;
+			while(!it.isNull())
+			{
+				if(bFirst)
+				{
+					nVal = it.key();
+					bFirst = false;
+				}
+				else
+				{
+					if((it.key() - nVal) > 1)
+					{
+						std::cout << "Order error key: " /*<< nVal << "next key :" << it.key() */<< std::endl;
+						nOrderError++;
+					}
+					nVal = it.key();
 
+				}
+				it.next();
+				nSize++;
+				if(nSize%nStep == 0)
+				{
+					std::cout << nSize   << '\r';
+				}
+			}
+		}
+		else
+		{
+			TBtree::iterator it = tree.last();
+			bool bFirst = true;
+			TKey nVal = 0;
+	
+		
+			while(!it.isNull())
+			{
+				if(bFirst)
+				{
+					nVal = it.key();
+					bFirst = false;
+				}
+				else
+				{
+					if((nVal - it.key()) > 1)
+					{
+						std::cout << "Order error key: " /*<< nVal << "next key :" << it.key() */<< std::endl;
+						nOrderError++;
+					}
+					nVal = it.key();
+
+				}
+				it.back();
+				nSize++;
+				if(nSize%nStep == 0)
+				{
+					std::cout << nSize   << '\r';
+				}
+			}
+		}
+	orderTm = time.stop();
+	std::cout << "Order end size: " << nSize << " error: " << nOrderError << " Total time: " << orderTm << std::endl;
+
+}
 
 template<class TBtree,  class TTran, class TKey>
 void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize, int32 nCacheBPTreeSize)
@@ -152,13 +233,29 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			tran1.begin();
 			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage);
 		}
+
+		{
+
+			TTran tran5(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tranOrderF.data", &storage, 1);
+			tran5.begin();
+			testOrderINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize,  nStep, &tran5, alloc, nTreeRootPage, false);
+		}
+		{
+
+			TTran tran5(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tranOrderBack.data", &storage, 1);
+			tran5.begin();
+			testOrderINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize,  nStep, &tran5, alloc, nTreeRootPage, true);
+		}
 	}
 }
 
 
+
+
+
 void TestBRteeSet()
 {
-	__int64 nCount = 2000;
+	__int64 nCount = 1000000000;
 		size_t nPageSize = 8192;
 	testBPTreeSetImpl<TBDoubleSet,  embDB::CDirectTransactions, int64>(nCount, nPageSize, 5000, 1000);
 }

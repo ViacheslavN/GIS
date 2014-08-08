@@ -13,7 +13,7 @@
 #include "BPLeafNodeSetSimpleCompressorV2.h"
 #include "BPTree.h"
 #include "CompressorParams.h"
-
+#include "BPIteratorSetV2.h"
 namespace embDB
 {
 
@@ -44,6 +44,19 @@ namespace embDB
 	class TBPlusTreeSetV2 /*: public IBPTree<_TKey, _TValue>*/
 	{
 	public:
+
+		enum eBPTState
+		{
+			eBPTNoChange = 1,
+			eBPTChangeLeafNode = 2,
+			eBPTNewLeafNode =4,
+			eBPTDeleteLeafNode = 8,
+			eBPTNewInnerNode =16,
+			eBPTDeleteInnerNode =32,
+			eBPTNewRootNode =64
+		};
+
+
 		TBPlusTreeSetV2(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
 		  m_nPageBTreeInfo(nPageBTreeInfo), m_pTransaction(pTransaction), m_pAlloc(pAlloc), m_nChacheSize(nChacheSize)
 		 ,m_bChangeRoot(false), m_nRootAddr(-1), m_bMulti(bMulti)
@@ -91,7 +104,8 @@ namespace embDB
 	/*	typedef TBPSetIterator<TKey,  TLink, TComp, Transaction,  TInnerMemSet, 
 			TLeafMemSet, TInnerCompess,	TLeafCompess ,TInnerNode , TLeafNode,  TBTreeNode> iterator;*/
 
-
+		typedef TBPSetIteratorV2<TKey, TLink, TComp,Transaction, TInnerCompess, TLeafCompess> iterator;
+		  
 
 		void setTransactions(Transaction *pTransaction)
 		{
@@ -697,13 +711,13 @@ namespace embDB
 			{
 				if( nNextAddr == -1)
 					break;
-				TBTreeNode* pNode = getNode(nNextAddr);
+				TBTreeNode* pNode = getNode(nNextAddr, false, false, true);
 				if(pNode->isLeaf())
 				{
 					nIndex = pNode->search(key); 
 					if(nIndex != -1)
 					{
-						pValue =  &m_pRoot->m_LeafNode.m_leafMemSet[nIndex];
+						pValue =  &pNode->m_LeafNode.m_leafMemSet[nIndex];
 					}
 					return  pValue;
 					break;
@@ -716,14 +730,15 @@ namespace embDB
 		ClearChache();
 		return pValue;
 
-	}/*
+	}
+
 	iterator begin()
 	{
 		TBTreeNode* pFindBTNode = NULL;
 		if(m_nRootAddr == -1)
 			loadBTreeInfo();
 		if(m_nRootAddr == -1)
-			return iterator(this, NULL, NULL);
+			return iterator(this, NULL, -1);
 
 		if(!m_pRoot)
 			m_pRoot = getNode(m_nRootAddr, true); 
@@ -731,9 +746,10 @@ namespace embDB
 			return iterator(this, NULL, NULL);
 		if(m_pRoot->isLeaf())
 		{
-			return iterator(this, m_pRoot, NULL);
+			return iterator(this, m_pRoot, 0);
 		}
 		int64 nNextAddr = m_pRoot->less();
+		int64 nParent = m_pRoot->addr();
 		for (;;)
 		{
 			if( nNextAddr == -1)
@@ -741,16 +757,18 @@ namespace embDB
 				break;
 			}
 			TBTreeNode* pNode = getNode(nNextAddr);
+			pNode->m_nParent = nParent;
+			pNode->m_nFoundIndex = -1;
 			if(pNode->isLeaf())
 			{
-				//return iterator(this, pNode, NULL);
 				pFindBTNode = pNode;
 				break;
 			}
 			nNextAddr = pNode->less();
+			nParent = pNode->addr();
 		}
 		ClearChache();
-		return iterator(this, pFindBTNode, NULL);
+		return iterator(this, pFindBTNode, 0);
 	}
 
 	iterator last()
@@ -759,18 +777,19 @@ namespace embDB
 		if(m_nRootAddr == -1)
 			loadBTreeInfo();
 		if(m_nRootAddr == -1)
-			return iterator(this, NULL, NULL);
+			return iterator(this, NULL, 0);
 
 		if(!m_pRoot)
 			m_pRoot = getNode(m_nRootAddr, true); 
 		if(!m_pRoot)
-			return iterator(this, NULL, NULL);
+			return iterator(this, NULL, 0);
 		if(m_pRoot->isLeaf())
 		{
-			
-			return iterator(this, m_pRoot, m_pRoot->lastLeftMemSetNode());
+			return iterator(this, m_pRoot, m_pRoot->count()  - 1);
 		}
-		int64 nNextAddr = m_pRoot->less();
+		int64 nNextAddr = m_pRoot->backLink();
+		int64 nParent = m_pRoot->addr();
+		int32 nIndex = m_pRoot->count() - 1;
 		for (;;)
 		{
 			if( nNextAddr == -1)
@@ -778,19 +797,56 @@ namespace embDB
 				break;
 			}
 			TBTreeNode* pNode = getNode(nNextAddr);
+			pNode->m_nParent = nParent;
+			pNode->m_nFoundIndex = nIndex;
 			if(pNode->isLeaf())
 			{
-				//return iterator(this, pNode, NULL);
 				pFindBTNode = pNode;
 				break;
 			}
-			nNextAddr = pNode->lastPage();
+			nNextAddr = pNode->backLink();
+			nParent = pNode->addr();
+			nIndex = pNode->count() - 1;
 		}
 		ClearChache();
-		return iterator(this, pFindBTNode, pFindBTNode ? pFindBTNode->lastLeftMemSetNode() : NULL);
+		return iterator(this, pFindBTNode, pFindBTNode ? pFindBTNode->count() - 1 : -1);
 	}
 
-	bool findNode(const TKey& key, bool bFirst, TBTreeNode** pFindBTNode,	TLeftMemSetNode **pFindMemNode,bool bNextKey = false )
+	iterator upper_bound(const TKey& key)
+	{
+		TBTreeNode* pFindBTNode = NULL;
+		uint32 nIndex = 0;
+		if(m_nRootAddr == -1)
+			loadBTreeInfo();
+		if(m_nRootAddr == -1)
+			return iterator(this, NULL, 0);
+
+		if(!m_pRoot)
+			m_pRoot = getNode(m_nRootAddr, true); 
+		if(!m_pRoot)
+			return iterator(this, NULL, 0);
+
+		return iterator(this, pFindBTNode, nIndex);
+	}
+	iterator lower_bound(const TKey& key)
+	{
+		TBTreeNode* pFindBTNode = NULL;
+		uint32 nIndex = 0;
+		if(m_nRootAddr == -1)
+			loadBTreeInfo();
+		if(m_nRootAddr == -1)
+			return iterator(this, NULL, 0);
+
+		if(!m_pRoot)
+			m_pRoot = getNode(m_nRootAddr, true); 
+		if(!m_pRoot)
+			return iterator(this, NULL, 0);
+
+		return iterator(this, pFindBTNode, nIndex);
+	}
+
+
+	/*bool findNode(const TKey& key, bool bFirst, TBTreeNode** pFindBTNode)
 	{
 
 		*pFindBTNode = NULL;
@@ -909,7 +965,7 @@ namespace embDB
 
 		return true;
 	}
-	iterator find(const TKey& key, bool bFirst = false)
+	/*iterator find(const TKey& key, bool bFirst = false)
 	{
 
 		TBTreeNode* pFindBTNode = 0;

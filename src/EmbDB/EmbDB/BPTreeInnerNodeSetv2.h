@@ -215,7 +215,7 @@ namespace embDB
 			}	
 			m_innerKeyMemSet.resize(nNewSize);
 			m_innerLinkMemSet.resize(nNewSize);
-			pSplitKey = &newNodeKeySet[0];
+			*pSplitKey = newNodeKeySet[0];
 			return true;
 		}
 	public:

@@ -25,7 +25,8 @@ namespace embDB
 
 			Set.reserve(m_nSize);
 
-			uint32 nKeySize = stream.readInt32();
+			/*uint32 nKeySize = stream.readInt32();*/
+			uint32 nKeySize =  m_nSize * sizeof(TKey);
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			TKey nkey;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
@@ -43,7 +44,7 @@ namespace embDB
 			if(!m_nSize)
 				return true;
 			uint32 nKeySize =  m_nSize * sizeof(TKey);
-			stream.write(nKeySize);
+			/*stream.write(nKeySize);*/
 			CommonLib::FxMemoryWriteStream KeyStreams;
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
  
@@ -71,7 +72,7 @@ namespace embDB
 		}
 		virtual size_t size() const
 		{
-			return sizeof(TKey) *  m_nSize +  2 *sizeof(uint32);
+			return sizeof(TKey) *  m_nSize +  sizeof(uint32);
 		}
 		virtual size_t count() const
 		{

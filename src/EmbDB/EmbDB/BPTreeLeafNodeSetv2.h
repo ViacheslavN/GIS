@@ -162,7 +162,7 @@ namespace embDB
 				++nSize;
 			}	
 			m_leafMemSet.resize(nNewSize);
-			pSplitKey = &newNodeMemSet[0];
+			*pSplitKey = newNodeMemSet[0];
 			return true;
 		}
 		size_t count() const 
@@ -172,6 +172,14 @@ namespace embDB
 		size_t tupleSize() const
 		{
 			return m_pCompressor->tupleSize();
+		}
+		const TKey& key(uint32 nIndex) const
+		{
+			return m_leafMemSet[nIndex];
+		}
+		TKey& key(uint32 nIndex)
+		{
+			return m_leafMemSet[nIndex];
 		}
 	public:
 		TCompressor * m_pCompressor;

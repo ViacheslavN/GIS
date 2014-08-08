@@ -588,6 +588,9 @@
     <ClInclude Include="BPTreeNodeSetV2.h">
       <Filter>DB\Index\BtreePlusv2\BPSetv2</Filter>
     </ClInclude>
+    <ClInclude Include="BPIteratorSetV2.h">
+      <Filter>DB\Index\BtreePlusv2\BPSetv2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

@@ -6,8 +6,8 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	//testBPTreeSet ();
-	testBPTreeMap ();
+	testBPTreeSet ();
+	//testBPTreeMap ();
 	//testInsertBPTree ();
 	//testUndoTransactionBPTree ();
 	return 0;
