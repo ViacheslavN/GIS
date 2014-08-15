@@ -18,8 +18,53 @@ template<class _Ty>
 		}*/
 	};
 
+
+void ShowVector(embDB::TBPVector<int32>& vec)
+{
+	for (size_t i = 0, sz = vec.size(); i < sz; ++i)
+	{
+		std::cout << vec[i] << std::endl;
+	}
+}
+
+
+void TestInsert()
+{
+	embDB::TBPVector<int32> vec;
+	embDB::TBPVector<int32> vec1;
+	embDB::TBPVector<int32> vec3;
+
+
+	vec1.push_back(2);
+	vec1.push_back(3);
+	vec1.push_back(4);
+	vec.push_back(0);
+	vec.push_back(1);
+
+	vec.push_back(6);
+	vec.push_back(7);
+	vec.push_back(8);
+
+	vec3.push_back(9);
+	vec3.push_back(10);
+	vec3.push_back(11);
+	vec3.push_back(20);
+	//ShowVector(vec);
+	vec.insert(vec1, 2, 0, vec1.size());
+	//ShowVector(vec);
+	vec.push_back(vec3);
+	ShowVector(vec);
+		short nType = 0;
+	vec.remove(vec.lower_bound(8, nType, comp<int32>()));
+	ShowVector(vec);
+}
 void TestBPVector()
 {
+	TestInsert();
+
+
+
+	return;
 	embDB::TBPVector<int32> vec1;
 
 	vec1.push_back(0);

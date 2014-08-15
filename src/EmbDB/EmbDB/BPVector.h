@@ -52,6 +52,11 @@ namespace embDB
 			m_nSize++;
 			return true;
 		}
+
+		bool push_back(const TBPVector& vec)
+		{
+			return copy(vec, m_nSize, 0, vec.size());
+		}
 		bool insert(const TValue& value, size_t idx)
 		{
 			if(idx > m_nSize)
@@ -68,6 +73,26 @@ namespace embDB
 			m_nSize++;
 			return true;
 		}
+
+
+		bool insert(const TBPVector& vec, size_t nPos, size_t nBegin, size_t nEnd)
+		{		 
+			size_t nLen = nEnd - nBegin;
+			if(m_nSize + nPos + nLen >= m_nCapacity)
+			{
+				if(!reserve((2 * m_nCapacity) > (m_nSize + nPos + nLen) ? 2 * m_nCapacity :  2 * (m_nSize + nPos + nLen) ))
+					return false;
+			}
+
+			if(m_nSize == nPos)
+				return push_back(vec);
+			if(nPos < m_nSize)
+				mover(nPos, nLen);
+
+			::memcpy( m_pData + nPos, vec.m_pData + nBegin, ( nLen)*sizeof( TValue ) );
+			return true;
+		}
+
 
 		bool remove(size_t idx)
 		{
@@ -122,6 +147,17 @@ namespace embDB
 			}
 			memcpy(m_pData + nPos, vec.m_pData + nBegin,  nLen * sizeof(TValue));
 			m_nSize += nLen;
+			return true;
+		}
+		bool mover(size_t nPos, size_t nCnt)
+		{
+			if( m_nSize + nCnt >= m_nCapacity)
+			{
+				if(reserve((2 * m_nCapacity) > m_nSize + nCnt ? 2*m_nCapacity : 2 * (m_nSize + nCnt) ))
+					return false;
+			}
+			memmove(m_pData + nPos + nCnt, m_pData + nPos, (m_nSize)* sizeof(TValue));
+			m_nSize +=  nCnt;
 			return true;
 		}
 		template<class _TComp >
@@ -214,8 +250,27 @@ namespace embDB
 			return m_pData[m_nSize - 1];
 		}
 
-	
 
+		TValue& front() 
+		{
+			assert(m_nSize);
+			return m_pData[0];
+		}
+
+		const TValue& front() const
+		{
+			assert(m_nSize);
+			return m_pData[0];
+		}
+	
+		void swap(TBPVector& vec)
+		{
+			//alloc must be compatible
+
+			std::swap(vec.m_pData, m_pData);
+			std::swap(vec.m_nCapacity, m_nCapacity);
+			std::swap(vec.m_nSize, m_nSize);
+		}
 		private:
 			TValue*  m_pData;
 			CommonLib::alloc_t* m_pAlloc;

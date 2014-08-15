@@ -282,6 +282,78 @@ namespace embDB
 			assert(!m_bIsLeaf);
 			return m_InnerNode.m_innerLinkMemSet.back();
 		}
+
+		TLink frontLink()
+		{
+			assert(!m_bIsLeaf);
+			return m_InnerNode.m_innerLinkMemSet.front();
+		}
+		TLink link(int32 nIndex)
+		{
+			assert(!m_bIsLeaf);
+			return m_InnerNode.link(nIndex);
+		}
+		void updateLink(int32 nIndex, TLink nLink)
+		{
+			assert(!m_bIsLeaf);
+			return m_InnerNode.updateLink(nIndex, nLink);
+		}
+		void updateKey(int32 nIndex, const TKey& Key)
+		{
+			assert(!m_bIsLeaf);
+			return m_InnerNode.updateKey(nIndex, Key);
+		}
+		const TKey& key(int32 nIndex) const
+		{
+			if(m_bIsLeaf)
+				return m_LeafNode.key(nIndex);
+			return m_InnerNode.key(nIndex);
+		}
+
+		TKey& key(int32 nIndex)
+		{
+			if(m_bIsLeaf)
+				return m_LeafNode.key(nIndex);
+			return m_InnerNode.key(nIndex);
+		}
+
+		bool AlignmentOf(BPTreeNodeSetv2 *pNode, bool bFromLeft)
+		{
+			return m_LeafNode.AlignmentOf(&pNode->m_LeafNode, bFromLeft);
+		}
+		bool AlignmentInnerNodeOf(BPTreeNodeSet *pNode, bool const TKey& lessMin, bool bLeft)
+		{
+			assert(!m_InnerNode.isLeaf());
+			return m_InnerNode.AlignmentOf(&pNode->m_InnerNode, lessMin, bLeft);
+		}
+
+		bool UnionWith(BPTreeNodeSetv2* pNode, bool bLeft)
+		{
+			assert(m_bIsLeaf)
+			return m_LeafNode.UnionWith(&pNode->m_LeafNode, bLeft);
+		 
+		}
+		bool UnioInnerWith(BPTreeNodeSetv2* pNode, const TKey& lessMin, bool bLeft)
+		{
+			assert(!m_bIsLeaf)
+			return m_InnerNode.UnionWith(&pNode->m_InnerNode, lessMin, bLeft);
+
+		}
+		void removeByIndex(int32 nIndex)
+		{
+			if(m_bIsLeaf)
+				 m_LeafNode.removeByIndex(nIndex);
+			else
+				m_InnerNode.removeByIndex(nIndex);
+		}
+
+		bool isKey(const TKey& key, uint32 nIndex)
+		{
+			if(m_bIsLeaf)
+				return m_LeafNode.isKey(key, nIndex);
+			else
+				return m_InnerNode.isKey(key, nIndex);
+		}
 	public:
 		BPBaseTreeNode* m_pBaseNode;
 		TLeafNode    m_LeafNode;

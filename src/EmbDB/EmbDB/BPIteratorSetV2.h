@@ -42,13 +42,13 @@ namespace embDB
 		TBPSetIteratorV2(const TBPSetIteratorV2& iter)
 		{
 			if(m_pCurNode)
-				m_pCurNode->setFlag(BUSY_NODE, false);
+				m_pCurNode->setFlags(BUSY_NODE, false);
 			m_pCurNode = iter.m_pCurNode;
 			m_pTree = iter.m_pTree;
-			m_nIndex = nIndex;
+			m_nIndex = iter.m_nIndex;
 			if(m_pCurNode)
 			{
-				m_pCurNode->setFlag(BUSY_NODE, true);
+				m_pCurNode->setFlags(BUSY_NODE, true);
 				m_pCurLeafNode = &m_pCurNode->m_LeafNode;
 			}
 
@@ -152,7 +152,7 @@ namespace embDB
 			}
 			return false;
 		}
-	private:
+	public:
 		TBTree *m_pTree;
 		TBTreeNode *m_pCurNode;
 		TBTreeLeafNode*	m_pCurLeafNode;

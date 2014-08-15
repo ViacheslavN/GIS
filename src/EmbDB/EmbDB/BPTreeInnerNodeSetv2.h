@@ -87,9 +87,8 @@ namespace embDB
 			}
 			return m_innerLinkMemSet[nIndex - 1]; 
 		}
-		TLink lower_bound(const TKey& key, int32& nIndex )
+		TLink lower_bound(const TKey& key, short& nType, int32& nIndex )
 		{
-			short nType = 0;
 			nIndex = m_innerKeyMemSet.lower_bound(key, nType, m_comp);
 			if(nType == FIND_KEY)
 				return m_innerLinkMemSet[nIndex];
@@ -100,7 +99,7 @@ namespace embDB
 				return m_nLess;
 			}
 
-			return m_innerLinkMemSet.[nIndex - 1]; 
+			return m_innerLinkMemSet[nIndex - 1]; 
 		}
 	
 
@@ -187,11 +186,26 @@ namespace embDB
 			{
 				return false;
 			}
+			return removeByIndex(nIndex);
+		}
 
+
+		bool removeByIndex(int32 nIndex)
+		{
 			m_pCompressor->remove(m_innerKeyMemSet[nIndex], m_innerLinkMemSet[nIndex]);
-			m_innerKeyMemSet.remove(nIndex);
-			m_innerLinkMemSet.remove(nIndex);
-			assert(m_pCompressor->count() == m_innerKeyMemSet.size());
+			bool bRet = m_innerKeyMemSet.remove(nIndex);
+			if(!bRet)
+			{
+				//TO DO Logs
+				return false;
+			}
+			bRet =  m_innerLinkMemSet.remove(nIndex);
+			if(!bRet)
+			{
+				//TO DO Logs
+				return false;
+			}
+		
 			return true;
 		}
 
@@ -218,6 +232,69 @@ namespace embDB
 			*pSplitKey = newNodeKeySet[0];
 			return true;
 		}
+		size_t count() const
+		{
+			return m_innerLinkMemSet.size();
+		}
+		TLink link(int32 nIndex)
+		{
+			return m_innerLinkMemSet[nIndex];
+		}
+
+		const TKey& key(int32 nIndex) const
+		{
+			return m_innerKeyMemSet[nIndex];
+		}
+
+		TKey& key(int32 nIndex)
+		{
+			return m_innerKeyMemSet[nIndex];
+		}
+
+		void updateLink(int32 nIndex, TLink nLink)
+		{
+			m_innerLinkMemSet[nIndex] = nLink;
+			m_pCompressor->update(m_innerKeyMemSet[nIndex], m_innerLinkMemSet[nIndex]);
+		}
+
+
+		void updateKey(int32 nIndex, const TKey& key)
+		{
+			m_innerKeyMemSet[nIndex] = key;
+			m_pCompressor->update(m_innerKeyMemSet[nIndex], m_innerLinkMemSet[nIndex]);
+		}
+
+		bool UnionWith(BPTreeInnerNodeSetv2* pNode,  const Key& LessMin, bool bLeft)
+		{
+			m_pCompressor->add(pNode->m_innerLinkMemSet, pNode->m_innerKeyMemSet);
+			m_pCompressor->add(LessMin bLeft ? m_nLess : pNode->m_nLess );
+			if(bLeft)
+			{
+				pNode->m_innerKeyMemSet.push_back(LessMin)
+				pNode->m_innerKeyMemSet.push_back(m_innerKeyMemSet);
+				pNode->m_innerKeyMemSet.swap(m_innerKeyMemSet);
+
+				pNode->m_innerKeyMemSet.push_back(m_nLess);
+				pNode->m_innerLinkMemSet.push_back(m_innerLinkMemSet);
+				pNode->m_innerLinkMemSet.swap(m_innerLinkMemSet);
+
+				m_nLess = pNode->m_nLess;
+			}
+			else
+			{
+				m_innerKeyMemSet.push_back(LessMin);
+				m_innerKeyMemSet.push_back(pNode->m_innerKeyMemSet);
+
+				m_innerKeyMemSet.push_back(pNode->m_nLess);
+				m_innerLinkMemSet.push_back(pNode->m_innerLinkMemSet);
+			}
+			return true;
+		}
+		bool isKey(const TKey& key, uint32 nIndex)
+		{
+			return m_comp.EQ(key, m_innerKeyMemSet[nIndex]);
+		}
+
 	public:
 		TLink m_nLess;
 		TKeyMemSet m_innerKeyMemSet;

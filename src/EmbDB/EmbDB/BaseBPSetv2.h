@@ -681,55 +681,47 @@ namespace embDB
 		}
 		return true;
 	}
-	TKey* search(const TKey& key) //for debug
+	iterator find(const TKey& key)  
 	{
-		TKey* pValue = 0;
-		if(m_nRootAddr == -1)
-			return pValue;
+ 		if(m_nRootAddr == -1)
+			return iterator(this, NULL, -1);
 		
 		if(!m_pRoot)
 		{
 			m_pRoot= getNode(m_nRootAddr, true); 
 		}
 		if(!m_pRoot)
-			return pValue;
+			return iterator(this, NULL, -1);
 
-		if(m_pRoot-> isLeaf())
+		short nType = 0;
+		if(m_pRoot->isLeaf())
 		{
-			int32 nIndex = m_pRoot->search(key);//m_leafMemSet.findNode(key);
-			if(nIndex != -1)
-			{
-				pValue =  &m_pRoot->m_LeafNode.m_leafMemSet[nIndex];
-			}
-			return  pValue;
+			return iterator(this, m_pRoot, m_pRoot->leaf_lower_bound(key, nType));
 		}
-		else
-		{
-			int32 nIndex = -1;
-			int64 nNextAddr = m_pRoot->inner_upper_bound(key, nIndex);
-			for (;;)
-			{
-				if( nNextAddr == -1)
-					break;
-				TBTreeNode* pNode = getNode(nNextAddr, false, false, true);
-				if(pNode->isLeaf())
-				{
-					nIndex = pNode->search(key); 
-					if(nIndex != -1)
-					{
-						pValue =  &pNode->m_LeafNode.m_leafMemSet[nIndex];
-					}
-					return  pValue;
-					break;
-				}
-				nNextAddr = pNode->inner_upper_bound(key, nIndex);
-			}
-		}
-	
+		int32 nIndex = -1;
+		int64 nNextAddr = m_pRoot->inner_lower_bound(key, nType, nIndex);
+		int64 nParent = m_pRoot->addr();
 
+		for (;;)
+		{
+			if( nNextAddr == -1)
+			{
+				break;
+			}
+			TBTreeNode* pNode = getNode(nNextAddr);
+			pNode->m_nParent = nParent;
+			pNode->m_nFoundIndex = nIndex;
+			if(pNode->isLeaf())
+			{
+				return iterator(this, pNode, pNode->leaf_lower_bound(key, nType));
+				break;
+			}
+			nNextAddr = pNode->inner_lower_bound(key, nType, nIndex);
+			nParent = pNode->addr();
+		}
 		ClearChache();
-		return pValue;
-
+		return iterator(this, NULL,-1);
+ 
 	}
 
 	iterator begin()
@@ -814,7 +806,7 @@ namespace embDB
 
 	iterator upper_bound(const TKey& key)
 	{
-		TBTreeNode* pFindBTNode = NULL;
+		 
 		uint32 nIndex = 0;
 		if(m_nRootAddr == -1)
 			loadBTreeInfo();
@@ -826,7 +818,34 @@ namespace embDB
 		if(!m_pRoot)
 			return iterator(this, NULL, 0);
 
-		return iterator(this, pFindBTNode, nIndex);
+	 
+		if(m_pRoot->isLeaf())
+		{
+			return iterator(this, m_pRoot, m_pRoot->leaf_upper_bound(key));
+		}
+		int32 nIndex = -1;
+		int64 nNextAddr = m_pRoot->inner_upper_bound(key, nIndex);
+		int64 nParent = m_pRoot->addr();
+	 
+		for (;;)
+		{
+			if( nNextAddr == -1)
+			{
+				break;
+			}
+			TBTreeNode* pNode = getNode(nNextAddr);
+			pNode->m_nParent = nParent;
+			pNode->m_nFoundIndex = nIndex;
+			if(pNode->isLeaf())
+			{
+				return iterator(this, pNode, pNode->leaf_upper_bound(key));
+				break;
+			}
+			nNextAddr = pNode->inner_upper_bound(key, nIndex);
+			nParent = pNode->addr();
+		}
+		ClearChache();
+		return iterator(this, NULL,-1);
 	}
 	iterator lower_bound(const TKey& key)
 	{
@@ -842,7 +861,471 @@ namespace embDB
 		if(!m_pRoot)
 			return iterator(this, NULL, 0);
 
-		return iterator(this, pFindBTNode, nIndex);
+		short nType = 0;
+		if(m_pRoot->isLeaf())
+		{
+			return iterator(this, m_pRoot, m_pRoot->leaf_lower_bound(key, nType));
+		}
+		int32 nIndex = -1;
+		int64 nNextAddr = m_pRoot->inner_lower_bound(key, nType, nIndex);
+		int64 nParent = m_pRoot->addr();
+
+		for (;;)
+		{
+			if( nNextAddr == -1)
+			{
+				break;
+			}
+			TBTreeNode* pNode = getNode(nNextAddr);
+			pNode->m_nParent = nParent;
+			pNode->m_nFoundIndex = nIndex;
+			if(pNode->isLeaf())
+			{
+				return iterator(this, pNode, pNode->leaf_lower_bound(key, nType));
+				break;
+			}
+			nNextAddr = pNode->inner_lower_bound(key, nType, nIndex);
+			nParent = pNode->addr();
+		}
+		ClearChache();
+		return iterator(this, NULL,-1);
+	}
+
+	bool remove(const TKey& key)
+	{
+		iterator it = find(key);
+		return remove(it);
+	}
+
+	bool remove(iterator it)
+	{
+		if(it.isNull())
+			return false;
+
+		TBTreeNode *pNode = it.m_pCurNode;
+		TLeafNode *pLeafNode = it.m_pCurLeafNode;
+		TKey key = it.key();
+
+		pLeafNode->removeByIndex(it.m_nIndex);
+		if(pLeafNode->size() >  m_pTransaction->getPageSize()/2)
+		{
+			return removeUP(key, pParentNode, pNode->m_nFoundIndex);
+			return true;
+		}
+		if(pLeafNode->getFlags() & ROOT_NODE)
+		{
+			return true;
+		}
+
+		TBTreeNode *pParentNode = getNode(pNode->m_nParent);
+		assert(pParentNode);
+		assert(!pParentNode->isLeaf());
+
+
+		TBTreeNode* pDonorNode = NULL;
+		bool bLeft = false;
+		
+		if(pParentNode->less() == pNode->addr())
+		{
+			pDonorNode = getNode(pParentNode->link(0));
+			bLeft = false;
+		}
+		else
+		{
+
+			TBTreeNode* pLeafNodeRight = NULL;
+			TBTreeNode* pLeafNodeLeft = NULL;
+
+			if(pNode->m_nFoundIndex == 0)
+			{
+				pLeafNodeLeft = getNode(pParentNode->less());
+				pLeafNodeLeft->m_nFoundIndex = -1;
+				if(pParentNode->count() > 1)
+				{
+					pLeafNodeRight = getNode(pParentNode->link(1));
+					pLeafNodeRight->m_nFoundIndex = 1;
+				}
+			}
+			else
+			{
+				pLeafNodeLeft = getNode(pParentNode->link(pNode->m_nFoundIndex - 1));
+				pLeafNodeLeft->m_nFoundIndex = pNode->m_nFoundIndex - 1;
+				if((int32)pParentNode->count() > pParentNode->m_nFoundIndex)
+				{
+					pLeafNodeRight = getNode(pParentNode->link(pNode->m_nFoundIndex + 1));
+					pLeafNodeRight->m_nFoundIndex = pNode->m_nFoundIndex + 1;
+				}
+			}
+ 
+			assert(pLeafNodeLeft != NULL || pLeafNodeRight != NULL);
+
+
+			int nLeftsize =  pLeafNodeLeft ? pLeafNodeLeft->rowSize() : -1;
+			int nRightSize = pLeafNodeRight ? pLeafNodeRight->rowSize() : -1;
+			if(nLeftsize > nRightSize)
+			{
+				pDonorNode = pLeafNodeLeft;
+					bLeft = true;
+			}
+			else
+			{
+				pDonorNode = pLeafNodeRight;
+				bLeft = false;
+			}
+		}
+		assert(pDonorNode);
+		size_t nSumSize = pDonorNode->rowSize() + pLeafNode->rowSize() + pLeafNode->headSize();
+		int nCnt = ((pLeafNode->count() + pDonorNode->count()))/2 - pLeafNode->count();
+
+		bool bUnion = false;
+		bool bAlignment = false;
+
+		if(nSumSize <  m_pTransaction->getPageSize()/2)	
+			bUnion = true;
+		else if(nCnt > 0)
+			bAlignment = true;
+		else
+		{
+			if(nSumSize < m_pTransaction->getPageSize())
+			{
+				bUnion = true;
+			}
+		}
+		if(bUnion)  
+		{
+			bool bRet = true;
+			if(pDonorNode->m_nFoundIndex == -1)
+				bRet = UnionLeafNode(pParentNode, pDonorNode, pNode, false);
+			else
+				bRet = UnionLeafNode(pParentNode, pNode, pDonorNode, bLeft);
+			if(bRet)
+			{
+				return false;
+			}
+		}
+		else if(bAlignment)
+		{
+			if(!AlignmentLeafNode(pParentNode, pNode,  pDonorNode,  bLeft))
+				return false;
+
+		}
+		return removeUP(key, pParentNode, pNode->m_nFoundIndex);
+	 
+	}
+
+	bool UnionLeafNode(TBTreeNode* pParentNode, TBTreeNode* pLeafNode, TBTreeNode* pDonorNode, bool bLeft)
+	{
+		pLeafNode->UnionWith(pDonorNode, bLeft);
+		size_t nNodeSize = pLeafNode->size() ;
+		/*if(nNodeSize > m_pTransaction->getPageSize())
+		{
+			//pLeafNode->splitIn()
+			return false;
+		}*/
+	
+		if(bLeft)
+		{
+
+			TBTreeNode* pPrevNode = getNode( pDonorNode->prev());
+			if(pPrevNode)
+			{
+				assert(pPrevNode->isLeaf());
+				pLeafNode->setPrev(pPrevNode->m_nPageAddr);
+				pPrevNode->setNext(pLeafNode->m_nPageAddr);
+				pPrevNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+				m_ChangeNode.insert(pPrevNode);
+			}
+			else
+				pLeafNode->setPrev(-1);
+		}
+		else
+		{
+
+			TBTreeNode* pNextNode = getNode( pDonorNode->m_LeafNode.m_nNext);
+			if(pNextNode)
+			{
+				assert(pNextNode->isLeaf());
+				pLeafNode->setNext(pNextNode->m_nPageAddr);
+				pNextNode->setPrev(pLeafNode->m_nPageAddr);
+				pNextNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+				m_ChangeNode.insert(pNextNode);
+			}
+			else
+				pLeafNode->m_LeafNode.m_nNext = -1;
+		}
+
+		pParentNode->removeByIndex(pDonorNode->m_nFoundIndex);
+		if(bLeft && pLeafNode->m_nFoundIndex != -1)
+		{
+			pParentNode->updateKey(pLeafNode->m_nFoundIndex, pLeafNode->key(0));
+ 		}
+ 
+			
+		deleteNode(pDonorNode);
+		pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+		m_ChangeNode.insert(pParentNode);
+		return true;
+
+	}
+
+	bool AlignmentLeafNode(TBTreeNode* pParentNode, TBTreeNode* pLeafNode, TBTreeNode* pDonorNode , bool bLeft)
+	{
+		if(!pLeafNode->AlignmentOf(pDonorNode, bLeft))
+			return false;
+		if(bLeft)
+		{
+			pParentNode->updateKey(pLeafNode->m_nFoundIndex, pLeafNode->key(0));
+			pLeafNode->m_nFoundIndex = -1;
+		}
+		else
+			pParentNode->updateKey(pDonorNode->m_nFoundIndex, pDonorNode->key(0));
+		pLeafNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+		m_ChangeNode.insert(pLeafNode);
+		pDonorNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+		m_ChangeNode.insert(pDonorNode);
+		pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+		m_ChangeNode.insert(pParentNode);
+		return true;
+	}
+
+
+	bool removeUP(const TKey& key, TBTreeNode* pNode, int32 nIndex)
+	{
+			
+		TBTreeNode* pCheckNode = pNode;
+		TBTreeNode* pParentNode = getNode(pCheckNode->m_nParent);
+		while(pCheckNode)
+		{
+			if(pCheckNode->size() > m_pTransaction->getPageSize()/2)
+				return true;
+	
+			/*if(pCheckNode->isKey(key, nIndex))
+			{
+				pCheckNode->removeByIndex(nIndex);
+				pCheckNode->setFlags(CHANGE_NODE, true);
+				m_ChangeNode.insert(pCheckNode);
+			}*/
+
+			if(!pParentNode)
+			{
+				if(!pCheckNode->count())
+				{
+					TBTreeNode* pNode = getNode(pCheckNode->less());
+					assert(pNode);//Должна быть
+					m_Chache.remove(pNode->addr());
+					m_ChangeNode.remove(m_pRoot);
+					deleteNode(m_pRoot);
+					m_pRoot = pNode;
+					m_pRoot->m_nParent = -1;
+					m_nRootAddr = m_pRoot->addr();
+					pNode->setFlags(CHANGE_NODE|ROOT_NODE, true);
+					m_ChangeNode.insert(pNode);
+					saveBTreeInfo();
+					m_nStateTree |= (eBPTDeleteInnerNode | eBPTNewRootNode);
+					return true;
+				}
+			}
+			
+			TBTreeNode* pDonorNode = NULL;
+			bool bLeft = false;
+			bool bLess = false;
+
+			if(pParentNode->less() == pNode->addr())
+			{
+				pDonorNode = getNode(pParentNode->link(0));
+				bLeft = false;
+				bLess = true;
+			}
+			else
+			{
+
+				TBTreeNode* pLeafNodeRight = NULL;
+				TBTreeNode* pLeafNodeLeft = NULL;
+
+				if(pCheckNode->m_nFoundIndex == 0)
+				{
+					pLeafNodeLeft = getNode(pParentNode->less());
+					pLeafNodeLeft->m_nFoundIndex = -1;
+					if(pParentNode->count() > 1)
+					{
+						pLeafNodeRight = getNode(pParentNode->link(1));
+						pLeafNodeRight->m_nFoundIndex = 1;
+					}
+				}
+				else
+				{
+					pLeafNodeLeft = getNode(pParentNode->link(pNode->m_nFoundIndex - 1));
+					pLeafNodeLeft->m_nFoundIndex = pNode->m_nFoundIndex - 1;
+					if((int32)pParentNode->count() > pParentNode->m_nFoundIndex)
+					{
+						pLeafNodeRight = getNode(pParentNode->link(pNode->m_nFoundIndex + 1));
+						pLeafNodeRight->m_nFoundIndex = pNode->m_nFoundIndex + 1;
+					}
+				}
+
+				assert(pLeafNodeLeft != NULL || pLeafNodeRight != NULL);
+
+
+				int nLeftsize =  pLeafNodeLeft ? pLeafNodeLeft->rowSize() : -1;
+				int nRightSize = pLeafNodeRight ? pLeafNodeRight->rowSize() : -1;
+				if(nLeftsize > nRightSize)
+				{
+					pDonorNode = pLeafNodeLeft;
+					bLeft = true;
+				}
+				else
+				{
+					pDonorNode = pLeafNodeRight;
+					bLeft = false;
+				}
+			}
+			assert(pDonorNode);
+			bool bUnion = false;
+			bool bAlignment = false;
+			size_t nSumSize = pCheckNode->rowSize() + pDonorNode->rowSize() + pDonorNode->headSize();
+			nSumSize += pCheckNode->tupleSize(); //insert less	
+			
+			int nCnt = ((pCheckNode->count() + pDonorNode->count()))/2 - pCheckNode->count();
+			if(nSumSize <   m_pTransaction->getPageSize()/2)	
+				bUnion = true;
+			else if(nCnt > 0)
+				bAlignment = true;
+			else
+			{
+				if(nSumSize < m_pTransaction->getPageSize())
+				{
+					bUnion = true;
+				}
+			}
+			if(bUnion) 
+			{
+				if(bLess)
+					UnionInnerNode(pParentNode, pDonorNode, pCheckNode, false);
+				else
+					UnionInnerNode(pParentNode, pCheckNode, pDonorNode, bLeft);
+				if(bLess)
+				{
+					pCheckNode = pParentNode;
+					continue;
+				}
+			}
+			else if(bAlignment)
+			{
+				AlignmentInnerNode(pParentNode, pCheckNode, pDonorNode, bLeft);
+				pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+				m_ChangeNode.insert(pParentNode);
+			}
+			pCheckNode = getNode(pCheckNode->m_nParent);
+
+		}
+		return true;
+	}
+
+
+	bool UnionInnerNode(TBTreeNode* pParentNode, TBTreeNode* pNode, TBTreeNode* pDonorNode, bool bLeft)
+	{
+		pNode->UnioInnerWith(pDonorNode, bLeft ? getMinimumKeyValue(getNode(pNode->less())) :   getMinimumKeyValue(getNode(pDonorNode->less())),  bLeft);
+ 
+		pParentNode->removeByIndex(pDonorNode->m_nFoundIndex);
+		if(bLeft && pNode->m_nFoundIndex != -1)
+		{
+			pParentNode->updateKey(pNode->m_nFoundIndex, pNode->key(0));
+		}
+		deleteNode(pDonorNode);
+		assert(pParentNode->count() != 0 || pParentNode->less() != -1);
+		pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+		m_ChangeNode.insert(pParentNode);
+		m_nStateTree |= (eBPTDeleteInnerNode);
+		return true;
+	}
+
+
+	const TKey& getMinimumKeyValue(TBTreeNode* pNode)
+	{
+		while(!pNode->isLeaf())
+		{
+			pNode = getNode(pNode->less());
+			assert(pNode);
+		}
+		assert(pNode);
+		return pNode->key(0);
+	}
+
+	bool AlignmentInnerNode(TBTreeNode* pNode, TInnerMemSetNode *pNode, TBTreeNode* pDonorNode, bool bLeft)
+	{	
+
+
+		pNode->AlignmentInnerNodeOf(pDonorNode, bLeft ? getMinimumKeyValue(getNode(pNode->less())) :   getMinimumKeyValue(getNode(pDonorNode->less())),  bLeft);
+
+
+		if(bLeft) //Нода донор слева
+		{
+
+			TBTreeNode* pLessNode = getNode(pNode->less());
+			if(pLessNode)
+			{
+				assert(pLessNode->count());
+				TKey *pKey = NULL;
+				if(getMinimumKeyValue(pLessNode, &pKey))
+				{
+
+					pDonorNode->m_InnerNode.insert(*pKey, pLessNode->addr()); 
+				}
+
+			}
+			TKey key;
+			TLink addr;
+			if(!pNode->AlignmentInnerNodeOf(pDonorNode, bLeft, key, addr))
+			{
+				pNode->m_InnerNode.remove(pLessNode->firstKey());
+				pNode->m_InnerNode.m_nLess = pLessNode->addr();
+				return false;
+			}
+			//assert(pLastNode);
+
+
+			TKey *pKey = NULL;
+			if(getMinimumKeyValue(getNode(addr), &pKey))
+			{
+
+				pNode->m_InnerNode.m_nLess = addr;
+				pParentKeyNode->m_key =*pKey; 
+			}
+		}
+		else
+		{
+			TBTreeNode* pLessNode = getNode(pDonorNode->less());
+			if(pLessNode)
+			{
+				assert(pLessNode->count());
+				TKey *pKey = NULL;
+				getMinimumKeyValue(pLessNode, &pKey);
+				pDonorNode->m_InnerNode.insert(*pKey, pLessNode->m_nPageAddr);
+			}
+			TKey key;
+			TLink addr;
+			if(!pNode->AlignmentInnerNodeOf(pDonorNode, bLeft, key, addr)) //
+			{
+				pNode->m_InnerNode.remove(pLessNode->firstKey());
+				pDonorNode->m_InnerNode.m_nLess = pLessNode->m_nPageAddr;
+				//pDonorNode->m_InnerNode.insert(key, addr);
+				return false;
+			}
+			//assert(pLastNode);
+			pDonorNode->m_InnerNode.m_nLess = addr; 
+			TKey *pKey = NULL;
+			if(getMinimumKeyValue(getNode(addr), &pKey))
+			{
+				pParentDonorKeyNode->m_key = *pKey; 
+			}
+		}
+		assert(pNode->size() < m_pTransaction->getPageSize());
+		assert(pDonorNode->size() < m_pTransaction->getPageSize());
+		pNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+		m_ChangeNode.insert(pNode);
+		pDonorNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+		m_ChangeNode.insert(pDonorNode);
+		return true;
 	}
 
 

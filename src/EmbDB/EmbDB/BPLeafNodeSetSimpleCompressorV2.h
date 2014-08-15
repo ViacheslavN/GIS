@@ -61,6 +61,11 @@ namespace embDB
 			m_nSize++;
 			return true;
 		}
+		virtual bool add(const TLeafMemSet& Set)
+		{
+			m_nSize += Set.size();
+			return true;
+		}
 		virtual bool update(const TKey& key)
 		{
 			return true;
