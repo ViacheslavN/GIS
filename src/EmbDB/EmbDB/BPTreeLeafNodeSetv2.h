@@ -23,7 +23,7 @@ namespace embDB
 		typedef  TBPVector<TKey> TLeafMemSet;
 
 		BPTreeLeafNodeSetv2( CommonLib::alloc_t *pAlloc, bool bMulti) :
-		m_leafMemSet(pAlloc),  m_pCompressor(0),	m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti)
+		m_leafKeyMemSet(pAlloc),  m_pCompressor(0),	m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti)
 
 		{
 		

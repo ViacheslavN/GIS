@@ -264,20 +264,23 @@ namespace embDB
 			m_pCompressor->update(m_innerKeyMemSet[nIndex], m_innerLinkMemSet[nIndex]);
 		}
 
-		bool UnionWith(BPTreeInnerNodeSetv2* pNode,  const Key& LessMin, bool bLeft)
+		bool UnionWith(BPTreeInnerNodeSetv2* pNode,  const TKey& LessMin, bool bLeft)
 		{
-			m_pCompressor->add(pNode->m_innerLinkMemSet, pNode->m_innerKeyMemSet);
-			m_pCompressor->add(LessMin bLeft ? m_nLess : pNode->m_nLess );
+		
+
 			if(bLeft)
 			{
-				pNode->m_innerKeyMemSet.push_back(LessMin)
+				pNode->m_innerKeyMemSet.push_back(LessMin);
 				pNode->m_innerKeyMemSet.push_back(m_innerKeyMemSet);
-				pNode->m_innerKeyMemSet.swap(m_innerKeyMemSet);
+		
 
 				pNode->m_innerKeyMemSet.push_back(m_nLess);
 				pNode->m_innerLinkMemSet.push_back(m_innerLinkMemSet);
-				pNode->m_innerLinkMemSet.swap(m_innerLinkMemSet);
+				
+				m_pCompressor->add(pNode->m_innerLinkMemSet, pNode->m_innerKeyMemSet);
 
+				pNode->m_innerLinkMemSet.swap(m_innerLinkMemSet);
+				pNode->m_innerKeyMemSet.swap(m_innerKeyMemSet);
 				m_nLess = pNode->m_nLess;
 			}
 			else
@@ -285,10 +288,61 @@ namespace embDB
 				m_innerKeyMemSet.push_back(LessMin);
 				m_innerKeyMemSet.push_back(pNode->m_innerKeyMemSet);
 
+				m_pCompressor->add(pNode->m_innerLinkMemSet, pNode->m_innerKeyMemSet);
+
 				m_innerKeyMemSet.push_back(pNode->m_nLess);
 				m_innerLinkMemSet.push_back(pNode->m_innerLinkMemSet);
 			}
 			return true;
+		}
+		bool AlignmentOf(BPTreeInnerNodeSetv2* pNode,  const TKey& LessMin, bool bLeft)
+		{
+			int nCnt = ((m_innerKeyMemSet.size() + pNode->m_innerKeyMemSet.size() ))/2 - m_innerKeyMemSet.size();
+			//assert(nCnt > 0);
+			if(nCnt < 2)
+				return false; //оставим все при своих
+
+			if(bLeft)
+			{
+				m_pCompressor->insert(LessMin, m_nLess);
+
+				m_innerKeyMemSet.mover(0, nCnt);
+				m_innerLinkMemSet.mover(0, nCnt);
+
+				m_innerKeyMemSet[0] = LessMin;
+				m_innerLinkMemSet[0] = m_nLess;
+
+				size_t newSize = pNode->m_innerLinkMemSet.size() - nCnt;
+
+
+				m_innerKeyMemSet.insert(pNode->m_innerKeyMemSet, 1, newSize - 1, pNode->m_innerKeyMemSet.size());
+				m_innerLinkMemSet.insert(pNode->m_innerLinkMemSet, 1, newSize - 1, pNode->m_innerLinkMemSet.size());
+
+				m_pCompressor->recalc(m_innerKeyMemSet, m_innerLinkMemSet);
+
+				m_nLess = pNode->m_innerLinkMemSet[newSize];
+
+				pNode->m_innerKeyMemSet.resize(newSize);
+				pNode->m_innerLinkMemSet.resize(newSize);
+
+				pNode->m_pCompressor->recalc(pNode->m_innerKeyMemSet, pNode->m_innerLinkMemSet);
+			}
+			else
+			{
+				m_innerKeyMemSet.push_back(LessMin);
+				m_innerLinkMemSet.push_back(pNode->m_nLess);
+
+				m_innerKeyMemSet.copy(pNode->m_innerKeyMemSet, m_innerKeyMemSet.size(), 0, nCnt - 1);
+				m_innerLinkMemSet.copy(pNode->m_innerLinkMemSet, m_innerLinkMemSet.size(), 0, nCnt - 1);
+
+				pNode->m_nLess = pNode->m_innerKeyMemSet[nCnt];
+
+				pNode->m_innerKeyMemSet.movel(nCnt, nCnt);
+				pNode->m_innerLinkMemSet.movel(nCnt, nCnt);
+
+				m_pCompressor->recalc(m_innerKeyMemSet, m_innerLinkMemSet);
+				pNode->m_pCompressor->recalc(pNode->m_innerKeyMemSet, pNode->m_innerLinkMemSet);
+			}
 		}
 		bool isKey(const TKey& key, uint32 nIndex)
 		{

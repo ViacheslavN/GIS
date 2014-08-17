@@ -94,6 +94,11 @@ namespace embDB
 			m_nSize += keySet.size();
 			return true;
 		}
+		virtual bool recalc(const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
+		{
+			m_nSize = keySet.size();
+			return true;
+		}
 		virtual bool remove(const TKey& key, TLink link)
 		{
 			m_nSize--;

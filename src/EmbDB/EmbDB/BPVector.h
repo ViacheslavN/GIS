@@ -160,6 +160,13 @@ namespace embDB
 			m_nSize +=  nCnt;
 			return true;
 		}
+
+		bool movel(size_t nPos, size_t nCnt)
+		{
+		    memmove(m_pData + nPos - nCnt,  m_pData + nPos, (m_nSize)* sizeof(TValue) - nCnt);
+			m_nSize -= nCnt;
+			return true;
+		}
 		template<class _TComp >
 		int32 binary_search(const TValue& val, _TComp& comp)
 		{

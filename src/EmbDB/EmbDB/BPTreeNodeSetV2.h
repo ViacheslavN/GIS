@@ -321,21 +321,21 @@ namespace embDB
 		{
 			return m_LeafNode.AlignmentOf(&pNode->m_LeafNode, bFromLeft);
 		}
-		bool AlignmentInnerNodeOf(BPTreeNodeSet *pNode, bool const TKey& lessMin, bool bLeft)
+		bool AlignmentInnerNodeOf(BPTreeNodeSetv2 *pNode,  const TKey& lessMin, bool bLeft)
 		{
-			assert(!m_InnerNode.isLeaf());
+			assert(!m_bIsLeaf);
 			return m_InnerNode.AlignmentOf(&pNode->m_InnerNode, lessMin, bLeft);
 		}
 
 		bool UnionWith(BPTreeNodeSetv2* pNode, bool bLeft)
 		{
-			assert(m_bIsLeaf)
+			assert(m_bIsLeaf);
 			return m_LeafNode.UnionWith(&pNode->m_LeafNode, bLeft);
 		 
 		}
 		bool UnioInnerWith(BPTreeNodeSetv2* pNode, const TKey& lessMin, bool bLeft)
 		{
-			assert(!m_bIsLeaf)
+			assert(!m_bIsLeaf);
 			return m_InnerNode.UnionWith(&pNode->m_InnerNode, lessMin, bLeft);
 
 		}

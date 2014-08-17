@@ -23,8 +23,10 @@ void ShowVector(embDB::TBPVector<int32>& vec)
 {
 	for (size_t i = 0, sz = vec.size(); i < sz; ++i)
 	{
-		std::cout << vec[i] << std::endl;
+		std::cout << vec[i] << ", ";
 	}
+
+	std::cout << std::endl;
 }
 
 
@@ -53,9 +55,11 @@ void TestInsert()
 	vec.insert(vec1, 2, 0, vec1.size());
 	//ShowVector(vec);
 	vec.push_back(vec3);
+
 	ShowVector(vec);
-		short nType = 0;
-	vec.remove(vec.lower_bound(8, nType, comp<int32>()));
+
+	vec.movel(6, 6);
+
 	ShowVector(vec);
 }
 void TestBPVector()

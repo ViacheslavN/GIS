@@ -907,6 +907,7 @@ namespace embDB
 		TKey key = it.key();
 
 		pLeafNode->removeByIndex(it.m_nIndex);
+		TBTreeNode *pParentNode = getNode(pNode->m_nParent);
 		if(pLeafNode->size() >  m_pTransaction->getPageSize()/2)
 		{
 			return removeUP(key, pParentNode, pNode->m_nFoundIndex);
@@ -917,7 +918,7 @@ namespace embDB
 			return true;
 		}
 
-		TBTreeNode *pParentNode = getNode(pNode->m_nParent);
+
 		assert(pParentNode);
 		assert(!pParentNode->isLeaf());
 
@@ -1099,12 +1100,13 @@ namespace embDB
 			if(pCheckNode->size() > m_pTransaction->getPageSize()/2)
 				return true;
 	
-			/*if(pCheckNode->isKey(key, nIndex))
+			if(nIndex != -1 && pCheckNode->isKey(key, nIndex))
 			{
-				pCheckNode->removeByIndex(nIndex);
+				TBTreeNode* pIndexNode = getNode(pCheckNode->key(nIndex));
+				pCheckNode->updateKey(nIndex, pIndexNode->key(0));
 				pCheckNode->setFlags(CHANGE_NODE, true);
 				m_ChangeNode.insert(pCheckNode);
-			}*/
+			}
 
 			if(!pParentNode)
 			{
@@ -1224,7 +1226,7 @@ namespace embDB
 
 	bool UnionInnerNode(TBTreeNode* pParentNode, TBTreeNode* pNode, TBTreeNode* pDonorNode, bool bLeft)
 	{
-		pNode->UnioInnerWith(pDonorNode, bLeft ? getMinimumKeyValue(getNode(pNode->less())) :   getMinimumKeyValue(getNode(pDonorNode->less())),  bLeft);
+		pNode->UnioInnerWith(pDonorNode, bLeft ? getMinimumKey(getNode(pNode->less())) :   getMinimumKey(getNode(pDonorNode->less())),  bLeft);
  
 		pParentNode->removeByIndex(pDonorNode->m_nFoundIndex);
 		if(bLeft && pNode->m_nFoundIndex != -1)
@@ -1240,7 +1242,7 @@ namespace embDB
 	}
 
 
-	const TKey& getMinimumKeyValue(TBTreeNode* pNode)
+	const TKey& getMinimumKey(TBTreeNode* pNode)
 	{
 		while(!pNode->isLeaf())
 		{
@@ -1251,76 +1253,21 @@ namespace embDB
 		return pNode->key(0);
 	}
 
-	bool AlignmentInnerNode(TBTreeNode* pNode, TInnerMemSetNode *pNode, TBTreeNode* pDonorNode, bool bLeft)
+	bool AlignmentInnerNode(TBTreeNode* pParentNode, TBTreeNode *pNode, TBTreeNode* pDonorNode, bool bLeft)
 	{	
 
 
-		pNode->AlignmentInnerNodeOf(pDonorNode, bLeft ? getMinimumKeyValue(getNode(pNode->less())) :   getMinimumKeyValue(getNode(pDonorNode->less())),  bLeft);
+		pNode->AlignmentInnerNodeOf(pDonorNode, bLeft ? getMinimumKey(getNode(pNode->less())) :   getMinimumKey(getNode(pDonorNode->less())),  bLeft);
 
 
-		if(bLeft) //Нода донор слева
+		if(!bLeft) //Нода донор справа
 		{
-
-			TBTreeNode* pLessNode = getNode(pNode->less());
-			if(pLessNode)
-			{
-				assert(pLessNode->count());
-				TKey *pKey = NULL;
-				if(getMinimumKeyValue(pLessNode, &pKey))
-				{
-
-					pDonorNode->m_InnerNode.insert(*pKey, pLessNode->addr()); 
-				}
-
-			}
-			TKey key;
-			TLink addr;
-			if(!pNode->AlignmentInnerNodeOf(pDonorNode, bLeft, key, addr))
-			{
-				pNode->m_InnerNode.remove(pLessNode->firstKey());
-				pNode->m_InnerNode.m_nLess = pLessNode->addr();
-				return false;
-			}
-			//assert(pLastNode);
-
-
-			TKey *pKey = NULL;
-			if(getMinimumKeyValue(getNode(addr), &pKey))
-			{
-
-				pNode->m_InnerNode.m_nLess = addr;
-				pParentKeyNode->m_key =*pKey; 
-			}
+			const TKey& minKey = getMinimumKey(getNode(pDonorNode->less()));
+			pParentNode->updateKey(pDonorNode->m_nFoundIndex, minKey);
+			pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+			m_ChangeNode.insert(pParentNode);
 		}
-		else
-		{
-			TBTreeNode* pLessNode = getNode(pDonorNode->less());
-			if(pLessNode)
-			{
-				assert(pLessNode->count());
-				TKey *pKey = NULL;
-				getMinimumKeyValue(pLessNode, &pKey);
-				pDonorNode->m_InnerNode.insert(*pKey, pLessNode->m_nPageAddr);
-			}
-			TKey key;
-			TLink addr;
-			if(!pNode->AlignmentInnerNodeOf(pDonorNode, bLeft, key, addr)) //
-			{
-				pNode->m_InnerNode.remove(pLessNode->firstKey());
-				pDonorNode->m_InnerNode.m_nLess = pLessNode->m_nPageAddr;
-				//pDonorNode->m_InnerNode.insert(key, addr);
-				return false;
-			}
-			//assert(pLastNode);
-			pDonorNode->m_InnerNode.m_nLess = addr; 
-			TKey *pKey = NULL;
-			if(getMinimumKeyValue(getNode(addr), &pKey))
-			{
-				pParentDonorKeyNode->m_key = *pKey; 
-			}
-		}
-		assert(pNode->size() < m_pTransaction->getPageSize());
-		assert(pDonorNode->size() < m_pTransaction->getPageSize());
+	 
 		pNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
 		m_ChangeNode.insert(pNode);
 		pDonorNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
