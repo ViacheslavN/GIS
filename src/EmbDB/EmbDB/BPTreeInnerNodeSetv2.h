@@ -65,12 +65,14 @@ namespace embDB
 		}
 		virtual  bool Save(	CommonLib::FxMemoryWriteStream& stream) 
 		{
+			assert(m_nLess != -1);
 			stream.write(m_nLess);
 			return m_pCompressor->Write(m_innerKeyMemSet, m_innerLinkMemSet, stream);
 		}
 		virtual bool Load(CommonLib::FxMemoryReadStream& stream)
 		{
 			 stream.read(m_nLess); 
+			 assert(m_nLess != -1);
 			return m_pCompressor->Load(m_innerKeyMemSet, m_innerLinkMemSet,  stream);
 		}
 		size_t tupleSize() const
@@ -197,12 +199,14 @@ namespace embDB
 			if(!bRet)
 			{
 				//TO DO Logs
+				assert(false);
 				return false;
 			}
 			bRet =  m_innerLinkMemSet.remove(nIndex);
 			if(!bRet)
 			{
 				//TO DO Logs
+				assert(false);
 				return false;
 			}
 		
@@ -218,18 +222,28 @@ namespace embDB
 			size_t nSize = m_innerKeyMemSet.size()/2;
 
 			//bool bOne = (m_leafMemSet.size() < 3);
-			newNodeKeySet.copy(m_innerKeyMemSet, 0, nSize,  m_innerKeyMemSet.size());
-			newNodeLinkSet.copy(m_innerLinkMemSet, 0, nSize,  m_innerLinkMemSet.size());
+			newNodeKeySet.copy(m_innerKeyMemSet, 0,  nSize + 1,  m_innerKeyMemSet.size());
+			newNodeLinkSet.copy(m_innerLinkMemSet, 0, nSize + 1,  m_innerLinkMemSet.size());
 			size_t nNewSize = nSize;
-			while(nSize < m_innerKeyMemSet.size())
+			nSize++;
+			while(nSize   < m_innerKeyMemSet.size())
 			{						 
 				m_pCompressor->remove(m_innerKeyMemSet[nSize], m_innerLinkMemSet[nSize]);
 				pNewNodeComp->insert(m_innerKeyMemSet[nSize], m_innerLinkMemSet[nSize]);
 				++nSize;
 			}	
+
+			*pSplitKey = m_innerKeyMemSet[nNewSize];
+			pNode->m_nLess = m_innerLinkMemSet[nNewSize];
+
+			m_pCompressor->remove(m_innerKeyMemSet[nNewSize], m_innerLinkMemSet[nNewSize]);
+		
+
+			assert(pNode->m_nLess  != -1);
+
 			m_innerKeyMemSet.resize(nNewSize);
 			m_innerLinkMemSet.resize(nNewSize);
-			*pSplitKey = newNodeKeySet[0];
+			
 			return true;
 		}
 		size_t count() const
@@ -271,27 +285,31 @@ namespace embDB
 			if(bLeft)
 			{
 				pNode->m_innerKeyMemSet.push_back(LessMin);
-				pNode->m_innerKeyMemSet.push_back(m_innerKeyMemSet);
+				pNode->m_innerLinkMemSet.push_back(m_nLess);
 		
 
-				pNode->m_innerKeyMemSet.push_back(m_nLess);
-				pNode->m_innerLinkMemSet.push_back(m_innerLinkMemSet);
-				
-				m_pCompressor->add(pNode->m_innerLinkMemSet, pNode->m_innerKeyMemSet);
+				pNode->m_innerKeyMemSet.push_back(m_innerLinkMemSet);
+				pNode->m_innerLinkMemSet.push_back(m_innerKeyMemSet);
+							 
 
 				pNode->m_innerLinkMemSet.swap(m_innerLinkMemSet);
 				pNode->m_innerKeyMemSet.swap(m_innerKeyMemSet);
+
 				m_nLess = pNode->m_nLess;
+
+				m_pCompressor->recalc(m_innerLinkMemSet, pNode->m_innerLinkMemSet);
 			}
 			else
 			{
 				m_innerKeyMemSet.push_back(LessMin);
+				m_innerLinkMemSet.push_back(pNode->m_nLess);
+
+
+
 				m_innerKeyMemSet.push_back(pNode->m_innerKeyMemSet);
-
-				m_pCompressor->add(pNode->m_innerLinkMemSet, pNode->m_innerKeyMemSet);
-
-				m_innerKeyMemSet.push_back(pNode->m_nLess);
 				m_innerLinkMemSet.push_back(pNode->m_innerLinkMemSet);
+
+				m_pCompressor->recalc(m_innerLinkMemSet, m_innerKeyMemSet);
 			}
 			return true;
 		}
@@ -306,17 +324,17 @@ namespace embDB
 			{
 				m_pCompressor->insert(LessMin, m_nLess);
 
-				m_innerKeyMemSet.mover(0, nCnt);
-				m_innerLinkMemSet.mover(0, nCnt);
+				m_innerKeyMemSet.mover(0, nCnt + 1);
+				m_innerLinkMemSet.mover(0, nCnt + 1);
 
-				m_innerKeyMemSet[0] = LessMin;
-				m_innerLinkMemSet[0] = m_nLess;
+				m_innerKeyMemSet[nCnt] = LessMin;
+				m_innerLinkMemSet[nCnt] = m_nLess;
 
 				size_t newSize = pNode->m_innerLinkMemSet.size() - nCnt;
 
 
-				m_innerKeyMemSet.insert(pNode->m_innerKeyMemSet, 1, newSize - 1, pNode->m_innerKeyMemSet.size());
-				m_innerLinkMemSet.insert(pNode->m_innerLinkMemSet, 1, newSize - 1, pNode->m_innerLinkMemSet.size());
+				m_innerKeyMemSet.insert(pNode->m_innerKeyMemSet, 0, newSize, pNode->m_innerKeyMemSet.size());
+				m_innerLinkMemSet.insert(pNode->m_innerLinkMemSet, 0, newSize, pNode->m_innerLinkMemSet.size());
 
 				m_pCompressor->recalc(m_innerKeyMemSet, m_innerLinkMemSet);
 
@@ -335,7 +353,7 @@ namespace embDB
 				m_innerKeyMemSet.copy(pNode->m_innerKeyMemSet, m_innerKeyMemSet.size(), 0, nCnt - 1);
 				m_innerLinkMemSet.copy(pNode->m_innerLinkMemSet, m_innerLinkMemSet.size(), 0, nCnt - 1);
 
-				pNode->m_nLess = pNode->m_innerKeyMemSet[nCnt];
+				pNode->m_nLess = pNode->m_innerLinkMemSet[nCnt];
 
 				pNode->m_innerKeyMemSet.movel(nCnt, nCnt);
 				pNode->m_innerLinkMemSet.movel(nCnt, nCnt);
@@ -343,6 +361,7 @@ namespace embDB
 				m_pCompressor->recalc(m_innerKeyMemSet, m_innerLinkMemSet);
 				pNode->m_pCompressor->recalc(pNode->m_innerKeyMemSet, pNode->m_innerLinkMemSet);
 			}
+			return true;
 		}
 		bool isKey(const TKey& key, uint32 nIndex)
 		{

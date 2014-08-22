@@ -576,9 +576,10 @@ namespace embDB
 			{
 
 				pNode->m_nParent = pParentNode->m_nPageAddr;
-				pParentNode->m_InnerNode.m_nLess = pNode->m_nPageAddr;
+				pParentNode->setLess(pNode->m_nPageAddr);
+			 
 			}
-			if(pNode->m_LeafNode.m_nNext != -1)
+			if(pNode->next() != -1)
 			{
 				pNewNode->m_LeafNode.m_nNext = pNode->m_LeafNode.m_nNext;
 				TBTreeNode *pNextNode = getNode(pNode->m_LeafNode.m_nNext);
@@ -668,7 +669,8 @@ namespace embDB
 			pNodeNewRoot->insertInInnerNode(nMedianKey, pNodeNewRight->m_nPageAddr);
 
 			pNode->m_nParent = pNodeNewRoot->m_nPageAddr;
-			pNodeNewRoot->m_InnerNode.m_nLess = pNode->m_nPageAddr;
+			pNodeNewRoot->setLess(pNode->m_nPageAddr);
+			assert(pNodeNewRoot->m_InnerNode.m_nLess != -1);
 			pNodeNewRight->m_nParent = pNodeNewRoot->m_nPageAddr;
 			m_nRootAddr = pNodeNewRoot->m_nPageAddr;
 			m_pRoot->setFlags(ROOT_NODE|BUSY_NODE, false);
@@ -711,9 +713,11 @@ namespace embDB
 			TBTreeNode* pNode = getNode(nNextAddr);
 			pNode->m_nParent = nParent;
 			pNode->m_nFoundIndex = nIndex;
+			nType = 0;
 			if(pNode->isLeaf())
 			{
-				return iterator(this, pNode, pNode->leaf_lower_bound(key, nType));
+				ClearChache();
+				return iterator(this, pNode, pNode->binary_search(key));
 				break;
 			}
 			nNextAddr = pNode->inner_lower_bound(key, nType, nIndex);
@@ -838,6 +842,7 @@ namespace embDB
 			pNode->m_nFoundIndex = nIndex;
 			if(pNode->isLeaf())
 			{
+				ClearChache();
 				return iterator(this, pNode, pNode->leaf_upper_bound(key));
 				break;
 			}
@@ -864,6 +869,7 @@ namespace embDB
 		short nType = 0;
 		if(m_pRoot->isLeaf())
 		{
+			
 			return iterator(this, m_pRoot, m_pRoot->leaf_lower_bound(key, nType));
 		}
 		int32 nIndex = -1;
@@ -881,6 +887,7 @@ namespace embDB
 			pNode->m_nFoundIndex = nIndex;
 			if(pNode->isLeaf())
 			{
+				ClearChache();
 				return iterator(this, pNode, pNode->leaf_lower_bound(key, nType));
 				break;
 			}
@@ -894,6 +901,8 @@ namespace embDB
 	bool remove(const TKey& key)
 	{
 		iterator it = find(key);
+		if(it.isNull())
+			return false;
 		return remove(it);
 	}
 
@@ -907,10 +916,21 @@ namespace embDB
 		TKey key = it.key();
 
 		pLeafNode->removeByIndex(it.m_nIndex);
+		pNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+		m_ChangeNode.insert(pNode);
 		TBTreeNode *pParentNode = getNode(pNode->m_nParent);
 		if(pLeafNode->size() >  m_pTransaction->getPageSize()/2)
 		{
-			return removeUP(key, pParentNode, pNode->m_nFoundIndex);
+
+			if(pNode->m_nFoundIndex != -1 && pParentNode->isKey(key, pNode->m_nFoundIndex))
+			{
+				TBTreeNode* pIndexNode = getNode(pParentNode->key(pNode->m_nFoundIndex ));
+				pParentNode->updateKey(pNode->m_nFoundIndex , pIndexNode->key(0));
+				pParentNode->setFlags(CHANGE_NODE, true);
+				m_ChangeNode.insert(pParentNode);
+			}
+
+			return removeUP(key, pParentNode);
 			return true;
 		}
 		if(pLeafNode->getFlags() & ROOT_NODE)
@@ -929,6 +949,7 @@ namespace embDB
 		if(pParentNode->less() == pNode->addr())
 		{
 			pDonorNode = getNode(pParentNode->link(0));
+			pDonorNode->m_nFoundIndex = 0;
 			bLeft = false;
 		}
 		else
@@ -999,7 +1020,7 @@ namespace embDB
 				bRet = UnionLeafNode(pParentNode, pDonorNode, pNode, false);
 			else
 				bRet = UnionLeafNode(pParentNode, pNode, pDonorNode, bLeft);
-			if(bRet)
+			if(!bRet)
 			{
 				return false;
 			}
@@ -1010,7 +1031,14 @@ namespace embDB
 				return false;
 
 		}
-		return removeUP(key, pParentNode, pNode->m_nFoundIndex);
+		if(pNode->m_nFoundIndex != -1 && pParentNode->isKey(key, pNode->m_nFoundIndex))
+		{
+			TBTreeNode* pIndexNode = getNode(pParentNode->key(pNode->m_nFoundIndex ));
+			pParentNode->updateKey(pNode->m_nFoundIndex , pIndexNode->key(0));
+			pParentNode->setFlags(CHANGE_NODE, true);
+			m_ChangeNode.insert(pParentNode);
+		}
+		return removeUP(key, pParentNode);
 	 
 	}
 
@@ -1090,24 +1118,13 @@ namespace embDB
 	}
 
 
-	bool removeUP(const TKey& key, TBTreeNode* pNode, int32 nIndex)
+	bool removeUP(const TKey& key, TBTreeNode* pCheckNode)
 	{
-			
-		TBTreeNode* pCheckNode = pNode;
-		TBTreeNode* pParentNode = getNode(pCheckNode->m_nParent);
+			 
 		while(pCheckNode)
 		{
-			if(pCheckNode->size() > m_pTransaction->getPageSize()/2)
-				return true;
-	
-			if(nIndex != -1 && pCheckNode->isKey(key, nIndex))
-			{
-				TBTreeNode* pIndexNode = getNode(pCheckNode->key(nIndex));
-				pCheckNode->updateKey(nIndex, pIndexNode->key(0));
-				pCheckNode->setFlags(CHANGE_NODE, true);
-				m_ChangeNode.insert(pCheckNode);
-			}
-
+			
+			TBTreeNode*  pParentNode = getNode(pCheckNode->m_nParent);
 			if(!pParentNode)
 			{
 				if(!pCheckNode->count())
@@ -1124,19 +1141,36 @@ namespace embDB
 					m_ChangeNode.insert(pNode);
 					saveBTreeInfo();
 					m_nStateTree |= (eBPTDeleteInnerNode | eBPTNewRootNode);
-					return true;
+					
 				}
+
+				return true;
 			}
 			
+
+			if(pCheckNode->m_nFoundIndex != -1 && pParentNode->isKey(key, pCheckNode->m_nFoundIndex ))
+			{
+				TBTreeNode* pIndexNode = getNode(pCheckNode->key(pCheckNode->m_nFoundIndex ));
+				pParentNode->updateKey(pCheckNode->m_nFoundIndex, pIndexNode->key(0));
+				pParentNode->setFlags(CHANGE_NODE, true);
+				m_ChangeNode.insert(pParentNode);
+			}
+			if(!(pCheckNode->getFlags() & CHANGE_NODE))
+					break;
+			if(pCheckNode->size() >  m_pTransaction->getPageSize()/2)
+			{
+				pCheckNode = getNode(pCheckNode->m_nParent);
+				continue;
+			}
+
 			TBTreeNode* pDonorNode = NULL;
 			bool bLeft = false;
-			bool bLess = false;
 
-			if(pParentNode->less() == pNode->addr())
+			if(pParentNode->less() == pCheckNode->addr())
 			{
 				pDonorNode = getNode(pParentNode->link(0));
+				pDonorNode->m_nFoundIndex = 0;
 				bLeft = false;
-				bLess = true;
 			}
 			else
 			{
@@ -1156,12 +1190,12 @@ namespace embDB
 				}
 				else
 				{
-					pLeafNodeLeft = getNode(pParentNode->link(pNode->m_nFoundIndex - 1));
-					pLeafNodeLeft->m_nFoundIndex = pNode->m_nFoundIndex - 1;
+					pLeafNodeLeft = getNode(pParentNode->link(pCheckNode->m_nFoundIndex - 1));
+					pLeafNodeLeft->m_nFoundIndex = pCheckNode->m_nFoundIndex - 1;
 					if((int32)pParentNode->count() > pParentNode->m_nFoundIndex)
 					{
-						pLeafNodeRight = getNode(pParentNode->link(pNode->m_nFoundIndex + 1));
-						pLeafNodeRight->m_nFoundIndex = pNode->m_nFoundIndex + 1;
+						pLeafNodeRight = getNode(pParentNode->link(pCheckNode->m_nFoundIndex + 1));
+						pLeafNodeRight->m_nFoundIndex = pCheckNode->m_nFoundIndex + 1;
 					}
 				}
 
@@ -1182,11 +1216,13 @@ namespace embDB
 				}
 			}
 			assert(pDonorNode);
-			bool bUnion = false;
-			bool bAlignment = false;
+		
 			size_t nSumSize = pCheckNode->rowSize() + pDonorNode->rowSize() + pDonorNode->headSize();
 			nSumSize += pCheckNode->tupleSize(); //insert less	
 			
+			
+			bool bUnion = false;
+			bool bAlignment = false;
 			int nCnt = ((pCheckNode->count() + pDonorNode->count()))/2 - pCheckNode->count();
 			if(nSumSize <   m_pTransaction->getPageSize()/2)	
 				bUnion = true;
@@ -1201,25 +1237,28 @@ namespace embDB
 			}
 			if(bUnion) 
 			{
-				if(bLess)
+				if(pDonorNode->addr() == pParentNode->less())
 					UnionInnerNode(pParentNode, pDonorNode, pCheckNode, false);
 				else
 					UnionInnerNode(pParentNode, pCheckNode, pDonorNode, bLeft);
-				if(bLess)
+				/*if(bLess)
 				{
 					pCheckNode = pParentNode;
 					continue;
-				}
+				}*/
 			}
 			else if(bAlignment)
 			{
-				AlignmentInnerNode(pParentNode, pCheckNode, pDonorNode, bLeft);
-				pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-				m_ChangeNode.insert(pParentNode);
+				if(AlignmentInnerNode(pParentNode, pCheckNode, pDonorNode, bLeft))
+				{
+					pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+					m_ChangeNode.insert(pParentNode);
+				}
+
 			}
 			pCheckNode = getNode(pCheckNode->m_nParent);
-
 		}
+		ClearChache();
 		return true;
 	}
 
@@ -1257,8 +1296,8 @@ namespace embDB
 	{	
 
 
-		pNode->AlignmentInnerNodeOf(pDonorNode, bLeft ? getMinimumKey(getNode(pNode->less())) :   getMinimumKey(getNode(pDonorNode->less())),  bLeft);
-
+		if(!pNode->AlignmentInnerNodeOf(pDonorNode, bLeft ? getMinimumKey(getNode(pNode->less())) :   getMinimumKey(getNode(pDonorNode->less())),  bLeft))
+			return false;
 
 		if(!bLeft) //Нода донор справа
 		{
@@ -1274,967 +1313,6 @@ namespace embDB
 		m_ChangeNode.insert(pDonorNode);
 		return true;
 	}
-
-
-	/*bool findNode(const TKey& key, bool bFirst, TBTreeNode** pFindBTNode)
-	{
-
-		*pFindBTNode = NULL;
-		*pFindMemNode= NULL;
-		if(m_nRootAddr == -1)
-			loadBTreeInfo();
-		if(m_nRootAddr == -1)
-			return false;
-
-		if(!m_pRoot)
-		{
-			m_pRoot= getNode(m_nRootAddr, true); 
-		}
-		if(!m_pRoot)
-			return false;
-
-		if(m_pRoot-> isLeaf())
-		{
-			TLeftMemSetNode *pRBNode = m_pRoot->findNode(key);//m_leafMemSet.findNode(key);
-			if(pRBNode)
-			{
-				*pFindBTNode = m_pRoot;
-				*pFindMemNode = pRBNode;
-			}
-
-		}
-		else
-		{
-
-			TInnerMemSetNode* pParentMemsetNode = 0;
-			TBTreeNode* pInnerParentNode  = 0;
-			pInnerParentNode = m_pRoot;
-			int64 nNextAddr = m_pRoot->findNext(key, &pParentMemsetNode);
-			for (;;)
-			{
-				if( nNextAddr == -1)
-					break;
-				TBTreeNode* pNode = getNode(nNextAddr);
-				//pNode->m_nParent = pInnerParentNode->addr();
-				//pNode->m_pParrentMemsetNode = pParentMemsetNode;
-				if(pNode->isLeaf())
-				{
-					TLeftMemSetNode *pRBNode = pNode->findNode(key);//m_leafMemSet.findNode(key);
-					if(pRBNode)
-					{						
-						*pFindBTNode = pNode;
-						*pFindMemNode = pRBNode;
-						if(bFirst && m_bMulti)
-						{
-							TLeftMemSetNode *pPrev = pRBNode->m_pPrev;
-							if(pNode->isLeamMemsetNodeNull(pPrev) && pNode->prev() != -1)
-							{
-								//TBTreeNode *pNode1 = pNode;
-								TBTreeNode* pNodePrev = getNode(pNode->prev());
-								TLeftMemSetNode *pRBNode = pNodePrev->findNode(key);
-								if(pRBNode)
-								{
-
-									if(bNextKey)
-									{
-										if(pNodePrev->addr() == pInnerParentNode->less())
-										{
-											pNodePrev->m_bValidNextKey = true;
-											pNodePrev->m_NextLeafKey = pInnerParentNode->firstInnerMemSetNode()->m_key;
-										}
-										else if(pParentMemsetNode)
-										{
-											if(!pInnerParentNode->isInnerMemsetNodeNull(pParentMemsetNode->m_pPrev)
-												&& pParentMemsetNode->m_pPrev->m_val == pNodePrev->addr() )
-											{
-												pNodePrev->m_bValidNextKey = true;
-												pNodePrev->m_NextLeafKey = pParentMemsetNode->m_key;
-											}
-											else
-												pNodePrev->m_bValidNextKey = false;
-										}
-										else
-											pNodePrev->m_bValidNextKey = false;
-									}
-									*pFindBTNode = pNodePrev;
-									*pFindMemNode = pRBNode;
-									break;
-								}
-							}
-						}
-						if(bNextKey)
-						{
-							if(pNode->addr() == pInnerParentNode->less())
-							{
-								pNode->m_bValidNextKey = true;
-								pNode->m_NextLeafKey = pInnerParentNode->firstInnerMemSetNode()->m_key;
-							}
-							else if(pParentMemsetNode)
-							{
-								if(!pInnerParentNode->isInnerMemsetNodeNull(pParentMemsetNode->m_pNext))
-								{
-									pNode->m_bValidNextKey = true;
-									pNode->m_NextLeafKey = pParentMemsetNode->m_pNext->m_key;
-								}
-								else
-									pNode->m_bValidNextKey = false;
-							}
-							else
-								pNode->m_bValidNextKey = false;
-						}
-					}
-					break; //дальше искать не куда
-				}
-				pInnerParentNode = pNode;
-				nNextAddr = pNode->findNext(key, &pParentMemsetNode);
-			}
-		}
-		if(*pFindBTNode)
-			(*pFindBTNode)->setFlags(BUSY_NODE, true);
-		ClearChache();
-
-		return true;
-	}
-	/*iterator find(const TKey& key, bool bFirst = false)
-	{
-
-		TBTreeNode* pFindBTNode = 0;
-		TLeftMemSetNode *pFindRBNode= 0;
-
-		findNode(key, bFirst, &pFindBTNode, &pFindRBNode);
-		return iterator(this, pFindBTNode, pFindRBNode);
-	}
-	
-
-	bool remove(const TKey& key, bool bFirst = false)
-	{
-
-		//TBTreeNode* pFindBTNode = 0;
-		//TLeftMemSetNode *pFindRBNode= 0;
-		if(m_nRootAddr == -1)
-			return false;
-
-		if(!m_pRoot)
-		{
-			m_pRoot= getNode(m_nRootAddr, true); 
-		}
-		if(!m_pRoot)
-			return false;
-
-		bool bRet = false;
-		if(m_pRoot-> isLeaf())
-		{
-			return m_pRoot->remove(key);
-		}
-		else
-		{
-			TInnerMemSetNode* pRBNode = 0;
-			TBTreeNode* pInnerParentNode  = 0;
-			pInnerParentNode = m_pRoot;
-			short nType = 0;
-			int64 nNextAddr = m_pRoot->findNextForDelete(key, &pRBNode, nType);
-			for (;;)
-			{
-				if( nNextAddr == -1)
-					break;
-				
-				TBTreeNode* pNode = getNode(nNextAddr);
-				assert(pNode);
-				pNode->m_nParent = pInnerParentNode->m_nPageAddr;
-				pNode->m_pParrentMemsetNode = pRBNode;
-				pNode->m_nType = nType;
-				if(pNode->isLeaf())
-				{
-					TLeftMemSetNode *pRBNode = pNode->findNode(key);
-					if(pRBNode)
-					{
-						//pFindBTNode = pNode;
-						//pFindRBNode = pRBNode;
-						if(removeFromLeafNode(key, pNode, pRBNode, pInnerParentNode))
-						{
-							m_BTreeInfo.AddKey(-1);
-							bRet = true;
-						}
-					}
-					break;
-				}
-				else
-				{
-
-				}
-				pInnerParentNode = pNode;
-				nNextAddr = pNode->findNextForDelete(key, &pRBNode, nType);
-			}
-		}
-		TChangeNode::iterator it = m_ChangeNode.begin();
-		for(; !it.isNull(); ++it)
-		{
-			TBTreeNode* pChNode = *it;
-			pChNode->setFlags(BUSY_NODE, false);
-		}
-		m_ChangeNode.destroyTree();
-
-		ClearChache();
-		return bRet;
-	}
-	bool removeUP(const TKey& key, TBTreeNode* pCheckNode, TInnerMemSetNode *pRBInnerKeyNode, short nType)
-	{
-		    		
-		
-			TInnerMemSetNode * pRBInnerNode = pRBInnerKeyNode;
-			TBTreeNode* pParentNode = getNode(pCheckNode->m_nParent);
-			TInnerMemSet*  innerTree = &pCheckNode->m_InnerNode.m_innerMemSet;
-
-			if(nType == FIND_KEY)
-			{
-				assert(pRBInnerNode);
-				TBTreeNode* pNode = getNode(pRBInnerNode->m_val);
-				assert(pNode && pNode->isLeaf() && pNode->count() > 0);
-				pRBInnerNode->m_key = pNode->firstKey();
-				pCheckNode->setFlags(CHANGE_NODE, true);
-				m_ChangeNode.insert(pCheckNode);
-			}
-
-			while(pCheckNode)
-			{
-				nType = pCheckNode->m_nType;
-				pRBInnerNode = pCheckNode->m_pParrentMemsetNode;
-				pParentNode =  getNode(pCheckNode->m_nParent);
-				innerTree = &pCheckNode->m_InnerNode.m_innerMemSet;
-				if(nType == FIND_KEY)
-				{ //TO DO fix
-					assert(pRBInnerNode);
-					assert(pParentNode->addr() == pRBInnerNode->m_val);
-					if(pCheckNode->count() > 0 || pCheckNode->less() != -1)
-					{
-						TKey *pKey = NULL;
-						getMinimumKeyValue(pCheckNode, &pKey);
-						pRBInnerNode->m_key = *pKey;
-					}
-					else
-					{
-						pParentNode->removeRBInnerNode(pRBInnerNode);
-						pParentNode->setFlags(CHANGE_NODE, true);
-						m_ChangeNode.insert(pParentNode);
-						pCheckNode = getNode(pCheckNode->m_nParent);
-						
-						deleteNode(pCheckNode);
-						m_nStateTree |= eBPTDeleteInnerNode;
-						continue;
-					}
-					pParentNode->setFlags(CHANGE_NODE, true);
-					m_ChangeNode.insert(pParentNode);
-				}
-				if(!(pCheckNode->getFlags() & CHANGE_NODE))
-				{
-					pCheckNode = getNode(pCheckNode->m_nParent);
-					continue;
-				}
-
-				if(pCheckNode->size() < m_pTransaction->getPageSize()/2)
-				{
-					if(!pParentNode)
-					{
-						//root
-						if(innerTree->size() == 0)
-						{
-							//делаем рутом листовую ноду
-							TBTreeNode* pNode = getNode(pCheckNode->m_InnerNode.m_nLess);
-							assert(pNode);//Должна быть
-							m_Chache.remove(pNode->addr());
-							m_ChangeNode.remove(m_pRoot);
-							deleteNode(m_pRoot);
-							m_pRoot = pNode;
-							m_pRoot->m_nParent = -1;
-							m_nRootAddr = m_pRoot->addr();
-							pNode->setFlags(CHANGE_NODE|ROOT_NODE, true);
-							m_ChangeNode.insert(pNode);
-							saveBTreeInfo();
-							m_nStateTree |= (eBPTDeleteInnerNode | eBPTNewRootNode);
-							return true;
-						 
-						}
-						return true;
-					}
-					TInnerMemSet& parentInnerTree = pParentNode->m_InnerNode.m_innerMemSet;
-					if(pCheckNode->count() == 0)
-					{
-						bool bRem = false;
-						if(pCheckNode->less() == -1)
-						{
-							bRem = true;
-							if(pCheckNode->addr() == pParentNode->less())
-							{
-								pParentNode->setLess(-1);
-								CreateLessNode(pParentNode, NULL);
-							
-							}
-							else
-							{
-								//TTreeInnerNode *pRBInnerNode = innerTree->findNode(key);
-								if(!innerTree->isNull(pRBInnerNode))
-								{
-									pParentNode->removeRBInnerNode(pRBInnerNode);
-									pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-									m_ChangeNode.insert(pParentNode);
-								}
-							}
-							TBTreeNode* pNode = pCheckNode;		
-							pCheckNode = getNode(pCheckNode->m_nParent);
-							deleteNode(pNode);
-							m_nStateTree |= (eBPTDeleteInnerNode);
-							continue;
-						}
-		 
-					}
-					TBTreeNode* pLeftNode = NULL;
-					TBTreeNode* pRightNode = NULL;
-					TBTreeNode* pDonorNode = NULL;
-					bool bLeft = false;
-					bool bLess = false;
-					//TTreeInnerNode *pRBParentInnerNode = pCheckNode->m_pParrentRBNode;
-					TInnerMemSetNode *pDonorParentKeyNode = pRBInnerNode;
-					if(pParentNode->less() == pCheckNode->addr())
-					{
-						//крайнея левая нода, у нее только есть правый брат в контексте родителя
-						pDonorParentKeyNode = parentInnerTree.minimumNode();
-						if(!parentInnerTree.isNull(pDonorParentKeyNode))
-						{
-							pDonorNode = getNode(pDonorParentKeyNode->m_val);
-							bLeft = false;
-						}
-						else
-						{
-							assert(false); //такого быть не должно 
-						}
-					}
-					else
-					{
-		
-						assert(pRBInnerNode);
-						assert(pRBInnerNode->m_val == pCheckNode->m_nPageAddr);
-
-						if(!parentInnerTree.isNull(pRBInnerNode->m_pPrev))
-						{
-							pLeftNode = getNode(pRBInnerNode->m_pPrev->m_val);
-							assert(pLeftNode->addr() != pParentNode->less());
-						}
-						if(!parentInnerTree.isNull(pRBInnerNode->m_pNext))
-						{
-							pRightNode = getNode(pRBInnerNode->m_pNext->m_val);
-							assert(pLeftNode->addr() != pParentNode->less());
-						}
-					
-
-						if(!pLeftNode)// либо всего две ноды, либо удаляется из самой первой
-						{
-							bLess = true;
-							pLeftNode = getNode(pParentNode->m_InnerNode.m_nLess);
-						}
-
-						if(!pLeftNode && !pRightNode)
-						{
-							pCheckNode = getNode(pCheckNode->m_nParent);
-							continue;
-						}
-						size_t nLeftsize =  pLeftNode ? pLeftNode->rowSize() : 0;
-						size_t nRightSize = pRightNode ? pRightNode->rowSize() : 0;
-						if(nLeftsize > nRightSize)
-						{
-							pDonorNode = pLeftNode;
-							if(bLess)
-								pDonorParentKeyNode = pRBInnerNode;
-							else
-								pDonorParentKeyNode = pRBInnerNode->m_pPrev;
-							bLeft = true;
-						}
-						else
-						{
-							pDonorNode = pRightNode;
-							pDonorParentKeyNode = pRBInnerNode->m_pNext;
-							bLeft = false;
-						}
-					}
-					if(!pDonorNode)
-					{
-						pCheckNode = getNode(pCheckNode->m_nParent);
-						continue;
-					}
-					bool bUnion = false;
-					bool bAlignment = false;
-					size_t nSumSize = pCheckNode->rowSize() + pDonorNode->rowSize() + pDonorNode->headSize();
-
-
-					if(bLeft)
-					{
-						if(pCheckNode->less() != -1)
-						{
-							//считаем самый худший вариант для компрессии
-							nSumSize += pCheckNode->tupleSize();
-						}
-						else
-						{
-							assert(pDonorNode->less() != -1);//должна быть
-							nSumSize += pDonorNode->tupleSize();
-						}
-						
-					}
-
-					int nCnt = ((pCheckNode->count() + pDonorNode->count()))/2 - pCheckNode->count();
-					if(nSumSize <   m_pTransaction->getPageSize()/2)	
-						bUnion = true;
-					else if(nCnt > 0)
-						bAlignment = true;
-					else
-					{
-						if(nSumSize < m_pTransaction->getPageSize())
-						{
-							bUnion = true;
-						}
-					}
-
-					if(bUnion) 
-					{
-						UnionInnerNode(pParentNode, pCheckNode, pDonorNode, bLeft, pDonorParentKeyNode, pRBInnerNode);
-						if(bLess)
-						{
-							pCheckNode = pParentNode;
-							continue;
-						}
-					}
-					else if(bAlignment)
-					{
-						AlignmentInnerNode(pCheckNode, pRBInnerNode, pDonorNode, pDonorParentKeyNode, bLeft);
-						pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-						m_ChangeNode.insert(pParentNode);
-					
-					}
-
-					
-
-				}
-		
-				pCheckNode = getNode(pCheckNode->m_nParent);
-				
-			}
-		return true;
-	}
-	bool CreateLessNode(TBTreeNode* pInnerNode, TInnerMemSetNode *pRBInnerNode)
-	{
-		assert(!pInnerNode->isLeaf());
-		assert(pInnerNode->less() == -1);
-		if(pInnerNode->count() == 0 )
-		{
-
-			pInnerNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-			m_ChangeNode.insert(pInnerNode);
-			return false;
-		}
-
-		TInnerMemSet&  innerTree = pInnerNode->m_InnerNode.m_innerMemSet;
-		TInnerMemSetNode *pMinNode = innerTree.minimumNode();
-		assert(!innerTree.isNull(pMinNode));
-
-		bool bNode = (pRBInnerNode == pMinNode);
-
-			
-		pInnerNode->setLess(pMinNode->m_val);
-		pInnerNode->removeRBInnerNode(pMinNode);
-	
-
-		pInnerNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-		m_ChangeNode.insert(pInnerNode);
-		return bNode;
- 
-	}
-	bool UnionLeafNode(TBTreeNode* pParentNode, TBTreeNode* pLeafNode, TBTreeNode* pDonorNode, bool bLeft, TInnerMemSetNode *pDonorParentKeyNode, TInnerMemSetNode *pParentKeyNode)
-	{
-		if(pDonorNode->m_nPageAddr == pParentNode->m_InnerNode.m_nLess) //тогда будет объяденять с less нодой
-		{
-			pDonorNode->UnionWith(pLeafNode);
-
-			if(pDonorNode->size() > m_pTransaction->getPageSize()) 
-			{
-
-				AlignmentLeafNode(pLeafNode, pParentKeyNode, pDonorNode, pDonorParentKeyNode, false);
-				return false;
-			}
-			else
-			{
-				TBTreeNode* pNextNode = getNode( pLeafNode->m_LeafNode.m_nNext);
-				if(pNextNode)
-				{
-					pDonorNode->m_LeafNode.m_nNext = pNextNode->m_nPageAddr;
-					pNextNode->m_LeafNode.m_nPrev = pDonorNode->m_nPageAddr;
-					pNextNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-					m_ChangeNode.insert(pNextNode);
-				}
-				else
-					pDonorNode->m_LeafNode.m_nNext = -1;
-				pParentNode->removeRBInnerNode(pParentKeyNode); //удаляем и считаем что это не критичный размер изменения родительской ноды, хотя возможно придетсья  это учитывать
-				assert(pParentNode->count() != 0 || pParentNode->less() != -1);
-				deleteNode(pLeafNode);
-				pDonorNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-				m_ChangeNode.insert(pDonorNode);
-				m_nStateTree |= (eBPTDeleteLeafNode);
-
-
-			}
-			return true;
-		}
-		pLeafNode->UnionWith(pDonorNode);
-		size_t nNodeSize = pLeafNode->size() ;
-		if(nNodeSize > m_pTransaction->getPageSize())
-		{
-			AlignmentLeafNode(pDonorNode, pDonorParentKeyNode, pLeafNode, pParentKeyNode, bLeft);
-			return false;
-		}
-		else
-		{
-			if(bLeft)
-			{
-		
-				TBTreeNode* pPrevNode = getNode( pDonorNode->m_LeafNode.m_nPrev);
-				if(pPrevNode)
-				{
-					assert(pPrevNode->isLeaf());
-					pLeafNode->m_LeafNode.m_nPrev = pPrevNode->m_nPageAddr;
-					pPrevNode->m_LeafNode.m_nNext = pLeafNode->m_nPageAddr;
-					pPrevNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-					m_ChangeNode.insert(pPrevNode);
-				}
-				else
-					pLeafNode->m_LeafNode.m_nPrev = -1;
-			}
-			else
-			{
-		
-				TBTreeNode* pNextNode = getNode( pDonorNode->m_LeafNode.m_nNext);
-				if(pNextNode)
-				{
-					assert(pNextNode->isLeaf());
-					pLeafNode->m_LeafNode.m_nNext = pNextNode->m_nPageAddr;
-					pNextNode->m_LeafNode.m_nPrev = pLeafNode->m_nPageAddr;
-					pNextNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-					m_ChangeNode.insert(pNextNode);
-				}
-				else
-					pLeafNode->m_LeafNode.m_nNext = -1;
-			}
-			
-			if(bLeft)
-			{
-				//TTreeLeftNode* pMinNode = pLeafNode->m_LeafNode.m_leafMemSet.minimumNode();
-				pDonorParentKeyNode->m_val = pLeafNode->m_nPageAddr;
-				pParentNode->removeRBInnerNode(pParentKeyNode);
-			}
-			else
-				pParentNode->removeRBInnerNode(pDonorParentKeyNode); 
-			deleteNode(pDonorNode);
-			pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-			m_ChangeNode.insert(pParentNode);
-		}
-	
-		return true;
-		
-	}
-	bool AlignmentLeafNode(TBTreeNode* pNode, TInnerMemSetNode *pParentKeyNode, TBTreeNode* pDonorNode, TInnerMemSetNode *pParentDonorKeyNode, bool bLeft)
-	{
-		if(!pNode->AlignmentOf(pDonorNode, bLeft))
-			return false;
-		if(bLeft)
-		{
-			TLeafMemSet&  leafTree = pNode->m_LeafNode.m_leafMemSet;
-			TLeftMemSetNode *pNode = leafTree.minimumNode();
-			assert(!leafTree.isNull(pNode));
-			pParentKeyNode->m_key = pNode->m_key;
-		}
-		else
-		{
-			TLeafMemSet&  leafTree = pDonorNode->m_LeafNode.m_leafMemSet;
-			TLeftMemSetNode *pNode = leafTree.minimumNode();
-			assert(!leafTree.isNull(pNode));
-			pParentDonorKeyNode->m_key = pNode->m_key;
-		}
-		pNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-		m_ChangeNode.insert(pNode);
-		pDonorNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-		m_ChangeNode.insert(pDonorNode);
-		return true;
-	}
-
-	bool AlignmentInnerNode(TBTreeNode* pNode, TInnerMemSetNode *pParentKeyNode, TBTreeNode* pDonorNode, TInnerMemSetNode *pParentDonorKeyNode, bool bLeft)
-	{	
-		if(bLeft) //Нода донор слева
-		{
-
-			TBTreeNode* pLessNode = getNode(pNode->less());
-			if(pLessNode)
-			{
-				assert(pLessNode->count());
-				TKey *pKey = NULL;
-				if(getMinimumKeyValue(pLessNode, &pKey))
-				{
-
-					pDonorNode->m_InnerNode.insert(*pKey, pLessNode->addr()); 
-				}
-				
-			}
-			TKey key;
-			TLink addr;
-			if(!pNode->AlignmentInnerNodeOf(pDonorNode, bLeft, key, addr))
-			{
-				pNode->m_InnerNode.remove(pLessNode->firstKey());
-				pNode->m_InnerNode.m_nLess = pLessNode->addr();
-				return false;
-			}
-			//assert(pLastNode);
-
-
-			TKey *pKey = NULL;
-			if(getMinimumKeyValue(getNode(addr), &pKey))
-			{
-
-				pNode->m_InnerNode.m_nLess = addr;
-				pParentKeyNode->m_key =*pKey; 
-			}
-		}
-		else
-		{
-			TBTreeNode* pLessNode = getNode(pDonorNode->less());
-			if(pLessNode)
-			{
-				assert(pLessNode->count());
-				TKey *pKey = NULL;
-				getMinimumKeyValue(pLessNode, &pKey);
-				pDonorNode->m_InnerNode.insert(*pKey, pLessNode->m_nPageAddr);
-			}
-			TKey key;
-			TLink addr;
-			if(!pNode->AlignmentInnerNodeOf(pDonorNode, bLeft, key, addr)) //
-			{
-				pNode->m_InnerNode.remove(pLessNode->firstKey());
-				pDonorNode->m_InnerNode.m_nLess = pLessNode->m_nPageAddr;
-				//pDonorNode->m_InnerNode.insert(key, addr);
-				return false;
-			}
-			//assert(pLastNode);
-			pDonorNode->m_InnerNode.m_nLess = addr; 
-			TKey *pKey = NULL;
-			if(getMinimumKeyValue(getNode(addr), &pKey))
-			{
-				pParentDonorKeyNode->m_key = *pKey; 
-			}
-		}
-		assert(pNode->size() < m_pTransaction->getPageSize());
-		assert(pDonorNode->size() < m_pTransaction->getPageSize());
-		pNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-		m_ChangeNode.insert(pNode);
-		pDonorNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-		m_ChangeNode.insert(pDonorNode);
-		return true;
-	}
-
-	bool removeFromLeafNode(const TKey& key, TBTreeNode* pLeafNode, TLeftMemSetNode *pRBNode, TBTreeNode* pParentNode)
-	{
-		assert(pLeafNode->isLeaf());
-
-		pLeafNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-		m_ChangeNode.insert(pLeafNode);
-		pLeafNode->removeRBLeafNode(pRBNode);
-
-		m_nStateTree |= eBPTChangeLeafNode;
-		if(pLeafNode->size() >  m_pTransaction->getPageSize()/2)
-		{
-			return removeUP(key, pParentNode, pLeafNode->m_pParrentMemsetNode, pLeafNode->m_nType);
-		}
-		if(pLeafNode->getFlags() & ROOT_NODE)
-		{
-			return true;
-		}
-		assert(pParentNode);
-		assert(!pParentNode->isLeaf());
-		
-
-		TBTreeNode* pLeafNodeRight = NULL;
-		TBTreeNode* pLeafNodeLeft = NULL;
-		TBTreeNode* pDonorNode = NULL;
-		TInnerMemSetNode *pDonorParentKeyNode = NULL;
-		TInnerMemSet& parentInnerTree = pParentNode->m_InnerNode.m_innerMemSet;
-		bool bLeft = false;
-		
-		short nType = pLeafNode->m_nType;
-		TInnerMemSetNode *pRBInnerNode = pLeafNode->m_pParrentMemsetNode;
-		assert(pRBInnerNode || pLeafNode->addr() ==  pParentNode->less());
-
-	
-		if(pLeafNode->count() == 0)
-		{
-
-			//вырожденный  случай для больших полей 1-4 на странице
-			if(pLeafNode->addr() == pParentNode->less())
-			{
-				if(pParentNode->count() > 1)
-				{
-					//TO DO modify parent node
-					pParentNode->setLess(-1);
-					if(CreateLessNode(pParentNode, pRBInnerNode))
-					{
-						pRBInnerNode = NULL;
-						nType = 0;
-					}
-				}
-				else
-				{
-					pParentNode->setLess(-1);
-					pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-					m_ChangeNode.insert(pParentNode);
-					//TO DO remove parent node
-				}
-			}
-			else
-			{
-				pParentNode->m_InnerNode.deleteNode(pRBInnerNode, true, true);
-				pRBInnerNode = NULL;
-				nType = 0;
-				//pParentNode->m_pParrentRBNode->m_val = pLeafNode->m_nPageAddr;
-				pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-				m_ChangeNode.insert(pParentNode);
-			}
-		
-
-			TBTreeNode* pNextNode = getNode( pLeafNode->next());
-			TBTreeNode* pPrevNode = getNode( pLeafNode->prev());
-			if(pNextNode)
-			{
-				pNextNode->setPrev(pPrevNode ? pPrevNode->m_nPageAddr : -1);
-				pNextNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-				m_ChangeNode.insert(pNextNode);
-
-			}
-			if(pPrevNode) 
-			{
-				pPrevNode->setNext(pNextNode ? pNextNode->m_nPageAddr : -1);
-				pPrevNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-				m_ChangeNode.insert(pPrevNode);
-			}
-			
-		
-			deleteNode(pLeafNode);
-			m_nStateTree |= (eBPTDeleteLeafNode);
-			return removeUP(key, pParentNode, pRBInnerNode, nType);
-		}
-		if(pParentNode->less() == pLeafNode->addr())
-		{
-			//крайнея левая нода, у нее только есть правый брат в контексте родителя
-			pDonorParentKeyNode = parentInnerTree.minimumNode();
-			if(!parentInnerTree.isNull(pDonorParentKeyNode))
-			{
-				pDonorNode = getNode(pDonorParentKeyNode->m_val);
-				bLeft = false;
-			}
-			else
-			{
-				assert(false); //такого быть не должно 
-			}
-		}
-		else
-		{
-			assert(!parentInnerTree.isNull(pRBInnerNode)); //должна быть
-			assert(pRBInnerNode->m_val == pLeafNode->addr());
-		 
-			if(!parentInnerTree.isNull(pRBInnerNode->m_pPrev))
-				pLeafNodeLeft = getNode(pRBInnerNode->m_pPrev->m_val);
-			if(!parentInnerTree.isNull(pRBInnerNode->m_pNext))
-				pLeafNodeRight = getNode(pRBInnerNode->m_pNext->m_val);
-
-			bool bLess = false;
-
-			if(!pLeafNodeLeft)// либо всего две ноды, либо удаляется из самой первой
-			{
-				pLeafNodeLeft = getNode(pParentNode->m_InnerNode.m_nLess);
-				bLess = true;
-			}
-
-			assert(pLeafNodeLeft != NULL || pLeafNodeRight != NULL);
-			
-		
-			int nLeftsize =  pLeafNodeLeft ? pLeafNodeLeft->rowSize() : -1;
-			int nRightSize = pLeafNodeRight ? pLeafNodeRight->rowSize() : -1;
-			if(nLeftsize > nRightSize)
-			{
-				pDonorNode = pLeafNodeLeft;
-				if(bLess)
-					pDonorParentKeyNode = pRBInnerNode;
-				else
-					pDonorParentKeyNode = pRBInnerNode->m_pPrev;
-				bLeft = true;
-			}
-			else
-			{
-				pDonorNode = pLeafNodeRight;
-				pDonorParentKeyNode = pRBInnerNode->m_pNext;
-				bLeft = false;
-			}
-		}
-			assert(pDonorNode);
-			size_t nSumSize = pDonorNode->rowSize() + pLeafNode->rowSize() + pLeafNode->headSize();
-			int nCnt = ((pLeafNode->count() + pDonorNode->count()))/2 - pLeafNode->count();
-			
-			bool bUnion = false;
-			bool bAlignment = false;
-
-			if(nSumSize <  m_pTransaction->getPageSize()/2)	
-				bUnion = true;
-			else if(nCnt > 0)
-				bAlignment = true;
-			else
-			{
-				if(nSumSize < m_pTransaction->getPageSize())
-				{
-					bUnion = true;
-				}
-			}
-			if(bUnion)  
-			{
-				if(UnionLeafNode(pParentNode, pLeafNode, pDonorNode, bLeft, pDonorParentKeyNode, pRBInnerNode))
-				{
-					if(bLeft)
-					{
-						pRBInnerNode = NULL;
-						nType = 0;
-					}
-				}
-			}
-			else if(bAlignment)
-			{
-				AlignmentLeafNode(pLeafNode, pLeafNode->m_pParrentMemsetNode, pDonorNode, pDonorParentKeyNode, bLeft);
-					
-		 	}
-
-			return removeUP(key, pParentNode, pRBInnerNode, nType);
-		
-	
-	}
-
-	bool getMinimumKeyValue(TBTreeNode* pNode, TKey** pKey)
-	{
-		while(!pNode->isLeaf())
-		{
-			pNode = getNode(pNode->less());
-			assert(pNode);
-		}
-		assert(pNode);
-		if(!pNode)
-			return false;
-
-		TLeafMemSet& LeafTree = pNode->m_LeafNode.m_leafMemSet;
-		assert(LeafTree.size());
-		TLeafMemSet::iterator it = LeafTree.begin();
-
-		if(it.isNull())
-		{
-			return false;
-		}
-		*pKey = &it.key();
-		return true;
-	}
-
-	bool InsertLessNodeInInnerNode(TBTreeNode* pNode, TBTreeNode* pDonorNode, bool bLeft)
-	{
-		assert(!pNode->isLeaf());
-		assert(!pDonorNode->isLeaf());
-		TBTreeNode* pLessNode = NULL;
-		if(bLeft)
-		{
-			pLessNode = getNode(pNode->less());
-		}
-		else
-			pLessNode = getNode(pDonorNode->less());
-
-		if(pLessNode)
-		{
-			if(pLessNode->isLeaf())
-			{
-				TLeafMemSet& LeafTree = pLessNode->m_LeafNode.m_leafMemSet;
-				TLeafMemSet::iterator it = LeafTree.begin();
-				if(!it.isNull())
-				{
-					pNode->m_InnerNode.insert(it.key(),  pLessNode->m_nPageAddr);
-				}
-			}
-			else
-			{
-				
-				TKey *pKey = NULL;
-				if(getMinimumKeyValue(pLessNode, &pKey))
-					pNode->m_InnerNode.insert(*pKey,  pLessNode->m_nPageAddr);
-
-			}
-		}
-
-		if(bLeft)
-		{
-			pNode->m_InnerNode.m_nLess = pDonorNode->less(); //TO DO нужно less ноду сохранить.
-
-		}
-		return true;
-	
-	}
-
-	bool UnionInnerNode(TBTreeNode* pParentNode, TBTreeNode* pNode, TBTreeNode* pDonorNode, bool bLeft, TInnerMemSetNode *pDonorParentKeyNode, TInnerMemSetNode *pParentKeyNode)
-	{
-		
-		if(pDonorNode->addr() == pParentNode->less()) //тогда будет объяденять с less нодой
-		{
-			
-			pDonorNode->UnionWith(pNode);
-			InsertLessNodeInInnerNode(pDonorNode, pNode, false);
-
-			if(pDonorNode->size() > m_pTransaction->getPageSize()) //плохо, придеться выравнивть рамер
-			{
-				AlignmentInnerNode(pDonorNode, pDonorParentKeyNode, pNode, pParentKeyNode, false);
-			}
-			else
-			{
-				//если объеденяли с  Less нодой, то нужно поменять ключь в родительсокм элементе
-				pParentNode->removeRBInnerNode(pParentKeyNode); 
-				deleteNode(pNode);
-				pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-				m_ChangeNode.insert(pParentNode);
-				pDonorNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-				m_ChangeNode.insert(pDonorNode);
-
-				m_nStateTree |= (eBPTDeleteInnerNode);
-			}
-		
-			return true;
-		}
-		pNode->UnionWith(pDonorNode);
-		InsertLessNodeInInnerNode(pNode, pDonorNode, bLeft);
-		if(pNode->size() > m_pTransaction->getPageSize()) //плохо, придеться выравнивть рамер
-		{
-			AlignmentInnerNode(pNode, pParentKeyNode, pDonorNode, pDonorParentKeyNode,  bLeft);
-			
-		}
-		else
-		{
-			if(bLeft)
-			{
-				//TTreeInnerNode* pMinNode = pNode->m_InnerNode.m_innerMemSet.minimumNode();
-				pDonorParentKeyNode->m_val = pNode->m_nPageAddr;
-				pParentNode->removeRBInnerNode(pParentKeyNode);
-			}
-			else
-				pParentNode->removeRBInnerNode(pDonorParentKeyNode); //удаляем и считаем что это не критичный размер изменения родительской ноды, хотя возможно придетсья  это учитывать
-			deleteNode(pDonorNode);
-			assert(pParentNode->count() != 0 || pParentNode->less() != -1);
-			pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
-			m_ChangeNode.insert(pParentNode);
-			m_nStateTree |= (eBPTDeleteInnerNode);
-		}
-		return true;
-	}*/
 
 		BPTreeStatisticsInfo m_BTreeInfo;
 	protected:

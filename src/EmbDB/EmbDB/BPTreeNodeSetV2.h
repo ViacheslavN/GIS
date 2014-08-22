@@ -45,7 +45,7 @@ namespace embDB
 			,m_bCheckCRC32(bCheckCRC32)
 
 		{
-
+			
 		}
 		~BPTreeNodeSetv2()
 		{
@@ -200,6 +200,11 @@ namespace embDB
 			assert(!m_bIsLeaf);
 			return m_InnerNode.findNext(key, nIndex);
 		}
+		int32 binary_search(const TKey& key)
+		{
+			assert(m_bIsLeaf);
+			return m_LeafNode.binary_search(key);
+		}
 		TLink inner_lower_bound(const TKey& key, short& nType, int32& nIndex )
 		{
 			assert(!m_bIsLeaf);
@@ -228,6 +233,7 @@ namespace embDB
 		void setLess(TLink nLess)
 		{
 			assert(!m_bIsLeaf);
+			assert(nLess != -1);
 			m_InnerNode.m_nLess = nLess;
 		}
 		TLink next()

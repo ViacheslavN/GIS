@@ -39,10 +39,13 @@ namespace embDB
 
 		}
 
+		TBPSetIteratorV2() : m_pCurNode(NULL), m_pTree(NULL), m_nIndex(0)
+		{
+
+		}
+
 		TBPSetIteratorV2(const TBPSetIteratorV2& iter)
 		{
-			if(m_pCurNode)
-				m_pCurNode->setFlags(BUSY_NODE, false);
 			m_pCurNode = iter.m_pCurNode;
 			m_pTree = iter.m_pTree;
 			m_nIndex = iter.m_nIndex;
@@ -83,15 +86,10 @@ namespace embDB
 		}
 		bool isNull()
 		{
-			if(m_pCurNode == NULL)
+			if(m_pCurNode == NULL || m_nIndex == - 1)
 				return true;
-			if(m_nIndex == - 1 && m_pCurNode->prev() == -1)
-				return true;
-
-			if((uint32)m_nIndex >= m_pCurLeafNode->count() && m_pCurNode->next() == -1)
-				return true;
-			
-			 return false;
+	
+			return false;
 
 		}
 
@@ -118,6 +116,8 @@ namespace embDB
 				m_pCurLeafNode = &m_pCurNode->m_LeafNode;
 				return true;
 			}
+			m_pCurNode = NULL;
+			m_nIndex = -1;
 			return false;
 		}
 		void update()

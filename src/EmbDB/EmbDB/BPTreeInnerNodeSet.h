@@ -129,7 +129,7 @@ namespace embDB
 
 				m_innerMemSet.deleteNode(pCurr, true, true);
 				m_pCompressor->remove(pCurr);
-
+				assert(pNode->m_nLess != -1);
 				return true;
 			}
 			while(nSize)
@@ -152,6 +152,7 @@ namespace embDB
 			m_innerMemSet.deleteNode(pCurr, true, true);
 
 			pNode->m_nLess =  nLink;
+			assert(pNode->m_nLess != -1);
 			return true;
 		}
 		TLink findNodeForBTree(const TKey& key)
