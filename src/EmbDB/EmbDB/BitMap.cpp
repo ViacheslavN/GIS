@@ -7,18 +7,47 @@ namespace embDB
 	{
 
 	}
+	CBitMap::CBitMap(uint32 nSizeInByte)
+	{
+
+		if(nSizeInByte > 0)
+		{
+			m_pBuf = new byte[nSizeInByte];
+			m_nSize = nSizeInByte; 
+		}
+		else
+		{
+			m_pBuf = NULL;
+			m_nSize = 0;
+		}
+	}
 	CBitMap::CBitMap(byte *pBuf, uint32 nSize)
 	{
-		m_pBuf = new byte[nSize];
-		memcpy(m_pBuf, pBuf, nSize);
-		m_nSize = nSize; 
+		if(pBuf && nSize > 0)
+		{
+			m_pBuf = new byte[nSize];
+			memcpy(m_pBuf, pBuf, nSize);
+			m_nSize = nSize; 
+		}
+		else
+		{
+			m_pBuf = NULL;
+			m_nSize = 0;
+		}
+
 	}
 	CBitMap::CBitMap(const CBitMap& bm)
 	{
-		if(m_pBuf)
-			delete m_pBuf;
-		m_pBuf = new byte[bm.m_nSize];
-		memcpy(m_pBuf, bm.m_pBuf, bm.m_nSize);
+		if(bm.m_pBuf && bm.m_nSize > 0)
+		{
+			m_pBuf = new byte[bm.m_nSize];
+			memcpy(m_pBuf, bm.m_pBuf, bm.m_nSize);
+		}
+		else
+		{
+			m_pBuf = NULL;
+		}
+
 		m_nSize = bm.m_nSize; 
 	}
 	CBitMap::~CBitMap()

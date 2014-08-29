@@ -7,6 +7,7 @@
 #include "DirectTransactions.h"
 #include "BTVector.h"
 #include "BitMap.h"
+#include <map>
 namespace embDB
 {
 	class CStorage;
@@ -28,12 +29,12 @@ namespace embDB
 			
 	    private:
 
-			bool AddFreeMap(int64 nAddr, bool bNew);
+			bool AddFreeMap(int64 nAddr, uint32 nBlockNum,  bool bNew);
 			typedef TSimpleStack<int64> TFreePages;
 
 			struct FileFreeMap
 			{
-				FileFreeMap() : m_bChange(false), m_nAddr(-1), m_nBeginAddr(0), m_nEndAddr(0)
+				FileFreeMap(uint32 nAddrLen) : m_bChange(false), m_nAddr(-1), m_nBlockNum(0), m_nBeginAddr(0), m_nEndAddr(0), m_nAddrLen(nAddrLen)
 				{
 
 				}
@@ -49,13 +50,23 @@ namespace embDB
 					return m_BitMap.setBit(uint32(nBit - m_nBeginAddr), bSet);
 				}
 				int64 m_nAddr;
-				int64 m_nBeginAddr;
-				int64 m_nEndAddr;
+				int64 nBlockNum;
+				/*
+
+				a[i] = i * (Len + 1)
+				b[i] = Len  + i * (Len + 1)
+
+
+				
+				*/
 
 				TFreePages m_FreePages;
 				CBitMap		m_BitMap;
 				bool m_bChange;
-
+				uint32 m_nBlockNum;
+				uint64 m_nBeginAddr;
+				uint64 m_nEndAddr;
+				uint32 m_nAddrLen;
 				bool load(CFilePage* pPage )
 				{
 					CommonLib::FxMemoryReadStream stream;
@@ -71,9 +82,16 @@ namespace embDB
 						//TO DO Logs
 						return false;
 					}
-					uint64 nPageAddr = m_nBeginAddr;
+		
 					byte nbyte;
+					m_nBlockNum = stream.readIntu32();
+
+					assert(m_nAddrLen == m_BitMap.getBitSize() * 8);
+					m_nBeginAddr = m_nBlockNum * (1 + m_nAddrLen);
+					m_nEndAddr = m_nBeginAddr +  m_nAddrLen;
+
 					m_BitMap.setBits(stream.buffer() + stream.pos(), stream.size() - stream.pos());
+					uint64 nPageAddr;
 					for (size_t i = 0, sz = stream.size() - stream.pos(); i < sz; ++i )
 					{
 
@@ -97,6 +115,7 @@ namespace embDB
 					CommonLib::FxMemoryWriteStream stream;
 					stream.attach(pPage->getRowData(), pPage->getPageSize());
 					sFilePageHeader header (stream, STORAGE_PAGE, STORAGE_FREE_MAP_PAGE);
+					stream.write(m_nBeginAddr);
 					stream.write(m_BitMap.getBits(), m_BitMap.size());
 					header.writeCRC32(stream);
 					return true;
@@ -108,7 +127,7 @@ namespace embDB
 				//bitstream
 			};
 
-			typedef std::vector<FileFreeMap> TVecFreeMaps;
+			typedef std::map<uint32, FileFreeMap*> TMapFreeMaps;
 		private:
 			
 			CStorage* m_pStorage;
@@ -117,7 +136,8 @@ namespace embDB
 			int64 m_nRootPage;
 			int64 m_nFreeMapLists;
 
-			TVecFreeMaps m_FreeMaps;
+			TMapFreeMaps m_FreeMaps;
+			uint32 m_nAddrLen;
 
 	
 	};

@@ -146,7 +146,9 @@ namespace embDB
 					return false;
 			}
 			memcpy(m_pData + nPos, vec.m_pData + nBegin,  nLen * sizeof(TValue));
-			m_nSize += nLen;
+		 
+			if((nPos + nLen) > m_nSize)
+				m_nSize += (nPos + nLen) - m_nSize;
 			return true;
 		}
 		bool mover(size_t nPos, size_t nCnt)
@@ -163,7 +165,7 @@ namespace embDB
 
 		bool movel(size_t nPos, size_t nCnt)
 		{
-		    memmove(m_pData + nPos - nCnt,  m_pData + nPos, (m_nSize)* sizeof(TValue) - nCnt);
+		    memmove(m_pData + nPos - nCnt,  m_pData + nPos, (m_nSize  - nCnt)* sizeof(TValue));
 			m_nSize -= nCnt;
 			return true;
 		}

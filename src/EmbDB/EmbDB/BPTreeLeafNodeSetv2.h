@@ -219,23 +219,19 @@ namespace embDB
 			{
 
 				m_leafKeyMemSet.insert(nodeMemset, 0, 0, nCnt);
-				for (size_t i = nCnt; i > 0; --i)
-				{
-			    	pNodeComp->remove(nodeMemset[i]);
-					m_pCompressor->insert(nodeMemset[i]);
-				}
-			
+				nodeMemset.resize(nodeMemset.size() - nCnt);
+							
 			}
 			else
 			{
-				for (size_t i = nCnt; i > 0; --i)
-				{
-					m_leafKeyMemSet.push_back(nodeMemset[i]);
-					pNodeComp->remove(nodeMemset[i]);
-					m_pCompressor->insert(nodeMemset[i]);
-				}
+				m_leafKeyMemSet.copy(nodeMemset, m_leafKeyMemSet.size(), 0, nCnt);
+				nodeMemset.movel(nCnt, nCnt);
 			}
-			nodeMemset.resize(nodeMemset.size() - nCnt);
+			
+
+			pNodeComp->recalc(nodeMemset);
+			m_pCompressor->recalc(m_leafKeyMemSet);
+
 			return true;
 		}
 		bool isKey(const TKey& key, uint32 nIndex)

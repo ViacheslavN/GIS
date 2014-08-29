@@ -10,7 +10,7 @@ namespace embDB
 		,m_pStorage(pStorage)
 		,m_pAlloc(pAlloc)
 	{
-
+		m_nAddrLen = m_pStorage->getPageSize() - sFilePageHeader::size() - sizeof(uint32);
 	}
 	CFreePageManager::~CFreePageManager()
 	{
@@ -39,7 +39,7 @@ namespace embDB
 			return false;
 		}*/
 		
-		if(!AddFreeMap(m_pStorage->getNewPageAddr(), true))
+		if(!AddFreeMap(m_pStorage->getNewPageAddr(), 0,  true))
 			return false;
 
 		CommonLib::FxMemoryWriteStream stream;
@@ -47,7 +47,7 @@ namespace embDB
 		sFilePageHeader header(stream, STORAGE_PAGE, STORAGE_LIST_FREEMAP_PAGE);
 		stream.write(int64(-1)); //next
 		stream.write(uint32(1));
-		stream.write(m_FreeMaps[0].m_nAddr);
+		stream.write(m_FreeMaps.begin()->m_nAddr);
 		header.writeCRC32(stream);
 		m_pStorage->saveFilePage(pListFreeBitMapsPage);
 
@@ -55,18 +55,20 @@ namespace embDB
 		
 	}
 
-	bool CFreePageManager::AddFreeMap(int64 nAddr, bool bNew)
+	bool CFreePageManager::AddFreeMap(int64 nAddr, uint32 nBlockNum, bool bNew)
 	{
-		{
-			FileFreeMap freeMap;
-			freeMap.m_nAddr = nAddr;
-			freeMap.m_nBeginAddr = m_FreeMaps.empty() ? 0 : m_FreeMaps.back().m_nAddr + 1;
-			freeMap.m_nEndAddr = freeMap.m_nBeginAddr + (m_pStorage->getPageSize() - sFilePageHeader::size()) * 8;
-			m_FreeMaps.push_back(freeMap);
-		}
-		FileFreeMap& freeMap = m_FreeMaps.back();
+
 		if(bNew)
 		{
+
+
+			FileFreeMap* pFreeMap =  new FileFreeMap(m_nAddrLen);
+			pFreeMap->m_nAddr = nAddr;
+			pFreeMap->m_nBlockNum = nBlockNum;
+			pFreeMap->m_nBeginAddr = pFreeMap->m_nBlockNum * (1 + m_nAddrLen);
+			pFreeMap->m_nEndAddr = pFreeMap->m_nBeginAddr  +  m_nAddrLen;
+			m_FreeMaps.insert(pFreeMap->nBlockNum, pFreeMap);
+
 			CFilePage* pPage = m_pStorage->getFilePage(nAddr, false);
 			if(!pPage)
 			{
@@ -82,73 +84,78 @@ namespace embDB
 		}
 		else
 		{
+			FileFreeMap* pFreeMap =  new FileFreeMap(m_nAddrLen);
 			CFilePage* pPage = m_pStorage->getFilePage(nAddr);
 			if(!pPage)
 			{
 				//TO DO Logs
 				return false;
 			}
-			return freeMap.load(pPage);
+			return pFreeMap->load(pPage);
 		}
  
 		return true;
 	}
 	bool CFreePageManager::load()
 	{
-		for (size_t i = 0, sz = m_FreeMaps.size(); i < sz; ++i)
+		return true;
+	}
+	bool CFreePageManager::save()
+	{
+		TMapFreeMaps::iterator it = m_FreeMaps.begin();
+		TMapFreeMaps::iterator end = m_FreeMaps.end();
+
+		for (; it != end; ++it)
 		{
-			FileFreeMap& freeMap = m_FreeMaps[i];
-			if(freeMap.m_bChange)
+			FileFreeMap* pFreeMap = it->second;
+			if(pFreeMap->m_bChange)
 			{
-				CFilePage* pPage = m_pStorage->getFilePage(freeMap.m_nAddr, false);
+				CFilePage* pPage = m_pStorage->getFilePage(pFreeMap->m_nAddr, false);
 				if(!pPage)
 				{
 					//TO DO Logs
 					return false;
 				}
-				freeMap.save(pPage);
-				freeMap.m_bChange = false;
+				pFreeMap->save(pPage);
+				pFreeMap->m_bChange = false;
 				m_pStorage->saveFilePage(pPage);
 			}
 		}
-		return true;
-	}
-	bool CFreePageManager::save()
-	{
 		return true;
 		
 	}
 	bool CFreePageManager::addPage(__int64 nAddr)
 	{
-		for (size_t i = 0, sz = m_FreeMaps.size(); i < sz; ++i)
-		{
-			FileFreeMap& freeMap = m_FreeMaps[i];
-			if(freeMap.m_nBeginAddr <= nAddr && freeMap.m_nEndAddr >= nAddr)
-			{
-				freeMap.setBit(nAddr, true);
-				freeMap.m_bChange = true;
-				return true;
-			}
-		}
-		if(!AddFreeMap(m_pStorage->getNewPageAddr(), true))
+		 
+		if(!AddFreeMap(m_pStorage->getNewPageAddr(), 1, true))
 			return false;
 		return addPage(nAddr);
 	}
 
 	bool CFreePageManager::removeFromFreePage(int64 nAddr)
 	{
-		for (size_t i = 0, sz = m_FreeMaps.size(); i < sz; ++i)
+
+		TMapFreeMaps::iterator it = m_FreeMaps.find(nAddr/(1 + m_nAddrLen));
+
+		if(it == m_FreeMaps.end())
 		{
-			FileFreeMap& freeMap = m_FreeMaps[i];
-			if(freeMap.m_nBeginAddr <= nAddr && freeMap.m_nEndAddr >= nAddr)
+			AddFreeMap(m_pStorage->getNewPageAddr(), nAddr/(1 + m_nAddrLen), true);
+			it = m_FreeMaps.find(nAddr);
+			if(it == m_FreeMaps.end())
 			{
-				assert(freeMap.getBit(nAddr));
-				freeMap.setBit(nAddr, false);
-				freeMap.m_bChange = true;
-				return true;
+				//TO DO LOg
+				return false;
 			}
 		}
-		return false;
+			
+		FileFreeMap* pFreeMap = it->second;
+
+		assert(pFreeMap->getBit(nAddr));
+		pFreeMap->setBit(nAddr, false);
+		pFreeMap->m_FreePages.push(nAddr);
+		pFreeMap->m_bChange = true;
+		return true;
+	
 	}
 	
 	
@@ -156,12 +163,12 @@ namespace embDB
 	{
 		for (size_t i = 0, sz = m_FreeMaps.size(); i < sz; ++i)
 		{
-			if(m_FreeMaps[i].m_FreePages.empty())
+			if(m_FreeMaps[i]->m_FreePages.empty())
 				continue;
 
-			FileFreeMap& freeMap = m_FreeMaps[i];
-			int64 nAddr = freeMap.m_FreePages.top();
-			//freeMap.m_BitMap.setBit(nAddr, false);
+			FileFreeMap* pFreeMap = m_FreeMaps[i];
+			int64 nAddr = pFreeMap->m_FreePages.top();
+			//pFreeMap->m_BitMap.setBit(nAddr, false);
 			return nAddr;
 		}
 		return -1;

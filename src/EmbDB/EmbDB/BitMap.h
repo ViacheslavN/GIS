@@ -11,10 +11,12 @@ namespace embDB
 	{
 		public:
 			CBitMap();
+			CBitMap(uint32 nSizeInByte);
 			CBitMap(byte *pBuf, uint32 nSize);
 			CBitMap(const CBitMap&);
 			~CBitMap();
 			
+
 			void setBits(byte *pBuf, uint32 nSize);
 			byte *getBits();
 			uint32 getBitSize() const;

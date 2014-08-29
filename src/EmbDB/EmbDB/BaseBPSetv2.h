@@ -918,13 +918,16 @@ namespace embDB
 		pLeafNode->removeByIndex(it.m_nIndex);
 		pNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
 		m_ChangeNode.insert(pNode);
+
+		int nFoundIndex = pNode->m_nFoundIndex;
+
 		TBTreeNode *pParentNode = getNode(pNode->m_nParent);
 		if(pLeafNode->size() >  m_pTransaction->getPageSize()/2)
 		{
 
 			if(pNode->m_nFoundIndex != -1 && pParentNode->isKey(key, pNode->m_nFoundIndex))
 			{
-				TBTreeNode* pIndexNode = getNode(pParentNode->key(pNode->m_nFoundIndex ));
+				TBTreeNode* pIndexNode = getNode(pParentNode->link(pNode->m_nFoundIndex ));
 				pParentNode->updateKey(pNode->m_nFoundIndex , pIndexNode->key(0));
 				pParentNode->setFlags(CHANGE_NODE, true);
 				m_ChangeNode.insert(pParentNode);
@@ -972,7 +975,7 @@ namespace embDB
 			{
 				pLeafNodeLeft = getNode(pParentNode->link(pNode->m_nFoundIndex - 1));
 				pLeafNodeLeft->m_nFoundIndex = pNode->m_nFoundIndex - 1;
-				if((int32)pParentNode->count() > pParentNode->m_nFoundIndex)
+				if((int32)pParentNode->count() > pNode->m_nFoundIndex + 1)
 				{
 					pLeafNodeRight = getNode(pParentNode->link(pNode->m_nFoundIndex + 1));
 					pLeafNodeRight->m_nFoundIndex = pNode->m_nFoundIndex + 1;
@@ -980,7 +983,7 @@ namespace embDB
 			}
  
 			assert(pLeafNodeLeft != NULL || pLeafNodeRight != NULL);
-
+			assert(pLeafNodeLeft != pNode && (pLeafNodeRight != pNode) && (pLeafNodeLeft != pLeafNodeRight));
 
 			int nLeftsize =  pLeafNodeLeft ? pLeafNodeLeft->rowSize() : -1;
 			int nRightSize = pLeafNodeRight ? pLeafNodeRight->rowSize() : -1;
@@ -1017,9 +1020,15 @@ namespace embDB
 		{
 			bool bRet = true;
 			if(pDonorNode->m_nFoundIndex == -1)
+			{
 				bRet = UnionLeafNode(pParentNode, pDonorNode, pNode, false);
+				nFoundIndex = -1;
+			}
 			else
+			{
 				bRet = UnionLeafNode(pParentNode, pNode, pDonorNode, bLeft);
+				nFoundIndex = pNode->m_nFoundIndex;
+			}
 			if(!bRet)
 			{
 				return false;
@@ -1030,11 +1039,12 @@ namespace embDB
 			if(!AlignmentLeafNode(pParentNode, pNode,  pDonorNode,  bLeft))
 				return false;
 
+			nFoundIndex = pNode->m_nFoundIndex;
 		}
-		if(pNode->m_nFoundIndex != -1 && pParentNode->isKey(key, pNode->m_nFoundIndex))
+		if(nFoundIndex != -1 && pParentNode->isKey(key, nFoundIndex))
 		{
-			TBTreeNode* pIndexNode = getNode(pParentNode->key(pNode->m_nFoundIndex ));
-			pParentNode->updateKey(pNode->m_nFoundIndex , pIndexNode->key(0));
+			TBTreeNode* pIndexNode = getNode(pParentNode->link(nFoundIndex));
+			pParentNode->updateKey(nFoundIndex, pIndexNode->key(0));
 			pParentNode->setFlags(CHANGE_NODE, true);
 			m_ChangeNode.insert(pParentNode);
 		}
@@ -1086,6 +1096,8 @@ namespace embDB
 		pParentNode->removeByIndex(pDonorNode->m_nFoundIndex);
 		if(bLeft && pLeafNode->m_nFoundIndex != -1)
 		{
+			pLeafNode->m_nFoundIndex--;
+			assert(pLeafNode->m_nFoundIndex >= 0);
 			pParentNode->updateKey(pLeafNode->m_nFoundIndex, pLeafNode->key(0));
  		}
  
@@ -1150,7 +1162,7 @@ namespace embDB
 
 			if(pCheckNode->m_nFoundIndex != -1 && pParentNode->isKey(key, pCheckNode->m_nFoundIndex ))
 			{
-				TBTreeNode* pIndexNode = getNode(pCheckNode->key(pCheckNode->m_nFoundIndex ));
+				TBTreeNode* pIndexNode = getNode(pCheckNode->link(pCheckNode->m_nFoundIndex ));
 				pParentNode->updateKey(pCheckNode->m_nFoundIndex, pIndexNode->key(0));
 				pParentNode->setFlags(CHANGE_NODE, true);
 				m_ChangeNode.insert(pParentNode);
@@ -1192,7 +1204,7 @@ namespace embDB
 				{
 					pLeafNodeLeft = getNode(pParentNode->link(pCheckNode->m_nFoundIndex - 1));
 					pLeafNodeLeft->m_nFoundIndex = pCheckNode->m_nFoundIndex - 1;
-					if((int32)pParentNode->count() > pParentNode->m_nFoundIndex)
+					if((int32)pParentNode->count() > pCheckNode->m_nFoundIndex + 1)
 					{
 						pLeafNodeRight = getNode(pParentNode->link(pCheckNode->m_nFoundIndex + 1));
 						pLeafNodeRight->m_nFoundIndex = pCheckNode->m_nFoundIndex + 1;
@@ -1200,6 +1212,7 @@ namespace embDB
 				}
 
 				assert(pLeafNodeLeft != NULL || pLeafNodeRight != NULL);
+				assert(pLeafNodeLeft != pCheckNode && (pLeafNodeRight != pCheckNode) && (pLeafNodeLeft != pLeafNodeRight));
 
 
 				int nLeftsize =  pLeafNodeLeft ? pLeafNodeLeft->rowSize() : -1;
@@ -1238,7 +1251,10 @@ namespace embDB
 			if(bUnion) 
 			{
 				if(pDonorNode->addr() == pParentNode->less())
+				{
 					UnionInnerNode(pParentNode, pDonorNode, pCheckNode, false);
+					pCheckNode = pDonorNode;
+				}
 				else
 					UnionInnerNode(pParentNode, pCheckNode, pDonorNode, bLeft);
 				/*if(bLess)
@@ -1270,6 +1286,8 @@ namespace embDB
 		pParentNode->removeByIndex(pDonorNode->m_nFoundIndex);
 		if(bLeft && pNode->m_nFoundIndex != -1)
 		{
+			pNode->m_nFoundIndex--;
+			assert(pNode->m_nFoundIndex >= 0);
 			pParentNode->updateKey(pNode->m_nFoundIndex, pNode->key(0));
 		}
 		deleteNode(pDonorNode);
