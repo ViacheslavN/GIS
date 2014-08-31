@@ -29,7 +29,7 @@ namespace embDB
 			
 	    private:
 
-			bool AddFreeMap(int64 nAddr, uint32 nBlockNum,  bool bNew);
+			bool AddFreeMap(int64 nAddr, uint64 nBlockNum,  bool bNew);
 			typedef TSimpleStack<int64> TFreePages;
 
 			struct FileFreeMap
@@ -50,7 +50,6 @@ namespace embDB
 					return m_BitMap.setBit(uint32(nBit - m_nBeginAddr), bSet);
 				}
 				int64 m_nAddr;
-				int64 nBlockNum;
 				/*
 
 				a[i] = i * (Len + 1)
@@ -63,9 +62,9 @@ namespace embDB
 				TFreePages m_FreePages;
 				CBitMap		m_BitMap;
 				bool m_bChange;
-				uint32 m_nBlockNum;
-				uint64 m_nBeginAddr;
-				uint64 m_nEndAddr;
+				uint64 m_nBlockNum;
+				int64 m_nBeginAddr;
+				int64 m_nEndAddr;
 				uint32 m_nAddrLen;
 				bool load(CFilePage* pPage )
 				{
@@ -109,13 +108,16 @@ namespace embDB
 						}
 
 					}
+
+					return true;
 				}
 				bool save(CFilePage* pPage )
 				{
 					CommonLib::FxMemoryWriteStream stream;
 					stream.attach(pPage->getRowData(), pPage->getPageSize());
 					sFilePageHeader header (stream, STORAGE_PAGE, STORAGE_FREE_MAP_PAGE);
-					stream.write(m_nBeginAddr);
+					stream.write(m_nBlockNum);
+				//	m_BitMap.setBits(stream.buffer() + stream.pos(), stream.size() - stream.pos());
 					stream.write(m_BitMap.getBits(), m_BitMap.size());
 					header.writeCRC32(stream);
 					return true;
@@ -127,7 +129,7 @@ namespace embDB
 				//bitstream
 			};
 
-			typedef std::map<uint32, FileFreeMap*> TMapFreeMaps;
+			typedef std::map<uint64, FileFreeMap*> TMapFreeMaps;
 		private:
 			
 			CStorage* m_pStorage;

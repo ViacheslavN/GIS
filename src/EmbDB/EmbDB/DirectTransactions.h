@@ -3,7 +3,7 @@
 
 #include "IDBTransactions.h"
 #include "IDBStorage.h"
-
+#include <set>
 namespace embDB
 {
 	class CDirectTransactions : public IDBTransactions
@@ -18,7 +18,7 @@ namespace embDB
 
 		//ITransactions
 		virtual bool begin(){return true;}
-		virtual bool commit(){return m_pDBStorage->commit();}
+		virtual bool commit();
 		virtual bool rollback(){return true;}
 		virtual bool restore(){return true;}
 		bool close(){return true;}
@@ -73,6 +73,8 @@ namespace embDB
 		IDBStorage* m_pDBStorage;
 		bool m_bError;
 		CommonLib::str_t m_sFileName;
+		std::set<int64> m_setRemovePages;
+		std::set<int64> m_setPagesFromFree;
 };
 }
 #endif

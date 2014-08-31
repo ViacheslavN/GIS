@@ -25,6 +25,8 @@ namespace embDB
 			bool getBit(uint32 nBit) const;
 			bool getBit(uint32 nBit, uint32& nVal) const;
 			bool setBit(uint32 nBit, bool bBit);
+
+			bool init(uint32 nSize);
 	private:
 		byte *m_pBuf;
 		uint32 m_nSize;

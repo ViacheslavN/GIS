@@ -323,6 +323,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tranUndoset.data", &storage, 1);
 			tran.begin();
 			insertINBTreeSet <TBtree, TTran,  TKey>(nCacheBPTreeSize, 0, nCount, nStep, &tran, alloc, nTreeRootPage);
+			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 		}
 	/*	{
 			TTran tran1(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tranUndo1.data", &storage, 1);
@@ -348,6 +349,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			TTran remtran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tranRemUndo.data", &storage, 1);
 			remtran.begin();
 			removeFromBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, mRemConst, 0, nStep, &remtran, alloc, nTreeRootPage);
+			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 		}
 
 		{
@@ -360,6 +362,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tranUndoset.data", &storage, 1);
 			tran.begin();
 			insertINBTreeSet <TBtree, TTran,  TKey>(nCacheBPTreeSize, 0, mRemConst, nStep, &tran, alloc, nTreeRootPage);
+			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 		}
 
 		{
@@ -380,6 +383,5 @@ void TestBRteeSet()
 	__int64 nCount = 1000000;
 		size_t nPageSize = 8192;
 
-		int32 n = floor((double)15/10);
 	testBPTreeSetImpl<TBDoubleSet,  embDB::CDirectTransactions, int64>(nCount, nPageSize, 5000, 1000);
 }

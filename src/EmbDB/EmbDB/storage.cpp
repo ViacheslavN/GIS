@@ -111,7 +111,7 @@ namespace embDB
 			assert(false);
 			m_nLastAddr =  nAddr + 1;
 		}
-		if(m_Chache.size() > m_nMaxPageBuf)
+		if(m_Chache.size() > (size_t)m_nMaxPageBuf)
 		{
 			CFilePage* pPage = m_Chache.remove_back();
 			delete pPage;
@@ -186,7 +186,7 @@ namespace embDB
 			uint32 nWCnt = m_pFile.writeFile((void*)pPage->getRowData(), (uint32)m_nPageSize );
 			assert(nWCnt != 0);
 		}
-		if(m_Chache.size() > m_nMaxPageBuf)
+		if(m_Chache.size() > (size_t)m_nMaxPageBuf)
 		{
 			 CFilePage* pBackPage = m_Chache.remove_back();
 			 if(pBackPage)
@@ -254,7 +254,7 @@ namespace embDB
 		if(!pPage)
 			return false;
 
-		int64 nFreeRootPage = m_FreePageManager.getFreePage();
+		int64 nFreeRootPage = m_FreePageManager.getRoot();
 		CommonLib::FxMemoryWriteStream stream;
 		stream.attach(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream, STORAGE_PAGE, STORAGE_INFO_PAGE);

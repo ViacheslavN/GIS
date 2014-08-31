@@ -50,6 +50,20 @@ namespace embDB
 
 		m_nSize = bm.m_nSize; 
 	}
+
+	bool CBitMap::init(uint32 nSize)
+	{
+		if(nSize == 0)
+			return false;
+
+		if(m_pBuf)
+			delete m_pBuf;
+
+		m_pBuf = new byte[nSize];
+		memset(m_pBuf, 0, nSize);
+		m_nSize = nSize; 
+		return true;
+	}
 	CBitMap::~CBitMap()
 	{
 		if(m_pBuf)
