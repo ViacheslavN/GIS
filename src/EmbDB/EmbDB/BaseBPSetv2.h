@@ -306,10 +306,14 @@ namespace embDB
 				CFilePage* pFilePage = m_pTransaction->getFilePage(nAddr);
 				assert(pFilePage);
 				if(!pFilePage)
+				{
 					return NULL;
+				}
 				pBNode = new TBTreeNode(-1, m_pAlloc, nAddr, m_bMulti, false, m_bCheckCRC32, (ICompressorParams *)m_InnerCompParams.get(), (ICompressorParams *)m_LeafCompParams.get());
 				if(!pBNode->LoadFromPage(pFilePage, m_pTransaction))
+				{
 					return NULL;
+				}
 				if(bCheckCache)
 				{
 					if(m_Chache.size() > m_nChacheSize)
@@ -698,7 +702,7 @@ namespace embDB
 		short nType = 0;
 		if(m_pRoot->isLeaf())
 		{
-			return iterator(this, m_pRoot, m_pRoot->leaf_lower_bound(key, nType));
+			return iterator(this, m_pRoot, m_pRoot->binary_search(key));
 		}
 		int32 nIndex = -1;
 		int64 nNextAddr = m_pRoot->inner_lower_bound(key, nType, nIndex);
@@ -711,6 +715,13 @@ namespace embDB
 				break;
 			}
 			TBTreeNode* pNode = getNode(nNextAddr);
+			if(!pNode)
+			{
+
+				ClearChache();
+				return iterator(this,  NULL,-1);
+				break;
+			}
 			pNode->m_nParent = nParent;
 			pNode->m_nFoundIndex = nIndex;
 			nType = 0;
@@ -1321,6 +1332,13 @@ namespace embDB
 		{
 			const TKey& minKey = getMinimumKey(getNode(pDonorNode->less()));
 			pParentNode->updateKey(pDonorNode->m_nFoundIndex, minKey);
+			pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
+			m_ChangeNode.insert(pParentNode);
+		}
+		else
+		{
+			const TKey& minKey = getMinimumKey(getNode(pNode->less()));
+			pParentNode->updateKey(pNode->m_nFoundIndex, minKey);
 			pParentNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
 			m_ChangeNode.insert(pParentNode);
 		}

@@ -4,6 +4,7 @@
 #include "IDBTransactions.h"
 #include "IDBStorage.h"
 #include <set>
+#include <iostream>
 namespace embDB
 {
 	class CDirectTransactions : public IDBTransactions
@@ -50,6 +51,7 @@ namespace embDB
 
 		virtual void error(const CommonLib::str_t& sError, uint32 nErrorID = 0)
 		{
+			std::cout << "Tran Error: " << sError.cstr() << std::endl;
 			m_bError = true;
 		}
 		virtual uint32 getLogLevel() const 

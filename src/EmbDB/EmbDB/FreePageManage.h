@@ -52,8 +52,8 @@ namespace embDB
 				int64 m_nAddr;
 				/*
 
-				a[i] = i * (Len + 1)
-				b[i] = Len  + i * (Len + 1)
+				a[i] = i * Len
+				b[i] =  i * Len - 1
 
 
 				
@@ -83,15 +83,17 @@ namespace embDB
 					}
 		
 					byte nbyte;
-					m_nBlockNum = stream.readIntu32();
+					m_nBlockNum = stream.readIntu64();
 
-					assert(m_nAddrLen == m_BitMap.getBitSize() * 8);
-					m_nBeginAddr = m_nBlockNum * (1 + m_nAddrLen);
-					m_nEndAddr = m_nBeginAddr +  m_nAddrLen;
+					m_nAddr = pPage->getAddr();
+					m_nBeginAddr = m_nBlockNum * m_nAddrLen;
+					m_nEndAddr = m_nBeginAddr +  m_nAddrLen - 1;
 
-					m_BitMap.setBits(stream.buffer() + stream.pos(), stream.size() - stream.pos());
-					uint64 nPageAddr;
-					for (size_t i = 0, sz = stream.size() - stream.pos(); i < sz; ++i )
+				//	m_BitMap.setBits(stream.buffer() + stream.pos(), stream.size() - stream.pos());
+					m_BitMap.setBits(stream.buffer() + stream.pos(), m_nAddrLen/8);
+					//assert(m_nAddrLen == m_BitMap.getBitSize());
+					uint64 nPageAddr = m_nBlockNum * m_nAddrLen;
+					for (size_t i = 0; i < m_nAddrLen/8; ++i )
 					{
 
 						stream.read(nbyte);
@@ -140,6 +142,8 @@ namespace embDB
 
 			TMapFreeMaps m_FreeMaps;
 			uint32 m_nAddrLen;
+
+			bool m_bNewFreeMap;
 
 	
 	};

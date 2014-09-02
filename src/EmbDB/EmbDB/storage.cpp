@@ -2,6 +2,7 @@
 #include "storage.h"
 #include "DBMagicSymbol.h"
 #include "CommonLibrary/FixedMemoryStream.h"
+#include <iostream>
 namespace embDB
 {
 	CStorage::CStorage(CommonLib::alloc_t *pAlloc, int32 nCacheSize) :
@@ -73,7 +74,7 @@ namespace embDB
 		}
 		m_Chache.m_set.clear();
 		m_nLastAddr = 0;
-		return m_pFile.closeFile();
+	 	return m_pFile.closeFile();
 	}
 	CStorage::~CStorage()
 	{
@@ -104,6 +105,11 @@ namespace embDB
 			assert(bRet);
 			uint32 nWCnt = m_pFile.readFile((void*)pPage->getRowData(),  (uint32)m_nPageSize );
 			assert(nWCnt != 0);
+			if(nWCnt == 0)
+			{
+				std::cout <<"Error read page addr: " << nAddr << "  set file : " << nAddr * m_nPageSize << std::endl;
+				return NULL;
+			}
 		}
 		
 		if(m_nLastAddr <= nAddr)
@@ -130,7 +136,7 @@ namespace embDB
 			return false;
 
 		 CFilePage* pFindPage = m_Chache.remove(pPage->getAddr());
-		 int64 nAddr = pPage->getAddr();
+		 int64 nAddr = pFindPage->getAddr();
 		 if(pFindPage)
 		 {
 			 delete pFindPage;
@@ -145,6 +151,7 @@ namespace embDB
 	}
 	bool CStorage::dropFilePage(int64 nAddr)
 	{		
+ 
 		if(!m_bCommitState)
 			return false;
 
@@ -153,8 +160,6 @@ namespace embDB
 		{
 			delete pPage;
 		}
-
-		//return true;
 		return m_FreePageManager.addPage(nAddr);
 	}
 	bool CStorage::isValid() const{

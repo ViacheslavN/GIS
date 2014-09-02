@@ -55,7 +55,7 @@ struct sFilePageHeader
 
 	void writeCRC32(CommonLib::FxMemoryWriteStream& stream)
 	{
-		uint32 nCRC = Crc32(stream.buffer() + sizeof(uint32), stream.size());
+		uint32 nCRC = Crc32(stream.buffer() + sizeof(uint32), stream.size() - sizeof(uint32));
 		size_t pos = stream.pos();
 		stream.seek(0, CommonLib::soFromBegin);
 		stream.write(nCRC);
@@ -69,7 +69,7 @@ struct sFilePageHeader
 		stream.read(m_nSubObjectPageType);
 		if(bCalcCRC)
 		{
-			m_nCalcCRC32 = Crc32(stream.buffer() + sizeof(uint32), stream.size());
+			m_nCalcCRC32 = Crc32(stream.buffer() + sizeof(uint32), stream.size() - sizeof(uint32));
 		}
 	}
 

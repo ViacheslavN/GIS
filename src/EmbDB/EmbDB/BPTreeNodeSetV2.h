@@ -117,7 +117,7 @@ namespace embDB
 			if( m_bCheckCRC32 && !pFilePage->isCheck() && !header.isValid())
 			{
 				CommonLib::str_t sMsg;
-				sMsg.format(_T("BTREE: Page %I64d Error CRC for node page"), pFilePage->getAddr());
+				sMsg.format(_T("BTREE: Page %I64d Error CRC for node page (crc page: %ud, calc crc %ud)"), pFilePage->getAddr(), header.m_nCRC32, header.m_nCalcCRC32);
 				pTransactions->error(sMsg);
 				return false;
 			}

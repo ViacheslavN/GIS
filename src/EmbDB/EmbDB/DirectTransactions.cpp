@@ -20,12 +20,12 @@ namespace embDB
 	}
 	CFilePage* CDirectTransactions::getFilePage(int64 nAddr, bool bRead )
 	{
-		CFilePage *pFilePage =  m_pDBStorage->getFilePage(nAddr, bRead);
-		if(!pFilePage)
+		return  m_pDBStorage->getFilePage(nAddr, bRead);
+		/*if(!pFilePage)
 			return NULL;
 		if(pFilePage->getFlags() & eFP_FROM_FREE_PAGES)
 			m_setPagesFromFree.insert(pFilePage->getAddr());
-		return pFilePage;
+		return pFilePage;*/
 	}
 	void CDirectTransactions::dropFilePage(CFilePage* pPage)
 	{
@@ -49,7 +49,7 @@ namespace embDB
 	}
 	void CDirectTransactions::saveFilePage(CFilePage* pPage)
 	{
-		m_pDBStorage->saveFilePage(pPage);
+		m_pDBStorage->saveFilePage(pPage, true);
 	}
 	size_t CDirectTransactions::getPageSize() const
 	{
@@ -76,6 +76,7 @@ namespace embDB
 			for (;it != end; ++it)
 			{
 				m_pDBStorage->dropFilePage((*it));
+				 
 			}
 
 		}

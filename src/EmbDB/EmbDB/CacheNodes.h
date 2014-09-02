@@ -124,7 +124,7 @@ namespace embDB
 			SCacheElem& el = pNode->m_val;
 			TCacheEl* pListEl = el.pListEl;
 			pObj = pListEl->obj_;
-			m_set.deleteNode(pNode, true, true);
+		
 			
 			if(m_pBack == m_pFirst)
 			{
@@ -150,7 +150,7 @@ namespace embDB
 				}
 				m_pAlloc->free(pListEl);
 			}
-
+			m_set.deleteNode(pNode, true, true);
 			return pObj;
 
 		}
