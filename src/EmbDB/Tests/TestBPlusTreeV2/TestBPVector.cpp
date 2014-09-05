@@ -4,6 +4,7 @@
 #include "../../EmbDB/BPVector.h"
 #include <vector>
 #include <algorithm>
+#include <set>
 template<class _Ty>
 	struct comp
 	{	
@@ -36,6 +37,15 @@ void TestInsert()
 	embDB::TBPVector<int32> vec1;
 	embDB::TBPVector<int32> vec3;
 
+	std::set<int> set;
+
+	set.insert(1);
+	set.insert(2);
+	set.insert(3);
+	set.insert(8);
+	set.insert(5);
+
+	std::upper_bound(set.begin(), set.end(), 4);
 
 	vec1.push_back(2);
 	vec1.push_back(3);

@@ -38,9 +38,13 @@ namespace embDB
 	};*/
 
 
-	template <class _TKey,	class _TLink, class _TComp, class _Transaction,
-	class _TInnerCompess = BPInnerNodeSimpleCompressorV2<_TKey, _TLink>,
-	class _TLeafCompess = BPLeafNodeSetSimpleCompressorV2<_TKey>  >
+	template <	class _TKey, class _TComp, class _Transaction,
+	class _TInnerCompess = BPInnerNodeSimpleCompressorV2<_TKey>,
+	class _TLeafCompess = BPLeafNodeSetSimpleCompressorV2<_TKey>,  
+	class _TInnerNode = BPTreeInnerNodeSetv2<_TKey, _TComp, _Transaction, _TInnerCompess>,
+	class _TLeafNode =  BPTreeLeafNodeSetv2<_TKey,  _TComp, _Transaction, _TLeafCompess>, 
+	class _TBTreeNode = BPTreeNodeSetv2<_TKey, _TComp, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode>
+	>
 	class TBPlusTreeSetV2 /*: public IBPTree<_TKey, _TValue>*/
 	{
 	public:
@@ -88,23 +92,21 @@ namespace embDB
 		//typedef _Traits Traits;
 		typedef _TKey      TKey;
 		typedef _TComp	   TComp;
-		typedef _TLink     TLink;
+		typedef int64     TLink;
 		typedef _Transaction  Transaction;
 		typedef _TInnerCompess  TInnerCompess;
 		typedef _TLeafCompess  TLeafCompess;
-
-		typedef BPTreeNodeSetv2<TKey, TLink, TComp, Transaction, TInnerCompess, TLeafCompess>  TBTreeNode;
-		typedef typename TBTreeNode::TInnerNode TInnerNode;
-		typedef typename TBTreeNode::TLeafNode TLeafNode;
-
+		typedef _TInnerNode TInnerNode;
+		typedef _TLeafNode	TLeafNode;
+		typedef _TBTreeNode TBTreeNode;
+		//typedef _TIerator iterator;
+ 
 		typedef CompressorParamsBase<Transaction> TCompressorParamsBase;
-		
-		
-		typedef BPTreeStatistics<_TLink, _Transaction, _TKey> BPTreeStatisticsInfo;
-	/*	typedef TBPSetIterator<TKey,  TLink, TComp, Transaction,  TInnerMemSet, 
-			TLeafMemSet, TInnerCompess,	TLeafCompess ,TInnerNode , TLeafNode,  TBTreeNode> iterator;*/
-
-		typedef TBPSetIteratorV2<TKey, TLink, TComp,Transaction, TInnerCompess, TLeafCompess> iterator;
+		typedef BPTreeStatistics<int64, _Transaction, _TKey> BPTreeStatisticsInfo;
+ 
+/*
+		typedef TBPSetIteratorV2<TKey, TComp,Transaction, TInnerCompess, TLeafCompess,
+		TInnerNode, TLeafNode, TBTreeNode> iterator;*/
 		  
 
 		void setTransactions(Transaction *pTransaction)
@@ -345,6 +347,14 @@ namespace embDB
 	}
 	void ClearChache()
 	{
+		TChangeNode::iterator it = m_ChangeNode.begin();
+		for(; !it.isNull(); ++it)
+		{
+			TBTreeNode* pChNode = *it;
+			pChNode->setFlags(BUSY_NODE, false);
+		}
+		m_ChangeNode.clear();
+
 		if(m_Chache.size() <= m_nChacheSize)
 			return;
 		for (size_t i = 0, sz = m_Chache.size(); i < sz - m_nChacheSize; i++)
@@ -414,9 +424,42 @@ namespace embDB
 		return true;
 	}
 
-	bool insert(const TKey& key)
+
+	TBTreeNode* findLeafNodeForInsert(const TKey& key)
 	{
 		if(!m_pRoot)
+		{
+			if(!checkRoot())
+				return NULL;
+		}
+		if(m_pRoot-> isLeaf())
+		{
+			return m_pRoot;
+		}
+		else
+		{
+			int64 nNextAddr = m_pRoot->findNodeInsert(key);
+			int64 nParentAddr =  m_pRoot->m_nPageAddr;
+			while (nNextAddr != -1)
+			{
+				TBTreeNode* pNode = getNode(nNextAddr);
+				pNode->m_nParent = nParentAddr;
+				if(pNode->isLeaf())
+				{
+					return pNode;
+					break;
+				}
+				nParentAddr = pNode->m_nPageAddr;
+				nNextAddr= pNode->findNodeInsert(key);
+			}
+		}
+
+		return NULL;
+	}
+
+	bool insert(const TKey& key)
+	{
+		/*if(!m_pRoot)
 		{
 			if(!checkRoot())
 				return false;
@@ -444,63 +487,41 @@ namespace embDB
 					nParentAddr = pNode->m_nPageAddr;
 					nNextAddr= pNode->findNodeInsert(key);
 				}
-			}
-			TChangeNode::iterator it = m_ChangeNode.begin();
-			for(; !it.isNull(); ++it)
+			}*/
+		
+			bool bRet = false;
+			TBTreeNode* pNode = findLeafNodeForInsert(key);
+			if(pNode)
 			{
-				TBTreeNode* pChNode = *it;
-				pChNode->setFlags(BUSY_NODE, false);
+				bRet = InsertInLeafNode(pNode, key);
 			}
-			m_ChangeNode.clear();
- 			ClearChache();
-			if(bRet)
-				m_BTreeInfo.AddKey(1);
-			return bRet;	
-		}
-	/*	template<class TKeyFunctor>
-		bool insertLast(TKeyFunctor& keyFunctor, TKey* pKey = NULL)
-		{
-
-			if(!m_pRoot)
-			{
-				if(!checkRoot())
-					return false;
-			}
-			TBTreeNode *pBNode = getLastLeafNode();
-			assert(pBNode);
-			assert(pBNode->isLeaf());
-			TLeftMemSetNode* pMemNode = pBNode->lastLeftMemSetNode();
-			TKey key = keyFunctor.inc(pMemNode->m_key);
-			if(pKey)
-				*pKey = key;
-			bool bRet = InsertInLeafNode(pBNode, key);
-			TChangeNode::iterator it = m_ChangeNode.begin();
-			for(; !it.isNull(); ++it)
-			{
-				TBTreeNode* pChNode = *it;
-				pChNode->setFlags(BUSY_NODE, false);
-			}
-			m_ChangeNode.clear();
 			ClearChache();
 			if(bRet)
 				m_BTreeInfo.AddKey(1);
 			return bRet;	
-		}*/
-	/*	TBTreeNode *getLastLeafNode()
+		}
+		template<class TIterator, class TKeyFunctor>
+		bool insertLast(TKeyFunctor& keyFunctor, TKey* pKey = NULL)
 		{
-			if(m_pRoot->isLeaf())
-				return m_pRoot;
-			TLink nParent = m_pRoot->addr();
-			TBTreeNode *pNode = getNode(m_pRoot->last());
-			while(!pNode->isLeaf())
-			{
-				pNode->m_nParent = nParent;
-				nParent = pNode->addr();
-				pNode = getNode(pNode->last());
-			}
-			pNode->m_nParent = nParent;
-			return pNode;
-		}*/
+
+			TIterator it = last();
+			if(!it.m_pCurLeafNode)
+				return false;
+			
+			TKey key;
+			if(it.m_nIndex == -1)
+				key = keyFunctor.begin();
+			else
+				key = keyFunctor.inc(it.key());
+
+			if(pKey)
+				*pKey = key;
+			bool bRet = InsertInLeafNode(pBNode, key);
+			ClearChache();
+			if(bRet)
+				m_BTreeInfo.AddKey(1);
+			return bRet;	
+		}
 		bool InsertInLeafNode(TBTreeNode *pNode, const TKey& key)
 		{
 			assert(pNode->isLeaf());
@@ -515,6 +536,11 @@ namespace embDB
 			
 			m_ChangeNode.insert(pNode);
 			m_nStateTree |= eBPTChangeLeafNode;
+		
+			return CheckLeafNode(pNode);
+		}
+		bool CheckLeafNode(TBTreeNode *pNode)
+		{
 			if(pNode->size() > m_pTransaction->getPageSize())
 			{
 
@@ -535,9 +561,9 @@ namespace embDB
 				}
 
 				m_nStateTree |= eBPTNewLeafNode;
-	
+
 				TBTreeNode* pNewLeafNode = newNode(false, true);
-				
+
 				splitLeafNode(pNode, pNewLeafNode, pParentNode);
 
 				pNewLeafNode->setFlags(CHANGE_NODE|BUSY_NODE, true);
@@ -558,7 +584,7 @@ namespace embDB
 					saveBTreeInfo();
 					return true;
 				}
-				
+
 				if(pParentNode->size() > m_pTransaction->getPageSize())
 				{
 					if(!splitInnerNode(pParentNode))
@@ -687,22 +713,23 @@ namespace embDB
 		}
 		return true;
 	}
-	iterator find(const TKey& key)  
+	template<class TIterator>
+	TIterator find(const TKey& key)
 	{
- 		if(m_nRootAddr == -1)
-			return iterator(this, NULL, -1);
-		
+		if(m_nRootAddr == -1)
+			return TIterator(this, NULL, -1);
+
 		if(!m_pRoot)
 		{
 			m_pRoot= getNode(m_nRootAddr, true); 
 		}
 		if(!m_pRoot)
-			return iterator(this, NULL, -1);
+			return TIterator(this, NULL, -1);
 
 		short nType = 0;
 		if(m_pRoot->isLeaf())
 		{
-			return iterator(this, m_pRoot, m_pRoot->binary_search(key));
+			return TIterator(this, m_pRoot, m_pRoot->binary_search(key));
 		}
 		int32 nIndex = -1;
 		int64 nNextAddr = m_pRoot->inner_lower_bound(key, nType, nIndex);
@@ -719,7 +746,7 @@ namespace embDB
 			{
 
 				ClearChache();
-				return iterator(this,  NULL,-1);
+				return TIterator(this,  NULL,-1);
 				break;
 			}
 			pNode->m_nParent = nParent;
@@ -728,32 +755,32 @@ namespace embDB
 			if(pNode->isLeaf())
 			{
 				ClearChache();
-				return iterator(this, pNode, pNode->binary_search(key));
+				return TIterator(this, pNode, pNode->binary_search(key));
 				break;
 			}
 			nNextAddr = pNode->inner_lower_bound(key, nType, nIndex);
 			nParent = pNode->addr();
 		}
 		ClearChache();
-		return iterator(this, NULL,-1);
- 
+		return TIterator(this, NULL,-1);
 	}
 
-	iterator begin()
+	template<class TIterator>
+	TIterator begin()
 	{
 		TBTreeNode* pFindBTNode = NULL;
 		if(m_nRootAddr == -1)
 			loadBTreeInfo();
 		if(m_nRootAddr == -1)
-			return iterator(this, NULL, -1);
+			return TIterator(this, NULL, -1);
 
 		if(!m_pRoot)
 			m_pRoot = getNode(m_nRootAddr, true); 
 		if(!m_pRoot)
-			return iterator(this, NULL, NULL);
+			return TIterator(this, NULL, NULL);
 		if(m_pRoot->isLeaf())
 		{
-			return iterator(this, m_pRoot, 0);
+			return TIterator(this, m_pRoot, 0);
 		}
 		int64 nNextAddr = m_pRoot->less();
 		int64 nParent = m_pRoot->addr();
@@ -775,24 +802,24 @@ namespace embDB
 			nParent = pNode->addr();
 		}
 		ClearChache();
-		return iterator(this, pFindBTNode, 0);
+		return TIterator(this, pFindBTNode, 0);
 	}
-
-	iterator last()
+	template<class TIterator>
+	TIterator last()
 	{
 		TBTreeNode* pFindBTNode = NULL;
 		if(m_nRootAddr == -1)
 			loadBTreeInfo();
 		if(m_nRootAddr == -1)
-			return iterator(this, NULL, 0);
+			return TIterator(this, NULL, 0);
 
 		if(!m_pRoot)
 			m_pRoot = getNode(m_nRootAddr, true); 
 		if(!m_pRoot)
-			return iterator(this, NULL, 0);
+			return TIterator(this, NULL, 0);
 		if(m_pRoot->isLeaf())
 		{
-			return iterator(this, m_pRoot, m_pRoot->count()  - 1);
+			return TIterator(this, m_pRoot, m_pRoot->count()  - 1);
 		}
 		int64 nNextAddr = m_pRoot->backLink();
 		int64 nParent = m_pRoot->addr();
@@ -816,27 +843,27 @@ namespace embDB
 			nIndex = pNode->count() - 1;
 		}
 		ClearChache();
-		return iterator(this, pFindBTNode, pFindBTNode ? pFindBTNode->count() - 1 : -1);
+		return TIterator(this, pFindBTNode, pFindBTNode ? pFindBTNode->count() - 1 : -1);
 	}
-
-	iterator upper_bound(const TKey& key)
+	template<class TIterator>
+	TIterator upper_bound(const TKey& key)
 	{
 		 
 		uint32 nIndex = 0;
 		if(m_nRootAddr == -1)
 			loadBTreeInfo();
 		if(m_nRootAddr == -1)
-			return iterator(this, NULL, 0);
+			return TIterator(this, NULL, 0);
 
 		if(!m_pRoot)
 			m_pRoot = getNode(m_nRootAddr, true); 
 		if(!m_pRoot)
-			return iterator(this, NULL, 0);
+			return TIterator(this, NULL, 0);
 
 	 
 		if(m_pRoot->isLeaf())
 		{
-			return iterator(this, m_pRoot, m_pRoot->leaf_upper_bound(key));
+			return TIterator(this, m_pRoot, m_pRoot->leaf_upper_bound(key));
 		}
 		int32 nIndex = -1;
 		int64 nNextAddr = m_pRoot->inner_upper_bound(key, nIndex);
@@ -854,34 +881,35 @@ namespace embDB
 			if(pNode->isLeaf())
 			{
 				ClearChache();
-				return iterator(this, pNode, pNode->leaf_upper_bound(key));
+				return TIterator(this, pNode, pNode->leaf_upper_bound(key));
 				break;
 			}
 			nNextAddr = pNode->inner_upper_bound(key, nIndex);
 			nParent = pNode->addr();
 		}
 		ClearChache();
-		return iterator(this, NULL,-1);
+		return TIterator(this, NULL,-1);
 	}
-	iterator lower_bound(const TKey& key)
+	template<class TIterator>
+	TIterator lower_bound(const TKey& key)
 	{
 		TBTreeNode* pFindBTNode = NULL;
 		uint32 nIndex = 0;
 		if(m_nRootAddr == -1)
 			loadBTreeInfo();
 		if(m_nRootAddr == -1)
-			return iterator(this, NULL, 0);
+			return TIterator(this, NULL, 0);
 
 		if(!m_pRoot)
 			m_pRoot = getNode(m_nRootAddr, true); 
 		if(!m_pRoot)
-			return iterator(this, NULL, 0);
+			return TIterator(this, NULL, 0);
 
 		short nType = 0;
 		if(m_pRoot->isLeaf())
 		{
 			
-			return iterator(this, m_pRoot, m_pRoot->leaf_lower_bound(key, nType));
+			return TIterator(this, m_pRoot, m_pRoot->leaf_lower_bound(key, nType));
 		}
 		int32 nIndex = -1;
 		int64 nNextAddr = m_pRoot->inner_lower_bound(key, nType, nIndex);
@@ -899,25 +927,25 @@ namespace embDB
 			if(pNode->isLeaf())
 			{
 				ClearChache();
-				return iterator(this, pNode, pNode->leaf_lower_bound(key, nType));
+				return TIterator(this, pNode, pNode->leaf_lower_bound(key, nType));
 				break;
 			}
 			nNextAddr = pNode->inner_lower_bound(key, nType, nIndex);
 			nParent = pNode->addr();
 		}
 		ClearChache();
-		return iterator(this, NULL,-1);
+		return TIterator(this, NULL,-1);
 	}
-
+	/*template<class TIterator>
 	bool remove(const TKey& key)
 	{
 		iterator it = find(key);
 		if(it.isNull())
 			return false;
 		return remove(it);
-	}
-
-	bool remove(iterator it)
+	}*/
+	template<class TIterator>
+	bool remove(TIterator it)
 	{
 		if(it.isNull())
 			return false;
@@ -1374,36 +1402,73 @@ namespace embDB
 		std::auto_ptr<TCompressorParamsBase*> m_LeafCompParams;
 		std::auto_ptr<TCompressorParamsBase*> m_InnerCompParams;
 		uint32 m_nStateTree;
-
-		
 	};
-	/*template<class _TKey, class _TComp ,
-	class _TInnerCompess = BPInnerNodeSetSimpleCompressor<RBMap<_TKey, int64, _TComp> > ,
-	class _TLeafCompess = BPLeafNodeSetSimpleCompressor<RBSet<_TKey, _TComp> > ,
-	class _Transaction = IDBTransactions, 
-	class _TInnerMemSet = RBMap<_TKey, int64, _TComp>,	
-	class _TLeafMemSet = RBSet<_TKey, _TComp>,
-	class _TInnerNode = BPTreeInnerNodeSet<_TInnerCompess, _TInnerMemSet>,
-	class _TLeafNode = BPTreeLeafNodeSet<int64, _TLeafCompess, _TLeafMemSet>,	
-	class _TBTreeNode = BPTreeNodeSet< _Transaction, _TInnerNode, _TLeafNode> 
+
+
+
+	template <class _TKey,	class _TComp, class _Transaction,
+	class _TInnerCompess = BPInnerNodeSimpleCompressorV2<_TKey>,
+	class _TLeafCompess = BPLeafNodeSetSimpleCompressorV2<_TKey>,  
+	class _TInnerNode = BPTreeInnerNodeSetv2<_TKey, _TComp, _Transaction, _TInnerCompess>,
+	class _TLeafNode =  BPTreeLeafNodeSetv2<_TKey,  _TComp, _Transaction, _TLeafCompess>, 
+	class _TBTreeNode = BPTreeNodeSetv2<_TKey, _TComp, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode>
 	>
-	class TBPSet : public TBPlusTreeSet<_TKey, int64, _TComp, _Transaction, 
-		_TInnerMemSet, _TLeafMemSet, _TInnerCompess, _TLeafCompess,
-		_TInnerNode, 	_TLeafNode,	_TBTreeNode	>
+	class TBPSetV2 : public TBPlusTreeSetV2<_TKey, _TComp, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode, _TBTreeNode>
 	{
 	public:
+		typedef TBPlusTreeSetV2<_TKey, _TComp, _Transaction, _TInnerCompess, 
+			_TLeafCompess, _TInnerNode, _TLeafNode, _TBTreeNode > TBase;
 
-		typedef TBPlusTreeSet<_TKey, int64, _TComp, _Transaction,
-			RBMap<_TKey, int64, _TComp>, RBSet<_TKey, _TComp>,	 _TInnerCompess  ,	 _TLeafCompess,
-			BPTreeInnerNodeSet<_TInnerCompess, _TInnerMemSet>, 	BPTreeLeafNodeSet<int64, _TLeafCompess, _TLeafMemSet>,	
-			BPTreeNodeSet< _Transaction, _TInnerNode, _TLeafNode> > TBase;
-		
-		
-		TBPSet(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false) :
-		  TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, bMulti)
-		  {
 
-		  }
-	};*/
+		typedef typename TBase::TKey      TKey;
+		typedef typename TBase::TComp	   TComp;
+		typedef typename TBase::TLink     TLink;
+		typedef typename TBase::Transaction  Transaction;
+		typedef typename TBase::TInnerCompess  TInnerCompess;
+		typedef typename TBase::TLeafCompess  TLeafCompess;
+		typedef typename TBase::TInnerNode TInnerNode;
+		typedef typename TBase::TLeafNode	TLeafNode;
+		typedef typename TBase::TBTreeNode TBTreeNode;
+
+		typedef TBPSetIteratorV2<TKey, TComp,Transaction, TInnerCompess, TLeafCompess,
+			TInnerNode, TLeafNode, TBTreeNode> iterator;
+
+		TBPSetV2(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
+			TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, bMulti, bCheckCRC32 )
+			{
+
+			}
+
+			iterator find(const TKey& key)  
+			{
+				return TBase::find<iterator>(key);
+			}
+			iterator begin()
+			{
+				return TBase::begin<iterator>();
+			}
+
+			iterator last()
+			{
+				return TBase::last<iterator>();
+			}
+			iterator upper_bound(const TKey& key)
+			{
+				return TBase::upper_bound<iterator>(key);
+			}
+			iterator lower_bound(const TKey& key)
+			{
+				return TBase::lower_bound<iterator>(key);
+			}
+
+			bool remove(const TKey& key)
+			{
+				iterator it = find(key);
+				if(it.isNull())
+					return false;
+				return TBase::remove<iterator>(it);
+			}
+	};
+	 
 }
 #endif

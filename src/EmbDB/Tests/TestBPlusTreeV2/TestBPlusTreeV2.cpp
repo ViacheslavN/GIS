@@ -4,10 +4,12 @@
 #include "stdafx.h"
 void TestBPVector();
 void TestBRteeSet();
+void TestBRteeMap();
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//TestBPVector();
-	TestBRteeSet();
+	//TestBRteeSet();
+	TestBRteeMap();
 	return 0;
 }
 

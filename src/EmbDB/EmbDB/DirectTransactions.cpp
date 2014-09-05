@@ -47,9 +47,9 @@ namespace embDB
 			m_setPagesFromFree.insert(pFilePage->getAddr());
 		return pFilePage;
 	}
-	void CDirectTransactions::saveFilePage(CFilePage* pPage)
+	void CDirectTransactions::saveFilePage(CFilePage* pPage, size_t nSize,  bool bChandgeInCache)
 	{
-		m_pDBStorage->saveFilePage(pPage, true);
+		m_pDBStorage->saveFilePage(pPage, nSize,  bChandgeInCache);
 	}
 	size_t CDirectTransactions::getPageSize() const
 	{

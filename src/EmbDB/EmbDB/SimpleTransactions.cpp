@@ -106,12 +106,12 @@ namespace embDB
 	{
 		return m_pDBStorage->getPageSize();
 	}
-	void SimpleTransactions::saveFilePage(CFilePage* pPage)
+	void SimpleTransactions::saveFilePage(CFilePage* pPage,  size_t nSize, bool bChandgeInCache)
 	{
 		/*assert(m_nTranType != eTT_SELECT);
 		pPage->setFlag(eFP_CHANGE, true);
 		m_PageChache.savePage(pPage); */
-		m_pDBStorage->saveFilePage(pPage);
+		m_pDBStorage->saveFilePage(pPage, nSize, bChandgeInCache);
 	}
 
 	bool  SimpleTransactions::isError() const

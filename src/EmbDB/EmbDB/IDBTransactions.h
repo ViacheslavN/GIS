@@ -33,7 +33,7 @@ namespace embDB
 		virtual void dropFilePage(CFilePage* pPage) = 0;
 		virtual void dropFilePage(int64 nAddr) = 0;
 		virtual CFilePage* getNewPage() = 0;
-		virtual void saveFilePage(CFilePage* pPage) = 0;
+		virtual void saveFilePage(CFilePage* pPage,  size_t nSize = 0,  bool bChandgeInCache = false) = 0;
 		virtual size_t getPageSize() const = 0;
 
 

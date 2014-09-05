@@ -17,6 +17,7 @@ namespace embDB
 		, m_nBeginSize(0)
 		, m_nStorageInfo(-1)
 		, m_bCommitState(false)
+		, m_nCalcFileSize(0)
 	{
 		
 	}
@@ -48,8 +49,10 @@ namespace embDB
 		{
 			/*int64 nSize = m_pFile.getFileSize();
 			int64 ntt = nSize%m_nPageSize;*/
+		
+			m_nCalcFileSize = m_pFile.getFileSize();
 			assert(m_pFile.getFileSize() % m_nPageSize == 0);
-			m_nLastAddr = m_pFile.getFileSize()/m_nPageSize;
+			m_nLastAddr = m_nCalcFileSize/m_nPageSize;
 		}
 		return bRet;
 	}
@@ -186,10 +189,18 @@ namespace embDB
 		
 		if(bWrite)
 		{
-			bool bRet = m_pFile.setFilePos64(pPage->getAddr()* m_nPageSize, CommonLib::soFromBegin);
+			uint64 nFileAddr = pPage->getAddr() * m_nPageSize;
+
+			bool bRet = m_pFile.setFilePos64(nFileAddr, CommonLib::soFromBegin);
 			assert(bRet);
 			uint32 nWCnt = m_pFile.writeFile((void*)pPage->getRowData(), (uint32)m_nPageSize );
 			assert(nWCnt != 0);
+
+			if(m_nCalcFileSize < (nFileAddr + m_nPageSize))
+			{
+				m_nCalcFileSize = (nFileAddr + m_nPageSize);
+			}
+
 		}
 		if(m_Chache.size() > (size_t)m_nMaxPageBuf)
 		{
@@ -206,7 +217,7 @@ namespace embDB
 		m_nLastAddr += 1;
 		return nAddr;
 	}
-	bool CStorage::saveFilePage(CFilePage* pPage, bool bChandgeInCache)
+	bool CStorage::saveFilePage(CFilePage* pPage, size_t nDataSize,  bool bChandgeInCache)
 	{
 
 		if(bChandgeInCache)
@@ -217,18 +228,34 @@ namespace embDB
 				pCachePage->copyFrom(pPage);
 			}
 		}
+		uint64 nFileAddr = pPage->getAddr() * m_nPageSize;
 		bool bRet = m_pFile.setFilePos64(pPage->getAddr() * m_nPageSize, CommonLib::soFromBegin);
 		assert(bRet);
 		if(!bRet)
 			return false;
-		uint32 nCnt = m_pFile.writeFile((void*)pPage->getRowData(),  (uint32)m_nPageSize );
-		assert(nCnt == (uint32)m_nPageSize);
-		return nCnt == (uint32)m_nPageSize;
+
+		uint32 nWriteSize = 0;
+		if(m_nCalcFileSize < (nFileAddr + m_nPageSize) || nDataSize == 0)
+			nWriteSize = (uint32)m_nPageSize;
+		else
+			nWriteSize = nDataSize;
+	
+		uint32 nCnt = m_pFile.writeFile((void*)pPage->getRowData(), nWriteSize );
+		assert(nCnt == nWriteSize);
+		if(m_nCalcFileSize < (nFileAddr + m_nPageSize))
+		{
+			m_nCalcFileSize = (nFileAddr + m_nPageSize);
+		}
+		
+
+		return nCnt == nWriteSize;
+		
 	}
 	bool CStorage::saveNewPage(CFilePage* pPage)
 	{
 		assert(m_nPageSize == pPage->getPageSize());
-		bool bRet = m_pFile.setFilePos64(pPage->getAddr() * m_nPageSize, CommonLib::soFromBegin);
+		uint64 nFileAddr = pPage->getAddr() * m_nPageSize;
+		bool bRet = m_pFile.setFilePos64(nFileAddr, CommonLib::soFromBegin);
 		assert(bRet);
 		if(!bRet)
 			return false;
@@ -238,6 +265,10 @@ namespace embDB
 		{
 			assert(0);
 			m_nLastAddr =  pPage->getAddr() + 1;
+		}
+		if(m_nCalcFileSize < (nFileAddr + m_nPageSize))
+		{
+			m_nCalcFileSize = (nFileAddr + m_nPageSize);
 		}
 		return nCnt == (uint32)m_nPageSize;
 	}

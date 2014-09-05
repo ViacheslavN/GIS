@@ -225,7 +225,7 @@ namespace embDB
 		m_PageChache.AddPage(nAddr, nTranAddr, pFilePage);
 		return pFilePage;
 	}
-	void CTransactions::saveFilePage(CFilePage* pPage)
+	void CTransactions::saveFilePage(CFilePage* pPage,  size_t nSize, bool bChandgeInCache )
 	{
 		m_PageChache.savePage(pPage);
 	}

@@ -10,22 +10,22 @@ namespace embDB
 
 
 
-	template<class _TKey, class _TLink, class _TComp, class _Transaction, 
-	class _TInnerCompressor, class _TLeafCompressor>
+	template<class _TKey, class _TComp, class _Transaction, 
+	class _TInnerCompressor, class _TLeafCompressor, 
+	class _TInnerNode,
+	class _TLeafNode >
 	class BPTreeNodeSetv2
 	{
 	public:
 
 		typedef _TKey TKey;
-		typedef _TLink TLink;
+		typedef int64 TLink;
 		typedef _TComp TComp;
 		typedef	_Transaction  Transaction;
 		typedef _TInnerCompressor TInnerCompressor;
 		typedef _TLeafCompressor TLeafCompressor;
-
-		typedef BPTreeInnerNodeSetv2<TKey, TLink, TComp, Transaction, TInnerCompressor> TInnerNode;
-		typedef BPTreeLeafNodeSetv2<TKey, TLink, TComp, Transaction,TLeafCompressor> TLeafNode;
-
+		typedef _TInnerNode TInnerNode;
+		typedef _TLeafNode  TLeafNode;
 
 		BPTreeNodeSetv2(int64 nParentAddr, CommonLib::alloc_t *pAlloc, int64 nPageAddr, bool bMulti, bool  bIsLeaf, bool bCheckCRC32,
 			ICompressorParams *pInnerCompParams = NULL, ICompressorParams *pLeafCompParams = NULL) :
@@ -86,7 +86,7 @@ namespace embDB
 				return false;
 
 
-			pFilePage->setFlag(eFP_CHANGE, true);
+			
 			CommonLib::FxMemoryWriteStream stream;
 
 			sFilePageHeader header;
@@ -106,7 +106,9 @@ namespace embDB
 			if(m_bCheckCRC32)
 				header.writeCRC32(stream);
 			pFilePage->setCheck(true);
-			pTransactions->saveFilePage(pFilePage);
+			pTransactions->saveFilePage(pFilePage, stream.pos());
+
+			pFilePage->setFlag(eFP_CHANGE, false);
 			return true;
 		}
 		bool LoadFromPage(CFilePage* pFilePage, Transaction* pTransactions)

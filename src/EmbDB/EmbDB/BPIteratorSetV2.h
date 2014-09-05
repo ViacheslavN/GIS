@@ -7,24 +7,31 @@ namespace embDB
 
 
 
-	template <class _TKey,	class _TLink, class _TComp, class _Transaction,	class _TInnerCompess, 	class _TLeafCompess >
+	template <class _TKey,	 class _TComp, class _Transaction,	class _TInnerCompess, 	class _TLeafCompess ,
+	class _TInnerNode, 	class _TLeafNode, class _TBTreeNode>
 	class TBPlusTreeSetV2;
 
-	template <class _TKey,  class _TLink, class _TComp, class _Transaction, class _TInnerCompess, class _TLeafCompess>
+	template <class _TKey,  class _TComp, class _Transaction, class _TInnerCompess, class _TLeafCompess, 
+	class _TInnerNode, 	class _TLeafNode, class _TBTreeNode>
 	class TBPSetIteratorV2
 	{
 	public:
 		//typedef _Traits Traits;
 		typedef _TKey      TKey;
 		typedef _TComp	   TComp;
-		typedef _TLink     TLink;
+		typedef int64     TLink;
 		typedef _Transaction  Transaction;
 		typedef _TInnerCompess TInnerCompess;  
 		typedef _TLeafCompess TLeafCompess; 
+		typedef _TInnerNode	TInnerNode;
+		typedef _TLeafNode TBTreeLeafNode;
+		typedef _TBTreeNode TBTreeNode;
+
 		typedef  TBPVector<TKey> TLeafMemSet;
-		typedef BPTreeNodeSetv2<TKey, TLink, TComp, Transaction, TInnerCompess, TLeafCompess> TBTreeNode;
-		typedef BPTreeLeafNodeSetv2<TKey, TLink, TComp,	Transaction, TLeafCompess> TBTreeLeafNode;
-		typedef TBPlusTreeSetV2<TKey,  TLink, TComp, Transaction, TInnerCompess, TLeafCompess> TBTree;
+		/*typedef BPTreeNodeSetv2<TKey, TComp, Transaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode, TBTreeNode> TBTreeNode;
+		typedef BPTreeLeafNodeSetv2<TKey, TComp,	Transaction, TLeafCompess> TBTreeLeafNode;*/
+		typedef TBPlusTreeSetV2<TKey,  TComp, Transaction, TInnerCompess, TLeafCompess
+		, TInnerNode, TBTreeLeafNode, TBTreeNode> TBTree;
 
 		TBPSetIteratorV2(TBTree *pTree, TBTreeNode *pCurNode, int32 nIndex) :
 		m_pTree(pTree), m_pCurNode(pCurNode),  m_nIndex(nIndex)

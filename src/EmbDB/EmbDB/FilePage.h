@@ -21,12 +21,13 @@ namespace embDB
 struct sFilePageHeader
 {
 	uint32 m_nCRC32;
+	uint32 m_nSize;
 	uint16 m_nObjectPageType;
 	uint16 m_nSubObjectPageType;
 	uint32 m_nCalcCRC32;
 
 
-	sFilePageHeader() : m_nObjectPageType(0), m_nSubObjectPageType(0), m_nCRC32(0), m_nCalcCRC32(0)
+	sFilePageHeader() : m_nObjectPageType(0), m_nSubObjectPageType(0), m_nCRC32(0), m_nCalcCRC32(0), m_nSize(0)
 	{}
 
 	sFilePageHeader(CommonLib::FxMemoryReadStream& stream, bool bCalcCRC = true)
@@ -43,33 +44,37 @@ struct sFilePageHeader
 
 	static uint32 size() 
 	{
-		return 2* (sizeof(uint16) )+ sizeof(uint32);
+		return 3* (sizeof(uint16) )+ 2 * sizeof(uint32);
 	}
 
 	void write(CommonLib::FxMemoryWriteStream& stream)
 	{
 		stream.write(m_nCRC32);
+		stream.write(m_nSize);
 		stream.write(m_nObjectPageType);
 		stream.write(m_nSubObjectPageType);
 	}
 
 	void writeCRC32(CommonLib::FxMemoryWriteStream& stream)
 	{
-		uint32 nCRC = Crc32(stream.buffer() + sizeof(uint32), stream.size() - sizeof(uint32));
+		m_nSize = stream.pos() - 2 *sizeof(uint32);
+		uint32 nCRC = Crc32(stream.buffer() + 2 *sizeof(uint32), m_nSize);
 		size_t pos = stream.pos();
 		stream.seek(0, CommonLib::soFromBegin);
 		stream.write(nCRC);
+		stream.write(m_nSize);
 		stream.seek(pos, CommonLib::soFromBegin );
 	}
 
 	void read(CommonLib::FxMemoryReadStream& stream, bool bCalcCRC = true)
 	{
 		stream.read(m_nCRC32);
+		stream.read(m_nSize);
 		stream.read(m_nObjectPageType);
 		stream.read(m_nSubObjectPageType);
 		if(bCalcCRC)
 		{
-			m_nCalcCRC32 = Crc32(stream.buffer() + sizeof(uint32), stream.size() - sizeof(uint32));
+			m_nCalcCRC32 = Crc32(stream.buffer() + 2 *sizeof(uint32), m_nSize);
 		}
 	}
 

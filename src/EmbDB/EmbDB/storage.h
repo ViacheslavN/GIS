@@ -23,7 +23,7 @@ namespace embDB
 		virtual bool dropFilePage(CFilePage* pPage);
 		virtual  bool dropFilePage(int64 nAddr);
 		virtual  CFilePage* getNewPage(bool bWrite = false);
-		virtual  bool saveFilePage(CFilePage* pPage, bool bChandgeInCache = false);
+		virtual  bool saveFilePage(CFilePage* pPage, size_t nDataSize = 0,  bool bChandgeInCache = false);
 		virtual bool saveNewPage(CFilePage* pPage);
 		virtual int64 getNewPageAddr();
 		virtual CFilePage* createPage(int64 nAddr);
@@ -80,6 +80,7 @@ namespace embDB
 		 int64 m_nStorageInfo;
 
 		 bool m_bCommitState;
+		 uint64 m_nCalcFileSize;
 	};
 }
 

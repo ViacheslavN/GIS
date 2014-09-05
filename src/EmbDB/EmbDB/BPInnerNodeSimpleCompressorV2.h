@@ -9,13 +9,13 @@
 namespace embDB
 {
 
-	template<typename _TKey, typename _TLink>
+	template<typename _TKey >
 	class BPInnerNodeSimpleCompressorV2  
 	{
 	public:
 
 		typedef _TKey TKey;
-		typedef _TLink TLink;
+		typedef int64 TLink;
 		typedef  TBPVector<TKey> TKeyMemSet;
 		typedef  TBPVector<TLink> TLinkMemSet;
 
@@ -34,9 +34,6 @@ namespace embDB
 			keySet.reserve(m_nSize);
 			linkSet.reserve(m_nSize);
 
-			/*uint32 nKeySize = stream.readInt32();
-			uint32 nLinkSize = stream.readInt32();*/
-
 			uint32 nKeySize =  m_nSize * sizeof(TKey);
 			uint32 nLinkSize =  m_nSize * sizeof(int64);
 
@@ -53,7 +50,7 @@ namespace embDB
 				keySet.push_back(key);
 				linkSet.push_back(nlink);
 			}
-
+			stream.seek(LinkStreams.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);		
 			return true;
 		}
 		virtual bool Write(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryWriteStream& stream)
@@ -75,12 +72,13 @@ namespace embDB
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
-						 
+			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);			 
 			for(size_t i = 0, sz = keySet.size(); i < sz; ++i)
 			{
 				KeyStreams.write(keySet[i]);
 				LinkStreams.write(linkSet[i]);
 			}
+			
 			return true;
 		}
 

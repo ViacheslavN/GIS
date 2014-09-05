@@ -172,7 +172,11 @@ void removeFromBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart,
 		int64 nCount = nStart - nEndStart;
 		for (; i > nEndStart; --i)
 		{	
-
+			if( 246761 == i)
+			{
+				int dd = 0;
+				dd++;
+			}
 			tree.remove(TKey(i));
 			n++;
 			if(i%nStep == 0)
@@ -332,8 +336,8 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 
 void testBPTreeSet ()
 {
-	int64 nCount = 10000000;
-	size_t nPageSize = 8192;
+	int64 nCount = 1000000000;
+	size_t nPageSize = 1048576;
 	int64 nVal = 1;
 	double dd = 0.0;
 	//sStringStrustTest strTest;
@@ -347,7 +351,7 @@ void testBPTreeSet ()
 	//testBPTreeSetImpl<TBTreePlusString, TBTreePlusROString, embDB::CTransactions, sStringStrustTest, int64>(nCount, nPageSize, strTest);
 
 	nCount = 1000000000;
-	testBPTreeSetImpl<TBTreeSet, TBTreeSetRO, embDB::CDirectTransactions, int64>(nCount, nPageSize, 5000, 1000);
+	testBPTreeSetImpl<TBTreeSet, TBTreeSetRO, embDB::CDirectTransactions, int64>(nCount, nPageSize, 500, 20);
 	//testBPTreeSetImpl<TBTreePlus, TBTreePlusRO, embDB::CTransactions, int64, int64>(nCount, nPageSize, nVal);
 
 

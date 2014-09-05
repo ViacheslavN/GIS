@@ -63,7 +63,11 @@ namespace embDB
 				return false;
 
 			if((m_nSize + 1) > m_nCapacity)
+			{
+				if(!m_nCapacity)
+					m_nCapacity = 1;
 				reserve(2 * m_nCapacity);
+			}
 	
 			if(m_nSize == idx)
 				return push_back(value);
@@ -155,7 +159,7 @@ namespace embDB
 		{
 			if( m_nSize + nCnt >= m_nCapacity)
 			{
-				if(reserve((2 * m_nCapacity) > m_nSize + nCnt ? 2*m_nCapacity : 2 * (m_nSize + nCnt) ))
+				if(!reserve((2 * m_nCapacity) > m_nSize + nCnt ? 2*m_nCapacity : 2 * (m_nSize + nCnt) ))
 					return false;
 			}
 			memmove(m_pData + nPos + nCnt, m_pData + nPos, (m_nSize)* sizeof(TValue));

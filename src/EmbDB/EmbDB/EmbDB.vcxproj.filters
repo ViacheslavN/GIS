@@ -130,6 +130,9 @@
     <Filter Include="DB\Index\BtreePlusv2\Compressors">
       <UniqueIdentifier>{26678ef3-0e17-4d24-825d-760da2efba78}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\Index\BtreePlusv2\BPSetMapv2">
+      <UniqueIdentifier>{f5c58f29-749d-48b2-b6da-57b4c86229a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -590,6 +593,21 @@
     </ClInclude>
     <ClInclude Include="BPIteratorSetV2.h">
       <Filter>DB\Index\BtreePlusv2\BPSetv2</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeNodeMapV2.h">
+      <Filter>DB\Index\BtreePlusv2\BPSetMapv2</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeLeafNodeMapv2.h">
+      <Filter>DB\Index\BtreePlusv2\BPSetMapv2</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseBPMapv2.h">
+      <Filter>DB\Index\BtreePlusv2\BPSetMapv2</Filter>
+    </ClInclude>
+    <ClInclude Include="BPIteratorMapV2.h">
+      <Filter>DB\Index\BtreePlusv2\BPSetMapv2</Filter>
+    </ClInclude>
+    <ClInclude Include="BPLeafNodeMapSimpleCompressorV2.h">
+      <Filter>DB\Index\BtreePlusv2\Compressors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

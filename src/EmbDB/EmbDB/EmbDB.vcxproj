@@ -425,6 +425,7 @@
   <ItemGroup>
     <ClInclude Include="BackTableZPoint16Bit.h" />
     <ClInclude Include="BaseBPMapRO.h" />
+    <ClInclude Include="BaseBPMapv2.h" />
     <ClInclude Include="BaseBPTreeSetRO.h" />
     <ClInclude Include="BaseBPSet.h" />
     <ClInclude Include="BaseBPMap.h" />
@@ -444,11 +445,13 @@
     <ClInclude Include="BPInnerNodeSimpleCompressorV2.h" />
     <ClInclude Include="BPIterator.h" />
     <ClInclude Include="BPIteratorMap.h" />
+    <ClInclude Include="BPIteratorMapV2.h" />
     <ClInclude Include="BPIteratorRO.h" />
     <ClInclude Include="BPIteratorSet.h" />
     <ClInclude Include="BPIteratorSetV2.h" />
     <ClInclude Include="BPLeafNodeMapROSimpleCompressor.h" />
     <ClInclude Include="BPLeafNodeMapSimpleCompressor.h" />
+    <ClInclude Include="BPLeafNodeMapSimpleCompressorV2.h" />
     <ClInclude Include="BPLeafNodeROSetSimpleCompressor.h" />
     <ClInclude Include="BPLeafNodeSetSimpleCompressor.h" />
     <ClInclude Include="BPLeafNodeSetSimpleCompressorV2.h" />
@@ -457,7 +460,9 @@
     <ClInclude Include="BPMapNodeRO.h" />
     <ClInclude Include="BaseBPSetv2.h" />
     <ClInclude Include="BPTreeInnerNodeSetv2.h" />
+    <ClInclude Include="BPTreeLeafNodeMapv2.h" />
     <ClInclude Include="BPTreeLeafNodeSetv2.h" />
+    <ClInclude Include="BPTreeNodeMapV2.h" />
     <ClInclude Include="BPTreeNodeSetV2.h" />
     <ClInclude Include="BPTreeSPLeafNodeMap.h" />
     <ClInclude Include="BPVector.h" />

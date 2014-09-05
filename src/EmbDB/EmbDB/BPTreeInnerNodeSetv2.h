@@ -11,12 +11,12 @@
 #include "BPVector.h"
 namespace embDB
 {
-	template<typename _TKey,typename typename _TLink, typename _TComp,
+	template<typename _TKey, typename _TComp,
 	class _Transaction, class _TCompressor>
 	class BPTreeInnerNodeSetv2 :   public  BPBaseTreeNode
 	{
 		typedef _TKey TKey;
-		typedef _TLink TLink;
+		typedef int64 TLink;
 		typedef _Transaction Transaction;
 		typedef _TComp		 TComporator;
 		typedef _TCompressor TCompressor;

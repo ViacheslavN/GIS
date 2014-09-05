@@ -11,7 +11,7 @@ namespace embDB
 		,m_pAlloc(pAlloc)
 		,m_bNewFreeMap(false)
 	{
-		m_nAddrLen = (m_pStorage->getPageSize() - sFilePageHeader::size() - sizeof(uint64)) * 8;
+		
 	}
 	CFreePageManager::~CFreePageManager()
 	{
@@ -19,7 +19,7 @@ namespace embDB
 	}
 	bool CFreePageManager::init(int64 nRootAddr, bool bNew)
 	{
-
+		m_nAddrLen = (m_pStorage->getPageSize() - sFilePageHeader::size() - sizeof(uint64)) * 8;
 		m_nRootPage = nRootAddr;
 		if(!bNew)
 			return load();

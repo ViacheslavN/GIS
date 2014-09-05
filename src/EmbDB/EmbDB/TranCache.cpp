@@ -75,7 +75,7 @@ namespace embDB
 				 if(bNew)
 					 pStorage->saveNewPage(pPage);
 				 else
-					pStorage->saveFilePage(pPage, true);
+					pStorage->saveFilePage(pPage, 0, true);
 				
 			 }
 			  delete pPage;

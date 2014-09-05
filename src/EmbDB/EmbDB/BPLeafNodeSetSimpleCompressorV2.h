@@ -18,7 +18,6 @@ namespace embDB
 		virtual bool Load(TLeafMemSet& Set, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;
-			CommonLib::FxMemoryReadStream ValStreams;
 			m_nSize = stream.readInt32();
 			if(!m_nSize)
 				return true;
@@ -28,13 +27,14 @@ namespace embDB
 			/*uint32 nKeySize = stream.readInt32();*/
 			uint32 nKeySize =  m_nSize * sizeof(TKey);
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
+			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
 			TKey nkey;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
 				KeyStreams.read(nkey);
 				Set.push_back(nkey);
 			}
-			assert(ValStreams.pos() < stream.size());
+			
 			return true;
 		}
 		virtual bool Write(TLeafMemSet& Set, CommonLib::FxMemoryWriteStream& stream)
@@ -47,12 +47,12 @@ namespace embDB
 			/*stream.write(nKeySize);*/
 			CommonLib::FxMemoryWriteStream KeyStreams;
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
- 
+			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
 			for(size_t i = 0, sz = Set.size(); i < sz; ++i)
 			{
 				KeyStreams.write(Set[i]);
 			}
-		 
+			
 			return true;
 		}
 
