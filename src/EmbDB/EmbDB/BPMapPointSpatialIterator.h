@@ -62,9 +62,9 @@ namespace embDB
 		{}
 
 
-		TBPTSpatialPointIteratorMap(TBTree *pTree, TBTreeNode *pCurNode, TLeftMemSetNode* pRBNode, 
+		TBPTSpatialPointIteratorMap(TBTree *pTree, TBTreeNode *pCurNode, int32 nIndex, 
 			TPointKey& zMin, TPointKey& zMax, TRect& QueryRect) : 
-		m_pTree(pTree), m_zMin(zMin), m_zMax(zMax), m_QueryRect(QueryRect)
+		m_pTree(pTree), m_zMin(zMin), m_zMax(zMax), m_QueryRect(QueryRect), m_nIndex(nIndex)
 		{		
 			m_nReq = 0;
 			m_nNodeCnt = 0;
@@ -75,25 +75,25 @@ namespace embDB
 			m_CurrentSpatialQuery.m_ID = m_ID;
 			m_pCurNode = pCurNode;
 			m_pRBNode = pRBNode;
-			if(pCurNode && pRBNode)
+			if(pCurNode)
 			{
-				SetParams(pCurNode, pRBNode);
+				SetParams(pCurNode);
 				CreateSubQuery();
 			}
 
 			
 		}
 
-		void SetParams(TBTreeNode *pCurNode, TLeftMemSetNode* pRBNode)
+		void SetParams(TBTreeNode *pCurNode)
 		{
 		
-			if(m_pCurNode)
+			if(m_pCurNode && m_nIndex != -1)
 			{
 				assert(m_pCurNode->isLeaf());
 				m_pCurNode->setFlags(BUSY_NODE, true);
 				if(m_pRBNode)
 				{
-					TPointKey& zMinPage = m_pRBNode->m_key;
+					TPointKey& zMinPage = m_pCurNode->key(m_nIndex);
 				//	zMinPage.getXY(m_CurrentSpatialQuery.m_Rect.m_minX, m_CurrentSpatialQuery.m_Rect.m_minY);
 					m_CurrentSpatialQuery.m_zMin = zMinPage;
 				//	m_CurrentSpatialQuery.InitFromZOrder();
@@ -103,11 +103,12 @@ namespace embDB
 		}
 		TBPTSpatialPointIteratorMap(const TBPTSpatialPointIteratorMap& iter)
 		{
-			if(m_pCurNode)
-				m_pCurNode->setFlag(BUSY_NODE, false);
+
 			m_pCurNode = iter.m_pCurNode;
 			m_pTree = iter.m_pTree;
-			m_pRBNode = iter.m_pRBNode;
+			m_nIndex = iter.m_nIndex;
+			if(m_pCurNode)
+				m_pCurNode->setFlag(BUSY_NODE, true);
 
 		}
 		~TBPTSpatialPointIteratorMap()
@@ -121,36 +122,37 @@ namespace embDB
 				m_pCurNode->setFlag(BUSY_NODE, false);
 			m_pCurNode = iter.m_pCurNode;
 			m_pTree = iter.m_pTree;
-			m_pRBNode = iter.m_pRBNode;
+			m_nIndex = iter.m_nIndex;
+
+			if(m_pCurNode)
+				m_pCurNode->setFlag(BUSY_NODE, true);
 			return this;
 		}
 
 		const TPointKey& key() const
 		{
-			return m_pRBNode->m_key;
+			return m_pCurNode->key(m_nIndex);
 		}
 		const TValue& value()  const
 		{
-			return m_pRBNode->m_val;
+			return m_pCurNode->value(m_nIndex);
 		}
 
 		TPointKey& key()
 		{
-			return m_pRBNode->m_key;
+				return m_pCurNode->key(m_nIndex);
 		}
 		TValue& value()
 		{
-			return m_pRBNode->m_val;
+			return m_pCurNode->value(m_nIndex);
 		}
 
 		bool isNull()
 		{
-			if(m_pCurNode == NULL || m_pRBNode == NULL)
+			if(m_pCurNode == NULL || m_nIndex == - 1)
 				return true;
-			TLeafMemSet& leafMemSet = m_pCurNode->m_LeafNode.m_leafMemSet;
-			if(leafMemSet.isNull(m_pRBNode))
-				return true;
-			TPointKey& zPage = m_pRBNode->m_key;
+					
+			TPointKey& zPage = m_pCurNode->key(m_nIndex);
 			if(m_zMax < zPage)
 				return true;
 			return false;
@@ -173,16 +175,18 @@ namespace embDB
 				bNextQuery = true;
 				if(m_pCurNode)
 					m_pCurNode->setFlags(BUSY_NODE, false);
-				if(m_pTree->SpatialfindNode(m_CurrentSpatialQuery.m_zMin, &m_pCurNode, &m_pRBNode))
+				TBTree::iterator it = m_pTree->upper_bound((m_CurrentSpatialQuery.m_zMin);
+				if(it.isNull())
+					return false;
+				if(/*m_pTree->SpatialfindNode(m_CurrentSpatialQuery.m_zMin, &m_pCurNode, &m_pRBNode)*/)
 				{
-					if(!m_pRBNode)
+		  
+					if(it->key() > m_CurrentSpatialQuery.m_zMax)
 						continue;
-					if(!m_pCurNode)
-						continue;
-					if(m_pRBNode->m_key > m_CurrentSpatialQuery.m_zMax)
-						continue;
+					m_pCurNode = it.m_pCurNode;
+					m_nIndex = it.m_nIndex;
 					m_pCurNode->setFlags(CHANGE_NODE, true);
-					SetParams(m_pCurNode, m_pRBNode);
+					SetParams(m_pCurNode);
 					CreateSubQuery();
 					return true;
 				}
@@ -195,138 +199,104 @@ namespace embDB
 			++m_nNodeCnt;
 			if(!m_pCurNode)
 				return false;
-			if(m_zMax < m_pRBNode->m_key)
+			/*if(m_zMax < m_pCurNode->key(m_nIndex))
 			{
 				m_pCurNode = NULL;
 				return false;
-			}
+			}*/
 			m_pTree->ClearChache();
-			TLeafMemSet& leafMemSet = m_pCurNode->m_LeafNode.m_leafMemSet;
-
-			uint32 nSize = leafMemSet.size();
-			if(leafMemSet.isNull(m_pRBNode->m_pNext))
+			m_nIndex++;
+			if(m_nIndex < m_pCurNode->count())
 			{
-				m_nNodeCnt = 0;
-				if(m_pCurNode->m_bValidNextKey)
-				{
-					if(m_pCurNode->m_NextLeafKey == m_pRBNode->m_key )
-					{
-						m_pCurNode->setFlags(BUSY_NODE, false); 
-						m_pCurNode = m_pTree->getNode(m_pCurNode->next(), false, false, true);
-						m_pCurNode->setFlags(BUSY_NODE, true); 
-						assert(m_pCurNode != NULL);
-						m_pRBNode = m_pCurNode->firstLeftMemSetNode();
-						assert(!m_pCurNode->isLeamMemsetNodeNull(m_pRBNode));
-						return true;
-					}
-					else
-					{
-						m_pRBNode = NULL;
-						TBTreeNode *pBPNode = m_pTree->getNode(m_pCurNode->next(), false, false, true);
-						if(!pBPNode)
-						{
-							m_pCurNode->setFlags(BUSY_NODE, false); 
-							m_pRBNode = NULL;
-							return findNext();
-						}
-						return findNext();
-						TLeftMemSetNode* pFirstRBNode = pBPNode->firstLeftMemSetNode();
-						while(m_Queries.size())
-						{
-							m_CurrentSpatialQuery = m_Queries.top();
-							if(pFirstRBNode->m_key < m_CurrentSpatialQuery.m_zMax )
-								break;
-							
-						}
-						return findNext(false);
-					}
-				}
-				else
-				{
-					//все ровно придется проверять
-					TBTreeNode *pBPNode = m_pTree->getNode(m_pCurNode->next(), false, false, true);
-					if(!pBPNode)
-					{
-						m_pCurNode->setFlags(BUSY_NODE, false); 
-						m_pRBNode = NULL;
-						return findNext();
-					}
-					pBPNode->setFlags(BUSY_NODE, true); 
-					TLeftMemSetNode* pRBNode = pBPNode->firstLeftMemSetNode();
-					assert(!pBPNode->isLeamMemsetNodeNull(pRBNode));
-					if(pRBNode->m_key  == m_pRBNode->m_key )
-					{
-						m_pCurNode->setFlags(BUSY_NODE, false); 
-						m_pCurNode = pBPNode;
-						m_pRBNode = pRBNode;
-						return true;
-					}
-					else
-					{
-						return findNext();
-						while(m_Queries.size())
-						{
-							m_CurrentSpatialQuery = m_Queries.top();
-							if(pRBNode->m_key < m_CurrentSpatialQuery.m_zMax )
-								break;
 
-						}
-						pBPNode->setFlags(BUSY_NODE, false); 
-						m_pRBNode = NULL;
-						return findNext(false);
-					}
-				}
-				m_pRBNode = NULL;
-				return findNext();
-			}	
-
-
-			m_pRBNode = m_pRBNode->m_pNext;
-			TPointKey& zPage = m_pRBNode->m_key;
-			if(m_zMax < zPage)
-			{
-				m_pCurNode = NULL;
-				return false;
-			}
-			if( m_CurrentSpatialQuery.m_zMax < m_pRBNode->m_key)
-			{
-				if(m_Queries.empty())
+				TPointKey& zPage = m_pCurLeafNode->key(m_nIndex);
+				if(m_zMax < zPage)
 				{
 					m_pCurNode = NULL;
 					return false;
 				}
-				m_CurrentSpatialQuery = m_Queries.top();
-			/*	if(zPage < m_CurrentSpatialQuery.m_zMin )
+				if( m_CurrentSpatialQuery.m_zMax < zPage)
 				{
-					m_Queries.push(m_CurrentSpatialQuery);
-					return true;
-				}*/
-		
+					if(m_Queries.empty())
+					{
+						m_pCurNode = NULL;
+						return false;
+					}
+					m_CurrentSpatialQuery = m_Queries.top();
+					m_pCurNode->setFlags(BUSY_NODE, false);
+					TBTree::iterator it = m_pTree->upper_bound(m_CurrentSpatialQuery.m_zMin);
+					if(it.IsNull())
+					{
+						return findNext(false);
+					}
+					else
+					{
+						if(it.key() > m_CurrentSpatialQuery.m_zMax)
+						{
+							m_nReq++;
+							return findNext(false);
+						}
 
-				m_pCurNode->setFlags(BUSY_NODE, false);
-				TLeftMemSetNode *pRBNode = m_pCurNode->findLessOrEQNode(m_CurrentSpatialQuery.m_zMin, m_pRBNode);
-				if(pRBNode)
-				{
-					m_pRBNode = pRBNode;
-					if(m_pRBNode->m_key > m_CurrentSpatialQuery.m_zMax)
-					{
-						m_nReq++;
-						return findNext(false);
+						m_pCurNode = it.m_pCurNode;
+						m_nIndex = it.m_nIndex;
+						m_pCurNode->setFlags(BUSY_NODE, true);
+					/*	CreateSubQuery();
+						if(it.key() > m_CurrentSpatialQuery.m_zMax)
+						{
+							m_nReq++;
+							return findNext(false);
+						}*/
+						return true;
 					}
-					m_pCurNode->setFlags(BUSY_NODE, true);
-					CreateSubQuery();
-					if(m_pRBNode->m_key > m_CurrentSpatialQuery.m_zMax)
-					{
-						m_nReq++;
-						return findNext(false);
-					}
-					return true;
+			
 				}
-				else 
-				{
-					return findNext(false);
-				}
+		
 			}
+			else
+			{
+				TBTreeNode *pParentNode = m_pTree->getNode(m_pCurNode->m_nParent, false, false, true);
+				int32 nParentNextKeyIndex = -1;
+				if(pParentNode->less() == m_pCurNode->addr())
+				{
+					nParentNextKeyIndex = 0;
+				}
+				else
+				{
+					
+					if(m_pCurNode->m_nFoundIndex + 1 < pParentNode->count())
+						nParentNextKeyIndex = m_pCurNode->m_nFoundIndex + 1;
+				}
+				if(nParentNextKeyIndex != -1)
+				{
+					if( m_pCurNode->key(m_nIndex) == pParentNode->key(nParentNextKeyIndex))
+					{
+						m_pCurNode->setFlags(BUSY_NODE, false); 
+						m_pCurNode = m_pTree->getNode(m_pCurNode->next(), false, false, true);
+						m_pCurNode->setFlags(BUSY_NODE, true); 
+						m_nIndex = 0;
+						return true;
+					}
+					else
+					{
+						return findNext();
+					}
+				
+				}
+	
+				TBTreeNode *pBPNode = m_pTree->getNode(m_pCurNode->next(), false, false, true);
+				if(!pBPNode)
+				{
+					m_pCurNode->setFlags(BUSY_NODE, false); 
+					m_nIndex = -1;
+					m_pCurNode = NULL;
+					return false;
+						/*return findNext();*/
+				}
+				return findNext();
+			}	
+
+
+		
 			return true;
 		}
 		void update()
@@ -334,7 +304,7 @@ namespace embDB
 			assert(!isNull());
 			m_pCurNode->setFlags(CHANGE_NODE, true);
 		}
-		void CreateSubQuery(TLeftMemSetNode * pLastMemSet = NULL)
+		void CreateSubQuery()
 		{
 			if(m_pCurNode->count() == 0)
 			{
@@ -342,8 +312,8 @@ namespace embDB
 				return;
 			}
 			//TPointKey zPageLast(m_currentNodePageRect.m_maxX, m_currentNodePageRect.m_maxY);
-			if(!pLastMemSet)
-				 pLastMemSet = m_pCurNode->lastLeftMemSetNode();
+			/*(!pLastMemSet)
+				 pLastMemSet = m_pCurNode->lastLeftMemSetNode();*/
 			TPointKey zPageLast = pLastMemSet->m_key;
 			TPointKey highKey = m_CurrentSpatialQuery.m_zMax;
 			TQuery curQuery = m_CurrentSpatialQuery;
@@ -409,7 +379,7 @@ namespace embDB
 		//	m_CurrentSpatialQuery.m_zMax = zPageLast;
 		}
 
-		void SetCurrZval(std::set<uint64>& m_Zal, std::set<uint64>& m_OID)
+		/*void SetCurrZval(std::set<uint64>& m_Zal, std::set<uint64>& m_OID)
 		{
 			TLeafMemSet& leafMemSet = m_pCurNode->m_LeafNode.m_leafMemSet;
 
@@ -420,11 +390,12 @@ namespace embDB
 				m_OID.insert(it.value());
 				it.next();
 			}
-		}
+		}*/
 	public:
 		TBTree *m_pTree;
 		TBTreeNode *m_pCurNode;
-		TLeftMemSetNode* m_pRBNode;
+		TBTreeLeafNode*	m_pCurLeafNode;
+		int32 m_nIndex;
 		TPointKey m_zMin;
 		TPointKey m_zMax;
 		TRect m_QueryRect;

@@ -47,6 +47,7 @@ namespace embDB
 		typedef int16  TPointTypei;
 		typedef uint16 TPointType;
 		typedef uint32 ZValueType;		
+		static const uint16 SizeInByte = 4;
 		ZOrderPoint2DU16() : m_nZValue(0)
 		{}
 		ZOrderPoint2DU16(uint32 nZorder) : m_nZValue(nZorder)
@@ -62,16 +63,6 @@ namespace embDB
 
 			x = getShiftValue16(nXPos);
 			y = getShiftValue16(nYPos);
-			/*x = (x | (x << SHIFTSPoint[3])) & MASKSPoint[3];
-			x = (x | (x << SHIFTSPoint[2])) & MASKSPoint[2];
-			x = (x | (x << SHIFTSPoint[1])) & MASKSPoint[1];
-			x = (x | (x << SHIFTSPoint[0])) & MASKSPoint[0];
-
-			y = (y | (y << SHIFTSPoint[3])) & MASKSPoint[3];
-			y = (y | (y << SHIFTSPoint[2])) & MASKSPoint[2];
-			y = (y | (y << SHIFTSPoint[1])) & MASKSPoint[1];
-			y = (y | (y << SHIFTSPoint[0])) & MASKSPoint[0];*/
-
 			m_nZValue = y | (x << 1);
 		}
 
@@ -143,6 +134,7 @@ namespace embDB
 		typedef int32  TPointTypei;
 		typedef uint32 TPointType;
 		typedef uint64 ZValueType;
+		static const uint16 SizeInByte = 8;
 		ZOrderPoint2DU32() : m_nZValue(0)
 		{}
 		ZOrderPoint2DU32(uint64 nZorder) : m_nZValue(nZorder)
@@ -218,6 +210,7 @@ namespace embDB
 	{
 		typedef uint64 TPointType;
 		typedef int64  TPointTypei;
+		static const uint16 SizeInByte = 8;
 		ZOrderPoint2DU64()
 		{
 			m_nZValue[0] = 0;

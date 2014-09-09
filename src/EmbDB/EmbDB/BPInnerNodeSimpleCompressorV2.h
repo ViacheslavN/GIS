@@ -116,7 +116,7 @@ namespace embDB
 		}
 		size_t headSize() const
 		{
-			return  3 * sizeof(uint32);
+			return  sizeof(uint32);
 		}
 		size_t rowSize()
 		{

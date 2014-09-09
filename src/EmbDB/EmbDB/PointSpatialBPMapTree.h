@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_BP_MAP_POINT_SPATIAL_H_
 #define _EMBEDDED_DATABASE_BP_MAP_POINT_SPATIAL_H_
-#include "BaseBPMap.h"
+#include "BaseBPMapv2.h"
  
 #include "PointSpatialBPMaTraits.h"
 #include "SpatialKey.h"
@@ -8,14 +8,18 @@
 namespace embDB
 {
 	template<class _TCoord, class _TValue, class _TComp, 
-	class _TInnerCompess =  BPSpatialPointInnerNodeSimpleCompressor<RBMap<_TCoord, int64, _TComp> > ,	
-	class _TLeafCompess = BPSpatialPointLeafNodeMapSimpleCompressor<RBMap<_TCoord, _TValue, _TComp> >,
-	class _Transaction = IDBTransactions>
-    class TBPPointSpatialMap : public TBPMap<_TCoord, _TValue,  _TComp, 
-		_TInnerCompess, _TLeafCompess,	_Transaction>
+	class _Transaction = IDBTransactions,
+	class _TInnerCompess =  BPSpatialPointInnerNodeSimpleCompressor<_TCoord > ,	
+	class _TLeafCompess = BPSpatialPointLeafNodeMapSimpleCompressor<_TCoord>
+	class _TInnerNode = BPTreeInnerNodeSetv2<_TCoord, _TComp, _Transaction, _TInnerCompess>,
+	class _TLeafNode =  BPTreeLeafNodeMapv2<_TCoord, _TValue,  _TComp, _Transaction, _TLeafCompess>, 
+	class _TBTreeNode = BPTreeNodeMapv2<_TCoord, _TValue,  _TComp, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode>
+	>
+    class TBPPointSpatialMap : public TBPMapV2<_TCoord, _TValue,  _TComp, _Transaction
+		_TInnerCompess, _TLeafCompess>
 	{
 	public:
-		typedef TBPMap<_TCoord, _TValue, _TComp, _TInnerCompess, _TLeafCompess,	_Transaction > TBase;
+		typedef TBPMapV2<_TCoord, _TValue, _TComp, _TInnerCompess, _TLeafCompess,	_Transaction > TBase;
 
 			TBPPointSpatialMap(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize):
 			TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, true)/*,
@@ -31,8 +35,6 @@ namespace embDB
 		typedef TRect2D<TPointType>         TRect;
 		typedef typename TBase::TBTreeNode  TBTreeNode;
 		typedef typename TBase::TLeafNode  TLeafNode;
-		typedef typename TBase::TLeafMemSet   TLeafMemSet;
-		typedef typename TBase::TLeftMemSetNode  TLeftMemSetNode;
 		typedef typename TBase::iterator iterator;
 		typedef TPoint2D<TPointType> TPoint;
 
@@ -74,8 +76,9 @@ namespace embDB
 			TPointKey key(x /*- m_shiftX*/, y /*- m_shiftY*/);
 			TBTreeNode* pFindBTNode = 0;
 			TLeftMemSetNode *pFindRBNode= 0;
-			SpatialfindNode(key,  &pFindBTNode, &pFindRBNode);
-			return TBase::iterator(this, pFindBTNode, pFindRBNode );
+			//SpatialfindNode(key,  &pFindBTNode, &pFindRBNode);
+			return TBase::lower_bound(key);
+			//return TBase::iterator(this, pFindBTNode, pFindRBNode );
 		}
 
 		TSpatialIterator spatialQuery(TPointType xMin, TPointType yMin, TPointType xMax, TPointType yMax)
@@ -88,12 +91,13 @@ namespace embDB
 			TPointKey zKeyMax(xMax /*- m_shiftX*/, yMax /*- m_shiftY*/);
 			TBTreeNode* pFindBTNode = 0;
 			TLeftMemSetNode *pFindRBNode= 0;
-			SpatialfindNode(zKeyMin,  &pFindBTNode, &pFindRBNode);
-			return TSpatialIterator(this, pFindBTNode, pFindRBNode, zKeyMin, zKeyMax, rectQuery);
+			TBase::iterator it = TBase::lower_bound(zKeyMin);
+			//SpatialfindNode(zKeyMin,  &pFindBTNode, &pFindRBNode);
+			return TSpatialIterator(this, it.m_pCurNode, it.m_nIndex, zKeyMin, zKeyMax, rectQuery);
 		}
 
 
-		bool SpatialfindNode(const TKey& key, TBTreeNode** pFindBTNode,	TLeftMemSetNode **pFindMemNode)
+		/*bool SpatialfindNode(const TKey& key, TBTreeNode** pFindBTNode,	TLeftMemSetNode **pFindMemNode)
 		{
 
 			*pFindBTNode = NULL;
@@ -215,7 +219,7 @@ namespace embDB
 			ClearChache();
 
 			return true;
-		}
+		}*/
 
 		//TPointType getShiftX(){return m_shiftX; }
 		//TPointType getShiftY(){return m_shiftY; }
