@@ -46,7 +46,7 @@ namespace embDB
 				vecKeys.push_back(key);
 				vecValues.push_back(value);
 			}
-			stream.seek(ValueStreams.pos() + nKeySize + nValueSize, CommonLib::soFromBegin);		
+ 
 			return true;
 		}
 		virtual bool Write(TLeafKeyMemSet& vecKeys, TLeafValueMemSet& vecValues, CommonLib::FxMemoryWriteStream& stream)

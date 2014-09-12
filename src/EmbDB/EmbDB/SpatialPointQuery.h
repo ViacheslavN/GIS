@@ -95,7 +95,7 @@ namespace embDB
 			return uint32(m_nZValue>>(idx&0x1f));
 		}
 
-		void splitByBits(int idx)
+		void setLowBits(int idx)
 		{
 			uint32 bitMask = 0xAAAAAAAA >> (31 - idx);
 			m_nZValue |= bitMask;
@@ -153,7 +153,7 @@ namespace embDB
 		}
 		void getXY(uint32& x,  uint32& y);
 		
-		void splitByBits(int idx)
+		void setLowBits(int idx)
 		{
 			uint64 bitMask = 0xAAAAAAAAAAAAAAAA >> (63 - idx);
 			m_nZValue |= bitMask;
@@ -210,7 +210,7 @@ namespace embDB
 	{
 		typedef uint64 TPointType;
 		typedef int64  TPointTypei;
-		static const uint16 SizeInByte = 8;
+		static const uint16 SizeInByte = 16;
 		ZOrderPoint2DU64()
 		{
 			m_nZValue[0] = 0;
@@ -243,7 +243,7 @@ namespace embDB
 			return (m_nZValue[idx > 63 ? 1 : 0] >> (subIndex & 0x3f));
 		}
 
-		void splitByBits(int idx);
+		void setLowBits(int idx);
 		void clearLowBits(int idx);
 		
 		bool operator < (const ZOrderPoint2DU64& zOrder)

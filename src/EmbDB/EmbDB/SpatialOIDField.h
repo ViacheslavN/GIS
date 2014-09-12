@@ -3,8 +3,11 @@
 #include "PointSpatialBPMapTree.h"
 #include "DBField.h"
 #include "SpatialKey.h"
+#include "SpatialPointQuery.h"
 #include "SpatialRectQuery.h"
 #include "RectSpatialBPMapTree.h"
+#include "PoinMapLeafCompressor64.h"
+#include "PoinMapInnerCompressor64.h"
 namespace embDB
 {
 
@@ -204,8 +207,8 @@ namespace embDB
 	typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU32, uint64,
 		embDB::ZPointComp<embDB::ZOrderPoint2DU32> > TBPMapPoint32;
 
-	typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU64, 	uint64,	embDB::ZPointComp64, 
-		embDB::BPSpatialPointInnerNodeSimpleCompressor64<int64>,
+	typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU64, 	uint64,	embDB::ZPointComp64, IDBTransactions,
+		embDB::BPSpatialPointInnerNodeSimpleCompressor64,
 		embDB::BPSpatialPointLeafNodeMapSimpleCompressor64<uint64> > TBPMapPoint64;
 
 
@@ -213,13 +216,14 @@ namespace embDB
 		embDB::ZPointComp<embDB::ZOrderRect2DU16> 	> TBPMapRect16;
 
 	typedef embDB::TBPRectSpatialMap<embDB::ZOrderRect2DU32, uint64,
-		embDB::ZRect32Comp,		embDB::BPSpatialRectInnerNodeSimpleCompressor< embDB::RBMap<embDB::ZOrderRect2DU32, int64, embDB::ZRect32Comp> >,	
-		embDB:: BPSpatialRectLeafNodeMapSimpleCompressor<embDB::RBMap<embDB::ZOrderRect2DU32, uint64, embDB::ZRect32Comp > > > TBPMapRect32;
+		embDB::ZRect32Comp, IDBTransactions,
+		embDB::BPSpatialRectInnerNodeSimpleCompressor< embDB::ZOrderRect2DU32>,	
+		embDB:: BPSpatialRectLeafNodeMapSimpleCompressor<embDB::ZOrderRect2DU32, uint64> > TBPMapRect32;
 
 	typedef embDB::TBPRectSpatialMap<embDB::ZOrderRect2DU64, uint64,
-		embDB::ZRect64Comp,
-		embDB::BPSpatialRectInnerNodeSimpleCompressor< embDB::RBMap<embDB::ZOrderRect2DU64, int64, embDB::ZRect64Comp> >,	
-		embDB:: BPSpatialRectLeafNodeMapSimpleCompressor<embDB::RBMap<embDB::ZOrderRect2DU64, uint64, embDB::ZRect64Comp > > > TBPMapRect64;
+		embDB::ZRect64Comp, IDBTransactions,
+		embDB::BPSpatialRectInnerNodeSimpleCompressor<ZOrderRect2DU64 >,	
+		embDB:: BPSpatialRectLeafNodeMapSimpleCompressor<embDB::ZOrderRect2DU64, uint64 > > TBPMapRect64;
 
 
 	typedef OIDSpatialFieldHandler<TBPMapPoint16, uint16, TPoint2Du16> TPoint16Field;

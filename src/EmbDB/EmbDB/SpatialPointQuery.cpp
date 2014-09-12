@@ -45,7 +45,7 @@ namespace embDB
 		y = nYmin | (nYmax << 32);
 	}
 
-	void ZOrderPoint2DU64::splitByBits(int idx)
+	void ZOrderPoint2DU64::setLowBits(int idx)
 	{
 
 		if(idx > 63)

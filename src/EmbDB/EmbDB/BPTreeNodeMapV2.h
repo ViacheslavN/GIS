@@ -47,7 +47,18 @@ namespace embDB
 			return m_LeafNode.insert(key, val);
 		}
 
-		
+
+		const TValue& value(uint32 nIndex) const
+		{
+			assert(m_bIsLeaf);
+			return m_LeafNode.value(nIndex);
+		}
+		TValue& value(uint32 nIndex)
+		{
+				assert(m_bIsLeaf);
+			return m_LeafNode.value(nIndex);
+		}
+
 
 	};
 }

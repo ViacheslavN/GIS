@@ -7,103 +7,113 @@
 namespace embDB
 {
 
-	template</*typename _TCoordPoint, typename _TValue, */typename _TLeafMemSet  >
+	template<class _TCoordPoint, class _TValue>
 	class BPSpatialRectLeafNodeMapSimpleCompressor 
 	{
 	public:
-		typedef _TLeafMemSet TLeafMemSet;
-		typedef typename TLeafMemSet::TKey TCoordPoint;
-		typedef typename TLeafMemSet::TValue TValue;
-
-		typedef typename _TLeafMemSet::TTreeNode  TTreeNode;
-		typedef typename TCoordPoint::TPointType  TPointType;
-		//TRect2D<TPointType>         TRect;
+		typedef _TCoordPoint TCoordPoint;
+		typedef  _TValue TValue;
+		typedef  TBPVector<TCoordPoint> TLeafKeyMemSet;
+		typedef  TBPVector<TValue> TLeafValueMemSet;
 
 		BPSpatialRectLeafNodeMapSimpleCompressor(ICompressorParams *pParams) : m_nSize(0)
 		{}
 		virtual ~BPSpatialRectLeafNodeMapSimpleCompressor(){}
-		virtual bool Load(TLeafMemSet& Set, CommonLib::FxMemoryReadStream& stream)
+		virtual bool Load(TLeafKeyMemSet& vecKeys, TLeafValueMemSet& vecValues, CommonLib::FxMemoryReadStream& stream)
 		{
+
 			CommonLib::FxMemoryReadStream KeyStreams;
-			CommonLib::FxMemoryReadStream ValStreams;
+			CommonLib::FxMemoryReadStream ValueStreams;
+
 			m_nSize = stream.readInt32();
 			if(!m_nSize)
 				return true;
 
-			Set.reserve(m_nSize);
+			vecKeys.reserve(m_nSize);
+			vecValues.reserve(m_nSize);
 
-			uint32 nKeySize = stream.readInt32();
-			uint32 nValSize = stream.readInt32();
+			uint32 nKeySize =  m_nSize *  TCoordPoint::SizeInByte;
+			uint32 nValueSize =  m_nSize * sizeof(TValue);
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValSize);
+			ValueStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValueSize);
 
 			TCoordPoint zPoint;
 			TValue nval;
+			size_t nCount = TCoordPoint::SizeInByte/8;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
-				size_t nCount = TCoordPoint::SizeInByte/8;
 				for (size_t i = 0; i < nCount; ++i )
 				{
 					KeyStreams.read(zPoint.m_nZValue[i]);
 				}
-				ValStreams.read(nval);
-				Set.insert(zPoint, nval);
+				ValueStreams.read(nval);
+
+				vecKeys.push_back(zPoint);
+				vecValues.push_back(nval);
 			}
-			assert(ValStreams.pos() < stream.size());
 			return true;
 		}
-
-		virtual bool Write(TLeafMemSet& Set, CommonLib::FxMemoryWriteStream& stream)
+		virtual bool Write(TLeafKeyMemSet& vecKeys, TLeafValueMemSet& vecValues, CommonLib::FxMemoryWriteStream& stream)
 		{
-			assert(m_nSize == Set.size());
-			uint32 nSize = (uint32)Set.size();
+			uint32 nSize = (uint32)vecKeys.size();
+			assert(m_nSize == nSize);
 			stream.write(nSize);
 			if(!nSize)
 				return true;
 
 			CommonLib::FxMemoryWriteStream KeyStreams;
-			CommonLib::FxMemoryWriteStream ValStreams;
+			CommonLib::FxMemoryWriteStream valueStreams;
 
 			uint32 nKeySize =  nSize * TCoordPoint::SizeInByte;
-			uint32 nValSize =  nSize * sizeof(TValue);
+			uint32 nValuesSize =  nSize * sizeof(TValue);
 
-			stream.write(nKeySize);
-			stream.write(nValSize);
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValSize);
+			valueStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValuesSize);
 
-			TLeafMemSet::iterator it = Set.begin();
-			for(; !it.isNull(); ++it)
+			stream.seek(stream.pos() + nKeySize + nValuesSize, CommonLib::soFromBegin);			
+			size_t nCount = TCoordPoint::SizeInByte/8;
+
+			for(size_t i = 0, sz = vecKeys.size(); i < sz; ++i)
 			{
-				size_t nCount = TCoordPoint::SizeInByte/8;
-				for (size_t i = 0; i < nCount; ++i )
+			
+				TCoordPoint& coord = vecKeys[i];
+				for (size_t j = 0; j < nCount; ++j )
 				{
-					KeyStreams.write(it.key().m_nZValue[i]);
+					KeyStreams.write(coord.m_nZValue[j]);
 				}
-				ValStreams.write(it.value());
+				valueStreams.write(vecValues[i]);
 			}
-			assert((stream.pos() + KeyStreams.pos() +  ValStreams.pos())< stream.size());
 			return true;
 		}
 
-		virtual bool insert(TTreeNode *pObj)
+		virtual bool insert(const TCoordPoint& key, const TValue& value)
 		{
 			m_nSize++;
 			return true;
 		}
-		virtual bool update(TTreeNode *pObj,  const TValue& nValue)
+		virtual bool add(const TLeafKeyMemSet& vecKeys, const TLeafValueMemSet& vecValues)
+		{
+			m_nSize += vecKeys.size();
+			return true;
+		}
+		virtual bool recalc(const TLeafKeyMemSet& vecKeys, const TLeafValueMemSet& vecValues)
+		{
+			m_nSize = vecKeys.size();
+			return true;
+		}
+		virtual bool update(const TCoordPoint& key, const TValue& value)
 		{
 			return true;
 		}
-		virtual bool remove(TTreeNode *pObj)
+		virtual bool remove(const TCoordPoint& key)
 		{
 			m_nSize--;
 			return true;
 		}
 		virtual size_t size() const
 		{
-			return (TCoordPoint::SizeInByte + sizeof(TValue)) *  m_nSize + 3 * sizeof(uint32);
+			return (TCoordPoint::SizeInByte + sizeof(TValue)) *  m_nSize +  sizeof(uint32);
 		}
 		virtual size_t count() const
 		{
@@ -111,7 +121,7 @@ namespace embDB
 		}
 		size_t headSize() const
 		{
-			return  3 * sizeof(uint32);
+			return  sizeof(uint32);
 		}
 		size_t rowSize() const
 		{

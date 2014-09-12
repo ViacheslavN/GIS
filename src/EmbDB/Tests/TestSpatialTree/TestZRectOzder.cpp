@@ -70,7 +70,7 @@ void testSplitZRect(TPointType nMax)
 
 			TCoord lowKey = curQuery.m_zMin;
 			highKey = curQuery.m_zMax;
-			highKey.splitByBits(nCurBit);
+			highKey.setLowBits(nCurBit);
 			lowKey.clearLowBits (nCurBit);
 
 			curQuery.m_nBits = --nCurBit;
@@ -128,7 +128,7 @@ void testSplitZRect1(TCoord& zMin, TCoord& zMax)
 
 			TCoord lowKey = curQuery.m_zMin;
 			highKey = curQuery.m_zMax;
-			highKey.splitByBits(nCurBit);
+			highKey.setLowBits(nCurBit);
 			lowKey.clearLowBits (nCurBit);
 
 			curQuery.m_nBits = --nCurBit;

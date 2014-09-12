@@ -22,7 +22,7 @@ namespace embDB
 			return uint64(m_nZValue >> (idx & 0x3f));
 			//return uint64(m_nZValue & ((uint64)0x1 << (idx & 0x3f)));
 		}
-		void splitByBits(int idx);
+		void setLowBits(int idx);
 		void clearLowBits(int idx);
 		short getBits() const
 		{
@@ -92,7 +92,7 @@ namespace embDB
 			return (m_nZValue[idx > 63 ? 1 : 0] >> (subIndex & 0x3f));
 		}
 
-		void splitByBits(int idx);
+		void setLowBits(int idx);
 		void clearLowBits(int idx);
 
 		uint64 m_nZValue[2];
@@ -171,7 +171,7 @@ namespace embDB
 		}
 
 		uint64 getBit (int idx);
-		void splitByBits(int idx);
+		void setLowBits(int idx);
 		void clearLowBits(int idx);
 
 

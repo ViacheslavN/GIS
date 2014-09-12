@@ -1,32 +1,29 @@
 #include "stdafx.h"
-#include "../../EmbDB/PointSpatialBPMaTraits.h"
+//#include "../../EmbDB/PointSpatialBPMaTraits.h"
 #include "../../EmbDB/PointSpatialBPMapTree.h"
 #include "../../EmbDB/SpatialKey.h"
 #include "../../EmbDB/SpatialPointQuery.h"
 #include "../../EmbDB/Transactions.h"
 #include "../../EmbDB/DirectTransactions.h"
+#include "../../EmbDB/PoinMapInnerCompressor64.h"
+#include "../../EmbDB/PoinMapLeafCompressor64.h"
 #include "CommonLibrary/str_t.h"
 #include "CommonLibrary/DebugTime.h"
 #include <iostream>
 #include <set>
 
-/*typedef embDB::TBPMapSpatialPointsTraits<embDB::ZOrderPoint2DU16, int64,
-	embDB::ZPointComp<embDB::ZOrderPoint2DU16>,> TTraits;*/
 typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU16, uint64,
 	embDB::ZPointComp<embDB::ZOrderPoint2DU16> > TBPMapPOint16;
 
 
-/*typedef embDB::TBPMapSpatialPointsTraits<embDB::ZOrderPoint2DU32, uint64, int64,
-	embDB::ZPointComp<embDB::ZOrderPoint2DU32>, embDB::IDBTransactions> TTraits32;*/
 typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU32, uint64,
 	embDB::ZPointComp<embDB::ZOrderPoint2DU32> > TBPMapPOint32;
 
 
 
-//typedef embDB::TBPMapSpatialPoints64Traits<uint64, int64, embDB::IDBTransactions> TTraits64;
 typedef embDB::TBPPointSpatialMap<
 	embDB::ZOrderPoint2DU64, 	uint64,	embDB::ZPointComp64, 
-	embDB::BPSpatialPointInnerNodeSimpleCompressor64<int64>,
+	embDB::BPSpatialPointInnerNodeSimpleCompressor64,
     embDB::BPSpatialPointLeafNodeMapSimpleCompressor64<uint64> 
 > TBPMapPOint64;
 
@@ -247,8 +244,8 @@ void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64
 
 						zVal = it.key();
 						int64 nOID = it.value();
-						//	if(zVal > zValMax)
-						//		break;
+							if(zVal > zValMax)
+								break;
 
 						/*if(m_ODIs.find(nOID) != m_ODIs.end())
 						{
@@ -272,7 +269,7 @@ void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64
 						else
 							++nCntInQuery;
 
-						if(nCnt == 803)
+						if(nCnt == 1229)
 						{
 							int dd = 0;
 							dd++;
@@ -380,7 +377,7 @@ void TestPointSpatialTree()
 
 
 	//TestPointSpatial<TBPMapPOint32, uint32, embDB::CDirectTransactions, embDB::ZOrderPoint2DU32>("d:\\dbspatialpoint32.data", 50, 8192, 0, 10000, 1, 1000);
-	//TestPointSpatial<TBPMapPOint32, uint32, embDB::CDirectTransactions, embDB::ZOrderPoint2DU32>("d:\\dbspatialpoint32.data", 50, 8192, 0, 5000, 1,  500, true);
+//	TestPointSpatial<TBPMapPOint32, uint32, embDB::CDirectTransactions, embDB::ZOrderPoint2DU32>("d:\\dbspatialpoint32.data", 50, 8192, 1000, 3000, 1,  500, true);
 
 	//TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransactions, embDB::ZOrderPoint2DU64>("d:\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 1000);
   //  TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransactions, embDB::ZOrderPoint2DU64>("d:\\dbspatialpoint64.data", 50, 8192, 0, 0xFFFFFFFFFFFFFFFF, 1,  500, true);

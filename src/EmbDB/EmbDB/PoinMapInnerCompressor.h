@@ -3,6 +3,7 @@
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CompressorParams.h"
+#include "BPVector.h"
 namespace embDB
 {
 
@@ -14,70 +15,13 @@ namespace embDB
 		typedef _CoordPoint CoordPoint;
 		typedef typename CoordPoint::ZValueType ZValueType;
 		typedef int64 TLink;
-		typedef  TBPVector<TKey> TKeyMemSet;
+		typedef  TBPVector<CoordPoint> TKeyMemSet;
 		typedef  TBPVector<TLink> TLinkMemSet;
 	
 		BPSpatialPointInnerNodeSimpleCompressor(ICompressorParams *pParms = NULL) : m_nSize(0)
 		{}
 		virtual ~BPSpatialPointInnerNodeSimpleCompressor(){}
-		/*virtual bool Load(TInnerMemSet& Set, CommonLib::FxMemoryReadStream& stream)
-		{
-			CommonLib::FxMemoryReadStream KeyStreams;
-			CommonLib::FxMemoryReadStream LinkStreams;
-
-			m_nSize = stream.readInt32();
-			if(!m_nSize)
-				return true;
-
-			Set.reserve(m_nSize);
-			uint32 nKeySize = stream.readInt32();
-			uint32 nLinkSize = stream.readInt32();
-
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
-
-			CoordPoint zPoint;
-			TLink nlink;
-			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
-			{
-				KeyStreams.read(zPoint.m_nZValue);
-				LinkStreams.read(nlink);
-				Set.insert(zPoint, nlink);
-			}
-			assert(LinkStreams.pos() < stream.size());
-			return true;
-		}
-		virtual bool Write(TInnerMemSet& Set, CommonLib::FxMemoryWriteStream& stream)
-		{
-			uint32 nSize = (uint32)Set.size();
-			assert(m_nSize == nSize);
-			stream.write(nSize);
-			if(!nSize)
-				return true;
-
-			CommonLib::FxMemoryWriteStream KeyStreams;
-			CommonLib::FxMemoryWriteStream LinkStreams;
-
-			uint32 nKeySize =  nSize * sizeof(ZValueType);
-			uint32 nLinkSize =  nSize * sizeof(TLink);
-
-			stream.write(nKeySize);
-			stream.write(nLinkSize);
-
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
-
-
-			TInnerMemSet::iterator it = Set.begin();
-			for(; !it.isNull(); ++it)
-			{
-				KeyStreams.write(it.key().m_nZValue);
-				LinkStreams.write(it.value());
-			}
-			assert((stream.pos() + KeyStreams.pos() +  LinkStreams.pos())< stream.size());
-			return true;
-		}*/
-
+	
 		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;
@@ -90,7 +34,7 @@ namespace embDB
 			keySet.reserve(m_nSize);
 			linkSet.reserve(m_nSize);
 
-			uint32 nKeySize =  m_nSize * sizeof(TKey);
+			uint32 nKeySize =  m_nSize * sizeof(ZValueType);
 			uint32 nLinkSize =  m_nSize * sizeof(int64);
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
@@ -120,11 +64,8 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream KeyStreams;
 			CommonLib::FxMemoryWriteStream LinkStreams;
 
-			uint32 nKeySize =  nSize * sizeof(TKey);
+			uint32 nKeySize =  nSize * sizeof(ZValueType);
 			uint32 nLinkSize =  nSize * sizeof(int64);
-
-			/*stream.write(nKeySize);
-			stream.write(nLinkSize);*/
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
@@ -138,7 +79,7 @@ namespace embDB
 			return true;
 		}
 
-		virtual bool insert(const TKey& key, TLink link )
+		virtual bool insert(const CoordPoint& key, TLink link )
 		{
 			m_nSize++;
 			return true;
@@ -153,12 +94,12 @@ namespace embDB
 			m_nSize = keySet.size();
 			return true;
 		}
-		virtual bool remove(const TKey& key, TLink link)
+		virtual bool remove(const CoordPoint& key, TLink link)
 		{
 			m_nSize--;
 			return true;
 		}
-		virtual bool update(const TKey& key, TLink link)
+		virtual bool update(const CoordPoint& key, TLink link)
 		{
 			return true;
 		}

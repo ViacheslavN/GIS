@@ -92,9 +92,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TestPointSpatialMap.cpp" />
-    <ClCompile Include="TestRectSpatialMap.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="TestRectSpatialMap.cpp" />
     <ClCompile Include="TestSpatialTree.cpp" />
     <ClCompile Include="TestZPointOzder.cpp" />
     <ClCompile Include="TestZRectOzder.cpp" />

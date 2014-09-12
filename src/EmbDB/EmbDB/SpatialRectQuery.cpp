@@ -124,7 +124,7 @@ namespace embDB
 	}
 
 
-	void ZOrderRect2DU16::splitByBits(int idx)
+	void ZOrderRect2DU16::setLowBits(int idx)
 	{					  
 		uint64 bitMask = 0x8888888888888888 >> (63 - idx);
 	
@@ -197,7 +197,7 @@ namespace embDB
 		getXYFromZValue32(xMin, yMin, xMax, yMax, m_nZValue[0], m_nZValue[1]);
 	}
 
-	void ZOrderRect2DU32::splitByBits(int idx)
+	void ZOrderRect2DU32::setLowBits(int idx)
 	{
 
 		if(idx > 63)
@@ -299,7 +299,7 @@ namespace embDB
 		return (m_nZValue[nBlock] >> (nSubIndex & 0x3f));
 	}
 
-	void ZOrderRect2DU64::splitByBits(int idx)
+	void ZOrderRect2DU64::setLowBits(int idx)
 	{
 
 		/*

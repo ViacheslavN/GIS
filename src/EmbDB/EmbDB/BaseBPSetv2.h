@@ -849,7 +849,7 @@ namespace embDB
 	TIterator upper_bound(const TKey& key)
 	{
 		 
-		uint32 nIndex = 0;
+		int32 nIndex = 0;
 		if(m_nRootAddr == -1)
 			loadBTreeInfo();
 		if(m_nRootAddr == -1)
@@ -865,7 +865,7 @@ namespace embDB
 		{
 			return TIterator(this, m_pRoot, m_pRoot->leaf_upper_bound(key));
 		}
-		int32 nIndex = -1;
+		nIndex = -1;
 		int64 nNextAddr = m_pRoot->inner_upper_bound(key, nIndex);
 		int64 nParent = m_pRoot->addr();
 	 
@@ -894,7 +894,7 @@ namespace embDB
 	TIterator lower_bound(const TKey& key)
 	{
 		TBTreeNode* pFindBTNode = NULL;
-		uint32 nIndex = 0;
+		int32 nIndex = 0;
 		if(m_nRootAddr == -1)
 			loadBTreeInfo();
 		if(m_nRootAddr == -1)
@@ -911,7 +911,7 @@ namespace embDB
 			
 			return TIterator(this, m_pRoot, m_pRoot->leaf_lower_bound(key, nType));
 		}
-		int32 nIndex = -1;
+		nIndex = -1;
 		int64 nNextAddr = m_pRoot->inner_lower_bound(key, nType, nIndex);
 		int64 nParent = m_pRoot->addr();
 

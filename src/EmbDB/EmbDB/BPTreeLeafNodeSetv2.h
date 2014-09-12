@@ -102,11 +102,24 @@ namespace embDB
 
 		uint32 upper_bound(const TKey& key)
 		{
-			return  m_leafKeyMemSet.upper_bound(key, m_comp);
+
+			int32 nIndex =  m_leafKeyMemSet.upper_bound(key, m_comp);
+			if(nIndex != 0)
+			{
+				nIndex--;
+			}
+			
+			return nIndex;
 		}
 		uint32 lower_bound(const TKey& key, short& nType)
 		{
-			return m_leafKeyMemSet.lower_bound(key, nType, m_comp);
+			int32 nIndex =   m_leafKeyMemSet.lower_bound(key, nType, m_comp);
+			if(nIndex != 0)
+			{
+				nIndex--;
+			}
+
+			return nIndex;
 		}
 		uint32 binary_search(const TKey& key)
 		{
@@ -123,7 +136,7 @@ namespace embDB
 			short nType = 0;
 			if(m_bMulti)
 			{
-				nIndex = m_leafKeyMemSet.upper_bound(nIndex,  m_comp);
+				nIndex = m_leafKeyMemSet.upper_bound(key,  m_comp);
 				if(nIndex && m_comp.EQ(key, m_leafKeyMemSet[nIndex - 1]))
 				{
 					nType = FIND_KEY;
@@ -131,7 +144,7 @@ namespace embDB
 				}
 			}
 			else
-				nIndex = m_leafKeyMemSet.lower_bound(nIndex, nType, m_comp);
+				nIndex = m_leafKeyMemSet.lower_bound(key, nType, m_comp);
 					
 			if(nType != FIND_KEY)
 			{

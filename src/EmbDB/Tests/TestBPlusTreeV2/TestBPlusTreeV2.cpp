@@ -5,11 +5,14 @@
 void TestBPVector();
 void TestBRteeSet();
 void TestBRteeMap();
+void  TestInsert();;
 int _tmain(int argc, _TCHAR* argv[])
 {
+
+	 TestInsert();
 	//TestBPVector();
 	//TestBRteeSet();
-	TestBRteeMap();
+	//TestBRteeMap();
 	return 0;
 }
 

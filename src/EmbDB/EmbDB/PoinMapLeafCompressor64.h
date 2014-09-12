@@ -12,90 +12,102 @@ namespace embDB
 	{
 	public:
 		typedef _TValue TValue;
-		typedef RBMap<ZOrderPoint2DU64, TValue, ZPointComp64>   TLeafMemSet;
-
-		typedef typename TLeafMemSet::TTreeNode  TTreeNode;
+		typedef  TBPVector<ZOrderPoint2DU64> TLeafKeyMemSet;
+		typedef  TBPVector<TValue> TLeafValueMemSet;
 
 		BPSpatialPointLeafNodeMapSimpleCompressor64(ICompressorParams *pParms = NULL) : m_nSize(0)
 		{}
-		virtual ~BPSpatialPointLeafNodeMapSimpleCompressor64(){}
-		virtual bool Load(TLeafMemSet& Set, CommonLib::FxMemoryReadStream& stream)
+
+		virtual bool Load(TLeafKeyMemSet& vecKeys, TLeafValueMemSet& vecValues, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;
 			CommonLib::FxMemoryReadStream ValStreams;
+
 			m_nSize = stream.readInt32();
 			if(!m_nSize)
 				return true;
 
-			Set.reserve(m_nSize);
+			vecKeys.reserve(m_nSize);
+			vecValues.reserve(m_nSize);
 
-			uint32 nKeySize = stream.readInt32();
-			uint32 nValSize = stream.readInt32();
+
+			uint32 nKeySize =  m_nSize * 2 * sizeof(int64);
+			uint32 nValSize =  m_nSize * sizeof(int64);
+
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			ValStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValSize);
 
 			ZOrderPoint2DU64 zPoint;
-			TValue nval;
+			TValue nValue;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
 				KeyStreams.read(zPoint.m_nZValue[0]);
 				KeyStreams.read(zPoint.m_nZValue[1]);
-				ValStreams.read(nval);
-				Set.insert(zPoint, nval);
+				ValStreams.read(nValue);
+
+				vecKeys.push_back(zPoint);
+				vecValues.push_back(nValue);
 			}
-			assert(ValStreams.pos() < stream.size());
+ 
 			return true;
 		}
-
-		virtual bool Write(TLeafMemSet& Set, CommonLib::FxMemoryWriteStream& stream)
+		virtual bool Write(TLeafKeyMemSet& vecKeys, TLeafValueMemSet& vecValues, CommonLib::FxMemoryWriteStream& stream)
 		{
-			assert(m_nSize == Set.size());
-			uint32 nSize = (uint32)Set.size();
+			uint32 nSize = (uint32)vecKeys.size();
+			assert(m_nSize == nSize);
 			stream.write(nSize);
 			if(!nSize)
 				return true;
 
 			CommonLib::FxMemoryWriteStream KeyStreams;
-			CommonLib::FxMemoryWriteStream ValStreams;
+			CommonLib::FxMemoryWriteStream valueStreams;
 
-			uint32 nKeySize =  nSize * 2 *sizeof(uint64);
-			uint32 nValSize =  nSize * sizeof(TValue);
+			uint32 nKeySize =  nSize *2 * sizeof(int64);
+			uint32 nValuesSize =  nSize * sizeof(TValue);
 
-			stream.write(nKeySize);
-			stream.write(nValSize);
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValSize);
+			valueStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValuesSize);
+			stream.seek(stream.pos() + nKeySize + nValuesSize, CommonLib::soFromBegin);			 
 
-			TLeafMemSet::iterator it = Set.begin();
-			for(; !it.isNull(); ++it)
+			for(size_t i = 0, sz = vecKeys.size(); i < sz; ++i)
 			{
-				ZOrderPoint2DU64& zPoint = it.key();
+				ZOrderPoint2DU64& zPoint = vecKeys[i];
 				KeyStreams.write(zPoint.m_nZValue[0]);
 				KeyStreams.write(zPoint.m_nZValue[1]);
-				ValStreams.write(it.value());
+				valueStreams.write(vecValues[i]);
 			}
-			assert((stream.pos() + KeyStreams.pos() +  ValStreams.pos())< stream.size());
+
 			return true;
 		}
 
-		virtual bool insert(TTreeNode *pObj)
+		virtual bool insert(const ZOrderPoint2DU64& key, int64 link )
 		{
 			m_nSize++;
 			return true;
 		}
-		virtual bool update(TTreeNode *pObj,  const TValue& nValue)
+		virtual bool add(const TLeafKeyMemSet& keySet, const TLeafValueMemSet& linkSet)
 		{
+			m_nSize += keySet.size();
 			return true;
 		}
-		virtual bool remove(TTreeNode *pObj)
+		virtual bool recalc(const TLeafKeyMemSet& keySet, const TLeafValueMemSet& linkSet)
+		{
+			m_nSize = keySet.size();
+			return true;
+		}
+		virtual bool remove(const ZOrderPoint2DU64& key)
 		{
 			m_nSize--;
 			return true;
 		}
+		virtual bool update(const ZOrderPoint2DU64& key, const TValue& value)
+		{
+			return true;
+		}
 		virtual size_t size() const
 		{
-			return (2 *sizeof(uint64) + sizeof(TValue)) *  m_nSize + 3 * sizeof(uint32);
+			return (2 *sizeof(uint64) + sizeof(TValue)) *  m_nSize + sizeof(uint32);
 		}
 		virtual size_t count() const
 		{
@@ -103,7 +115,7 @@ namespace embDB
 		}
 		size_t headSize() const
 		{
-			return  3 * sizeof(uint32);
+			return   sizeof(uint32);
 		}
 		size_t rowSize() const
 		{

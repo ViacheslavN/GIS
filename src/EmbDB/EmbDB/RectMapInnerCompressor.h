@@ -6,20 +6,20 @@
 namespace embDB
 {
 
-	template<typename _TInnerMemSet >
+	template<typename _CoordPoint >
 	class BPSpatialRectInnerNodeSimpleCompressor  
 	{
 	public:
 
-		typedef _TInnerMemSet TInnerMemSet;
-		typedef typename TInnerMemSet::TKey TCoordPoint;
-		typedef typename TInnerMemSet::TValue TLink;
-		typedef typename TInnerMemSet::TTreeNode  TTreeNode;
+		typedef _CoordPoint TCoordPoint;
+		typedef int64 TLink;
+		typedef  TBPVector<TCoordPoint> TKeyMemSet;
+		typedef  TBPVector<TLink> TLinkMemSet;
 
 		BPSpatialRectInnerNodeSimpleCompressor(ICompressorParams *pParams) : m_nSize(0)
 		{}
 		virtual ~BPSpatialRectInnerNodeSimpleCompressor(){}
-		virtual bool Load(TInnerMemSet& Set, CommonLib::FxMemoryReadStream& stream)
+		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;
 			CommonLib::FxMemoryReadStream LinkStreams;
@@ -28,31 +28,35 @@ namespace embDB
 			if(!m_nSize)
 				return true;
 
-			Set.reserve(m_nSize);
-			uint32 nKeySize = stream.readInt32();
-			uint32 nLinkSize = stream.readInt32();
+			keySet.reserve(m_nSize);
+			linkSet.reserve(m_nSize);
+
+			uint32 nKeySize =  m_nSize * TCoordPoint::SizeInByte;
+			uint32 nLinkSize =  m_nSize * sizeof(int64);
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 
 			TCoordPoint zPoint;
 			TLink nlink;
+			size_t nCount = TCoordPoint::SizeInByte/8;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
-				size_t nCount = TCoordPoint::SizeInByte/8;
 				for (size_t i = 0; i < nCount; ++i )
 				{
 					KeyStreams.read(zPoint.m_nZValue[i]);
 				}
 				LinkStreams.read(nlink);
-				Set.insert(zPoint, nlink);
+
+				keySet.push_back(zPoint);
+				linkSet.push_back(nlink);
 			}
 			assert(LinkStreams.pos() < stream.size());
 			return true;
 		}
-		virtual bool Write(TInnerMemSet& Set, CommonLib::FxMemoryWriteStream& stream)
+		virtual bool Write(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryWriteStream& stream)
 		{
-			uint32 nSize = (uint32)Set.size();
+			uint32 nSize = (uint32)keySet.size();
 			assert(m_nSize == nSize);
 			stream.write(nSize);
 			if(!nSize)
@@ -61,43 +65,56 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream KeyStreams;
 			CommonLib::FxMemoryWriteStream LinkStreams;
 
-			uint32 nKeySize =  nSize *  TCoordPoint::SizeInByte;
-			uint32 nLinkSize =  nSize * sizeof(TLink);
-
-			stream.write(nKeySize);
-			stream.write(nLinkSize);
+			uint32 nKeySize =  nSize * TCoordPoint::SizeInByte;
+			uint32 nLinkSize =  nSize * sizeof(int64);
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
+			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);	
+			
+			size_t nCount =  TCoordPoint::SizeInByte/8;
 
-
-			TInnerMemSet::iterator it = Set.begin();
-			for(; !it.isNull(); ++it)
+			
+			for (size_t i = 0, sz = keySet.size(); i < sz; ++i )
 			{
-				size_t nCount =  TCoordPoint::SizeInByte/8;
-				for (size_t i = 0; i < nCount; ++i )
+			
+				TCoordPoint& coord = keySet[i];
+				for (size_t j = 0; j < nCount; ++j )
 				{
-					KeyStreams.write(it.key().m_nZValue[i]);
+					KeyStreams.write(coord.m_nZValue[i]);
 				}
-				LinkStreams.write(it.value());
+				LinkStreams.write(linkSet[i]);
 			}
-			assert((stream.pos() + KeyStreams.pos() +  LinkStreams.pos())< stream.size());
 			return true;
 		}
 
-		virtual bool insert(TTreeNode *pObj)
+		virtual bool insert(const TCoordPoint& key, TLink link )
 		{
 			m_nSize++;
 			return true;
 		}
-		virtual bool remove(TTreeNode *pObj)
+		virtual bool add(const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
+		{
+			m_nSize += keySet.size();
+			return true;
+		}
+		virtual bool recalc(const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
+		{
+			m_nSize = keySet.size();
+			return true;
+		}
+		virtual bool remove(const TCoordPoint& key, TLink link)
 		{
 			m_nSize--;
 			return true;
 		}
+		virtual bool update(const TCoordPoint& key, TLink link)
+		{
+			return true;
+		}
 		virtual size_t size() const
 		{
-			return (TCoordPoint::SizeInByte + sizeof(TLink) ) *  m_nSize + 3* sizeof(uint32) ;
+			return (TCoordPoint::SizeInByte + sizeof(TLink) ) *  m_nSize + sizeof(uint32) ;
 		}
 		virtual size_t count() const
 		{
@@ -105,7 +122,7 @@ namespace embDB
 		}
 		size_t headSize() const
 		{
-			return  3 * sizeof(uint32);
+			return  sizeof(uint32);
 		}
 		size_t rowSize()
 		{

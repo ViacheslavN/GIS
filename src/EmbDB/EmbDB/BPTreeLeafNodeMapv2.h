@@ -65,11 +65,11 @@ namespace embDB
 			return true;
 		}
 		
-		const TKey& value(uint32 nIndex) const
+		const TValue& value(uint32 nIndex) const
 		{
 			return m_leafValueMemSet[nIndex];
 		}
-		TKey& value(uint32 nIndex)
+		TValue& value(uint32 nIndex)
 		{
 			return m_leafValueMemSet[nIndex];
 		}

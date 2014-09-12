@@ -6,20 +6,19 @@
 namespace embDB
 {
 
-	template<class _TLink>
+
 	class BPSpatialPointInnerNodeSimpleCompressor64  
 	{
 	public:
 
-
-		typedef _TLink TLink;
-		typedef RBMap<ZOrderPoint2DU64, TLink, ZPointComp64>   TInnerMemSet;
-		typedef typename TInnerMemSet::TTreeNode  TTreeNode;
+		typedef  TBPVector<ZOrderPoint2DU64> TKeyMemSet;
+		typedef  TBPVector<int64> TLinkMemSet;
 
 		BPSpatialPointInnerNodeSimpleCompressor64(ICompressorParams *pParms = NULL) : m_nSize(0)
 		{}
 		virtual ~BPSpatialPointInnerNodeSimpleCompressor64(){}
-		virtual bool Load(TInnerMemSet& Set, CommonLib::FxMemoryReadStream& stream)
+
+		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;
 			CommonLib::FxMemoryReadStream LinkStreams;
@@ -28,28 +27,32 @@ namespace embDB
 			if(!m_nSize)
 				return true;
 
-			Set.reserve(m_nSize);
-			uint32 nKeySize = stream.readInt32();
-			uint32 nLinkSize = stream.readInt32();
+			keySet.reserve(m_nSize);
+			linkSet.reserve(m_nSize);
+
+
+			uint32 nKeySize =  m_nSize * 2 * sizeof(int64);
+			uint32 nLinkSize =  m_nSize * sizeof(int64);
+
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 
 			ZOrderPoint2DU64 zPoint;
-			TLink nlink;
+			int64 nlink;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
 				KeyStreams.read(zPoint.m_nZValue[0]);
 				KeyStreams.read(zPoint.m_nZValue[1]);
 				LinkStreams.read(nlink);
-				Set.insert(zPoint, nlink);
+				keySet.push_back(zPoint);
 			}
-			assert(LinkStreams.pos() < stream.size());
+			stream.seek(LinkStreams.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);		
 			return true;
 		}
-		virtual bool Write(TInnerMemSet& Set, CommonLib::FxMemoryWriteStream& stream)
+		virtual bool Write(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryWriteStream& stream)
 		{
-			uint32 nSize = (uint32)Set.size();
+			uint32 nSize = (uint32)keySet.size();
 			assert(m_nSize == nSize);
 			stream.write(nSize);
 			if(!nSize)
@@ -58,41 +61,53 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream KeyStreams;
 			CommonLib::FxMemoryWriteStream LinkStreams;
 
-			uint32 nKeySize =  nSize * 2 *sizeof(uint64);
-			uint32 nLinkSize =  nSize * sizeof(TLink);
-
-			stream.write(nKeySize);
-			stream.write(nLinkSize);
+			uint32 nKeySize =  nSize * 2 *sizeof(int64);
+			uint32 nLinkSize =  nSize * sizeof(int64);
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
+			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);			 
 
-
-			TInnerMemSet::iterator it = Set.begin();
-			for(; !it.isNull(); ++it)
+	 
+			for(size_t i = 0, sz = keySet.size(); i < sz; ++i)
 			{
-				ZOrderPoint2DU64& zOrder = it.key();
+				ZOrderPoint2DU64& zOrder = keySet[i];
 				KeyStreams.write(zOrder.m_nZValue[0]);
 				KeyStreams.write(zOrder.m_nZValue[1]);
-				LinkStreams.write(it.value());
+				LinkStreams.write(linkSet[i]);
 			}
-			assert((stream.pos() + KeyStreams.pos() +  LinkStreams.pos())< stream.size());
+ 
 			return true;
 		}
 
-		virtual bool insert(TTreeNode *pObj)
+
+		virtual bool insert(const ZOrderPoint2DU64& key, int64 link )
 		{
 			m_nSize++;
 			return true;
 		}
-		virtual bool remove(TTreeNode *pObj)
+		virtual bool add(const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
+		{
+			m_nSize += keySet.size();
+			return true;
+		}
+		virtual bool recalc(const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
+		{
+			m_nSize = keySet.size();
+			return true;
+		}
+		virtual bool remove(const ZOrderPoint2DU64& key, int64 link)
 		{
 			m_nSize--;
 			return true;
 		}
+		virtual bool update(const ZOrderPoint2DU64& key, int64 link)
+		{
+			return true;
+		}
 		virtual size_t size() const
 		{
-			return (2 *sizeof(uint64) + sizeof(TLink) ) *  m_nSize + 3* sizeof(uint32) ;
+			return (2 *sizeof(uint64) + sizeof(int64) ) *  m_nSize + sizeof(uint32) ;
 		}
 		virtual size_t count() const
 		{
@@ -100,11 +115,11 @@ namespace embDB
 		}
 		size_t headSize() const
 		{
-			return  3 * sizeof(uint32);
+			return  sizeof(uint32);
 		}
 		size_t rowSize()
 		{
-			return (2 *sizeof(uint64) + sizeof(TLink)) *  m_nSize;
+			return (2 *sizeof(uint64) + sizeof(int64)) *  m_nSize;
 		}
 		void clear()
 		{
@@ -112,7 +127,7 @@ namespace embDB
 		}
 		size_t tupleSize() const
 		{
-			return  (2 *sizeof(uint64) + sizeof(TLink));
+			return  (2 *sizeof(uint64) + sizeof(uint64));
 		}
 	private:
 		size_t m_nSize;

@@ -36,16 +36,21 @@ void TestInsert()
 	embDB::TBPVector<int32> vec;
 	embDB::TBPVector<int32> vec1;
 	embDB::TBPVector<int32> vec3;
+ 
 
-	std::set<int> set;
+	vec.push_back(1);
+	vec.push_back(2);
+	vec.push_back(2);
+	vec.push_back(2);
+	vec.push_back(2);
+	vec.push_back(3);
+	vec.push_back(8);
+	vec.push_back(5);
+	short nType = 0;
 
-	set.insert(1);
-	set.insert(2);
-	set.insert(3);
-	set.insert(8);
-	set.insert(5);
-
-	std::upper_bound(set.begin(), set.end(), 4);
+	int indexUp = vec.upper_bound(2, comp<int32>());
+	int indexLow = vec.lower_bound(2, nType, comp<int32>());
+ 
 
 	vec1.push_back(2);
 	vec1.push_back(3);

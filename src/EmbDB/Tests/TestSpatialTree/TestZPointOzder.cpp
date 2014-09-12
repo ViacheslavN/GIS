@@ -64,7 +64,7 @@ void testZPoint1()
 
 			embDB::ZOrderPoint2DU64 lowKey = curQuery.m_zMin;
 			highKey = curQuery.m_zMax;
-			highKey.splitByBits(nCurBit);
+			highKey.setLowBits(nCurBit);
 			lowKey.clearLowBits (nCurBit);
 
 			curQuery.m_nBits = --nCurBit;
@@ -109,8 +109,8 @@ void testZPoint1()
 	zValMax = zMax.getBit (curBitNum);
 	embDB::ZOrderPoint2DU16 lowKey = zMin;
 	embDB::ZOrderPoint2DU16 highKey = zMax;
-	highKey.splitByBits(curBitNum);
-	lowKey.splitByBits (curBitNum);
+	highKey.setLowBits(curBitNum);
+	lowKey.setLowBits (curBitNum);
 
 	uint16 nX1, nY1;
 	highKey.getXY(nX1, nY1);
