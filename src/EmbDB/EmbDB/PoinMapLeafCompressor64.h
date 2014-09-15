@@ -32,7 +32,7 @@ namespace embDB
 
 
 			uint32 nKeySize =  m_nSize * 2 * sizeof(int64);
-			uint32 nValSize =  m_nSize * sizeof(int64);
+			uint32 nValSize =  m_nSize * sizeof(TValue);
 
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);

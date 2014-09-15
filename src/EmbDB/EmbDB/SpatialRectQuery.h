@@ -19,7 +19,7 @@ namespace embDB
 
 		uint64 getBit (int idx)
 		{
-			return uint64(m_nZValue >> (idx & 0x3f));
+			return uint64((m_nZValue >> (idx & 0x3f)) & 0x01);
 			//return uint64(m_nZValue & ((uint64)0x1 << (idx & 0x3f)));
 		}
 		void setLowBits(int idx);

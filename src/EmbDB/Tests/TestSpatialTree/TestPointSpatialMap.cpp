@@ -372,8 +372,8 @@ void TestPointSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize,
 }
 void TestPointSpatialTree()
 {
-	//TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransactions, embDB::ZOrderPoint2DU16>("d:\\dbspatialpointFor.data", 50, 8192, 10000-100, 10000, 1, 1);
-	//TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransactions, embDB::ZOrderPoint2DU16>("d:\\dbspatialpointFor.data", 50, 8192, 10000-100, 10000, 1000, 100, true);
+	//TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransactions, embDB::ZOrderPoint2DU16>("d:\\dbspatialpointFor.data", 50, 8192, 0, 10000, 1, 1);
+	TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransactions, embDB::ZOrderPoint2DU16>("d:\\dbspatialpointFor.data", 50, 8192, 0, 100, 1000, 100, true);
 
 
 	//TestPointSpatial<TBPMapPOint32, uint32, embDB::CDirectTransactions, embDB::ZOrderPoint2DU32>("d:\\dbspatialpoint32.data", 50, 8192, 0, 10000, 1, 1000);

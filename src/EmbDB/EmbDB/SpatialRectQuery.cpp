@@ -127,19 +127,20 @@ namespace embDB
 	void ZOrderRect2DU16::setLowBits(int idx)
 	{					  
 		uint64 bitMask = 0x8888888888888888 >> (63 - idx);
-	
 		uint64 bit = uint64 (1) << uint64 (idx & 0x3f);
-		//m_nZValue |= bitMask;
-		m_nZValue -= bit;
+		
+		
 		m_nZValue |= (bitMask & (bit - 1));
+		m_nZValue -= bit;
 	}
 	void ZOrderRect2DU16::clearLowBits(int idx)
 	{
 		uint64 bitMask = 0x8888888888888888 >> (63 - idx);
-		//m_nZValue &= (~bitMask);
 		uint64 bit = uint64 (1) << uint64 (idx & 0x3f);
+		
 		m_nZValue |= bit;
 		m_nZValue &= ~(bitMask & (bit - 1));
+		
 	}
 
 	ZOrderRect2DU32::ZOrderRect2DU32()
@@ -151,25 +152,10 @@ namespace embDB
 	{
 		setZOrder(xMin, yMin, xMax, yMax);
 	}
-
-
-
+	
 
 	void ZOrderRect2DU32::setZOrder(uint32 xMin, uint32 yMin, uint32 xMax, uint32 yMax)
 	{
-		/*uint16 xLowMin = xMin & 0xFFFF;
-		uint16 yLowMin = yMin & 0xFFFF;
-		uint16 xLowMax = xMax & 0xFFFF;
-		uint16 yLowMax = yMax & 0xFFFF;
-		 
-		m_nZValue[0] = getZvalu16(xLowMin, yLowMin, xLowMax, yLowMax);
-		
-		uint16 xHighMin = xMin >> 16;
-		uint16 yHighMin = yMin  >> 16;
-		uint16 xHighMax = xMax  >> 16;
-		uint16 yHighMax = yMax  >> 16;
-
-		m_nZValue[1] = getZvalu16(xHighMin, yHighMin, xHighMax, yHighMax);*/
 		setZValue32(xMin, yMin, xMax, yMax, m_nZValue[0], m_nZValue[1]);
 
 	}
@@ -178,22 +164,6 @@ namespace embDB
 
 	void ZOrderRect2DU32::getXY(uint32& xMin, uint32& yMin, uint32& xMax, uint32& yMax)
 	{
-		/*uint16 xLowMin;
-		uint16 yLowMin;
-		uint16 xLowMax;
-		uint16 yLowMax;
-		getXYFromZValue16(xLowMin, yLowMin, xLowMax, yLowMax, m_nZValue[0]);
-
-		uint16 xHighMin;
-		uint16 yHighMin;
-		uint16 xHighMax;
-		uint16 yHighMax;
-		getXYFromZValue16(xHighMin, yHighMin, xHighMax, yHighMax, m_nZValue[1]);
-
-		xMin = (uint32)xLowMin | ((uint32)(xHighMin << 16));
-		yMin = (uint32)yLowMin | ((uint32)(yHighMin << 16));
-		xMax = (uint32)xLowMax | ((uint32)(xHighMax << 16));
-		yMax = (uint32)yLowMax | ((uint32)(yHighMax << 16));*/
 		getXYFromZValue32(xMin, yMin, xMax, yMax, m_nZValue[0], m_nZValue[1]);
 	}
 
@@ -301,14 +271,7 @@ namespace embDB
 
 	void ZOrderRect2DU64::setLowBits(int idx)
 	{
-
-		/*
-		uint64 bitMask = 0x8888888888888888 >> (63 - idx);
-		uint64 bit = uint64 (1) << uint64 (idx & 0x3f);
-		m_nZValue[0] -= bit;
-		m_nZValue[0] |= (bitMask& (bit - 1));
-		*/
-
+		
 		int nBlock = (idx & 0xff) >> 6;
 		int nSubIndex = idx - (64 * nBlock);
 		uint64 bitMask = 0x8888888888888888 >> (63 - nSubIndex);
@@ -326,8 +289,7 @@ namespace embDB
 
 	void ZOrderRect2DU64::clearLowBits(int idx)
 	{
-
-
+		
 		int nBlock = (idx & 0xff) >> 6;
 		int nSubIndex = idx - (64 * nBlock);
 		uint64 bitMask = 0x8888888888888888 >> (63 - nSubIndex);

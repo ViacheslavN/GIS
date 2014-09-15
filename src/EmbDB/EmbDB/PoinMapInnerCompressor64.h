@@ -45,7 +45,9 @@ namespace embDB
 				KeyStreams.read(zPoint.m_nZValue[0]);
 				KeyStreams.read(zPoint.m_nZValue[1]);
 				LinkStreams.read(nlink);
+
 				keySet.push_back(zPoint);
+				linkSet.push_back(nlink);
 			}
 			stream.seek(LinkStreams.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);		
 			return true;

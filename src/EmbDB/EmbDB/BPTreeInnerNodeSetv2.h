@@ -101,7 +101,9 @@ namespace embDB
 				nIndex = -1;
 				return m_nLess;
 			}
-			nIndex--;
+		//	if(nIndex == m_innerKeyMemSet.size())
+				nIndex--;
+			//nIndex--;
 			return m_innerLinkMemSet[nIndex]; 
 		}
 	

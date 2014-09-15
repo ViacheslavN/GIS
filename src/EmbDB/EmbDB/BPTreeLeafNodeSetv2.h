@@ -114,9 +114,9 @@ namespace embDB
 		uint32 lower_bound(const TKey& key, short& nType)
 		{
 			int32 nIndex =   m_leafKeyMemSet.lower_bound(key, nType, m_comp);
-			if(nIndex != 0)
+			if(nIndex == m_leafKeyMemSet.size())
 			{
-				nIndex--;
+				return -1;
 			}
 
 			return nIndex;

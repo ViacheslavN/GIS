@@ -43,13 +43,13 @@ void TestInsert()
 	vec.push_back(2);
 	vec.push_back(2);
 	vec.push_back(2);
-	vec.push_back(3);
+	vec.push_back(4);
 	vec.push_back(8);
-	vec.push_back(5);
+	vec.push_back(9);
 	short nType = 0;
 
-	int indexUp = vec.upper_bound(2, comp<int32>());
-	int indexLow = vec.lower_bound(2, nType, comp<int32>());
+	int indexUp = vec.upper_bound(40, comp<int32>());
+	int indexLow = vec.lower_bound(40, nType, comp<int32>());
  
 
 	vec1.push_back(2);
