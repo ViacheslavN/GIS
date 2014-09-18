@@ -148,8 +148,8 @@ namespace embDB
 				m_pTransaction->error(_T("BTREE: Error Load  BTreeInfoPage: -1"));
 				return false;
 			}
-			CFilePage * pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo);
-			if(!pPage)
+			FilePagePtr pPage(m_pTransaction->getFilePage(m_nPageBTreeInfo));
+			if(!pPage.get())
 			{
 				CommonLib::str_t sMsg;
 				sMsg.format(_T("BTREE: Error load BTreeInfoPage: %I64d"), (int64)m_nPageBTreeInfo);
@@ -192,11 +192,11 @@ namespace embDB
 
 		bool saveBTreeInfo()
 		{
-			CFilePage * pPage = NULL;
+			FilePagePtr pPage(NULL);
 			if(m_nPageBTreeInfo == -1)
 			{
 				pPage = m_pTransaction->getNewPage();
-				if(pPage)
+				if(pPage.get())
 					m_nPageBTreeInfo = pPage->getAddr();
 				if(m_nPageBTreeInfo == -1)
 				{
@@ -209,7 +209,7 @@ namespace embDB
 			else
 			{
 				pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo, false);
-				if(!pPage)
+				if(!pPage.get())
 				{
 					CommonLib::str_t sMsg;
 					sMsg.format(_T("BTREE: Error save BTreeInfoPage: %I64d is not load"), (int64)m_nPageBTreeInfo);
@@ -297,12 +297,12 @@ namespace embDB
 			TBTreeNode *pBNode = m_Chache.GetElem(nAddr, bNotMove);
 			if(!pBNode)
 			{
-				CFilePage* pFilePage = m_pTransaction->getFilePage(nAddr);
-				assert(pFilePage);
-				if(!pFilePage)
+				FilePagePtr pFilePage(m_pTransaction->getFilePage(nAddr));
+				assert(pFilePage.get());
+				if(!pFilePage.get())
 					return NULL;
 				pBNode = new TBTreeNode(-1, m_pAlloc, nAddr, m_bMulti, false, m_bCheckCRC32, (ICompressorParams *)m_InnerCompParams.get(), (ICompressorParams *)m_LeafCompParams.get());
-				if(!pBNode->LoadFromPage(pFilePage, m_pTransaction))
+				if(!pBNode->LoadFromPage(pFilePage.get(), m_pTransaction))
 					return NULL;
 				if(bCheckCache)
 				{
@@ -361,8 +361,8 @@ namespace embDB
 	{
 		m_pRoot = newNode(true, true);
 		m_nRootAddr = m_pRoot->m_nPageAddr; 
-		CFilePage *pFilePage = m_pTransaction->getNewPage();
-		if(!pFilePage)
+		FilePagePtr pFilePage = m_pTransaction->getNewPage();
+		if(!pFilePage.get())
 		{
 			CommonLib::str_t sMsg;
 			sMsg.format(_T("BTREE: Error create new static page"));

@@ -181,7 +181,7 @@ namespace embDB
 	}
 
 
-	CFilePage* CTransactions::getFilePage(int64 nAddr, bool bRead)
+	FilePagePtr CTransactions::getFilePage(int64 nAddr, bool bRead)
 	{
 		if(m_nTranType == eTT_SELECT)
 		{
@@ -190,7 +190,7 @@ namespace embDB
 		CFilePage* pPage = m_PageChache.GetPage(nAddr, false, bRead);
 		if(!pPage)
 		{
-			CFilePage* pStoragePage =  m_pDBStorage->getFilePage(nAddr, bRead);
+			FilePagePtr pStoragePage =  m_pDBStorage->getFilePage(nAddr, bRead);
 			if(pStoragePage->getFlags() & eFP_FROM_FREE_PAGES)
 			{
 				m_VecFreePages.push_back(pStoragePage->getAddr());
@@ -198,15 +198,15 @@ namespace embDB
 			pPage = new CFilePage(m_pAlloc, pStoragePage->getRowData(), pStoragePage->getPageSize(), nAddr);
 			if(m_nRestoreType == rtUndo)
 			{
-				SaveDBPage(pStoragePage);
+				SaveDBPage(pStoragePage.get());
 			}
 			int64 nTranAddr = m_TranStorage.getNewPageAddr();
 			m_PageChache.AddPage(nAddr, nTranAddr, pPage);
 		}
 
-		return pPage;
+		return FilePagePtr(pPage);
 	}
-	void CTransactions::dropFilePage(CFilePage* pPage)
+	void CTransactions::dropFilePage(FilePagePtr pPage)
 	{
 
 	}
@@ -214,7 +214,7 @@ namespace embDB
 	{
 
 	}
-	CFilePage* CTransactions::getNewPage()
+	FilePagePtr CTransactions::getNewPage()
 	{
 		assert(m_nTranType != eTT_SELECT);
 		int64 nAddr = m_pDBStorage->getNewPageAddr();
@@ -223,11 +223,11 @@ namespace embDB
 		pFilePage->setFlag(eFP_NEW, true);
 
 		m_PageChache.AddPage(nAddr, nTranAddr, pFilePage);
-		return pFilePage;
+		return FilePagePtr(pFilePage);
 	}
-	void CTransactions::saveFilePage(CFilePage* pPage,  size_t nSize, bool bChandgeInCache )
+	void CTransactions::saveFilePage(FilePagePtr pPage,  size_t nSize, bool bChandgeInCache )
 	{
-		m_PageChache.savePage(pPage);
+		m_PageChache.savePage(pPage.get());
 	}
 	size_t CTransactions::getPageSize() const
 	{

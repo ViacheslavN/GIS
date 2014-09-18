@@ -65,8 +65,7 @@ namespace embDB
 			CStorage* getTableStorage(const CommonLib::str_t& sFileName, bool bCreate);
 
 			CommonLib::alloc_t* getBTreeAlloc();
-			ITransactions* createTransactions();
-			
+				
 		private:
 			bool readRootPage(CFilePage* pPage);
 			bool CheckDirty();

@@ -133,12 +133,12 @@ namespace embDB
 	public:	
 		BPNewPageStorage(CTranStorage *pTranStorage, CommonLib::alloc_t *pAlloc);
 		~BPNewPageStorage();
-		int64 saveFilePage(CFilePage* pPage);
-		CFilePage* getFilePage(int64 nAddr, bool bRead = true);
-		CFilePage* getNewPage();
+		int64 saveFilePage(FilePagePtr pPage);
+		FilePagePtr getFilePage(int64 nAddr, bool bRead = true);
+		FilePagePtr getNewPage();
 		void error(const CommonLib::str_t& sError){}
 		size_t getPageSize(){return m_pTranStorage->getPageSize();}
-		bool dropFilePage(CFilePage* pPage){return true;}
+		bool dropFilePage(FilePagePtr pPage){return true;}
 		bool dropFilePage(int64 pAddrPage){return true;}
 	private:
 		CTranStorage *m_pTranStorage;

@@ -32,6 +32,7 @@ namespace embDB
 		typedef typename TBase::TBTreeNode  TBTreeNode;
 		typedef typename TBase::TLeafNode  TLeafNode;
 		typedef typename TBase::iterator iterator;
+		typedef IRefCntPtr<TBTreeNode> TBTreeNodePtr;
 
 		/*template <class _TCoord, class _TValue, class _TComp, 	class _TInnerCompess ,	class _TLeafCompess,
 		class _Transaction,	class _TBTreeNode, class _TLeftMemset,  class _TLeftNode>*/
@@ -58,7 +59,7 @@ namespace embDB
 			TPointKey zKeyMin(m_Extent.m_minX, m_Extent.m_minY, xMin, yMin);
 			TPointKey zKeyMax(xMax, yMax, TPointKey::coordMax, TPointKey::coordMax);
 			TBase::iterator it = TBase::lower_bound(zKeyMin);
-			return TSpatialIterator(this, it.m_pCurNode, it.m_nIndex, zKeyMin, zKeyMax, rectQuery);
+			return TSpatialIterator(this, it.m_pCurNode.get(), it.m_nIndex, zKeyMin, zKeyMax, rectQuery);
 
 
 			/*

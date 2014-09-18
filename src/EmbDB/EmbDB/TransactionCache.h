@@ -138,8 +138,8 @@ namespace embDB
 			{
 				++nCount;
 				sFileTranPageInfo& pi = it.value();
-				CFilePage *pPage =  m_Chache.GetElem(it.key(), true);//pi.m_pPage;
-				if(!pPage)
+				FilePagePtr pPage(m_Chache.GetElem(it.key(), true));//pi.m_pPage;
+				if(!pPage.get())
 				{
 					assert(pi.m_nFileAddr != -1);
 					pPage = m_pFileStorage->getFilePage(pi.m_nFileAddr);
@@ -161,7 +161,7 @@ namespace embDB
 						pStorage->saveFilePage(pPage, true);
 
 				}
-				delete pPage;
+				delete pPage.release();
 				it.next();
 			}
 			//pStorage->unlockWrite();

@@ -93,8 +93,8 @@ namespace embDB
 	bool CTable::load()
 	{
 		CommonLib::FxMemoryReadStream stream;
-		CFilePage * pPage = m_pMainDBStorage->getFilePage(m_nTablePage);
-		if(!pPage)
+		FilePagePtr pPage = m_pMainDBStorage->getFilePage(m_nTablePage);
+		if(!pPage.get())
 			return false;
 		stream.attach(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream);
@@ -156,8 +156,8 @@ namespace embDB
 	}
 	bool CTable::save(IDBTransactions *pTran)
 	{
-		CFilePage* pFPage = pTran->getFilePage(m_nTablePage);
-		if(!pFPage)
+		FilePagePtr pFPage = pTran->getFilePage(m_nTablePage);
+		if(!pFPage.get())
 			return false;
 		CommonLib::FxMemoryWriteStream stream;
 		stream.attach(pFPage->getRowData(), pFPage->getPageSize());
@@ -173,8 +173,8 @@ namespace embDB
 		{
 			if(m_nFieldsPage == -1)
 			{
-				CFilePage* pPage = pTran->getNewPage();
-				if(!pPage)
+				FilePagePtr pPage = pTran->getNewPage();
+				if(!pPage.get())
 					return false;
 				m_nFieldsPage = pPage->getAddr();
 				m_nFieldsAddr.setFirstPage(m_nFieldsPage);
@@ -234,8 +234,8 @@ namespace embDB
 	bool CTable::ReadField(int64 nAddr, IDBTransactions *pTran)
 	{
 		CommonLib::FxMemoryReadStream stream;
-		CFilePage * pPage = m_pTableStorage ? m_pTableStorage->getFilePage(nAddr) : m_pMainDBStorage->getFilePage(nAddr);
-		if(!pPage)
+		FilePagePtr pPage = m_pTableStorage ? m_pTableStorage->getFilePage(nAddr) : m_pMainDBStorage->getFilePage(nAddr);
+		if(!pPage.get())
 			return false;
 		stream.attach(pPage->getRowData(), pPage->getPageSize());
 		sFieldInfo fi;
@@ -292,11 +292,11 @@ namespace embDB
 		if(fi.m_nFieldPage == -1)
 		{
 			assert(pTran);
-			CFilePage* pFieldInfoPage = pTran->getNewPage();
-			if(!pFieldInfoPage)
+			FilePagePtr pFieldInfoPage = pTran->getNewPage();
+			if(!pFieldInfoPage.get())
 				return false;
-			CFilePage* pFieldPage = pTran->getNewPage();
-			if(!pFieldPage)
+			FilePagePtr pFieldPage = pTran->getNewPage();
+			if(!pFieldPage.get())
 				return false;
 			fi.m_nFieldPage = pFieldPage->getAddr();
 			fi.m_nFIPage = pFieldInfoPage->getAddr();
@@ -362,11 +362,11 @@ namespace embDB
 		if(fi.m_nFieldPage == -1)
 		{
 			assert(pTran);
-			CFilePage* pFieldInfoPage = pTran->getNewPage();
-			if(!pFieldInfoPage)
+			FilePagePtr pFieldInfoPage = pTran->getNewPage();
+			if(!pFieldInfoPage.get())
 				return false;
-			CFilePage* pFieldPage = pTran->getNewPage();
-			if(!pFieldPage)
+			FilePagePtr pFieldPage = pTran->getNewPage();
+			if(!pFieldPage.get())
 				return false;
 			fi.m_nFieldPage = pFieldPage->getAddr();
 			fi.m_nFIPage = pFieldInfoPage->getAddr();
@@ -402,9 +402,9 @@ namespace embDB
 			return true;
 		
 		CommonLib::FxMemoryWriteStream stream;
-		CFilePage * pFPage = pTran->getFilePage(m_nFieldsPage);
-		CFilePage* pNextPage = NULL;
-		if(!pFPage)
+		FilePagePtr pFPage = pTran->getFilePage(m_nFieldsPage);
+		FilePagePtr pNextPage(NULL);
+		if(!pFPage.get())
 			return false;
 	 
 		stream.attach(pFPage->getRowData(), pFPage->getPageSize());
@@ -416,7 +416,7 @@ namespace embDB
 
 		while(!it.isNull())
 		{
-			if(!pFPage)
+			if(!pFPage.get())
 				return false;
 
 			stream.attach(pFPage->getRowData(), pFPage->getPageSize());
@@ -445,7 +445,7 @@ namespace embDB
 			if(!it.isNull())
 			{
 				pNextPage = nAddr == -1 ? pTran->getNewPage() : pTran->getFilePage(nAddr);
-				if(!pNextPage)
+				if(!pNextPage.get())
 				{
 					return false;
 				}
@@ -473,8 +473,8 @@ namespace embDB
 
 	bool CTable::loadTableStorage(int64 nAddr)
 	{
-		CFilePage * pPage = m_pMainDBStorage->getFilePage(nAddr);
-		if(!pPage)
+		FilePagePtr pPage(m_pMainDBStorage->getFilePage(nAddr));
+		if(!pPage.get())
 			return false;
 		CommonLib::FxMemoryReadStream stream;
 		stream.attach(pPage->getRowData(), pPage->getPageSize());

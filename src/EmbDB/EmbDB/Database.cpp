@@ -3,7 +3,6 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "DBMagicSymbol.h"
 #include "storage.h"
-#include "SimpleTransactions.h"
 #include "Transactions.h"
 #include "DBTranManager.h"
 namespace embDB
@@ -31,11 +30,11 @@ namespace embDB
 		if(nfSize < DEFAULT_PAGE_SIZE)
 			return false;
 		m_pStorage->setPageSize(DEFAULT_PAGE_SIZE);
-		CFilePage * pFile = m_pStorage->getFilePage(0);
-		if(!pFile)
+		FilePagePtr pFile(m_pStorage->getFilePage(0));
+		if(!pFile.get())
 			return false;
 
-		m_bOpen =  readRootPage(pFile);
+		m_bOpen =  readRootPage(pFile.get());
 		return m_bOpen;
 	}
 	bool CDatabase::create(const CommonLib::str_t& sDbName, size_t nPageSize, const CommonLib::str_t& sWorkingPath)
@@ -56,17 +55,17 @@ namespace embDB
 		if(!bOpen)
 			return false;
 
-		CFilePage * pDBHeaderPage = m_pStorage->getNewPage(true);
-		if(!pDBHeaderPage)
+		FilePagePtr pDBHeaderPage(m_pStorage->getNewPage(true));
+		if(!pDBHeaderPage.get())
 			return false;
-		CFilePage * pDBStoragePage = m_pStorage->getNewPage(true);
-		if(!pDBStoragePage)
+		FilePagePtr pDBStoragePage(m_pStorage->getNewPage(true));
+		if(!pDBStoragePage.get())
 			return false;
-		CFilePage * pDBShemaPage = m_pStorage->getNewPage(true);
-		if(!pDBShemaPage)
+		FilePagePtr pDBShemaPage(m_pStorage->getNewPage(true));
+		if(!pDBShemaPage.get())
 			return false;
-		CFilePage * pDBUserPage = m_pStorage->getNewPage(true);
-		if(!pDBUserPage)
+		FilePagePtr pDBUserPage(m_pStorage->getNewPage(true));
+		if(!pDBUserPage.get())
 			return false;
 
 		m_dbHeader.nStoragePage = pDBStoragePage->getAddr();
@@ -145,11 +144,7 @@ namespace embDB
 	{
 		return m_pAlloc.get();
 	}
-	ITransactions* CDatabase::createTransactions()
-	{
-		return new SimpleTransactions(m_pAlloc.get(), m_pStorage.get());
-	}
-
+	
 	ITransactions* CDatabase::startTransaction(eTransactionsType trType)
 	{
 		if(!m_bOpen)
@@ -189,7 +184,7 @@ namespace embDB
 			}
 			if(!pStorage->getFileSzie())
 			{
-				CFilePage *pPage = pStorage->getNewPage();
+				FilePagePtr pPage(pStorage->getNewPage());
 				pStorage->setStoragePageInfo(pPage->getAddr());
 				pStorage->saveStorageInfo();
 			}

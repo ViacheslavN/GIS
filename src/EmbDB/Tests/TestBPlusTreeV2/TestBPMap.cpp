@@ -169,7 +169,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  true, false, nPageSize);
-			embDB::CFilePage* pPage = storage.getNewPage();
+			embDB::FilePagePtr pPage = storage.getNewPage();
 			nStorageInfoPage = pPage->getAddr();
 			storage.initStorage(pPage->getAddr());
 

@@ -62,8 +62,8 @@ namespace embDB
 			{
 
 				int64 m_nFieldInfoPage = nAddr;
-				CFilePage * pPage = m_pDBTransactions->getFilePage(nAddr);
-				if(!pPage)
+				FilePagePtr pPage = m_pDBTransactions->getFilePage(nAddr);
+				if(!pPage.get())
 					return false;
 				CommonLib::FxMemoryReadStream stream;
 				stream.attach(pPage->getRowData(), pPage->getPageSize());
@@ -246,15 +246,15 @@ namespace embDB
 			virtual bool save(int64 nAddr, IDBTransactions *pTran)
 			{
 				//m_nFieldInfoPage = nAddr;
-				CFilePage * pPage = pTran->getFilePage(nAddr);
-				if(!pPage)
+				FilePagePtr pPage(pTran->getFilePage(nAddr));
+				if(!pPage.get())
 					return false;
 				CommonLib::FxMemoryWriteStream stream;
 				stream.attach(pPage->getRowData(), pPage->getPageSize());
 				sFilePageHeader header(stream, FIELD_PAGE, FIELD_INFO_PAGE);
 				int64 m_nBTreeRootPage = -1;
-					CFilePage *pRootPage = pTran->getNewPage();
-				if(!pRootPage)
+				FilePagePtr pRootPage(pTran->getNewPage());
+				if(!pRootPage.get())
 					return false;
 				m_nBTreeRootPage = pRootPage->getAddr();
 				stream.write(m_nBTreeRootPage);

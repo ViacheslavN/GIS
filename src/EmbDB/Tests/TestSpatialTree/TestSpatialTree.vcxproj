@@ -94,7 +94,6 @@
     <ClCompile Include="TestPointSpatialMap.cpp" />
     <ClCompile Include="TestRectSpatialMap.cpp" />
     <ClCompile Include="TestSpatialTree.cpp" />
-    <ClCompile Include="TestUgdZ32Order.cpp" />
     <ClCompile Include="TestZPointOzder.cpp" />
     <ClCompile Include="TestZRectOzder.cpp" />
     <ClCompile Include="ZOrderTable.cpp" />

@@ -19,14 +19,15 @@ namespace embDB
 		CStorage( CommonLib::alloc_t *pAlloc, int32 nCacheSize = 1000);
 		~CStorage();
 
-		virtual CFilePage* getFilePage(int64 nAddr, bool bRead = true);
-		virtual bool dropFilePage(CFilePage* pPage);
+		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true);
+		virtual bool dropFilePage(FilePagePtr pPage);
 		virtual  bool dropFilePage(int64 nAddr);
-		virtual  CFilePage* getNewPage(bool bWrite = false);
+		virtual  FilePagePtr getNewPage(bool bWrite = false);
 		virtual  bool saveFilePage(CFilePage* pPage, size_t nDataSize = 0,  bool bChandgeInCache = false);
-		virtual bool saveNewPage(CFilePage* pPage);
+		virtual  bool saveFilePage(FilePagePtr pPage, size_t nDataSize = 0,  bool bChandgeInCache = false);
+		virtual bool saveNewPage(FilePagePtr pPage);
 		virtual int64 getNewPageAddr();
-		virtual CFilePage* createPage(int64 nAddr);
+		//virtual FilePagePtr createPage(int64 nAddr);
 		virtual bool commit();
 		virtual bool removeFromFreePage(int64 nAddr);
 
@@ -38,7 +39,7 @@ namespace embDB
 		virtual bool try_lockWrite(){return false;}
 		virtual bool unlockWrite(IDBTransactions *pTran = NULL);
 		virtual void clearDirty();
-		virtual bool saveChache() ;
+	//	virtual bool saveChache() ;
 		bool isValid() const;
 
 		virtual bool saveState();

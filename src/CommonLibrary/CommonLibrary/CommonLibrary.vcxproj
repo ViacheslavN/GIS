@@ -423,6 +423,7 @@
     <ClInclude Include="FixedMemoryStream.h" />
     <ClInclude Include="general.h" />
     <ClInclude Include="GeneralTypes.h" />
+    <ClInclude Include="Interlocked.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="MemoryStream.h" />
     <ClInclude Include="multibyte.h" />
@@ -444,6 +445,7 @@
     <ClCompile Include="DebugTime.cpp" />
     <ClCompile Include="FileWin32.cpp" />
     <ClCompile Include="FixedMemoryStream.cpp" />
+    <ClCompile Include="Interlocked.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="MemoryStream.cpp">
       <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">EditAndContinue</DebugInformationFormat>

@@ -6,6 +6,7 @@
 #include "FilePageType.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CRC.h"
+#include "IRefCnt.h"
 namespace embDB
 {
 	enum ePageFlags
@@ -84,7 +85,7 @@ struct sFilePageHeader
 	}
 };
 
-class CFilePage
+class CFilePage : public RefCounter
 {
 public: 
 	CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, size_t nSize, int64 nAddr);
@@ -112,5 +113,7 @@ protected:
 	bool m_bCheck;
 	
 };
+
+typedef IRefCntPtr<CFilePage> FilePagePtr;
 }
 #endif //_EMBEDDED_DATABASE_FILE_PAGE_H_

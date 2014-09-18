@@ -18,8 +18,8 @@ namespace embDB
 		m_nPageID = nPageID;
 		if(bRead)
 		{
-			CFilePage *pPage = m_pDBStorage->getFilePage(m_nPageID, true);
-			if(!pPage)
+			FilePagePtr pPage(m_pDBStorage->getFilePage(m_nPageID, true));
+			if(!pPage.get())
 				return false;
 			CommonLib::FxMemoryReadStream stream;
 			stream.attach(pPage->getRowData(), pPage->getPageSize());

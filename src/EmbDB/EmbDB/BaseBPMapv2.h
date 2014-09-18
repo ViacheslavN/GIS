@@ -44,10 +44,10 @@ public:
 	bool insert(const TKey& key, const TValue& value )
 	{
 		bool bRet = false;
-		TBTreeNode* pNode = findLeafNodeForInsert(key);
-		if(pNode)
+		TBTreeNodePtr pNode = findLeafNodeForInsert(key);
+		if(pNode.get())
 		{
-			bRet = InsertInLeafNode(pNode, key, value);
+			bRet = InsertInLeafNode(pNode.get(), key, value);
 		}
 		ClearChache();
 		if(bRet)
@@ -66,7 +66,7 @@ public:
 		}
 		pNode->setFlags(CHANGE_NODE |BUSY_NODE, true);
 
-		m_ChangeNode.insert(pNode);
+		//m_ChangeNode.insert(TBTreeNodePtr(pNode));
 		m_nStateTree |= eBPTChangeLeafNode;
 
 		return CheckLeafNode(pNode);

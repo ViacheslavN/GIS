@@ -340,7 +340,7 @@ void TestPointSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize,
 	{
 		embDB::CStorage storage( alloc, nCacheStorageSize);
 		storage.open(sFileName, false, false,  onlySearch ? false : true, false, nPageSize);
-		embDB::CFilePage* pPage = storage.getNewPage();
+		embDB::FilePagePtr pPage = storage.getNewPage();
 		storage.setStoragePageInfo(pPage->getAddr());
 		storage.saveStorageInfo();
 

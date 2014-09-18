@@ -47,8 +47,5 @@
     <ClCompile Include="TestRectSpatialMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestUgdZ32Order.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

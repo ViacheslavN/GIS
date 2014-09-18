@@ -25,11 +25,11 @@ namespace embDB
 		bool close(){return true;}
 
 
-		virtual CFilePage* getFilePage(int64 nAddr, bool bRead = true);
-		virtual void dropFilePage(CFilePage* pPage);
+		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true);
+		virtual void dropFilePage(FilePagePtr pPage);
 		virtual void dropFilePage(int64 nAddr);
-		virtual CFilePage* getNewPage();
-		virtual void saveFilePage(CFilePage* pPage,  size_t nSize = 0, bool bChandgeInCache = false);
+		virtual FilePagePtr getNewPage();
+		virtual void saveFilePage(FilePagePtr pPage,  size_t nSize = 0, bool bChandgeInCache = false);
 		virtual size_t getPageSize() const;
 		virtual eTransactionsType getType() const {return eTT_UNDEFINED;}
 

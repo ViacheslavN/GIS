@@ -9,9 +9,9 @@ void  TestInsert();;
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	 TestInsert();
+	// TestInsert();
 	//TestBPVector();
-	//TestBRteeSet();
+	TestBRteeSet();
 	//TestBRteeMap();
 	return 0;
 }

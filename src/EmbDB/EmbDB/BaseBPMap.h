@@ -71,8 +71,8 @@ namespace embDB
 				{
 					m_pRoot = newNode(true, true);
 					m_nRootAddr = m_pRoot->m_nPageAddr; 
-					CFilePage *pFilePage = m_pTransaction->getNewPage();
-					if(!pFilePage)
+					FilePagePtr pFilePage(m_pTransaction->getNewPage());
+					if(!pFilePage.get())
 					{
 						CommonLib::str_t sMsg;
 						sMsg.format(_T("BTREE: Error create new root page"));

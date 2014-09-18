@@ -21,15 +21,15 @@ namespace embDB
 			it.next();
 		}
 	}
-	int64 BPNewPageStorage::saveFilePage(CFilePage* pPage)
+	int64 BPNewPageStorage::saveFilePage(FilePagePtr pPage)
 	{
-		return m_pTranStorage->saveFilePage(pPage, pPage->getAddr());
+		return m_pTranStorage->saveFilePage(pPage.get(), pPage->getAddr());
 	}
-	CFilePage* BPNewPageStorage::getFilePage(int64 nAddr, bool bRead)
+	FilePagePtr BPNewPageStorage::getFilePage(int64 nAddr, bool bRead)
 	{
 		CFilePage* pPage = m_Chache.GetElem(nAddr);
 		if(pPage)
-			return pPage;
+			return FilePagePtr(pPage);
 		pPage = m_pTranStorage->getFilePage(nAddr, bRead);
 		if(m_Chache.size() > m_nMaxPageBuf)
 		{
@@ -37,9 +37,9 @@ namespace embDB
 			delete pRemPage;
 		}
 		m_Chache.AddElem(pPage->getAddr(), pPage);
-		return pPage;
+			return FilePagePtr(pPage);
 	}
-	CFilePage* BPNewPageStorage::getNewPage()
+	FilePagePtr BPNewPageStorage::getNewPage()
 	{
 		CFilePage*	pPage = m_pTranStorage->getNewPage();
 		if(m_Chache.size() > m_nMaxPageBuf){
@@ -47,7 +47,7 @@ namespace embDB
 			delete pRemPage;
 		}
 		m_Chache.AddElem(pPage->getAddr(), pPage);
-		return pPage;
+		return FilePagePtr(pPage);
 	}
 
 }

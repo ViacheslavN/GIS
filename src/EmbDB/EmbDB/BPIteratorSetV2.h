@@ -26,6 +26,7 @@ namespace embDB
 		typedef _TInnerNode	TInnerNode;
 		typedef _TLeafNode TBTreeLeafNode;
 		typedef _TBTreeNode TBTreeNode;
+		typedef IRefCntPtr<TBTreeNode> TBTreeNodePtr;
 
 		typedef  TBPVector<TKey> TLeafMemSet;
 		/*typedef BPTreeNodeSetv2<TKey, TComp, Transaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode, TBTreeNode> TBTreeNode;
@@ -36,10 +37,9 @@ namespace embDB
 		TBPSetIteratorV2(TBTree *pTree, TBTreeNode *pCurNode, int32 nIndex) :
 		m_pTree(pTree), m_pCurNode(pCurNode),  m_nIndex(nIndex)
 		{		
-			if(m_pCurNode)
+			if(m_pCurNode.get())
 			{
 				assert(m_pCurNode->isLeaf());
-				m_pCurNode->setFlags(BUSY_NODE, true);
 				m_pCurLeafNode = &m_pCurNode->m_LeafNode;
 			}
 
@@ -56,28 +56,24 @@ namespace embDB
 			m_pCurNode = iter.m_pCurNode;
 			m_pTree = iter.m_pTree;
 			m_nIndex = iter.m_nIndex;
-			if(m_pCurNode)
+			if(m_pCurNode.get())
 			{
-				m_pCurNode->setFlags(BUSY_NODE, true);
 				m_pCurLeafNode = &m_pCurNode->m_LeafNode;
 			}
 
 		}
 		~TBPSetIteratorV2()
 		{
-			if(m_pCurNode)
-				m_pCurNode->setFlags(BUSY_NODE, false);
+ 
 		}
 		TBPSetIteratorV2& operator = (const TBPSetIteratorV2& iter)
 		{
-			if(m_pCurNode)
-				m_pCurNode->setFlag(BUSY_NODE, false);
 			m_pCurNode = iter.m_pCurNode;
 			m_pTree = iter.m_pTree;
 			m_nIndex = nIndex;
-			if(m_pCurNode)
+			m_pCurLeafNode = NULL;
+			if(m_pCurNode.get())
 			{
-				m_pCurNode->setFlag(BUSY_NODE, true);
 				m_pCurLeafNode = &m_pCurNode->m_LeafNode;
 			}
 			return this;
@@ -93,7 +89,7 @@ namespace embDB
 		}
 		bool isNull()
 		{
-			if(m_pCurNode == NULL || m_nIndex == - 1)
+			if(m_pCurNode.get() == NULL || m_nIndex == - 1)
 				return true;
 	
 			return false;
@@ -111,9 +107,9 @@ namespace embDB
 
 			if(m_pCurNode->next() != -1)
 			{
-				TBTreeNode *pNode = m_pTree->getNode(m_pCurNode->next()); //TO DO set busy
+				TBTreeNodePtr pNode = m_pTree->getNode(m_pCurNode->next()); //TO DO set busy
 				m_pCurNode->setFlags(BUSY_NODE, false); 
-				if(!pNode)
+				if(!pNode.get())
 				{
 					//to do log error
 					return false;
@@ -144,9 +140,8 @@ namespace embDB
 
 			if(m_pCurNode->prev() != -1)
 			{
-				TBTreeNode *pNode = m_pTree->getNode(m_pCurNode->prev()); //TO DO set busy
-				m_pCurNode->setFlags(BUSY_NODE, false); 
-				if(!pNode)
+				TBTreeNodePtr pNode = m_pTree->getNode(m_pCurNode->prev()); //TO DO set busy
+				if(!pNode.get())
 				{
 					//to do log error
 					return false;
@@ -161,7 +156,7 @@ namespace embDB
 		}
 	public:
 		TBTree *m_pTree;
-		TBTreeNode *m_pCurNode;
+		TBTreeNodePtr m_pCurNode;
 		TBTreeLeafNode*	m_pCurLeafNode;
 		int32 m_nIndex;
 	};

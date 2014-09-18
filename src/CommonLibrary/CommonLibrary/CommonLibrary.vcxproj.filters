@@ -126,6 +126,9 @@
     <ClInclude Include="WaitForGraph.h">
       <Filter>thread\Wait For Graph</Filter>
     </ClInclude>
+    <ClInclude Include="Interlocked.h">
+      <Filter>thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -169,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="WaitForGraph.cpp">
       <Filter>thread\Wait For Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Interlocked.cpp">
+      <Filter>thread</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

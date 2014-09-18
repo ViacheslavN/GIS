@@ -249,15 +249,6 @@
     <ClInclude Include="DBConfig.h">
       <Filter>DB</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleTransactions.h">
-      <Filter>DB\transactions\simple_for_debug</Filter>
-    </ClInclude>
-    <ClInclude Include="TranCache.h">
-      <Filter>DB\transactions\simple_for_debug</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleTranStorage.h">
-      <Filter>DB\transactions\simple_for_debug</Filter>
-    </ClInclude>
     <ClInclude Include="ITransactions.h">
       <Filter>SDK</Filter>
     </ClInclude>
@@ -609,6 +600,9 @@
     <ClInclude Include="BPLeafNodeMapSimpleCompressorV2.h">
       <Filter>DB\Index\BtreePlusv2\Compressors</Filter>
     </ClInclude>
+    <ClInclude Include="IRefCnt.h">
+      <Filter>SDK\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -646,15 +640,6 @@
     </ClCompile>
     <ClCompile Include="FreePageManage.cpp">
       <Filter>storage</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleTransactions.cpp">
-      <Filter>DB\transactions\simple_for_debug</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleTranStorage.cpp">
-      <Filter>DB\transactions\simple_for_debug</Filter>
-    </ClCompile>
-    <ClCompile Include="TranCache.cpp">
-      <Filter>DB\transactions\simple_for_debug</Filter>
     </ClCompile>
     <ClCompile Include="OIDField.cpp">
       <Filter>DB\Fields</Filter>

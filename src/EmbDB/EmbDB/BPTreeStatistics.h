@@ -28,8 +28,8 @@ namespace embDB
 		}
 		bool Load(_Transaction* pTransaction)
 		{
-			CFilePage* pFilePage =  pTransaction->getFilePage(m_nRootPage);
-			if(!pFilePage)
+			FilePagePtr pFilePage =  pTransaction->getFilePage(m_nRootPage);
+			if(!pFilePage.get())
 				return false; 
 			CommonLib::FxMemoryReadStream stream;
 			stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
@@ -61,8 +61,8 @@ namespace embDB
 		}
 		bool Save(_Transaction* pTransaction)
 		{
-			CFilePage* pFilePage =  pTransaction->getFilePage(m_nRootPage, false);
-			if(!pFilePage)
+			FilePagePtr pFilePage =  pTransaction->getFilePage(m_nRootPage, false);
+			if(!pFilePage.get())
 				return false; 
 			CommonLib::FxMemoryWriteStream stream;
 			

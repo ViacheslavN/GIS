@@ -65,10 +65,10 @@ namespace embDB
 			}
 		}
 		
-		CFilePage* pPage = pTran->getNewPage();
-		if(!pPage)
+		FilePagePtr pPage = pTran->getNewPage();
+		if(!pPage.get())
 			return false;
-		CTable* pTable = new CTable(m_pDB, pPage, sTableName, pTradeStorage/*, m_nLastTableID++*/);
+		CTable* pTable = new CTable(m_pDB, pPage.get(), sTableName, pTradeStorage/*, m_nLastTableID++*/);
 		if(!pTable->save(pTran))
 			return false;
 		m_TablesByName.insert(sTableName, pTable);
@@ -111,8 +111,8 @@ namespace embDB
 	bool CSchema::LoadSchema()
 	{
 
-		CFilePage * pPage = m_pStorage->getFilePage(m_nAddr);
-		if(!pPage)
+		FilePagePtr pPage(m_pStorage->getFilePage(m_nAddr));
+		if(!pPage.get())
 			return false;
 
 		CommonLib::FxMemoryReadStream stream;
@@ -188,8 +188,8 @@ namespace embDB
 	}
 	bool CSchema::saveHead(IDBTransactions *pTran)
 	{
-		CFilePage * pPage = pTran ? pTran->getFilePage(m_nAddr) : m_pStorage->getFilePage(m_nAddr);
-		if(!pPage)
+		FilePagePtr pPage(pTran ? pTran->getFilePage(m_nAddr) : m_pStorage->getFilePage(m_nAddr));
+		if(!pPage.get())
 			return false;
 
  
@@ -220,8 +220,8 @@ namespace embDB
 
 		if(m_nTablesPage == -1)
 		{
-			CFilePage *pPage  = pTran ?  pTran->getNewPage() : m_pStorage->getNewPage();
-			if(!pPage)
+			FilePagePtr pPage (pTran ?  pTran->getNewPage() : m_pStorage->getNewPage());
+			if(!pPage.get())
 				return false;
 			 m_nTablesPage = pPage->getAddr();
 			 m_nTablesAddr.setFirstPage(m_nTablesPage);

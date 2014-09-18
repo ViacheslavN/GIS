@@ -212,8 +212,8 @@ public:
 		while(nPage != -1)
 		{
 		//	m_nLastPage = nPage;
-			CFilePage *pPage = pStorage->getFilePage(nPage);
-			if(!pPage)
+			FilePagePtr pPage(pStorage->getFilePage(nPage));
+			if(!pPage.get())
 				return false;
 			CommonLib::FxMemoryReadStream stream;
 			stream.attach(pPage->getRowData(), pPage->getPageSize());
@@ -247,17 +247,17 @@ public:
 	template <typename _TStorage>
 	bool SavePage(SPageValues* pNode, _TStorage *pStorage)
 	{
-		CFilePage *pPage = NULL;
+		FilePagePtr pPage(NULL);
 		if(pNode->m_nPageAddr == -1)
 		{
 			pPage = pStorage->getNewPage();
-			if(!pPage)
+			if(!pPage.get())
 				return false;
 			pNode->m_nPageAddr = pPage->getAddr();
 		}
 		else
 			pPage = pStorage->getFilePage(pNode->m_nPageAddr);
-		if(!pPage)
+		if(!pPage.get())
 			return false;
 		CommonLib::FxMemoryWriteStream stream;
 		stream.attach(pPage->getRowData(), pPage->getPageSize());

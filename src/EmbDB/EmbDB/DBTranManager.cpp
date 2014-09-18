@@ -37,10 +37,10 @@ namespace embDB
 		if(nSize != 0)
 		{
 
-			CFilePage *pInfoPage = m_Storage.getFilePage(0);
-			if(!pInfoPage)
+			FilePagePtr pInfoPage (m_Storage.getFilePage(0));
+			if(!pInfoPage.get())
 				return false;
-			if(!LoadHeader(pInfoPage))
+			if(!LoadHeader(pInfoPage.get()))
 				return false;
 		//	m_pBPtree.reset(new TBTreePlus(1, &m_Storage, m_pAlloc, 50));
 		/*	TBTreePlus::iterator it = m_pBPtree->begin();
@@ -57,10 +57,10 @@ namespace embDB
 		}
 		else
 		{
-			CFilePage *pInfoPage = m_Storage.getNewPage();
+			FilePagePtr pInfoPage(m_Storage.getNewPage());
 			int64 nBPRoot = m_Storage.getNewPageAddr();
 			m_Info.nRootPageTree = nBPRoot;
-			SaveHeader(pInfoPage);
+			SaveHeader(pInfoPage.get());
 			//m_pBPtree.reset(new TBTreePlus(nBPRoot, &m_Storage, m_pAlloc, 50));
 			//m_pBPtree->saveBTreeInfo();
 		}

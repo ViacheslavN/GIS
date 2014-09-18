@@ -469,6 +469,7 @@
     <ClInclude Include="CompressorParams.h" />
     <ClInclude Include="CRC.h" />
     <ClInclude Include="ICursor.h" />
+    <ClInclude Include="IRefCnt.h" />
     <ClInclude Include="IShape.h" />
     <ClInclude Include="ISpatialQuery.h" />
     <ClInclude Include="PageList.h" />
@@ -551,8 +552,6 @@
     <ClInclude Include="CacheNodes.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="SimpleCompessor.h" />
-    <ClInclude Include="SimpleTransactions.h" />
-    <ClInclude Include="SimpleTranStorage.h" />
     <ClInclude Include="simple_list.h" />
     <ClInclude Include="simple_list_iterator.h" />
     <ClInclude Include="simple_stack.h" />
@@ -570,7 +569,6 @@
     <ClInclude Include="tableZRectBack4Bit.h" />
     <ClInclude Include="tableZRect16Bit.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TranCache.h" />
     <ClInclude Include="TranLogManager.h" />
     <ClInclude Include="TranLogStateManager.h" />
     <ClInclude Include="DBStateManager.h" />
@@ -620,8 +618,6 @@
     <ClCompile Include="FilePage.cpp" />
     <ClCompile Include="Schema.cpp" />
     <ClCompile Include="Shape.cpp" />
-    <ClCompile Include="SimpleTransactions.cpp" />
-    <ClCompile Include="SimpleTranStorage.cpp" />
     <ClCompile Include="simple_list.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
@@ -655,7 +651,6 @@
     <ClCompile Include="storage.cpp" />
     <ClCompile Include="StorageInfo.cpp" />
     <ClCompile Include="Table.cpp" />
-    <ClCompile Include="TranCache.cpp" />
     <ClCompile Include="TranLogStateManager.cpp" />
     <ClCompile Include="DBStateManager.cpp" />
     <ClCompile Include="TransactionCache.cpp" />

@@ -88,7 +88,7 @@ namespace embDB
 			TPointKey zKeyMin(xMin, yMin);
 			TPointKey zKeyMax(xMax, yMax);
 			TBase::iterator it = TBase::lower_bound(zKeyMin);
-			return TSpatialIterator(this, it.m_pCurNode, it.m_nIndex, zKeyMin, zKeyMax, rectQuery);
+			return TSpatialIterator(this, it.m_pCurNode.get(), it.m_nIndex, zKeyMin, zKeyMax, rectQuery);
 		}
 
 	protected:

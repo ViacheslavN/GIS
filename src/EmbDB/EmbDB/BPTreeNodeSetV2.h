@@ -5,6 +5,7 @@
 #include "CompressorParams.h"
 #include "BPTreeInnerNodeSetv2.h"
 #include "BPTreeLeafNodeSetv2.h"
+#include "IRefCnt.h"
 namespace embDB
 {
 
@@ -14,7 +15,7 @@ namespace embDB
 	class _TInnerCompressor, class _TLeafCompressor, 
 	class _TInnerNode,
 	class _TLeafNode >
-	class BPTreeNodeSetv2
+	class BPTreeNodeSetv2 : public RefCounter
 	{
 	public:
 
@@ -57,8 +58,8 @@ namespace embDB
 			if(m_nPageAddr == -1)
 			{
 
-				CFilePage* pFilePage = pTransactions->getNewPage();
-				if(!pFilePage)
+				FilePagePtr pFilePage = pTransactions->getNewPage();
+				if(!pFilePage.get())
 					return false;
 
 				m_nPageAddr = pFilePage->getAddr();
@@ -68,21 +69,21 @@ namespace embDB
 					m_pBaseNode = &m_InnerNode;
 				return m_pBaseNode->init(m_bIsLeaf ? m_pLeafCompParams : m_pInnerCompParams);
 			}
-			CFilePage* pFilePage =  pTransactions->getFilePage(m_nPageAddr);
-			assert(pFilePage);
-			if(!pFilePage)
+			FilePagePtr pFilePage =  pTransactions->getFilePage(m_nPageAddr);
+			assert(pFilePage.get());
+			if(!pFilePage.get())
 				return false; 
-			return LoadFromPage(pFilePage, pTransactions);
+			return LoadFromPage(pFilePage.get(), pTransactions);
 		}
 		bool Save(Transaction* pTransactions)
 		{
-			CFilePage *pFilePage = NULL;
+			FilePagePtr pFilePage(NULL);
 			if(m_nPageAddr != -1)
 				pFilePage = pTransactions->getFilePage(m_nPageAddr, false);
 			else
 				pFilePage = pTransactions->getNewPage();
 
-			if(!pFilePage)
+			if(!pFilePage.get())
 				return false;
 
 
@@ -143,7 +144,7 @@ namespace embDB
 		}
 		bool IsFree()
 		{
-			return m_pBaseNode->IsFree();
+			return RefCounter::isRemovable();
 		}
 		size_t size()
 		{

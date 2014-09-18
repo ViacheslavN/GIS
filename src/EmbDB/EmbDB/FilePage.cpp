@@ -42,7 +42,7 @@ int64 CFilePage::getAddr() const
 }
 bool CFilePage::IsFree()
 {
-	return true;
+	return RefCounter::isRemovable();
 }
 int CFilePage::getFlags() const
 {
