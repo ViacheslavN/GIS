@@ -109,9 +109,6 @@
     <Filter Include="DB\transactions\readonly">
       <UniqueIdentifier>{3399dcb5-687e-4c20-a3ef-83e7fa7432e3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\transactions\simple_for_debug">
-      <UniqueIdentifier>{5572632d-dc62-4f52-b387-430f23e013cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB\transactions\DirectTran">
       <UniqueIdentifier>{0b3d5f68-2ee7-4511-8b39-2960eca6dc1a}</UniqueIdentifier>
     </Filter>

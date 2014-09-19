@@ -70,6 +70,10 @@ namespace embDB
 		virtual size_t getPageSize() const;
 		virtual eTransactionsType getType() const {return (eTransactionsType)m_nTranType;}
 
+		virtual FilePagePtr getTranNewPage();
+		virtual FilePagePtr getTranFilePage(int64 nAddr, bool bRead = true);
+		virtual void saveTranFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false);
+
 		virtual void addInnerTransactions(IDBTransactions *pTran);
 
 
@@ -117,7 +121,11 @@ namespace embDB
 
 		TInnerTransactions m_InnerTran;
 
-		std::vector<int64> m_VecFreePages;
+		//std::set<int64> m_setRemovePages;
+		//std::set<int64> m_setPagesFromFree;
+
+		std::vector<int64> m_vecFreePages;
+		std::vector<int64> m_vecRemovePages;
 	};
 }
 

@@ -193,10 +193,10 @@ namespace embDB
 			FilePagePtr pStoragePage =  m_pDBStorage->getFilePage(nAddr, bRead);
 			if(pStoragePage->getFlags() & eFP_FROM_FREE_PAGES)
 			{
-				m_VecFreePages.push_back(pStoragePage->getAddr());
+				m_vecFreePages.push_back(pStoragePage->getAddr());
 			}
 			pPage = new CFilePage(m_pAlloc, pStoragePage->getRowData(), pStoragePage->getPageSize(), nAddr);
-			if(m_nRestoreType == rtUndo)
+			if(m_nRestoreType == rtUndo || m_nRestoreType == rtUndoRedo)
 			{
 				SaveDBPage(pStoragePage.get());
 			}
@@ -206,13 +206,31 @@ namespace embDB
 
 		return FilePagePtr(pPage);
 	}
-	void CTransactions::dropFilePage(FilePagePtr pPage)
+
+
+	FilePagePtr CTransactions::getTranNewPage()
 	{
 
 	}
-	void CTransactions::dropFilePage(int64 nAddr)
+	FilePagePtr CTransactions::getTranFilePage(int64 nAddr, bool bRead)
+	{
+		CFilePage* pPage = m_PageChache.GetPage(nAddr, false, bRead);
+		if(!pPage)
+		{
+
+		}
+	}
+	void CTransactions::saveTranFilePage(FilePagePtr pPage,  size_t nSize,  bool bChandgeInCache)
 	{
 
+	}
+	void CTransactions::dropFilePage(FilePagePtr pPage)
+	{
+		m_vecRemovePages.push_back(pPage->getAddr());
+	}
+	void CTransactions::dropFilePage(int64 nAddr)
+	{
+		m_vecRemovePages.push_back(nAddr);
 	}
 	FilePagePtr CTransactions::getNewPage()
 	{
@@ -281,7 +299,9 @@ namespace embDB
 		m_LogStateManager.setDBSize(nStorageSize);
 
 		if(m_Header.nRestoreType == rtUndo)
+		{
 			m_TranUndoManager.save();
+		}
 		m_LogStateManager.save();
 	
 		m_LogStateManager.setState(eTS_BEGIN_COPY_TO_DB);

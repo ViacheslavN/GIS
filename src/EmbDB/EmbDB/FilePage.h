@@ -16,7 +16,8 @@ namespace embDB
 		eFP_CHANGE = 2,
 		eFP_EMPTY = 4,
 		eFP_REMOVE = 8,
-		eFP_FROM_FREE_PAGES = 16
+		eFP_FROM_FREE_PAGES = 16,
+		eFP_INNER_TRAN_PAGE = 32
 	};
 
 struct sFilePageHeader

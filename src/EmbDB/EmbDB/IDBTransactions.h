@@ -11,7 +11,8 @@ namespace embDB
 	{
 		rtUndefined,
 		rtUndo,
-		rtRedo
+		rtRedo,
+		rtUndoRedo
 	};
 	class IDBStorage;
 	class IDBBtree
@@ -36,6 +37,10 @@ namespace embDB
 		virtual void saveFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false) = 0;
 		virtual size_t getPageSize() const = 0;
 
+
+		virtual FilePagePtr getTranNewPage()= 0;
+		virtual FilePagePtr getTranFilePage(int64 nAddr, bool bRead = true) = 0;
+		virtual void saveTranFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false) = 0;
 
 		virtual void addInnerTransactions(IDBTransactions *pTran) = 0;
 

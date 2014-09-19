@@ -133,7 +133,7 @@ namespace embDB
 				{
 					TValue val;
 					pRW->read(val, stream);
-
+					vecValues.push_back(val);
 				}
 				return true;
 			}

@@ -368,6 +368,12 @@ namespace embDB
 				delete pDelNode;
 			}
 		}
+
+		if(m_Cache.size() > m_nChacheSize)
+		{
+			int dd = 0;
+			dd++;
+		}
 	}
 
 	bool init()
@@ -1203,7 +1209,7 @@ namespace embDB
 					m_nStateTree |= (eBPTDeleteInnerNode | eBPTNewRootNode);
 					
 				}
-
+				ClearChache();
 				return true;
 			}
 			

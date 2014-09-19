@@ -71,6 +71,20 @@ namespace embDB
 		virtual void setDBStorage(IDBStorage *pStorage)  {m_pDBStorage = pStorage;}
 		virtual void wait() {}
 		virtual void stop() {}
+
+
+		virtual FilePagePtr getTranFilePage(int64 nAddr, bool bRead = true)
+		{
+			return getFilePage(nAddr, bRead);
+		}
+		virtual void saveTranFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false) 
+		{
+			return saveTranFilePage(pPage, nSize, bChandgeInCache);
+		}
+		virtual FilePagePtr getTranNewPage()
+		{
+			return getNewPage();
+		}
 	private:
 		IDBStorage* m_pDBStorage;
 		bool m_bError;

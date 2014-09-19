@@ -425,4 +425,13 @@ namespace embDB
 		m_bDirty = true;
 		saveStorageInfo();
 	}
+
+	bool  CStorage::saveForUndoState(IDBTransactions *pTran, int64 nPageBegin)
+	{
+
+	}
+	bool  CStorage::undo(IDBTransactions *pTran, int64 nPageBegin)
+	{
+
+	}
 }

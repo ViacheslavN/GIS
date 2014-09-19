@@ -25,7 +25,7 @@ namespace embDB
 
 	bool CTranUndoPageManager::save()
 	{
-		return m_undoPages.save(m_pStorage);
+		return m_undoPages.save();
 	}
 
 	/*bool CTranUndoPageManager::save(const TUndoDBPages& nPages)
