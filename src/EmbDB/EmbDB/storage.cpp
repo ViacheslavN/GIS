@@ -428,10 +428,11 @@ namespace embDB
 
 	bool  CStorage::saveForUndoState(IDBTransactions *pTran, int64 nPageBegin)
 	{
-
+		
+		return m_FreePageManager.saveForUndoState(pTran, nPageBegin);
 	}
 	bool  CStorage::undo(IDBTransactions *pTran, int64 nPageBegin)
 	{
-
+		return m_FreePageManager.undo(pTran, nPageBegin);
 	}
 }

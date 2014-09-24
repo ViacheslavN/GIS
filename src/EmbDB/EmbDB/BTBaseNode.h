@@ -15,7 +15,8 @@ namespace embDB
 	{
 		ROOT_NODE = 0x01,
 		CHANGE_NODE = 0x02,
-		BUSY_NODE = 0x04
+		BUSY_NODE = 0x04,
+		REMOVE_NODE = 0x08
 	};
 
 	class BPBaseTreeNode

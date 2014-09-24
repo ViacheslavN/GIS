@@ -34,6 +34,8 @@ namespace embDB
 
 
 	
+
+	
 		BPTreeNodeMapv2(int64 nParentAddr, CommonLib::alloc_t *pAlloc, int64 nPageAddr, bool bMulti, bool  bIsLeaf, bool bCheckCRC32,
 			ICompressorParams *pInnerCompParams = NULL, ICompressorParams *pLeafCompParams = NULL) : 
 			TBase( nParentAddr, pAlloc, nPageAddr, bMulti,  bIsLeaf, bCheckCRC32, pInnerCompParams,pLeafCompParams)

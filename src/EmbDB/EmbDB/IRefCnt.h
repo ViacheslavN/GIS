@@ -2,29 +2,44 @@
 #define _EMBEDDED_DATABASE_I_REF_CNT_H_
 
 #include "CommonLibrary/Interlocked.h"
-
+#include "CommonLibrary/delegate.h"
 namespace embDB
 {
 	class IRefCnt {
 	public:
 		virtual int AddRef() const =0;
-		virtual int Release() const =0;
+		virtual int Release() =0;
 	protected:
 		virtual ~IRefCnt() {}
 	};
 
-
+	class RefCounter;
+	typedef CommonLib::delegate1_t<RefCounter*> TRemoveFunk;
 	class RefCounter : public IRefCnt
 	{
 	public:
-		RefCounter() : m_nCounter(0) {}
-		RefCounter(LONG val) : m_nCounter(val) {}
+		RefCounter(TRemoveFunk *pRem = NULL) : m_nCounter(0), m_pRemFunk(pRem)
+		{}
+		RefCounter(LONG val, TRemoveFunk *pRem = NULL) : m_nCounter(val) {}
 		~RefCounter(){};
 		virtual int AddRef() const { return CommonLib::Interlocked::Increment(&m_nCounter);}
-		virtual int Release() const {return CommonLib::Interlocked::Decrement(&m_nCounter);}
+		virtual int Release()  {
+			if(CommonLib::Interlocked::Decrement(&m_nCounter) != 0)
+			{
+				return m_nCounter;
+			}
+			if(m_pRemFunk)
+			{
+				m_pRemFunk->operator()(this);
+			}
+			return 0;
+		}
 		bool isRemovable() const { return 0 == m_nCounter; }
+		TRemoveFunk* m_pRemFunk;
 	private:
 		mutable CommonLib::Interlocked::inc_type m_nCounter;
+	
+		
 	};
 
 

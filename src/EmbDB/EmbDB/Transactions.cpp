@@ -210,19 +210,20 @@ namespace embDB
 
 	FilePagePtr CTransactions::getTranNewPage()
 	{
-
+		int64 nTranAddr = m_TranStorage.getNewPageAddr();
+		CFilePage *pFilePage = new CFilePage(m_pAlloc, m_pDBStorage->getPageSize(), nTranAddr);
+		pFilePage->setFlag(eFP_NEW|eFP_INNER_TRAN_PAGE, true);
+		m_PageChache.AddPage(-1, nTranAddr, pFilePage);
+		return FilePagePtr(pFilePage);
 	}
 	FilePagePtr CTransactions::getTranFilePage(int64 nAddr, bool bRead)
 	{
 		CFilePage* pPage = m_PageChache.GetPage(nAddr, false, bRead);
-		if(!pPage)
-		{
-
-		}
+	 	return FilePagePtr(pPage);
 	}
 	void CTransactions::saveTranFilePage(FilePagePtr pPage,  size_t nSize,  bool bChandgeInCache)
 	{
-
+		m_TranStorage.saveFilePage(pPage.get(), pPage->getAddr());
 	}
 	void CTransactions::dropFilePage(FilePagePtr pPage)
 	{

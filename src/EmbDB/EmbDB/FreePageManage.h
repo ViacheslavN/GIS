@@ -8,6 +8,7 @@
 #include "BTVector.h"
 #include "BitMap.h"
 #include <map>
+#include "PageVector.h"
 namespace embDB
 {
 	class CStorage;
@@ -24,9 +25,9 @@ namespace embDB
 			bool addPage(int64 nAddr);
 			int64 getFreePage();
 			bool removeFromFreePage(int64 nAddr);
-			
 			int64 getRoot(){return m_nRootPage;};
-			
+			bool saveForUndoState(IDBTransactions *pTran, int64 nPageBegin);
+			bool undo(IDBTransactions *pTran, int64 nPageBegin);
 	    private:
 
 			bool AddFreeMap(int64 nAddr, uint64 nBlockNum,  bool bNew);
@@ -132,8 +133,15 @@ namespace embDB
 			};
 
 			typedef std::map<uint64, FileFreeMap*> TMapFreeMaps;
+			struct sUndoPageInfo
+			{
+				int64 m_BitMapAddr;
+				int64 m_nBitMapAddInTran;
+			};
 		private:
-			
+			std::vector<int64> m_vecNewFreeMaps;
+			typedef TPageVector<int64> TFreeMapLists;
+			TFreeMapLists m_ListFreeMaps;
 			CStorage* m_pStorage;
 			CommonLib::alloc_t * m_pAlloc;
 
@@ -142,8 +150,6 @@ namespace embDB
 
 			TMapFreeMaps m_FreeMaps;
 			uint32 m_nAddrLen;
-
-			bool m_bNewFreeMap;
 
 	
 	};

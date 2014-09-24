@@ -30,7 +30,7 @@ void insertINBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 		int64 nCount = nEndStart - nStart;
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
-			if(i == 130560)
+			if(i == 260100)
 			{
 				int dd = 0;
 				dd++;
@@ -51,6 +51,11 @@ void insertINBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 		int64 nCount = nStart - nEndStart;
 		for (__int64 i = nStart; i > nEndStart; --i)
 		{
+			if(i == 260100)
+			{
+				int dd = 0;
+				dd++;
+			}
 			if(!tree.insert(TKey(i)))
 			{
 				std::cout   << "Error Insert key:  " << i << std::endl;
@@ -269,20 +274,41 @@ void removeFromBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart,
 	}
 	else
 	{
-		TBtree::iterator it = tree.find(TKey(54));
+
 		int64 nCount = nStart - nEndStart;
+		{
+			TBtree::iterator it = tree.find(TKey(15));
+		}
 		for (; i > nEndStart; --i)
 		{	
-				
-			if(i ==  258062)
+			/*	
+			if(i ==  4)
 			{
 				int dd = 0;
 				dd++;
+			}*/
+		 
+			{
+			/*	TBtree::iterator it = tree.find(TKey(2));
+				if(it.isNull())
+				{
+					int dd = 0;
+					dd++;
+				}*/
 			}
 			if(!tree.remove(TKey(i)))
 			{
 				std::cout << "Error remove,  not found " << i << std::endl;
 			}
+			{
+				/*TBtree::iterator it = tree.find(TKey(2));
+				if(it.isNull())
+				{
+					int dd = 0;
+					dd++;
+				}*/
+			}
+			
 			TBtree::iterator it = tree.find(TKey(i));
 			if(!it.isNull())
 			{
@@ -326,7 +352,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		int64 nTreeRootPage = -1;
 		int64 nStorageInfoPage = 0;
 		int64 nStep = nCount/100;
-		{
+	/*	{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  true, false, nPageSize);
 			embDB::FilePagePtr pPage = storage.getNewPage();
@@ -353,7 +379,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage);
 			storage.close();
 		}
-		/*{
+		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
@@ -372,9 +398,10 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 	//	int64 mRemConst =246762;
 	//	nTreeRootPage = 6;
 		int64 mRemConst =nCount/2;
-	//	int64 mRemConst = 26974454;
+		//mRemConst =24;
 	
 		{
+			nTreeRootPage = 6;
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
@@ -385,7 +412,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 			storage.close();
 		}
-		//	return;
+		return;
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
@@ -441,8 +468,9 @@ void TestBRteeSet()
 {
 	//__int64 nCount = 1531;
 
-	__int64 nCount = 10000000;
-		size_t nPageSize = 8192;
-
-	testBPTreeSetImpl<TBDoubleSet,  embDB::CDirectTransactions, int64>(nCount, nPageSize, 10, 4);
+	__int64 nCount = 100000000;
+	//nCount = 200;
+	//	size_t nPageSize = 100;
+	size_t nPageSize = 8192;
+	testBPTreeSetImpl<TBDoubleSet,  embDB::CDirectTransactions, int64>(nCount, nPageSize, 10, 1);
 }

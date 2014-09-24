@@ -300,7 +300,7 @@ namespace embDB
 
 				m_nLess = pNode->m_nLess;
 
-				m_pCompressor->recalc(m_innerLinkMemSet, pNode->m_innerLinkMemSet);
+				m_pCompressor->recalc(m_innerLinkMemSet, m_innerKeyMemSet);
 			}
 			else
 			{
@@ -320,7 +320,7 @@ namespace embDB
 		{
 			int nCnt = ((m_innerKeyMemSet.size() + pNode->m_innerKeyMemSet.size() ))/2 - m_innerKeyMemSet.size();
 			//assert(nCnt > 0);
-			if(nCnt < 3)
+			if(nCnt < 2)
 				return false; //оставим все при своих
 
 	 

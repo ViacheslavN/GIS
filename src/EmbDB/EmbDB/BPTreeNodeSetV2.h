@@ -44,14 +44,11 @@ namespace embDB
 			,m_pInnerCompParams(pInnerCompParams)
 			,m_pLeafCompParams(pLeafCompParams)
 			,m_bCheckCRC32(bCheckCRC32)
-
 		{
 			
 		}
 		~BPTreeNodeSetv2()
-		{
-
-		}
+		{}
 
 		bool Load(Transaction* pTransactions)
 		{
@@ -363,7 +360,36 @@ namespace embDB
 			else
 				return m_InnerNode.isKey(key, nIndex);
 		}
+		typedef IRefCntPtr<IRefCnt> TParentNodePtr;
+
+		void setParent(BPTreeNodeSetv2 *pNode, int32 nFoundIndex = -1)
+		{
+			
+			m_pParent = (IRefCnt*)pNode;
+			m_nFoundIndex = nFoundIndex;
+			if(pNode)
+				m_nParent = pNode->addr();
+			else
+				m_nParent = -1;
+		}
+
+		void setParent(TParentNodePtr &pNodePtr, int64 nAddr)
+		{
+
+			m_pParent = pNodePtr;
+			m_nFoundIndex = -1;
+			if(pNodePtr.get())
+				m_nParent = nAddr;
+			else
+				m_nParent = -1;
+		}
+
+		int64 parentAddr() {return m_nParent;}
+		int32 foundIndex(){return m_nFoundIndex;}
+		void setFoundIndex(int32 nFoundIndex){m_nFoundIndex = nFoundIndex;}
+		TParentNodePtr& parentNodePtr(){return m_pParent;}
 	public:
+
 		BPBaseTreeNode* m_pBaseNode;
 		TLeafNode    m_LeafNode;
 		TInnerNode	m_InnerNode;
@@ -372,9 +398,7 @@ namespace embDB
 		bool m_bMulti;
 		TLink m_nPageAddr;
 		CommonLib::alloc_t* m_pAlloc;
-		//for removing
-		TLink m_nParent;
-		int32 m_nFoundIndex;
+
 		short m_nType; // найдена по ключу?
 		//for spatial search
 		TKey m_NextLeafKey;
@@ -384,6 +408,12 @@ namespace embDB
 		ICompressorParams *m_pLeafCompParams;
 
 		bool m_bCheckCRC32;
+	private:
+		//for removing
+		TParentNodePtr m_pParent;
+		int32 m_nFoundIndex;
+		int64 m_nParent;
+
 	};
 }
 #endif
