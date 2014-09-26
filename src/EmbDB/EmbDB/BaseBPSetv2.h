@@ -368,8 +368,14 @@ namespace embDB
 	void deleteNodeRef(RefCounter *pRefPtr)
 	{
 		TBTreeNode* pNode = (TBTreeNode*)pRefPtr;
-	
-		if(m_Cache.size() > m_nChacheSize || pNode->getFlags() & REMOVE_NODE)
+		if(pNode->getFlags() & REMOVE_NODE)
+		{
+			delete pNode;
+			return;
+		}
+
+		ClearChache();
+		/*if(m_Cache.size() > m_nChacheSize  )
 		{
 			if(pNode->getFlags() & CHANGE_NODE && !(pNode->getFlags() & REMOVE_NODE))
 			{
@@ -378,7 +384,7 @@ namespace embDB
 			}
 			m_Cache.remove(pNode->m_nPageAddr);
 			delete pNode;
-		}
+		}*/
 	
 	}
 	void ClearChache()
@@ -405,12 +411,7 @@ namespace embDB
 				delete pDelNode;
 			}
 		}
-
-		if(m_Cache.size() > m_nChacheSize)
-		{
-			int dd = 0;
-			dd++;
-		}
+	
 	}
 
 	bool init()
@@ -805,7 +806,7 @@ namespace embDB
 			nType = 0;
 			if(pNode->isLeaf())
 			{
-				ClearChache();
+				//ClearChache();
 				return TIterator(this, pNode.get(), pNode->binary_search(key));
 				break;
 			}
@@ -854,7 +855,7 @@ namespace embDB
 			nNextAddr = pNode->less();
 			pParent = pNode;
 		}
-		ClearChache();
+		//ClearChache();
 		return TIterator(this, pFindBTNode.get(), 0);
 	}
 	template<class TIterator>
@@ -900,7 +901,7 @@ namespace embDB
 			pParent = pNode;
 			nIndex = pNode->count() - 1;
 		}
-		ClearChache();
+	//	ClearChache();
 		return TIterator(this, pFindBTNode.get(), pFindBTNode.get() ? pFindBTNode->count() - 1 : -1);
 	}
 	template<class TIterator>
@@ -983,14 +984,14 @@ namespace embDB
 			pNode->m_nFoundIndex = nIndex;
 			if(pNode->isLeaf())
 			{
-				ClearChache();
+				//ClearChache();
 				return TIterator(this, pNode.get(), pNode->leaf_lower_bound(key, nType));
 				break;
 			}
 			nNextAddr = pNode->inner_lower_bound(key, nType, nIndex);
 			nParent = pNode->addr();
 		}
-		ClearChache();
+		//ClearChache();
 		return TIterator(this, NULL,-1);
 	}
 	/*template<class TIterator>
@@ -1270,7 +1271,7 @@ namespace embDB
 					m_nStateTree |= (eBPTDeleteInnerNode | eBPTNewRootNode);
 					
 				}
-				ClearChache();
+				//ClearChache();
 				return true;
 			}
 			
@@ -1429,7 +1430,7 @@ namespace embDB
 			}
 			pCheckNode = pParentNode;//getNode(pCheckNode->m_nParent);
 		}
-		ClearChache();
+		//ClearChache();
 		return true;
 	}
 

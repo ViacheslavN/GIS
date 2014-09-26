@@ -352,7 +352,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		int64 nTreeRootPage = -1;
 		int64 nStorageInfoPage = 0;
 		int64 nStep = nCount/100;
-	/*	{
+		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  true, false, nPageSize);
 			embDB::FilePagePtr pPage = storage.getNewPage();
@@ -368,6 +368,9 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 				<<  nStorageInfoPage << " nTreeRootPage " <<nTreeRootPage  << std::endl;
 			storage.close();
 		}
+
+	return;
+		nTreeRootPage = 6;
 	
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
@@ -379,6 +382,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage);
 			storage.close();
 		}
+				
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
@@ -388,7 +392,9 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			tran5.begin();
 			testOrderINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize,  nStep, &tran5, alloc, nTreeRootPage, true);
 			storage.close();
-		}*/
+		}
+	
+		return;
 	/*	{
 
 			TTran tran5(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran4.data", &storage, 1);
@@ -412,8 +418,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 			storage.close();
 		}
-		return;
-		{
+ 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
@@ -472,5 +477,5 @@ void TestBRteeSet()
 	//nCount = 200;
 	//	size_t nPageSize = 100;
 	size_t nPageSize = 8192;
-	testBPTreeSetImpl<TBDoubleSet,  embDB::CDirectTransactions, int64>(nCount, nPageSize, 10, 1);
+	testBPTreeSetImpl<TBDoubleSet,  embDB::CDirectTransactions, int64>(nCount, nPageSize, 1000, 10);
 }

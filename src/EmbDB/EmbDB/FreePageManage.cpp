@@ -351,7 +351,13 @@ namespace embDB
 
 	bool CFreePageManager::saveForUndoState(IDBTransactions *pTran, int64 nPageBegin)
 	{
-		FilePagePtr pRootPage = pTran->getTranNewPage();
+		FilePagePtr pRootPage = pTran->getTranFilePage(nPageBegin, false);
+		if(!pRootPage.get())
+		{
+			//TO DO LOG
+			return false;
+		}
+
 		return true;
 	}
 	bool CFreePageManager::undo(IDBTransactions *pTran, int64 nPageBegin)

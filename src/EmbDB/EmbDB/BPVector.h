@@ -197,7 +197,7 @@ namespace embDB
 			while (nCount > 0)
 			{
 				nIndex = nFirst; 
-				nStep = nCount / 2;
+				nStep = nCount >> 1;
 				nIndex += nStep;
 				if(comp.LE(m_pData[ nIndex ], val))
 				{
@@ -207,11 +207,10 @@ namespace embDB
 				else nCount = nStep;
 			}
 			if(nFirst < (int32)m_nSize && comp.EQ(val, m_pData[ nFirst ]))
-				nType = FIND_KEY;
+			  nType = FIND_KEY;
 			return nFirst;
 		}
-
-
+		
 		template<class _TComp >
 		int32 upper_bound(const TValue& val,_TComp& comp)  
 		{
@@ -226,7 +225,7 @@ namespace embDB
 			while (nCount > 0)
 		   {
 				nIndex = nFirst; 
-				nStep = nCount / 2;
+				nStep = nCount >> 1;
 				nIndex += nStep;
 				if(!comp.LE(val, m_pData[ nIndex ]))
 				{

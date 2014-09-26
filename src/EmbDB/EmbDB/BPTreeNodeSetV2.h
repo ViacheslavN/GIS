@@ -193,7 +193,13 @@ namespace embDB
 		{
 			assert(!m_bIsLeaf);
 			int32 nIndex = -1;
-			return m_InnerNode.upper_bound(key, nIndex);
+		//	if(m_bMulti)
+				return m_InnerNode.upper_bound(key, nIndex);
+		/*	else
+			{
+				short nType = 0;
+				return m_InnerNode.lower_bound(key, nType, nIndex);
+			}*/
 		}
 		TLink findNext(const TKey& key , int32& nIndex)
 		{

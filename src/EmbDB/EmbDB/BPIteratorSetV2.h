@@ -100,7 +100,7 @@ namespace embDB
 		{
 			if(isNull())
 				return false;
-			m_pTree->ClearChache();
+			//m_pTree->ClearChache();
 			m_nIndex++;
 			if((uint32)m_nIndex < m_pCurLeafNode->count())
 				return true;
@@ -133,7 +133,7 @@ namespace embDB
 		{
 			if(isNull())
 				return false;
-			m_pTree->ClearChache();
+			//m_pTree->ClearChache();
 			m_nIndex--;
 			if(m_nIndex >= 0)
 				return true;

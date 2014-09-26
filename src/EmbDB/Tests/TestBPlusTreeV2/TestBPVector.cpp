@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <set>
+#include "CommonLibrary/DebugTime.h"
 template<class _Ty>
 	struct comp
 	{	
@@ -30,6 +31,44 @@ void ShowVector(embDB::TBPVector<int32>& vec)
 	std::cout << std::endl;
 }
 
+void TestSearch()
+{
+	embDB::TBPVector<int64> vec;
+	for (int i = 0; i < 100000; ++i)
+	{
+		vec.push_back(i);
+	}
+
+
+	double tmUpperBound = 0;
+	double tmLowerBound = 0;
+	CommonLib::TimeUtils::CDebugTime time;
+	time.start();
+	for (int i =0; i < 100000; ++i)
+	{
+		
+		for (int64 j = 0; j < 100000; ++j)
+		{
+			vec.upper_bound(j, comp<int64>());
+		}
+	}
+	tmUpperBound = time.stop();
+	time.start();
+	short nType = 0;
+
+	for (int i =0; i < 100000; ++i)
+	{
+
+		for (int64 j = 0; j < 100000; ++j)
+		{
+			vec.lower_bound(j, nType, comp<int64>());
+		
+		}
+	}
+	tmLowerBound = time.stop();
+
+	std::cout << "Upper bound time: " << tmUpperBound << " Lower bound time: " << tmLowerBound << std::endl;
+}
 
 void TestInsert()
 {
