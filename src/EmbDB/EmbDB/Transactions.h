@@ -25,6 +25,7 @@ namespace embDB
 			,nErrorLogHeader(-1)
 			,nMesageLogHeader(-1)
 			,nPageStateHeader(-1)
+			,nFreeUndoPage(-1)
 			{}
 		int32 nRestoreType;
 		int64 nPageChangeHeader;
@@ -32,6 +33,7 @@ namespace embDB
 		int64 nErrorLogHeader;
 		int64 nMesageLogHeader;
 		int64 nPageStateHeader;
+		int64 nFreeUndoPage;
 	};
 
 	struct sTransactionSatateHeader
@@ -94,8 +96,6 @@ namespace embDB
 		virtual void wait() {}
 		virtual void stop() {}
 	private:
-
-		
 		bool SaveDBPage(CFilePage* pPage);
 		bool commit_undo();
 		bool commit_redo();

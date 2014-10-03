@@ -1,12 +1,13 @@
 #ifndef _EMBEDDED_DATABASE_PAGE_LIST_
 #define _EMBEDDED_DATABASE_PAGE_LIST_
 #include "PageVector.h"
+#include "FilePage.h"
 
 namespace embDB
 {
 
 	template<typename _TValue, typename _TReaderWriter = TSimpleReaderWriter<_TValue> >
-	class TPageList
+	class TPageVectorLazySave
 	{
 
 		typedef _TValue   TValue;
@@ -14,11 +15,11 @@ namespace embDB
 		typedef std::vector<TValue> TVecValues;
 	public:
 
-		TPageList(int64 nPage, uint32 nPageSize, short nObjectPage, short nSubObjectPage) :
+		TPageVectorLazySave(int64 nPage, uint32 nPageSize, short nObjectPage, short nSubObjectPage) :
 		  m_nRootPage(nPage), m_nPageSize(nPageSize), m_nObjectPage(nObjectPage), 
 			  m_nSubObjectPage(nSubObjectPage), m_nPageAddr(nPage)
 		{}
-		~TPageList(){}
+		~TPageVectorLazySave(){}
 
 		void setRoot(int64 nPage)
 		{
@@ -26,12 +27,12 @@ namespace embDB
 			m_nPageAddr = nPage;
 		}
 
-		template <typename _TStorage>
+		template <typename _TStorage, typename _TFilePage>
 		bool push( const TValue& val, _TStorage *pStorage)
 		{
 			if(!checkSize())
 			{
-				if(!save(pStorage))
+				if(!save<_TStorage, _TFilePage>(pStorage))
 					return false;
 			}
 			m_values.push_back(val);
@@ -43,21 +44,21 @@ namespace embDB
 			size_t nMemSize = (m_values.size() * (m_rw.rowSize() + 1)) + sizeof(int64) + sizeof(int32) + sFilePageHeader::size();
 			return nMemSize < m_nPageSize; 
 		}
-		template <typename _TStorage>
+		template <typename _TStorage, typename _FilePage>
 		bool save(_TStorage *pStorage)
 		{
-			CFilePage *pPage = pStorage->getFilePage(m_nPageAddr);
-			if(!pPage)
+			_FilePage pPage = pStorage->getFilePage(m_nPageAddr);
+			if(pPage == NULL)
 			{
 				//TO DO Logs
 				return false;
 			}
 		 
-			CFilePage* pNextPage = NULL;
+			_FilePage pNextPage(NULL);
 			if(!checkSize())
 			{
 				pNextPage = pStorage->getNewPage();
-				if(!pNextPage)
+				if(pNextPage == NULL)
 				{
 					//TO DO Logs
 					return false;
@@ -67,7 +68,7 @@ namespace embDB
 			stream.attach(pPage->getRowData(), pPage->getPageSize());
 			sFilePageHeader header(stream, m_nObjectPage, m_nSubObjectPage);
 
-			stream.write(pNextPage ? pNextPage->getAddr() : -1);
+			stream.write(pNextPage != NULL? pNextPage->getAddr() : (int64)-1);
 			stream.write((int32)m_values.size());
 
 			for (size_t i = 0, sz = m_values.size(); i < sz; ++i)
@@ -79,7 +80,7 @@ namespace embDB
 			pStorage->saveFilePage(pPage);
 
 			m_values.clear();
-			if(pNextPage)
+			if(pNextPage != NULL)
 				m_nPageAddr = pNextPage->getAddr();
 			return true;
 		}
@@ -89,22 +90,43 @@ namespace embDB
 		{
 		public:
 			iterator(int64 nPage, _TStorage *pStorage, TReaderWriter *pRW, short nObjectPage, short nSubObjectPage)
-				: m_nPage(nPage), pStorage(pStorage), pRW(pRW),  m_nSubObjectPage(nSubObjectPage),  m_nNextPage(-1)
+				: m_nPage(nPage), pStorage(pStorage), pRW(pRW),  m_nSubObjectPage(nSubObjectPage),  m_nNextPage(-1), m_nPageIDx(0)
 			{
 
 			}
-			bool isEnd()
+			bool isNull()
 			{
-				return m_nPage == -1;
+				if(m_nPage != -1 && m_nPageIDx <  (int32)m_vecCurValues.size() && !m_vecCurValues.empty())
+					return false;
+				return true;
 			}
-			bool nextPage()
+			bool LoadNext()
 			{
+				m_vecCurValues.clear();
+				m_nPageIDx = 0;
 				m_nPage = m_nNextPage;
-				return m_nPage != -1;
+				if(m_nPage == -1)
+				{
+					return false;
+				}
+				return load();
+
 			}
-			bool getValues(TVecValues &vecValues)
+
+			TValue& value()
 			{
-				if(isEnd())
+				return m_vecCurValues[m_nPageIDx];
+			}
+			bool next()
+			{
+				m_nPageIDx++;
+				if(m_nPageIDx < (int32)m_vecCurValues.size() )
+					return false;
+				return LoadNext();
+			}
+			bool load()
+			{
+				if(isNull())
 					return false;
 				CFilePage *pPage = pStorage->getFilePage(m_nPage);
 				if(!pPage)
@@ -133,7 +155,7 @@ namespace embDB
 				{
 					TValue val;
 					pRW->read(val, stream);
-					vecValues.push_back(val);
+					m_vecCurValues.push_back(val);
 				}
 				return true;
 			}
@@ -147,7 +169,8 @@ namespace embDB
 			TReaderWriter *pRW;
 			short m_nObjectPage; 
 			short m_nSubObjectPage;
-
+			int32 m_nPageIDx;
+			TVecValues m_vecCurValues;
 		};
 		template <typename _TStorage>
 		iterator<_TStorage> begin(_TStorage *pStorage)

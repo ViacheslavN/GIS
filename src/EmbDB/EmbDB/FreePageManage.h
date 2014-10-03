@@ -9,6 +9,7 @@
 #include "BitMap.h"
 #include <map>
 #include "PageVector.h"
+#include "PageVectorLazySave.h"
 namespace embDB
 {
 	class CStorage;
@@ -28,6 +29,8 @@ namespace embDB
 			int64 getRoot(){return m_nRootPage;};
 			bool saveForUndoState(IDBTransactions *pTran, int64 nPageBegin);
 			bool undo(IDBTransactions *pTran, int64 nPageBegin);
+
+		
 	    private:
 
 			bool AddFreeMap(int64 nAddr, uint64 nBlockNum,  bool bNew);
@@ -138,7 +141,35 @@ namespace embDB
 				int64 m_BitMapAddr;
 				int64 m_nBitMapAddInTran;
 			};
+ 
+			class UndoPageInfoReaderWriter
+			{
+			public:
+			 
+				void write(const sUndoPageInfo& undoPageInfo, CommonLib::FxMemoryWriteStream& stream)
+				{
+					stream.write(undoPageInfo.m_BitMapAddr);
+					stream.write(undoPageInfo.m_nBitMapAddInTran);
+				}
+				void read(sUndoPageInfo& undoPageInfo, CommonLib::FxMemoryReadStream& stream)
+				{
+					stream.read(undoPageInfo.m_BitMapAddr);
+					stream.read(undoPageInfo.m_nBitMapAddInTran);
+				}
+
+				size_t rowSize()
+				{
+					return 2*sizeof(int64);
+				}
+			};
+			typedef TPageVectorLazySave<sUndoPageInfo, UndoPageInfoReaderWriter> TUndoVector;
+
+
+			bool SaveUndoPage(__int64 nPage, IDBTransactions *pTran, TUndoVector& vec);
 		private:
+		
+			
+
 			std::vector<int64> m_vecNewFreeMaps;
 			typedef TPageVector<int64> TFreeMapLists;
 			TFreeMapLists m_ListFreeMaps;

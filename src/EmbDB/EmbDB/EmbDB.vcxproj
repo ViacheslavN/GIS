@@ -472,7 +472,7 @@
     <ClInclude Include="IRefCnt.h" />
     <ClInclude Include="IShape.h" />
     <ClInclude Include="ISpatialQuery.h" />
-    <ClInclude Include="PageList.h" />
+    <ClInclude Include="PageVectorLazySave.h" />
     <ClInclude Include="PoinMapInnerCompressor64.h" />
     <ClInclude Include="PoinMapLeafCompressor.h" />
     <ClInclude Include="PoinMapInnerCompressor.h" />

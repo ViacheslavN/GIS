@@ -56,7 +56,9 @@ namespace embDB
 
 	enum eTransactionsPageType
 	{
-		UNDO_PAGES
+		UNDO_PAGES,
+		UNDO_FREEMAP_PAGES_ROOT,
+		UNDO_FREEMAP_PAGES_LIST
 	};
 }
 #endif

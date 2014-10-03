@@ -88,6 +88,18 @@ namespace embDB
 			return m_pObj == refCntPtr.m_pObj;
 		}
 
+
+
+		bool operator != (const Obj* pObj)
+		{
+			return m_pObj != pObj;
+		}
+		bool operator == (const Obj* pObj)
+		{
+			return m_pObj == pObj;
+		}
+
+
 		~IRefCntPtr()
 		{
 			if (m_pObj != 0)

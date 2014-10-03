@@ -20,12 +20,12 @@ namespace embDB
 	}
 	bool CTranUndoPageManager::add(const sUndoPageInfo& PageInfo)
 	{
-		return m_undoPages.push(PageInfo, m_pStorage);
+		return m_undoPages.push<CTranStorage, CFilePage*>(PageInfo, m_pStorage);
 	}
 
 	bool CTranUndoPageManager::save()
 	{
-		return m_undoPages.save(m_pStorage);
+		return m_undoPages.save<CTranStorage, CFilePage*>(m_pStorage);
 	}
 
 	/*bool CTranUndoPageManager::save(const TUndoDBPages& nPages)
@@ -81,25 +81,18 @@ namespace embDB
 	{
 		TUndoPageList::iterator<CTranStorage> it =  m_undoPages.begin(pTranStorage);
 		TUndoDBPages undoPage;
-		while(!it.isEnd())
+		while(!it.isNull())
 		{			
-			it.getValues(undoPage);
-
-			for (size_t i = 0, sz = undoPage.size(); i < sz; ++i)
+			sUndoPageInfo& pageInfo = it.value();
+			CFilePage *pFilePage = pTranStorage->getFilePage(pageInfo.nTranAddr);
+			if(!pFilePage)
 			{
-				sUndoPageInfo& pageInfo = undoPage[i];
-				CFilePage *pFilePage = pTranStorage->getFilePage(pageInfo.nTranAddr);
-				if(!pFilePage)
-				{
-					m_pTran->error("TRAN: Can't get page from Tran");
-					return false;
-				}
-				pFilePage->setAddr(pageInfo.nDBAddr);
-				pDBStorage->saveFilePage(pFilePage);
-
+				m_pTran->error("TRAN: Can't get page from Tran");
+				return false;
 			}
-
-			it.nextPage();
+			pFilePage->setAddr(pageInfo.nDBAddr);
+			pDBStorage->saveFilePage(pFilePage);
+			it.next();
 		}
 
 

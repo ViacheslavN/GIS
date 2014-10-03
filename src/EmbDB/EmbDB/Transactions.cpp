@@ -85,6 +85,7 @@ namespace embDB
 		m_Header.nPageChangeHeader = m_TranStorage.getNewPageAddr();
 		m_Header.nPageUndoHeader = m_TranStorage.getNewPageAddr();
 		m_Header.nPageStateHeader = m_TranStorage.getNewPageAddr();
+		m_Header.nFreeUndoPage	= -1;
  
 		CommonLib::FxMemoryWriteStream stream;
 		stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
@@ -302,6 +303,12 @@ namespace embDB
 		if(m_Header.nRestoreType == rtUndo)
 		{
 			m_TranUndoManager.save();
+			if(!m_vecFreePages.empty() || !m_vecRemovePages.empty())
+			{
+				FilePagePtr pPage = getTranNewPage();
+				m_pDBStorage->saveForUndoState(this, pPage->getAddr());
+			}
+
 		}
 		m_LogStateManager.save();
 	

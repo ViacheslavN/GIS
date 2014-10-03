@@ -6,7 +6,7 @@
 #include "IDBTransactions.h"
 #include "TranUndoPageManager.h"
 #include "storage.h"
-#include "PageList.h"
+#include "PageVectorLazySave.h"
 namespace embDB
 {
 	struct sUndoPageInfo
@@ -56,7 +56,7 @@ namespace embDB
 			}
 		};
 
-		typedef TPageList<sUndoPageInfo, TReaderWriter> TUndoPageList;
+		typedef TPageVectorLazySave<sUndoPageInfo, TReaderWriter> TUndoPageList;
 	private:
 		IDBTransactions *m_pTran;
 		CTranStorage *m_pStorage;

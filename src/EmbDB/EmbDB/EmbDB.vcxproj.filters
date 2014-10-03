@@ -552,9 +552,6 @@
     <ClInclude Include="PageVector.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="PageList.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="BitMap.h">
       <Filter>utils</Filter>
     </ClInclude>
@@ -599,6 +596,9 @@
     </ClInclude>
     <ClInclude Include="IRefCnt.h">
       <Filter>SDK\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="PageVectorLazySave.h">
+      <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

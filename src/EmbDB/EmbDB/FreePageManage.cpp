@@ -358,10 +358,97 @@ namespace embDB
 			return false;
 		}
 
+		FilePagePtr pListPage = pTran->getTranNewPage();
+		if(!pListPage.get())
+		{
+			//TO DO LOG
+			return false;
+		}
+
+		TUndoVector UndoVector(pListPage->getAddr(), pTran->getPageSize(), TRANSACTION_PAGE, UNDO_FREEMAP_PAGES_LIST);
+		TMapFreeMaps::iterator it =  m_FreeMaps.begin();
+		TMapFreeMaps::iterator end =  m_FreeMaps.end();
+
+		SaveUndoPage(m_nFreeMapLists, pTran, UndoVector);
+		for (; it != end; ++it)
+		{
+			FileFreeMap* pFreeMap = it->second;
+			SaveUndoPage(pFreeMap->m_nAddr, pTran, UndoVector);
+		}
+ 
+
+		UndoVector.save<IDBTransactions, FilePagePtr>(pTran);
+
+		CommonLib::FxMemoryWriteStream stream;
+		stream.attach(pRootPage->getRowData(), pRootPage->getPageSize());
+		sFilePageHeader header(stream, TRANSACTION_PAGE, UNDO_FREEMAP_PAGES_ROOT);
+		stream.write(pListPage->getAddr());
+		pTran->saveTranFilePage(pRootPage);
 		return true;
 	}
 	bool CFreePageManager::undo(IDBTransactions *pTran, int64 nPageBegin)
 	{
+
+		FilePagePtr pRootPage = pTran->getTranFilePage(nPageBegin, false);
+		if(!pRootPage.get())
+		{
+			//TO DO LOG
+			return false;
+		}
+		CommonLib::FxMemoryReadStream stream;
+		stream.attach(pRootPage->getRowData(), pRootPage->getPageSize());
+		sFilePageHeader header(stream);
+		if(!header.isValid())
+		{
+			//TO DO Log
+			return false;
+		}
+		if(header.m_nObjectPageType != TRANSACTION_PAGE || header.m_nSubObjectPageType != UNDO_FREEMAP_PAGES_ROOT )
+		{
+			//TO DO Log
+			return false;
+		}
+
+		int64 nPageList = stream.readInt64();
+		
+		TUndoVector UndoVector(nPageList, pTran->getPageSize(), TRANSACTION_PAGE, UNDO_FREEMAP_PAGES_LIST);
+		TUndoVector::iterator<IDBTransactions> it = UndoVector.begin(pTran);
+		while(!it.isNull())
+		{
+			const sUndoPageInfo& undoPageInfo = it.value();
+			FilePagePtr pTranPage = pTran->getFilePage(undoPageInfo.m_nBitMapAddInTran);
+			pTranPage->setAddr(undoPageInfo.m_BitMapAddr);
+			m_pStorage->saveFilePage(pTranPage);
+		}
+		return true;
+	}
+
+
+	bool  CFreePageManager::SaveUndoPage(__int64 nPageAddr, IDBTransactions *pTran, TUndoVector& UndoVector)
+	{
+		sUndoPageInfo undoPageInfo;
+		undoPageInfo.m_BitMapAddr = nPageAddr;
+		FilePagePtr pTranPage = pTran->getTranNewPage();
+		FilePagePtr pStoragePage = m_pStorage->getFilePage(nPageAddr);
+
+		if(!pTranPage.get())
+		{
+			//TO DO LOGs
+			return false;
+		}
+		if(!pStoragePage.get())
+		{
+			//TO DO LOGs
+			return false;
+		}
+		undoPageInfo.m_nBitMapAddInTran = pTranPage->getAddr();
+		if(!UndoVector.push<IDBTransactions, FilePagePtr>(undoPageInfo, pTran))
+		{
+			//TO DO LOGs
+			return false;
+		}
+		pTranPage->copyFrom(pStoragePage.get());
+		pTran->saveFilePage(pTranPage);
 		return true;
 	}
 }
