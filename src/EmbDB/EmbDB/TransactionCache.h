@@ -4,11 +4,12 @@
 
 #include "CacheNodes.h"
 #include "TranStorage.h" 
-#include "RBSet.h"
+//#include "RBSet.h"
 #include "FilePage.h"
 #include "IDBStorage.h"
 #include "BPTreeInfoPage.h"
-
+#include "BaseBPMapv2.h"
+#include <map>
 
 namespace embDB
 {
@@ -17,19 +18,18 @@ namespace embDB
 	{
 	public:
 		CTransactionsCache(CommonLib::alloc_t* pAlloc, CTranStorage *pStorage) : 
-			  m_pages(pAlloc)
-			  , m_pFileStorage(pStorage)
+			    m_pFileStorage(pStorage)
 			  , m_nPageInMemory(0)
-			  , m_nMaxPageBuf(10000)
+			  , m_nMaxPageBuf(5)
 			  , m_Chache(pAlloc)
-			  , m_bInBtree(false)
-			  , m_mapPageHolder(&m_pages)
-			  , m_BTreePageHolder(NULL)
+			 // , m_bInBtree(false)
+			 // , m_mapPageHolder(&m_pages)
+			//  , m_BTreePageHolder(NULL)
 			  , m_BPStorage(pStorage, pAlloc)
 			  , m_pAlloc(pAlloc)
 
 		  {
-			  m_pCurPageHolder = &m_mapPageHolder;
+			 // m_pCurPageHolder = &m_mapPageHolder;
 		  }
 		  ~CTransactionsCache()
 		  {
@@ -46,35 +46,33 @@ namespace embDB
 		  void savePage(CFilePage *Page);
 		  void saveInBTree();
 		  void clear();
+		  bool savePageForUndo(IDBTransactions *pTran);
 	public:
-		typedef RBMap<int64, sFileTranPageInfo> TPages; //все страницы
-	
-
-		typedef RBMap<int64, int64, embDB::comp<int64> > TInnerMemset;
-		typedef RBMap<int64, sFileTranPageInfo, embDB::comp<int64> > TLeafMemset;
-		typedef embDB::BPInnerNodeSetSimpleCompressor<TInnerMemset> TInnerCompressor;
-	
-
-		typedef TBPMap<
+		/*typedef RBMap<int64, sFileTranPageInfo> TPages; //все страницы
+			typedef TBPMapV2<
 			int64, //key
 			sFileTranPageInfo, //val
 			embDB::comp<int64>, //comp
-			TInnerCompressor,
-			BPNewPageLeafNodeCompressor, //leafcomp
-			BPNewPageStorage  //innercomp
-		> 	TBTreePlus;
+			BPNewPageStorage,
+			 BPInnerNodeSimpleCompressorV2<int64>,
+			BPNewPageLeafNodeCompressor //leafcomp
+			  //innercomp
+		> 	TBTreePlus;*/
+
+
+		typedef std::map<int64, sFileTranPageInfo> TPages; 
 
 		/*
 		template <class _TKey, class _TValue, class _TLink, class _TComp, class _Transaction,
 		class _TBreeNode = BPTreeNodeMap<_TKey, _TLink, _TComp, _Transaction> >
 		*/
 		TPages m_pages;
-		std::auto_ptr<TBTreePlus> m_BTreePages;// если страниц становиться "много" переключаться на B-tree
+		//std::auto_ptr<TBTreePlus> m_BTreePages;// если страниц становиться "много" переключаться на B-tree
 		typedef TSimpleCache<int64, CFilePage> TNodesCache;
 		TNodesCache m_Chache; //страницы в памяти
 
 
-		class PageHolder
+		/*class PageHolder
 		{
 		public:
 			virtual void insert (int64 nAddr, const sFileTranPageInfo& pi) = 0;
@@ -146,19 +144,21 @@ namespace embDB
 					pPage->setFlag(pi.m_nFlags, true);
 					pPage->setAddr(it.key());
 				}
+				
 				bool bNew = (pPage->getFlags() & eFP_NEW) != 0;
 				bool bChange = (pPage->getFlags() & eFP_CHANGE) != 0;
 				bool bRemove = (pPage->getFlags() & eFP_REMOVE) != 0;
-				if(bRemove )
+				if(bRemove)
 				{
-					pStorage->dropFilePage(pPage);
+					if(!bNew)
+						pStorage->dropFilePage(pPage);
 				}
 				else if(bNew || bChange)
 				{
 					if(bNew)
 						pStorage->saveNewPage(pPage);
 					else
-						pStorage->saveFilePage(pPage, true);
+						pStorage->saveFilePage(pPage, 0,  true);
 
 				}
 				delete pPage.release();
@@ -168,18 +168,18 @@ namespace embDB
 			m_Chache.clear();
 			m_Chache.m_set.destroyTree();
 			pages.clear();
-		}
-		typedef TPageHolder<TPages> TPageMapHolder;
-		typedef TPageHolder<TBTreePlus> TPageBTreeHolder;
+		}*/
+		//typedef TPageHolder<TPages> TPageMapHolder;
+		//typedef TPageHolder<TBTreePlus> TPageBTreeHolder;
 
 
-		PageHolder *m_pCurPageHolder;
-		TPageMapHolder m_mapPageHolder;
-		TPageBTreeHolder m_BTreePageHolder;
+		//PageHolder *m_pCurPageHolder;
+	//	TPageMapHolder m_mapPageHolder;
+	//	TPageBTreeHolder m_BTreePageHolder;
 		CTranStorage * m_pFileStorage;
 		size_t m_nPageInMemory;
 		size_t m_nMaxPageBuf;
-		bool m_bInBtree;
+		//bool m_bInBtree;
 		BPNewPageStorage m_BPStorage;
 		CommonLib::alloc_t* m_pAlloc;
 

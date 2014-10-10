@@ -21,7 +21,7 @@ namespace embDB
 			it.next();
 		}
 	}
-	int64 BPNewPageStorage::saveFilePage(FilePagePtr pPage)
+	int64 BPNewPageStorage::saveFilePage(FilePagePtr pPage, size_t pos)
 	{
 		return m_pTranStorage->saveFilePage(pPage.get(), pPage->getAddr());
 	}

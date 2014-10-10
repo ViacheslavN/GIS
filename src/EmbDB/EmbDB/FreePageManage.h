@@ -27,7 +27,7 @@ namespace embDB
 			int64 getFreePage();
 			bool removeFromFreePage(int64 nAddr);
 			int64 getRoot(){return m_nRootPage;};
-			bool saveForUndoState(IDBTransactions *pTran, int64 nPageBegin);
+			bool saveForUndoState(IDBTransactions *pTran);
 			bool undo(IDBTransactions *pTran, int64 nPageBegin);
 
 		

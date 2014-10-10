@@ -175,6 +175,7 @@ namespace embDB
 			{
 				m_pDBStorage->clearDirty();
 				m_pDBStorage->commit();
+				m_pDBStorage->reload();
 			}
 			m_TranStorage.close();
 		}
@@ -197,17 +198,26 @@ namespace embDB
 				m_vecFreePages.push_back(pStoragePage->getAddr());
 			}
 			pPage = new CFilePage(m_pAlloc, pStoragePage->getRowData(), pStoragePage->getPageSize(), nAddr);
-			if(m_nRestoreType == rtUndo || m_nRestoreType == rtUndoRedo)
+			/*if(m_nRestoreType == rtUndo || m_nRestoreType == rtUndoRedo)
 			{
 				SaveDBPage(pStoragePage.get());
-			}
-			int64 nTranAddr = m_TranStorage.getNewPageAddr();
-			m_PageChache.AddPage(nAddr, nTranAddr, pPage);
+			}*/
+			//int64 nTranAddr = m_TranStorage.getNewPageAddr();
+			m_PageChache.AddPage(nAddr, -1, pPage);
+		}
+		if(pPage->getAddr() == -1)
+		{
+			pPage->setAddr(nAddr);
+			m_pDBStorage->readPage(pPage);
 		}
 
 		return FilePagePtr(pPage);
 	}
 
+	void CTransactions::addUndoPage(FilePagePtr pPage)
+	{
+		SaveDBPage(pPage.get());
+	}
 
 	FilePagePtr CTransactions::getTranNewPage()
 	{
@@ -300,20 +310,33 @@ namespace embDB
 		int64  nStorageSize = m_pDBStorage->getFileSize();
 		m_LogStateManager.setDBSize(nStorageSize);
 
-		if(m_Header.nRestoreType == rtUndo)
+		if(m_Header.nRestoreType == rtUndo || m_Header.nRestoreType == rtUndoRedo )
 		{
 			m_TranUndoManager.save();
 			if(!m_vecFreePages.empty() || !m_vecRemovePages.empty())
 			{
-				FilePagePtr pPage = getTranNewPage();
-				m_pDBStorage->saveForUndoState(this, pPage->getAddr());
+				//FilePagePtr pPage = getTranNewPage();
+				m_pDBStorage->saveForUndoState(this);
 			}
 
+			m_PageChache.savePageForUndo(this);
 		}
+
+	
 		m_LogStateManager.save();
 	
 		m_LogStateManager.setState(eTS_BEGIN_COPY_TO_DB);
 		m_TranStorage.Flush();
+
+
+		for (size_t i = 0, sz = m_vecFreePages.size(); i < sz; ++i)
+		{
+			m_pDBStorage->removeFromFreePage(m_vecFreePages[i]);
+		}
+		for (size_t i = 0, sz = m_vecRemovePages.size(); i < sz; ++i)
+		{
+			m_pDBStorage->dropFilePage(m_vecRemovePages[i]);
+		}
 		
 		m_PageChache.saveChange(m_pDBStorage);
 		m_pDBStorage->commit();

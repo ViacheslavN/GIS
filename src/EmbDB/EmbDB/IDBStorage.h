@@ -37,8 +37,9 @@ namespace embDB
 		virtual bool try_lockWrite() = 0;
 		virtual bool unlockWrite(IDBTransactions *pTran = NULL) = 0;
 
-		virtual bool saveForUndoState(IDBTransactions *pTran, int64 nPageBegin) = 0;
-		virtual bool undo(IDBTransactions *pTran, int64 nPageBegin) = 0;
+		virtual bool saveForUndoState(IDBTransactions *pTran) = 0;
+		virtual bool undo(IDBTransactions *pTran) = 0;
+		virtual bool reload()= 0;
 		//
 		virtual bool saveState() = 0;
 	};

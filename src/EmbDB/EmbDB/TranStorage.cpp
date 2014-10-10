@@ -34,7 +34,6 @@ namespace embDB
 	}
 	int64 CTranStorage::saveFilePage(CFilePage* pPage, int64 nAddr )
 	{
-		pPage->setFlag(eFP_CHANGE, true);
 		if(nAddr == -1)
 		{
 			nAddr = m_nLastAddr;

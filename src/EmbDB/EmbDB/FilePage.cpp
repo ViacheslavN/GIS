@@ -44,11 +44,11 @@ bool CFilePage::IsFree()
 {
 	return RefCounter::isRemovable();
 }
-int CFilePage::getFlags() const
+uint32 CFilePage::getFlags() const
 {
 	return m_nFlags;
 }
-void CFilePage::setFlag(int nFlag, bool bSet)
+void CFilePage::setFlag(uint32 nFlag, bool bSet)
 {
 	if(bSet)
 		m_nFlags |= nFlag;

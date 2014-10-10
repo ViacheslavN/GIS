@@ -426,13 +426,18 @@ namespace embDB
 		saveStorageInfo();
 	}
 
-	bool  CStorage::saveForUndoState(IDBTransactions *pTran, int64 nPageBegin)
+	bool  CStorage::saveForUndoState(IDBTransactions *pTran)
 	{
 		
-		return m_FreePageManager.saveForUndoState(pTran, nPageBegin);
+		return m_FreePageManager.saveForUndoState(pTran);
 	}
-	bool  CStorage::undo(IDBTransactions *pTran, int64 nPageBegin)
+	bool  CStorage::undo(IDBTransactions *pTran)
 	{
-		return m_FreePageManager.undo(pTran, nPageBegin);
+		return true;
+		//return m_FreePageManager.undo(pTran, nPageBegin);
+	}
+	bool CStorage::reload()
+	{
+		return loadStorageInfo();
 	}
 }

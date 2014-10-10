@@ -21,6 +21,7 @@ namespace embDB
 		size_t getPageSize(){return m_nPageSize;}
 		bool Flush();
 		void error(const CommonLib::str_t& sError){}
+
 	private:
 		CommonLib::CFile m_pFile;
 		CommonLib::alloc_t *m_pAlloc;

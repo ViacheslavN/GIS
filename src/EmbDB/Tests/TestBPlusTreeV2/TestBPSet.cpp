@@ -276,9 +276,7 @@ void removeFromBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart,
 	{
 
 		int64 nCount = nStart - nEndStart;
-		{
-			TBtree::iterator it = tree.find(TKey(15));
-		}
+		 
 		for (; i > nEndStart; --i)
 		{	
 			/*	
@@ -369,10 +367,9 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			storage.close();
 		}
 
-	return;
-		nTreeRootPage = 6;
+		//nTreeRootPage = 6;
 	
-		{
+	/*	{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
@@ -381,9 +378,9 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			tran1.begin();
 			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage);
 			storage.close();
-		}
+		}*/
 				
-		{
+		/*{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
@@ -392,9 +389,9 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			tran5.begin();
 			testOrderINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize,  nStep, &tran5, alloc, nTreeRootPage, true);
 			storage.close();
-		}
+		}*/
 	
-		return;
+	
 	/*	{
 
 			TTran tran5(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran4.data", &storage, 1);
@@ -473,9 +470,9 @@ void TestBRteeSet()
 {
 	//__int64 nCount = 1531;
 
-	__int64 nCount = 100000000;
+	__int64 nCount = 10000000;
 	//nCount = 200;
 	//	size_t nPageSize = 100;
 	size_t nPageSize = 8192;
-	testBPTreeSetImpl<TBDoubleSet,  embDB::CDirectTransactions, int64>(nCount, nPageSize, 1000, 10);
+	testBPTreeSetImpl<TBDoubleSet, embDB::CTransactions, int64>(nCount, nPageSize, 1000, 2);
 }

@@ -48,7 +48,9 @@ namespace embDB
 			
 		}
 		~BPTreeNodeSetv2()
-		{}
+		{
+		
+		}
 
 		bool Load(Transaction* pTransactions)
 		{
@@ -70,6 +72,8 @@ namespace embDB
 			assert(pFilePage.get());
 			if(!pFilePage.get())
 				return false; 
+
+		
 			return LoadFromPage(pFilePage.get(), pTransactions);
 		}
 		bool Save(Transaction* pTransactions)
@@ -106,11 +110,13 @@ namespace embDB
 			pFilePage->setCheck(true);
 			pTransactions->saveFilePage(pFilePage, stream.pos());
 
-			pFilePage->setFlag(eFP_CHANGE, false);
+			//pFilePage->setFlag(eFP_CHANGE, false);
 			return true;
 		}
 		bool LoadFromPage(CFilePage* pFilePage, Transaction* pTransactions)
 		{
+
+			
 			CommonLib::FxMemoryReadStream stream;
 			stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
 			sFilePageHeader header(stream, m_bCheckCRC32 && !pFilePage->isCheck());

@@ -95,8 +95,8 @@ public:
 	byte* getRowData() const;
 	size_t getPageSize() const;
 	int64 getAddr() const;
-	int getFlags() const;
-	void setFlag(int nFlag, bool bSet);
+	uint32 getFlags() const;
+	void setFlag(uint32 nFlag, bool bSet);
 	void setAddr(int64 nAddr);
 	bool IsFree();
 	bool copyFrom(CFilePage *pPage);
@@ -109,7 +109,7 @@ protected:
 	size_t m_nSize;
 	int64 m_nAddr;
 	CommonLib::alloc_t *m_pAlloc;
-	int m_nFlags;
+	uint32 m_nFlags;
 	bool m_bValid;
 	bool m_bCheck;
 	

@@ -141,9 +141,9 @@ namespace embDB
 				delete pBNode;
 				it.next();
 			}
-			m_Chache.m_set.clear();
-			m_Chache.clear();
-			if(m_pRoot)
+			//m_Chache.m_set.clear();
+			//m_Chache.clear();
+			if(m_pRoot.get())
 			{
 				if(bNotSetFreePage)
 				{
@@ -151,9 +151,9 @@ namespace embDB
 				}
 				
 
-				deleteNode(m_pRoot);
+				deleteNode(m_pRoot.get());
 				m_pRoot = newNode(true, true);
-				m_pRoot->m_nParent = -1;
+				m_pRoot->setParent(NULL);
 				m_pRoot->setFlags(ROOT_NODE, true);
 				m_pRoot->Save(m_pTransaction);
 				m_BTreeInfo.clear();
@@ -375,28 +375,12 @@ namespace embDB
 		}
 
 		ClearChache();
-		/*if(m_Cache.size() > m_nChacheSize  )
-		{
-			if(pNode->getFlags() & CHANGE_NODE && !(pNode->getFlags() & REMOVE_NODE))
-			{
-				pNode->Save(m_pTransaction);
-				pNode->setFlags(CHANGE_NODE, false);
-			}
-			m_Cache.remove(pNode->m_nPageAddr);
-			delete pNode;
-		}*/
+		
 	
 	}
 	void ClearChache()
 	{
-		/*TChangeNode::iterator it = m_ChangeNode.begin();
-		for(; !it.isNull(); ++it)
-		{
-			TBTreeNode pChNode = *it;
-			pChNode->setFlags(BUSY_NODE, false);
-		}*/
-		//m_ChangeNode.clear();
-
+	
 		if(m_Cache.size() <= m_nChacheSize)
 			return;
 		for (size_t i = 0, sz = m_Cache.size(); i < sz - m_nChacheSize; i++)
@@ -792,6 +776,7 @@ namespace embDB
 			{
 				break;
 			}
+			
 			TBTreeNodePtr pNode = getNode(nNextAddr);
 			if(!pNode.get())
 			{
@@ -1413,7 +1398,7 @@ namespace embDB
 					pCheckNode = pParentNode;
 					continue;
 				}*/
-				assert(pParentNode->count());
+				//assert(pParentNode->count());
 			}
 			else if(bAlignment)
 			{

@@ -2,13 +2,9 @@
 #define _EMBEDDED_DATABASE_BP_TREE_INFO_PAGE_
 
 #include "TranStorage.h"
-#include "RBSet.h"
 #include "FilePage.h"
-#include "BTreeNode.h"
-#include "BPTreeNode.h"
-#include "BaseBPMap.h"
-#include "BPInnerNodeSimpleCompressor.h"
-#include "BPLeafNodeSimpleCompressor.h"
+#include "BaseBPMapv2.h"
+ 
 
 namespace embDB
 {
@@ -23,97 +19,109 @@ namespace embDB
 	class BPNewPageLeafNodeCompressor 
 	{
 	public:
-		typedef RBMap<int64, sFileTranPageInfo, embDB::comp<int64> >   TLeafMemSet;
-		typedef TLeafMemSet::TTreeNode TTreeNode;
+ 
+
+		typedef int64 TKey;
+		typedef sFileTranPageInfo TValue;
+		typedef  TBPVector<TKey> TLeafKeyMemSet;
+		typedef  TBPVector<TValue> TLeafValueMemSet;
 
 		BPNewPageLeafNodeCompressor(ICompressorParams *pParams = NULL) : m_nSize(0)
 		{}
 		virtual ~BPNewPageLeafNodeCompressor(){}
-		virtual bool Load(TLeafMemSet& Set, CommonLib::FxMemoryReadStream& stream)
+		virtual bool Load(TLeafKeyMemSet& vecKeys, TLeafValueMemSet& vecValues, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;
-			CommonLib::FxMemoryReadStream ValStreams;
+			CommonLib::FxMemoryReadStream ValueStreams;
 			m_nSize = stream.readInt32();
 			if(!m_nSize)
 				return true;
 
-			Set.reserve(m_nSize);
+			vecKeys.reserve(m_nSize);
+			vecValues.reserve(m_nSize);
 
-			uint32 nKeySize = stream.readInt32();
-			uint32 nValSize = stream.readInt32();
+	 
+			uint32 nKeySize =  m_nSize * sizeof(TKey);
+			uint32 nValueSize =  m_nSize *  (sizeof(int64) + sizeof(int32));
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValSize);
+			ValueStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValueSize);
 
 			int64 nkey;
 			sFileTranPageInfo nval;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
 				KeyStreams.read(nkey);
-				ValStreams.read(nval.m_nFileAddr);
-				ValStreams.read(nval.m_nFlags);
-				Set.insert(nkey, nval);
+				ValueStreams.read(nval.m_nFileAddr);
+				ValueStreams.read(nval.m_nFlags);
+				vecKeys.push_back(nkey);
+				vecValues.push_back(nval);
 			}
-			assert(stream.pos() <= stream.size());
+ 
 			return true;
 		}
-		virtual bool Write(TLeafMemSet& Set, CommonLib::FxMemoryWriteStream& stream)
+		virtual bool Write(TLeafKeyMemSet& vecKeys, TLeafValueMemSet& vecValues, CommonLib::FxMemoryWriteStream& stream)
 		{
-			assert(m_nSize == (uint32)Set.size());
-			uint32 nSize = (uint32)Set.size();
-			stream.write(nSize);
-			if(!nSize)
+			assert(m_nSize == vecKeys.size());
+			stream.write(m_nSize);
+			if(!m_nSize)
 				return true;
 
 			CommonLib::FxMemoryWriteStream KeyStreams;
-			CommonLib::FxMemoryWriteStream ValStreams;
+			CommonLib::FxMemoryWriteStream valueStreams;
 
-			uint32 nKeySize =  nSize * sizeof(int64);
-			uint32 nValSize =  nSize * (sizeof(int64) + sizeof(int32));
 
-			stream.write(nKeySize);
-			stream.write(nValSize);
+			uint32 nKeySize =  m_nSize * sizeof(int64);
+			uint32 nValSize =  m_nSize * (sizeof(int64) + sizeof(int32));
+
+	 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValSize);
+			valueStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValSize);
+			stream.seek(stream.pos() + nKeySize + nValSize, CommonLib::soFromBegin);			 
 
-			TLeafMemSet::iterator it = Set.begin();
-			for(; !it.isNull(); ++it)
+			for(size_t i = 0, sz = vecKeys.size(); i < sz; ++i)
 			{
-				KeyStreams.write(it.key());
-				ValStreams.write(it.value().m_nFileAddr);
-				ValStreams.write(it.value().m_nFlags);
+				KeyStreams.write(vecKeys[i]);
+				valueStreams.write(vecValues[i].m_nFileAddr);
+				valueStreams.write(vecValues[i].m_nFlags);
 			}
-			assert(stream.pos() <= stream.size());
-			return true;
+		 	return true;
 		}
 
-		virtual bool insert(TTreeNode *pNode)
+		virtual bool insert(const TKey& key, const TValue& value)
 		{
 			m_nSize++;
 			return true;
 		}
-		virtual bool update(TTreeNode *pNode, const sFileTranPageInfo& nValue)
+		virtual bool add(const TLeafKeyMemSet& vecKeys, const TLeafValueMemSet& vecValues)
+		{
+			m_nSize += vecKeys.size();
+			return true;
+		}
+		virtual bool recalc(const TLeafKeyMemSet& vecKeys, const TLeafValueMemSet& vecValues)
+		{
+			m_nSize = vecKeys.size();
+			return true;
+		}
+		virtual bool update(const TKey& key, const TValue& value)
 		{
 			return true;
 		}
-		virtual bool remove(TTreeNode *pNode)
+		virtual bool remove(const TKey& key)
 		{
 			m_nSize--;
 			return true;
 		}
 		virtual size_t size() const
 		{
-			//return (sizeof(int64) + sizeof(sFileTranPageInfo)) *  m_nSize;
-			return ( (2 * sizeof(int64) + sizeof(int32)) *  m_nSize) + 3 * sizeof(uint32);
+			return ( (2 * sizeof(int64) + sizeof(int32)) *  m_nSize) +sizeof(uint32);
 		}
 		size_t headSize() const
 		{
-			//return (sizeof(int64) + sizeof(sFileTranPageInfo)) *  m_nSize;
-			return  3 * sizeof(uint32);
+			return   sizeof(uint32);
 		}
 		 size_t rowSize() const
 		{
-			//return (sizeof(int64) + sizeof(sFileTranPageInfo)) *  m_nSize;
 			return (2 * sizeof(int64) + sizeof(int32)) *  m_nSize;
 		}
 		size_t count()
@@ -133,7 +141,7 @@ namespace embDB
 	public:	
 		BPNewPageStorage(CTranStorage *pTranStorage, CommonLib::alloc_t *pAlloc);
 		~BPNewPageStorage();
-		int64 saveFilePage(FilePagePtr pPage);
+		int64 saveFilePage(FilePagePtr pPage, size_t pos = 0);
 		FilePagePtr getFilePage(int64 nAddr, bool bRead = true);
 		FilePagePtr getNewPage();
 		void error(const CommonLib::str_t& sError){}
