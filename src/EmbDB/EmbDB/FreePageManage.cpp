@@ -330,7 +330,7 @@ namespace embDB
 	}
 	
 	
-	int64 CFreePageManager::getFreePage()
+	int64 CFreePageManager::getFreePage(bool bSave)
 	{
 
 		TMapFreeMaps::iterator it =  m_FreeMaps.begin();
@@ -343,7 +343,11 @@ namespace embDB
 
 		
 			int64 nAddr = pFreeMap->m_FreePages.top();
-			//pFreeMap->m_BitMap.setBit(nAddr, false);
+			if(bSave)
+			{
+				pFreeMap->setBit(nAddr, false);
+				pFreeMap->m_bChange = true;
+			}
 			return nAddr;
 		}
 		return -1;

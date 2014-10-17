@@ -204,11 +204,7 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 						int64 nOID = it.value();
 						//	if(zVal > zValMax)
 						//		break;
-						if(nCnt == 345)
-						{
-							int dd = 0;
-							dd++;
-						}
+					
 						if(m_ODIs.find(nOID) != m_ODIs.end())
 						{
 							nDouble++;
@@ -242,13 +238,7 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 					//		m_Zal.erase(zVal.m_nZValue);
 					//		m_OID.erase(it.value());
 						}
-						if(nCntInQuery == 168)
-						{
-							int ndd = 0;
-							ndd++;
-						}
-					
-
+						
 						if(!it.next())
 							break;
 					}
@@ -316,17 +306,8 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 					m_Zal.insert(it.value());
 				}
 
-				if(nOID == 78648)
-				{
-					int dd = 0;
-					dd++;
-				}
+			
 
-				if(nOID == 78649)
-				{
-					int dd = 0;
-					dd++;
-				}
 				if(!it.next())
 					break;
 			}

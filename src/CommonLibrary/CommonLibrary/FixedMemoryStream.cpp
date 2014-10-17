@@ -76,7 +76,10 @@ namespace CommonLib
 			break;
 		}
 		if(newpos > m_nSize)
+		{
+			assert(false);
 			return false;
+		}
 		m_nPos = newpos;
 		return true;
 	}

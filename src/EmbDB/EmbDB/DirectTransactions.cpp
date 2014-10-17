@@ -2,14 +2,14 @@
 #include "DirectTransactions.h"
 namespace embDB
 {
-	CDirectTransactions::CDirectTransactions(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage) 
+	CDirectTransactions::CDirectTransactions(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache) 
 		: m_pDBStorage(pDBStorage)
 		,m_bError(false)
 	{
 		assert(m_pDBStorage);
 	}
 	CDirectTransactions::CDirectTransactions(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionsType nTranType, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage, int64 nID): m_pDBStorage(pDBStorage)
+		eTransactionsType nTranType, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache): m_pDBStorage(pDBStorage)
 		,m_bError(false)
 	{
 		assert(m_pDBStorage);
@@ -76,7 +76,6 @@ namespace embDB
 			for (;it != end; ++it)
 			{
 				m_pDBStorage->dropFilePage((*it));
-				 
 			}
 
 		}

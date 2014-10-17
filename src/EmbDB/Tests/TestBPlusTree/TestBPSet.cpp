@@ -172,11 +172,6 @@ void removeFromBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart,
 		int64 nCount = nStart - nEndStart;
 		for (; i > nEndStart; --i)
 		{	
-			if( 246761 == i)
-			{
-				int dd = 0;
-				dd++;
-			}
 			tree.remove(TKey(i));
 			n++;
 			if(i%nStep == 0)

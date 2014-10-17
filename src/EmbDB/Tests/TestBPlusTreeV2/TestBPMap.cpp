@@ -28,11 +28,6 @@ void insertINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 		int64 nCount = nEndStart - nStart;
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
-			if(i == 130560)
-			{
-				int dd = 0;
-				dd++;
-			}
 			if(!tree.insert(TKey(i), TValue(i)))
 			{
 				std::cout   << "Error Insert key:  " << i << std::endl;

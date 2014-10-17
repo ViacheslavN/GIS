@@ -25,16 +25,14 @@ void insertINBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 	tree.loadBTreeInfo(); 
 	time.start();
 	int64 n = 0;
+	bool bFind = false;
 	if(nStart < nEndStart)
 	{
+
 		int64 nCount = nEndStart - nStart;
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
-			if(i == 260100)
-			{
-				int dd = 0;
-				dd++;
-			}
+			
 			if(!tree.insert(TKey(i)))
 			{
 				std::cout   << "Error Insert key:  " << i << std::endl;
@@ -51,11 +49,9 @@ void insertINBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 		int64 nCount = nStart - nEndStart;
 		for (__int64 i = nStart; i > nEndStart; --i)
 		{
-			if(i == 260100)
-			{
-				int dd = 0;
-				dd++;
-			}
+			
+			
+
 			if(!tree.insert(TKey(i)))
 			{
 				std::cout   << "Error Insert key:  " << i << std::endl;
@@ -67,17 +63,25 @@ void insertINBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 			}
 		}
 	}
+
+	
 	tmInsert = time.stop();
 	time.start();
-	tree.commit();
 
+	
+	tree.commit();
+	
 	treeCom = time.stop();
 	time.start();
 	pTran->commit();
+
+
+	
 	tranCom = time.stop();
 	nTreeRootPage = tree.getPageBTreeInfo();
+	pTran->OutDebugInfo();
 
-
+	
 	std::cout << "Insert end key start: " << nStart << " key end: " << nEndStart << " Total time: " << (tmInsert + treeCom + tranCom) <<
 		" time insert: " << tmInsert << " time tree commit: " << treeCom << " Tran commit: " << tranCom <<	std::endl;
 	std::cout << "Tree inner node : " << tree.m_BTreeInfo.m_nInnerNodeCounts<< " Tree leaf node : " << tree.m_BTreeInfo.m_nLeafNodeCounts <<	std::endl;
@@ -98,6 +102,8 @@ void searchINBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 	int64 n = 0;
 	time.start();
  
+
+
 	if(nStart < nEndStart)
 	{
 		int64 nCount = nEndStart - nStart;
@@ -176,11 +182,6 @@ void testOrderINBTreeSet (int32 nCacheBPTreeSize, int64 nStep, Tran* pTran, Comm
 						nOrderError++;
 					}
 					nVal = it.key();
-					if(999999 == nVal)
-					{
-						int dd = 0;
-						dd++;
-					}
 				}
 				it.next();
 				nSize++;
@@ -242,16 +243,25 @@ void removeFromBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart,
 	time.start();
 	int64 i = nStart;
 	int64 n = 0;
+
+	
 	if(nStart < nEndStart)
 	{
 		int64 nCount = nEndStart - nStart;
 		for (; i < nEndStart; ++i)
 		{	
+
+
+		
+			
+
 			if(!tree.remove(TKey(i)))
 			{
 				std::cout << "Error remove,  not found " << i << std::endl;
 			}
 			n++;
+
+			
 
 			TBtree::iterator it = tree.find(TKey(i));
 			if(!it.isNull())
@@ -279,34 +289,12 @@ void removeFromBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart,
 		 
 		for (; i > nEndStart; --i)
 		{	
-			/*	
-			if(i ==  4)
-			{
-				int dd = 0;
-				dd++;
-			}*/
-		 
-			{
-			/*	TBtree::iterator it = tree.find(TKey(2));
-				if(it.isNull())
-				{
-					int dd = 0;
-					dd++;
-				}*/
-			}
+			
 			if(!tree.remove(TKey(i)))
 			{
 				std::cout << "Error remove,  not found " << i << std::endl;
 			}
-			{
-				/*TBtree::iterator it = tree.find(TKey(2));
-				if(it.isNull())
-				{
-					int dd = 0;
-					dd++;
-				}*/
-			}
-			
+						
 			TBtree::iterator it = tree.find(TKey(i));
 			if(!it.isNull())
 			{
@@ -329,7 +317,7 @@ void removeFromBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart,
 
 	pTran->commit();
 	tranCom = time.stop();
-
+	pTran->OutDebugInfo();
 	nTreeRootPage = tree.getPageBTreeInfo();
 
 	std::cout << "Remove end key start: " << nStart << " key end: " << nEndStart << " Total time: " << (tmRemove + treeCom + tranCom) <<
@@ -339,7 +327,7 @@ void removeFromBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart,
 
 
 template<class TBtree,  class TTran, class TKey>
-void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize, int32 nCacheBPTreeSize)
+void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize, int32 nCacheBPTreeSize, int32 nTranCache)
 {
 	CommonLib::alloc_t *alloc = new CommonLib::simple_alloc_t();
 	CommonLib::TimeUtils::CDebugTime time;
@@ -359,7 +347,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			pPage.release();
 			storage.saveStorageInfo();
 
-			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran1.data", &storage, 1);
+			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran1.data", &storage, 1, nTranCache);
 			tran.begin();
 			insertINBTreeSet <TBtree, TTran,  TKey>(nCacheBPTreeSize, 0, nCount, nStep, &tran, alloc, nTreeRootPage);
 			std::cout << "File Size " << storage.getFileSize() << " StorageInfoPage " 
@@ -367,9 +355,9 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			storage.close();
 		}
 
-		//nTreeRootPage = 6;
+	//	nTreeRootPage = 6;
 	
-	/*	{
+		/*{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
@@ -378,9 +366,8 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			tran1.begin();
 			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage);
 			storage.close();
-		}*/
-				
-		/*{
+		}
+		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
@@ -392,7 +379,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		}*/
 	
 	
-	/*	{
+		/*{
 
 			TTran tran5(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran4.data", &storage, 1);
 			tran5.begin();
@@ -409,7 +396,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
-			TTran remtran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran5.data", &storage, 1);
+			TTran remtran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran5.data", &storage, 1, nTranCache);
 			remtran.begin();
 			removeFromBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, mRemConst, 0, nStep, &remtran, alloc, nTreeRootPage);
 			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
@@ -420,7 +407,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
-			TTran tran1(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran6.data", &storage, 1);
+			TTran tran1(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran6.data", &storage, 1, nTranCache);
 			tran1.begin();
 			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, mRemConst, nCount, nStep, &tran1, alloc, nTreeRootPage);
 			storage.close();
@@ -431,7 +418,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
-			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran7.data", &storage, 1);
+			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran7.data", &storage, 1, nTranCache);
 			tran.begin();
 			insertINBTreeSet <TBtree, TTran,  TKey>(nCacheBPTreeSize, mRemConst, 0, nStep, &tran, alloc, nTreeRootPage);
 			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
@@ -443,7 +430,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
-			TTran tran1(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran8.data", &storage, 1);
+			TTran tran1(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran8.data", &storage, 1, nTranCache);
 			tran1.begin();
 			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage);
 			storage.close();
@@ -453,7 +440,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
-			TTran tran5(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran9.data", &storage, 1);
+			TTran tran5(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran9.data", &storage, 1, nTranCache);
 			tran5.begin();
 			testOrderINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize,  nStep, &tran5, alloc, nTreeRootPage, true);
 			storage.close();
@@ -469,10 +456,10 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 void TestBRteeSet()
 {
 	//__int64 nCount = 1531;
-
-	__int64 nCount = 10000000;
+	//3130
+	__int64 nCount = 1000000000;
 	//nCount = 200;
 	//	size_t nPageSize = 100;
 	size_t nPageSize = 8192;
-	testBPTreeSetImpl<TBDoubleSet, embDB::CTransactions, int64>(nCount, nPageSize, 1000, 2);
+	testBPTreeSetImpl<TBDoubleSet, embDB::CTransactions, int64>(nCount, nPageSize, 1000, 10, 10000);
 }

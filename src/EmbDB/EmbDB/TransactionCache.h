@@ -10,24 +10,26 @@
 #include "BPTreeInfoPage.h"
 #include "BaseBPMapv2.h"
 #include <map>
-
+#include "TranPerfCounter.h"
 namespace embDB
 {
 	
+	class CTransactions;
 	class CTransactionsCache
 	{
 	public:
-		CTransactionsCache(CommonLib::alloc_t* pAlloc, CTranStorage *pStorage) : 
+		CTransactionsCache(CommonLib::alloc_t* pAlloc, CTranStorage *pStorage, CTransactions *pTransaction, CTranPerfCounter *pCounter, uint32 nTranCache) : 
 			    m_pFileStorage(pStorage)
 			  , m_nPageInMemory(0)
-			  , m_nMaxPageBuf(5)
+			  , m_nMaxPageBuf(nTranCache)
 			  , m_Chache(pAlloc)
 			 // , m_bInBtree(false)
 			 // , m_mapPageHolder(&m_pages)
 			//  , m_BTreePageHolder(NULL)
 			  , m_BPStorage(pStorage, pAlloc)
 			  , m_pAlloc(pAlloc)
-
+			  , m_pTransaction(pTransaction)
+			  , m_pCounter(pCounter)
 		  {
 			 // m_pCurPageHolder = &m_mapPageHolder;
 		  }
@@ -182,7 +184,9 @@ namespace embDB
 		//bool m_bInBtree;
 		BPNewPageStorage m_BPStorage;
 		CommonLib::alloc_t* m_pAlloc;
-
+		CTransactions* m_pTransaction;
+		CTranPerfCounter *m_pCounter;
+		
 	};   
 
 

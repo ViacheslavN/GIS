@@ -600,6 +600,9 @@
     <ClInclude Include="PageVectorLazySave.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="TranPerfCounter.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -688,6 +691,9 @@
     </ClCompile>
     <ClCompile Include="BitMap.cpp">
       <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="TranPerfCounter.cpp">
+      <Filter>DB\transactions</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

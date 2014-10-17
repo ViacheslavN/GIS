@@ -11,10 +11,10 @@ namespace embDB
 	{
 	public:
 
-		CDirectTransactions(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage);
+		CDirectTransactions(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache = 10000);
 		//for compatible tests
 		CDirectTransactions(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionsType nTranType, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage, int64 nID);
+			eTransactionsType nTranType, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
 		~CDirectTransactions();
 
 		//ITransactions
@@ -85,6 +85,7 @@ namespace embDB
 		{
 			return getNewPage();
 		}
+		void OutDebugInfo(){}
 	private:
 		IDBStorage* m_pDBStorage;
 		bool m_bError;

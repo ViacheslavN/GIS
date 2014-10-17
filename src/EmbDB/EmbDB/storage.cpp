@@ -170,7 +170,7 @@ namespace embDB
 	}
 	FilePagePtr CStorage::getNewPage(bool bWrite)
 	{
-		int64 nAddr = m_FreePageManager.getFreePage();
+		int64 nAddr = m_FreePageManager.getFreePage(m_bCommitState);
 		bool bFree = false;
 		if(nAddr == -1)
 		{
@@ -178,7 +178,9 @@ namespace embDB
 			m_nLastAddr += 1;
 		}
 		else
+		{
 			bFree = true;
+		}
 		CFilePage* pPage = new CFilePage(m_pAlloc, m_nPageSize, nAddr);
 		pPage->setFlag(eFP_FROM_FREE_PAGES, bFree);
 		/*bool bRet = m_pFile.setFilePos64(m_nLastAddr, CommonLib::soFromBegin);
@@ -211,9 +213,17 @@ namespace embDB
 		m_Chache.AddElem(pPage->getAddr(), pPage);
 		return FilePagePtr(pPage);
 	}
-	int64 CStorage::getNewPageAddr()
+	int64 CStorage::getNewPageAddr(uint32* nType)
 	{
-		int64 nAddr = m_nLastAddr;
+		int64 nAddr = m_FreePageManager.getFreePage(m_bCommitState);
+		if(nAddr != -1)
+		{
+			if(nType)
+				*nType |= eFP_FROM_FREE_PAGES;
+		
+			return nAddr;
+		}
+		nAddr = m_nLastAddr;
 		m_nLastAddr += 1;
 		return nAddr;
 	}

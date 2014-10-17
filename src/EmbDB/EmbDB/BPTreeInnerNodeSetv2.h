@@ -82,6 +82,8 @@ namespace embDB
 		TLink upper_bound(const TKey& key, int32& nIndex )
 		{
 			nIndex = m_innerKeyMemSet.upper_bound(key, m_comp);
+			if(nIndex == -1)
+				return -1;
 			if(nIndex == 0) //меньше всех ключей
 			{
 				nIndex = -1;
@@ -93,6 +95,8 @@ namespace embDB
 		TLink lower_bound(const TKey& key, short& nType, int32& nIndex )
 		{
 			nIndex = m_innerKeyMemSet.lower_bound(key, nType, m_comp);
+			if(nIndex == -1)
+				return -1;
 			if(nType == FIND_KEY)
 				return m_innerLinkMemSet[nIndex];
 
@@ -320,7 +324,7 @@ namespace embDB
 		{
 			int nCnt = ((m_innerKeyMemSet.size() + pNode->m_innerKeyMemSet.size() ))/2 - m_innerKeyMemSet.size();
 			//assert(nCnt > 0);
-			if(nCnt < 2)
+			if(nCnt < 2 && !m_innerKeyMemSet.empty())
 				return false; //оставим все при своих
 
 	 

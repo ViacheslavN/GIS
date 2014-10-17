@@ -698,11 +698,6 @@ CommonLib::alloc_t *alloc = new CommonLib::simple_alloc_t();
 	for(int64 i = 1000; i > 0; --i)
 	{
 		embDB::RBSet<int64>::iterator it = set.find(i);
-		if(it.isNull() || it.key() != i)
-		{
-			int dd = 0;
-			dd++;
-		}
 		set1.remove(i);
 	}
 
@@ -717,22 +712,11 @@ CommonLib::alloc_t *alloc = new CommonLib::simple_alloc_t();
 
 
 
-	for(int64 i = 1600000; i > 0; --i)
-	{
-		if(set1.insert(i))
-		{
-			int dd = 0;
-			dd++;
-		}
-	}
+	
 	for(int64 i = 1600000; i > 0; --i)
 	{
 		embDB::RBSet<int64>::iterator it = set1.find(i);
-		if(it.isNull() || it.key() != i)
-		{
-			int dd = 0;
-			dd++;
-		}
+		
 		set1.remove(i);
 	}
 
@@ -835,11 +819,7 @@ CommonLib::alloc_t *alloc = new CommonLib::simple_alloc_t();
 		for(int64 j = 1000; j > 0; --j)
 		{
 			embDB::RBSet<int64>::iterator it = set.find(j);
-			if(it.isNull()|| it.key() != j)
-			{
-				int dd = 0;
-				dd++;
-			}
+		
 			set.deleteNode(it.m_pNode, true, true);
 		}
 	}

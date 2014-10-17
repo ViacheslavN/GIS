@@ -18,7 +18,7 @@ namespace embDB
 		virtual bool saveFilePage(FilePagePtr pPage, size_t nDataSize = 0,  bool ChandgeInCache = false) = 0;
 		virtual bool saveNewPage(FilePagePtr pPage) = 0;
 		virtual size_t getPageSize() const = 0;
-		virtual int64 getNewPageAddr() = 0;
+		virtual int64 getNewPageAddr(uint32* nType = NULL) = 0;
 		//virtual FilePagePtr createPage(int64 nAddr) = 0;
 		virtual bool commit() = 0;
 		virtual bool removeFromFreePage(int64 nAddr) = 0;

@@ -13,6 +13,7 @@
 #include "TranUndoPageManager.h"
 #include "TranLogStateManager.h"
 #include "RBSet.h"
+#include "TranPerfCounter.h"
 namespace embDB
 {
 	//class CTransactionsCache;
@@ -45,9 +46,9 @@ namespace embDB
 	{
 	public:
 		CTransactions(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionsType nTranType, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage, int64 nID);
+			eTransactionsType nTranType, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
 
-		CTransactions(CommonLib::alloc_t* pAlloc, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage);
+		CTransactions(CommonLib::alloc_t* pAlloc, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage, uint32 nTranCache = 10000);
 
 		~CTransactions();
 
@@ -77,7 +78,7 @@ namespace embDB
 		virtual void saveTranFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false);
 
 		virtual void addUndoPage(FilePagePtr pPage);
-
+		 
 		virtual void addInnerTransactions(IDBTransactions *pTran);
 
 
@@ -97,10 +98,17 @@ namespace embDB
 		virtual void setDBStorage(IDBStorage *pStorage)  {m_pDBStorage = pStorage;}
 		virtual void wait() {}
 		virtual void stop() {}
+
+		int getRestoreType() {return m_nRestoreType;}
+
+
+		void OutDebugInfo();
 	private:
 		bool SaveDBPage(CFilePage* pPage);
+		bool SaveDBPage(int64 nAddr);
 		bool commit_undo();
 		bool commit_redo();
+
 	private:
 		int m_nTranType;
 		int m_nRestoreType;
@@ -128,6 +136,10 @@ namespace embDB
 
 		std::vector<int64> m_vecFreePages;
 		std::vector<int64> m_vecRemovePages;
+
+		///////DEBUG UTILS/////////
+		CTranPerfCounter m_TranPerfCounter;
+
 	};
 }
 

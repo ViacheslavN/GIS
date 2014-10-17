@@ -5,12 +5,13 @@
 #include "CommonLibrary/str_t.h"
 #include "FilePage.h"
 #include "CommonLibrary/alloc_t.h"
+#include "TranPerfCounter.h"
 namespace embDB
 {
 	class CTranStorage
 	{
 	public:
-		CTranStorage(CommonLib::alloc_t *pAlloc);
+		CTranStorage(CommonLib::alloc_t *pAlloc, CTranPerfCounter *pCounter);
 		~CTranStorage();
 		bool open(const CommonLib::str_t& sTranName, size_t nPageSize, bool bNew);
 		int64 saveFilePage(CFilePage* pPage, int64 nAddr = -1); //если nAddr = -1, то возвращаеться новый адрес
@@ -28,6 +29,7 @@ namespace embDB
 		int64 m_nLastAddr;
 		size_t m_nPageSize;
 		CommonLib::str_t m_sTranName;
+		CTranPerfCounter *m_pCounter;
 	};
 }
 #endif

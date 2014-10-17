@@ -13,10 +13,11 @@ namespace embDB
 {
 	enum eBPTreeNodePageFlags
 	{
-		ROOT_NODE = 0x01,
-		CHANGE_NODE = 0x02,
-		BUSY_NODE = 0x04,
-		REMOVE_NODE = 0x08
+		ROOT_NODE = 1,
+		CHANGE_NODE = 2,
+		BUSY_NODE = 4,
+		REMOVE_NODE = 8,
+		CHECK_REM_NODE = 16
 	};
 
 	class BPBaseTreeNode

@@ -10,10 +10,11 @@ namespace embDB
 {
 	struct sFileTranPageInfo
 	{
-		sFileTranPageInfo(int64  nAddr = -1, int nFlags = -1) : m_nFileAddr(nAddr), m_nFlags(nFlags)
+		sFileTranPageInfo(int64  nAddr = -1, int nFlags = -1) : m_nFileAddr(nAddr), m_nFlags(nFlags), m_bOrignSave(false)
 		{}
 		int64  m_nFileAddr; // адрес страницы в файле транзакций
 		uint32 m_nFlags; //флаги выгружаемой страницы
+		bool m_bOrignSave; //
 	};
 
 	class BPNewPageLeafNodeCompressor 

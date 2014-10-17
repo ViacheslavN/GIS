@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "TransactionCache.h"
-
+#include "Transactions.h"
 namespace embDB
 {
 
@@ -13,12 +13,30 @@ namespace embDB
 			TPages::iterator it = m_pages.find(pRemPage->getAddr());
 			assert(it != m_pages.end());
 			sFileTranPageInfo& pi = it->second;
-			if((pi.m_nFlags & (eFP_CHANGE | eFP_NEW)) &&  ! (pi.m_nFlags & eFP_REMOVE))
+			if(pi.m_nFlags & (eFP_CHANGE | eFP_NEW))
 			{
 				int64 nRet = m_pFileStorage->saveFilePage(pRemPage, pi.m_nFileAddr);
 				if(pi.m_nFileAddr == -1)
-					nRet = pi.m_nFileAddr;
+				{
+					pi.m_nFileAddr = nRet;
+					assert(pi.m_nFileAddr != -1);
+				}
+
+
+				if(!pi.m_bOrignSave)
+				{
+					if( !(pi.m_nFlags & eFP_NEW) && (pi.m_nFlags & eFP_CHANGE) &&
+						(m_pTransaction->getRestoreType() == rtUndo ||  m_pTransaction->getRestoreType() == rtUndoRedo) )
+					{
+						m_pTransaction->addUndoPage(FilePagePtr(pRemPage));
+					}
+					pi.m_bOrignSave = true;
+				}
+			
 			}
+
+		
+
 			delete pRemPage;
 		}
 	}
@@ -39,27 +57,38 @@ namespace embDB
 
 	 bool CTransactionsCache::savePageForUndo(IDBTransactions *pTran)
 	 {
-
+		 
 		 TPages::iterator it = m_pages.begin();
 		 TPages::iterator it_end = m_pages.end();
 		 for(;it != it_end; ++it)
 		 {
 			 sFileTranPageInfo& pi = it->second;
-			 FilePagePtr pPage(m_Chache.GetElem(it->first, true));//pi.m_pPage;
-			 if(!pPage.get())
-			 {
-				 assert(pi.m_nFileAddr != -1);
-				 pPage = m_pFileStorage->getFilePage(pi.m_nFileAddr);
-				 pPage->setFlag(pi.m_nFlags, true);
-				 pPage->setAddr(it->first);
-			 }
 
-			 bool bNew = (pPage->getFlags() & eFP_NEW) != 0;
-			 bool bChange = (pPage->getFlags() & eFP_CHANGE) != 0;
-			 bool bRemove = (pPage->getFlags() & eFP_REMOVE) != 0;
+			 if(pi.m_bOrignSave)
+				 continue;
 
-			 if(!bNew && (bChange || bRemove))
+			 bool bNew = (pi.m_nFlags & eFP_NEW) != 0;
+			 bool bChange = (pi.m_nFlags & eFP_CHANGE) != 0;
+		//	 bool bRemove = (pi.m_nFlags & eFP_REMOVE) != 0;
+
+			 if(!bNew && bChange)
+			 {			
+
+				 bool bRemPage = false;
+				 FilePagePtr pPage(m_Chache.GetElem(it->first, true));//pi.m_pPage;
+				 if(!pPage.get())
+				 {
+					 assert(pi.m_nFileAddr != -1);
+					 pPage = m_pFileStorage->getFilePage(pi.m_nFileAddr);
+					 pPage->setFlag(pi.m_nFlags, true);
+					 pPage->setAddr(it->first);
+					 bRemPage = true;
+					// m_Chache.AddElem(it->first, pPage.get());
+				 }
 				 pTran->addUndoPage(pPage);
+				 if(bRemPage)
+					 delete pPage.release();
+			 }
 		 }
 		 return true;
 	 }
@@ -77,32 +106,51 @@ namespace embDB
 		{
 			++nCount;
 			sFileTranPageInfo& pi = it->second;
-			FilePagePtr pPage(m_Chache.GetElem(it->first, true));//pi.m_pPage;
-			if(!pPage.get())
-			{
-				assert(pi.m_nFileAddr != -1);
-				pPage = m_pFileStorage->getFilePage(pi.m_nFileAddr);
-				pPage->setFlag(pi.m_nFlags, true);
-				pPage->setAddr(it->first);
-			}
+			bool bNew = (pi.m_nFlags & eFP_NEW) != 0;
+			bool bChange = (pi.m_nFlags & eFP_CHANGE) != 0;
+		//	bool bRemove = (pi.m_nFlags & eFP_REMOVE) != 0;
 
-			bool bNew = (pPage->getFlags() & eFP_NEW) != 0;
-			bool bChange = (pPage->getFlags() & eFP_CHANGE) != 0;
-			bool bRemove = (pPage->getFlags() & eFP_REMOVE) != 0;
-			if(bRemove)
+			
+			if(bNew || bChange /*|| bRemove*/)
 			{
-				if(!bNew)
-					pStorage->dropFilePage(pPage);
-			}
-			else if(bNew || bChange)
-			{
-				if(bNew)
-					pStorage->saveNewPage(pPage);
-				else
-					pStorage->saveFilePage(pPage, 0,  true);
+				FilePagePtr pPage(m_Chache.GetElem(it->first, true));//pi.m_pPage;
+				if(!pPage.get())
+				{
+					assert(pi.m_nFileAddr != -1);
+					pPage = m_pFileStorage->getFilePage(pi.m_nFileAddr);
+					pPage->setFlag(pi.m_nFlags, true);
+					pPage->setAddr(it->first);
+				}
 
+				bool bNew = (pPage->getFlags() & eFP_NEW) != 0;
+				bool bChange = (pPage->getFlags() & eFP_CHANGE) != 0;
+			//	bool bRemove = (pPage->getFlags() & eFP_REMOVE) != 0;
+				bool bFromFree = (pPage->getFlags() & eFP_FROM_FREE_PAGES) != 0;
+			/*	if(bRemove)
+				{
+					if(!bNew)
+					{					
+						pStorage->dropFilePage(pPage);
+					}
+				}
+				else */if(bNew || bChange)
+				{
+					if(bNew && !bFromFree)
+					{
+						
+						pStorage->saveNewPage(pPage);
+						m_pCounter->WriteNewDBPage();
+					}
+					else
+					{
+						pStorage->saveFilePage(pPage, 0,  true);
+						m_pCounter->WriteDBPage();
+					}
+
+				}
+				delete pPage.release();
 			}
-			delete pPage.release();
+		
 		}
 		m_Chache.clear();
 		m_Chache.m_set.destroyTree();
@@ -157,7 +205,6 @@ namespace embDB
 			m_Chache.AddElem(nAddr, pPage);
 			return pPage;
 		}
-				
 		pPage = m_pFileStorage->getFilePage(PageInfo.m_nFileAddr, bRead);
 		assert(pPage);
 		pPage->setAddr(nAddr);

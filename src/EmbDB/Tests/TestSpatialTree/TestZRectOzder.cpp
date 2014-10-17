@@ -97,8 +97,7 @@ void testSplitZRect(TPointType nMax)
 	}
 
 	TQuery<TPointType, TCoord>& curBack = vecSubQueries.back();
-	int dd = 0;
-	dd++;
+	
 }
 
 
@@ -159,8 +158,7 @@ void testSplitZRect1(TCoord& zMin, TCoord& zMax)
 
 				std::cout << "Right order Error " <<std::endl;
 			}
-	int dd = 0;
-	dd++;
+	
 }
 
 
@@ -209,6 +207,5 @@ void testZRect1()
 	embDB::ZOrderRect2DU16 zMin(0,2040,10,2050);
 	embDB::ZOrderRect2DU16 zMax(500,500,2047,3071);
 	testSplitZRect1<uint16, embDB::ZOrderRect2DU16>(zMin, zMax);
-	int dd = 0;
-	dd++;
+
 }

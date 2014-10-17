@@ -269,12 +269,6 @@ void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64
 						else
 							++nCntInQuery;
 
-						if(nCnt == 1229)
-						{
-							int dd = 0;
-							dd++;
-						}
-
 						if(!it.next())
 							break;
 					}

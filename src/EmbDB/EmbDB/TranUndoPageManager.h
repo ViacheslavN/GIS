@@ -52,7 +52,7 @@ namespace embDB
 
 			size_t rowSize()
 			{
-				return sizeof(sUndoPageInfo);
+				return 2 * sizeof(int64) + sizeof(uint32);
 			}
 		};
 

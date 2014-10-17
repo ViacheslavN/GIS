@@ -1093,13 +1093,14 @@ namespace embDB
 			}
 		}
 		assert(pDonorNode.get());
-		size_t nSumSize = pDonorNode->rowSize() + pLeafNode->rowSize() + pLeafNode->headSize();
+		 
+		size_t nSumSize = pDonorNode->rowSize() + pLeafNode->rowSize() + pNode->headSize();
 		int nCnt = ((pLeafNode->count() + pDonorNode->count()))/2 - pLeafNode->count();
 
 		bool bUnion = false;
 		bool bAlignment = false;
 
-		if(nSumSize <  m_pTransaction->getPageSize()/2)	
+		if(nSumSize <  m_pTransaction->getPageSize())	
 			bUnion = true;
 		else if(nCnt > 0)
 			bAlignment = true;
@@ -1152,7 +1153,7 @@ namespace embDB
 	bool UnionLeafNode(TBTreeNode* pParentNode, TBTreeNode* pLeafNode, TBTreeNode*pDonorNode, bool bLeft)
 	{
 		pLeafNode->UnionWith(pDonorNode, bLeft);
-		size_t nNodeSize = pLeafNode->size() ;
+		pLeafNode->setFlags(CHANGE_NODE, true);
 		/*if(nNodeSize > m_pTransaction->getPageSize())
 		{
 			//pLeafNode->splitIn()
@@ -1201,7 +1202,7 @@ namespace embDB
  
 			
 		deleteNode(pDonorNode);
-		pParentNode->setFlags(CHANGE_NODE, true);
+		pParentNode->setFlags(CHANGE_NODE|CHECK_REM_NODE, true);
 		//m_ChangeNode.insert(pParentNode);
 		return true;
 
@@ -1268,16 +1269,19 @@ namespace embDB
 				pParentNode->setFlags(CHANGE_NODE, true);
 				//m_ChangeNode.insert(pParentNode);
 			}
-			if(!(pCheckNode->getFlags() & CHANGE_NODE))
+			if(!(pCheckNode->getFlags() & CHECK_REM_NODE))
 			{
 				pCheckNode = getNode(pCheckNode->parentAddr());//		break;
 				continue;
 			}
+			pCheckNode->setFlags(CHECK_REM_NODE, false);
 			if(pCheckNode->size() >  m_pTransaction->getPageSize()/2)
 			{
 				pCheckNode = getNode(pCheckNode->parentAddr());
 				continue;
 			}
+
+			
 			if(pCheckNode->count() == 0)
 			{
 				int n = 0;
@@ -1373,7 +1377,7 @@ namespace embDB
 			bool bAlignment = false;
 			int nCnt = ((pCheckNode->count() + pDonorNode->count()))/2 - pCheckNode->count();
 
-			if(nSumSize <   m_pTransaction->getPageSize()/2)	
+			if(nSumSize <   m_pTransaction->getPageSize())	
 				bUnion = true;
 			else if(nCnt > 0)
 				bAlignment = true;
@@ -1425,7 +1429,7 @@ namespace embDB
 
 		TBTreeNodePtr pMinNode = bLeft ? getMinimumNode(getNode(pNode->less())) :   getMinimumNode(getNode(pDonorNode->less()));
 		pNode->UnioInnerWith(pDonorNode, pMinNode->key(0)/*bLeft ? getMinimumKey(getNode(pNode->less())) :   getMinimumKey(getNode(pDonorNode->less()))*/,  bLeft);
- 
+		pNode->setFlags(CHANGE_NODE, true);
 		pParentNode->removeByIndex(pDonorNode->foundIndex());
 		if(bLeft && pNode->foundIndex() != -1)
 		{
@@ -1438,7 +1442,7 @@ namespace embDB
 		deleteNode(pDonorNode);
 
 		assert(pParentNode->count() != 0 || pParentNode->less() != -1);
-		pParentNode->setFlags(CHANGE_NODE, true);
+		pParentNode->setFlags(CHANGE_NODE|CHECK_REM_NODE, true);
 		//m_ChangeNode.insert(pParentNode);
 		m_nStateTree |= (eBPTDeleteInnerNode);
 		return true;

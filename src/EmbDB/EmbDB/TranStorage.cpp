@@ -2,7 +2,8 @@
 #include "TranStorage.h"
 namespace embDB
 {
-	CTranStorage::CTranStorage(CommonLib::alloc_t *pAlloc) : m_pAlloc(pAlloc), m_nLastAddr(-1)
+	CTranStorage::CTranStorage(CommonLib::alloc_t *pAlloc, CTranPerfCounter *pCounter) : m_pAlloc(pAlloc), m_nLastAddr(-1),
+		m_pCounter(pCounter)
 	{
 
 	}
@@ -43,6 +44,7 @@ namespace embDB
 		assert(bRet);
 		uint32 nCnt = m_pFile.writeFile((void*)pPage->getRowData(),  (uint32)m_nPageSize );
 		assert(nCnt != 0);
+		m_pCounter->WriteTranPage();
 		return nAddr;
 	}
 	CFilePage* CTranStorage::getFilePage(int64 nAddr, bool bRead)
@@ -58,6 +60,7 @@ namespace embDB
 	
 		if(m_nLastAddr <= nAddr)
 			m_nLastAddr =  nAddr + 1;
+			m_pCounter->ReadTranPage();
 		return pPage;
 	}
 	CFilePage* CTranStorage::getNewPage()

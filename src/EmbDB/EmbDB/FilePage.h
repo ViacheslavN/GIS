@@ -22,6 +22,10 @@ namespace embDB
 
 struct sFilePageHeader
 {
+	/*uint64 m_nTranID:
+	uint32 m_nTime;
+	uint32 m_nOps;*/
+
 	uint32 m_nCRC32;
 	uint32 m_nSize;
 	uint16 m_nObjectPageType;
@@ -46,7 +50,7 @@ struct sFilePageHeader
 
 	static uint32 size() 
 	{
-		return 3* (sizeof(uint16) )+ 2 * sizeof(uint32);
+		return 2* (sizeof(uint16) )+ 2 * sizeof(uint32);
 	}
 
 	void write(CommonLib::FxMemoryWriteStream& stream)

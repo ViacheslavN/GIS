@@ -87,8 +87,7 @@ namespace embDB
 			if(!pFilePage.get())
 				return false;
 
-
-			
+					
 			CommonLib::FxMemoryWriteStream stream;
 
 			sFilePageHeader header;
@@ -108,7 +107,7 @@ namespace embDB
 			if(m_bCheckCRC32)
 				header.writeCRC32(stream);
 			pFilePage->setCheck(true);
-			pTransactions->saveFilePage(pFilePage, stream.pos());
+			pTransactions->saveFilePage(pFilePage, stream.pos(), true);
 
 			//pFilePage->setFlag(eFP_CHANGE, false);
 			return true;
@@ -116,7 +115,7 @@ namespace embDB
 		bool LoadFromPage(CFilePage* pFilePage, Transaction* pTransactions)
 		{
 
-			
+		
 			CommonLib::FxMemoryReadStream stream;
 			stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
 			sFilePageHeader header(stream, m_bCheckCRC32 && !pFilePage->isCheck());
@@ -152,12 +151,12 @@ namespace embDB
 		size_t size()
 		{
 			assert(m_pBaseNode);
-			return sFilePageHeader::size() + 1 + 3 * sizeof(int16) + m_pBaseNode->size();
+			return sFilePageHeader::size() + 1 + /*3 * sizeof(int16) */+ m_pBaseNode->size();
 		}
 		size_t headSize()
 		{
 			assert(m_pBaseNode);
-			return sFilePageHeader::size() + 1 + 3 * sizeof(int16) + m_pBaseNode->headSize();
+			return sFilePageHeader::size() + 1 + /*3 * sizeof(int16)*/ + m_pBaseNode->headSize();
 		}
 		size_t rowSize()
 		{

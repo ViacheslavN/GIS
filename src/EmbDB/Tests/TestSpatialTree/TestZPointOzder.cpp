@@ -116,8 +116,7 @@ void testZPoint1()
 	highKey.getXY(nX1, nY1);
 	uint16 nX2, nY2;
 	lowKey.getXY(nX2, nY2);
-	int dd = 0;
-	dd++;
+
 	//testZPoint<uint16, embDB::ZOrderPoint2DU16>(0, 65535);
 	//testZPoint<uint32, embDB::ZOrderPoint2DU32>(1000000, 1000000 + 10000);
 	//testZPoint<uint32, embDB::ZOrderPoint2DU32>(0xFFFFFFFF-10000, 0xFFFFFFFF);
