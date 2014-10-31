@@ -21,7 +21,7 @@ namespace embDB
 		virtual bool begin(){return true;}
 		virtual bool commit();
 		virtual bool rollback(){return true;}
-		virtual bool restore(){return true;}
+		virtual bool restore(bool Force = false){return true;}
 		bool close(){return true;}
 
 

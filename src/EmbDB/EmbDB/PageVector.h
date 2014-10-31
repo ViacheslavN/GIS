@@ -118,6 +118,7 @@ public:
 			delete pNode;
 			pNode = pNextNode;
 		}
+		m_pBeginNode = NULL;
 	}
 	void setFirstPage(int64 nPage)
 	{

@@ -26,7 +26,7 @@ namespace embDB
 			 // , m_bInBtree(false)
 			 // , m_mapPageHolder(&m_pages)
 			//  , m_BTreePageHolder(NULL)
-			  , m_BPStorage(pStorage, pAlloc)
+			 // , m_BPStorage(pStorage, pAlloc)
 			  , m_pAlloc(pAlloc)
 			  , m_pTransaction(pTransaction)
 			  , m_pCounter(pCounter)
@@ -182,7 +182,7 @@ namespace embDB
 		size_t m_nPageInMemory;
 		size_t m_nMaxPageBuf;
 		//bool m_bInBtree;
-		BPNewPageStorage m_BPStorage;
+		//BPNewPageStorage m_BPStorage;
 		CommonLib::alloc_t* m_pAlloc;
 		CTransactions* m_pTransaction;
 		CTranPerfCounter *m_pCounter;

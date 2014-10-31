@@ -27,7 +27,7 @@ namespace embDB
 		virtual ~IDBTransactions(){}
 
 
-		virtual bool restore() = 0;
+		virtual bool restore(bool Force = false) = 0;
 
 
 		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true) = 0;

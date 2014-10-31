@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "stdafx.h"
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "../../EmbDB/BaseBPSetv2.h"
@@ -357,7 +356,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 
 	//	nTreeRootPage = 6;
 	
-		/*{
+		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
@@ -376,7 +375,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			tran5.begin();
 			testOrderINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize,  nStep, &tran5, alloc, nTreeRootPage, true);
 			storage.close();
-		}*/
+		}
 	
 	
 		/*{
@@ -457,9 +456,9 @@ void TestBRteeSet()
 {
 	//__int64 nCount = 1531;
 	//3130
-	__int64 nCount = 1000000000;
+	__int64 nCount = 1000000;
 	//nCount = 200;
 	//	size_t nPageSize = 100;
 	size_t nPageSize = 8192;
-	testBPTreeSetImpl<TBDoubleSet, embDB::CTransactions, int64>(nCount, nPageSize, 1000, 10, 10000);
+	testBPTreeSetImpl<TBDoubleSet, embDB::CDirectTransactions, int64>(nCount, nPageSize, 1000, 10, 10000);
 }

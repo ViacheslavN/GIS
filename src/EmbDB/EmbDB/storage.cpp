@@ -50,9 +50,9 @@ namespace embDB
 			/*int64 nSize = m_pFile.getFileSize();
 			int64 ntt = nSize%m_nPageSize;*/
 		
-			m_nCalcFileSize = m_pFile.getFileSize();
-			assert(m_pFile.getFileSize() % m_nPageSize == 0);
-			m_nLastAddr = m_nCalcFileSize/m_nPageSize;
+			//m_nCalcFileSize = m_pFile.getFileSize();
+			//assert(m_pFile.getFileSize() % m_nPageSize == 0);
+			//m_nLastAddr = m_nCalcFileSize/m_nPageSize;
 		}
 		return bRet;
 	}
@@ -115,7 +115,7 @@ namespace embDB
 			}
 		}
 		
-		if(m_nLastAddr <= nAddr)
+		if(m_nLastAddr < nAddr)
 		{
 			assert(false);
 			m_nLastAddr =  nAddr + 1;
@@ -309,6 +309,7 @@ namespace embDB
 		stream.attach(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream, STORAGE_PAGE, STORAGE_INFO_PAGE);
 		stream.write(nFreeRootPage);
+		stream.write(m_nLastAddr);
 		stream.write((int32)(m_bDirty ? 1 : 0));
 		if(m_bDirty)
 		{
@@ -337,7 +338,8 @@ namespace embDB
 			//TO DO Log
 			return false;
 		}
-		int64 nFreeRootPage =stream.readInt64();
+		int64 nFreeRootPage = stream.readInt64();
+		m_nLastAddr = stream.readInt64();
 		int32 bDirty = stream.readInt32();
 		m_bDirty = (bDirty == 1);
 		if(m_bDirty)
@@ -364,8 +366,8 @@ namespace embDB
 	}
 	bool CStorage::setFileSize(int64 nSize)
 	{
-		assert(m_pFile.getFileSize() % m_nPageSize == 0);
-		m_nLastAddr = m_pFile.getFileSize()/m_nPageSize;
+		assert(nSize % m_nPageSize == 0);
+		m_nLastAddr = (nSize / m_nPageSize) + 1;
 		return true;
 		//return m_pFile.setFileSize();
 	}
@@ -432,7 +434,7 @@ namespace embDB
 	}
 	 void CStorage::clearDirty()
 	{
-		m_bDirty = true;
+		m_bDirty = false;
 		saveStorageInfo();
 	}
 

@@ -50,7 +50,7 @@ namespace embDB
 				keySet.push_back(key);
 				linkSet.push_back(nlink);
 			}
-			stream.seek(LinkStreams.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);		
+			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);		
 			return true;
 		}
 		virtual bool Write(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryWriteStream& stream)

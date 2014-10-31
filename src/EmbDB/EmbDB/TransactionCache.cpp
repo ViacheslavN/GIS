@@ -28,6 +28,7 @@ namespace embDB
 					if( !(pi.m_nFlags & eFP_NEW) && (pi.m_nFlags & eFP_CHANGE) &&
 						(m_pTransaction->getRestoreType() == rtUndo ||  m_pTransaction->getRestoreType() == rtUndoRedo) )
 					{
+						 
 						m_pTransaction->addUndoPage(FilePagePtr(pRemPage));
 					}
 					pi.m_bOrignSave = true;

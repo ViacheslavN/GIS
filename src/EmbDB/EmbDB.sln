@@ -31,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestBPlusTreeV2", "Tests\Te
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestProject", "..\..\..\..\B+Tree-1.0\example\TestProject.vcxproj", "{D057A8A6-5F2D-4A23-A5E2-14AFEAEBE37A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DBViewerLib", "DBViewerLib\DBViewerLib.vcxproj", "{6DBCD449-4545-4C19-94D9-E80C8C515167}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		debug_shared|Win32 = debug_shared|Win32
@@ -288,6 +290,29 @@ Global
 		{D057A8A6-5F2D-4A23-A5E2-14AFEAEBE37A}.Release|Win32.ActiveCfg = Release|Win32
 		{D057A8A6-5F2D-4A23-A5E2-14AFEAEBE37A}.Release|Win32.Build.0 = Release|Win32
 		{D057A8A6-5F2D-4A23-A5E2-14AFEAEBE37A}.Release|x64.ActiveCfg = Release|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.debug_shared|Win32.ActiveCfg = Debug|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.debug_shared|Win32.Build.0 = Debug|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.debug_shared|x64.ActiveCfg = Debug|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.debug_static|Win32.ActiveCfg = debug_static|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.debug_static|Win32.Build.0 = debug_static|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.debug_static|x64.ActiveCfg = debug_static|x64
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.debug_static|x64.Build.0 = debug_static|x64
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.Debug|Win32.Build.0 = Debug|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.Debug|x64.ActiveCfg = Debug|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.ds|Win32.ActiveCfg = Debug|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.ds|Win32.Build.0 = Debug|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.ds|x64.ActiveCfg = Debug|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.release_shared|Win32.ActiveCfg = Release|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.release_shared|Win32.Build.0 = Release|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.release_shared|x64.ActiveCfg = Release|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.release_static|Win32.ActiveCfg = release_static|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.release_static|Win32.Build.0 = release_static|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.release_static|x64.ActiveCfg = release_static|x64
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.release_static|x64.Build.0 = release_static|x64
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.Release|Win32.ActiveCfg = Release|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.Release|Win32.Build.0 = Release|Win32
+		{6DBCD449-4545-4C19-94D9-E80C8C515167}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

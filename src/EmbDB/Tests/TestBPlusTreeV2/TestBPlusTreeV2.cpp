@@ -7,14 +7,16 @@ void TestBRteeSet();
 void TestBRteeMap();
 void  TestInsert();
 void TestSearch();
+void testUndo();
 int _tmain(int argc, _TCHAR* argv[])
 {
 
 	//TestSearch();
 	// TestInsert();
 	//TestBPVector();
-	TestBRteeSet();
+	//TestBRteeSet();
 	//TestBRteeMap();
+	testUndo();
 	return 0;
 }
 

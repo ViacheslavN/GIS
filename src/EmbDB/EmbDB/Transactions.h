@@ -59,7 +59,7 @@ namespace embDB
 
 
 
-		virtual bool restore();
+		virtual bool restore(bool bForce = false);
 
 
 		bool close();
@@ -103,6 +103,10 @@ namespace embDB
 
 
 		void OutDebugInfo();
+
+		void setDeleteStorage(bool bDel){m_bDeleteStorage = bDel;}
+
+		FilePagePtr getFileDBPage(int64 nAddr, bool bRead = true);
 	private:
 		bool SaveDBPage(CFilePage* pPage);
 		bool SaveDBPage(int64 nAddr);
@@ -128,6 +132,7 @@ namespace embDB
 
 		bool m_bIsCompleted;
 		bool m_bIsBegin;
+		bool m_bDeleteStorage;
 
 		TInnerTransactions m_InnerTran;
 

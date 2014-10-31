@@ -20,7 +20,8 @@ namespace embDB
 		~CTranLogStateManager();
 		bool Init(int64 nPageAddr, bool bRead);
 		bool setState(eTransactionsState eTS);
-		void setDBSize(int64 nSize);
+		void setDBSize(uint64 nSize);
+		uint64 getDBSize() const {return m_nDbSize;}
 		uint32 getState();
 		bool save();
 	private:

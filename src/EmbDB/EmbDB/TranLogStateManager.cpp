@@ -33,7 +33,7 @@ namespace embDB
 	}
 	bool CTranLogStateManager::save()
 	{
-		CFilePage* pPage = m_pStorage->getFilePage(m_nPageAddr);
+		CFilePage* pPage = m_pStorage->getFilePage(m_nPageAddr, false);
 		assert(pPage);
 		if(!pPage)
 			return false;
@@ -41,7 +41,7 @@ namespace embDB
 		stream.attach(pPage->getRowData(), pPage->getPageSize());
 		stream.write(m_nState);
 		stream.write(m_nDbSize);
-		m_pStorage->saveFilePage(pPage);
+		m_pStorage->saveFilePage(pPage, pPage->getAddr());
 		delete pPage;
 		return true;
 	}
@@ -54,7 +54,7 @@ namespace embDB
 	{
 		return m_nState;
 	}
-	void CTranLogStateManager::setDBSize(int64 nSize)
+	void CTranLogStateManager::setDBSize(uint64 nSize)
 	{
 		m_nDbSize = nSize;
 	}

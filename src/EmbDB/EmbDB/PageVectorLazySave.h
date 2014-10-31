@@ -67,7 +67,6 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attach(pPage->getRowData(), pPage->getPageSize());
 			sFilePageHeader header(stream, m_nObjectPage, m_nSubObjectPage);
-
 			stream.write(pNextPage != NULL? pNextPage->getAddr() : (int64)-1);
 			stream.write((int32)m_values.size());
 
@@ -77,7 +76,7 @@ namespace embDB
 			}
 			header.writeCRC32(stream);
 			pPage->setFlag(eFP_CHANGE, true);
-			pStorage->saveFilePage(pPage);
+			pStorage->saveFilePage(pPage, pPage->getAddr());
 
 			m_values.clear();
 			if(pNextPage != NULL)
@@ -90,7 +89,7 @@ namespace embDB
 		{
 		public:
 			iterator(int64 nPage, _TStorage *pStorage, TReaderWriter *pRW, short nObjectPage, short nSubObjectPage)
-				: m_nPage(nPage), pStorage(pStorage), pRW(pRW),  m_nSubObjectPage(nSubObjectPage),  m_nNextPage(-1), m_nPageIDx(0)
+				: m_nPage(nPage), pStorage(pStorage), pRW(pRW), m_nObjectPage(nObjectPage),  m_nSubObjectPage(nSubObjectPage),  m_nNextPage(-1), m_nPageIDx(0)
 			{
 
 			}
@@ -126,7 +125,7 @@ namespace embDB
 			}
 			bool load()
 			{
-				if(isNull())
+				if(m_nPage == -1 )
 					return false;
 				CFilePage *pPage = pStorage->getFilePage(m_nPage);
 				if(!pPage)
