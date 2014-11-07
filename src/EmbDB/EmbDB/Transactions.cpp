@@ -228,9 +228,15 @@ namespace embDB
 		return m_pDBStorage->getFilePage(nAddr, bRead);
 	}
 
-	void CTransactions::addUndoPage(FilePagePtr pPage)
+	void CTransactions::addUndoPage(FilePagePtr pPage, bool bReadFromDB )
 	{
-		SaveDBPage(pPage.get());
+		if(bReadFromDB)
+		{
+			FilePagePtr pDBPage = m_pDBStorage->getFilePage(pPage->getAddr());
+			SaveDBPage(pDBPage.get());
+		}
+		else
+			SaveDBPage(pPage.get());
 	}
 
 	FilePagePtr CTransactions::getTranNewPage()
@@ -252,7 +258,7 @@ namespace embDB
 	}
 	void CTransactions::dropFilePage(FilePagePtr pPage)
 	{
-		addUndoPage(pPage);
+		addUndoPage(pPage, true);
 		m_vecRemovePages.push_back(pPage->getAddr());
 	}
 	void CTransactions::dropFilePage(int64 nAddr)
@@ -315,11 +321,11 @@ namespace embDB
 	{
 		m_TranPerfCounter.AddUndoPage();
 
-		FilePagePtr pDBPage = m_pDBStorage->getFilePage(pPage->getAddr());
+		//FilePagePtr pDBPage = m_pDBStorage->getFilePage(pPage->getAddr());
 		sUndoPageInfo nPageInfo;
-		nPageInfo.nDBAddr = pDBPage->getAddr();
-		nPageInfo.nTranAddr = m_TranStorage.saveFilePage(pDBPage.get(), -1);
-		nPageInfo.nFlags = pDBPage->getFlags();
+		nPageInfo.nDBAddr = pPage->getAddr();
+		nPageInfo.nTranAddr = m_TranStorage.saveFilePage(pPage, -1);
+		nPageInfo.nFlags = pPage->getFlags();
 		if(nPageInfo.nTranAddr == -1)
 		{
 			CommonLib::str_t sMsg;

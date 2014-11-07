@@ -29,15 +29,12 @@ namespace embDB
 						(m_pTransaction->getRestoreType() == rtUndo ||  m_pTransaction->getRestoreType() == rtUndoRedo) )
 					{
 						 
-						m_pTransaction->addUndoPage(FilePagePtr(pRemPage));
+						m_pTransaction->addUndoPage(FilePagePtr(pRemPage), true);
 					}
 					pi.m_bOrignSave = true;
 				}
 			
 			}
-
-		
-
 			delete pRemPage;
 		}
 	}
@@ -86,7 +83,7 @@ namespace embDB
 					 bRemPage = true;
 					// m_Chache.AddElem(it->first, pPage.get());
 				 }
-				 pTran->addUndoPage(pPage);
+				 pTran->addUndoPage(pPage, true);
 				 if(bRemPage)
 					 delete pPage.release();
 			 }
@@ -95,10 +92,6 @@ namespace embDB
 	 }
 	void CTransactionsCache::saveChange(IDBStorage *pStorage)
 	{
-		/*if(m_bInBtree)
-			SavePages(m_BTreePageHolder,  pStorage);	 
-		else
-			SavePages(m_mapPageHolder,  pStorage);*/
 
 		TPages::iterator it = m_pages.begin();
 		TPages::iterator it_end = m_pages.end();
@@ -109,12 +102,11 @@ namespace embDB
 			sFileTranPageInfo& pi = it->second;
 			bool bNew = (pi.m_nFlags & eFP_NEW) != 0;
 			bool bChange = (pi.m_nFlags & eFP_CHANGE) != 0;
-		//	bool bRemove = (pi.m_nFlags & eFP_REMOVE) != 0;
 
 			
-			if(bNew || bChange /*|| bRemove*/)
+			if(bNew || bChange)
 			{
-				FilePagePtr pPage(m_Chache.GetElem(it->first, true));//pi.m_pPage;
+				FilePagePtr pPage(m_Chache.GetElem(it->first, true));
 				if(!pPage.get())
 				{
 					assert(pi.m_nFileAddr != -1);
@@ -125,16 +117,8 @@ namespace embDB
 
 				bool bNew = (pPage->getFlags() & eFP_NEW) != 0;
 				bool bChange = (pPage->getFlags() & eFP_CHANGE) != 0;
-			//	bool bRemove = (pPage->getFlags() & eFP_REMOVE) != 0;
 				bool bFromFree = (pPage->getFlags() & eFP_FROM_FREE_PAGES) != 0;
-			/*	if(bRemove)
-				{
-					if(!bNew)
-					{					
-						pStorage->dropFilePage(pPage);
-					}
-				}
-				else */if(bNew || bChange)
+				if(bNew || bChange)
 				{
 					if(bNew && !bFromFree)
 					{
@@ -157,34 +141,11 @@ namespace embDB
 		m_Chache.m_set.destroyTree();
 		m_pages.clear();
 	}
-	void CTransactionsCache::saveInBTree()
-	{
-		/*TPages::iterator it = m_pages.begin();
-		while(!it.isNull())
-		{
-			m_BTreePages->insert(it.key(), it.value());
-			it.next();
-		}
-		m_pages.clear();*/
-	}
-
+	
 	void  CTransactionsCache::AddPage(int64 nAddr, int64 nTranAddr, CFilePage* pPage, bool bAddBack)
 	{
 
 		m_pages.insert(std::make_pair(nAddr, sFileTranPageInfo(nTranAddr, pPage->getFlags())));
-		/*m_pCurPageHolder->insert(nAddr, sFileTranPageInfo(nTranAddr, pPage->getFlags()));
-		if(!m_bInBtree)
-		{
-			if(m_pages.size() > 1000000)
-			{
-				m_BTreePages.reset(new TBTreePlus(-1, &m_BPStorage, m_pAlloc, 1000, false ));
-				saveInBTree();
-				m_BTreePageHolder.m_pSet = m_BTreePages.get();
-				m_pCurPageHolder = &m_BTreePageHolder;
-				m_bInBtree = true;
-			}
-		}*/
-
 		CheckCache();
 		m_Chache.AddElem(nAddr, pPage);
 	}
@@ -195,7 +156,7 @@ namespace embDB
 		CFilePage* pPage = m_Chache.GetElem(nAddr);
 		if(pPage)
 			return pPage;
-		TPages::iterator it = m_pages.find(nAddr);//m_pCurPageHolder->find(nAddr);
+		TPages::iterator it = m_pages.find(nAddr);
 		if(it == m_pages.end())
 			return NULL;
 
@@ -219,9 +180,5 @@ namespace embDB
 		m_Chache.clear();
 		m_Chache.m_set.clear();
 		m_pages.clear();
-	/*	if(m_bInBtree)
-			m_BTreePageHolder.clear();
-		else
-			m_mapPageHolder.clear();*/
 	}
 } 

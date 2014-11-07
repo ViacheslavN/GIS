@@ -77,7 +77,7 @@ namespace embDB
 		virtual FilePagePtr getTranFilePage(int64 nAddr, bool bRead = true);
 		virtual void saveTranFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false);
 
-		virtual void addUndoPage(FilePagePtr pPage);
+		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false);
 		 
 		virtual void addInnerTransactions(IDBTransactions *pTran);
 
