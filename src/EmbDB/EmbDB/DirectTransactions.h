@@ -35,7 +35,7 @@ namespace embDB
 
 		virtual void addInnerTransactions(IDBTransactions *pTran){}
 
-		virtual void addUndoPage(FilePagePtr pPage){}
+		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false){}
 		virtual bool isError() const
 		{
 			return m_bError;

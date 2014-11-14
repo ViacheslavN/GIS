@@ -138,7 +138,6 @@ namespace embDB
 		
 		}
 		m_Chache.clear();
-		m_Chache.m_set.destroyTree();
 		m_pages.clear();
 	}
 	
@@ -178,7 +177,6 @@ namespace embDB
 	void CTransactionsCache::clear()
 	{
 		m_Chache.clear();
-		m_Chache.m_set.clear();
 		m_pages.clear();
 	}
 } 

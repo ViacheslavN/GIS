@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_TRANSACTIONS_CACHE_H_
 
 
-#include "CacheNodes.h"
+#include "CacheMRU.h"
 #include "TranStorage.h" 
 //#include "RBSet.h"
 #include "FilePage.h"
@@ -23,16 +23,10 @@ namespace embDB
 			  , m_nPageInMemory(0)
 			  , m_nMaxPageBuf(nTranCache)
 			  , m_Chache(pAlloc)
-			 // , m_bInBtree(false)
-			 // , m_mapPageHolder(&m_pages)
-			//  , m_BTreePageHolder(NULL)
-			 // , m_BPStorage(pStorage, pAlloc)
 			  , m_pAlloc(pAlloc)
 			  , m_pTransaction(pTransaction)
 			  , m_pCounter(pCounter)
-		  {
-			 // m_pCurPageHolder = &m_mapPageHolder;
-		  }
+		  {  }
 		  ~CTransactionsCache()
 		  {
 			
@@ -51,7 +45,7 @@ namespace embDB
 	public:
 		typedef std::map<int64, sFileTranPageInfo> TPages; 
 		TPages m_pages;
-		typedef TSimpleCache<int64, CFilePage> TNodesCache;
+		typedef TCacheMRU<int64, CFilePage> TNodesCache;
 		TNodesCache m_Chache; //страницы в памяти
 		CTranStorage * m_pFileStorage;
 		size_t m_nPageInMemory;

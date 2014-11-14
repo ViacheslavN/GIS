@@ -137,7 +137,7 @@ namespace embDB
 		size_t m_nSize;
 	};
 
-	class  BPNewPageStorage
+	/*class  BPNewPageStorage
 	{
 	public:	
 		BPNewPageStorage(CTranStorage *pTranStorage, CommonLib::alloc_t *pAlloc);
@@ -155,7 +155,7 @@ namespace embDB
 		typedef TSimpleCache<int64, CFilePage> TNodesCache;
 		TNodesCache m_Chache;
 
-	};
+	};*/
 
 
 }

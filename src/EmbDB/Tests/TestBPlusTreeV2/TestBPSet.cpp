@@ -456,7 +456,7 @@ void TestBRteeSet()
 {
 	//__int64 nCount = 1531;
 	//3130
-	__int64 nCount = 1000000;
+	__int64 nCount = 100000000;
 	//nCount = 200;
 	//	size_t nPageSize = 100;
 	size_t nPageSize = 8192;

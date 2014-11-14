@@ -6,7 +6,7 @@
 #include "BPTreeNodeSetV2.h"
 #include "IDBTransactions.h"
 #include "simple_stack.h"
-#include "CacheNodes.h"
+//#include "CacheNodes.h"
 #include "DBMagicSymbol.h"
 #include "BPTreeStatistics.h"
 #include "BPInnerNodeSimpleCompressorV2.h"
@@ -15,6 +15,7 @@
 #include "CompressorParams.h"
 #include "BPIteratorSetV2.h"
 #include "CommonLibrary/delegate.h"
+#include "CacheMRU.h"
 namespace embDB
 {
 
@@ -81,22 +82,21 @@ namespace embDB
 		}
 		~TBPlusTreeSetV2()
 		{
-			TNodesCache::TCacheSet::iterator it =	m_Cache.m_set.begin();
+			TNodesCache::iterator it =	m_Cache.begin();
 			while(!it.isNull())
 			{
-				TBTreeNode* pBNode = it.value().pListEl->obj_;
+				TBTreeNode* pBNode = it.object();
 				assert(pBNode != m_pRoot.get());
 				//delete pBNode;
 				pBNode->setParent(NULL);
 				it.next();
 			}
-			it =	m_Cache.m_set.begin();
+			it = m_Cache.begin();
 			while(!it.isNull())
 			{
-				TBTreeNode* pBNode = it.value().pListEl->obj_;
+				TBTreeNode* pBNode  = it.object();
 				assert(pBNode != m_pRoot.get());
 				delete pBNode;
-				//pBNode->setParent(NULL);
 				it.next();
 			}
 			if(m_pRoot.get())
@@ -277,10 +277,10 @@ namespace embDB
 		{
 			if(!m_pRoot.get())
 				return true;
-			TNodesCache::TCacheSet::iterator it =	m_Cache.m_set.begin();
+			TNodesCache::iterator it =	m_Cache.begin();
 			while(!it.isNull())
 			{
-				TBTreeNode* pBNode = it.value().pListEl->obj_;
+				TBTreeNode* pBNode = it.object();
 				if(pBNode->getFlags() & CHANGE_NODE)
 				{
 					pBNode->Save(m_pTransaction);
@@ -1510,7 +1510,8 @@ namespace embDB
 		//typedef RBSet<TBTreeNodePtr> TChangeNode;
 		//TChangeNode m_ChangeNode;
 		size_t m_nChacheSize;
-		typedef TSimpleCache<TLink, TBTreeNode> TNodesCache;
+		//typedef TSimpleCache<TLink, TBTreeNode> TNodesCache;
+		typedef TCacheMRU<TLink, TBTreeNode> TNodesCache;
 		TNodesCache m_Cache;
 		bool m_bChangeRoot;
 		bool m_bMulti;

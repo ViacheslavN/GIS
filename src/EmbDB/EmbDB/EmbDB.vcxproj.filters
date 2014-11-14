@@ -603,6 +603,12 @@
     <ClInclude Include="TranPerfCounter.h">
       <Filter>DB\transactions</Filter>
     </ClInclude>
+    <ClInclude Include="TranRedoPageManager.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="CacheMRU.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -693,6 +699,9 @@
       <Filter>utils</Filter>
     </ClCompile>
     <ClCompile Include="TranPerfCounter.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="TranRedoPageManager.cpp">
       <Filter>DB\transactions</Filter>
     </ClCompile>
   </ItemGroup>

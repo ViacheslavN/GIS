@@ -466,6 +466,7 @@
     <ClInclude Include="BPTreeNodeSetV2.h" />
     <ClInclude Include="BPTreeSPLeafNodeMap.h" />
     <ClInclude Include="BPVector.h" />
+    <ClInclude Include="CacheMRU.h" />
     <ClInclude Include="CompressorParams.h" />
     <ClInclude Include="CRC.h" />
     <ClInclude Include="ICursor.h" />
@@ -573,6 +574,7 @@
     <ClInclude Include="TranLogStateManager.h" />
     <ClInclude Include="DBStateManager.h" />
     <ClInclude Include="TranPerfCounter.h" />
+    <ClInclude Include="TranRedoPageManager.h" />
     <ClInclude Include="TransactionCache.h" />
     <ClInclude Include="Transactions.h" />
     <ClInclude Include="TranStorage.h" />
@@ -655,6 +657,7 @@
     <ClCompile Include="TranLogStateManager.cpp" />
     <ClCompile Include="DBStateManager.cpp" />
     <ClCompile Include="TranPerfCounter.cpp" />
+    <ClCompile Include="TranRedoPageManager.cpp" />
     <ClCompile Include="TransactionCache.cpp" />
     <ClCompile Include="Transactions.cpp" />
     <ClCompile Include="TranStorage.cpp" />

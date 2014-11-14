@@ -4,7 +4,7 @@
 namespace embDB
 {
 
-	BPNewPageStorage::BPNewPageStorage(CTranStorage *pTranStorage, CommonLib::alloc_t *pAlloc) :
+	/*BPNewPageStorage::BPNewPageStorage(CTranStorage *pTranStorage, CommonLib::alloc_t *pAlloc) :
 		m_pTranStorage(pTranStorage)
 		,m_nMaxPageBuf(100) 
 		,m_Chache(pAlloc)
@@ -48,6 +48,6 @@ namespace embDB
 		}
 		m_Chache.AddElem(pPage->getAddr(), pPage);
 		return FilePagePtr(pPage);
-	}
+	}*/
 
 }
