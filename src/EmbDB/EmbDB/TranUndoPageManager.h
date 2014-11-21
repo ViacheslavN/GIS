@@ -9,13 +9,7 @@
 #include "PageVectorLazySave.h"
 namespace embDB
 {
-	struct sUndoPageInfo
-	{
-		int64 nDBAddr;
-		int64 nTranAddr;
-		int32 nFlags;
-	};
-	typedef std::vector<sUndoPageInfo> TUndoDBPages;
+	
 
 
 
@@ -25,12 +19,27 @@ namespace embDB
 	public:
 		CTranUndoPageManager(IDBTransactions *pTran, CTranStorage *pStorage);
 		~CTranUndoPageManager();
+
+
+		struct sUndoPageInfo
+		{
+			int64 nDBAddr;
+			int64 nTranAddr;
+			uint32 nFlags;
+
+			sUndoPageInfo(int64 _nDBAddr = -1, int64 _nTranAddr = -1, uint32 _nFlags = 0) :
+				nDBAddr(_nDBAddr), nTranAddr(_nTranAddr), nFlags(+nFlags)
+			{
+
+			}
+		};
+		typedef std::vector<sUndoPageInfo> TUndoDBPages;
 		
 		void setFirstPage(int64 nPage)
 		{
 			m_undoPages.setRoot(nPage);
 		}
-		bool add(const sUndoPageInfo& PageInfo);
+		bool add(int64 nDBAddr, int64 nTranAddr, uint32 nFlags);
 		bool undo(CTranStorage *pTranStorage, IDBStorage* pDBStorage);
 		bool save();
 

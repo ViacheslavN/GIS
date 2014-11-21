@@ -18,9 +18,9 @@ namespace embDB
 	{
 
 	}
-	bool CTranUndoPageManager::add(const sUndoPageInfo& PageInfo)
+	bool CTranUndoPageManager::add(int64 nDBAddr, int64 nTranAddr, uint32 nFlags)
 	{
-		return m_undoPages.push<CTranStorage, CFilePage*>(PageInfo, m_pStorage);
+		return m_undoPages.push<CTranStorage, CFilePage*>(sUndoPageInfo(nDBAddr, nTranAddr, nFlags), m_pStorage);
 	}
 
 	bool CTranUndoPageManager::save()

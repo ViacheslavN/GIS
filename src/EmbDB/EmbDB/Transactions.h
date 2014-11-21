@@ -11,6 +11,7 @@
 #include "TranStorage.h"
 #include "DBMagicSymbol.h"
 #include "TranUndoPageManager.h"
+#include "TranRedoPageManager.h"
 #include "TranLogStateManager.h"
 #include "RBSet.h"
 #include "TranPerfCounter.h"
@@ -22,7 +23,7 @@ namespace embDB
 		sTransactionHeader() :
 			nRestoreType(-1)
 			,nPageChangeHeader(-1)
-			,nPageUndoHeader(-1)
+			,nPageUndoRedoHeader(-1)
 			,nErrorLogHeader(-1)
 			,nMesageLogHeader(-1)
 			,nPageStateHeader(-1)
@@ -30,7 +31,7 @@ namespace embDB
 			{}
 		int32 nRestoreType;
 		int64 nPageChangeHeader;
-		int64 nPageUndoHeader;
+		int64 nPageUndoRedoHeader;
 		int64 nErrorLogHeader;
 		int64 nMesageLogHeader;
 		int64 nPageStateHeader;
@@ -112,6 +113,8 @@ namespace embDB
 		bool SaveDBPage(int64 nAddr);
 		bool commit_undo();
 		bool commit_redo();
+		bool restore_undo(bool bForce = false);
+		bool restore_redo(bool bForce = false);
 
 	private:
 		int m_nTranType;
@@ -124,6 +127,7 @@ namespace embDB
 		CTransactionsCache m_PageChache;
 		IDBStorage* m_pDBStorage;
 		CTranUndoPageManager m_TranUndoManager;
+		CTranRedoPageManager m_TranRedoManager;
 		CTranLogStateManager m_LogStateManager;
  		CommonLib::alloc_t *m_pAlloc;
 		sTransactionHeader m_Header;

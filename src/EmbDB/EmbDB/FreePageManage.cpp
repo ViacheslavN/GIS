@@ -358,50 +358,13 @@ namespace embDB
 
 		TMapFreeMaps::iterator it =  m_FreeMaps.begin();
 		TMapFreeMaps::iterator end =  m_FreeMaps.end();
-
-		//SaveUndoPage(m_nFreeMapLists, pTran, UndoVector);
 		pTran->addUndoPage(m_pStorage->getFilePage(m_nFreeMapLists));
 		for (; it != end; ++it)
 		{
 			FileFreeMap* pFreeMap = it->second;
 			pTran->addUndoPage(m_pStorage->getFilePage(pFreeMap->m_nAddr));
 
-			//SaveUndoPage(pFreeMap->m_nAddr, pTran, UndoVector);
 		}
-
-		/*FilePagePtr pRootPage = pTran->getTranFilePage(nPageBegin, false);
-		if(!pRootPage.get())
-		{
-			//TO DO LOG
-			return false;
-		}
-
-		FilePagePtr pListPage = pTran->getTranNewPage();
-		if(!pListPage.get())
-		{
-			//TO DO LOG
-			return false;
-		}
-
-		TUndoVector UndoVector(pListPage->getAddr(), pTran->getPageSize(), TRANSACTION_PAGE, UNDO_FREEMAP_PAGES_LIST);
-		TMapFreeMaps::iterator it =  m_FreeMaps.begin();
-		TMapFreeMaps::iterator end =  m_FreeMaps.end();
-
-		SaveUndoPage(m_nFreeMapLists, pTran, UndoVector);
-		for (; it != end; ++it)
-		{
-			FileFreeMap* pFreeMap = it->second;
-			SaveUndoPage(pFreeMap->m_nAddr, pTran, UndoVector);
-		}
- 
-
-		UndoVector.save<IDBTransactions, FilePagePtr>(pTran);
-
-		CommonLib::FxMemoryWriteStream stream;
-		stream.attach(pRootPage->getRowData(), pRootPage->getPageSize());
-		sFilePageHeader header(stream, TRANSACTION_PAGE, UNDO_FREEMAP_PAGES_ROOT);
-		stream.write(pListPage->getAddr());
-		pTran->saveTranFilePage(pRootPage);*/
 		return true;
 	}
 	bool CFreePageManager::undo(IDBTransactions *pTran, int64 nPageBegin)

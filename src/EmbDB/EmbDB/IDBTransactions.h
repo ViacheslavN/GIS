@@ -11,8 +11,7 @@ namespace embDB
 	{
 		rtUndefined,
 		rtUndo,
-		rtRedo,
-		rtUndoRedo
+		rtRedo
 	};
 	class IDBStorage;
 	class IDBBtree

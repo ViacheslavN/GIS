@@ -22,17 +22,23 @@ namespace embDB
 					assert(pi.m_nFileAddr != -1);
 				}
 
-
-				if(!pi.m_bOrignSave)
+				if(m_pTransaction->getRestoreType() == rtUndo)
 				{
-					if( !(pi.m_nFlags & eFP_NEW) && (pi.m_nFlags & eFP_CHANGE) &&
-						(m_pTransaction->getRestoreType() == rtUndo ||  m_pTransaction->getRestoreType() == rtUndoRedo) )
+					if(!pi.m_bOrignSave)
 					{
-						 
-						m_pTransaction->addUndoPage(FilePagePtr(pRemPage), true);
+						if( !(pi.m_nFlags & eFP_NEW) && (pi.m_nFlags & eFP_CHANGE))
+						{
+
+							m_pTransaction->addUndoPage(FilePagePtr(pRemPage), true);
+						}
+						pi.m_bOrignSave = true;
 					}
-					pi.m_bOrignSave = true;
 				}
+				else if(m_pTransaction->getRestoreType() == rtRedo)
+				{
+					pi.m_bRedoSave = true;
+				}
+				
 			
 			}
 			delete pRemPage;
@@ -46,6 +52,10 @@ namespace embDB
 		sFileTranPageInfo& pi = it->second;
 		pi.m_nFlags |= eFP_CHANGE;
 		pPage->setFlag(eFP_CHANGE, true);
+		if(m_pTransaction->getRestoreType() == rtRedo)
+		{
+			pi.m_bRedoSave = false;
+		}
 	//	m_pFileStorage->saveFilePage(pPage, pi->m_nFileAddr);
 	}
 	void CTransactionsCache::dropChange(IDBStorage *pStorage)
@@ -87,6 +97,52 @@ namespace embDB
 				 if(bRemPage)
 					 delete pPage.release();
 			 }
+		 }
+		 return true;
+	 }
+	 bool CTransactionsCache::savePageForRedo(CTranRedoPageManager *pRepoPageManager)
+	 {
+		 TPages::iterator it = m_pages.begin();
+		 TPages::iterator it_end = m_pages.end();
+		 for(;it != it_end; ++it)
+		 {
+			 sFileTranPageInfo& pi = it->second;
+
+			 bool bNew = (pi.m_nFlags & eFP_NEW) != 0;
+			 bool bChange = (pi.m_nFlags & eFP_CHANGE) != 0;
+			 bool bRemove = (pi.m_nFlags & eFP_REMOVE) != 0;
+			 bool bAdd = false;
+			 if(bNew)
+			 {
+				 if(!bRemove)
+					 bAdd = true;
+			 }
+			 else if(bRemove)
+				  bAdd = true;
+			 else if(bChange)
+				  bAdd = true;
+
+			 if(bAdd)
+			 {
+				 if(!pi.m_bRedoSave)
+				 {
+					CFilePage* pPage = m_Chache.GetElem(it->first, true);
+					 if(!pPage)
+					 {
+						 assert(pPage); //должна быть
+						 //TO DO Logs
+						 return false;
+					 }
+					 int64 nRet = m_pFileStorage->saveFilePage(pPage, pi.m_nFileAddr);
+					 if(pi.m_nFileAddr == -1)
+					 {
+						 pi.m_nFileAddr = nRet;
+						 assert(pi.m_nFileAddr != -1);
+					 }
+				 }
+				 pRepoPageManager->add(it->first, pi.m_nFileAddr, pi.m_nFlags);
+			 }
+				 
 		 }
 		 return true;
 	 }

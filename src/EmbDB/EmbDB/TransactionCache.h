@@ -13,7 +13,7 @@
 #include "TranPerfCounter.h"
 namespace embDB
 {
-	
+	class CTranRedoPageManager;
 	class CTransactions;
 	class CTransactionsCache
 	{
@@ -42,6 +42,7 @@ namespace embDB
 		  void savePage(CFilePage *Page);
 		  void clear();
 		  bool savePageForUndo(IDBTransactions *pTran);
+		  bool savePageForRedo(CTranRedoPageManager *pRepoPageManager);
 	public:
 		typedef std::map<int64, sFileTranPageInfo> TPages; 
 		TPages m_pages;

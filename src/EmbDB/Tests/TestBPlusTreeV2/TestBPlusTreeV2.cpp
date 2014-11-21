@@ -8,6 +8,7 @@ void TestBRteeMap();
 void  TestInsert();
 void TestSearch();
 void testUndo();
+void testRedo();
 int _tmain(int argc, _TCHAR* argv[])
 {
 
@@ -16,7 +17,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//TestBPVector();
 	//TestBRteeSet();
 	//TestBRteeMap();
-	testUndo();
+	//testUndo();
+	testRedo();
 	return 0;
 }
 
