@@ -130,6 +130,9 @@
     <Filter Include="DB\Index\BtreePlusv2\BPSetMapv2">
       <UniqueIdentifier>{f5c58f29-749d-48b2-b6da-57b4c86229a2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="utils\alloc">
+      <UniqueIdentifier>{8ecce2e9-4a53-4216-8369-71db1bd724d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -609,6 +612,9 @@
     <ClInclude Include="CacheMRU.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="PageAlloc.h">
+      <Filter>utils\alloc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -703,6 +709,9 @@
     </ClCompile>
     <ClCompile Include="TranRedoPageManager.cpp">
       <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="PageAlloc.cpp">
+      <Filter>utils\alloc</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

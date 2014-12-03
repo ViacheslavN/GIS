@@ -252,20 +252,11 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 			storage.loadStorageInfo();
 			TTran tran1(alloc, embDB::rtRedo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1);
 			tran1.begin();
-			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage, true);
+			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, 0, nCount + nCount/2, nStep, &tran1, alloc, nTreeRootPage, true);
 			storage.close();
 		}
 
-		{
-			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
-			storage.setStoragePageInfo(nStorageInfoPage);
-			storage.loadStorageInfo();
-			TTran tran1(alloc, embDB::rtRedo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1);
-			tran1.begin();
-			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, nCount, nCount + nCount/2, nStep, &tran1, alloc, nTreeRootPage, false);
-			storage.close();
-		}
+		
 
 		{
 			nTreeRootPage = 6;
@@ -309,7 +300,19 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 			storage.loadStorageInfo();
 			TTran tran1(alloc, embDB::rtRedo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1);
 			tran1.begin();
-			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage, true);
+			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, 0, nCount/2, nStep, &tran1, alloc, nTreeRootPage, false);
+			storage.close();
+		}
+
+
+		{
+			embDB::CStorage storage( alloc, nCacheStorageSize);
+			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.setStoragePageInfo(nStorageInfoPage);
+			storage.loadStorageInfo();
+			TTran tran1(alloc, embDB::rtRedo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1);
+			tran1.begin();
+			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, nCount/2, nCount + nCount/2, nStep, &tran1, alloc, nTreeRootPage, true);
 			storage.close();
 		}
 
