@@ -15,10 +15,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//TestSearch();
 	// TestInsert();
 	//TestBPVector();
-	//TestBRteeSet();
+	TestBRteeSet();
 	//TestBRteeMap();
 	//testUndo();
-	testRedo();
+	//testRedo();
 	return 0;
 }
 

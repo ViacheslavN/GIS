@@ -470,10 +470,12 @@
     <ClInclude Include="CompressorParams.h" />
     <ClInclude Include="CRC.h" />
     <ClInclude Include="ICursor.h" />
+    <ClInclude Include="Index.h" />
     <ClInclude Include="IRefCnt.h" />
     <ClInclude Include="IShape.h" />
     <ClInclude Include="ISpatialQuery.h" />
-    <ClInclude Include="PageAlloc.h" />
+    <ClInclude Include="MemPageCache.h" />
+    <ClInclude Include="MultiIndexBPTree.h" />
     <ClInclude Include="PageVectorLazySave.h" />
     <ClInclude Include="PoinMapInnerCompressor64.h" />
     <ClInclude Include="PoinMapLeafCompressor.h" />
@@ -620,7 +622,7 @@
     <ClCompile Include="FreePageManage.cpp" />
     <ClCompile Include="OIDField.cpp" />
     <ClCompile Include="FilePage.cpp" />
-    <ClCompile Include="PageAlloc.cpp" />
+    <ClCompile Include="MemPageCache.cpp" />
     <ClCompile Include="Schema.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="simple_list.cpp">

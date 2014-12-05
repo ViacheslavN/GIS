@@ -11,6 +11,7 @@
 #include "FreePageManage.h"
 #include "IDBTransactions.h"
 #include "StorageInfo.h"
+#include "MemPageCache.h"
 namespace embDB
 {
 	class CStorage : public IDBStorage
@@ -86,6 +87,7 @@ namespace embDB
 
 		 bool m_bCommitState;
 		 uint64 m_nCalcFileSize;
+		 CMemPageCache m_MemCache;
 	};
 }
 

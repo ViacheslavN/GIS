@@ -25,8 +25,23 @@ CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, size_t nSize, in
 	m_pData =  (byte*)m_pAlloc->alloc(sizeof(byte) * m_nSize);
 	memcpy(m_pData, pData, nSize);
 }
-CFilePage::~CFilePage(){
-	m_pAlloc->free(m_pData);
+
+	CFilePage::CFilePage(byte *pData, size_t nSize, int64 nAddr) :
+	m_nSize(nSize)
+	,m_nAddr(nAddr)
+	,m_pAlloc(0)
+	,m_nFlags(0)
+	,m_bValid(false)
+	,m_bCheck(false)
+{
+	m_pData =  pData;
+
+}
+
+CFilePage::~CFilePage()
+{
+	if(m_pAlloc)
+		m_pAlloc->free(m_pData);
 }
 byte* CFilePage::getRowData() const
 {

@@ -95,6 +95,7 @@ class CFilePage : public RefCounter
 public: 
 	CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, size_t nSize, int64 nAddr);
 	CFilePage(CommonLib::alloc_t *m_pAlloc, size_t nSize, int64 nAddr);
+	CFilePage( byte *pData, size_t nSize, int64 nAddr);
 	~CFilePage();
 	byte* getRowData() const;
 	size_t getPageSize() const;

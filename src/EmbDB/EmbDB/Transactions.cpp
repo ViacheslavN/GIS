@@ -169,6 +169,7 @@ namespace embDB
 		{
 			return restore_redo(bForce);
 		}
+		return false;
 	}
 
 	bool CTransactions::restore_undo(bool bForce)

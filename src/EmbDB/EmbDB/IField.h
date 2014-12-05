@@ -159,7 +159,7 @@ namespace embDB
 
 
 		template<class TValue>
-		bool setVal(TValue& val)
+		bool setVal(const TValue& val)
 		{
 			return set(val);
 		}

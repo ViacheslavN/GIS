@@ -18,6 +18,8 @@ namespace embDB
 		, m_nStorageInfo(-1)
 		, m_bCommitState(false)
 		, m_nCalcFileSize(0)
+		, m_MemCache(pAlloc)
+	 
 	{
 		
 	}
@@ -53,6 +55,7 @@ namespace embDB
 			//m_nCalcFileSize = m_pFile.getFileSize();
 			//assert(m_pFile.getFileSize() % m_nPageSize == 0);
 			//m_nLastAddr = m_nCalcFileSize/m_nPageSize;
+			m_MemCache.init(m_nPageSize, m_nMaxPageBuf);
 		}
 		return bRet;
 	}
@@ -89,6 +92,7 @@ namespace embDB
 			it.next();
 		}
 		m_Chache.m_set.clear();
+		m_MemCache.clear();
 	}
 	int64 CStorage::getFileSzie()
 	{
@@ -101,7 +105,7 @@ namespace embDB
 		if(pPage)
 			return FilePagePtr(pPage);
 		
-		pPage = new CFilePage(m_pAlloc, m_nPageSize, nAddr);
+		pPage = new CFilePage(&m_MemCache, m_nPageSize, nAddr);
 		if(bRead)
 		{
 			bool bRet = m_pFile.setFilePos64(nAddr * m_nPageSize, CommonLib::soFromBegin);
@@ -181,7 +185,7 @@ namespace embDB
 		{
 			bFree = true;
 		}
-		CFilePage* pPage = new CFilePage(m_pAlloc, m_nPageSize, nAddr);
+		CFilePage* pPage = new CFilePage(&m_MemCache, m_nPageSize, nAddr);
 		pPage->setFlag(eFP_FROM_FREE_PAGES, bFree);
 		/*bool bRet = m_pFile.setFilePos64(m_nLastAddr, CommonLib::soFromBegin);
 		assert(bRet);
@@ -208,7 +212,9 @@ namespace embDB
 		{
 			 CFilePage* pBackPage = m_Chache.remove_back();
 			 if(pBackPage)
+			 {
 				 delete pBackPage;
+			 }
 		}
 		m_Chache.AddElem(pPage->getAddr(), pPage);
 		return FilePagePtr(pPage);
@@ -352,6 +358,7 @@ namespace embDB
 			stream.read((byte*)&buf[0], nlenStr * 2);
 			m_sTranName = CommonLib::str_t(&buf[0]);
 		}
+		m_MemCache.init(m_nPageSize, m_nMaxPageBuf);
 		return m_FreePageManager.init(nFreeRootPage, false);
 	}
 	bool CStorage::commit()
