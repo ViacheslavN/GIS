@@ -11,7 +11,7 @@ namespace embDB
 
 
 
-	template<class _TKey, class _TComp, class _Transaction, 
+	template<class _TKey, /*class _TComp, */class _Transaction, 
 	class _TInnerCompressor, class _TLeafCompressor, 
 	class _TInnerNode,
 	class _TLeafNode >
@@ -21,7 +21,7 @@ namespace embDB
 
 		typedef _TKey TKey;
 		typedef int64 TLink;
-		typedef _TComp TComp;
+		//typedef _TComp TComp;
 		typedef	_Transaction  Transaction;
 		typedef _TInnerCompressor TInnerCompressor;
 		typedef _TLeafCompressor TLeafCompressor;
@@ -168,17 +168,17 @@ namespace embDB
 			assert(m_pBaseNode);
 			return m_pBaseNode->isLeaf();
 		}
-
-		bool insertInLeaf( const TKey& key)
+		template<class TComp>
+		bool insertInLeaf(TComp& comp, const TKey& key)
 		{
 			assert(m_bIsLeaf);
-			return m_LeafNode.insert(key);
+			return m_LeafNode.insert(comp, key);
 		}
-
-		bool insertInInnerNode(const TKey& key, TLink nLink)
+		template<class TComp>
+		bool insertInInnerNode( TComp& comp, const TKey& key, TLink nLink)
 		{
 			assert(!m_bIsLeaf);
-			return m_InnerNode.insert(key, nLink);
+			return m_InnerNode.insert(comp, key, nLink);
 		}
 		int getFlags()
 		{
@@ -194,47 +194,48 @@ namespace embDB
 		{
 			m_pBaseNode->setFlags(nFlag,bSet);
 		}
-		TLink findNodeInsert(const TKey& key)
+		template<class TComp>
+		TLink findNodeInsert(TComp& comp, const TKey& key)
 		{
 			assert(!m_bIsLeaf);
 			int32 nIndex = -1;
-		//	if(m_bMulti)
-				return m_InnerNode.upper_bound(key, nIndex);
-		/*	else
-			{
-				short nType = 0;
-				return m_InnerNode.lower_bound(key, nType, nIndex);
-			}*/
+			return m_InnerNode.upper_bound(comp, key, nIndex);
+	
 		}
-		TLink findNext(const TKey& key , int32& nIndex)
+		/*TLink findNext(const TKey& key , int32& nIndex)
 		{
 			assert(!m_bIsLeaf);
 			return m_InnerNode.findNext(key, nIndex);
-		}
-		int32 binary_search(const TKey& key)
+		}*/
+		template<class TComp>
+		int32 binary_search(TComp& comp, const TKey& key)
 		{
 			assert(m_bIsLeaf);
-			return m_LeafNode.binary_search(key);
+			return m_LeafNode.binary_search(comp, key);
 		}
-		TLink inner_lower_bound(const TKey& key, short& nType, int32& nIndex )
+		template<class TComp>
+		TLink inner_lower_bound(TComp& comp, const TKey& key, short& nType, int32& nIndex )
 		{
 			assert(!m_bIsLeaf);
-			return m_InnerNode.lower_bound(key, nType, nIndex);
+			return m_InnerNode.lower_bound(comp, key, nType, nIndex);
 		}
-		TLink  inner_upper_bound(const TKey& key, int32& nIndex )
+		template<class TComp>
+		TLink  inner_upper_bound(TComp& comp, const TKey& key, int32& nIndex )
 		{
 			assert(!m_bIsLeaf);
-			return m_InnerNode.upper_bound(key, nIndex);
+			return m_InnerNode.upper_bound(comp, key, nIndex);
 		}
-		int32 leaf_lower_bound(const TKey& key, short& nType)
+		template<class TComp>
+		int32 leaf_lower_bound(TComp& comp, const TKey& key, short& nType)
 		{
 			assert(m_bIsLeaf);
-			return m_LeafNode.lower_bound(key, nType);
+			return m_LeafNode.lower_bound(comp, key, nType);
 		}
-		int32  leaf_upper_bound(const TKey& key)
+		template<class TComp>
+		int32  leaf_upper_bound(TComp& comp, const TKey& key)
 		{
 			assert(m_bIsLeaf);
-			return m_LeafNode.upper_bound(key);
+			return m_LeafNode.upper_bound(comp, key);
 		}
 		int64 less()
 		{
@@ -278,7 +279,7 @@ namespace embDB
 			return m_nPageAddr;
 		}
 
-		bool splitIn(BPTreeNodeSetv2 *pNewNode, TKey* pSplitKey)
+		int splitIn(BPTreeNodeSetv2 *pNewNode, TKey* pSplitKey)
 		{
 			if(m_bIsLeaf)
 				return m_LeafNode.SplitIn(&pNewNode->m_LeafNode, pSplitKey);
@@ -344,10 +345,10 @@ namespace embDB
 			return m_InnerNode.AlignmentOf(&pNode->m_InnerNode, lessMin, bLeft);
 		}
 
-		bool UnionWith(BPTreeNodeSetv2* pNode, bool bLeft)
+		bool UnionWith(BPTreeNodeSetv2* pNode, bool bLeft, int *nCheckIndex = 0)
 		{
 			assert(m_bIsLeaf);
-			return m_LeafNode.UnionWith(&pNode->m_LeafNode, bLeft);
+			return m_LeafNode.UnionWith(&pNode->m_LeafNode, bLeft, nCheckIndex);
 		 
 		}
 		bool UnioInnerWith(BPTreeNodeSetv2* pNode, const TKey& lessMin, bool bLeft)
@@ -363,13 +364,13 @@ namespace embDB
 			else
 				m_InnerNode.removeByIndex(nIndex);
 		}
-
-		bool isKey(const TKey& key, uint32 nIndex)
+		template<class TComp>
+		bool isKey(TComp& comp, const TKey& key, uint32 nIndex)
 		{
 			if(m_bIsLeaf)
-				return m_LeafNode.isKey(key, nIndex);
+				return m_LeafNode.isKey(comp, key, nIndex);
 			else
-				return m_InnerNode.isKey(key, nIndex);
+				return m_InnerNode.isKey(comp, key, nIndex);
 		}
 		typedef IRefCntPtr<IRefCnt> TParentNodePtr;
 

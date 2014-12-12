@@ -459,6 +459,8 @@
     <ClInclude Include="BPMapIteratorRO.h" />
     <ClInclude Include="BPMapNodeRO.h" />
     <ClInclude Include="BaseBPSetv2.h" />
+    <ClInclude Include="BPMultiIndexLeafNodeCompressor.h" />
+    <ClInclude Include="BPMultiInnerIndexNodeCompressor.h" />
     <ClInclude Include="BPTreeInnerNodeSetv2.h" />
     <ClInclude Include="BPTreeLeafNodeMapv2.h" />
     <ClInclude Include="BPTreeLeafNodeSetv2.h" />
@@ -475,6 +477,8 @@
     <ClInclude Include="IShape.h" />
     <ClInclude Include="ISpatialQuery.h" />
     <ClInclude Include="MemPageCache.h" />
+    <ClInclude Include="MultiIndex.h" />
+    <ClInclude Include="MultiIndexBase.h" />
     <ClInclude Include="MultiIndexBPTree.h" />
     <ClInclude Include="PageVectorLazySave.h" />
     <ClInclude Include="PoinMapInnerCompressor64.h" />

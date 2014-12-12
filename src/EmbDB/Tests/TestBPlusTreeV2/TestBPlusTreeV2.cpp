@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+
 void TestBPVector();
 void TestBRteeSet();
 void TestBRteeMap();

@@ -66,17 +66,17 @@ namespace embDB
 		{
  
 		}
-		TBPSetIteratorV2& operator = (const TBPSetIteratorV2& iter)
+		 TBPSetIteratorV2& operator = (const TBPSetIteratorV2& iter)
 		{
 			m_pCurNode = iter.m_pCurNode;
 			m_pTree = iter.m_pTree;
-			m_nIndex = nIndex;
+			m_nIndex = iter.m_nIndex;;
 			m_pCurLeafNode = NULL;
 			if(m_pCurNode.get())
 			{
 				m_pCurLeafNode = &m_pCurNode->m_LeafNode;
 			}
-			return this;
+			return *this;
 		}
 
 		const TKey& key() const

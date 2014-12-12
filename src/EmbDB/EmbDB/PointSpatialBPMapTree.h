@@ -14,9 +14,9 @@ namespace embDB
 	class _Transaction = IDBTransactions,
 	class _TInnerCompess =  BPSpatialPointInnerNodeSimpleCompressor<_TCoord > ,	
 	class _TLeafCompess = BPSpatialPointLeafNodeMapSimpleCompressor<_TCoord, _TValue>,
-	class _TInnerNode = BPTreeInnerNodeSetv2<_TCoord, _TComp, _Transaction, _TInnerCompess>,
-	class _TLeafNode =  BPTreeLeafNodeMapv2<_TCoord, _TValue,  _TComp, _Transaction, _TLeafCompess>, 
-	class _TBTreeNode = BPTreeNodeMapv2<_TCoord, _TValue,  _TComp, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode>
+	class _TInnerNode = BPTreeInnerNodeSetv2<_TCoord,/* _TComp,*/ _Transaction, _TInnerCompess>,
+	class _TLeafNode =  BPTreeLeafNodeMapv2<_TCoord, _TValue, /* _TComp, */_Transaction, _TLeafCompess>, 
+	class _TBTreeNode = BPTreeNodeMapv2<_TCoord, _TValue, /* _TComp,*/ _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode>
 	>
     class TBPPointSpatialMap : public TBPMapV2<_TCoord, _TValue,  _TComp, _Transaction,
 		_TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode, _TBTreeNode>

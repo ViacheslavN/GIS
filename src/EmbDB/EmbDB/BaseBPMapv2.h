@@ -11,9 +11,9 @@ namespace embDB
 template <class _TKey,	class _TValue, class _TComp, class _Transaction,
 class _TInnerCompess = BPInnerNodeSimpleCompressorV2<_TKey>,
 class _TLeafCompess = BPLeafNodeMapSimpleCompressorV2<_TKey, _TValue>,  
-class _TInnerNode = BPTreeInnerNodeSetv2<_TKey, _TComp, _Transaction, _TInnerCompess>,
-class _TLeafNode =  BPTreeLeafNodeMapv2<_TKey, _TValue,  _TComp, _Transaction, _TLeafCompess>, 
-class _TBTreeNode = BPTreeNodeMapv2<_TKey, _TValue,  _TComp, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode>
+class _TInnerNode = BPTreeInnerNodeSetv2<_TKey,/* _TComp, */_Transaction, _TInnerCompess>,
+class _TLeafNode =  BPTreeLeafNodeMapv2<_TKey, _TValue, /* _TComp, */_Transaction, _TLeafCompess>, 
+class _TBTreeNode = BPTreeNodeMapv2<_TKey, _TValue, /* _TComp,*/ _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode>
 >
 class TBPMapV2 : public TBPlusTreeSetV2<_TKey, _TComp, _Transaction, _TInnerCompess, 
 	_TLeafCompess, _TInnerNode, _TLeafNode, _TBTreeNode>
@@ -41,7 +41,8 @@ public:
 		TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, bMulti, bCheckCRC32 )
 		{}
 
-	bool insert(const TKey& key, const TValue& value )
+
+	bool insert( const TKey& key, const TValue& value )
 	{
 		bool bRet = false;
 		TBTreeNodePtr pNode = findLeafNodeForInsert(key);
@@ -57,7 +58,7 @@ public:
 	bool InsertInLeafNode(TBTreeNode *pNode, const TKey& key, const TValue& value)
 	{
 		assert(pNode->isLeaf());
-		if(!pNode->insertInLeaf(key, value))
+		if(!pNode->insertInLeaf(m_comp, key, value))
 		{
 			CommonLib::str_t sMsg;
 			sMsg.format(_T("BTREE: Error insert"));
@@ -71,10 +72,7 @@ public:
 
 		return CheckLeafNode(pNode);
 	}
-	iterator find(const TKey& key)  
-	{
-		return TBase::find<iterator>(key);
-	}
+	
 	iterator begin()
 	{
 		return TBase::begin<iterator>();
@@ -84,20 +82,74 @@ public:
 	{
 		return TBase::last<iterator>();
 	}
-	iterator upper_bound(const TKey& key)
+	template<class TComp>
+	iterator find(TComp& comp, const TKey& key)  
 	{
-		return TBase::upper_bound<iterator>(key);
+		return TBase::find<iterator, TComp>(comp, key);
+	}
+	template<class TComp>
+	iterator upper_bound(TComp& comp, const TKey& key)
+	{
+		return TBase::upper_bound<iterator>(comp, key);
+	}
+	template<class TComp>
+	iterator lower_bound(TComp& comp, const TKey& key)
+	{
+		return TBase::lower_bound<iterator>(comp, key);
+	}
+	
+
+	iterator find(const TKey& key)  
+	{
+		return TBase::find<iterator>(m_comp, key);
+	}
+	iterator upper_bound( const TKey& key)
+	{
+		return TBase::upper_bound<iterator>(m_comp, key);
 	}
 	iterator lower_bound(const TKey& key)
 	{
-		return TBase::lower_bound<iterator>(key);
+		return TBase::lower_bound<iterator>(m_comp, key);
 	}
+
+
 	bool remove(const TKey& key)
+	{
+		iterator it = find(m_comp, key);
+		if(it.isNull())
+			return false;
+		return TBase::remove<iterator>(it);
+	}
+	template<class TKeyFunctor>
+	bool insertLast(TKeyFunctor& keyFunctor, const TValue& value, TKey* pKey = NULL)
+	{
+
+		iterator it = last();
+		if(!it.m_pCurLeafNode)
+			return false;
+
+		TKey key;
+		if(it.m_nIndex == -1)
+			key = keyFunctor.begin();
+		else
+			key = keyFunctor.inc(it.key());
+
+		if(pKey)
+			*pKey = key;
+		bool bRet = InsertInLeafNode(it.m_pCurNode.get(), key, value);
+		ClearChache();
+		if(bRet)
+			m_BTreeInfo.AddKey(1);
+		return bRet;	
+	}
+
+	bool update(const TKey& key, const TValue& value )
 	{
 		iterator it = find(key);
 		if(it.isNull())
 			return false;
-		return TBase::remove<iterator>(it);
+		it.value() = value; //TO DO set node change....
+		return true;
 	}
 };
 

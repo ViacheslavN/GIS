@@ -11,18 +11,18 @@
 #include "BPVector.h"
 namespace embDB
 {
-	template<typename _TKey, typename _TComp,
+	template<typename _TKey,/* typename _TComp,*/
 	class _Transaction, class _TCompressor>
 	class BPTreeInnerNodeSetv2 :   public  BPBaseTreeNode
 	{
 		typedef _TKey TKey;
 		typedef int64 TLink;
 		typedef _Transaction Transaction;
-		typedef _TComp		 TComporator;
+		//typedef _TComp		 TComporator;
 		typedef _TCompressor TCompressor;
 		typedef  TBPVector<TKey> TKeyMemSet;
 		typedef  TBPVector<TLink> TLinkMemSet;
-
+				
 	public:
 		
 		BPTreeInnerNodeSetv2( CommonLib::alloc_t *pAlloc,  bool bMulti) :
@@ -79,9 +79,11 @@ namespace embDB
 		{
 			return m_pCompressor->tupleSize();
 		}
-		TLink upper_bound(const TKey& key, int32& nIndex )
+
+		template<class TComp>
+		TLink upper_bound(TComp& comp, const TKey& key, int32& nIndex )
 		{
-			nIndex = m_innerKeyMemSet.upper_bound(key, m_comp);
+			nIndex = m_innerKeyMemSet.upper_bound(key, comp);
 			if(nIndex == -1)
 				return -1;
 			if(nIndex == 0) //меньше всех ключей
@@ -92,9 +94,10 @@ namespace embDB
 			nIndex--;
 			return m_innerLinkMemSet[nIndex]; 
 		}
-		TLink lower_bound(const TKey& key, short& nType, int32& nIndex )
+		template<class TComp>
+		TLink lower_bound(TComp& comp, const TKey& key, short& nType, int32& nIndex )
 		{
-			nIndex = m_innerKeyMemSet.lower_bound(key, nType, m_comp);
+			nIndex = m_innerKeyMemSet.lower_bound(key, nType, comp);
 			if(nIndex == -1)
 				return -1;
 			if(nType == FIND_KEY)
@@ -105,38 +108,14 @@ namespace embDB
 				nIndex = -1;
 				return m_nLess;
 			}
-		//	if(nIndex == m_innerKeyMemSet.size())
-				nIndex--;
+			//	if(nIndex == m_innerKeyMemSet.size())
+			nIndex--;
 			//nIndex--;
 			return m_innerLinkMemSet[nIndex]; 
 		}
-	
-
-		TLink findNodeForBTree(const TKey& key)
-		{
-			assert(m_nLess != -1);
-			
-			int32 nIndex = -1;
-			short nType = 0;
-			if(m_bMulti)
-			{
-				nIndex = m_innerKeyMemSet.upper_bound(key, m_comp);
-				if(nIndex == 0) //меньше всех ключей
-					return m_nLess;
-				return m_innerLinkMemSet[nIndex - 1]; 
-			}
 		
-			nIndex  = m_innerKeyMemSet.lower_bound(key, nType, m_comp);
-			if(nType == FIND_KEY)
-				return m_innerLinkMemSet.[nIndex];
-
-			if(nIndex == 0) //меньше всех ключей
-				return m_nLess;
-			
-			return m_innerLinkMemSet.[nIndex - 1];
-		}
-
-		virtual bool insert(const TKey& key, TLink nLink)
+		template<class TComp>
+		bool insert(TComp& comp, const TKey& key, TLink nLink)
 		{
 			uint32 nIndex = -1;
 			short nType = 0;
@@ -150,10 +129,10 @@ namespace embDB
 			{
 				short nType = 0;
 				if(m_bMulti)
-					nIndex = m_innerKeyMemSet.upper_bound(key, m_comp);
+					nIndex = m_innerKeyMemSet.upper_bound(key, comp);
 				else
 				{
-					nIndex = m_innerKeyMemSet.lower_bound(key, nType, m_comp);
+					nIndex = m_innerKeyMemSet.lower_bound(key, nType, comp);
 					if(nType == FIND_KEY)
 					{
 						//TO LOGs
@@ -172,14 +151,15 @@ namespace embDB
 	
 			return bRet;
 		}
-		virtual bool remove(const TKey& key)
+		template<class TComp>
+		bool remove(TComp& comp, const TKey& key)
 		{
 			uint32 nIndex = -1;
 			short nType = 0;
 			if(m_bMulti)
 			{
 				
-				nIndex = m_innerKeyMemSet.upper_bound(key, m_comp);
+				nIndex = m_innerKeyMemSet.upper_bound(key, comp);
 				if(nIndex && m_comp.EQ(key, m_innerKeyMemSet[nIndex - 1]))
 				{
 					nType = FIND_KEY;
@@ -188,7 +168,7 @@ namespace embDB
 			}
 			else
 			{
-				nIndex = m_innerKeyMemSet.lower_bound(key, nType, m_comp);
+				nIndex = m_innerKeyMemSet.lower_bound(key, nType, comp);
 			}
 	
 			if(nType != FIND_KEY)
@@ -304,7 +284,7 @@ namespace embDB
 
 				m_nLess = pNode->m_nLess;
 
-				m_pCompressor->recalc(m_innerLinkMemSet, m_innerKeyMemSet);
+				m_pCompressor->recalc(m_innerKeyMemSet, m_innerLinkMemSet);
 			}
 			else
 			{
@@ -316,7 +296,7 @@ namespace embDB
 				m_innerKeyMemSet.push_back(pNode->m_innerKeyMemSet);
 				m_innerLinkMemSet.push_back(pNode->m_innerLinkMemSet);
 
-				m_pCompressor->recalc(m_innerLinkMemSet, m_innerKeyMemSet);
+				m_pCompressor->recalc(m_innerKeyMemSet, m_innerLinkMemSet);
 			}
 			return true;
 		}
@@ -373,9 +353,10 @@ namespace embDB
 			}
 			return true;
 		}
-		bool isKey(const TKey& key, uint32 nIndex)
+		template<class TComp>
+		bool isKey(TComp& comp, const TKey& key, uint32 nIndex)
 		{
-			return m_comp.EQ(key, m_innerKeyMemSet[nIndex]);
+			return comp.EQ(key, m_innerKeyMemSet[nIndex]);
 		}
 
 	public:
@@ -383,7 +364,7 @@ namespace embDB
 		TKeyMemSet m_innerKeyMemSet;
 		TLinkMemSet m_innerLinkMemSet;
 		bool m_bMulti;
-		TComporator m_comp;
+		//TComporator m_comp;
 		TCompressor *m_pCompressor;
 	};	
 }

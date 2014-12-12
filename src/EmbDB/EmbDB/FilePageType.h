@@ -11,7 +11,8 @@ namespace embDB
 		FIELD_PAGE,
 		FREE_PAGE_LIST,
 		STORAGE_PAGE,
-		TRANSACTION_PAGE
+		TRANSACTION_PAGE,
+		INDEX_PAGE
 	};
 	enum eDatabasePageType
 	{
@@ -52,6 +53,11 @@ namespace embDB
 	enum eFieldPageType
 	{
 		FIELD_INFO_PAGE
+	};
+
+	enum eIndexPageType
+	{
+		INDEX_INFO_PAGE
 	};
 
 	enum eTransactionsPageType

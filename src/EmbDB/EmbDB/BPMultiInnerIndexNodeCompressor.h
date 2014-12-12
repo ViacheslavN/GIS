@@ -1,27 +1,29 @@
-#ifndef _EMBEDDED_DATABASE_BTREE_PLUS_V2_INNER_NODE_SIMPLE_COMPRESSOR_H_
-#define _EMBEDDED_DATABASE_BTREE_PLUS_V2_INNER_NODE_SIMPLE_COMPRESSOR_H_
+#ifndef _EMBEDDED_DATABASE_BTREE_PLUS_V2_INNER_NODE_MULTI_INDEX_COMPRESSOR_H_
+#define _EMBEDDED_DATABASE_BTREE_PLUS_V2_INNER_NODE_MULTI_INDEX_COMPRESSOR_H_
 
 #include "CommonLibrary/FixedMemoryStream.h"
-#include "RBSet.h"
 #include "BPVector.h"
 #include "Key.h"
 #include "BPCompressors.h"
+#include "MultiIndexBase.h"
 namespace embDB
 {
 
 	template<typename _TKey >
-	class BPInnerNodeSimpleCompressorV2  
+	class BPMultiIndexInnerNodeCompressor  
 	{
 	public:
 
 		typedef _TKey TKey;
-		typedef  int64 TLink;
-		typedef  TBPVector<TKey> TKeyMemSet;
-		typedef  TBPVector<TLink> TLinkMemSet;
+		typedef IndexTuple<TKey> TIndex;
+	
+		typedef int64 TLink;
+		typedef TBPVector<TIndex> TKeyMemSet;
+		typedef TBPVector<TLink> TLinkMemSet;
 
-		BPInnerNodeSimpleCompressorV2(ICompressorParams *pParams = NULL) : m_nSize(0)
+		BPMultiIndexInnerNodeCompressor(ICompressorParams *pParams = NULL) : m_nSize(0)
 		{}
-		virtual ~BPInnerNodeSimpleCompressorV2(){}
+		virtual ~BPMultiIndexInnerNodeCompressor(){}
 		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;
@@ -34,20 +36,22 @@ namespace embDB
 			keySet.reserve(m_nSize);
 			linkSet.reserve(m_nSize);
 
-			uint32 nKeySize =  m_nSize * sizeof(TKey);
+			uint32 nKeySize =  m_nSize * (sizeof(TKey) + sizeof(int64));
 			uint32 nLinkSize =  m_nSize * sizeof(int64);
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 
-			TKey key;
+			TIndex index;
 			TLink nlink;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
-				KeyStreams.read(key);
+				KeyStreams.read(index.key);
+				KeyStreams.read(index.nObjectID);
+
 				LinkStreams.read(nlink);
 
-				keySet.push_back(key);
+				keySet.push_back(index);
 				linkSet.push_back(nlink);
 			}
 			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);		
@@ -64,7 +68,7 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream KeyStreams;
 			CommonLib::FxMemoryWriteStream LinkStreams;
 
-			uint32 nKeySize =  nSize * sizeof(TKey);
+			uint32 nKeySize =  nSize * (sizeof(TKey) + sizeof(int64));
 			uint32 nLinkSize =  nSize * sizeof(int64);
 
 			/*stream.write(nKeySize);
@@ -75,7 +79,8 @@ namespace embDB
 			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);			 
 			for(size_t i = 0, sz = keySet.size(); i < sz; ++i)
 			{
-				KeyStreams.write(keySet[i]);
+				KeyStreams.write(keySet[i].key);
+				KeyStreams.write(keySet[i].nObjectID);
 				LinkStreams.write(linkSet[i]);
 			}
 			
@@ -108,7 +113,7 @@ namespace embDB
 		}
 		virtual size_t size() const
 		{
-			return (sizeof(TKey) + sizeof(TLink) ) *  m_nSize + sizeof(uint32) ;
+			return (sizeof(TKey) + 2 * sizeof(TLink) ) *  m_nSize + sizeof(uint32) ;
 		}
 		virtual size_t count() const
 		{
@@ -120,7 +125,7 @@ namespace embDB
 		}
 		size_t rowSize()
 		{
-			return (sizeof(TKey) + sizeof(TLink)) *  m_nSize;
+			return (sizeof(TKey) + 2 *sizeof(TLink)) *  m_nSize;
 		}
 		void clear()
 		{
@@ -128,7 +133,7 @@ namespace embDB
 		}
 		size_t tupleSize() const
 		{
-			return  (sizeof(TKey) + sizeof(TLink));
+			return  (sizeof(TKey) + 2* sizeof(TLink));
 		}
 	private:
 		size_t m_nSize;

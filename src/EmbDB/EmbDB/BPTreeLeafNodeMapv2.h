@@ -5,17 +5,17 @@
 #include "BPTreeLeafNodeSetv2.h"
 namespace embDB
 {
-	template<typename _TKey, typename _TValue,   typename _TComp,
+	template<typename _TKey, typename _TValue,  /* typename _TComp,*/
 	class _Transaction, class _TCompressor>
-	class BPTreeLeafNodeMapv2 : public  BPTreeLeafNodeSetv2Base<_TKey, _TComp, _Transaction, _TCompressor>
+	class BPTreeLeafNodeMapv2 : public  BPTreeLeafNodeSetv2Base<_TKey,/* _TComp,*/ _Transaction, _TCompressor>
 	{
 	public:
-		typedef BPTreeLeafNodeSetv2Base<_TKey, _TComp, _Transaction, _TCompressor> TBase;
+		typedef BPTreeLeafNodeSetv2Base<_TKey, /*_TComp, */_Transaction, _TCompressor> TBase;
 		typedef _TValue TValue;
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;
 		typedef typename TBase::Transaction Transaction;
-		typedef typename TBase::TComporator	 TComporator;
+//		typedef typename TBase::TComporator	 TComporator;
 		typedef typename TBase::TCompressor TCompressor;
 		typedef typename TBase::TLeafMemSet TLeafMemSet;
 		typedef  TBPVector<TValue> TValueMemSet;
@@ -41,11 +41,11 @@ namespace embDB
 			stream.read(m_nPrev); 
 			return m_pCompressor->Load(m_leafKeyMemSet,m_leafValueMemSet, stream);
 		}
-
-		bool insert(const TKey& key, const TValue& value)
+		template<class TComp>
+		bool insert(TComp& comp, const TKey& key, const TValue& value)
 		{
 			int32 nIndex = 0;
-			bool bRet =  insertImp(key, nIndex);
+			bool bRet =  insertImp(comp, key, nIndex);
 			if(!bRet)
 				return false;
 
@@ -53,16 +53,16 @@ namespace embDB
 			return  m_pCompressor->insert(key, value);
 
 		}
-		bool SplitIn(BPTreeLeafNodeMapv2 *pNode, TKey* pSplitKey)
+		int SplitIn(BPTreeLeafNodeMapv2 *pNode, TKey* pSplitKey)
 		{
  			TCompressor* pNewNodeComp = pNode->m_pCompressor;
 
-			SplitInVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
+			int nSplitIndex = SplitInVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
 			SplitInVec(m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
 
 			recalc();
 			pNode->recalc();
-			return true;
+			return nSplitIndex;
 		}
 		
 		const TValue& value(uint32 nIndex) const
@@ -74,10 +74,10 @@ namespace embDB
 			return m_leafValueMemSet[nIndex];
 		}
 
-		bool UnionWith(BPTreeLeafNodeMapv2* pNode, bool bLeft)
+		bool UnionWith(BPTreeLeafNodeMapv2* pNode, bool bLeft, int *nCheckIndex = 0)
 		{
 			m_pCompressor->add(pNode->m_leafKeyMemSet, pNode->m_leafValueMemSet);
-			UnionVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft);
+			UnionVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft, nCheckIndex);
 			UnionVec(m_leafValueMemSet, pNode->m_leafValueMemSet, bLeft);
 			return true;
 		}
@@ -86,7 +86,7 @@ namespace embDB
 			if(!AlignmentOfVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, bFromLeft))
 				return false;
 						
-			AlignmentOfVec(m_leafValueMemSet, pNode->m_leafValueMemSet, bFromLeft)
+			AlignmentOfVec(m_leafValueMemSet, pNode->m_leafValueMemSet, bFromLeft);
 
 			pNode->recalc();
 			recalc();

@@ -55,9 +55,6 @@
     <Filter Include="DB\Fields\Index">
       <UniqueIdentifier>{ddffc1ac-0c56-45f3-9228-e39b6a9381fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\Fields\MultiIndex">
-      <UniqueIdentifier>{fee05596-0675-4063-a3fc-45a32f4886b0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB\BPTrees">
       <UniqueIdentifier>{6bc92130-c22f-4075-b6e5-80493240829f}</UniqueIdentifier>
     </Filter>
@@ -139,8 +136,17 @@
     <Filter Include="DB\BPTrees\BTreeNotUse\BtreeReadOnly">
       <UniqueIdentifier>{b956d9ef-3293-41e6-905f-153d9d2395b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\Fields\MultiIndex\IndexTrees">
+    <Filter Include="DB\Fields\Index\MultiIndex">
+      <UniqueIdentifier>{fee05596-0675-4063-a3fc-45a32f4886b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Fields\Index\MultiIndex\IndexTrees">
       <UniqueIdentifier>{4dd52fc2-fbe7-4d46-a3bb-ac12299dbc45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Fields\Index\CompositeIndex">
+      <UniqueIdentifier>{0ca594cb-78b3-4676-83cc-a5b5efaa1c13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Statistics">
+      <UniqueIdentifier>{7fccf5ab-64b0-424f-b3de-80d04da6abe2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -628,7 +634,19 @@
       <Filter>DB\Fields\Index</Filter>
     </ClInclude>
     <ClInclude Include="MultiIndexBPTree.h">
-      <Filter>DB\Fields\MultiIndex\IndexTrees</Filter>
+      <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiIndexBase.h">
+      <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="BPMultiIndexLeafNodeCompressor.h">
+      <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="BPMultiInnerIndexNodeCompressor.h">
+      <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiIndex.h">
+      <Filter>DB\Fields\Index\MultiIndex</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

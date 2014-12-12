@@ -76,7 +76,7 @@ namespace embDB
 			}
 			header.writeCRC32(stream);
 			pPage->setFlag(eFP_CHANGE, true);
-			pStorage->saveFilePage(pPage, pPage->getAddr());
+			pStorage->saveFilePage(pPage);
 
 			m_values.clear();
 			if(pNextPage != NULL)

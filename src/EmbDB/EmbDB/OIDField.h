@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_FIELD_OID_H_
 #define _EMBEDDED_DATABASE_FIELD_OID_H_
 #include "Key.h"
-#include "BaseBPMap.h"
+#include "BaseBPMapv2.h"
 #include "VariantField.h"
 #include "DBField.h"
 #include "IDBTransactions.h"
@@ -100,7 +100,6 @@ namespace embDB
 	 protected:
 		IDBTransactions* m_pDBTransactions;
 		TBTree m_tree;
-		sFieldInfo m_fi;
 		int64 m_nBTreeRootPage;
 	};
 	
@@ -201,24 +200,22 @@ namespace embDB
 		  }
 	};
 
-	template<class _FType, int FieldDataType>
+	template<class _FType, int FieldDataType,
+		class _TLeafCompressor = embDB::BPLeafNodeMapSimpleCompressorV2<uint64, _FType > 	
+	>
 	class OIDFieldHandler : public IDBFieldHandler
 	{
 		public:
 
 			typedef _FType FType;
-			typedef embDB::BPInnerNodeSimpleCompressor<uint64, int64, embDB::comp<uint64> > TInnerCompressor;
-			typedef embDB::BPLeafNodeSimpleCompressor<uint64, FType, embDB::comp<uint64> > TLeafCompressor;
+			typedef embDB::BPInnerNodeSimpleCompressorV2<uint64> TInnerCompressor;
+			typedef _TLeafCompressor TLeafCompressor;
 
-			typedef embDB::TBPlusTreeMap<uint64, FType, int64, embDB::comp<uint64>, 
-				embDB::IDBTransactions/*, TInnerCompressor, TLeafCompressor*/ > TBTree;
-
-			typedef embDB::TBaseBPlusTreeRO<uint64, FType, int64, embDB::comp<uint64>, 
-				embDB::IDBTransactions, TInnerCompressor, TLeafCompressor > TBTreeRO;
-
+			typedef embDB::TBPMapV2<uint64, FType, embDB::comp<uint64>, 
+				embDB::IDBTransactions, TInnerCompressor, TLeafCompressor> TBTree;
 
 			typedef OIDField<FType, TBTree, FieldDataType> TOIDField;
-			typedef OIDFieldRO<FType, TBTreeRO, FieldDataType> TOIDFieldRO;
+	
 			OIDFieldHandler(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc)
 			{
 
@@ -279,13 +276,7 @@ namespace embDB
 				return pField;	
 			}
 
-			IOIDFiled* getOIDFieldRO(IDBTransactions* pTransactions, IDBStorage *pStorage)
-			{
-				TOIDFieldRO * pFieldRO = new  TOIDFieldRO(pTransactions, m_pAlloc);
-				pFieldRO->load(m_fi.m_nFieldPage, pStorage);
-				return pFieldRO;
-			}
-
+		
 			bool release(IOIDFiled* pField)
 			{
 				TOIDField* pOIDField = (TOIDField*)pField;

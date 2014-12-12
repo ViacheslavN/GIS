@@ -11,20 +11,20 @@ namespace embDB
 
 
 
-	template<class _TKey, class _TValue, class _TComp, class _Transaction, 
+	template<class _TKey, class _TValue,/* class _TComp,*/ class _Transaction, 
 	class _TInnerCompressor, class _TLeafCompressor, 	class _TInnerNode,	class _TLeafNode >
-	class BPTreeNodeMapv2 : public BPTreeNodeSetv2<_TKey, _TComp, _Transaction, 
+	class BPTreeNodeMapv2 : public BPTreeNodeSetv2<_TKey,/* _TComp,*/ _Transaction, 
 		_TInnerCompressor, _TLeafCompressor,  _TInnerNode,	 _TLeafNode >
 	{
 	public:
 
-		typedef BPTreeNodeSetv2<TKey, _TComp, _Transaction, 	_TInnerCompressor, 
+		typedef BPTreeNodeSetv2<TKey, /*_TComp, */_Transaction, 	_TInnerCompressor, 
 			_TLeafCompressor,  _TInnerNode,	 _TLeafNode > TBase;
 
 		typedef _TValue TValue;
 		typedef typename TBase::TKey TKey;
 		typedef typename TBase::TLink TLink;
-		typedef typename TBase::TComp TComp;
+		//typedef typename TBase::TComp TComp;
 		typedef typename TBase::Transaction  Transaction;
 		typedef typename TBase::TInnerCompressor TInnerCompressor;
 		typedef typename TBase::TLeafCompressor TLeafCompressor;
@@ -42,11 +42,11 @@ namespace embDB
 			{}
 		~BPTreeNodeMapv2()
 		{}
-
-		bool insertInLeaf( const TKey& key, const TValue& val)
+		template<class TComp>
+		bool insertInLeaf(TComp& comp, const TKey& key, const TValue& val)
 		{
 			assert(m_bIsLeaf);
-			return m_LeafNode.insert(key, val);
+			return m_LeafNode.insert(comp, key, val);
 		}
 
 
