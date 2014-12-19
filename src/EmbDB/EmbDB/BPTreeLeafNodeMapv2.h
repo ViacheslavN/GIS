@@ -42,16 +42,17 @@ namespace embDB
 			return m_pCompressor->Load(m_leafKeyMemSet,m_leafValueMemSet, stream);
 		}
 		template<class TComp>
-		bool insert(TComp& comp, const TKey& key, const TValue& value)
+		int insert(TComp& comp, const TKey& key, const TValue& value)
 		{
 			int32 nIndex = 0;
 			bool bRet =  insertImp(comp, key, nIndex);
 			if(!bRet)
-				return false;
+				return -1;
 
 			m_leafValueMemSet.insert(value, nIndex);
-			return  m_pCompressor->insert(key, value);
-
+			if(!m_pCompressor->insert(key, value))
+				return -1;
+			return nIndex;
 		}
 		int SplitIn(BPTreeLeafNodeMapv2 *pNode, TKey* pSplitKey)
 		{

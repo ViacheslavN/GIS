@@ -169,13 +169,13 @@ namespace embDB
 			return m_pBaseNode->isLeaf();
 		}
 		template<class TComp>
-		bool insertInLeaf(TComp& comp, const TKey& key)
+		int insertInLeaf(TComp& comp, const TKey& key, int nInsertLeafIndex = -1)
 		{
 			assert(m_bIsLeaf);
-			return m_LeafNode.insert(comp, key);
+			return m_LeafNode.insert(comp, key, nInsertLeafIndex);
 		}
 		template<class TComp>
-		bool insertInInnerNode( TComp& comp, const TKey& key, TLink nLink)
+		int insertInInnerNode( TComp& comp, const TKey& key, TLink nLink)
 		{
 			assert(!m_bIsLeaf);
 			return m_InnerNode.insert(comp, key, nLink);
@@ -377,15 +377,17 @@ namespace embDB
 		void setParent(BPTreeNodeSetv2 *pNode, int32 nFoundIndex = -1)
 		{
 			
+		
 			m_pParent = (IRefCnt*)pNode;
 			m_nFoundIndex = nFoundIndex;
 			if(pNode)
 				m_nParent = pNode->addr();
 			else
 				m_nParent = -1;
+			
 		}
 
-		void setParent(TParentNodePtr &pNodePtr, int64 nAddr)
+		/*void setParent(TParentNodePtr &pNodePtr, int64 nAddr)
 		{
 
 			m_pParent = pNodePtr;
@@ -394,7 +396,7 @@ namespace embDB
 				m_nParent = nAddr;
 			else
 				m_nParent = -1;
-		}
+		}*/
 
 		int64 parentAddr() {return m_nParent;}
 		int32 foundIndex(){return m_nFoundIndex;}

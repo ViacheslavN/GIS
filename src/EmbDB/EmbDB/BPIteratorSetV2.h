@@ -114,6 +114,7 @@ namespace embDB
 					//to do log error
 					return false;
 				}
+				m_pTree->SetParentNext(m_pCurNode.get(), pNode.get());
 				m_nIndex = 0;
 				m_pCurNode = pNode;
 				m_pCurLeafNode = &m_pCurNode->m_LeafNode;

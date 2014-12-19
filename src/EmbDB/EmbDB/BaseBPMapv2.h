@@ -48,14 +48,14 @@ public:
 		TBTreeNodePtr pNode = findLeafNodeForInsert(key);
 		if(pNode.get())
 		{
-			bRet = InsertInLeafNode(pNode.get(), key, value);
+			bRet = InsertInLeafNode(pNode.get(), key, value) == NULL;
 		}
 		ClearChache();
 		if(bRet)
 			m_BTreeInfo.AddKey(1);
 		return bRet;	
 	}
-	bool InsertInLeafNode(TBTreeNode *pNode, const TKey& key, const TValue& value)
+	TBTreeNodePtr InsertInLeafNode(TBTreeNode *pNode, const TKey& key, const TValue& value)
 	{
 		assert(pNode->isLeaf());
 		if(!pNode->insertInLeaf(m_comp, key, value))
@@ -63,7 +63,7 @@ public:
 			CommonLib::str_t sMsg;
 			sMsg.format(_T("BTREE: Error insert"));
 			m_pTransaction->error(sMsg);
-			return false;
+			return TBTreeNodePtr(NULL);
 		}
 		pNode->setFlags(CHANGE_NODE |BUSY_NODE, true);
 
@@ -136,7 +136,7 @@ public:
 
 		if(pKey)
 			*pKey = key;
-		bool bRet = InsertInLeafNode(it.m_pCurNode.get(), key, value);
+		bool bRet = InsertInLeafNode(it.m_pCurNode.get(), key, value) == NULL;
 		ClearChache();
 		if(bRet)
 			m_BTreeInfo.AddKey(1);

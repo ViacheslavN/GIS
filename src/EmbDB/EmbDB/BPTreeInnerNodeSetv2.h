@@ -115,7 +115,7 @@ namespace embDB
 		}
 		
 		template<class TComp>
-		bool insert(TComp& comp, const TKey& key, TLink nLink)
+		int insert(TComp& comp, const TKey& key, TLink nLink)
 		{
 			uint32 nIndex = -1;
 			short nType = 0;
@@ -124,6 +124,7 @@ namespace embDB
 			{
 				m_innerKeyMemSet.push_back(key);
 				m_innerLinkMemSet.push_back(nLink);
+				nIndex = 0;
 			}
 			else
 			{
@@ -149,7 +150,7 @@ namespace embDB
 
 			bool bRet = m_pCompressor->insert(key, nLink);
 	
-			return bRet;
+			return bRet ? nIndex : -1;
 		}
 		template<class TComp>
 		bool remove(TComp& comp, const TKey& key)

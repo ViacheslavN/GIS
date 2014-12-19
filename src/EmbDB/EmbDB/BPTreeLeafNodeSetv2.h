@@ -64,7 +64,7 @@ namespace embDB
 		}
 	
 		template<class TComp>
-		bool insertImp(TComp& comp, const TKey& key, int32& nIndex)
+		bool insertImp(TComp& comp, const TKey& key, int32& nIndex, int nInsertLeafIndex = -1)
 		{
 			nIndex = -1;
 			short nType = 0;
@@ -76,29 +76,37 @@ namespace embDB
 			}
 			else
 			{
-				if(m_bMulti)
-					nIndex = m_leafKeyMemSet.upper_bound(key, comp);
+				if(nInsertLeafIndex != -1)
+					nIndex = nInsertLeafIndex;
 				else
 				{
-					nIndex = m_leafKeyMemSet.lower_bound(key, nType, comp);
-					if(nType == FIND_KEY)
+					if(m_bMulti)
+						nIndex = m_leafKeyMemSet.upper_bound(key, comp);
+					else
 					{
-						//TO DO logs
-						return false;
+						nIndex = m_leafKeyMemSet.lower_bound(key, nType, comp);
+						if(nType == FIND_KEY)
+						{
+							//TO DO logs
+							return false;
+						}
 					}
 				}
+			
 
 				m_leafKeyMemSet.insert(key, nIndex);
 			}
 			return true;
 		}
 		template<class TComp>
-		bool insert(TComp& comp, const TKey& key)
+		int insert(TComp& comp, const TKey& key, int nInsertLeafIndex = -1)
 		{
 			int32 nIndex = 0;
-			if(!insertImp(comp, key, nIndex))
-				return false;
-			return  m_pCompressor->insert(key);
+			if(!insertImp(comp, key, nIndex, nInsertLeafIndex))
+				return -1;
+			 if(!m_pCompressor->insert(key))
+				 return -1;
+			 return nIndex;
 		}
 
 	
