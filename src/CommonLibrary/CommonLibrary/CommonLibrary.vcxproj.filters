@@ -37,6 +37,9 @@
     <Filter Include="thread\Wait For Graph">
       <UniqueIdentifier>{d9cc7b27-e426-4ff1-ac4a-a89b78b38da7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="StatialData">
+      <UniqueIdentifier>{66c87df4-8da9-48f3-abaf-ee8b8a6a8aa2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -129,6 +132,9 @@
     <ClInclude Include="Interlocked.h">
       <Filter>thread</Filter>
     </ClInclude>
+    <ClInclude Include="BoundaryBox.h">
+      <Filter>StatialData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -175,6 +181,9 @@
     </ClCompile>
     <ClCompile Include="Interlocked.cpp">
       <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundaryBox.cpp">
+      <Filter>StatialData</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

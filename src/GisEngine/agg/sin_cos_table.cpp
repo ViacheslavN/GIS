@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "sin_cos_table.h"
 #include <assert.h>
 #include <vector>

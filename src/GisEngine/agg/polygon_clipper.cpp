@@ -1,5 +1,5 @@
 #include "polygon_clipper.h"
-
+#include "stdafx.h"
 namespace agg
 {
 polygon_clipper::polygon_clipper() : inited_(false)
@@ -93,7 +93,7 @@ void polygon_clipper::calc_strip_count()
   // отбрасываем 10% сверху и снизу и считаем среднее ребро
   // принимаем размер полосы за размер среднего ребра
   int edgeCount  = clipEdges_.size();
-  decore::de_vector<double> lenCalc;
+  std::vector<double> lenCalc;
   lenCalc.reserve(edgeCount);
   for(int ind = 0; ind < edgeCount; ++ind)
   {
@@ -142,7 +142,7 @@ void polygon_clipper::calc_edge_prj(ClipEdge &clipEdge, double stripMinY, double
   xInt1 += 0.1;
 }
 
-void polygon_clipper::calc_interval_borders(double stripMinY, double stripMaxY, decore::de_vector<double> &intervalBorders)
+void polygon_clipper::calc_interval_borders(double stripMinY, double stripMaxY, std::vector<double> &intervalBorders)
 {
   int edgeCount  = clipEdges_.size();
   for(int ind = 0; ind < edgeCount; ++ind)
@@ -227,11 +227,11 @@ void polygon_clipper::make_strips()
     double stripMinY = stripLen * double(ind) + m_clip_box_.yMin;
     double stripMaxY = stripMinY + stripLen;
     strips_.push_back(StripInfo());
-    decore::de_vector<IntervalInfo> &currentStripIInfo = strips_[strips_.size() - 1].intervalEdges;
+    std::vector<IntervalInfo> &currentStripIInfo = strips_[strips_.size() - 1].intervalEdges;
     currentStripIInfo.reserve(10);
 
     // до заполнения ребрами надо определить интервалы
-    decore::de_vector<double> intervalBorders;
+    std::vector<double> intervalBorders;
     intervalBorders.reserve(2 * (edgeCount / stripCount_ + 10));
     calc_interval_borders(stripMinY, stripMaxY, intervalBorders);
 
@@ -248,7 +248,7 @@ void polygon_clipper::make_strips()
       currInt.xMin = intervalBorders[intInd];
       currInt.xMax = intervalBorders[intInd + 1];
 
-      decore::de_vector<int> &currentStripInterval = currInt.intervalEdges;
+      std::vector<int> &currentStripInterval = currInt.intervalEdges;
       currentStripInterval.reserve(edgeCount / stripCount_ + 10);
       for(int ind = 0; ind < edgeCount; ++ind)
       {
@@ -296,7 +296,7 @@ void polygon_clipper::solve_strips()
     // разбиваем все ребра по полосам
     double stripMinY = stripLen * double(ind) + m_clip_box_.yMin;
     double stripMaxY = stripMinY + stripLen;
-    decore::de_vector<IntervalInfo> &currentStripIInfo = strips_[ind].intervalEdges;
+    std::vector<IntervalInfo> &currentStripIInfo = strips_[ind].intervalEdges;
     for(size_t intInd = 0; intInd < currentStripIInfo.size(); intInd += 2)
     {
       IntervalInfo &currentStripInterval = currentStripIInfo[intInd];
@@ -370,7 +370,7 @@ bool polygon_clipper::isInside(double x, double y)
   //bool evenCounter = (((counter >> 1) << 1) == counter);
   //return !evenCounter;
 
-  decore::de_vector<IntervalInfo> &currentStripIInfo = strips_[stripInd].intervalEdges;
+  std::vector<IntervalInfo> &currentStripIInfo = strips_[stripInd].intervalEdges;
   for(size_t intInd = 0; intInd < currentStripIInfo.size(); intInd++)
   {
     IntervalInfo &currentStripInterval = currentStripIInfo[intInd];

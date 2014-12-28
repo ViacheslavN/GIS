@@ -47,13 +47,11 @@ namespace agg
     {
         static T*   allocate(unsigned num)       
         { 
-          //return new T [num]; 
-          return (T*)decore::CommonAllocGuard::GetAllocator()->Alloc(num * sizeof(T));
+          return new T [num]; 
         }
         static void deallocate(T* ptr, unsigned) 
         { 
-          //delete [] ptr;      
-          decore::CommonAllocGuard::GetAllocator()->Free(ptr);
+          delete [] ptr;      
         }
     };
 
@@ -69,16 +67,12 @@ namespace agg
     {
         static T*   allocate()         
         { 
-          //return new T; 
-          T* t = (T*)decore::CommonAllocGuard::GetAllocator()->Alloc(sizeof(T));
-          new (t) T();
-          return t;
+          return new T; 
+         
         }
         static void deallocate(T* ptr) 
         { 
-          ptr->~T();
-          decore::CommonAllocGuard::GetAllocator()->Free(ptr);
-          //delete ptr;   
+           delete ptr;   
         }
     };
 }

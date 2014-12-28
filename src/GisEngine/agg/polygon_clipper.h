@@ -29,27 +29,27 @@ public:
   };
 
 private:
-  UGLite::GisBoundingBox m_clip_box_;
-  decore::de_vector<ClipEdge> clipEdges_;
+  GisEngine::GisBoundingBox m_clip_box_;
+  std::vector<ClipEdge> clipEdges_;
 
   struct IntervalInfo
   {
     double xMin;
     double xMax;
     bool inside;
-    decore::de_vector<int> intervalEdges;
+    std::vector<int> intervalEdges;
   };
   struct StripInfo
   {
-    decore::de_vector<IntervalInfo> intervalEdges;
+    std::vector<IntervalInfo> intervalEdges;
   };
-  decore::de_vector<StripInfo> strips_;
+  std::vector<StripInfo> strips_;
   int stripCount_;
   bool inited_;
 
   void  calc_strip_count();
   void  make_strips();
-  void  calc_interval_borders(double stripMinY, double stripMaxY, decore::de_vector<double> &intervalBorders);
+  void  calc_interval_borders(double stripMinY, double stripMaxY, std::vector<double> &intervalBorders);
   void  solve_strips();
   void  calc_edge_prj(ClipEdge &clipEdge, double stripMinY, double stripMaxY, double &xInt1, double &xInt2);
 };
