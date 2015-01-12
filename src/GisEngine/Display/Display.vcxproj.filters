@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="GraphTypes">
+      <UniqueIdentifier>{7eb4c715-4198-4bf7-b264-5c09515fa9bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Transformation">
+      <UniqueIdentifier>{742f9ffa-8b88-4660-b585-7907f1836620}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Clip">
+      <UniqueIdentifier>{8dfe6908-9ead-463a-8044-3d223116a2c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -24,10 +33,49 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphTypes.h">
+      <Filter>GraphTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>GraphTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Point.h">
+      <Filter>GraphTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Rect.h">
+      <Filter>GraphTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3d.h">
+      <Filter>Transformation</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayTransformation.h">
+      <Filter>Transformation</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix4.h">
+      <Filter>Transformation</Filter>
+    </ClInclude>
+    <ClInclude Include="Bitmap.h">
+      <Filter>GraphTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Clip.h">
+      <Filter>Clip</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Color.cpp">
+      <Filter>GraphTypes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

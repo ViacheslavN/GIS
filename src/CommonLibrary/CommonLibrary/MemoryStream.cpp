@@ -181,9 +181,17 @@ namespace CommonLib
 	{
 		return readTR<int32>();
 	}
+	uint32 MemoryStream::readIntu32()
+	{
+		return readTR<uint32>();
+	}
 	int64 MemoryStream::readInt64()
 	{
 		return readTR<int64>();
+	}
+	uint64 MemoryStream::readIntu64()
+	{
+		return readTR<uint64>();
 	}
 	float MemoryStream::readFloat()
 	{
@@ -219,6 +227,10 @@ namespace CommonLib
 	void MemoryStream::read(int64& value)
 	{
 		readT<int64>(value);
+	}
+	void MemoryStream::read(uint64& value)
+	{
+		readT<uint64>(value);
 	}
 	void MemoryStream::read(float& value)
 	{
@@ -263,6 +275,10 @@ namespace CommonLib
 	void MemoryStream::write(int64 value)
 	{
 		writeT<int64>(value);
+	}
+	void MemoryStream::write(uint64 value)
+	{
+		writeT<uint64>(value);
 	}
 
 	void MemoryStream::write(float value)

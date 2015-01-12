@@ -77,6 +77,7 @@ public:
 	virtual void write(uint32 value) = 0;
 	virtual void write(int32 value) = 0;
 	virtual void write(int64 value) = 0;
+	virtual void write(uint64 value) = 0;
 	virtual void write(float value) = 0;
 
 	virtual ~IWriteStream()  {}
@@ -93,6 +94,7 @@ public:
 	virtual void read(uint32& value) = 0;
 	virtual void read(int32& value) = 0;
 	virtual void read(int64& value) = 0;
+	virtual void read(uint64& value) = 0;
 	virtual void read(float& value) = 0;
 	virtual void read(double& value) = 0;
 
@@ -101,7 +103,9 @@ public:
 	virtual uint16       readWord() = 0;
 	virtual uint32       readDword() = 0;
 	virtual int32        readInt32() = 0;
+	virtual uint32       readIntu32()= 0;
 	virtual int64        readInt64() = 0;
+	virtual uint64       readIntu64() = 0;
 	virtual float        readFloat() = 0;
 	virtual double       readDouble() = 0;
 
