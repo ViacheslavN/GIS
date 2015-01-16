@@ -26,14 +26,13 @@ class IndexFiled
 public:
 	IndexFiled() {}
 	virtual ~IndexFiled() {}
-	virtual bool insert (IFieldVariant* pIndexKey, uint64 nOID) = 0;
-	virtual bool update (IFieldVariant* pIndexKey, uint64 nOID) = 0;
-	virtual bool remove (IFieldVariant* pIndexKey) = 0;
+	virtual bool insert (IFieldVariant* pIndexKey, uint64 nOID, IndexIterator* pIter = NULL) = 0;
+	virtual bool update (IFieldVariant* pIndexKey, uint64 nOID, IndexIterator* pIter = NULL) = 0;
+	virtual bool remove (IFieldVariant* pIndexKey, IndexIterator* pIter = NULL) = 0;
+	virtual bool remove (IndexIterator* pIter ) = 0;
 	virtual TIndexIterator find(IFieldVariant* pIndexKey) = 0;
 	virtual TIndexIterator lower_bound(IFieldVariant* pIndexKey) = 0;
 	virtual TIndexIterator upper_bound(IFieldVariant* pIndexKey) = 0;
-	virtual bool remove (IndexIterator pIter) = 0;
-	virtual bool remove (IFieldVariant* pIndexKey) = 0;
 	virtual bool commit() = 0;
 };
 
