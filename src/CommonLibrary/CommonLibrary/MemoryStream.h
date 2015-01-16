@@ -30,6 +30,7 @@ namespace CommonLib
 		virtual void read(uint16& value);
 		virtual void read(uint32& value);
 		virtual void read(int32& value);
+		virtual void read(uint64& value);
 		virtual void read(int64& value);
 		virtual void read(float& value);
 		virtual void read(double& value);
@@ -40,7 +41,9 @@ namespace CommonLib
 		virtual uint16       readWord();
 		virtual uint32       readDword();
 		virtual int32        readInt32();
+		virtual uint32       readIntu32();
 		virtual int64        readInt64();
+		virtual uint64       readIntu64();
 		virtual float        readFloat();
 		virtual double       readDouble();
 
@@ -52,6 +55,7 @@ namespace CommonLib
 		virtual void write(uint32 value);
 		virtual void write(int32 value);
 		virtual void write(int64 value);
+		virtual void write(uint64 value);
 		virtual void write(float value);
 		virtual void write(double value);
 
