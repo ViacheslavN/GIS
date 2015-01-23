@@ -42,10 +42,10 @@ namespace embDB
 			return m_pCompressor->Load(m_leafKeyMemSet,m_leafValueMemSet, stream);
 		}
 		template<class TComp>
-		int insert(TComp& comp, const TKey& key, const TValue& value)
+		int insert(TComp& comp, const TKey& key, const TValue& value, int nInsertInIndex = -1)
 		{
 			int32 nIndex = 0;
-			bool bRet =  insertImp(comp, key, nIndex);
+			bool bRet =  insertImp(comp, key, nIndex, nInsertInIndex);
 			if(!bRet)
 				return -1;
 

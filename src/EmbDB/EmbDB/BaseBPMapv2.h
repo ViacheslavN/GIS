@@ -42,23 +42,41 @@ public:
 		{}
 
 
-	bool insert( const TKey& key, const TValue& value )
+	bool insert( const TKey& key, const TValue& value, iterator*pRetItertor = NULL, iterator* pFromIterator = NULL )
 	{
 		bool bRet = false;
-		TBTreeNodePtr pNode = findLeafNodeForInsert(key);
-		if(pNode.get())
+		TBTreeNodePtr pNode;
+		int nIndex = -1;
+		if(pFromIterator)
 		{
-			bRet = InsertInLeafNode(pNode.get(), key, value) == NULL;
+			pNode = InsertInLeafNode(pFromIterator->m_pCurNode.get(), key, value, nIndex, pFromIterator->m_nIndex + 1);
 		}
+		else
+		{
+			pNode = findLeafNodeForInsert(key);
+			if(pNode.get())
+			{
+				bRet = InsertInLeafNode(pNode.get(), key, value, nIndex) == NULL;
+			}
+		}
+		
+		
 		ClearChache();
 		if(bRet)
 			m_BTreeInfo.AddKey(1);
+
+
+		if(pRetItertor)
+		{
+			*pRetItertor = iterator(this, pNode.get(), nIndex);
+		}
 		return bRet;	
 	}
-	TBTreeNodePtr InsertInLeafNode(TBTreeNode *pNode, const TKey& key, const TValue& value)
+	TBTreeNodePtr InsertInLeafNode(TBTreeNode *pNode, const TKey& key, const TValue& value, int& nRetIndex, int nToIndex = -1 )
 	{
 		assert(pNode->isLeaf());
-		if(!pNode->insertInLeaf(m_comp, key, value))
+		nRetIndex = pNode->insertInLeaf(m_comp, key, value, nToIndex);
+		if(nRetIndex == -1)
 		{
 			CommonLib::str_t sMsg;
 			sMsg.format(_T("BTREE: Error insert"));
@@ -125,6 +143,7 @@ public:
 	{
 
 		iterator it = last();
+		int nIndex = -1;
 		if(!it.m_pCurLeafNode)
 			return false;
 
@@ -136,7 +155,7 @@ public:
 
 		if(pKey)
 			*pKey = key;
-		bool bRet = InsertInLeafNode(it.m_pCurNode.get(), key, value) == NULL;
+		bool bRet = InsertInLeafNode(it.m_pCurNode.get(), key, value, nIndex) == NULL;
 		ClearChache();
 		if(bRet)
 			m_BTreeInfo.AddKey(1);

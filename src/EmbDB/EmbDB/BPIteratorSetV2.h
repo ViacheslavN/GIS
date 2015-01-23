@@ -46,7 +46,7 @@ namespace embDB
 
 		}
 
-		TBPSetIteratorV2() : m_pCurNode(NULL), m_pTree(NULL), m_nIndex(0)
+		TBPSetIteratorV2() : m_pCurNode(NULL), m_pTree(NULL), m_nIndex(0), m_pCurLeafNode(0)
 		{
 
 		}

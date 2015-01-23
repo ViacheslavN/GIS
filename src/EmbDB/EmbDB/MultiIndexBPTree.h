@@ -74,6 +74,8 @@ namespace embDB
 		typedef typename TBase::TBTree TBTree;
 		typedef _TIndexType FType;
 		typedef IndexTuple<FType> TIndexTuple;
+		typedef typename TBTree::iterator  iterator;
+
 
 		MultiIndex( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
 		TBase(pTransactions, pAlloc)
@@ -82,21 +84,50 @@ namespace embDB
 		}
 		~MultiIndex(){}
 
-
-		virtual bool insert (IFieldVariant* pIndexKey, uint64 nOID)
+ 
+		virtual bool insert (IFieldVariant* pIndexKey, uint64 nOID, IndexIterator* pIter = NULL)
 		{
 			TIndexTuple index;
 			pIndexKey->getVal(index.key);
 			index.nObjectID = nOID;
 
-			return m_tree.insert(index);
+			if(!pIter)
+				return m_tree.insert(index);
+			else
+			{
+				iterator it;
+				bool bRet = m_tree.insert(index, &it);
+
+			}
+		}
+		virtual bool update (IFieldVariant* pIndexKey, uint64 nOID, IndexIterator* pIter = NULL)
+		{
+
+		}
+		virtual bool remove (IFieldVariant* pIndexKey, IndexIterator* pIter = NULL)
+		{
+
+		}
+		virtual bool remove (IndexIterator* pIter )
+		{
+
+		}
+		virtual TIndexIterator find(IFieldVariant* pIndexKey)
+		{
+
+		}
+		virtual TIndexIterator lower_bound(IFieldVariant* pIndexKey)
+		{
+
+		}
+		virtual TIndexIterator upper_bound(IFieldVariant* pIndexKey)
+		{
 
 		}
 		virtual bool commit()
 		{
 			return m_tree.commit();
 		}
-
 	};
 }
 

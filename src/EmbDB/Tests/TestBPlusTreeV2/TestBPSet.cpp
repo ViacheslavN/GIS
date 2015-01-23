@@ -104,8 +104,9 @@ void insertINBTreeSetByIT (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart
 	int64 n = 0;
 	bool bFind = false;
 
-	int nRet = 0;
-		TBtree::iterator it = tree.insertRetIT(TKey(nStart), nRet);
+		int nRet = 0;
+		TBtree::iterator it;
+		nRet = tree.insert(TKey(nStart), &it);
 		if(nRet == -1)
 		{
 			std::cout   << "Error Insert key:  " << nStart << std::endl;
@@ -118,7 +119,7 @@ void insertINBTreeSetByIT (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart
 				int i = 0;
 				i++;
 			}
-			it = tree.insertRetIT(TKey(i), it, false, false, nRet);
+			nRet =tree.insert(TKey(i), &it, &it);
 			if(it.key() != i) 
 			{
 				std::cout   << "Error Value iterator Insert key:  " << i << std::endl;

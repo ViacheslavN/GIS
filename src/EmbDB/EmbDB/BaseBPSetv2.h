@@ -485,7 +485,7 @@ namespace embDB
 
 		return TBTreeNodePtr(NULL);
 	}
-	template<class TIterator>
+	/*template<class TIterator>
 	TIterator insertRetIT(const TKey& key, int& nRet)
 	{
 
@@ -501,27 +501,43 @@ namespace embDB
 				m_BTreeInfo.AddKey(1);
 			nRet =  pNode.get() ? 1 : -1;	
 		   return TIterator(this, pNode.get(), nIndex);
-	}
-
-
- 
-	bool insert(const TKey& key)
-	{
-
-		bool bRet = false;
-		TBTreeNodePtr pNode = findLeafNodeForInsert(key);
-		if(pNode.get())
-		{
-			pNode = InsertInLeafNode(pNode.get(), key);
-		}
-		ClearChache();
-		if(pNode.get())
-			m_BTreeInfo.AddKey(1);
-		return pNode.get() ? true : false;	
-	}
+	}*/
 
 
 	template<class TIterator>
+	bool insert(const TKey& key, TIterator* pRetIterator = NULL, TIterator* pFromIterator = NULL)
+	{
+
+		bool bRet = false;
+		int nIndex = -1;
+		TBTreeNodePtr pNode;
+		if(pFromIterator)
+		{
+			pNode = InsertInLeafNode(pFromIterator->m_pCurNode.get(), key, &nIndex,  pFromIterator->m_nIndex + 1);
+		}
+		else
+		{
+			pNode = findLeafNodeForInsert(key);
+			if(pNode.get())
+			{
+				pNode = InsertInLeafNode(pNode.get(), key, &nIndex);
+			}
+		}		
+		ClearChache();
+		if(pNode.get())
+			m_BTreeInfo.AddKey(1);
+
+		bRet = pNode.get() ? true : false;	
+		if(pRetIterator)
+		{
+			*pRetIterator = TIterator(this, pNode.get(), nIndex);
+		}
+
+		return bRet;	
+	}
+
+
+	/*template<class TIterator>
 	TIterator insertRetIT(const TKey& key, TIterator& it, bool bFindNode, bool bFindIndex, int& nRet)
 	{
 		TBTreeNodePtr pNode;
@@ -545,7 +561,7 @@ namespace embDB
 			m_BTreeInfo.AddKey(1);
 		nRet =  pNode.get() ? 1 : -1;	
 		return TIterator(this, pNode.get(), nIndex);
-	}
+	}*/
 
 	
 	
@@ -1132,7 +1148,7 @@ namespace embDB
 		TBTreeNodePtr pNextParentNode = getNode(pParent->link(nFoundIndex - 1));
 		pNextParentNode->setParent(pParent.get(),  nFoundIndex - 1);
 
-		TBTreeNodePtr pPrevNode =  getNode(pNextParentNode->link(pNextParentNode->count());
+		TBTreeNodePtr pPrevNode =  getNode(pNextParentNode->link(pNextParentNode->count()));
 
 		while(!pLessNode->isLeaf())
 		{
@@ -1984,6 +2000,11 @@ namespace embDB
 				return TBase::lower_bound<iterator, TComp>(m_comp, key);
 			}
 
+			bool  insert(const TKey& key, iterator *pIterator = NULL, iterator *pFromIterator = NULL)
+			{
+				return TBase::insert<iterator>(key, pIterator);
+			}
+
 			bool remove(const TKey& key)
 			{
 				iterator it = find(key);
@@ -1992,6 +2013,8 @@ namespace embDB
 				return TBase::remove<iterator>(it);
 			}
 			
+
+
 
 			iterator remove(const TKey& key, int& nRet)
 			{
@@ -2008,7 +2031,7 @@ namespace embDB
 
 
 
-		 
+		/* 
 			iterator insertRetIT(const TKey& key, int& nRet)
 			{
 				return TBase::insertRetIT<iterator>(key, nRet);
@@ -2017,7 +2040,7 @@ namespace embDB
 			iterator insertRetIT(const TKey& key, iterator& it, bool bFindNode, bool bFindIndex, int& nRet)
 			{
 				return TBase::insertRetIT<iterator>(key, it, bFindNode, bFindIndex, nRet);
-			}
+			}*/
 	};
 	 
 }

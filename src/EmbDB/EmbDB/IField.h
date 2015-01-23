@@ -170,6 +170,18 @@ namespace embDB
 			return get(val);
 		}
 
+
+		class FieldIterator 
+		{
+		public:
+			FieldIterator();
+			virtual ~FieldIterator();
+			virtual bool isValid() = 0;
+			virtual bool next() = 0;
+			virtual bool isNull() = 0;
+			virtual bool getVal(IFieldVariant* pIndexKey) = 0;
+			virtual uint64 getObjectID() = 0;
+		};
 	};
 
 }
