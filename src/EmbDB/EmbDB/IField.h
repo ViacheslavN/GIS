@@ -2,6 +2,7 @@
 #define _EMBEDDED_DATABASE_I_FIELD_H_
 #include "CommonLibrary/str_t.h"
 #include "SpatialKey.h"
+#include "IRefCnt.h"
 namespace embDB
 {
 	enum eDataTypes
@@ -170,19 +171,57 @@ namespace embDB
 			return get(val);
 		}
 
-
-		class FieldIterator 
-		{
-		public:
-			FieldIterator();
-			virtual ~FieldIterator();
-			virtual bool isValid() = 0;
-			virtual bool next() = 0;
-			virtual bool isNull() = 0;
-			virtual bool getVal(IFieldVariant* pIndexKey) = 0;
-			virtual uint64 getObjectID() = 0;
-		};
 	};
+
+
+
+
+
+	class IFieldIterator : public RefCounter
+	{
+	public:
+		IFieldIterator(){};
+		virtual ~IFieldIterator(){}
+		virtual bool isValid() = 0;
+		virtual bool next() = 0;
+		virtual bool back() = 0;
+		virtual bool isNull() = 0;
+		virtual bool getVal(IFieldVariant* pIndexKey) = 0;
+		virtual uint64 getObjectID() = 0;
+	};
+
+	typedef IRefCntPtr<IFieldIterator> FieldIteratorPtr;
+
+	class IIndexIterator  : public RefCounter
+	{
+	public:
+		IIndexIterator();
+		virtual ~IIndexIterator();
+		virtual bool isValid() = 0;
+		virtual bool next() = 0;
+		virtual bool back() = 0;
+		virtual bool isNull() = 0;
+		virtual bool getKey(IFieldVariant* pIndexKey) = 0;
+		virtual uint64 getObjectID() = 0;
+	};
+
+	typedef IRefCntPtr<IIndexIterator> IndexIteratorPtr;
+
+	class IIndexPageIterator  : public RefCounter
+	{
+	public:
+		IIndexPageIterator();
+		virtual ~IIndexPageIterator();
+		virtual bool isValid() = 0;
+		virtual bool next() = 0;
+		virtual bool back() = 0;
+		virtual bool isNull() = 0;
+		virtual bool getKey(IFieldVariant* pIndexKey) = 0;
+		virtual uint64 getPage() = 0;
+		virtual uint32 getPos() = 0;
+	};
+
+	typedef IRefCntPtr<IIndexPageIterator> IndexPageIteratorPtr;
 
 }
 

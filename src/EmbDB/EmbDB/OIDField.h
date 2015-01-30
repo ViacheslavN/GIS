@@ -15,7 +15,7 @@ namespace embDB
 
 
 
-	class IOIDFiled  
+	class IOIDFiled: public RefCounter
 	{
 	public:
 		IOIDFiled() {}
@@ -25,6 +25,7 @@ namespace embDB
 		virtual bool update (uint64 nOID, IFieldVariant* pFieldVal) = 0;
 		virtual bool remove (uint64 nOID) = 0;
 		virtual bool find(uint64 nOID, IFieldVariant* pFieldVal) = 0;
+		virtual FieldIteratorPtr find(uint64 nOID) = 0;
 		virtual bool commit() = 0;
 	};
 
@@ -84,7 +85,8 @@ namespace embDB
 				}
 				stream.read(m_nBTreeRootPage);
 				m_tree.setRootPage(m_nBTreeRootPage);
-					return true;
+				return m_tree.loadBTreeInfo(); 
+			 
 			}
 
 
@@ -103,6 +105,47 @@ namespace embDB
 		int64 m_nBTreeRootPage;
 	};
 	
+
+
+
+	template<class TBTree>
+	class FieldIterator: public IFieldIterator
+	{
+	public:
+		typedef typename TBTree::iterator  iterator;
+
+		FieldIterator(iterator& it) : m_ParentIt(it){}
+		virtual ~FieldIterator(){}
+	
+		virtual bool isValid()
+		{
+			return !m_ParentIt.isNull();
+		}
+		virtual bool next() 
+		{
+			return m_ParentIt.next();
+		}
+		virtual bool back() 
+		{
+			return m_ParentIt.back();
+		}
+		virtual bool isNull()
+		{
+			return m_ParentIt.isNull();
+		}
+		virtual bool getVal(IFieldVariant* pVal)
+		{
+			return pVal->setVal(m_ParentIt.value());
+		}
+		virtual uint64 getObjectID()
+		{
+			return m_ParentIt.key();
+		}
+
+	private:
+		iterator m_ParentIt;
+
+	};
 	
 	
 	
@@ -111,6 +154,8 @@ namespace embDB
 	{
 		public:
 
+
+			typedef FieldIterator<_TBTree> TFieldIterator;
 
 			class TOIDIncFunctor
 			{
@@ -167,6 +212,12 @@ namespace embDB
 				if(it.isNull())
 					return false;
 				return pFieldVal->setVal(it.value());
+			}
+			FieldIteratorPtr find(uint64 nOID)
+			{
+				TBTree::iterator it = m_tree.find(nOID);
+				TFieldIterator *pFiledIterator = new TFieldIterator(it);
+				return FieldIteratorPtr(pFiledIterator);
 			}
 			virtual bool commit()
 			{

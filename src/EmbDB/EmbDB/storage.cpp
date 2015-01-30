@@ -119,7 +119,7 @@ namespace embDB
 			}
 		}
 		
-		if(m_nLastAddr < nAddr)
+		if(m_nLastAddr < nAddr && nAddr != m_nStorageInfo)
 		{
 			assert(false);
 			m_nLastAddr =  nAddr + 1;

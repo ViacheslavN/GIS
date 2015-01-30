@@ -87,7 +87,6 @@ public:
 
 		//m_ChangeNode.insert(TBTreeNodePtr(pNode));
 		m_nStateTree |= eBPTChangeLeafNode;
-
 		return CheckLeafNode(pNode);
 	}
 	
@@ -155,8 +154,9 @@ public:
 
 		if(pKey)
 			*pKey = key;
-		bool bRet = InsertInLeafNode(it.m_pCurNode.get(), key, value, nIndex) == NULL;
+		TBTreeNodePtr pNode = InsertInLeafNode(it.m_pCurNode.get(), key, value, nIndex);
 		ClearChache();
+		bool bRet = pNode.get() ? true : false;
 		if(bRet)
 			m_BTreeInfo.AddKey(1);
 		return bRet;	

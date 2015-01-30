@@ -140,6 +140,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			if(!pOIDField->find(i, &int32key))
 				std::cout << "Not found " << i << std::endl;
+
+			embDB::FieldIteratorPtr pIter = pOIDField->find(i);
 		}
 		db.closeTransaction(pTran);
 	}
