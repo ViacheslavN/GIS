@@ -7,34 +7,80 @@ namespace embDB
 {
 
 
-class IndexIterator : public RefCounter
+class IIndexIterator : public RefCounter
 {
 public:
-	IndexIterator();
-	virtual ~IndexIterator();
+	IIndexIterator();
+	virtual ~IIndexIterator();
 	virtual bool isValid() = 0;
 	virtual bool next() = 0;
 	virtual bool isNull() = 0;
-	virtual bool getVal(IFieldVariant* pIndexKey) = 0;
+	virtual bool getKey(IFieldVariant* pIndexKey) = 0;
 	virtual uint64 getObjectID() = 0;
 };
 
-typedef IRefCntPtr<IndexIterator> TIndexIterator;
+typedef IRefCntPtr<IIndexIterator> TIndexIterator;
+
+
+
+
+template<class TBTree>
+class IndexIterator: public IIndexIterator
+{
+public:
+	typedef typename TBTree::iterator  iterator;
+
+	IndexIterator(iterator& it) : m_ParentIt(it){}
+	virtual ~IndexIterator(){}
+
+	virtual bool isValid()
+	{
+		return !m_ParentIt.isNull();
+	}
+	virtual bool next() 
+	{
+		return m_ParentIt.next();
+	}
+	virtual bool back() 
+	{
+		return m_ParentIt.back();
+	}
+	virtual bool isNull()
+	{
+		return m_ParentIt.isNull();
+	}
+	virtual bool getKey(IFieldVariant* pVal)
+	{
+		return pVal->setVal(m_ParentIt.key());
+	}
+	virtual uint64 getObjectID()
+	{
+		return m_ParentIt.value();
+	}
+
+private:
+	iterator m_ParentIt;
+
+};
+
 
 class IndexFiled  
 {
 public:
 	IndexFiled() {}
 	virtual ~IndexFiled() {}
-	virtual bool insert (IFieldVariant* pIndexKey, uint64 nOID, IndexIterator* pIter = NULL) = 0;
-	virtual bool update (IFieldVariant* pIndexKey, uint64 nOID, IndexIterator* pIter = NULL) = 0;
-	virtual bool remove (IFieldVariant* pIndexKey, IndexIterator* pIter = NULL) = 0;
-	virtual bool remove (IndexIterator* pIter ) = 0;
+	virtual bool insert (IFieldVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL) = 0;
+	virtual bool update (IFieldVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL) = 0;
+	virtual bool remove (IFieldVariant* pIndexKey, IIndexIterator** pRetIter = NULL) = 0;
+	virtual bool remove (IIndexIterator* pIter ) = 0;
 	virtual TIndexIterator find(IFieldVariant* pIndexKey) = 0;
 	virtual TIndexIterator lower_bound(IFieldVariant* pIndexKey) = 0;
 	virtual TIndexIterator upper_bound(IFieldVariant* pIndexKey) = 0;
 	virtual bool commit() = 0;
 };
+
+
+
 
 
 template<class _TBTree>
@@ -80,7 +126,7 @@ public:
 		  }
 		  stream.read(m_nBTreeRootPage);
 		  m_tree.setRootPage(m_nBTreeRootPage);
-		  return true;
+		  return m_tree.loadBTreeInfo(); 
 	  }
 
 
@@ -98,6 +144,74 @@ protected:
 	TBTree m_tree;
 	int64 m_nBTreeRootPage;
 };
+
+
+
+
+template<class _TIndexType, class _TBTree, int FieldDataType>
+class CIndexField : public CIndexBase<_TBTree>, public  IndexFiled
+{
+public:
+
+
+	typedef IndexIterator<_TBTree> TFieldIterator;
+	
+	CIndexField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
+		CIndexBase(pTransactions, pAlloc)
+	{}
+	~CIndexField(){}
+	typedef OIDFieldBase<_TBTree> TBase;
+	typedef typename TBase::TBTree TBTree;
+	typedef _TIndexType TIndexType;
+
+	virtual bool insert (IFieldVariant* pIndexKey, uint64 nOID, IIndexIterator* pIter = NULL)
+	{
+		TIndexType val;
+		pIndexKey->getVal(val);
+		if(pIter)
+		else
+			return m_tree.insert(val, nOID);
+
+	}
+	virtual uint64 insert (IFieldVariant* pFieldVal)
+	{
+		FType val;
+		pFieldVal->getVal(val);
+		uint64 nOID;
+		if(!m_tree.insertLast(TOIDIncFunctor(), val, &nOID))
+			return  0;
+		return nOID;
+	}
+	virtual bool update (uint64 nOID, IFieldVariant* pFieldVal)
+	{
+		FType val;
+		pFieldVal->getVal(val);
+		return  m_tree.update(nOID, val);
+	}
+	virtual bool remove(uint64 nOID)
+	{
+		return m_tree.remove(nOID);
+	}
+	virtual bool find(uint64 nOID, IFieldVariant* pFieldVal)
+	{
+		TBTree::iterator it = m_tree.find(nOID);
+		if(it.isNull())
+			return false;
+		return pFieldVal->setVal(it.value());
+	}
+	FieldIteratorPtr find(uint64 nOID)
+	{
+		TBTree::iterator it = m_tree.find(nOID);
+		TFieldIterator *pFiledIterator = new TFieldIterator(it);
+		return FieldIteratorPtr(pFiledIterator);
+	}
+	virtual bool commit()
+	{
+		return m_tree.commit();
+	}
+
+};
+
 
 
 }

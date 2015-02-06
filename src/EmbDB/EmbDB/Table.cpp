@@ -8,6 +8,7 @@
 #include "OIDField.h"
 #include "Database.h"
 #include "SpatialOIDField.h"
+#include "Index.h"
 namespace embDB
 {
 	CTable::CTable(CDatabase* pDB, int64 nPageAddr, CStorage* pTableStorage) : m_pDB(pDB), m_pMainDBStorage(pDB->getMainStorage()), 
@@ -70,6 +71,7 @@ namespace embDB
 			bRet = createValueField(fi, pTran);
 			break;
 		case FT_INDEX_VALUE_FIELD:
+			bRet = createIndexField(fi, pTran);
 			break;
 		case FT_COUNTER_VALUE_FIELD:
 			break;
@@ -318,6 +320,56 @@ namespace embDB
 			pField->setFieldInfoType(fi);
 			bRet = pField->load(fi.m_nFieldPage, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
 			
+			if(!bRet)
+				delete pField;
+		}
+		m_OIDFieldByName.insert(fi.m_sFieldName, pField);
+		m_OIDFieldByID.insert(fi.m_nFIPage, pField);
+		return true;
+	}
+	bool CTable::createIndexField(sFieldInfo& fi, IDBTransactions *pTran)
+	{
+		IDBFieldHandler* pField = NULL;
+		bool bRet = true;
+		int64 nFieldAddr = -1;
+		switch(fi.m_nFieldDataType)
+		{
+		case ftInteger32:
+			pField = new TOIDFieldINT32(m_pDB->getBTreeAlloc());
+			break;
+		}
+		if(!pField)
+			return false;
+		//return pField != NULL;
+		if(fi.m_nFieldPage == -1)
+		{
+			assert(pTran);
+			FilePagePtr pFieldInfoPage = pTran->getNewPage();
+			if(!pFieldInfoPage.get())
+				return false;
+			FilePagePtr pFieldPage = pTran->getNewPage();
+			if(!pFieldPage.get())
+				return false;
+			fi.m_nFieldPage = pFieldPage->getAddr();
+			fi.m_nFIPage = pFieldInfoPage->getAddr();
+			CommonLib::FxMemoryWriteStream stream;
+			stream.attach(pFieldInfoPage->getRowData(), pFieldInfoPage->getPageSize());
+			//stream.write((int64)DB_FIELD_INFO_SYMBOL);
+			sFilePageHeader header (stream, TABLE_PAGE, TABLE_FIELD_PAGE);
+			fi.Write(&stream);
+			pFieldInfoPage->setFlag(eFP_CHANGE, true);
+			header.writeCRC32(stream);
+			pTran->saveFilePage(pFieldInfoPage);
+			pField->setFieldInfoType(fi);
+			bRet = pField->save(pFieldPage->getAddr(), pTran);
+			if(!m_nFieldsAddr.push(fi.m_nFIPage, pTran))
+				return false;
+		}
+		else
+		{
+			pField->setFieldInfoType(fi);
+			bRet = pField->load(fi.m_nFieldPage, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
+
 			if(!bRet)
 				delete pField;
 		}

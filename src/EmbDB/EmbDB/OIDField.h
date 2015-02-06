@@ -20,10 +20,10 @@ namespace embDB
 	public:
 		IOIDFiled() {}
 		virtual ~IOIDFiled() {}
-		virtual bool insert (uint64 nOID, IFieldVariant* pFieldVal) = 0;
-		virtual uint64 insert (IFieldVariant* pFieldVal) = 0;
+		virtual bool insert (uint64 nOID, IFieldVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator *pRetIter = NULL) = 0;
+		virtual uint64 insert (IFieldVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator *pRetIter = NULL) = 0;
 		virtual bool update (uint64 nOID, IFieldVariant* pFieldVal) = 0;
-		virtual bool remove (uint64 nOID) = 0;
+		virtual bool remove (uint64 nOID, IFieldIterator *pRetIter = NULL) = 0;
 		virtual bool find(uint64 nOID, IFieldVariant* pFieldVal) = 0;
 		virtual FieldIteratorPtr find(uint64 nOID) = 0;
 		virtual bool commit() = 0;
@@ -180,14 +180,14 @@ namespace embDB
 			typedef typename TBase::TBTree TBTree;
 			typedef _FType FType;
 		
-			virtual bool insert (uint64 nOID, IFieldVariant* pFieldVal)
+			virtual bool insert (uint64 nOID, IFieldVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator *pRetIter = NULL)
 			{
 				FType val;
 				pFieldVal->getVal(val);
 				return m_tree.insert(nOID, val);
 
 			}
-			virtual uint64 insert (IFieldVariant* pFieldVal)
+			virtual uint64 insert (IFieldVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator *pRetIter = NULL)
 			{
 				FType val;
 				pFieldVal->getVal(val);

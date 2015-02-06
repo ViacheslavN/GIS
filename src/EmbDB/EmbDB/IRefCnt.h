@@ -43,6 +43,31 @@ namespace embDB
 	};
 
 
+
+	class AutoRefCounter : public IRefCnt
+	{
+	public:
+		AutoRefCounter() : m_nCounter(0)
+		{}
+		AutoRefCounter(LONG val) : m_nCounter(val) {}
+		~AutoRefCounter(){};
+		virtual int AddRef() const { return CommonLib::Interlocked::Increment(&m_nCounter);}
+		virtual int Release()  {
+			if(CommonLib::Interlocked::Decrement(&m_nCounter) != 0)
+			{
+				return m_nCounter;
+			}
+			delete this;
+			return 0;
+		}
+		bool isRemovable() const { return 0 == m_nCounter; }
+	private:
+		mutable CommonLib::Interlocked::inc_type m_nCounter;
+
+
+	};
+
+
 	template<class Obj>
 	class IRefCntPtr
 	{

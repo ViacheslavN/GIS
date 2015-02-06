@@ -73,6 +73,7 @@ namespace embDB
 			bool readHeader(CommonLib::FxMemoryReadStream& stream);
 			bool createValueField(sFieldInfo& fi, IDBTransactions *pTran);
 			bool createSpatialIndexField(sFieldInfo& fi, IDBTransactions *pTran);
+			bool createIndexField(sFieldInfo& fi, IDBTransactions *pTran);
 			bool ReadField(int64 nAddr, IDBTransactions *pTran);
 			bool saveFields(IDBTransactions *pTran);
 			bool loadTableStorage(int64 nAddr);
