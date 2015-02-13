@@ -10,20 +10,28 @@ namespace embDB
 		CommonLib::str_t sFieldName;
 		CommonLib::str_t sFieldAlias;
 		eDataTypes dataType;
-		indexTypes indexType;
 		eDataTypesExt dateTypeExt;
+	};
+
+	struct SIndexProp
+	{
+		indexTypes indexType;
 	};
 	class ITable
 	{
 	public:
 		ITable(){}
 		virtual ~ITable(){}
+		virtual bool getOIDFieldName(CommonLib::str_t& sOIDName) = 0;
+		virtual bool setOIDFieldName(const CommonLib::str_t& sOIDName) = 0;
 		virtual const CommonLib::str_t& getName() const  = 0;
 		virtual IField* getField(const CommonLib::str_t& sName) const = 0;
 		virtual size_t getFieldCnt() const = 0;
 		virtual IField* getField(size_t nIdx) const = 0;
 		virtual IField* createField(SFieldProp& sFP) = 0;
 		virtual bool deleteField(IField* pField) = 0;
+		virtual bool createIndex(const CommonLib::str_t& sName, SIndexProp& ip) = 0;
+		virtual bool createCompositeIndex(std::vector<CommonLib::str_t>& vecFields, SIndexProp& ip) = 0;
 
 
 

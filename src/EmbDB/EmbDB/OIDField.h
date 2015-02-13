@@ -3,7 +3,7 @@
 #include "Key.h"
 #include "BaseBPMapv2.h"
 #include "VariantField.h"
-#include "DBField.h"
+#include "DBFieldInfo.h"
 #include "IDBTransactions.h"
 #include "Database.h"
 #include "DBMagicSymbol.h"
@@ -15,19 +15,7 @@ namespace embDB
 
 
 
-	class IOIDFiled: public RefCounter
-	{
-	public:
-		IOIDFiled() {}
-		virtual ~IOIDFiled() {}
-		virtual bool insert (uint64 nOID, IFieldVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator *pRetIter = NULL) = 0;
-		virtual uint64 insert (IFieldVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator *pRetIter = NULL) = 0;
-		virtual bool update (uint64 nOID, IFieldVariant* pFieldVal) = 0;
-		virtual bool remove (uint64 nOID, IFieldIterator *pRetIter = NULL) = 0;
-		virtual bool find(uint64 nOID, IFieldVariant* pFieldVal) = 0;
-		virtual FieldIteratorPtr find(uint64 nOID) = 0;
-		virtual bool commit() = 0;
-	};
+
 
 
 
@@ -115,6 +103,7 @@ namespace embDB
 		typedef typename TBTree::iterator  iterator;
 
 		FieldIterator(iterator& it) : m_ParentIt(it){}
+		FieldIterator() {}
 		virtual ~FieldIterator(){}
 	
 		virtual bool isValid()
@@ -142,7 +131,26 @@ namespace embDB
 			return m_ParentIt.key();
 		}
 
-	private:
+
+		virtual int64 addr() const
+		{
+			return m_ParentIt.addr();
+		}
+		virtual int32 pos() const
+		{
+			return pos();
+		}
+
+		virtual bool copy(IFieldIterator *pIter)
+		{
+			return m_ParentIt.setAddr(pIter->addr(), pIter->pos());
+		}
+
+		void set(iterator it)
+		{
+			m_ParentIt = it;
+		}
+	public:
 		iterator m_ParentIt;
 
 	};
@@ -153,8 +161,8 @@ namespace embDB
 	class OIDField : public OIDFieldBase<_TBTree>, public  IOIDFiled
 	{
 		public:
-
-
+	 
+	
 			typedef FieldIterator<_TBTree> TFieldIterator;
 
 			class TOIDIncFunctor
@@ -178,22 +186,59 @@ namespace embDB
 			~OIDField(){}
 			typedef OIDFieldBase<_TBTree> TBase;
 			typedef typename TBase::TBTree TBTree;
+			typedef typename TBTree::iterator  iterator;
 			typedef _FType FType;
 		
-			virtual bool insert (uint64 nOID, IFieldVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator *pRetIter = NULL)
+			virtual bool insert (uint64 nOID, IFieldVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
+				iterator *pFromIterator = NULL;
+				iterator RetIterator;
+				if(pFromIterator)
+				{
+					TFieldIterator *pFieldIterator = (TFieldIterator*)pFromIter;
+					assert(pFromIterator);
+					pFromIterator = &pFieldIterator->m_ParentIt;
+				}
+				
 				FType val;
 				pFieldVal->getVal(val);
-				return m_tree.insert(nOID, val);
+				bool bRet =  m_tree.insert(nOID, val, pFromIterator, pRetIter ? &RetIterator : NULL);
 
+
+				if(pRetIter)
+				{
+					if(*pRetIter) 
+						((TFieldIterator*)(*pRetIter))->set(RetIterator);
+					else
+						*pRetIter = new TFieldIterator(RetIterator); 
+				}
+				return bRet;
 			}
-			virtual uint64 insert (IFieldVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator *pRetIter = NULL)
+			virtual uint64 insert (IFieldVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
+
+				iterator *pFromIterator = NULL;
+				iterator RetIterator;
+				if(pFromIter)
+				{
+					TFieldIterator *pFieldIterator = (TFieldIterator*)pFromIter;
+					assert(pFieldIterator);
+					pFromIterator = &pFieldIterator->m_ParentIt;
+				}
+
 				FType val;
 				pFieldVal->getVal(val);
 				uint64 nOID;
-				if(!m_tree.insertLast(TOIDIncFunctor(), val, &nOID))
+				if(!m_tree.insertLast(TOIDIncFunctor(), val, &nOID, pFromIterator, pRetIter ? &RetIterator : NULL))
 					return  0;
+
+				if(pRetIter)
+				{
+					if(*pRetIter) 
+						((TFieldIterator*)(*pRetIter))->set(RetIterator);
+					else
+						*pRetIter = new TFieldIterator(RetIterator); 
+				}
 				return nOID;
 			}
 			virtual bool update (uint64 nOID, IFieldVariant* pFieldVal)
@@ -204,6 +249,16 @@ namespace embDB
 			}
 			virtual bool remove(uint64 nOID)
 			{
+				return m_tree.remove(nOID);
+			}
+			virtual bool remove (uint64 nOID, IFieldIterator **pRetIter = NULL) 
+			{
+				if(pRetIter)
+				{
+					TBTree::iterator retIt;
+					return true;
+				}
+				else
 				return m_tree.remove(nOID);
 			}
 			virtual bool find(uint64 nOID, IFieldVariant* pFieldVal)
@@ -264,7 +319,7 @@ namespace embDB
 
 			typedef embDB::TBPMapV2<uint64, FType, embDB::comp<uint64>, 
 				embDB::IDBTransactions, TInnerCompressor, TLeafCompressor> TBTree;
-
+ 
 			typedef OIDField<FType, TBTree, FieldDataType> TOIDField;
 	
 			OIDFieldHandler(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc)
@@ -283,6 +338,16 @@ namespace embDB
 			{
 				return true;
 			}
+
+			eDataTypes getType() const
+			{
+				return (eDataTypes)m_fi.m_nFieldDataType;
+			}
+			const CommonLib::str_t& getName() const
+			{
+				return m_fi.m_sFieldName;
+			}
+
 			virtual sFieldInfo* getFieldInfoType()
 			{
 				return &m_fi;
@@ -319,7 +384,7 @@ namespace embDB
 				return true;
 			}
 
-			IOIDFiled* getOIDField(IDBTransactions* pTransactions, IDBStorage *pStorage)
+			virtual IOIDFiled* getOIDField(IDBTransactions* pTransactions, IDBStorage *pStorage)
 			{
 
 				TOIDField * pField = new  TOIDField(pTransactions, m_pAlloc);
@@ -328,13 +393,14 @@ namespace embDB
 			}
 
 		
-			bool release(IOIDFiled* pField)
+			virtual bool release(IOIDFiled* pField)
 			{
 				TOIDField* pOIDField = (TOIDField*)pField;
 
 				TOIDField::TBTree *pBTree = pOIDField->getBTree();
 
 				delete pField;
+				return true;
 			}
 
 			bool isCanBeRemoving()

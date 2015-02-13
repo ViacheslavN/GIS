@@ -5,7 +5,7 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "Key.h"
 #include "SpatialKey.h"
-#include "IField.h"
+#include "IDBField.h"
 
 namespace embDB
 {
@@ -27,14 +27,14 @@ namespace embDB
 	struct sFieldInfo
 	{
 		sFieldInfo() : 
-			m_nFieldType(-1)
+			m_nFieldType(0)
 			,m_nFieldDataType(ftUnknown)
-			,m_nBaseFieldProp(-1)
+			,m_nBaseFieldProp(0)
 			,m_bPrimeryKey(false)
 			,m_bSecondaryKey(false)
-			,m_nRefTableID(-1)
-			,m_nRefTFieldID(-1)
-			,m_nFieldPage(-1)
+			,m_nRefTableID(0)
+			,m_nRefTFieldID(0)
+			,m_nFieldPage(0)
 			,m_nFIPage(-1)
 			,m_bCheckCRC32(true)
 			,m_nOffsetX(0)
@@ -44,9 +44,9 @@ namespace embDB
 		}
 		CommonLib::str_t m_sFieldName;
 		CommonLib::str_t m_sFieldAlias;
-		int32 m_nFieldType;
-		int32 m_nFieldDataType;
-		int32 m_nBaseFieldProp;
+		uint32 m_nFieldType;
+		uint32 m_nFieldDataType;
+		uint32 m_nBaseFieldProp;
 		bool m_bPrimeryKey;
 		bool m_bSecondaryKey;
 		int64 m_nRefTableID;
@@ -182,7 +182,7 @@ namespace embDB
 	};
 
 
-	class IDBFieldHandler
+	class IDBFieldHandler : IField
 	{
 	public:
 		IDBFieldHandler(){}
@@ -191,7 +191,8 @@ namespace embDB
 		virtual void setFieldInfoType(sFieldInfo& fi) = 0;
 		virtual bool save(int64 nAddr, IDBTransactions *pTran) = 0;
 		virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
-		//virtual bool setPage(int64 nAddr) = 0;
+		virtual IOIDFiled* getOIDField(IDBTransactions* pTransactions, IDBStorage *pStorage) = 0;
+		virtual bool release(IOIDFiled* pField) = 0;
 
 		virtual bool lock() =0;
 		virtual bool unlock() =0;

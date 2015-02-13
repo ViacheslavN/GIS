@@ -148,6 +148,9 @@
     <Filter Include="DB\Statistics">
       <UniqueIdentifier>{7fccf5ab-64b0-424f-b3de-80d04da6abe2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\Table">
+      <UniqueIdentifier>{8e35fad5-4a97-4f20-93b7-810c27bd7cbc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -237,9 +240,6 @@
     <ClInclude Include="Database.h">
       <Filter>DB</Filter>
     </ClInclude>
-    <ClInclude Include="Table.h">
-      <Filter>DB</Filter>
-    </ClInclude>
     <ClInclude Include="FilePageType.h">
       <Filter>storage</Filter>
     </ClInclude>
@@ -277,9 +277,6 @@
       <Filter>SDK\internal</Filter>
     </ClInclude>
     <ClInclude Include="OIDField.h">
-      <Filter>DB\Fields</Filter>
-    </ClInclude>
-    <ClInclude Include="DBField.h">
       <Filter>DB\Fields</Filter>
     </ClInclude>
     <ClInclude Include="VariantField.h">
@@ -486,9 +483,6 @@
     <ClInclude Include="BPMapIteratorRO.h">
       <Filter>DB\BPTrees\BTreePlus\BPMap\ReadOnly</Filter>
     </ClInclude>
-    <ClInclude Include="PointSpatialBPMaTraits.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClInclude>
     <ClInclude Include="PointSpatialBPMapTree.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
     </ClInclude>
@@ -648,6 +642,18 @@
     <ClInclude Include="MultiIndex.h">
       <Filter>DB\Fields\Index\MultiIndex</Filter>
     </ClInclude>
+    <ClInclude Include="IDBField.h">
+      <Filter>SDK\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="DBFieldInfo.h">
+      <Filter>DB\Fields</Filter>
+    </ClInclude>
+    <ClInclude Include="Table.h">
+      <Filter>DB\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateFields.h">
+      <Filter>DB\Table</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -675,9 +681,6 @@
       <Filter>DB\BPTrees\BTreeNotUse</Filter>
     </ClCompile>
     <ClCompile Include="Database.cpp">
-      <Filter>DB</Filter>
-    </ClCompile>
-    <ClCompile Include="Table.cpp">
       <Filter>DB</Filter>
     </ClCompile>
     <ClCompile Include="Schema.cpp">
@@ -745,6 +748,9 @@
     </ClCompile>
     <ClCompile Include="MemPageCache.cpp">
       <Filter>utils\alloc</Filter>
+    </ClCompile>
+    <ClCompile Include="Table.cpp">
+      <Filter>DB\Table</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

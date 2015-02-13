@@ -190,9 +190,11 @@ namespace embDB
 						  break;
 					  }
 					  pListEl = pListEl->m_pPrev;
+					  pObj = NULL;
 				  }
 				  if(!pObj)
 					  return pObj;
+				 
 
 				  if(m_pBack == m_pFirst)
 				  {

@@ -34,6 +34,11 @@ namespace embDB
 			TBase(pTree, pCurNode, nIndex)
 		{		
 		}
+
+
+		TBPMapIteratorV2() :TBase()
+		{}
+
 		const TValue& value() const
 		{
 			return m_pCurLeafNode->value((uint32)m_nIndex);

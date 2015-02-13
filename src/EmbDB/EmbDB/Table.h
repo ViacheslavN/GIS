@@ -6,18 +6,19 @@
 #include "BaseBTree.h"
 #include "VariantField.h"
 #include "OIDField.h"
-#include "DBField.h"
+#include "DBFieldInfo.h"
 #include <vector>
 #include <map>
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "IDBTransactions.h"
 #include "PageVector.h"
+#include "IDBTable.h"
 namespace embDB
 {
 	class CDatabase;
 	class CStorage;
 
-	class CTable
+	class CTable : public IDBTable
 	{
 
 		enum eSectionTYpe
@@ -38,10 +39,24 @@ namespace embDB
 			CTable(CDatabase* pDB, int64 m_nPageAddr, CStorage* pTableStorage);
 			~CTable();
 
+
+
+
+			virtual bool getOIDFieldName(CommonLib::str_t& sOIDName);
+			virtual bool setOIDFieldName(const CommonLib::str_t& sOIDName) ;
+			virtual const CommonLib::str_t& getName() const ;
+			virtual IField* getField(const CommonLib::str_t& sName) const ;
+			virtual size_t getFieldCnt() const;
+			virtual IField* getField(size_t nIdx) const;
+			virtual IField* createField(SFieldProp& sFP);
+			virtual bool deleteField(IField* pField);
+			virtual bool createIndex(const CommonLib::str_t& , SIndexProp& ip);
+			virtual bool createCompositeIndex(std::vector<CommonLib::str_t>& vecFields, SIndexProp& ip);
+
+
 			bool addField(sFieldInfo& fi, IDBTransactions *pTran);
 			bool addSpatialField(sFieldInfo& fi, IDBTransactions *pTran);
 			bool load();
-			const CommonLib::str_t& getName() const;
 			int64 getAddr();
 			//int64 getID() const {return m_nTableID;}
 			bool save(IDBTransactions *pTran);
@@ -80,8 +95,8 @@ namespace embDB
 
 			
 	    private:
-			typedef RBMap<CommonLib::str_t, IDBFieldHandler*> TFieldByName;
-			typedef RBMap<int64, IDBFieldHandler*> TFieldByID;
+			typedef std::map<CommonLib::str_t, IDBFieldHandler*> TFieldByName;
+			typedef std::map<int64, IDBFieldHandler*> TFieldByID;
 			typedef TPageVector<int64> TFieldPages;
  
 			TFieldByName m_OIDFieldByName;

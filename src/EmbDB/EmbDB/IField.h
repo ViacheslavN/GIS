@@ -51,6 +51,7 @@ namespace embDB
 		itOID
 	};
 
+
 	enum eSpatialCoordinatesType
 	{
 		sctNotDef =0,
@@ -174,54 +175,6 @@ namespace embDB
 	};
 
 
-
-
-
-	class IFieldIterator : public RefCounter
-	{
-	public:
-		IFieldIterator(){};
-		virtual ~IFieldIterator(){}
-		virtual bool isValid() = 0;
-		virtual bool next() = 0;
-		virtual bool back() = 0;
-		virtual bool isNull() = 0;
-		virtual bool getVal(IFieldVariant* pIndexKey) = 0;
-		virtual uint64 getObjectID() = 0;
-	};
-
-	typedef IRefCntPtr<IFieldIterator> FieldIteratorPtr;
-
-	class IIndexIterator  : public RefCounter
-	{
-	public:
-		IIndexIterator();
-		virtual ~IIndexIterator();
-		virtual bool isValid() = 0;
-		virtual bool next() = 0;
-		virtual bool back() = 0;
-		virtual bool isNull() = 0;
-		virtual bool getKey(IFieldVariant* pIndexKey) = 0;
-		virtual uint64 getObjectID() = 0;
-	};
-
-	typedef IRefCntPtr<IIndexIterator> IndexIteratorPtr;
-
-	class IIndexPageIterator  : public RefCounter
-	{
-	public:
-		IIndexPageIterator();
-		virtual ~IIndexPageIterator();
-		virtual bool isValid() = 0;
-		virtual bool next() = 0;
-		virtual bool back() = 0;
-		virtual bool isNull() = 0;
-		virtual bool getKey(IFieldVariant* pIndexKey) = 0;
-		virtual uint64 getPage() = 0;
-		virtual uint32 getPos() = 0;
-	};
-
-	typedef IRefCntPtr<IIndexPageIterator> IndexPageIteratorPtr;
 
 }
 

@@ -113,14 +113,19 @@ int _tmain(int argc, _TCHAR* argv[])
 		
 
 		uint64 nOID = 0;
+		embDB::IFieldIterator *pRetIter = NULL;
+		embDB::IFieldIterator *pFromIter = NULL;
 		for (int i = 0; i < nCount; ++i)
 		{
 			int32key.set(i);
-			nOID = pOIDField->insert(&int32key);
+			
+			nOID = pOIDField->insert(&int32key, pFromIter, &pRetIter);
+		 
 			if(nOID == 0)
 			{
 				std::cout << "error insert" << i << std::endl;
 			}
+			pFromIter = pRetIter;
 			
 		}
 

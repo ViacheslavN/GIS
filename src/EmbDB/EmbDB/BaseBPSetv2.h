@@ -505,7 +505,7 @@ namespace embDB
 
 
 	template<class TIterator>
-	bool insert(const TKey& key, TIterator* pRetIterator = NULL, TIterator* pFromIterator = NULL)
+	bool insert(const TKey& key, TIterator* pFromIterator = NULL,  TIterator* pRetIterator = NULL)
 	{
 
 		bool bRet = false;
@@ -535,38 +535,10 @@ namespace embDB
 
 		return bRet;	
 	}
-
-
-	/*template<class TIterator>
-	TIterator insertRetIT(const TKey& key, TIterator& it, bool bFindNode, bool bFindIndex, int& nRet)
-	{
-		TBTreeNodePtr pNode;
-		int nIndex = -1;
-		if(bFindNode)
-		{
-			pNode = findLeafNodeForInsert(key);
-			if(pNode.get())
-			{
-				pNode = InsertInLeafNode(pNode.get(), key, &nIndex);
-			}
-		}
-		else
-		{
-			pNode = InsertInLeafNode(it.m_pCurNode.get(), key, &nIndex, bFindIndex ? -1 : it.m_nIndex + 1);
-		}
-	 
-	 
-		ClearChache();
-		if(pNode.get())
-			m_BTreeInfo.AddKey(1);
-		nRet =  pNode.get() ? 1 : -1;	
-		return TIterator(this, pNode.get(), nIndex);
-	}*/
-
 	
 	
 	template<class TIterator, class TKeyFunctor>
-	bool insertLast(TKeyFunctor& keyFunctor, TKey* pKey = NULL)
+	bool insertLast(TKeyFunctor& keyFunctor, TKey* pKey = NULL,  TIterator* pRetIterator = NULL)
 		{
 
 			TIterator it = last();
@@ -2000,9 +1972,9 @@ namespace embDB
 				return TBase::lower_bound<iterator, TComp>(m_comp, key);
 			}
 
-			bool  insert(const TKey& key, iterator *pIterator = NULL, iterator *pFromIterator = NULL)
+			bool  insert(const TKey& key, iterator *pFromIterator = NULL, iterator *pRetIterator = NULL)
 			{
-				return TBase::insert<iterator>(key, pIterator);
+				return TBase::insert<iterator>(key, pFromIterator, pRetIterator);
 			}
 
 			bool remove(const TKey& key)

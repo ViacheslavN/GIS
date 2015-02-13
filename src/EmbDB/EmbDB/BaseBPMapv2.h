@@ -42,7 +42,7 @@ public:
 		{}
 
 
-	bool insert( const TKey& key, const TValue& value, iterator*pRetItertor = NULL, iterator* pFromIterator = NULL )
+	bool insert( const TKey& key, const TValue& value, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL )
 	{
 		bool bRet = false;
 		TBTreeNodePtr pNode;
@@ -87,7 +87,7 @@ public:
 
 		//m_ChangeNode.insert(TBTreeNodePtr(pNode));
 		m_nStateTree |= eBPTChangeLeafNode;
-		return CheckLeafNode(pNode);
+		return CheckLeafNode(pNode, &nRetIndex);
 	}
 	
 	iterator begin()
@@ -99,11 +99,26 @@ public:
 	{
 		return TBase::last<iterator>();
 	}
+
+	iterator find(const TKey& key)  
+	{
+		return TBase::find<iterator>(m_comp, key);
+	}
 	template<class TComp>
 	iterator find(TComp& comp, const TKey& key)  
 	{
 		return TBase::find<iterator, TComp>(comp, key);
 	}
+	iterator find(iterator& itFrom, const TKey& key, bool bFoundNext = true)
+	{
+		return TBase::find<iterator, TComp>(itFrom, m_comp, key, bFoundNext);
+	}
+	template<class TComp>
+	iterator find(iterator& itFrom, const TKey& key, bool bFoundNext = true)
+	{
+		return TBase::find<iterator, TComp>(itFrom, m_comp, key, bFoundNext);
+	}
+
 	template<class TComp>
 	iterator upper_bound(TComp& comp, const TKey& key)
 	{
@@ -116,10 +131,8 @@ public:
 	}
 	
 
-	iterator find(const TKey& key)  
-	{
-		return TBase::find<iterator>(m_comp, key);
-	}
+	
+
 	iterator upper_bound( const TKey& key)
 	{
 		return TBase::upper_bound<iterator>(m_comp, key);
@@ -138,10 +151,15 @@ public:
 		return TBase::remove<iterator>(it);
 	}
 	template<class TKeyFunctor>
-	bool insertLast(TKeyFunctor& keyFunctor, const TValue& value, TKey* pKey = NULL)
+	bool insertLast(TKeyFunctor& keyFunctor, const TValue& value, TKey* pKey = NULL,  iterator* pFromIterator = NULL,  iterator* pRetIterator = NULL)
 	{
 
-		iterator it = last();
+		iterator it;
+		if(pFromIterator)
+			it = *pFromIterator;
+		else
+			it = last();
+
 		int nIndex = -1;
 		if(!it.m_pCurLeafNode)
 			return false;
@@ -154,11 +172,17 @@ public:
 
 		if(pKey)
 			*pKey = key;
-		TBTreeNodePtr pNode = InsertInLeafNode(it.m_pCurNode.get(), key, value, nIndex);
+		TBTreeNodePtr pNode = InsertInLeafNode(it.m_pCurNode.get(), key, value, nIndex, pFromIterator ? pFromIterator->m_nIndex + 1 : -1);
 		ClearChache();
 		bool bRet = pNode.get() ? true : false;
 		if(bRet)
 			m_BTreeInfo.AddKey(1);
+
+
+		if(pRetIterator)
+		{
+			*pRetIterator = iterator(this, pNode.get(), nIndex);
+		}
 		return bRet;	
 	}
 

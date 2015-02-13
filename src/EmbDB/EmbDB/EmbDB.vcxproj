@@ -471,7 +471,9 @@
     <ClInclude Include="CacheMRU.h" />
     <ClInclude Include="CompressorParams.h" />
     <ClInclude Include="CRC.h" />
+    <ClInclude Include="CreateFields.h" />
     <ClInclude Include="ICursor.h" />
+    <ClInclude Include="IDBField.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IRefCnt.h" />
     <ClInclude Include="IShape.h" />
@@ -485,7 +487,6 @@
     <ClInclude Include="PoinMapLeafCompressor.h" />
     <ClInclude Include="PoinMapInnerCompressor.h" />
     <ClInclude Include="PoinMapLeafCompressor64.h" />
-    <ClInclude Include="PointSpatialBPMaTraits.h" />
     <ClInclude Include="BPMapTraits.h" />
     <ClInclude Include="BPSetIteratorRO.h" />
     <ClInclude Include="BPSetNodeRO.h" />
@@ -514,7 +515,7 @@
     <ClInclude Include="Database.h" />
     <ClInclude Include="DBConfig.h" />
     <ClInclude Include="DBMagicSymbol.h" />
-    <ClInclude Include="DBField.h" />
+    <ClInclude Include="DBFieldInfo.h" />
     <ClInclude Include="DBTranManager.h" />
     <ClInclude Include="DirectTransactions.h" />
     <ClInclude Include="FixedStringLeafCompressor.h" />

@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_SPATIAL_OID_FIELD_H_
 #define _EMBEDDED_DATABASE_SPATIAL_OID_FIELD_H_
 #include "PointSpatialBPMapTree.h"
-#include "DBField.h"
+#include "DBFieldInfo.h"
 #include "SpatialKey.h"
 #include "SpatialPointQuery.h"
 #include "SpatialRectQuery.h"
@@ -13,7 +13,7 @@ namespace embDB
 
 
 	template <class _TSpatialBPTree, class _TPointType, class _TSpatialObject>
-	class OIDSpatialField
+	class OIDSpatialField/* : public IOIDFiled*/
 	{
 	public:
 		typedef _TSpatialBPTree TSpatialBPTree;
@@ -129,6 +129,17 @@ namespace embDB
 			{
 
 			}
+
+
+			eDataTypes getType() const
+			{
+				return (eDataTypes)m_fi.m_nFieldDataType;
+			}
+			const CommonLib::str_t& getName() const
+			{
+				return m_fi.m_sFieldName;
+			}
+
 			virtual sFieldInfo* getFieldInfoType()
 			{
 				return &m_fi;
@@ -196,6 +207,15 @@ namespace embDB
 			{
 				return true;
 			}
+			IOIDFiled* getOIDField(IDBTransactions* pTransactions, IDBStorage *pStorage) 
+			{
+				return NULL;
+			}
+			bool release(IOIDFiled* pField)
+			{
+				return true;
+			}
+
 		private:
 			sFieldInfo m_fi;
 			CommonLib::alloc_t* m_pAlloc;

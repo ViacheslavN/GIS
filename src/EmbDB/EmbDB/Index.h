@@ -6,24 +6,6 @@ namespace embDB
 
 {
 
-
-class IIndexIterator : public RefCounter
-{
-public:
-	IIndexIterator();
-	virtual ~IIndexIterator();
-	virtual bool isValid() = 0;
-	virtual bool next() = 0;
-	virtual bool isNull() = 0;
-	virtual bool getKey(IFieldVariant* pIndexKey) = 0;
-	virtual uint64 getObjectID() = 0;
-};
-
-typedef IRefCntPtr<IIndexIterator> TIndexIterator;
-
-
-
-
 template<class TBTree>
 class IndexIterator: public IIndexIterator
 {
@@ -73,9 +55,9 @@ public:
 	virtual bool update (IFieldVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL) = 0;
 	virtual bool remove (IFieldVariant* pIndexKey, IIndexIterator** pRetIter = NULL) = 0;
 	virtual bool remove (IIndexIterator* pIter ) = 0;
-	virtual TIndexIterator find(IFieldVariant* pIndexKey) = 0;
-	virtual TIndexIterator lower_bound(IFieldVariant* pIndexKey) = 0;
-	virtual TIndexIterator upper_bound(IFieldVariant* pIndexKey) = 0;
+	virtual IndexIteratorPtr find(IFieldVariant* pIndexKey) = 0;
+	virtual IndexIteratorPtr lower_bound(IFieldVariant* pIndexKey) = 0;
+	virtual IndexIteratorPtr upper_bound(IFieldVariant* pIndexKey) = 0;
 	virtual bool commit() = 0;
 };
 
