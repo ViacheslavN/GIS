@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_FIELD_OID_H_
-#define _EMBEDDED_DATABASE_FIELD_OID_H_
+#ifndef _EMBEDDED_DATABASE_FIELD_RID_H_
+#define _EMBEDDED_DATABASE_FIELD_RID_H_
 #include "Key.h"
 #include "BaseBPMapv2.h"
 #include "VariantField.h"

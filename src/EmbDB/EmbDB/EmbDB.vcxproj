@@ -573,6 +573,7 @@
     <ClInclude Include="storage.h" />
     <ClInclude Include="StorageInfo.h" />
     <ClInclude Include="Table.h" />
+    <ClInclude Include="TableHeader.h" />
     <ClInclude Include="tableZPoint8Bit.h" />
     <ClInclude Include="tableZRect8Bit.h" />
     <ClInclude Include="tableZRectBack4Bit.h" />
@@ -663,6 +664,7 @@
     <ClCompile Include="storage.cpp" />
     <ClCompile Include="StorageInfo.cpp" />
     <ClCompile Include="Table.cpp" />
+    <ClCompile Include="TableHeader.cpp" />
     <ClCompile Include="TranLogStateManager.cpp" />
     <ClCompile Include="DBStateManager.cpp" />
     <ClCompile Include="TranPerfCounter.cpp" />

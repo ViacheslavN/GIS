@@ -18,10 +18,12 @@ namespace embDB
 		m_nStoragePageID(-1),
 		m_pTableStorage(pTableStorage),
 		m_nLastRecOID(0),
-		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE)/*,
-		m_nTableID(0)*/
+		m_nIndexsPage(-1),
+		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE),
+		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE)
 	{
 		m_nFieldsAddr.setPageSize(m_pMainDBStorage->getPageSize());
+		m_nIndexAddr.setPageSize(m_pMainDBStorage->getPageSize());
 	}
 	CTable::CTable(CDatabase* pDB, int64 nPageAddr, const CommonLib::str_t& sTableName, CStorage* pTableStorage) : 
 		m_pDB(pDB),
@@ -32,10 +34,12 @@ namespace embDB
 		m_nStoragePageID(-1),
 		m_pTableStorage(pTableStorage),
 		m_nLastRecOID(0),
-		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE)/*,
-	 m_nTableID(0)*/
+		m_nIndexsPage(-1),
+		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE),
+		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE)
 	{
 		m_nFieldsAddr.setPageSize(m_pMainDBStorage->getPageSize());
+		m_nIndexAddr.setPageSize(m_pMainDBStorage->getPageSize());
 	}
 	CTable::CTable(CDatabase* pDB, CFilePage* pFilePage, const CommonLib::str_t& sTableName, CStorage* pTableStorage/*, int64 nTableID*/) :
 		m_pDB(pDB), 
@@ -46,10 +50,12 @@ namespace embDB
 		m_nStoragePageID(-1),
 		m_pTableStorage(pTableStorage),
 		m_nLastRecOID(0),
-		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE)/*,
-		m_nTableID(nTableID)*/
+		m_nIndexsPage(-1),
+		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE),
+		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE)
 	{
 		m_nFieldsAddr.setPageSize(m_pMainDBStorage->getPageSize());
+		m_nIndexAddr.setPageSize(m_pMainDBStorage->getPageSize());
 	}
 	CTable::~CTable()
 	{
@@ -110,8 +116,8 @@ namespace embDB
 		std::vector<wchar_t> buf(nlenStr + 1, L'\0');
 		stream.read((byte*)&buf[0], nlenStr * 2);
 		m_sTableName = CommonLib::str_t(&buf[0]);
-		int64 m_nStoragePageID = stream.readInt64();
-		int64 m_nFieldPage = 0;
+		m_nStoragePageID = stream.readInt64();
+		m_nFieldsPage = 0;
 
 		if(m_nStoragePageID != -1)
 		{
@@ -122,34 +128,40 @@ namespace embDB
 		}
 		else
 		{
-			m_nFieldPage = stream.readInt64();
+			m_nFieldsPage = stream.readInt64();
+			m_nIndexsPage = stream.readInt64();
 		}
 
-		if(m_nFieldPage == -1)
+		if(m_nFieldsPage == -1)
 			return true;
-		m_nFieldsAddr.setFirstPage(m_nFieldPage);
-		m_nFieldsAddr.setPageSize(m_pMainDBStorage->getPageSize());
-		m_nFieldsAddr.load(m_pMainDBStorage);
-		TFieldPages::iterator it = m_nFieldsAddr.begin();
+		{
+			m_nFieldsAddr.setFirstPage(m_nFieldsPage);
+			m_nFieldsAddr.setPageSize(m_pMainDBStorage->getPageSize());
+			m_nFieldsAddr.load(m_pMainDBStorage);
+			TFieldPages::iterator it = m_nFieldsAddr.begin();
+			while(!it.isNull())
+			{
+				if(!ReadField(it.value(), NULL))
+					return false;
+				it.next();
+			}
+
+		}
+		
+		if(m_nIndexsPage == -1)
+			return true;
+
+
+		m_nIndexAddr.setFirstPage(m_nIndexsPage);
+		m_nIndexAddr.setPageSize(m_pMainDBStorage->getPageSize());
+		m_nIndexAddr.load(m_pMainDBStorage);
+		TFieldPages::iterator it = m_nIndexAddr.begin();
 		while(!it.isNull())
 		{
-			if(!ReadField(it.value(), NULL))
+			if(!ReadIndex(it.value(), NULL))
 				return false;
 			it.next();
 		}
-	/*	if(m_nFieldPage != -1)
-		{
-			ListDBPage<CStorage> listDB(m_pTableStorage ? m_pTableStorage : m_pMainDBStorage, DB_FIELDS_PAGE_SYMBOL);
-			if(!listDB.load(&stream, m_nFieldPage))
-				return false;
-			if(!readFields(stream))
-				return false;
-			while(listDB.next(&stream))
-			{
-				if(!readFields(stream))
-					return false;
-			}
-		}*/
 		
 		return true;
 	}
@@ -180,6 +192,7 @@ namespace embDB
 
 			}
 			stream.write(m_nFieldsPage);
+			stream.write(m_nIndexsPage);
 			header.writeCRC32(stream);
 			pTran->saveFilePage(pFPage);
 			return m_nFieldsAddr.save(pTran);
@@ -230,6 +243,10 @@ namespace embDB
 		}
 		return true; 
  	}
+	bool CTable::ReadIndex(int64 nAddr, IDBTransactions *pTran)
+	{
+		return true;
+	}
 	bool CTable::ReadField(int64 nAddr, IDBTransactions *pTran)
 	{
 		CommonLib::FxMemoryReadStream stream;
@@ -656,6 +673,16 @@ namespace embDB
 		return true;
 	}
 	bool CTable::createCompositeIndex(std::vector<CommonLib::str_t>& vecFields, SIndexProp& ip)
+	{
+		return true;
+	}
+
+
+	bool CTable::insert(IRecordset *pRecordSet, IDBTransactions *Tran)
+	{
+		return true;
+	}
+	bool CTable::insert(INameRecordset *pRecordSet, IDBTransactions *Tran)
 	{
 		return true;
 	}

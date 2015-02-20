@@ -654,6 +654,9 @@
     <ClInclude Include="CreateFields.h">
       <Filter>DB\Table</Filter>
     </ClInclude>
+    <ClInclude Include="TableHeader.h">
+      <Filter>DB\Table</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -750,6 +753,9 @@
       <Filter>utils\alloc</Filter>
     </ClCompile>
     <ClCompile Include="Table.cpp">
+      <Filter>DB\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="TableHeader.cpp">
       <Filter>DB\Table</Filter>
     </ClCompile>
   </ItemGroup>

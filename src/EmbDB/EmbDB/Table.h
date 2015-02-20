@@ -68,6 +68,9 @@ namespace embDB
 		
 
 
+			virtual bool insert(IRecordset *pRecordSet, IDBTransactions *Tran = NULL);
+			virtual bool insert(INameRecordset *pRecordSet, IDBTransactions *Tran = NULL);
+
 
 			virtual bool isLockWrite(){return true;}
 			virtual bool lockWrite(){return true;}
@@ -92,7 +95,7 @@ namespace embDB
 			bool ReadField(int64 nAddr, IDBTransactions *pTran);
 			bool saveFields(IDBTransactions *pTran);
 			bool loadTableStorage(int64 nAddr);
-
+			bool ReadIndex(int64 nAddr, IDBTransactions *pTran);
 			
 	    private:
 			typedef std::map<CommonLib::str_t, IDBFieldHandler*> TFieldByName;
@@ -106,12 +109,14 @@ namespace embDB
 			int64 m_nTablePage;
 			int64 m_nStoragePageID;
 			int64 m_nFieldsPage;
+			int64 m_nIndexsPage;
 			int64 m_nLastRecOID;
 			CStorage* m_pMainDBStorage;
 			CommonLib::str_t m_sTableName;
 			CDatabase* m_pDB;
 			CStorage* m_pTableStorage;
 			TFieldPages m_nFieldsAddr;
+			TFieldPages m_nIndexAddr;
 			//int64 m_nTableID;
 
 	};
