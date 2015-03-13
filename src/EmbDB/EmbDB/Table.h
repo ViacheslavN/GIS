@@ -17,6 +17,7 @@ namespace embDB
 {
 	class CDatabase;
 	class CStorage;
+	class IDBIndexHandler;
 
 	class CTable : public IDBTable
 	{
@@ -91,7 +92,7 @@ namespace embDB
 			bool readHeader(CommonLib::FxMemoryReadStream& stream);
 			bool createValueField(sFieldInfo& fi, IDBTransactions *pTran);
 			bool createSpatialIndexField(sFieldInfo& fi, IDBTransactions *pTran);
-			bool createIndexField(sFieldInfo& fi, IDBTransactions *pTran);
+			bool createMultiIndexField(sFieldInfo& fi, IDBTransactions *pTran);
 			bool ReadField(int64 nAddr, IDBTransactions *pTran);
 			bool saveFields(IDBTransactions *pTran);
 			bool loadTableStorage(int64 nAddr);
@@ -100,10 +101,18 @@ namespace embDB
 	    private:
 			typedef std::map<CommonLib::str_t, IDBFieldHandler*> TFieldByName;
 			typedef std::map<int64, IDBFieldHandler*> TFieldByID;
+
+			typedef std::map<CommonLib::str_t, IDBIndexHandler*> TIndexByName;
+			typedef std::map<int64, IDBIndexHandler*> TIndexByID;
+
+
 			typedef TPageVector<int64> TFieldPages;
  
 			TFieldByName m_OIDFieldByName;
 			TFieldByID m_OIDFieldByID;
+
+			TIndexByName m_IndexByName;
+			TIndexByID m_IndexByID;
 
 			int64 m_nSchemaPageAddr;
 			int64 m_nTablePage;

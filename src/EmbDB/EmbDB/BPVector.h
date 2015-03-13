@@ -212,7 +212,7 @@ namespace embDB
 		}
 		
 		template<class _TComp >
-		int32 upper_bound(const TValue& val,_TComp& comp)  
+		int32 upper_bound(const TValue& val, const _TComp& comp)  
 		{
 
 			if(m_nSize == 0)

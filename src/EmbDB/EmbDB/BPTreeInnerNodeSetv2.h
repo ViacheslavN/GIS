@@ -81,7 +81,7 @@ namespace embDB
 		}
 
 		template<class TComp>
-		TLink upper_bound(TComp& comp, const TKey& key, int32& nIndex )
+		TLink upper_bound(const TComp& comp, const TKey& key, int32& nIndex )
 		{
 			nIndex = m_innerKeyMemSet.upper_bound(key, comp);
 			if(nIndex == -1)
@@ -95,7 +95,7 @@ namespace embDB
 			return m_innerLinkMemSet[nIndex]; 
 		}
 		template<class TComp>
-		TLink lower_bound(TComp& comp, const TKey& key, short& nType, int32& nIndex )
+		TLink lower_bound(const TComp& comp, const TKey& key, short& nType, int32& nIndex )
 		{
 			nIndex = m_innerKeyMemSet.lower_bound(key, nType, comp);
 			if(nIndex == -1)
@@ -115,7 +115,7 @@ namespace embDB
 		}
 		
 		template<class TComp>
-		int insert(TComp& comp, const TKey& key, TLink nLink)
+		int insert(const TComp& comp, const TKey& key, TLink nLink)
 		{
 			uint32 nIndex = -1;
 			short nType = 0;
@@ -153,7 +153,7 @@ namespace embDB
 			return bRet ? nIndex : -1;
 		}
 		template<class TComp>
-		bool remove(TComp& comp, const TKey& key)
+		bool remove(const TComp& comp, const TKey& key)
 		{
 			uint32 nIndex = -1;
 			short nType = 0;

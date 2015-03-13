@@ -12,7 +12,7 @@ namespace embDB
 	public:	
 		typedef _TKey TKey;
 		typedef IndexTuple<TKey> TIndex;
-		typedef TBPVector<TIndex> TKeyMemSet;
+		typedef TBPVector<TIndex> TLeafMemSet;
 
 		BPLeafNodeMultiIndexCompressor(ICompressorParams *pParams = NULL) : m_nSize(0)
 		{}
@@ -32,8 +32,8 @@ namespace embDB
 			TIndex index;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
-				KeyStreams.read(index.key);
-				KeyStreams.read(index.nObjectID);
+				KeyStreams.read(index.m_key);
+				KeyStreams.read(index.m_nObjectID);
 				Set.push_back(index);
 			}
 
@@ -52,14 +52,14 @@ namespace embDB
 			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
 			for(size_t i = 0, sz = Set.size(); i < sz; ++i)
 			{
-				KeyStreams.write(Set[i].key);
-				KeyStreams.write(Set[i].nObjectID);
+				KeyStreams.write(Set[i].m_key);
+				KeyStreams.write(Set[i].m_nObjectID);
 			}
 
 			return true;
 		}
 
-		virtual bool insert(const TKey& key)
+		virtual bool insert(const TIndex& key)
 		{
 			m_nSize++;
 			return true;
@@ -74,11 +74,11 @@ namespace embDB
 			m_nSize = Set.size();
 			return true;
 		}
-		virtual bool update(const TKey& key)
+		virtual bool update(const TIndex& key)
 		{
 			return true;
 		}
-		virtual bool remove(const TKey& key)
+		virtual bool remove(const TIndex& key)
 		{
 			m_nSize--;
 			return true;

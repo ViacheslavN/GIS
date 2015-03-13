@@ -195,7 +195,7 @@ namespace embDB
 			m_pBaseNode->setFlags(nFlag,bSet);
 		}
 		template<class TComp>
-		TLink findNodeInsert(TComp& comp, const TKey& key)
+		TLink findNodeInsert(const TComp& comp, const TKey& key)
 		{
 			assert(!m_bIsLeaf);
 			int32 nIndex = -1;
@@ -208,31 +208,31 @@ namespace embDB
 			return m_InnerNode.findNext(key, nIndex);
 		}*/
 		template<class TComp>
-		int32 binary_search(TComp& comp, const TKey& key)
+		int32 binary_search(const TComp& comp, const TKey& key)
 		{
 			assert(m_bIsLeaf);
 			return m_LeafNode.binary_search(comp, key);
 		}
 		template<class TComp>
-		TLink inner_lower_bound(TComp& comp, const TKey& key, short& nType, int32& nIndex )
+		TLink inner_lower_bound(const TComp& comp, const TKey& key, short& nType, int32& nIndex )
 		{
 			assert(!m_bIsLeaf);
 			return m_InnerNode.lower_bound(comp, key, nType, nIndex);
 		}
 		template<class TComp>
-		TLink  inner_upper_bound(TComp& comp, const TKey& key, int32& nIndex )
+		TLink  inner_upper_bound(const TComp& comp, const TKey& key, int32& nIndex )
 		{
 			assert(!m_bIsLeaf);
 			return m_InnerNode.upper_bound(comp, key, nIndex);
 		}
 		template<class TComp>
-		int32 leaf_lower_bound(TComp& comp, const TKey& key, short& nType)
+		int32 leaf_lower_bound(const TComp& comp, const TKey& key, short& nType)
 		{
 			assert(m_bIsLeaf);
 			return m_LeafNode.lower_bound(comp, key, nType);
 		}
 		template<class TComp>
-		int32  leaf_upper_bound(TComp& comp, const TKey& key)
+		int32  leaf_upper_bound(const TComp& comp, const TKey& key)
 		{
 			assert(m_bIsLeaf);
 			return m_LeafNode.upper_bound(comp, key);

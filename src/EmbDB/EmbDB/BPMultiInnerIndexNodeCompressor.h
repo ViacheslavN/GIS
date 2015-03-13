@@ -46,8 +46,8 @@ namespace embDB
 			TLink nlink;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
-				KeyStreams.read(index.key);
-				KeyStreams.read(index.nObjectID);
+				KeyStreams.read(index.m_key);
+				KeyStreams.read(index.m_nObjectID);
 
 				LinkStreams.read(nlink);
 
@@ -79,15 +79,15 @@ namespace embDB
 			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);			 
 			for(size_t i = 0, sz = keySet.size(); i < sz; ++i)
 			{
-				KeyStreams.write(keySet[i].key);
-				KeyStreams.write(keySet[i].nObjectID);
+				KeyStreams.write(keySet[i].m_key);
+				KeyStreams.write(keySet[i].m_nObjectID);
 				LinkStreams.write(linkSet[i]);
 			}
 			
 			return true;
 		}
 
-		virtual bool insert(const TKey& key, TLink link )
+		virtual bool insert(const TIndex& key, TLink link )
 		{
 			m_nSize++;
 			return true;
@@ -102,12 +102,12 @@ namespace embDB
 			m_nSize = keySet.size();
 			return true;
 		}
-		virtual bool remove(const TKey& key, TLink link)
+		virtual bool remove(const TIndex& key, TLink link)
 		{
 			m_nSize--;
 			return true;
 		}
-		virtual bool update(const TKey& key, TLink link)
+		virtual bool update(const TIndex& key, TLink link)
 		{
 			return true;
 		}

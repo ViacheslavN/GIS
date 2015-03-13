@@ -9,6 +9,7 @@
 #include "Database.h"
 #include "SpatialOIDField.h"
 #include "Index.h"
+#include "MultiIndexBPTree.h"
 #include "CreateFields.h"
 namespace embDB
 {
@@ -77,7 +78,7 @@ namespace embDB
 		case FT_VALUE_FIELD:
 			bRet = createValueField(fi, pTran);
 			break;
-		case FT_INDEX_VALUE_FIELD:
+	/*	case FT_INDEX_VALUE_FIELD:
 			bRet = createIndexField(fi, pTran);
 			break;
 		case FT_COUNTER_VALUE_FIELD:
@@ -87,7 +88,7 @@ namespace embDB
 		case FT_SPATIAL_INDEX_VALUE_FIELD:
 		case FT_MULTI_SPATIAL_INDEX_VALUE_FIELD:
 			bRet = createSpatialIndexField(fi, pTran);
-			break;
+			break;*/
 		}
 		return bRet;
 	}
@@ -336,19 +337,15 @@ namespace embDB
 		m_OIDFieldByID.insert(std::make_pair(fi.m_nFIPage, pField));
 		return true;
 	}
-	bool CTable::createIndexField(sFieldInfo& fi, IDBTransactions *pTran)
+	bool CTable::createMultiIndexField(sFieldInfo& fi, IDBTransactions *pTran)
 	{
-		IDBFieldHandler* pField = NULL;
+		IDBIndexHandler* pIndex = NULL;
 		bool bRet = true;
 		int64 nFieldAddr = -1;
-		switch(fi.m_nFieldDataType)
-		{
-			case ftInteger32:
-				pField = new TOIDFieldINT32(m_pDB->getBTreeAlloc());
-				break;
 
-		}
-		if(!pField)
+		pIndex = CreateMultiIndex(fi, m_pDB);
+	 
+		if(!pIndex)
 			return false;
 		//return pField != NULL;
 		if(fi.m_nFieldPage == -1)
@@ -370,21 +367,21 @@ namespace embDB
 			pFieldInfoPage->setFlag(eFP_CHANGE, true);
 			header.writeCRC32(stream);
 			pTran->saveFilePage(pFieldInfoPage);
-			pField->setFieldInfoType(fi);
-			bRet = pField->save(pFieldPage->getAddr(), pTran);
+			pIndex->setFieldInfoType(fi);
+			bRet = pIndex->save(pFieldPage->getAddr(), pTran);
 			if(!m_nFieldsAddr.push(fi.m_nFIPage, pTran))
 				return false;
 		}
 		else
 		{
-			pField->setFieldInfoType(fi);
-			bRet = pField->load(fi.m_nFieldPage, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
+			pIndex->setFieldInfoType(fi);
+			bRet = pIndex->load(fi.m_nFieldPage, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
 
 			if(!bRet)
-				delete pField;
+				delete pIndex;
 		}
-		m_OIDFieldByName.insert(std::make_pair(fi.m_sFieldName, pField));
-		m_OIDFieldByID.insert(std::make_pair(fi.m_nFIPage, pField));
+		m_IndexByName.insert(std::make_pair(fi.m_sFieldName, pIndex));
+		m_IndexByID.insert(std::make_pair(fi.m_nFIPage, pIndex));
 		return true;
 	}
 	bool  CTable::createSpatialIndexField(sFieldInfo& fi, IDBTransactions *pTran)
@@ -660,6 +657,10 @@ namespace embDB
 	{
 		return true;
 	}
+
+
+ 
+
 	bool CTable::createIndex(const CommonLib::str_t& sFieldName, SIndexProp& ip)
 	{
 		TFieldByName::iterator it = m_OIDFieldByName.find(sFieldName);
@@ -668,6 +669,27 @@ namespace embDB
 
 		IDBFieldHandler* pFieldHandler = it->second;
 		assert(pFieldHandler);
+
+		IDBTransactions* pTran =  (IDBTransactions*)m_pDB->startTransaction(eTT_DDL);
+
+
+		sFieldInfo*  fi = pFieldHandler->getFieldInfoType();
+		switch(ip.indexType)
+		{
+			case itRegular:
+				break;
+			case itMultiRegular:
+				createMultiIndexField(fi, pTran);
+				break;
+			case itSpatial:
+				break;
+			case itFreeText:
+				break;
+			case itRouting:
+				break;
+		}
+
+
 		//pFieldHandler->getType();
 
 		return true;

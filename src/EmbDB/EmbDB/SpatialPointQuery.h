@@ -66,15 +66,15 @@ namespace embDB
 			m_nZValue = y | (x << 1);
 		}
 
-		bool operator < (const ZOrderPoint2DU16& zOrder)
+		bool operator < (const ZOrderPoint2DU16& zOrder) const
 		{
 			return m_nZValue < zOrder.m_nZValue;
 		}
-		bool operator <= (const ZOrderPoint2DU16& zOrder)
+		bool operator <= (const ZOrderPoint2DU16& zOrder) const
 		{
 			return m_nZValue <= zOrder.m_nZValue;
 		}
-		bool operator > (const ZOrderPoint2DU16& zOrder)
+		bool operator > (const ZOrderPoint2DU16& zOrder) const
 		{
 			return m_nZValue > zOrder.m_nZValue;
 		}
@@ -82,7 +82,7 @@ namespace embDB
 		{
 			 m_nZValue = nZorder;
 		}
-		bool operator == (const ZOrderPoint2DU16&  Zorder)
+		bool operator == (const ZOrderPoint2DU16&  Zorder) const
 		{
 			return m_nZValue == Zorder.m_nZValue;
 		}
@@ -167,23 +167,23 @@ namespace embDB
 			uint64 bit = uint64 (1) << uint64 (idx & 0x3f);
 			m_nZValue |= bit;
 		}
-		bool operator < (const ZOrderPoint2DU32& zOrder)
+		bool operator < (const ZOrderPoint2DU32& zOrder) const
 		{
 			return m_nZValue < zOrder.m_nZValue;
 		}
-		bool operator <= (const ZOrderPoint2DU32& zOrder)
+		bool operator <= (const ZOrderPoint2DU32& zOrder) const
 		{
 			return m_nZValue <= zOrder.m_nZValue;
 		}
-		bool operator > (const ZOrderPoint2DU32& zOrder)
+		bool operator > (const ZOrderPoint2DU32& zOrder) const
 		{
 			return m_nZValue > zOrder.m_nZValue;
 		}
-		bool operator = (uint64 nZorder)
+		bool operator = (uint64 nZorder) 
 		{
 			m_nZValue = nZorder;
 		}
-		bool operator == (const ZOrderPoint2DU32&  Zorder)
+		bool operator == (const ZOrderPoint2DU32&  Zorder) const
 		{
 			return m_nZValue == Zorder.m_nZValue;
 		}
@@ -197,10 +197,12 @@ namespace embDB
 	template <class PontType>
 	struct ZPointComp
 	{
-		bool LE(const PontType& _Left, const PontType& _Right){
+		bool LE(const PontType& _Left, const PontType& _Right) const
+		{
 			return (_Left.m_nZValue < _Right.m_nZValue);
 		}
-		bool EQ(const PontType& _Left, const PontType& _Right){
+		bool EQ(const PontType& _Left, const PontType& _Right) const
+		{
 			return (_Left.m_nZValue == _Right.m_nZValue);
 		}
 	};
@@ -246,25 +248,25 @@ namespace embDB
 		void setLowBits(int idx);
 		void clearLowBits(int idx);
 		
-		bool operator < (const ZOrderPoint2DU64& zOrder)
+		bool operator < (const ZOrderPoint2DU64& zOrder) const
 		{
 			if(m_nZValue[1] != zOrder.m_nZValue[1] )
 				return m_nZValue[1] < zOrder.m_nZValue[1];
 			return m_nZValue[0] < zOrder.m_nZValue[0];
 		}
-		bool operator <= (const ZOrderPoint2DU64& zOrder)
+		bool operator <= (const ZOrderPoint2DU64& zOrder) const
 		{
 			if(m_nZValue[1] <= zOrder.m_nZValue[1] )
 				return m_nZValue[0] <= zOrder.m_nZValue[0] ;
 			return false;
 		}
-		bool operator > (const ZOrderPoint2DU64& zOrder)
+		bool operator > (const ZOrderPoint2DU64& zOrder) const
 		{
 			if(m_nZValue[1] != zOrder.m_nZValue[1] )
 				 return m_nZValue[1] > zOrder.m_nZValue[1];
 			return m_nZValue[0] > zOrder.m_nZValue[0];
 		}
-		bool operator == (const ZOrderPoint2DU64&  zOrder)
+		bool operator == (const ZOrderPoint2DU64&  zOrder) const
 		{
 			return m_nZValue[1] == zOrder.m_nZValue[1] && m_nZValue[0] == zOrder.m_nZValue[0];
 		}
@@ -277,13 +279,13 @@ namespace embDB
 
 	struct ZPointComp64
 	{
-		bool LE(const ZOrderPoint2DU64& _Left, const ZOrderPoint2DU64& _Right)
+		bool LE(const ZOrderPoint2DU64& _Left, const ZOrderPoint2DU64& _Right) const
 		{
 			if(_Left.m_nZValue[1] != _Right.m_nZValue[1])
 				return _Left.m_nZValue[1] < _Right.m_nZValue[1];
 			return _Left.m_nZValue[0] < _Right.m_nZValue[0];
 		}
-		bool EQ(const ZOrderPoint2DU64& _Left, const ZOrderPoint2DU64& _Right)
+		bool EQ(const ZOrderPoint2DU64& _Left, const ZOrderPoint2DU64& _Right) const
 		{
 			return (_Left.m_nZValue[0] == _Right.m_nZValue[0] && _Left.m_nZValue[1] == _Right.m_nZValue[1]);
 		}

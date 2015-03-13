@@ -1,7 +1,8 @@
 #ifndef _EMBEDDED_DATABASE_B_INDEX_H_
 #define _EMBEDDED_DATABASE_B_INDEX_H_
 #include "BaseBPMapv2.h"
-#include "IField.h"
+#include "IDBField.h"
+#include "DBFieldInfo.h"
 namespace embDB
 
 {
@@ -40,6 +41,25 @@ public:
 		return m_ParentIt.value();
 	}
 
+	virtual int64 addr() const
+	{
+		return m_ParentIt.addr();
+	}
+	virtual int32 pos() const
+	{
+		return m_ParentIt.pos();
+	}
+
+	virtual bool copy(IndexIterator *pIter)
+	{
+		return m_ParentIt.setAddr(pIter->addr(), pIter->pos());
+	}
+
+	void set(iterator it)
+	{
+		m_ParentIt = it;
+	}
+
 private:
 	iterator m_ParentIt;
 
@@ -52,7 +72,7 @@ public:
 	IndexFiled() {}
 	virtual ~IndexFiled() {}
 	virtual bool insert (IFieldVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL) = 0;
-	virtual bool update (IFieldVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL) = 0;
+	virtual bool update (IFieldVariant* pOldIndexKey, IFieldVariant* pNewIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL) = 0;
 	virtual bool remove (IFieldVariant* pIndexKey, IIndexIterator** pRetIter = NULL) = 0;
 	virtual bool remove (IIndexIterator* pIter ) = 0;
 	virtual IndexIteratorPtr find(IFieldVariant* pIndexKey) = 0;
@@ -127,7 +147,7 @@ protected:
 	int64 m_nBTreeRootPage;
 };
 
-
+/*
 
 
 template<class _TIndexType, class _TBTree, int FieldDataType>
@@ -137,9 +157,9 @@ public:
 
 
 	typedef IndexIterator<_TBTree> TFieldIterator;
-	
+
 	CIndexField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
-		CIndexBase(pTransactions, pAlloc)
+	CIndexBase(pTransactions, pAlloc)
 	{}
 	~CIndexField(){}
 	typedef OIDFieldBase<_TBTree> TBase;
@@ -152,7 +172,7 @@ public:
 		pIndexKey->getVal(val);
 		if(pIter)
 		else
-			return m_tree.insert(val, nOID);
+		return m_tree.insert(val, nOID);
 
 	}
 	virtual uint64 insert (IFieldVariant* pFieldVal)
@@ -192,7 +212,32 @@ public:
 		return m_tree.commit();
 	}
 
+};*/
+
+
+
+
+
+
+class IDBIndexHandler : IField
+{
+public:
+	IDBIndexHandler(){}
+	~IDBIndexHandler(){}
+	virtual sFieldInfo* getFieldInfoType() = 0;
+	virtual void setFieldInfoType(sFieldInfo& fi) = 0;
+	virtual bool save(int64 nAddr, IDBTransactions *pTran) = 0;
+	virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
+	virtual IndexFiled* getIndex(IDBTransactions* pTransactions, IDBStorage *pStorage) = 0;
+	virtual bool release(IndexFiled* pField) = 0;
+
+	virtual bool lock() =0;
+	virtual bool unlock() =0;
+
+	virtual bool isCanBeRemoving() = 0;
+
 };
+
 
 
 

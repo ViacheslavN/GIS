@@ -8,6 +8,7 @@ namespace embDB
 	enum eDataTypes
 	{
 		ftUnknown   = 0,
+		ftNull,
 		ftInteger8,
 		ftInteger16,
 		ftInteger32,

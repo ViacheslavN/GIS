@@ -105,7 +105,7 @@ public:
 		return TBase::find<iterator>(m_comp, key);
 	}
 	template<class TComp>
-	iterator find(TComp& comp, const TKey& key)  
+	iterator find(const TComp& comp, const TKey& key)  
 	{
 		return TBase::find<iterator, TComp>(comp, key);
 	}
@@ -120,12 +120,12 @@ public:
 	}
 
 	template<class TComp>
-	iterator upper_bound(TComp& comp, const TKey& key)
+	iterator upper_bound(const TComp& comp, const TKey& key)
 	{
 		return TBase::upper_bound<iterator>(comp, key);
 	}
 	template<class TComp>
-	iterator lower_bound(TComp& comp, const TKey& key)
+	iterator lower_bound(const TComp& comp, const TKey& key)
 	{
 		return TBase::lower_bound<iterator>(comp, key);
 	}

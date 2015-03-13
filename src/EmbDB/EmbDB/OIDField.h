@@ -138,7 +138,7 @@ namespace embDB
 		}
 		virtual int32 pos() const
 		{
-			return pos();
+			return m_ParentIt.pos();
 		}
 
 		virtual bool copy(IFieldIterator *pIter)
@@ -256,10 +256,10 @@ namespace embDB
 				if(pRetIter)
 				{
 					TBTree::iterator retIt;
-					return true;
+					return m_tree.remove(nOID);
 				}
 				else
-				return m_tree.remove(nOID);
+					return m_tree.remove(nOID);
 			}
 			virtual bool find(uint64 nOID, IFieldVariant* pFieldVal)
 			{

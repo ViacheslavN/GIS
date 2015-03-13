@@ -29,19 +29,19 @@ namespace embDB
 			return 63;
 		}
 
-		bool operator < (const ZOrderRect2DU16& zOrder)
+		bool operator < (const ZOrderRect2DU16& zOrder) const
 		{
 			return m_nZValue < zOrder.m_nZValue;
 		}
-		bool operator <= (const ZOrderRect2DU16& zOrder)
+		bool operator <= (const ZOrderRect2DU16& zOrder) const
 		{
 			return m_nZValue <= zOrder.m_nZValue;
 		}
-		bool operator > (const ZOrderRect2DU16& zOrder)
+		bool operator > (const ZOrderRect2DU16& zOrder) const
 		{
 			return m_nZValue > zOrder.m_nZValue;
 		}
-		bool operator == (const ZOrderRect2DU16&  Zorder)
+		bool operator == (const ZOrderRect2DU16&  Zorder) const
 		{
 			return m_nZValue == Zorder.m_nZValue;
 		}
@@ -63,25 +63,25 @@ namespace embDB
 			return 127;
 		}
 
-		bool operator < (const ZOrderRect2DU32& zOrder)
+		bool operator < (const ZOrderRect2DU32& zOrder) const
 		{
 			if(m_nZValue[1] != zOrder.m_nZValue[1] )
 				return m_nZValue[1] < zOrder.m_nZValue[1];
 			return m_nZValue[0] < zOrder.m_nZValue[0];
 		}
-		bool operator <= (const ZOrderRect2DU32& zOrder)
+		bool operator <= (const ZOrderRect2DU32& zOrder) const
 		{
 			if(m_nZValue[1] <= zOrder.m_nZValue[1] )
 				return m_nZValue[0] <= zOrder.m_nZValue[0] ;
 			return false;
 		}
-		bool operator > (const ZOrderRect2DU32& zOrder)
+		bool operator > (const ZOrderRect2DU32& zOrder) const
 		{
 			if(m_nZValue[1] != zOrder.m_nZValue[1] )
 				return m_nZValue[1] > zOrder.m_nZValue[1];
 			return m_nZValue[0] > zOrder.m_nZValue[0];
 		}
-		bool operator == (const ZOrderRect2DU32&  zOrder)
+		bool operator == (const ZOrderRect2DU32&  zOrder) const
 		{
 			return m_nZValue[1] == zOrder.m_nZValue[1] && m_nZValue[0] == zOrder.m_nZValue[0];
 		}
@@ -103,13 +103,13 @@ namespace embDB
  
 	struct ZRect32Comp
 	{
-		bool LE(const ZOrderRect2DU32& _Left, const ZOrderRect2DU32& _Right)
+		bool LE(const ZOrderRect2DU32& _Left, const ZOrderRect2DU32& _Right) const
 		{
 			if(_Left.m_nZValue[1] != _Right.m_nZValue[1] )
 				return _Left.m_nZValue[1] < _Right.m_nZValue[1];
 			return _Left.m_nZValue[0] < _Right.m_nZValue[0];
 		}
-		bool EQ(const ZOrderRect2DU32& _Left, const ZOrderRect2DU32& _Right)
+		bool EQ(const ZOrderRect2DU32& _Left, const ZOrderRect2DU32& _Right) const
 		{
 			return _Left.m_nZValue[1] == _Right.m_nZValue[1] && _Left.m_nZValue[0] == _Right.m_nZValue[0];
 		}
@@ -132,7 +132,7 @@ namespace embDB
 			return 255;
 		}
 
-		bool operator < (const ZOrderRect2DU64& zOrder)
+		bool operator < (const ZOrderRect2DU64& zOrder) const
 		{
 			if(m_nZValue[3] != zOrder.m_nZValue[3] )
 				return m_nZValue[3] < zOrder.m_nZValue[3];
@@ -142,7 +142,7 @@ namespace embDB
 				return m_nZValue[1] < zOrder.m_nZValue[1];
 			return m_nZValue[0] < zOrder.m_nZValue[0];
 		}
-		bool operator <= (const ZOrderRect2DU64& zOrder)
+		bool operator <= (const ZOrderRect2DU64& zOrder) const
 		{
 			if(m_nZValue[3] == zOrder.m_nZValue[3] && m_nZValue[2] == zOrder.m_nZValue[2] && m_nZValue[1] == zOrder.m_nZValue[1] && m_nZValue[0] == zOrder.m_nZValue[0])
 				return true;
@@ -155,7 +155,7 @@ namespace embDB
 				return m_nZValue[1] < zOrder.m_nZValue[1];
 			return m_nZValue[0] < zOrder.m_nZValue[0];
 		}
-		bool operator > (const ZOrderRect2DU64& zOrder)
+		bool operator > (const ZOrderRect2DU64& zOrder) const
 		{
 			if(m_nZValue[3] != zOrder.m_nZValue[3] )
 				return m_nZValue[3] > zOrder.m_nZValue[3];
@@ -165,7 +165,7 @@ namespace embDB
 				return m_nZValue[1] > zOrder.m_nZValue[1];
 			return m_nZValue[0] > zOrder.m_nZValue[0];
 		}
-		bool operator == (const ZOrderRect2DU64&  zOrder)
+		bool operator == (const ZOrderRect2DU64&  zOrder) const
 		{
 			return m_nZValue[3] == zOrder.m_nZValue[3] && m_nZValue[2] == zOrder.m_nZValue[2] && m_nZValue[1] == zOrder.m_nZValue[1] && m_nZValue[0] == zOrder.m_nZValue[0];
 		}
@@ -180,7 +180,7 @@ namespace embDB
 
 	struct ZRect64Comp
 	{
-		bool LE(const ZOrderRect2DU64& _Left, const ZOrderRect2DU64& _Right)
+		bool LE(const ZOrderRect2DU64& _Left, const ZOrderRect2DU64& _Right) const
 		{
 			if(_Left.m_nZValue[3] != _Right.m_nZValue[3] )
 				return _Left.m_nZValue[3] < _Right.m_nZValue[3];
@@ -190,7 +190,7 @@ namespace embDB
 				return _Left.m_nZValue[1] < _Right.m_nZValue[1];
 			return _Left.m_nZValue[0] < _Right.m_nZValue[0];
 		}
-		bool EQ(const ZOrderRect2DU64& _Left, const ZOrderRect2DU64& _Right)
+		bool EQ(const ZOrderRect2DU64& _Left, const ZOrderRect2DU64& _Right) const
 		{
 			return _Left.m_nZValue[3] == _Right.m_nZValue[3] &&  _Left.m_nZValue[2] == _Right.m_nZValue[2] && _Left.m_nZValue[1] == _Right.m_nZValue[1] &&
 				_Left.m_nZValue[1] == _Right.m_nZValue[1] && _Left.m_nZValue[0] == _Right.m_nZValue[0];
@@ -198,4 +198,4 @@ namespace embDB
 	};
 
 }
-#endif  _EMBEDDED_DATABASE_B_STATIAL_RECT_QUERY_H_
+#endif  //_EMBEDDED_DATABASE_B_STATIAL_RECT_QUERY_H_

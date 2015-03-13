@@ -67,6 +67,10 @@ int _tmain(int argc, _TCHAR* argv[])
 				fi.m_nFieldType = embDB::FT_VALUE_FIELD;
 				fi.m_nFieldDataType = embDB::ftInteger32;
 				pTable->addField(fi, (embDB::IDBTransactions*)pFieldTran);
+
+				embDB::SIndexProp indexProp;
+				indexProp.indexType = embDB::itMultiRegular;
+				pTable->createIndex(sFieldName, indexProp);
 			}
 			pFieldTran->commit();
 			db.closeTransaction(pFieldTran);

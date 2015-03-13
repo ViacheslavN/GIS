@@ -790,7 +790,7 @@ namespace embDB
 
 	
 	template<class TIterator, class TComp>
-	TIterator find(TComp& comp, const TKey& key)
+	TIterator find(const TComp& comp, const TKey& key)
 	{
 		if(m_nRootAddr == -1)
 			return TIterator(this, NULL, -1);
@@ -943,8 +943,8 @@ namespace embDB
 	//	ClearChache();
 		return TIterator(this, pFindBTNode.get(), pFindBTNode.get() ? pFindBTNode->count() - 1 : -1);
 	}
-	template<class TIterator>
-	TIterator upper_bound(const TKey& key)
+	template<class TIterator, class TComp>
+	TIterator upper_bound(const TComp& comp, const TKey& key)
 	{
 		 
 		int32 nIndex = 0;
@@ -961,12 +961,12 @@ namespace embDB
 	 
 		if(m_pRoot->isLeaf())
 		{
-			return TIterator(this, m_pRoot.get(), m_pRoot->leaf_upper_bound(key));
+			return TIterator(this, m_pRoot.get(), m_pRoot->leaf_upper_bound(comp, key));
 		}
 		nIndex = -1;
-		int64 nNextAddr = m_pRoot->inner_upper_bound(key, nIndex);
-		int64 nParent = m_pRoot->addr();
-	 
+		int64 nNextAddr = m_pRoot->inner_upper_bound(comp, key, nIndex);
+		//int64 nParent = m_pRoot->addr();
+		 TBTreeNodePtr pParent = m_pRoot;
 		for (;;)
 		{
 			if( nNextAddr == -1)
@@ -974,22 +974,25 @@ namespace embDB
 				break;
 			}
 			TBTreeNodePtr pNode = getNode(nNextAddr);
-			pNode->m_nParent = nParent;
-			pNode->m_nFoundIndex = nIndex;
+			//pNode->m_nParent = nParent;
+			//pNode->m_nFoundIndex = nIndex;
+
+			pNode->setParent(pParent.get(), nIndex);
 			if(pNode->isLeaf())
 			{
 				ClearChache();
-				return TIterator(this, pNode.get(), pNode->leaf_upper_bound(key));
+				return TIterator(this, pNode.get(), pNode->leaf_upper_bound(comp, key));
 				break;
 			}
-			nNextAddr = pNode->inner_upper_bound(key, nIndex);
-			nParent = pNode->addr();
+			nNextAddr = pNode->inner_upper_bound(comp, key, nIndex);
+			//nParent = pNode->addr();
+			pParent = pNode;
 		}
 		ClearChache();
 		return TIterator(this, NULL,-1);
 	}
-	template<class TIterator>
-	TIterator lower_bound(const TKey& key)
+	template<class TIterator, class TComp>
+	TIterator lower_bound(const TComp& comp, const TKey& key)
 	{
 		int32 nIndex = 0;
 		if(m_nRootAddr == -1)
@@ -1006,12 +1009,12 @@ namespace embDB
 		if(m_pRoot->isLeaf())
 		{
 			
-			return TIterator(this, m_pRoot.get(), m_pRoot->leaf_lower_bound(key, nType));
+			return TIterator(this, m_pRoot.get(), m_pRoot->leaf_lower_bound(comp, key, nType));
 		}
 		nIndex = -1;
-		int64 nNextAddr = m_pRoot->inner_lower_bound(key, nType, nIndex);
-		int64 nParent = m_pRoot->addr();
-
+		int64 nNextAddr = m_pRoot->inner_lower_bound(comp, key, nType, nIndex);
+		//int64 nParent = m_pRoot->addr();
+		 TBTreeNodePtr pParent = m_pRoot;
 		for (;;)
 		{
 			if( nNextAddr == -1)
@@ -1019,16 +1022,18 @@ namespace embDB
 				break;
 			}
 			TBTreeNodePtr pNode = getNode(nNextAddr);
-			pNode->m_nParent = nParent;
-			pNode->m_nFoundIndex = nIndex;
+			//pNode->m_nParent = nParent;
+			//pNode->m_nFoundIndex = nIndex;
+			pNode->setParent(pParent.get(), nIndex);
 			if(pNode->isLeaf())
 			{
 				//ClearChache();
-				return TIterator(this, pNode.get(), pNode->leaf_lower_bound(key, nType));
+				return TIterator(this, pNode.get(), pNode->leaf_lower_bound(comp, key, nType));
 				break;
 			}
-			nNextAddr = pNode->inner_lower_bound(key, nType, nIndex);
-			nParent = pNode->addr();
+			nNextAddr = pNode->inner_lower_bound(comp, key, nType, nIndex);
+			//nParent = pNode->addr();
+			pParent = pNode;
 		}
 		//ClearChache();
 		return TIterator(this, NULL,-1);
@@ -1946,7 +1951,11 @@ namespace embDB
 			{
 				return TBase::find<iterator, TComp>(m_comp, key);
 			}
-
+			template<class _TComp>
+			iterator find(_TComp& comp, const TKey& key)  
+			{
+				return TBase::find<iterator, _TComp>(comp, key);
+			}
 		 
 			iterator find(iterator& itFrom, const TKey& key, bool bFoundNext = true)
 			{
@@ -1963,6 +1972,8 @@ namespace embDB
 			{
 				return TBase::last<iterator>();
 			}
+
+
 			iterator upper_bound(const TKey& key)
 			{
 				return TBase::upper_bound<iterator, TComp>(m_comp, key);
@@ -1971,6 +1982,20 @@ namespace embDB
 			{
 				return TBase::lower_bound<iterator, TComp>(m_comp, key);
 			}
+
+			template<class _Comp>
+			iterator upper_bound(const _Comp& comp, const TKey& key)
+			{
+				return TBase::upper_bound<iterator, _Comp>(comp, key);
+			}
+			template<class _Comp>
+			iterator lower_bound(const _Comp& comp, const TKey& key)
+			{
+				return TBase::lower_bound<iterator, _Comp>(comp, key);
+			}
+
+
+			
 
 			bool  insert(const TKey& key, iterator *pFromIterator = NULL, iterator *pRetIterator = NULL)
 			{
