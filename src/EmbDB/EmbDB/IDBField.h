@@ -30,8 +30,8 @@ namespace embDB
 	class IIndexIterator : public RefCounter
 	{
 	public:
-		IIndexIterator();
-		virtual ~IIndexIterator();
+		IIndexIterator(){};
+		virtual ~IIndexIterator(){};
 		virtual bool isValid() = 0;
 		virtual bool next() = 0;
 		virtual bool isNull() = 0;
@@ -42,7 +42,7 @@ namespace embDB
 		virtual int64 addr() const = 0;
 		virtual int32 pos() const = 0;
 
-		virtual bool copy(IIndexIterator *pIter);
+		virtual bool copy(IIndexIterator *pIter) = 0;
 	};
 
 

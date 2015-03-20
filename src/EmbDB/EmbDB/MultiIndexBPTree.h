@@ -358,9 +358,9 @@ namespace embDB
 
 
 	typedef MultiIndexFieldHandler<int64, ftInteger64> TMultiIndexNT64;
-	typedef MultiIndexFieldHandler<uint64, ftUIInteger64> TMultiIndexUINT64;
+	typedef MultiIndexFieldHandler<uint64, ftUInteger64> TMultiIndexUINT64;
 	typedef MultiIndexFieldHandler<int32, ftInteger32> TMultiIndexINT32;
-	typedef MultiIndexFieldHandler<uint32, ftUIInteger32> TMultiIndexUINT32;
+	typedef MultiIndexFieldHandler<uint32, ftUInteger32> TMultiIndexUINT32;
 	typedef MultiIndexFieldHandler<int16, ftInteger16> TMultiIndexINT16;
 	typedef MultiIndexFieldHandler<uint16, ftUInteger16> TMultiIndexUINT16;
 	typedef MultiIndexFieldHandler<int32, ftUInteger8> TMultiIndexINT8;

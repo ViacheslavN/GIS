@@ -72,13 +72,14 @@ namespace embDB
 		TFieldByName::iterator it = m_OIDFieldByName.find(fi.m_sFieldName);
 		if(it != m_OIDFieldByName.end())
 			return false;
-		bool bRet = false;
-		switch(fi.m_nFieldType)
+	
+		return createValueField(fi, pTran);
+		/*switch(fi.m_nFieldType)
 		{
 		case FT_VALUE_FIELD:
 			bRet = createValueField(fi, pTran);
 			break;
-	/*	case FT_INDEX_VALUE_FIELD:
+		case FT_INDEX_VALUE_FIELD:
 			bRet = createIndexField(fi, pTran);
 			break;
 		case FT_COUNTER_VALUE_FIELD:
@@ -88,11 +89,32 @@ namespace embDB
 		case FT_SPATIAL_INDEX_VALUE_FIELD:
 		case FT_MULTI_SPATIAL_INDEX_VALUE_FIELD:
 			bRet = createSpatialIndexField(fi, pTran);
-			break;*/
+			break;
+		}*/
+	 
+	}
+
+	bool CTable::addIndex(sFieldInfo& fi, IDBTransactions *pTran)
+	{
+		bool bRet = false;
+		switch(fi.m_nIndexType)
+		{
+		case itRegular:
+			break;
+		case itMultiRegular:
+			bRet = createMultiIndexField(fi, pTran);
+			break;
+		case itSpatial:
+			break;
+		case itFreeText:
+			break;
+		case itRouting:
+			break;
 		}
+
 		return bRet;
 	}
-	bool  CTable::addSpatialField(sFieldInfo& fi, IDBTransactions *pTran)
+	bool CTable::addSpatialField(sFieldInfo& fi, IDBTransactions *pTran)
 	{
 		return createSpatialIndexField(fi, pTran);
 	}
@@ -192,11 +214,21 @@ namespace embDB
 				m_nFieldsAddr.setFirstPage(m_nFieldsPage);
 
 			}
+
+			if(m_nIndexsPage == -1)
+			{
+				FilePagePtr pPage = pTran->getNewPage();
+				if(!pPage.get())
+					return false;
+				m_nIndexsPage = pPage->getAddr();
+				m_nIndexAddr.setFirstPage(m_nIndexsPage);
+
+			}
 			stream.write(m_nFieldsPage);
 			stream.write(m_nIndexsPage);
 			header.writeCRC32(stream);
 			pTran->saveFilePage(pFPage);
-			return m_nFieldsAddr.save(pTran);
+			return m_nFieldsAddr.save(pTran) && m_nIndexAddr.save(pTran);
 		}
 		else
 		{
@@ -230,24 +262,7 @@ namespace embDB
 	{
 		return m_nTablePage;
 	}
-	bool CTable::readFields(CommonLib::FxMemoryReadStream& stream, IDBTransactions *pTran)
-	{
-		size_t nCount = stream.readInt32();
-		if(nCount * sizeof(int64) > size_t(stream.size() - stream.pos()))
-			return false;
-		for(size_t i = 0; i < nCount; ++i)
-		{
-			int64 nFIPage = stream.readInt64();
-			if(!ReadField(nFIPage, pTran))
-				return false;
-
-		}
-		return true; 
- 	}
-	bool CTable::ReadIndex(int64 nAddr, IDBTransactions *pTran)
-	{
-		return true;
-	}
+	 
 	bool CTable::ReadField(int64 nAddr, IDBTransactions *pTran)
 	{
 		CommonLib::FxMemoryReadStream stream;
@@ -280,6 +295,40 @@ namespace embDB
 			return false;
 		fi.m_nFIPage = nAddr;
 		return CreateField(fi, pTran);
+	}
+
+	bool CTable::ReadIndex(int64 nAddr, IDBTransactions *pTran)
+	{
+		CommonLib::FxMemoryReadStream stream;
+		FilePagePtr pPage = m_pTableStorage ? m_pTableStorage->getFilePage(nAddr) : m_pMainDBStorage->getFilePage(nAddr);
+		if(!pPage.get())
+			return false;
+		stream.attach(pPage->getRowData(), pPage->getPageSize());
+		sFieldInfo fi;
+		sFilePageHeader header (stream);
+		if(!header.isValid())
+		{
+			if(!pTran)
+				return false;
+			CommonLib::str_t sMsg;
+			sMsg.format(_T("TABLE: Page %I64d Error CRC for field header page"), nAddr);
+			pTran->error(sMsg);
+			return false;
+		}
+		if(header.m_nObjectPageType != TABLE_PAGE || header.m_nSubObjectPageType != TABLE_INDEX_PAGE )
+		{
+			if(!pTran)
+				return false;
+			CommonLib::str_t sMsg;
+			sMsg.format(_T("TABLE: Page %I64d is not field info"), nAddr);
+			pTran->error(sMsg);
+			return false;
+		}
+
+		if(!fi.Read(&stream))
+			return false;
+		fi.m_nFIPage = nAddr;
+		return addIndex(fi, pTran);
 	}
 	bool CTable::readHeader(CommonLib::FxMemoryReadStream& stream)
 	{
@@ -361,15 +410,14 @@ namespace embDB
 			fi.m_nFIPage = pFieldInfoPage->getAddr();
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attach(pFieldInfoPage->getRowData(), pFieldInfoPage->getPageSize());
-			//stream.write((int64)DB_FIELD_INFO_SYMBOL);
-			sFilePageHeader header (stream, TABLE_PAGE, TABLE_FIELD_PAGE);
+			sFilePageHeader header (stream, TABLE_PAGE, TABLE_INDEX_PAGE);
 			fi.Write(&stream);
 			pFieldInfoPage->setFlag(eFP_CHANGE, true);
 			header.writeCRC32(stream);
 			pTran->saveFilePage(pFieldInfoPage);
 			pIndex->setFieldInfoType(fi);
 			bRet = pIndex->save(pFieldPage->getAddr(), pTran);
-			if(!m_nFieldsAddr.push(fi.m_nFIPage, pTran))
+			if(!m_nIndexAddr.push(fi.m_nFIPage, pTran))
 				return false;
 		}
 		else
@@ -382,6 +430,13 @@ namespace embDB
 		}
 		m_IndexByName.insert(std::make_pair(fi.m_sFieldName, pIndex));
 		m_IndexByID.insert(std::make_pair(fi.m_nFIPage, pIndex));
+
+		TFieldByName::iterator it = m_OIDFieldByName.find(fi.m_sFieldName);
+		if(it != m_OIDFieldByName.end())
+			it->second->setIndexHandler(pIndex);
+		else
+			assert(false);
+
 		return true;
 	}
 	bool  CTable::createSpatialIndexField(sFieldInfo& fi, IDBTransactions *pTran)
@@ -522,7 +577,7 @@ namespace embDB
 		return true;
 	}
 
-	IDBFieldHandler* CTable::getField(const CommonLib::str_t&  sName)
+	IDBFieldHandler* CTable::getFieldHandler(const CommonLib::str_t&  sName)
 	{
 		TFieldByName::iterator it = m_OIDFieldByName.find(sName);
 		if(it == m_OIDFieldByName.end())
@@ -651,7 +706,24 @@ namespace embDB
 	}
 	IField* CTable::createField(SFieldProp& sFP)
 	{
-		return NULL;
+
+		sFieldInfo fi;
+
+		fi.m_nFieldType  = sFP.dataType;
+		fi.m_nFieldDataType = sFP.dateTypeExt;
+		fi.m_sFieldName = sFP.sFieldName;
+		fi.m_sFieldAlias = sFP.sFieldAlias;
+		IDBTransactions* pTran =  (IDBTransactions*)m_pDB->startTransaction(eTT_DDL);
+		pTran->begin();
+
+		if(!addField(fi, pTran))
+		{	
+			pTran->rollback();
+			return NULL;
+		}
+
+		pTran->commit();
+		return getField(sFP.sFieldName);
 	}
 	bool CTable::deleteField(IField* pField)
 	{
@@ -669,28 +741,25 @@ namespace embDB
 
 		IDBFieldHandler* pFieldHandler = it->second;
 		assert(pFieldHandler);
-
+		
 		IDBTransactions* pTran =  (IDBTransactions*)m_pDB->startTransaction(eTT_DDL);
+		pTran->begin();
 
+		sFieldInfo  filedFi = *pFieldHandler->getFieldInfoType();
+		sFieldInfo indexFi;
+		indexFi.m_nIndexType = ip.indexType;
+		indexFi.m_nFieldType = filedFi.m_nFieldType;
+		indexFi.m_nFieldDataType = filedFi.m_nFieldDataType;
+		indexFi.m_sFieldName = filedFi.m_sFieldName;
+		indexFi.m_sFieldAlias = filedFi.m_sFieldAlias;
 
-		sFieldInfo*  fi = pFieldHandler->getFieldInfoType();
-		switch(ip.indexType)
+		if(!addIndex(indexFi, pTran))
 		{
-			case itRegular:
-				break;
-			case itMultiRegular:
-				createMultiIndexField(fi, pTran);
-				break;
-			case itSpatial:
-				break;
-			case itFreeText:
-				break;
-			case itRouting:
-				break;
+			pTran->rollback();
+			return false;
 		}
-
-
-		//pFieldHandler->getType();
+		pTran->commit();
+ 
 
 		return true;
 	}

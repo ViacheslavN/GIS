@@ -121,7 +121,7 @@ namespace embDB
 			typedef _TSpatialObject TSpatialObject;
 			typedef OIDSpatialField<TSpatialBPTree, TPointType, TSpatialObject>  TOIDSpatialField;
 
-			OIDSpatialFieldHandler(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc)
+			OIDSpatialFieldHandler(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc), m_pIndexHandler(NULL)
 			{
 
 			}
@@ -216,9 +216,19 @@ namespace embDB
 				return true;
 			}
 
+			virtual void setIndexHandler(IDBIndexHandler *pIndexHandler)
+			{
+				m_pIndexHandler = pIndexHandler;
+			}
+			virtual IDBIndexHandler* getIndexIndexHandler()
+			{
+				return m_pIndexHandler;
+			}
+
 		private:
 			sFieldInfo m_fi;
 			CommonLib::alloc_t* m_pAlloc;
+			IDBIndexHandler* m_pIndexHandler;
 	};
 
 

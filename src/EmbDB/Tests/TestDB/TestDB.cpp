@@ -2,15 +2,9 @@
 //
 
 #include "stdafx.h"
-#include "../../EmbDB/Database.h"
-#include "../../EmbDB/VariantField.h"
-#include "../../EmbDB/IField.h"
-#include "../../EmbDB/Table.h"
-#include "../../EmbDB/OIDField.h"
-#include "../../EmbDB/Transactions.h"
 
 #include <iostream>
-#include "../../EmbDB/BitMap.h"
+#include "CreateFields.h"
 
 void TestSpatialField(embDB::CDatabase& db);
 int _tmain(int argc, _TCHAR* argv[])
@@ -40,7 +34,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		else
 		{
 			bNew = true;
-			embDB::CSchema* pSchema = db.getSchema();
+			CreateTables(&db);
+		}
+		/*	embDB::CSchema* pSchema = db.getSchema();
 			CommonLib::str_t sTableName; 
 			embDB::ITransactions *pTableTran = db.startTransaction(embDB::eTT_DDL);
 			pTableTran->begin();
@@ -64,8 +60,8 @@ int _tmain(int argc, _TCHAR* argv[])
 				embDB::sFieldInfo fi;
 				fi.m_sFieldName = sFieldName;
 				fi.m_sFieldAlias = "test field 1";
-				fi.m_nFieldType = embDB::FT_VALUE_FIELD;
-				fi.m_nFieldDataType = embDB::ftInteger32;
+				fi.m_nFieldType = embDB::ftInteger32;
+				fi.m_nFieldDataType = embDB::dteSimple;
 				pTable->addField(fi, (embDB::IDBTransactions*)pFieldTran);
 
 				embDB::SIndexProp indexProp;
@@ -74,11 +70,11 @@ int _tmain(int argc, _TCHAR* argv[])
 			}
 			pFieldTran->commit();
 			db.closeTransaction(pFieldTran);
-		}
+		}*/
 
 		
 	}
-
+	/*
 	embDB::CSchema* pSchema = db.getSchema();
 	CommonLib::str_t sTableName; 
 	for (int i = 0; i < 1000; ++i)

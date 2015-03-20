@@ -10,7 +10,7 @@
 namespace embDB
 {
 	class CStorage;
-	enum eBaseFieldProp
+/*	enum eBaseFieldProp
 	{
 		FP_IS_NOT_EMPTY = 0x01,
 		FP_UNIQUE_FIELD = 0x02,
@@ -18,23 +18,24 @@ namespace embDB
 	enum eFieldType
 	{
 		FT_VALUE_FIELD = 1,
-		FT_COUNTER_VALUE_FIELD/*,
+		FT_COUNTER_VALUE_FIELD,
 		FT_INDEX_VALUE_FIELD ,
 		FT_MULTI_INDEX_VALUE_FIELD,
 		FT_SPATIAL_INDEX_VALUE_FIELD,
-		FT_MULTI_SPATIAL_INDEX_VALUE_FIELD*/
-	};
+		FT_MULTI_SPATIAL_INDEX_VALUE_FIELD
+	};*/
 	struct sFieldInfo
 	{
 		sFieldInfo() : 
 			m_nFieldType(0)
 			,m_nFieldDataType(ftUnknown)
 			,m_nBaseFieldProp(0)
+			,m_nIndexType(0)
 			,m_bPrimeryKey(false)
 			,m_bSecondaryKey(false)
-			,m_nRefTableID(0)
-			,m_nRefTFieldID(0)
-			,m_nFieldPage(0)
+			,m_nRefTableID(-1)
+			,m_nRefTFieldID(-1)
+			,m_nFieldPage(-1)
 			,m_nFIPage(-1)
 			,m_bCheckCRC32(true)
 			,m_nOffsetX(0)
@@ -47,6 +48,7 @@ namespace embDB
 		uint32 m_nFieldType;
 		uint32 m_nFieldDataType;
 		uint32 m_nBaseFieldProp;
+		uint32 m_nIndexType;
 		bool m_bPrimeryKey;
 		bool m_bSecondaryKey;
 		int64 m_nRefTableID;
@@ -79,9 +81,10 @@ namespace embDB
 				m_sFieldAlias = CommonLib::str_t(&Aliasbuf[0]);
 			}
 				
-			m_nFieldType = pStream->readInt32();
-			m_nFieldDataType = pStream->readInt32();
-			m_nBaseFieldProp= pStream->readInt32();
+			m_nFieldType = pStream->readIntu32();
+			m_nFieldDataType = pStream->readIntu32();
+			m_nBaseFieldProp= pStream->readIntu32();
+			m_nIndexType = pStream->readIntu32(); 
 			m_bPrimeryKey = pStream->readBool();
 			m_bSecondaryKey = pStream->readBool();
 			m_nRefTableID = pStream->readInt64();
@@ -99,6 +102,7 @@ namespace embDB
 			pStream->write(m_nFieldType);
 			pStream->write(m_nFieldDataType);
 			pStream->write(m_nBaseFieldProp);
+			pStream->write(m_nIndexType);
 			pStream->write(m_bPrimeryKey);
 			pStream->write(m_bSecondaryKey);
 			pStream->write(m_nRefTableID);
@@ -181,6 +185,7 @@ namespace embDB
 
 	};
 
+	class IDBIndexHandler;
 
 	class IDBFieldHandler : IField
 	{
@@ -193,6 +198,9 @@ namespace embDB
 		virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
 		virtual IOIDFiled* getOIDField(IDBTransactions* pTransactions, IDBStorage *pStorage) = 0;
 		virtual bool release(IOIDFiled* pField) = 0;
+
+		virtual void setIndexHandler(IDBIndexHandler *pIndexHandler) = 0;
+		virtual IDBIndexHandler * getIndexIndexHandler() = 0;
 
 		virtual bool lock() =0;
 		virtual bool unlock() =0;

@@ -16,7 +16,7 @@ namespace embDB
 
 
 
-
+	class IndexFiled;
 
 
 	class IOIDFiledRO   //read only
@@ -322,7 +322,7 @@ namespace embDB
  
 			typedef OIDField<FType, TBTree, FieldDataType> TOIDField;
 	
-			OIDFieldHandler(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc)
+			OIDFieldHandler(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc), m_pIndexHandler(0)
 			{
 
 			}
@@ -407,9 +407,20 @@ namespace embDB
 			{
 				return true;
 			}
+
+			virtual void setIndexHandler(IDBIndexHandler *pIndexHandler)
+			{
+				m_pIndexHandler = pIndexHandler;
+			}
+			virtual IDBIndexHandler * getIndexIndexHandler()
+			{
+				return m_pIndexHandler;
+			}
+
 		private:
 			sFieldInfo m_fi;
 			CommonLib::alloc_t* m_pAlloc;
+			IDBIndexHandler *m_pIndexHandler;
 
 	};
 
@@ -420,9 +431,9 @@ namespace embDB
 	};*/
 
 	typedef OIDFieldHandler<int64, ftInteger64> TOIDFieldINT64;
-	typedef OIDFieldHandler<uint64, ftUIInteger64> TOIDFieldUINT64;
+	typedef OIDFieldHandler<uint64, ftUInteger64> TOIDFieldUINT64;
 	typedef OIDFieldHandler<int32, ftInteger32> TOIDFieldINT32;
-	typedef OIDFieldHandler<uint32, ftUIInteger32> TOIDFieldUINT32;
+	typedef OIDFieldHandler<uint32, ftUInteger32> TOIDFieldUINT32;
 	typedef OIDFieldHandler<int16, ftInteger16> TOIDFieldINT16;
 	typedef OIDFieldHandler<uint16, ftUInteger16> TOIDFieldUINT16;
 	typedef OIDFieldHandler<int32, ftUInteger8> TOIDFieldINT8;

@@ -55,13 +55,15 @@ namespace embDB
 			virtual bool createCompositeIndex(std::vector<CommonLib::str_t>& vecFields, SIndexProp& ip);
 
 
+
+			bool addIndex(sFieldInfo& fi, IDBTransactions *pTran);
 			bool addField(sFieldInfo& fi, IDBTransactions *pTran);
 			bool addSpatialField(sFieldInfo& fi, IDBTransactions *pTran);
 			bool load();
 			int64 getAddr();
 			//int64 getID() const {return m_nTableID;}
 			bool save(IDBTransactions *pTran);
-			IDBFieldHandler* getField(const CommonLib::str_t& name);
+			IDBFieldHandler* getFieldHandler(const CommonLib::str_t& name);
 
 			bool delField(IDBFieldHandler *pField, IDBTransactions *Tran = NULL);
 			bool delField(const CommonLib::str_t& sFieldName, IDBTransactions *Tran = NULL);
@@ -87,16 +89,17 @@ namespace embDB
 			bool commit();
 
 		private:
+			bool ReadField(int64 nAddr, IDBTransactions *pTran);
+			bool ReadIndex(int64 nAddr, IDBTransactions *pTran);
 			bool CreateField(sFieldInfo& fi, IDBTransactions *pTran);
-			bool readFields(CommonLib::FxMemoryReadStream& stream, IDBTransactions *pTran = NULL);
 			bool readHeader(CommonLib::FxMemoryReadStream& stream);
 			bool createValueField(sFieldInfo& fi, IDBTransactions *pTran);
 			bool createSpatialIndexField(sFieldInfo& fi, IDBTransactions *pTran);
 			bool createMultiIndexField(sFieldInfo& fi, IDBTransactions *pTran);
-			bool ReadField(int64 nAddr, IDBTransactions *pTran);
+
 			bool saveFields(IDBTransactions *pTran);
 			bool loadTableStorage(int64 nAddr);
-			bool ReadIndex(int64 nAddr, IDBTransactions *pTran);
+			bool ReadIndices(int64 nAddr, IDBTransactions *pTran);
 			
 	    private:
 			typedef std::map<CommonLib::str_t, IDBFieldHandler*> TFieldByName;
@@ -114,7 +117,7 @@ namespace embDB
 			TIndexByName m_IndexByName;
 			TIndexByID m_IndexByID;
 
-			int64 m_nSchemaPageAddr;
+
 			int64 m_nTablePage;
 			int64 m_nStoragePageID;
 			int64 m_nFieldsPage;

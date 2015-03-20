@@ -53,9 +53,9 @@ namespace embDB
 	typedef IBaseFieldVariant<int16, ftInteger16> TFieldINT16;
 	typedef IBaseFieldVariant<uint16, ftUInteger16> TFieldUINT16;
 	typedef IBaseFieldVariant<int32, ftInteger32> TFieldINT32;
-	typedef IBaseFieldVariant<uint32, ftUIInteger32> TFieldUINT32;
+	typedef IBaseFieldVariant<uint32, ftUInteger32> TFieldUINT32;
 	typedef IBaseFieldVariant<int64, ftInteger64> TFieldINT64;
-	typedef IBaseFieldVariant<uint64, ftUIInteger64> TFieldUINT64;
+	typedef IBaseFieldVariant<uint64, ftUInteger64> TFieldUINT64;
 	typedef IBaseFieldVariant<float, ftFloat> TFieldFloat;
 	typedef IBaseFieldVariant<double, ftDouble> TFieldDouble;
 }

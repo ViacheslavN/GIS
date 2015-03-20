@@ -26,7 +26,7 @@ void CreateSpatialRectField(const CommonLib::str_t& sFieldName, embDB::CDatabase
 
 	embDB::sFieldInfo fi;
 	fi.m_sFieldName = sFieldName;
-	fi.m_nFieldType = embDB::FT_SPATIAL_INDEX_VALUE_FIELD;
+	fi.m_nFieldType =0;// embDB::eShapeType;
 	fi.m_nFieldDataType = nType;
 	fi.m_Extent.m_minX = xMin;
 	fi.m_Extent.m_minY = yMin;
@@ -73,7 +73,7 @@ void CreateSpatialRectField(const CommonLib::str_t& sFieldName, embDB::CDatabase
 void TestSpatialField(embDB::CDatabase& db)
 {
 
-	embDB::CSchema* pSchema = db.getSchema();
+	/*embDB::CSchema* pSchema = db.getSchema();
 	embDB::CTable *pTable = pSchema->getTable("table_2");
 	embDB::IDBFieldHandler *pRectField = pTable->getField(_T("rect16spatialField"));
 	if(!pRectField)
@@ -83,5 +83,5 @@ void TestSpatialField(embDB::CDatabase& db)
 	else
 	{
 
-	}
+	}*/
 }

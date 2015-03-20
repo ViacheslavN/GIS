@@ -7,7 +7,7 @@ namespace embDB
 	static IDBFieldHandler* CreateValueField(sFieldInfo& fi, CDatabase* pDB)
 	{
 		IDBFieldHandler* pField = NULL;
-		switch(fi.m_nFieldDataType)
+		switch(fi.m_nFieldType)
 		{
 		case ftInteger8:
 			pField = new TOIDFieldINT8(pDB->getBTreeAlloc());
@@ -24,13 +24,13 @@ namespace embDB
 		case ftInteger32:
 			pField = new TOIDFieldINT32(pDB->getBTreeAlloc());
 			break;
-		case ftUIInteger32:
+		case ftUInteger32:
 			pField = new TOIDFieldUINT32(pDB->getBTreeAlloc());
 			break;
 		case ftInteger64:
 			pField = new TOIDFieldINT64(pDB->getBTreeAlloc());
 			break;
-		case ftUIInteger64:
+		case ftUInteger64:
 			pField = new TOIDFieldUINT64(pDB->getBTreeAlloc());
 			break;
 		case ftFloat:
@@ -51,7 +51,7 @@ namespace embDB
 	static IDBIndexHandler* CreateMultiIndex(sFieldInfo& fi, CDatabase* pDB)
 	{
 		IDBIndexHandler* pIndex = NULL;
-		switch(fi.m_nFieldDataType)
+		switch(fi.m_nFieldType)
 		{
 		case ftInteger8:
 			pIndex = new TMultiIndexINT8(pDB->getBTreeAlloc());
@@ -68,13 +68,13 @@ namespace embDB
 		case ftInteger32:
 			pIndex = new TMultiIndexINT32(pDB->getBTreeAlloc());
 			break;
-		case ftUIInteger32:
+		case ftUInteger32:
 			pIndex = new TMultiIndexUINT32(pDB->getBTreeAlloc());
 			break;
 		case ftInteger64:
 			pIndex = new TMultiIndexNT64(pDB->getBTreeAlloc());
 			break;
-		case ftUIInteger64:
+		case ftUInteger64:
 			pIndex = new TMultiIndexNT64(pDB->getBTreeAlloc());
 			break;
 		case ftFloat:

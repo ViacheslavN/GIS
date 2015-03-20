@@ -11,5 +11,13 @@
 #include <tchar.h>
 
 
+#include "../../EmbDB/Database.h"
+#include "../../EmbDB/VariantField.h"
+#include "../../EmbDB/IField.h"
+#include "../../EmbDB/Table.h"
+#include "../../EmbDB/OIDField.h"
+#include "../../EmbDB/Transactions.h"
+#include "../../EmbDB/BitMap.h"
+
 
 // TODO: reference additional headers your program requires here

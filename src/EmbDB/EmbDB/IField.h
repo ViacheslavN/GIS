@@ -15,8 +15,8 @@ namespace embDB
 		ftInteger64,
 		ftUInteger8,
 		ftUInteger16,
-		ftUIInteger32,
-		ftUIInteger64,
+		ftUInteger32,
+		ftUInteger64,
 		ftOid,
 		ftFloat,
 		ftDouble,
@@ -36,6 +36,7 @@ namespace embDB
 	};
 	enum eDataTypesExt
 	{
+		dteSimple = 0,
 		dteIsNotEmpty = 1,
 		dteIsUNIQUE = 2,
 		dteIsCounter = 4,
