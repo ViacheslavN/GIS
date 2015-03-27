@@ -33,7 +33,7 @@ namespace embDB
 		{
 			return pVal->setVal(m_ParentIt.key().m_key);
 		}
-		virtual uint64 getObjectID()
+		virtual uint64 getRowID()
 		{
 			return m_ParentIt.key().m_nObjectID;
 		}

@@ -871,7 +871,7 @@ namespace embDB
 			return TIterator(this, NULL, NULL);
 		if(m_pRoot->isLeaf())
 		{
-			return TIterator(this, m_pRoot.get(), 0);
+			return TIterator(this, m_pRoot.get(), m_pRoot->count() ? 0 : -1);
 		}
 		int64 nNextAddr = m_pRoot->less();
 		//int64 nParent = m_pRoot->addr();

@@ -151,6 +151,9 @@
     <Filter Include="DB\Table">
       <UniqueIdentifier>{8e35fad5-4a97-4f20-93b7-810c27bd7cbc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\Fields\Counters">
+      <UniqueIdentifier>{bd557f27-de7f-414a-9a85-7a7cd002971a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -275,9 +278,6 @@
     </ClInclude>
     <ClInclude Include="IDBBTreeNode.h">
       <Filter>SDK\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="OIDField.h">
-      <Filter>DB\Fields</Filter>
     </ClInclude>
     <ClInclude Include="VariantField.h">
       <Filter>DB\Fields</Filter>
@@ -657,6 +657,18 @@
     <ClInclude Include="TableHeader.h">
       <Filter>DB\Table</Filter>
     </ClInclude>
+    <ClInclude Include="LeafCounterCompress.h">
+      <Filter>DB\Fields\Counters</Filter>
+    </ClInclude>
+    <ClInclude Include="CounterField.h">
+      <Filter>DB\Fields\Counters</Filter>
+    </ClInclude>
+    <ClInclude Include="ValueField.h">
+      <Filter>DB\Fields</Filter>
+    </ClInclude>
+    <ClInclude Include="RowIDCounter.h">
+      <Filter>DB\Table</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -691,9 +703,6 @@
     </ClCompile>
     <ClCompile Include="FreePageManage.cpp">
       <Filter>storage</Filter>
-    </ClCompile>
-    <ClCompile Include="OIDField.cpp">
-      <Filter>DB\Fields</Filter>
     </ClCompile>
     <ClCompile Include="Transactions.cpp">
       <Filter>DB\transactions</Filter>
@@ -757,6 +766,9 @@
     </ClCompile>
     <ClCompile Include="TableHeader.cpp">
       <Filter>DB\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="ValueField.cpp">
+      <Filter>DB\Fields</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -36,7 +36,7 @@ public:
 	{
 		return pVal->setVal(m_ParentIt.key());
 	}
-	virtual uint64 getObjectID()
+	virtual uint64 getRowID()
 	{
 		return m_ParentIt.value();
 	}
@@ -65,21 +65,6 @@ private:
 
 };
 
-
-class IndexFiled  
-{
-public:
-	IndexFiled() {}
-	virtual ~IndexFiled() {}
-	virtual bool insert (IFieldVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL) = 0;
-	virtual bool update (IFieldVariant* pOldIndexKey, IFieldVariant* pNewIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL) = 0;
-	virtual bool remove (IFieldVariant* pIndexKey, IIndexIterator** pRetIter = NULL) = 0;
-	virtual bool remove (IIndexIterator* pIter ) = 0;
-	virtual IndexIteratorPtr find(IFieldVariant* pIndexKey) = 0;
-	virtual IndexIteratorPtr lower_bound(IFieldVariant* pIndexKey) = 0;
-	virtual IndexIteratorPtr upper_bound(IFieldVariant* pIndexKey) = 0;
-	virtual bool commit() = 0;
-};
 
 
 

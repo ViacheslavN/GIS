@@ -470,6 +470,7 @@
     <ClInclude Include="BPVector.h" />
     <ClInclude Include="CacheMRU.h" />
     <ClInclude Include="CompressorParams.h" />
+    <ClInclude Include="CounterField.h" />
     <ClInclude Include="CRC.h" />
     <ClInclude Include="CreateFields.h" />
     <ClInclude Include="ICursor.h" />
@@ -478,6 +479,7 @@
     <ClInclude Include="IRefCnt.h" />
     <ClInclude Include="IShape.h" />
     <ClInclude Include="ISpatialQuery.h" />
+    <ClInclude Include="LeafCounterCompress.h" />
     <ClInclude Include="MemPageCache.h" />
     <ClInclude Include="MultiIndex.h" />
     <ClInclude Include="MultiIndexBase.h" />
@@ -533,7 +535,8 @@
     <ClInclude Include="ITable.h" />
     <ClInclude Include="ITransactions.h" />
     <ClInclude Include="ListDBPage.h" />
-    <ClInclude Include="OIDField.h" />
+    <ClInclude Include="RowIDCounter.h" />
+    <ClInclude Include="ValueField.h" />
     <ClInclude Include="FilePage.h" />
     <ClInclude Include="FilePageType.h" />
     <ClInclude Include="Key.h" />
@@ -626,7 +629,7 @@
     <ClCompile Include="DBTranManager.cpp" />
     <ClCompile Include="DirectTransactions.cpp" />
     <ClCompile Include="FreePageManage.cpp" />
-    <ClCompile Include="OIDField.cpp" />
+    <ClCompile Include="ValueField.cpp" />
     <ClCompile Include="FilePage.cpp" />
     <ClCompile Include="MemPageCache.cpp" />
     <ClCompile Include="Schema.cpp" />

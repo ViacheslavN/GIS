@@ -207,11 +207,11 @@ namespace embDB
 			{
 				return true;
 			}
-			IOIDFiled* getOIDField(IDBTransactions* pTransactions, IDBStorage *pStorage) 
+			IValueFiled* getOIDField(IDBTransactions* pTransactions, IDBStorage *pStorage) 
 			{
 				return NULL;
 			}
-			bool release(IOIDFiled* pField)
+			bool release(IValueFiled* pField)
 			{
 				return true;
 			}

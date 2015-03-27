@@ -10,34 +10,34 @@ namespace embDB
 		switch(fi.m_nFieldType)
 		{
 		case ftInteger8:
-			pField = new TOIDFieldINT8(pDB->getBTreeAlloc());
+			pField = new TValFieldINT8(pDB->getBTreeAlloc());
 			break;
 		case ftUInteger8:
-			pField = new TOIDFieldUINT8(pDB->getBTreeAlloc());
+			pField = new TValFieldUINT8(pDB->getBTreeAlloc());
 			break;
 		case ftInteger16:
-			pField = new TOIDFieldINT16(pDB->getBTreeAlloc());
+			pField = new TValFieldINT16(pDB->getBTreeAlloc());
 			break;
 		case ftUInteger16:
-			pField = new TOIDFieldUINT16(pDB->getBTreeAlloc());
+			pField = new TValFieldUINT16(pDB->getBTreeAlloc());
 			break;
 		case ftInteger32:
-			pField = new TOIDFieldINT32(pDB->getBTreeAlloc());
+			pField = new TValFieldINT32(pDB->getBTreeAlloc());
 			break;
 		case ftUInteger32:
-			pField = new TOIDFieldUINT32(pDB->getBTreeAlloc());
+			pField = new TValFieldUINT32(pDB->getBTreeAlloc());
 			break;
 		case ftInteger64:
-			pField = new TOIDFieldINT64(pDB->getBTreeAlloc());
+			pField = new TValFieldINT64(pDB->getBTreeAlloc());
 			break;
 		case ftUInteger64:
-			pField = new TOIDFieldUINT64(pDB->getBTreeAlloc());
+			pField = new TValFieldUINT64(pDB->getBTreeAlloc());
 			break;
 		case ftFloat:
-			pField = new TOIDFieldFloat(pDB->getBTreeAlloc());
+			pField = new TValFieldFloat(pDB->getBTreeAlloc());
 			break;
 		case ftDouble:
-			pField = new TOIDFieldDouble(pDB->getBTreeAlloc());
+			pField = new TValFieldDouble(pDB->getBTreeAlloc());
 			break;
 		}
 

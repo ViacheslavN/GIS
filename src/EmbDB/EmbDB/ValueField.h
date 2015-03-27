@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_FIELD_RID_H_
-#define _EMBEDDED_DATABASE_FIELD_RID_H_
+#ifndef _EMBEDDED_DATABASE_FIELD_VALUE_H_
+#define _EMBEDDED_DATABASE_FIELD_VALUE_H_
 #include "Key.h"
 #include "BaseBPMapv2.h"
 #include "VariantField.h"
@@ -31,10 +31,10 @@ namespace embDB
 	
 
 	template<class _TBTree>
-	class OIDFieldBase 
+	class ValueFieldBase 
 	{
 	public:
-		OIDFieldBase( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
+		ValueFieldBase( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
 			  m_pDBTransactions(pTransactions),
 			  m_tree(-1, pTransactions, pAlloc, 100), 
 			  m_nBTreeRootPage(-1)
@@ -126,7 +126,7 @@ namespace embDB
 		{
 			return pVal->setVal(m_ParentIt.value());
 		}
-		virtual uint64 getObjectID()
+		virtual uint64 getRowID()
 		{
 			return m_ParentIt.key();
 		}
@@ -158,7 +158,7 @@ namespace embDB
 	
 	
 	template<class _FType, class _TBTree, int FieldDataType>
-	class OIDField : public OIDFieldBase<_TBTree>, public  IOIDFiled
+	class ValueField : public ValueFieldBase<_TBTree>, public  IValueFiled
 	{
 		public:
 	 
@@ -178,13 +178,13 @@ namespace embDB
 				}
 			};
 
-			OIDField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
-			  OIDFieldBase(pTransactions, pAlloc)
+			ValueField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
+			  ValueFieldBase(pTransactions, pAlloc)
 			{
 
 			}
-			~OIDField(){}
-			typedef OIDFieldBase<_TBTree> TBase;
+			~ValueField(){}
+			typedef ValueFieldBase<_TBTree> TBase;
 			typedef typename TBase::TBTree TBTree;
 			typedef typename TBTree::iterator  iterator;
 			typedef _FType FType;
@@ -274,6 +274,18 @@ namespace embDB
 				TFieldIterator *pFiledIterator = new TFieldIterator(it);
 				return FieldIteratorPtr(pFiledIterator);
 			}
+			FieldIteratorPtr begin()
+			{
+				TBTree::iterator it = m_tree.begin();
+				TFieldIterator *pFiledIterator = new TFieldIterator(it);
+				return FieldIteratorPtr(pFiledIterator);
+			}
+			virtual FieldIteratorPtr last()
+			{
+				TBTree::iterator it = m_tree.last();
+				TFieldIterator *pFiledIterator = new TFieldIterator(it);
+				return FieldIteratorPtr(pFiledIterator);
+			}
 			virtual bool commit()
 			{
 				return m_tree.commit();
@@ -284,16 +296,16 @@ namespace embDB
 
 
 	template<class _FType, class _TBTree, int FieldDataType>
-	class OIDFieldRO : public OIDFieldBase<_TBTree>,  IOIDFiledRO
+	class OIDFieldRO : public ValueFieldBase<_TBTree>,  IOIDFiledRO
 	{
 	public:
 		OIDFieldRO( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
-		  OIDFieldBase(pTransactions, pAlloc)
+		  ValueFieldBase(pTransactions, pAlloc)
 		  {
 
 		  }
 		  ~OIDFieldRO(){}
-		  typedef OIDFieldBase<_TBTree> TBase;
+		  typedef ValueFieldBase<_TBTree> TBase;
 		  typedef typename TBase::TBTree TBTree;
 		  typedef _FType FType;
 
@@ -309,7 +321,7 @@ namespace embDB
 	template<class _FType, int FieldDataType,
 		class _TLeafCompressor = embDB::BPLeafNodeMapSimpleCompressorV2<uint64, _FType > 	
 	>
-	class OIDFieldHandler : public IDBFieldHandler
+	class ValueFieldHandler : public IDBFieldHandler
 	{
 		public:
 
@@ -320,13 +332,13 @@ namespace embDB
 			typedef embDB::TBPMapV2<uint64, FType, embDB::comp<uint64>, 
 				embDB::IDBTransactions, TInnerCompressor, TLeafCompressor> TBTree;
  
-			typedef OIDField<FType, TBTree, FieldDataType> TOIDField;
+			typedef ValueField<FType, TBTree, FieldDataType> TField;
 	
-			OIDFieldHandler(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc), m_pIndexHandler(0)
+			ValueFieldHandler(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc), m_pIndexHandler(0)
 			{
 
 			}
-			~OIDFieldHandler()
+			~ValueFieldHandler()
 			{
 
 			}
@@ -375,7 +387,7 @@ namespace embDB
 				pPage->setFlag(eFP_CHANGE, true);
 				pTran->saveFilePage(pPage);
 
-				TOIDField field(pTran, m_pAlloc);
+				TField field(pTran, m_pAlloc);
 				field.init(m_nBTreeRootPage);
 				return field.save();
 			}
@@ -384,20 +396,20 @@ namespace embDB
 				return true;
 			}
 
-			virtual IOIDFiled* getOIDField(IDBTransactions* pTransactions, IDBStorage *pStorage)
+			virtual IValueFiled* getOIDField(IDBTransactions* pTransactions, IDBStorage *pStorage)
 			{
 
-				TOIDField * pField = new  TOIDField(pTransactions, m_pAlloc);
+				TField * pField = new  TField(pTransactions, m_pAlloc);
 				pField->load(m_fi.m_nFieldPage);
 				return pField;	
 			}
 
 		
-			virtual bool release(IOIDFiled* pField)
+			virtual bool release(IValueFiled* pField)
 			{
-				TOIDField* pOIDField = (TOIDField*)pField;
+				TField* pOIDField = (TField*)pField;
 
-				TOIDField::TBTree *pBTree = pOIDField->getBTree();
+				TField::TBTree *pBTree = pOIDField->getBTree();
 
 				delete pField;
 				return true;
@@ -430,16 +442,16 @@ namespace embDB
 		public:
 	};*/
 
-	typedef OIDFieldHandler<int64, ftInteger64> TOIDFieldINT64;
-	typedef OIDFieldHandler<uint64, ftUInteger64> TOIDFieldUINT64;
-	typedef OIDFieldHandler<int32, ftInteger32> TOIDFieldINT32;
-	typedef OIDFieldHandler<uint32, ftUInteger32> TOIDFieldUINT32;
-	typedef OIDFieldHandler<int16, ftInteger16> TOIDFieldINT16;
-	typedef OIDFieldHandler<uint16, ftUInteger16> TOIDFieldUINT16;
-	typedef OIDFieldHandler<int32, ftUInteger8> TOIDFieldINT8;
-	typedef OIDFieldHandler<uint32, ftInteger8> TOIDFieldUINT8;
-	typedef OIDFieldHandler<double, ftDouble> TOIDFieldDouble;
-	typedef OIDFieldHandler<float, ftFloat> TOIDFieldFloat;
+	typedef ValueFieldHandler<int64, ftInteger64> TValFieldINT64;
+	typedef ValueFieldHandler<uint64, ftUInteger64> TValFieldUINT64;
+	typedef ValueFieldHandler<int32, ftInteger32> TValFieldINT32;
+	typedef ValueFieldHandler<uint32, ftUInteger32> TValFieldUINT32;
+	typedef ValueFieldHandler<int16, ftInteger16> TValFieldINT16;
+	typedef ValueFieldHandler<uint16, ftUInteger16> TValFieldUINT16;
+	typedef ValueFieldHandler<int32, ftUInteger8> TValFieldINT8;
+	typedef ValueFieldHandler<uint32, ftInteger8> TValFieldUINT8;
+	typedef ValueFieldHandler<double, ftDouble> TValFieldDouble;
+	typedef ValueFieldHandler<float, ftFloat> TValFieldFloat;
     //typedef OIDFieldCounter<int32, ftInteger32> TOIDFieldINT32Counter;
 	 
 }

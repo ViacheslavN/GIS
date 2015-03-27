@@ -5,7 +5,7 @@
 #include "Key.h"
 #include "BaseBTree.h"
 #include "VariantField.h"
-#include "OIDField.h"
+#include "ValueField.h"
 #include "DBFieldInfo.h"
 #include <vector>
 #include <map>
@@ -100,6 +100,7 @@ namespace embDB
 			bool saveFields(IDBTransactions *pTran);
 			bool loadTableStorage(int64 nAddr);
 			bool ReadIndices(int64 nAddr, IDBTransactions *pTran);
+			bool BuildIndex(IDBIndexHandler* pIndexHandler, IDBFieldHandler *pFieldHandler, IDBTransactions* pTran);
 			
 	    private:
 			typedef std::map<CommonLib::str_t, IDBFieldHandler*> TFieldByName;
@@ -111,8 +112,8 @@ namespace embDB
 
 			typedef TPageVector<int64> TFieldPages;
  
-			TFieldByName m_OIDFieldByName;
-			TFieldByID m_OIDFieldByID;
+			TFieldByName m_FieldByName;
+			TFieldByID m_FieldByID;
 
 			TIndexByName m_IndexByName;
 			TIndexByID m_IndexByID;
@@ -122,7 +123,7 @@ namespace embDB
 			int64 m_nStoragePageID;
 			int64 m_nFieldsPage;
 			int64 m_nIndexsPage;
-			int64 m_nLastRecOID;
+			int64 m_nRowIDPage;
 			CStorage* m_pMainDBStorage;
 			CommonLib::str_t m_sTableName;
 			CDatabase* m_pDB;
