@@ -22,6 +22,9 @@
     <Filter Include="Clip">
       <UniqueIdentifier>{8dfe6908-9ead-463a-8044-3d223116a2c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GraphTypes\img">
+      <UniqueIdentifier>{5a75d6dd-593a-45ee-94ad-2c4546efa46a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -69,6 +72,12 @@
     <ClInclude Include="Clip.h">
       <Filter>Clip</Filter>
     </ClInclude>
+    <ClInclude Include="ReadPng.h">
+      <Filter>GraphTypes\img</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadJPG.h">
+      <Filter>GraphTypes\img</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -76,6 +85,15 @@
     </ClCompile>
     <ClCompile Include="Color.cpp">
       <Filter>GraphTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Bitmap.cpp">
+      <Filter>GraphTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="ReadPng.cpp">
+      <Filter>GraphTypes\img</Filter>
+    </ClCompile>
+    <ClCompile Include="ReadJPG.cpp">
+      <Filter>GraphTypes\img</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

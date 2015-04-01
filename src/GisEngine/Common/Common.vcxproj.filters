@@ -30,9 +30,15 @@
     <ClInclude Include="StreamSerialize.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Units.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Units.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

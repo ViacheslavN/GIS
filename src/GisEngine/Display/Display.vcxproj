@@ -230,7 +230,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB-1.2.8/;../../ThirdParty/jpeg-9a/;../../ThirdParty/LIBPNG-1.2.29;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -243,7 +243,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB-1.2.8/;../../ThirdParty/jpeg-9a/;../../ThirdParty/LIBPNG-1.2.29;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -259,6 +259,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB-1.2.8/;../../ThirdParty/jpeg-9a/;../../ThirdParty/LIBPNG-1.2.29;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -271,6 +272,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB-1.2.8/;../../ThirdParty/jpeg-9a/;../../ThirdParty/LIBPNG-1.2.29;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -286,7 +288,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB-1.2.8/;../../ThirdParty/jpeg-9a/;../../ThirdParty/LIBPNG-1.6.16;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -302,8 +304,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB-1.2.8/;../../ThirdParty/jpeg-9a/;../../ThirdParty/LIBPNG-1.2.29;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -321,7 +324,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB-1.2.8/;../../ThirdParty/jpeg-9a/;../../ThirdParty/LIBPNG-1.2.29;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -338,7 +341,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB-1.2.8/;../../ThirdParty/jpeg-9a/;../../ThirdParty/LIBPNG-1.2.29;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -358,7 +361,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB-1.2.8/;../../ThirdParty/jpeg-9a/;../../ThirdParty/LIBPNG-1.2.29;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -379,6 +382,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB-1.2.8/;../../ThirdParty/jpeg-9a/;../../ThirdParty/LIBPNG-1.2.29;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -395,6 +399,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB-1.2.8/;../../ThirdParty/jpeg-9a/;../../ThirdParty/LIBPNG-1.2.29;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -413,8 +418,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB-1.2.8/;../../ThirdParty/jpeg-9a/;../../ThirdParty/LIBPNG-1.2.29;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -440,13 +446,18 @@
     <ClInclude Include="GraphTypes.h" />
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="Point.h" />
+    <ClInclude Include="ReadJPG.h" />
+    <ClInclude Include="ReadPng.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Vector3d.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="ReadJPG.cpp" />
+    <ClCompile Include="ReadPng.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugShared|Win32'">Create</PrecompiledHeader>

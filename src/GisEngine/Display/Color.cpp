@@ -90,11 +90,11 @@ namespace GisEngine
 			return !(this->operator ==(c));
 		}
 
-		void Color::Save(CommonLib::IWriteStream *pStream) const
+		void Color::save(CommonLib::IWriteStream *pStream) const
 		{
 			pStream->write(rgba_);
 		}
-		void Color::Load(CommonLib::IReadStream *pStream)
+		void Color::load(CommonLib::IReadStream *pStream)
 		{
 			rgba_ = pStream->readIntu32();
 		}

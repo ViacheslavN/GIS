@@ -233,7 +233,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary;d:\ThirdParty\freetype-2.4.4\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/freetype-2.5.4/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -279,7 +279,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary;d:\ThirdParty\freetype-2.4.4\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/freetype-2.5.4/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -330,7 +330,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary;d:\ThirdParty\freetype-2.4.4\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/freetype-2.5.4/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -388,7 +388,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary;d:\ThirdParty\freetype-2.4.4\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/freetype-2.5.4/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

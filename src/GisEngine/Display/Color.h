@@ -1,5 +1,5 @@
-#ifndef GIS_ENGINE_DISPLAY_GRAPHICS_TYPES_H_
-#define GIS_ENGINE_DISPLAY_GRAPHICS_TYPES_H_
+#ifndef GIS_ENGINE_DISPLAY_COLOR_H_
+#define GIS_ENGINE_DISPLAY_COLOR_H_
 #include "GraphTypes.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/GeneralTypes.h"
@@ -40,8 +40,8 @@ namespace GisEngine
 			bool operator==(const Color& a) const;
 			bool operator!=(const Color& a) const;
 
-			void Save(CommonLib::IWriteStream *pStream) const;
-			void Load(CommonLib::IReadStream *pStream);
+			void save(CommonLib::IWriteStream *pStream) const;
+			void load(CommonLib::IReadStream *pStream);
 			
 
 		private:
