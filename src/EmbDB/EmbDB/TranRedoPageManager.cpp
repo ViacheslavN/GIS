@@ -56,7 +56,7 @@ bool CTranRedoPageManager::save()
 
 bool  CTranRedoPageManager::redo(CTranStorage *pTranStorage, IDBStorage* pDBStorage)
 {
-	{
+	/*{
 		TRedoPageList::iterator<CTranStorage> it =  m_UndoPages.begin(pTranStorage);
 		it.load();
 		while(!it.isNull())
@@ -74,7 +74,7 @@ bool  CTranRedoPageManager::redo(CTranStorage *pTranStorage, IDBStorage* pDBStor
 		}
 
 		pDBStorage->reload();
-	}
+	}*/
 	{
 		TRedoPageList::iterator<CTranStorage> it =  m_RedoPages.begin(pTranStorage);
 		it.load();
@@ -97,6 +97,7 @@ bool  CTranRedoPageManager::redo(CTranStorage *pTranStorage, IDBStorage* pDBStor
 				pDBStorage->removeFromFreePage(pageInfo.nDBAddr);
 
 			pPage->setAddr(pageInfo.nDBAddr);
+			pPage->setNeedEncrypt(false);
 			if(bRemove)
 			{
 				if(!bNew)

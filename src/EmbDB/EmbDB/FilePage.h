@@ -7,6 +7,7 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CRC.h"
 #include "IRefCnt.h"
+
 namespace embDB
 {
 	enum ePageFlags
@@ -109,6 +110,8 @@ public:
 	void setValid(bool bValid);
 	bool isCheck() const;
 	void setCheck(bool bCheck);
+	bool isNeedEncrypt() const;
+	void setNeedEncrypt(bool bEncrypt);
 protected:
 	byte *m_pData;
 	size_t m_nSize;
@@ -117,7 +120,7 @@ protected:
 	uint32 m_nFlags;
 	bool m_bValid;
 	bool m_bCheck;
-	
+	bool m_bIsNeedEncrypt;
 };
 
 typedef IRefCntPtr<CFilePage> FilePagePtr;

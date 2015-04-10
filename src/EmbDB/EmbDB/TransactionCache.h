@@ -11,6 +11,7 @@
 #include "BaseBPMapv2.h"
 #include <map>
 #include "TranPerfCounter.h"
+
 namespace embDB
 {
 	class CTranRedoPageManager;

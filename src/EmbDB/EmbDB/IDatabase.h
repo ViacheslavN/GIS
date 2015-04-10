@@ -9,6 +9,7 @@ namespace embDB
 	enum DBTransactionMode
 	{
 		eTMSingleTransactions,
+		eTMOneReadersManywriter,
 		eTMMultiTransactions
 	};
 	class IDatabase
@@ -16,8 +17,8 @@ namespace embDB
 	public:
 		IDatabase(){}
 		virtual ~IDatabase(){}
-		virtual bool open(const CommonLib::str_t& sDbName, const CommonLib::str_t& sWorkingPath = "")  = 0;
-		virtual bool create(const CommonLib::str_t& sDbName, size_t nPageSize, const CommonLib::str_t& sWorkingPath = "")  = 0;
+		virtual bool open(const CommonLib::str_t& sDbName, DBTransactionMode mode = eTMMultiTransactions, const CommonLib::str_t& sWorkingPath = "", const CommonLib::str_t& sPassword = "")  = 0;
+		virtual bool create(const CommonLib::str_t& sDbName, size_t nPageSize, DBTransactionMode mode = eTMMultiTransactions, const CommonLib::str_t& sWorkingPath = "", const CommonLib::str_t& sPassword = "")  = 0;
 		virtual bool close()  = 0;
 		virtual ITransactions* startTransaction(eTransactionsType trType) = 0;
 		virtual bool closeTransaction(ITransactions* ) = 0;

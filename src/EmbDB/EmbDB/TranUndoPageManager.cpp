@@ -43,6 +43,7 @@ namespace embDB
 				return false;
 			}
 			pFilePage->setAddr(pageInfo.nDBAddr);
+			pFilePage->setNeedEncrypt(false);
 			pDBStorage->saveFilePage(pFilePage);
 			it.next();
 		}

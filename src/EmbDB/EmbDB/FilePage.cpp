@@ -10,6 +10,7 @@ CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, size_t nSize, int64 nAddr) :
 	,m_nFlags(0)
 	,m_bValid(false)
 	,m_bCheck(false)
+	,m_bIsNeedEncrypt(true)
 {
 	m_pData =  (byte*)m_pAlloc->alloc(sizeof(byte) * m_nSize);
 
@@ -21,6 +22,7 @@ CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, size_t nSize, in
 	,m_nFlags(0)
 	,m_bValid(false)
 	,m_bCheck(false)
+	,m_bIsNeedEncrypt(true)
 {
 	m_pData =  (byte*)m_pAlloc->alloc(sizeof(byte) * m_nSize);
 	memcpy(m_pData, pData, nSize);
@@ -33,6 +35,7 @@ CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, size_t nSize, in
 	,m_nFlags(0)
 	,m_bValid(false)
 	,m_bCheck(false)
+	,m_bIsNeedEncrypt(true)
 {
 	m_pData =  pData;
 
@@ -97,4 +100,13 @@ void CFilePage::setCheck(bool bCheck)
 {
 	m_bCheck = bCheck;
 }
+bool CFilePage::isNeedEncrypt() const
+{
+	return m_bIsNeedEncrypt;
+}
+void CFilePage::setNeedEncrypt(bool bEncrypt)
+{
+	m_bIsNeedEncrypt = bEncrypt;
+}
+
 }

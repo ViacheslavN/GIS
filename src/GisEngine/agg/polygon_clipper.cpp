@@ -1,5 +1,6 @@
 #include "polygon_clipper.h"
 #include "stdafx.h"
+#include <xutility>
 namespace agg
 {
 polygon_clipper::polygon_clipper() : inited_(false)
@@ -125,8 +126,8 @@ void polygon_clipper::calc_strip_count()
 void polygon_clipper::calc_edge_prj(ClipEdge &clipEdge, double stripMinY, double stripMaxY, double &xInt1, double &xInt2)
 {
   // x-координаты проекции ребра на границы полосы
-  double minX = std::min(clipEdge.x1, clipEdge.x2);
-  double maxX = std::max(clipEdge.x1, clipEdge.x2);
+  double minX = min(clipEdge.x1, clipEdge.x2);
+  double maxX = max(clipEdge.x1, clipEdge.x2);
   xInt1 = clipEdge.x1 + stripMinY * clipEdge.k - clipEdge.yk;
   if(clipEdge.k == 0)
     xInt1 = minX;
@@ -170,8 +171,8 @@ void polygon_clipper::calc_interval_borders(double stripMinY, double stripMaxY, 
             (xInt1 <= intervalBorders[intInd + 1] && intervalBorders[intInd + 1] <= xInt2))
           {
             foundAny = true;
-            xInt1 = std::min(intervalBorders[intInd], xInt1);
-            xInt2 = std::max(intervalBorders[intInd + 1], xInt2);
+            xInt1 = min(intervalBorders[intInd], xInt1);
+            xInt2 = max(intervalBorders[intInd + 1], xInt2);
             if(xInt1 < intervalBorders[intInd] || xInt2 > intervalBorders[intInd + 1])
             {
               if(intervalBorders.size() - intInd > 2)

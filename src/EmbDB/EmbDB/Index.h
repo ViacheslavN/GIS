@@ -8,29 +8,25 @@ namespace embDB
 {
 
 template<class TBTree>
-class IndexIterator: public IIndexIterator
+class TIndexIterator: public IIndexIterator
 {
 public:
 	typedef typename TBTree::iterator  iterator;
 
-	IndexIterator(iterator& it) : m_ParentIt(it){}
-	virtual ~IndexIterator(){}
+	TIndexIterator(iterator& it) : m_ParentIt(it){}
+	virtual ~TIndexIterator(){}
 
-	virtual bool isValid()
-	{
-		return !m_ParentIt.isNull();
-	}
-	virtual bool next() 
+	virtual bool next()
 	{
 		return m_ParentIt.next();
-	}
-	virtual bool back() 
-	{
-		return m_ParentIt.back();
 	}
 	virtual bool isNull()
 	{
 		return m_ParentIt.isNull();
+	}
+	virtual bool isValid()
+	{
+		return !m_ParentIt.isNull();
 	}
 	virtual bool getKey(IFieldVariant* pVal)
 	{
@@ -40,7 +36,6 @@ public:
 	{
 		return m_ParentIt.value();
 	}
-
 	virtual int64 addr() const
 	{
 		return m_ParentIt.addr();
@@ -49,25 +44,18 @@ public:
 	{
 		return m_ParentIt.pos();
 	}
-
-	virtual bool copy(IndexIterator *pIter)
+	virtual bool copy(IIndexIterator *pIter)
 	{
 		return m_ParentIt.setAddr(pIter->addr(), pIter->pos());
 	}
-
 	void set(iterator it)
 	{
 		m_ParentIt = it;
 	}
-
-private:
+	public:
 	iterator m_ParentIt;
 
 };
-
-
-
-
 
 
 template<class _TBTree>
@@ -87,7 +75,7 @@ public:
 	  {
 		  return m_tree.saveBTreeInfo();
 	  }
-	  virtual bool load(int64 nAddr)
+	  virtual bool load(int64 nAddr, eTransactionsType type)
 	  {
 
 		  int64 m_nFieldInfoPage = nAddr;
@@ -132,77 +120,6 @@ protected:
 	int64 m_nBTreeRootPage;
 };
 
-/*
-
-
-template<class _TIndexType, class _TBTree, int FieldDataType>
-class CIndexField : public CIndexBase<_TBTree>, public  IndexFiled
-{
-public:
-
-
-	typedef IndexIterator<_TBTree> TFieldIterator;
-
-	CIndexField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
-	CIndexBase(pTransactions, pAlloc)
-	{}
-	~CIndexField(){}
-	typedef OIDFieldBase<_TBTree> TBase;
-	typedef typename TBase::TBTree TBTree;
-	typedef _TIndexType TIndexType;
-
-	virtual bool insert (IFieldVariant* pIndexKey, uint64 nOID, IIndexIterator* pIter = NULL)
-	{
-		TIndexType val;
-		pIndexKey->getVal(val);
-		if(pIter)
-		else
-		return m_tree.insert(val, nOID);
-
-	}
-	virtual uint64 insert (IFieldVariant* pFieldVal)
-	{
-		FType val;
-		pFieldVal->getVal(val);
-		uint64 nOID;
-		if(!m_tree.insertLast(TOIDIncFunctor(), val, &nOID))
-			return  0;
-		return nOID;
-	}
-	virtual bool update (uint64 nOID, IFieldVariant* pFieldVal)
-	{
-		FType val;
-		pFieldVal->getVal(val);
-		return  m_tree.update(nOID, val);
-	}
-	virtual bool remove(uint64 nOID)
-	{
-		return m_tree.remove(nOID);
-	}
-	virtual bool find(uint64 nOID, IFieldVariant* pFieldVal)
-	{
-		TBTree::iterator it = m_tree.find(nOID);
-		if(it.isNull())
-			return false;
-		return pFieldVal->setVal(it.value());
-	}
-	FieldIteratorPtr find(uint64 nOID)
-	{
-		TBTree::iterator it = m_tree.find(nOID);
-		TFieldIterator *pFiledIterator = new TFieldIterator(it);
-		return FieldIteratorPtr(pFiledIterator);
-	}
-	virtual bool commit()
-	{
-		return m_tree.commit();
-	}
-
-};*/
-
-
-
-
-
 
 class IDBIndexHandler : IField
 {
@@ -218,12 +135,86 @@ public:
 
 	virtual bool lock() =0;
 	virtual bool unlock() =0;
-
 	virtual bool isCanBeRemoving() = 0;
 
 };
 
 
+
+
+class CIndexHandlerBase : public IDBIndexHandler
+{
+public:
+
+	CIndexHandlerBase(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc)
+	{}
+	~CIndexHandlerBase(){}
+
+	template<class TField>
+	bool save(int64 nAddr, IDBTransactions *pTran, CommonLib::alloc_t *pAlloc,  uint16 nObjectPageType, uint16 nSubObjectPageType  )
+	{
+		//m_nFieldInfoPage = nAddr;
+		FilePagePtr pPage(pTran->getFilePage(nAddr));
+		if(!pPage.get())
+			return false;
+		CommonLib::FxMemoryWriteStream stream;
+		stream.attach(pPage->getRowData(), pPage->getPageSize());
+		sFilePageHeader header(stream, nObjectPageType, nSubObjectPageType);
+		int64 m_nBTreeRootPage = -1;
+		FilePagePtr pRootPage(pTran->getNewPage());
+		if(!pRootPage.get())
+			return false;
+		m_nBTreeRootPage = pRootPage->getAddr();
+		stream.write(m_nBTreeRootPage);
+		header.writeCRC32(stream);
+		pPage->setFlag(eFP_CHANGE, true);
+		pTran->saveFilePage(pPage);
+
+		TField field(pTran, pAlloc);
+		field.init(m_nBTreeRootPage);
+		return field.save();
+	}
+	virtual bool load(int64 nAddr, IDBStorage *pStorage)
+	{
+		return true;
+	}
+
+	virtual bool lock()
+	{
+		return true;
+	}
+	virtual bool unlock()
+	{
+		return true;
+	}
+
+	eDataTypes getType() const
+	{
+		return (eDataTypes)m_fi.m_nFieldDataType;
+	}
+	const CommonLib::str_t& getName() const
+	{
+		return m_fi.m_sFieldName;
+	}
+
+	virtual sFieldInfo* getFieldInfoType()
+	{
+		return &m_fi;
+	}
+	virtual void setFieldInfoType(sFieldInfo& fi)
+	{
+		m_fi = fi;
+	}
+	bool isCanBeRemoving()
+	{
+		return true;
+	}
+protected:
+	sFieldInfo m_fi;
+	CommonLib::alloc_t* m_pAlloc;
+
+
+};
 
 
 }

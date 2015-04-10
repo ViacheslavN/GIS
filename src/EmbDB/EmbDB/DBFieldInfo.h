@@ -24,6 +24,8 @@ namespace embDB
 		FT_SPATIAL_INDEX_VALUE_FIELD,
 		FT_MULTI_SPATIAL_INDEX_VALUE_FIELD
 	};*/
+
+
 	struct sFieldInfo
 	{
 		sFieldInfo() : 
@@ -210,7 +212,87 @@ namespace embDB
 	};
 
 
+	class CDBFieldHandlerBase  : IDBFieldHandler
+	{
+	public:
 
+		CDBFieldHandlerBase(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc), m_pIndexHandler(0)
+		{}
+		~CDBFieldHandlerBase(){}
+		template<class TField>
+		bool save(int64 nAddr, IDBTransactions *pTran, CommonLib::alloc_t *pAlloc,  uint16 nObjectPageType, uint16 nSubObjectPageType  )
+		{
+			//m_nFieldInfoPage = nAddr;
+			FilePagePtr pPage(pTran->getFilePage(nAddr));
+			if(!pPage.get())
+				return false;
+			CommonLib::FxMemoryWriteStream stream;
+			stream.attach(pPage->getRowData(), pPage->getPageSize());
+			sFilePageHeader header(stream, nObjectPageType, nSubObjectPageType);
+			int64 m_nBTreeRootPage = -1;
+			FilePagePtr pRootPage(pTran->getNewPage());
+			if(!pRootPage.get())
+				return false;
+			m_nBTreeRootPage = pRootPage->getAddr();
+			stream.write(m_nBTreeRootPage);
+			header.writeCRC32(stream);
+			pPage->setFlag(eFP_CHANGE, true);
+			pTran->saveFilePage(pPage);
 
+			TField field(pTran, pAlloc);
+			field.init(m_nBTreeRootPage);
+			return field.save();
+		}
+		bool isCanBeRemoving()
+		{
+			return true;
+		}
+
+		virtual void setIndexHandler(IDBIndexHandler *pIndexHandler)
+		{
+			m_pIndexHandler = pIndexHandler;
+		}
+		virtual IDBIndexHandler * getIndexIndexHandler()
+		{
+			return m_pIndexHandler;
+		}
+		virtual bool lock()
+		{
+			return true;
+		}
+		virtual bool unlock()
+		{
+			return true;
+		}
+
+		eDataTypes getType() const
+		{
+			return (eDataTypes)m_fi.m_nFieldDataType;
+		}
+		const CommonLib::str_t& getName() const
+		{
+			return m_fi.m_sFieldName;
+		}
+
+		virtual sFieldInfo* getFieldInfoType()
+		{
+			return &m_fi;
+		}
+		virtual void setFieldInfoType(sFieldInfo& fi)
+		{
+			m_fi = fi;
+		}
+		virtual bool load(int64 nAddr, IDBStorage *pStorage)
+		{
+			return true;
+		}
+
+	protected:
+		sFieldInfo m_fi;
+		CommonLib::alloc_t* m_pAlloc;
+		IDBIndexHandler *m_pIndexHandler;
+	};
+
+ 
 }
 #endif

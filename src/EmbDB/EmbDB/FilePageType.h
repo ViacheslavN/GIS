@@ -12,7 +12,8 @@ namespace embDB
 		FREE_PAGE_LIST,
 		STORAGE_PAGE,
 		TRANSACTION_PAGE,
-		INDEX_PAGE
+		INDEX_PAGE,
+		TRAN_MANAGE_PAGE
 	};
 	enum eDatabasePageType
 	{
@@ -35,7 +36,8 @@ namespace embDB
 		TABLE_FIELD_PAGE,
 		TABLE_FIELD_LIST_PAGE,
 		TABLE_INDEX_LIST_PAGE,
-		TABLE_INDEX_PAGE
+		TABLE_INDEX_PAGE,
+		TABLE_STORAGE_PAGE
 	};
 
 	enum eSchemaPageType
@@ -59,7 +61,8 @@ namespace embDB
 
 	enum eIndexPageType
 	{
-		INDEX_INFO_PAGE
+		INDEX_INFO_PAGE,
+		MULTI_INDEX_INFO_PAGE
 	};
 
 	enum eTransactionsPageType
@@ -68,6 +71,11 @@ namespace embDB
 		UNDO_FREEMAP_PAGES_ROOT,
 		UNDO_FREEMAP_PAGES_LIST,
 		REDO_PAGES
+	};
+
+	enum eTransactionsManagePage
+	{
+		TM_HEADER_PAGE
 	};
 }
 #endif

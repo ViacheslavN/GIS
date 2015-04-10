@@ -6,6 +6,7 @@
 #include "FilePage.h"
 #include "CommonLibrary/alloc_t.h"
 #include "TranPerfCounter.h"
+#include "PageCrypto.h"
 namespace embDB
 {
 	class CTranStorage
@@ -15,7 +16,7 @@ namespace embDB
 		~CTranStorage();
 		bool open(const CommonLib::str_t& sTranName, size_t nPageSize, bool bNew);
 		int64 saveFilePage(CFilePage* pPage, int64 nAddr = -1); //если nAddr = -1, то возвращаеться новый адрес
-		CFilePage* getFilePage(int64 nAddr, bool bRead = true);
+		CFilePage* getFilePage(int64 nAddr, bool bRead = true, bool bDecrypt = true);
 		CFilePage* getNewPage();
 		int64 getNewPageAddr();
 		bool close(bool bDelete = true);
@@ -30,6 +31,8 @@ namespace embDB
 		size_t m_nPageSize;
 		CommonLib::str_t m_sTranName;
 		CTranPerfCounter *m_pCounter;
+		IPageCrypto* m_pPageCrypto;
+		std::auto_ptr<CFilePage> m_pBufPageCrypto;
 	};
 }
 #endif

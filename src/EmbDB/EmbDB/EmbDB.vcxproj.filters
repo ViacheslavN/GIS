@@ -154,6 +154,12 @@
     <Filter Include="DB\Fields\Counters">
       <UniqueIdentifier>{bd557f27-de7f-414a-9a85-7a7cd002971a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\Fields\Index\UniqueIndex">
+      <UniqueIdentifier>{2d679e2c-b1df-465a-8fb7-6a5940c03102}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Crypto">
+      <UniqueIdentifier>{874a85fe-0a8c-45f7-b307-87b60ff208e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -668,6 +674,18 @@
     </ClInclude>
     <ClInclude Include="RowIDCounter.h">
       <Filter>DB\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="UniqueIndex.h">
+      <Filter>DB\Fields\Index\UniqueIndex</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeIndex.h">
+      <Filter>DB\Fields\Index\CompositeIndex</Filter>
+    </ClInclude>
+    <ClInclude Include="PageCrypto.h">
+      <Filter>Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="IConnection.h">
+      <Filter>SDK</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

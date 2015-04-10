@@ -54,8 +54,8 @@ namespace embDB
 		public:
 			CDatabase();
 			~CDatabase();
-			virtual bool open(const CommonLib::str_t& sDbName, const CommonLib::str_t& sWorkingPath = "");
-			virtual bool create(const CommonLib::str_t& sDbName, size_t nPageSize, const CommonLib::str_t& sWorkingPath = "");
+			virtual bool open(const CommonLib::str_t& sDbName,  DBTransactionMode mode, const CommonLib::str_t& sWorkingPath = "", const CommonLib::str_t& sPassword = "");
+			virtual bool create(const CommonLib::str_t& sDbName, size_t nPageSize, DBTransactionMode mode,  const CommonLib::str_t& sWorkingPath = "", const CommonLib::str_t& sPassword = "");
 			virtual bool close();
 			virtual ITransactions* startTransaction(eTransactionsType trType);
 			virtual bool closeTransaction(ITransactions* );

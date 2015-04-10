@@ -19,6 +19,7 @@ namespace embDB
 		, m_bCommitState(false)
 		, m_nCalcFileSize(0)
 		, m_MemCache(pAlloc)
+		, m_pPageCrypto(NULL)
 	 
 	{
 		
@@ -57,6 +58,8 @@ namespace embDB
 			//m_nLastAddr = m_nCalcFileSize/m_nPageSize;
 			m_MemCache.init(m_nPageSize, m_nMaxPageBuf);
 		}
+
+		m_pBufPageCrypto.reset( new CFilePage(m_pAlloc, m_nPageSize, -1));
 		return bRet;
 	}
 	void CStorage::setPageSize(size_t nPageSize)
@@ -112,6 +115,13 @@ namespace embDB
 			assert(bRet);
 			uint32 nWCnt = m_pFile.readFile((void*)pPage->getRowData(),  (uint32)m_nPageSize );
 			assert(nWCnt != 0);
+
+			if(m_pPageCrypto && pPage->isNeedEncrypt())
+			{
+				m_pPageCrypto->decrypt(pPage->getRowData(), pPage->getPageSize());
+			}
+			 
+
 			if(nWCnt == 0)
 			{
 				std::cout <<"Error read page addr: " << nAddr << "  set file : " << nAddr * m_nPageSize << std::endl;
@@ -260,7 +270,14 @@ namespace embDB
 		else
 			nWriteSize = nDataSize;
 	
-		uint32 nCnt = m_pFile.writeFile((void*)pPage->getRowData(), nWriteSize );
+		uint32 nCnt = 0;
+		if(m_pPageCrypto && pPage->isNeedEncrypt())
+		{
+			m_pPageCrypto->encrypt(pPage->getRowData(), pPage->getPageSize(), m_pBufPageCrypto->getRowData(), m_pBufPageCrypto->getPageSize());
+			nCnt = m_pFile.writeFile((void*)m_pBufPageCrypto->getRowData(), m_pBufPageCrypto->getPageSize());
+		}
+		else
+			nCnt = m_pFile.writeFile((void*)pPage->getRowData(), nWriteSize );
 		assert(nCnt == nWriteSize);
 		if(m_nCalcFileSize < (nFileAddr + m_nPageSize))
 		{

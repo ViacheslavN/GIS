@@ -45,7 +45,7 @@ namespace embDB
 	enum indexTypes
 	{
 		itUnknown   = 0x00,
-		itRegular,
+		itUnique,
 		itMultiRegular,
 		itSpatial,
 		itFreeText,

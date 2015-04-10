@@ -17,7 +17,7 @@ namespace embDB
 	{
 
 	}
-	bool CDatabase::open(const CommonLib::str_t& sDbName, const CommonLib::str_t& sWorkingPath)
+	bool CDatabase::open(const CommonLib::str_t& sDbName, DBTransactionMode mode, const CommonLib::str_t& sWorkingPath, const CommonLib::str_t& sPassword)
 	{
 		close();
 		bool bOpen =  m_pStorage->open(sDbName, false, false, false, false, DEFAULT_PAGE_SIZE);
@@ -37,7 +37,7 @@ namespace embDB
 		m_bOpen =  readRootPage(pFile.get());
 		return m_bOpen;
 	}
-	bool CDatabase::create(const CommonLib::str_t& sDbName, size_t nPageSize, const CommonLib::str_t& sWorkingPath)
+	bool CDatabase::create(const CommonLib::str_t& sDbName, size_t nPageSize, DBTransactionMode mode, const CommonLib::str_t& sWorkingPath, const CommonLib::str_t& sPassword)
 	{
 		close();
 		if(nPageSize <= 0 )

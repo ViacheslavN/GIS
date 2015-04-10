@@ -10,34 +10,34 @@ namespace embDB
 		switch(fi.m_nFieldType)
 		{
 		case ftInteger8:
-			pField = new TValFieldINT8(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldINT8(pDB->getBTreeAlloc());
 			break;
 		case ftUInteger8:
-			pField = new TValFieldUINT8(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldUINT8(pDB->getBTreeAlloc());
 			break;
 		case ftInteger16:
-			pField = new TValFieldINT16(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldINT16(pDB->getBTreeAlloc());
 			break;
 		case ftUInteger16:
-			pField = new TValFieldUINT16(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldUINT16(pDB->getBTreeAlloc());
 			break;
 		case ftInteger32:
-			pField = new TValFieldINT32(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldINT32(pDB->getBTreeAlloc());
 			break;
 		case ftUInteger32:
-			pField = new TValFieldUINT32(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldUINT32(pDB->getBTreeAlloc());
 			break;
 		case ftInteger64:
-			pField = new TValFieldINT64(pDB->getBTreeAlloc());
+			pField =(IDBFieldHandler*) new TValFieldINT64(pDB->getBTreeAlloc());
 			break;
 		case ftUInteger64:
-			pField = new TValFieldUINT64(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldUINT64(pDB->getBTreeAlloc());
 			break;
 		case ftFloat:
-			pField = new TValFieldFloat(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldFloat(pDB->getBTreeAlloc());
 			break;
 		case ftDouble:
-			pField = new TValFieldDouble(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldDouble(pDB->getBTreeAlloc());
 			break;
 		}
 
@@ -82,6 +82,48 @@ namespace embDB
 			break;
 		case ftDouble:
 			pIndex = new TMultiIndexDouble(pDB->getBTreeAlloc());
+			break;
+		}
+
+		return pIndex;
+	}
+
+
+
+	static IDBIndexHandler* CreateUniqueIndex(sFieldInfo& fi, CDatabase* pDB)
+	{
+		IDBIndexHandler* pIndex = NULL;
+		switch(fi.m_nFieldType)
+		{
+		case ftInteger8:
+			pIndex = new TUniqueIndexINT8(pDB->getBTreeAlloc());
+			break;
+		case ftUInteger8:
+			pIndex = new TUniqueIndexUINT8(pDB->getBTreeAlloc());
+			break;
+		case ftInteger16:
+			pIndex = new TUniqueIndexINT16(pDB->getBTreeAlloc());
+			break;
+		case ftUInteger16:
+			pIndex = new TUniqueIndexUINT16(pDB->getBTreeAlloc());
+			break;
+		case ftInteger32:
+			pIndex = new TUniqueIndexINT32(pDB->getBTreeAlloc());
+			break;
+		case ftUInteger32:
+			pIndex = new TUniqueIndexUINT32(pDB->getBTreeAlloc());
+			break;
+		case ftInteger64:
+			pIndex = new TUniqueIndexNT64(pDB->getBTreeAlloc());
+			break;
+		case ftUInteger64:
+			pIndex = new TUniqueIndexNT64(pDB->getBTreeAlloc());
+			break;
+		case ftFloat:
+			pIndex = new TUniqueIndexFloat(pDB->getBTreeAlloc());
+			break;
+		case ftDouble:
+			pIndex = new TUniqueIndexDouble(pDB->getBTreeAlloc());
 			break;
 		}
 

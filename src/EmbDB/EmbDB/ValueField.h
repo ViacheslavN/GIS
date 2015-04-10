@@ -47,7 +47,7 @@ namespace embDB
 			{
 				return m_tree.saveBTreeInfo();
 			}
-			virtual bool load(int64 nAddr)
+			virtual bool load(int64 nAddr, eTransactionsType type)
 			{
 
 				int64 m_nFieldInfoPage = nAddr;
@@ -292,36 +292,11 @@ namespace embDB
 			}
 		
 	};
-
-
-
-	template<class _FType, class _TBTree, int FieldDataType>
-	class OIDFieldRO : public ValueFieldBase<_TBTree>,  IOIDFiledRO
-	{
-	public:
-		OIDFieldRO( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
-		  ValueFieldBase(pTransactions, pAlloc)
-		  {
-
-		  }
-		  ~OIDFieldRO(){}
-		  typedef ValueFieldBase<_TBTree> TBase;
-		  typedef typename TBase::TBTree TBTree;
-		  typedef _FType FType;
-
-		  virtual bool find(int64 nOID, IFieldVariant* pFieldVal)
-		  {
-			  TBTree::iterator it = m_tree.find(nOID);
-			  if(it.isNull())
-				  return false;
-			  return pFieldVal->setVal(it.value());
-		  }
-	};
-
+	
 	template<class _FType, int FieldDataType,
 		class _TLeafCompressor = embDB::BPLeafNodeMapSimpleCompressorV2<uint64, _FType > 	
 	>
-	class ValueFieldHandler : public IDBFieldHandler
+	class ValueFieldHandler :  CDBFieldHandlerBase
 	{
 		public:
 
@@ -334,77 +309,21 @@ namespace embDB
  
 			typedef ValueField<FType, TBTree, FieldDataType> TField;
 	
-			ValueFieldHandler(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc), m_pIndexHandler(0)
-			{
-
-			}
+			ValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
+			{}
 			~ValueFieldHandler()
-			{
-
-			}
-			virtual bool lock()
-			{
-				return true;
-			}
-			virtual bool unlock()
-			{
-				return true;
-			}
-
-			eDataTypes getType() const
-			{
-				return (eDataTypes)m_fi.m_nFieldDataType;
-			}
-			const CommonLib::str_t& getName() const
-			{
-				return m_fi.m_sFieldName;
-			}
-
-			virtual sFieldInfo* getFieldInfoType()
-			{
-				return &m_fi;
-			}
-			virtual void setFieldInfoType(sFieldInfo& fi)
-			{
-				m_fi = fi;
-			}
+			{}
+			
 			virtual bool save(int64 nAddr, IDBTransactions *pTran)
 			{
-				//m_nFieldInfoPage = nAddr;
-				FilePagePtr pPage(pTran->getFilePage(nAddr));
-				if(!pPage.get())
-					return false;
-				CommonLib::FxMemoryWriteStream stream;
-				stream.attach(pPage->getRowData(), pPage->getPageSize());
-				sFilePageHeader header(stream, FIELD_PAGE, FIELD_INFO_PAGE);
-				int64 m_nBTreeRootPage = -1;
-				FilePagePtr pRootPage(pTran->getNewPage());
-				if(!pRootPage.get())
-					return false;
-				m_nBTreeRootPage = pRootPage->getAddr();
-				stream.write(m_nBTreeRootPage);
-				header.writeCRC32(stream);
-				pPage->setFlag(eFP_CHANGE, true);
-				pTran->saveFilePage(pPage);
-
-				TField field(pTran, m_pAlloc);
-				field.init(m_nBTreeRootPage);
-				return field.save();
+				return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE);
 			}
-			virtual bool load(int64 nAddr, IDBStorage *pStorage)
-			{
-				return true;
-			}
-
 			virtual IValueFiled* getOIDField(IDBTransactions* pTransactions, IDBStorage *pStorage)
 			{
-
 				TField * pField = new  TField(pTransactions, m_pAlloc);
-				pField->load(m_fi.m_nFieldPage);
+				pField->load(m_fi.m_nFieldPage, pTransactions->getType());
 				return pField;	
 			}
-
-		
 			virtual bool release(IValueFiled* pField)
 			{
 				TField* pOIDField = (TField*)pField;
@@ -414,34 +333,8 @@ namespace embDB
 				delete pField;
 				return true;
 			}
-
-			bool isCanBeRemoving()
-			{
-				return true;
-			}
-
-			virtual void setIndexHandler(IDBIndexHandler *pIndexHandler)
-			{
-				m_pIndexHandler = pIndexHandler;
-			}
-			virtual IDBIndexHandler * getIndexIndexHandler()
-			{
-				return m_pIndexHandler;
-			}
-
-		private:
-			sFieldInfo m_fi;
-			CommonLib::alloc_t* m_pAlloc;
-			IDBIndexHandler *m_pIndexHandler;
-
 	};
-
-	/*template<class _FType, int FieldDataType>
-	class OIDFieldCounter : public OIDField<_FType, FieldDataType>
-	{
-		public:
-	};*/
-
+ 
 	typedef ValueFieldHandler<int64, ftInteger64> TValFieldINT64;
 	typedef ValueFieldHandler<uint64, ftUInteger64> TValFieldUINT64;
 	typedef ValueFieldHandler<int32, ftInteger32> TValFieldINT32;
@@ -452,7 +345,6 @@ namespace embDB
 	typedef ValueFieldHandler<uint32, ftInteger8> TValFieldUINT8;
 	typedef ValueFieldHandler<double, ftDouble> TValFieldDouble;
 	typedef ValueFieldHandler<float, ftFloat> TValFieldFloat;
-    //typedef OIDFieldCounter<int32, ftInteger32> TOIDFieldINT32Counter;
-	 
+ 
 }
 #endif

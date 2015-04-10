@@ -469,10 +469,12 @@
     <ClInclude Include="BPTreeSPLeafNodeMap.h" />
     <ClInclude Include="BPVector.h" />
     <ClInclude Include="CacheMRU.h" />
+    <ClInclude Include="CompositeIndex.h" />
     <ClInclude Include="CompressorParams.h" />
     <ClInclude Include="CounterField.h" />
     <ClInclude Include="CRC.h" />
     <ClInclude Include="CreateFields.h" />
+    <ClInclude Include="IConnection.h" />
     <ClInclude Include="ICursor.h" />
     <ClInclude Include="IDBField.h" />
     <ClInclude Include="Index.h" />
@@ -484,6 +486,7 @@
     <ClInclude Include="MultiIndex.h" />
     <ClInclude Include="MultiIndexBase.h" />
     <ClInclude Include="MultiIndexBPTree.h" />
+    <ClInclude Include="PageCrypto.h" />
     <ClInclude Include="PageVectorLazySave.h" />
     <ClInclude Include="PoinMapInnerCompressor64.h" />
     <ClInclude Include="PoinMapLeafCompressor.h" />
@@ -536,6 +539,7 @@
     <ClInclude Include="ITransactions.h" />
     <ClInclude Include="ListDBPage.h" />
     <ClInclude Include="RowIDCounter.h" />
+    <ClInclude Include="UniqueIndex.h" />
     <ClInclude Include="ValueField.h" />
     <ClInclude Include="FilePage.h" />
     <ClInclude Include="FilePageType.h" />

@@ -12,6 +12,7 @@
 #include "IDBTransactions.h"
 #include "StorageInfo.h"
 #include "MemPageCache.h"
+#include "PageCrypto.h"
 namespace embDB
 {
 	class CStorage : public IDBStorage
@@ -88,6 +89,8 @@ namespace embDB
 		 bool m_bCommitState;
 		 uint64 m_nCalcFileSize;
 		 CMemPageCache m_MemCache;
+		 IPageCrypto *m_pPageCrypto;
+		 std::auto_ptr<CFilePage> m_pBufPageCrypto; 
 	};
 }
 
