@@ -436,7 +436,6 @@
     <ClInclude Include="BaseRBMultiTree.h" />
     <ClInclude Include="BaseRBTree.h" />
     <ClInclude Include="BitMap.h" />
-    <ClInclude Include="BitStream.h" />
     <ClInclude Include="BPCompressors.h" />
     <ClInclude Include="BPInneOIDNodeCompressor.h" />
     <ClInclude Include="BPInnerNodeSetROSimpleCompressor.h" />
@@ -474,6 +473,7 @@
     <ClInclude Include="CounterField.h" />
     <ClInclude Include="CRC.h" />
     <ClInclude Include="CreateFields.h" />
+    <ClInclude Include="ACIntegerDiffComp.h" />
     <ClInclude Include="IConnection.h" />
     <ClInclude Include="ICursor.h" />
     <ClInclude Include="IDBField.h" />

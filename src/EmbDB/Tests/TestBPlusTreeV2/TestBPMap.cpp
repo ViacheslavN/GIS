@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "stdafx.h"
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "../../EmbDB/BaseBPMapv2.h"

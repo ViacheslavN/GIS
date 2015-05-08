@@ -160,6 +160,9 @@
     <Filter Include="Crypto">
       <UniqueIdentifier>{874a85fe-0a8c-45f7-b307-87b60ff208e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\BPTrees\Compress">
+      <UniqueIdentifier>{f4ef3e23-0e89-465d-b967-eccf7545448c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -236,9 +239,6 @@
     </ClInclude>
     <ClInclude Include="NodeLoader.h">
       <Filter>DB\BPTrees\BTreeNotUse\BTreeNodeLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="BitStream.h">
-      <Filter>streams</Filter>
     </ClInclude>
     <ClInclude Include="Compressors.h">
       <Filter>DB\BPTrees\BTreeNotUse\BTreeNodeLoader\Compressors</Filter>
@@ -686,6 +686,9 @@
     </ClInclude>
     <ClInclude Include="IConnection.h">
       <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="ACIntegerDiffComp.h">
+      <Filter>DB\BPTrees\Compress</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -110,7 +110,7 @@ namespace CommonLib
 
 	void FxStreamBase::read_inverse(byte* buffer, size_t size)
 	{
-		for(int64 i = 0; i < size; m_nPos++, i++)
+		for(size_t i = 0; i < size; m_nPos++, i++)
 			buffer[i] = m_pBuffer[m_nPos + size - i - 1];
 		m_nPos += size;
 		assert(m_nPos <= m_nSize);

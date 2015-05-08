@@ -25,7 +25,7 @@ namespace embDB
 		~CHuffmanOIDComp();
 	private:
 		size_t m_nLenCounts[64];
-		sHuffmanNode m_pRootTree;
+		sHuffmanNode *m_pRootTree;
 
 	};
 }

@@ -8,7 +8,8 @@
 #include "targetver.h"
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-
-
+#include "CommonLibrary/general.h"
+#include "Commonlibrary/alloc_t.h"
+#include "Commonlibrary/str_t.h"
 
 // TODO: reference additional headers your program requires here

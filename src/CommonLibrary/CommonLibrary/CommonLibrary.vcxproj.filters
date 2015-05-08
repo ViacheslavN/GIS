@@ -40,6 +40,9 @@
     <Filter Include="SpatialData">
       <UniqueIdentifier>{66c87df4-8da9-48f3-abaf-ee8b8a6a8aa2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="stream\bits">
+      <UniqueIdentifier>{92084605-44d3-4e94-ba55-9952d4bba969}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -135,6 +138,9 @@
     <ClInclude Include="BoundaryBox.h">
       <Filter>SpatialData</Filter>
     </ClInclude>
+    <ClInclude Include="FixedBitStream.h">
+      <Filter>stream\bits</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -184,6 +190,9 @@
     </ClCompile>
     <ClCompile Include="BoundaryBox.cpp">
       <Filter>SpatialData</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedBitStream.cpp">
+      <Filter>stream\bits</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
