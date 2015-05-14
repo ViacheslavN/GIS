@@ -12,12 +12,12 @@ namespace GisEngine
 			GPoint(GUnits X, GUnits Y);
 			GPoint(const GPoint& gp);
 
-			bool    operator==(const CPoint&) const;
-			bool    operator!=(const CPoint&) const;
-			const GPoint &operator+=(const CPoint &);
-			const GPoint &operator-=(const CPoint &);
+			bool    operator==(const GPoint&) const;
+			bool    operator!=(const GPoint&) const;
+			const GPoint &operator+=(const GPoint &);
+			const GPoint &operator-=(const GPoint &);
 		public:
-			GPoint x, y;
+			GUnits m_x, m_y;
 		};
 	}
 }

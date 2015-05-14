@@ -396,9 +396,6 @@
     <ClInclude Include="ListDBPage.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="DirectTransactions.h">
-      <Filter>DB\transactions\DirectTran</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\BPTrees\BTreePlus\Compressors</Filter>
     </ClInclude>
@@ -692,6 +689,9 @@
     </ClInclude>
     <ClInclude Include="BPMapPointSpatialIterator.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectTransactions.h">
+      <Filter>DB\transactions\readonly</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -95,5 +95,11 @@
     <ClCompile Include="ReadJPG.cpp">
       <Filter>GraphTypes\img</Filter>
     </ClCompile>
+    <ClCompile Include="Point.cpp">
+      <Filter>GraphTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Rect.cpp">
+      <Filter>GraphTypes</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

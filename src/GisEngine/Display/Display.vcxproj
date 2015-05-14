@@ -456,8 +456,10 @@
   <ItemGroup>
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="Point.cpp" />
     <ClCompile Include="ReadJPG.cpp" />
     <ClCompile Include="ReadPng.cpp" />
+    <ClCompile Include="Rect.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugShared|Win32'">Create</PrecompiledHeader>
