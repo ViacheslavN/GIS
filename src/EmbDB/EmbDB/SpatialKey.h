@@ -45,7 +45,7 @@ namespace embDB
 			return (m_maxX < m_minX || (m_maxY < m_minY)); 
 		}
 
-		bool isIntersection(TRect2D& rect)
+		bool isIntersection(TRect2D& rect) const
 		{
 
 			if(IsEmpty() || rect.IsEmpty())
@@ -85,7 +85,7 @@ namespace embDB
 			else if(Y < m_minY)
 				m_minY = Y;
 		}
-		bool isInRectEQ (TRect2D& rect)
+		bool isInRectEQ (TRect2D& rect) const
 		{
 
 			if(m_minX <= rect.m_minX) return false;
@@ -94,7 +94,7 @@ namespace embDB
 			if(m_maxY >= rect.m_maxY) return false;
 			return true;
 		}
-		bool isInRect(TRect2D& rect)
+		bool isInRect(TRect2D& rect) const
 		{
 
 			if(m_minX < rect.m_minX) return false;
@@ -104,7 +104,7 @@ namespace embDB
 			return true;
 		}
 
-		bool isPoinInRectEQ (TPointType X, TPointType Y)
+		bool isPoinInRectEQ (TPointType X, TPointType Y) const
 		{
 
 			if(m_minX >= X) return false;
@@ -113,7 +113,7 @@ namespace embDB
 			if(m_maxY <= Y) return false;
 			return true;
 		}
-		bool isPoinInRect (TPointType X, TPointType Y)
+		bool isPoinInRect (TPointType X, TPointType Y) const
 		{
 
 			if(m_minX > X) return false;
@@ -122,6 +122,9 @@ namespace embDB
 			if(m_maxY < Y) return false;
 			return true;
 		}
+
+
+	
 	};
 
 

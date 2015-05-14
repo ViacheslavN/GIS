@@ -3,7 +3,7 @@
 #include "BackTableZPoint16Bit.h"
 namespace embDB
 {
-	void ZOrderPoint2DU16::getXY(uint16& x, uint16& y)
+	void ZOrderPoint2DU16::getXY(uint16& x, uint16& y)  const
 	{
 		uint32 zY = m_nZValue & MASKSPoint[0];
 		uint32 zX = (m_nZValue >> 1) & MASKSPoint[0];
@@ -18,7 +18,7 @@ namespace embDB
 		return BackTableZpoint16[zX & 0xFFFF] | (BackTableZpoint16[(zX >> 16) & 0xFFFF]) << 8
 			| (BackTableZpoint16[(zX >> 32) & 0xFFFF]) << 16 | (BackTableZpoint16[(zX >> 48) & 0xFFFF]) << 24;
 	}
-	void ZOrderPoint2DU32::getXY(uint32& x, uint32& y)
+	void ZOrderPoint2DU32::getXY(uint32& x, uint32& y) const
 	{
 		uint64 zY = m_nZValue & MASKSPoint64[0];
 		uint64 zX = (m_nZValue >> 1) & MASKSPoint64[0];
@@ -27,7 +27,7 @@ namespace embDB
 	}
 
 
-	void ZOrderPoint2DU64::getXY(uint64& x,  uint64& y)
+	void ZOrderPoint2DU64::getXY(uint64& x,  uint64& y)  const
 	{
 		uint64 zYMin = m_nZValue[0] & MASKSPoint64[0];
 		uint64 zXMin = (m_nZValue[0] >> 1) & MASKSPoint64[0];

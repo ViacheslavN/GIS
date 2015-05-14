@@ -458,6 +458,7 @@
     <ClInclude Include="BPMapIteratorRO.h" />
     <ClInclude Include="BPMapNodeRO.h" />
     <ClInclude Include="BaseBPSetv2.h" />
+    <ClInclude Include="BPMapPointSpatialIterator.h" />
     <ClInclude Include="BPMultiIndexLeafNodeCompressor.h" />
     <ClInclude Include="BPMultiInnerIndexNodeCompressor.h" />
     <ClInclude Include="BPTreeInnerNodeSetv2.h" />
@@ -549,7 +550,7 @@
     <ClInclude Include="NodeLoader.h" />
     <ClInclude Include="PageID.h" />
     <ClInclude Include="PointSpatialBPMapTree.h" />
-    <ClInclude Include="BPMapPointSpatialIterator.h" />
+    <ClInclude Include="BPMapPointSpatialIteratorOld.h" />
     <ClInclude Include="SpatialOIDField.h" />
     <ClInclude Include="RBMap.h" />
     <ClInclude Include="RBMuitiMapIteratorImp.h" />

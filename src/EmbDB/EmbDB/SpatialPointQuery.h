@@ -40,6 +40,14 @@ namespace embDB
 		return x;
 	}
 
+	template <class TPoint, class TZOrder, class TRect>
+	bool IsZPointOrdertInRect(const TRect& rect, const TZOrder& zOrder) 
+	{
+		TPoint x, y;
+		zOrder.getXY(x, y);
+		return rect.isPoinInRect(x, y);
+	}
+		
 
 	struct ZOrderPoint2DU16
 	{
@@ -110,8 +118,12 @@ namespace embDB
 			uint32 bit = uint32 (1) << uint32 (idx & 0x3f);
 			m_nZValue |= bit;
 		}
-		
-		void getXY(uint16& x,  uint16& y);
+		bool IsInRect(const TRect2Du16& rect) const 
+		{		 
+			return IsZPointOrdertInRect<uint16, ZOrderPoint2DU16, TRect2Du16>(rect, *this);
+		}
+				
+		void getXY(uint16& x,  uint16& y) const;
 		uint32 m_nZValue;
 	};
 	//typename ZOrderPoint2D<uint16> PointZOrderU16;
@@ -151,7 +163,7 @@ namespace embDB
 		{
 			return uint64(m_nZValue >> (idx & 0x3f));
 		}
-		void getXY(uint32& x,  uint32& y);
+		void getXY(uint32& x,  uint32& y) const;
 		
 		void setLowBits(int idx)
 		{
@@ -190,6 +202,11 @@ namespace embDB
 		short getBits() const
 		{
 			return 63;
+		}
+
+		bool IsInRect(const  TRect2Du32& rect) const 
+		{		 
+			return IsZPointOrdertInRect<uint32, ZOrderPoint2DU32, TRect2Du32>(rect, *this);
 		}
 		uint64 m_nZValue;
 	};
@@ -235,7 +252,7 @@ namespace embDB
 			SetZOrderInt32(m_nZValue[1], (uint32)nXmax, (uint32)nYmax);
 			SetZOrderInt32(m_nZValue[0], (uint32)nXmin, (uint32)nYmin);
 		}
-		void getXY(uint64& x, uint64& y);
+		void getXY(uint64& x, uint64& y) const;
 		
 		uint64 m_nZValue[2];
 
@@ -273,6 +290,11 @@ namespace embDB
 		short getBits() const
 		{
 			return 127;
+		}
+
+		bool IsInRect(const  TRect2Du64& rect) const 
+		{		 
+			return IsZPointOrdertInRect<uint64, ZOrderPoint2DU64, TRect2Du64>(rect, *this);
 		}
 	};
 

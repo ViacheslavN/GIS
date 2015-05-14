@@ -1884,9 +1884,10 @@ namespace embDB
 	}
 
 		BPTreeStatisticsInfo m_BTreeInfo;
+		TComp& getComp(){ return m_comp;}
 	protected:
 
-		TComp		 m_comp;;
+		TComp		 m_comp;
 		TBTreeNodePtr m_pRoot; 
 		TLink m_nRootAddr;
 		TLink m_nRTreeStaticAddr;

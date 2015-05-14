@@ -13,15 +13,20 @@ void testZPoint1();
 void testZRect1();
 void TestPointSpatialTree();
 void TestRectSpatialTree();
+void TestPointZorder();
+void TestRectZorder();
+void TestRectZorder(int Xmax, int Ymax, int qXmin, int qYmin, int qXmax, int qYmax);
 void WriteZorderTable(uint16 nBegin, uint16 nEnd);
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//testZRect1();
 	//testZPoint();
 //	testZPoint1();
-	//TestPointSpatialTree();
+//	TestPointSpatialTree();
 	//WriteZorderTable(0, 10);
    TestRectSpatialTree();
-//	return 0;
+	//TestPointZorder();
+//	TestRectZorder();
+	return 0;
 }
 

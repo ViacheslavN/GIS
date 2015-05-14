@@ -204,7 +204,6 @@ namespace CommonLib
 	}
 	void FxBitReadStream::readBits(byte& nBits, size_t nCntBits)
 	{
-
 		assert(nCntBits < 9);
 		_readBits<byte>(nBits, nCntBits); 
 	}

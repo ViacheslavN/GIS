@@ -3,6 +3,14 @@
 #include "BaseRBTree.h"
 namespace embDB
 {
+
+	template<class T> inline void swap_elements(T& a, T& b)
+	{
+		T temp = a;
+		a = b;
+		b = temp;
+	}
+
 	template <class _TValue >
 	class TBPVector
 	{
@@ -184,16 +192,16 @@ namespace embDB
 
 
 		template<class _TComp >
-		int32 lower_bound(const TValue& val, short& nType, _TComp& comp) 
+		int32 lower_bound(const TValue& val, short& nType, _TComp& comp, int32 nLeft = -1, int32 nRight = -1) 
 		{
 
 			if(m_nSize == 0)
 				return -1;
 
-			int32 nFirst = 0;
+			int32 nFirst = nLeft == -1 ? 0 : nLeft;
 			int32 nIndex = 0;
 			int32 nStep = 0;
-			int32 nCount = m_nSize;
+			int32 nCount = nRight == -1 ? m_nSize : nRight;
 			while (nCount > 0)
 			{
 				nIndex = nFirst; 
@@ -282,6 +290,112 @@ namespace embDB
 			std::swap(vec.m_pData, m_pData);
 			std::swap(vec.m_nCapacity, m_nCapacity);
 			std::swap(vec.m_nSize, m_nSize);
+		}
+
+		
+
+		template<class _TComp >
+		void quick_sort(_TComp& comp)
+		{
+			if(m_nSize < 2) return;
+
+			TValue* e1;
+			TValue* e2;
+
+			int  stack[80];
+			int* top = stack; 
+			int  limit = m_nSize;
+			int  base = 0;
+
+			for(;;)
+			{
+				int len = limit - base;
+
+				int i;
+				int j;
+				int pivot;
+
+				if(len > 9)
+				{
+					// we use base + len/2 as the pivot
+					pivot = base + len / 2;
+					swap_elements(m_pData[base], m_pData[pivot]);
+
+					i = base + 1;
+					j = limit - 1;
+
+					// now ensure that *i <= *base <= *j 
+					e1 = &(m_pData[j]); 
+					e2 = &(m_pData[i]);
+					if(comp.LE(*e1, *e2)) swap_elements(*e1, *e2);
+
+					e1 = &(m_pData[base]); 
+					e2 = &(m_pData[i]);
+					if(comp.LE(*e1, *e2)) swap_elements(*e1, *e2);
+
+					e1 = &(m_pData[j]); 
+					e2 = &(m_pData[base]);
+					if(comp.LE(*e1, *e2)) swap_elements(*e1, *e2);
+
+					for(;;)
+					{
+						do i++; while(comp.LE(m_pData[i], m_pData[base]));
+						do j--; while(comp.LE(m_pData[base], m_pData[j]));
+
+						if(i > j)
+						{
+							break;
+						}
+
+						swap_elements(m_pData[i], m_pData[j]);
+					}
+
+					swap_elements(m_pData[base], m_pData[j]);
+
+					// now, push the largest sub-array
+					if(j - base > limit - i)
+					{
+						top[0] = base;
+						top[1] = j;
+						base   = i;
+					}
+					else
+					{
+						top[0] = i;
+						top[1] = limit;
+						limit  = j;
+					}
+					top += 2;
+				}
+				else
+				{
+					// the sub-array is small, perform insertion sort
+					j = base;
+					i = j + 1;
+
+					for(; i < limit; j = i, i++)
+					{
+						for(; comp.LE(*(e1 = &(m_pData[j + 1])), *(e2 = &(m_pData[j]))); j--)
+						{
+							swap_elements(*e1, *e2);
+							if(j == base)
+							{
+								break;
+							}
+						}
+					}
+					if(top > stack)
+					{
+						top  -= 2;
+						base  = top[0];
+						limit = top[1];
+					}
+					else
+					{
+						break;
+					}
+				}
+			}
 		}
 		private:
 			TValue*  m_pData;

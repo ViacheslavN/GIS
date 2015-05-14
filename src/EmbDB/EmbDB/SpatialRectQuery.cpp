@@ -114,7 +114,7 @@ namespace embDB
 		m_nZValue = getZValue16(xMin, yMin, xMax, yMax);
 	}
 
-	void ZOrderRect2DU16::getXY(uint16& xMin, uint16& yMin, uint16& xMax, uint16& yMax)
+	void ZOrderRect2DU16::getXY(uint16& xMin, uint16& yMin, uint16& xMax, uint16& yMax) const
 	{
 		/*xMin = getFromZu16(m_nZValue & 0x1111111111111111);
 		yMin = getFromZu16((m_nZValue >> 1 ) & 0x1111111111111111);
@@ -162,7 +162,7 @@ namespace embDB
 
 	
 
-	void ZOrderRect2DU32::getXY(uint32& xMin, uint32& yMin, uint32& xMax, uint32& yMax)
+	void ZOrderRect2DU32::getXY(uint32& xMin, uint32& yMin, uint32& xMax, uint32& yMax) const
 	{
 		getXYFromZValue32(xMin, yMin, xMax, yMax, m_nZValue[0], m_nZValue[1]);
 	}
@@ -240,7 +240,7 @@ namespace embDB
 
 		 setZValue32(xHighMin, yHighMin, xHighMax, yHighMax, m_nZValue[2], m_nZValue[3]);
 	}
-	void ZOrderRect2DU64::getXY(uint64& xMin, uint64& yMin, uint64& xMax, uint64& yMax)
+	void ZOrderRect2DU64::getXY(uint64& xMin, uint64& yMin, uint64& xMax, uint64& yMax) const
 	{
 		uint32 xLowMin = 0;
 		uint32 yLowMin = 0;

@@ -23,6 +23,7 @@ typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU32, uint64,
 
 typedef embDB::TBPPointSpatialMap<
 	embDB::ZOrderPoint2DU64, 	uint64,	embDB::ZPointComp64, 
+	embDB::IDBTransactions,
 	embDB::BPSpatialPointInnerNodeSimpleCompressor64,
     embDB::BPSpatialPointLeafNodeMapSimpleCompressor64<uint64> 
 > TBPMapPOint64;
@@ -144,7 +145,9 @@ void TestPointSpatialSearchByFeature(int32 nCacheBPTreeSize, uint64 nStart, uint
 
 
 template <class TSparialTree, class TCoodType, class Tran, class TZorderType>
-void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndStart, uint64 nStep, TCoodType nSearchStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64 nTreeRootPage)
+void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndStart, uint64 nStep,
+			TCoodType qXmin,  TCoodType qYmin,  TCoodType qXmax,  TCoodType qYmax,
+			Tran* pTran, CommonLib::alloc_t *pAlloc, int64 nTreeRootPage)
 {
 	std::cout << "Search Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
@@ -158,82 +161,49 @@ void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64
 	tree.loadBTreeInfo(); 
 	tree.setExtent(ExtentTree);
 	time.start();
-	uint64 nNotFound = 0;
-	uint64 nOIDErr = 0;
-	double searchTm  = 0;
-	time.start();
 
-	int64 nCount = (nEndStart - nStart)/nStep;
-	nCount *= nCount;
-	int64 nProcStep = nCount/100;
+	 
 	int64 nCnt = 0;
 	int64 nCntNotQuery = 0;
 	int64 nCntInQuery = 0;
-	int64 nDubble = 0;
-	std::set<uint64> m_ODIs;
 	double searchZorderTm  = 0;
 
 	int64 nCntFull = 0;
 	int64 nCntNotQueryFull  = 0;
 	int64 nCntInQueryFull  = 0;
-	int64 nDubbleFull = 0;
-	std::set<uint64> m_ODIsFull;
 	double searchFullTm  = 0;
 
-	int64 nDouble = 0;
-	TZorderType zVal;
-	TZorderType zValMax;
-	TCoodType nx, ny;
-	nSearchStep = 1;
+
+	SpatialQuery.m_minX = (TCoodType)qXmin;
+	SpatialQuery.m_maxX = (TCoodType)qXmax;
+	SpatialQuery.m_minY = (TCoodType)qYmin;
+	SpatialQuery.m_maxY = (TCoodType)qYmax;
+
+	TZorderType zValMax, zVal;
 
 
-	/*for (uint64 x = nStart; x <= nEndStart - nSearchStep; x +=nSearchStep)
-	{
-		SpatialQuery.m_minX = (TCoodType)x;
-		//SpatialQuery.m_minY = (TCoodType)x;
-		for (uint64 y = nStart; y <= nEndStart - nSearchStep; y +=nSearchStep)
-		{
-			SpatialQuery.m_minY = (TCoodType)y;
-			//SpatialQuery.m_minX = (TCoodType)y;
-			TSparialTree::TSpatialIterator it = tree.spatialQuery(SpatialQuery.m_minX, SpatialQuery.m_minY, SpatialQuery.m_maxX, SpatialQuery.m_maxY);
-			//it.findNext(false);
-			//it.next();
-			TZorderType key(SpatialQuery.m_minX , SpatialQuery.m_maxY);
-			
-			//TSparialTree::iterator it = tree.find(key);
-			it.isNull();
-		}
-	}*/
-	//for (uint64 x = nStart; x <= nEndStart - nSearchStep; x +=nSearchStep)
-	{
-		SpatialQuery.m_minX = (TCoodType)nStart;
-		SpatialQuery.m_maxX = (TCoodType)nEndStart;
+	uint64 nCountX = (uint64)(SpatialQuery.m_maxX - (uint64)SpatialQuery.m_minX );
+	uint64 nCountY = (uint64)(SpatialQuery.m_maxY - (uint64)SpatialQuery.m_minY);
+	uint64 nCount = (nCountX * nCountY)/nStep;
 	
-		//for (uint64 y = nStart; y <= nEndStart - nSearchStep; y +=nSearchStep)
-		{
-			SpatialQuery.m_minY = (TCoodType)nStart;
-			SpatialQuery.m_maxY = (TCoodType)nEndStart;
-			uint64 nCount = (uint64)(SpatialQuery.m_maxX - (uint64)SpatialQuery.m_minX );
-			nCount *= nCount;
-			uint64 nProcStep = nCount/100;
-			if(!nProcStep)
-				nProcStep = 1000000000;
-			zValMax.setZOrder(SpatialQuery.m_maxX, SpatialQuery.m_maxY);
+
+	TCoodType nx, ny;
+	uint64 nProcStep = nCount/100;
+	if(!nProcStep)
+		nProcStep = 1000000000;
+	zValMax.setZOrder(SpatialQuery.m_maxX, SpatialQuery.m_maxY);
 		
 			
 
-			{
+	{
 				nCnt = 0;
 				nCntNotQuery = 0;
 				nCntInQuery = 0;
-				nDubble = 0;
-				m_ODIs.clear();
-				time.start();
+					time.start();
 				TSparialTree::TSpatialIterator it = tree.spatialQuery(SpatialQuery.m_minX, SpatialQuery.m_minY, SpatialQuery.m_maxX, SpatialQuery.m_maxY);
 				if(it.isNull())
 				{
 					std::cout << "Not found poins for query Xmin: " << SpatialQuery.m_minX <<" Ymin: " << SpatialQuery.m_minY << " xMax: " <<  SpatialQuery.m_maxX << " yMax: " <<  SpatialQuery.m_maxY << std::endl;
-					nNotFound++;
 				}
 				else
 				{
@@ -244,23 +214,10 @@ void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64
 
 						zVal = it.key();
 						int64 nOID = it.value();
-							if(zVal > zValMax)
-								break;
+						if(zVal > zValMax)
+							break;
 
-						/*if(m_ODIs.find(nOID) != m_ODIs.end())
-						{
-							nDouble++;
-						}
-						else
-						{
-							m_ODIs.insert(nOID);
-						}*/
-
-						if(nCnt%nProcStep == 0)
-						{
-							std::cout <<"zOrder Cnt:  " << nCnt << " " << (nCnt* 100)/nCount << " %" << '\r';
-						}
-
+						
 						zVal.getXY(nx, ny);
 						if(!SpatialQuery.isPoinInRect(nx, ny))
 						{
@@ -269,19 +226,24 @@ void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64
 						else
 							++nCntInQuery;
 
+
+						if(nCntInQuery%nProcStep == 0)
+						{
+							std::cout <<"zOrder Cnt:  " << nCntInQuery << " " << (nCntInQuery* 100)/nCount << " %" << '\r';
+						}
+
+
 						if(!it.next())
 							break;
 					}
 					searchZorderTm = time.stop();
-
 				}
 			}
 
 			nCntFull = 0;
 			nCntNotQueryFull  = 0;
 			nCntInQueryFull  = 0;
-			nDubbleFull = 0;
-			m_ODIsFull.clear();
+
 			TSparialTree::iterator it = tree.identify(SpatialQuery.m_minX, SpatialQuery.m_minY);
 			time.start();
 			while(!it.isNull())
@@ -291,10 +253,7 @@ void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64
 					break;
 				++nCntFull;
 		 
-				if(nCntFull%nProcStep == 0)
-				{
-					std::cout << "Full Search:  "  << nCntFull << " " << (nCntFull* 100)/nCount << " %" << '\r';
-				}
+			
 
 				zVal.getXY(nx, ny);
 				if(!SpatialQuery.isPoinInRect(nx, ny))
@@ -303,29 +262,29 @@ void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64
 				}
 				else
 					++nCntInQueryFull;
+
+				if(nCntInQueryFull%nProcStep == 0)
+				{
+					std::cout << "Full Search:  "  << nCntInQueryFull << " " << (nCntInQueryFull* 100)/nCount << " %" << '\r';
+				}
+
 				it.next();
 			}
 			searchFullTm = time.stop();
 		
 		
 
-			std::cout << "Found Zorder  time: " << searchZorderTm <<" Cnt: " << nCnt << " InQuery " <<  nCntInQuery<< " NotInQuery " << nCntNotQuery  << std::endl;
-			std::cout << "Found Full    time: " << searchFullTm   <<" Cnt: " << nCntFull << " InQuery " <<  nCntInQueryFull<< " NotInQuery " << nCntNotQueryFull  << std::endl;
-			return;
-		}
-
-	}
-
-
-
-
-	searchTm = time.stop();
-	std::cout << "Search end key start: " << nStart << " key end: " << nEndStart << " Not found: " << nNotFound<< " OID Error found: " << nOIDErr  << " Total time: " << searchTm << std::endl;
+	std::cout << "Found Zorder  time: " << searchZorderTm <<" Cnt: " << nCnt << " InQuery " <<  nCntInQuery<< " NotInQuery " << nCntNotQuery  << std::endl;
+	std::cout << "Found Full    time: " << searchFullTm   <<" Cnt: " << nCntFull << " InQuery " <<  nCntInQueryFull<< " NotInQuery " << nCntNotQueryFull  << std::endl;
+	return;
 
 }
 
 template <class TSparialTree, class TCoodType, class TTran, class TZorderType>
-void TestPointSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize, int nPageSize, TCoodType nBegin, TCoodType nEnd, TCoodType nStep, TCoodType nSearchStep, bool onlySearch = false)
+void TestPointSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize, int nPageSize, 
+			TCoodType nBegin, TCoodType nEnd, TCoodType nStep, 
+			TCoodType qXmin,  TCoodType qYmin,  TCoodType qXmax,  TCoodType qYmax, 
+			bool onlySearch = false)
 {
 	CommonLib::alloc_t *alloc = new CommonLib::simple_alloc_t();
 	CommonLib::TimeUtils::CDebugTime time;
@@ -334,14 +293,16 @@ void TestPointSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize,
 	{
 		embDB::CStorage storage( alloc, nCacheStorageSize);
 		storage.open(sFileName, false, false,  onlySearch ? false : true, false, nPageSize);
-		embDB::FilePagePtr pPage = storage.getNewPage();
-		storage.setStoragePageInfo(pPage->getAddr());
-		storage.saveStorageInfo();
+	
 
-		int64 nTreeRootPage = onlySearch ? 3 : -1;
+		int64 nTreeRootPage = onlySearch ? 6 : -1;
 
 		if(!onlySearch)
 		{
+			embDB::FilePagePtr pPage = storage.getNewPage();
+			storage.initStorage(pPage->getAddr());
+			storage.saveStorageInfo();
+
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tranUndo.data", &storage, 1);
 			tran.begin();
 			TestPointSpatialInsert<TSparialTree,TCoodType, TTran>(50, nBegin, nEnd, nStep, &tran, alloc, nTreeRootPage);
@@ -356,23 +317,34 @@ void TestPointSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize,
 			
 		}*/
 		{
+			storage.setStoragePageInfo(0);
+			storage.loadStorageInfo();
 
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tranUndo1.data", &storage, 1);
 			tran.begin();
-			TestPointSpatialSearchByQuery<TSparialTree,TCoodType, TTran, TZorderType>(50, nBegin, nEnd, nStep, nSearchStep,  &tran, alloc, nTreeRootPage);
+			TestPointSpatialSearchByQuery<TSparialTree,TCoodType, TTran, TZorderType>(50, nBegin, nEnd,  nStep,
+				  qXmin,  qYmin,  qXmax,   qYmax,	&tran, alloc, nTreeRootPage);
 
 		}
 	}
 }
 void TestPointSpatialTree()
 {
-	//TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransactions, embDB::ZOrderPoint2DU16>("d:\\dbspatialpointFor.data", 50, 8192, 0, 10000, 1, 1);
-	TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransactions, embDB::ZOrderPoint2DU16>("d:\\dbspatialpointFor.data", 50, 8192, 0, 100, 1000, 100, true);
+	/*uint64 nBegin = 0;
+	uint64 nEnd = 1000;
+	uint64 nStep = 1;
+	uint64 xMin = 0;
+	uint64 xMax = 100;
+	uint64 yMin = 0;
+	uint64 yMax = 100;*/
+
+//	TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransactions, embDB::ZOrderPoint2DU16>("d:\\db\\dbspatialpoint16.data", 50, 8192, 0, 10000, 1, 0, 0, 100, 100, false);
+//	TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransactions, embDB::ZOrderPoint2DU16>("d:\\db\\dbspatialpoint16.data", 50, 8192, 0, 10000, 1, 100, 0, 1000, 1000, true);
 
 
-	//TestPointSpatial<TBPMapPOint32, uint32, embDB::CDirectTransactions, embDB::ZOrderPoint2DU32>("d:\\dbspatialpoint32.data", 50, 8192, 0, 10000, 1, 1000);
-//	TestPointSpatial<TBPMapPOint32, uint32, embDB::CDirectTransactions, embDB::ZOrderPoint2DU32>("d:\\dbspatialpoint32.data", 50, 8192, 1000, 3000, 1,  500, true);
+//	TestPointSpatial<TBPMapPOint32, uint32, embDB::CDirectTransactions, embDB::ZOrderPoint2DU32>("d:\\db\\dbspatialpoint32.data", 50, 8192, 0, 2000, 1, 0, 0, 100, 100, false);
+//	TestPointSpatial<TBPMapPOint32, uint32, embDB::CDirectTransactions, embDB::ZOrderPoint2DU32>("d:\\db\\dbspatialpoint32.data", 50, 8192, 0, 10000, 1, 100, 0, 1000, 1000, true);
 
-	//TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransactions, embDB::ZOrderPoint2DU64>("d:\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 1000);
-  //  TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransactions, embDB::ZOrderPoint2DU64>("d:\\dbspatialpoint64.data", 50, 8192, 0, 0xFFFFFFFFFFFFFFFF, 1,  500, true);
+//	TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransactions, embDB::ZOrderPoint2DU64>("d:\\db\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 0, 0, 100, 100, false);
+    TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransactions, embDB::ZOrderPoint2DU64>("d:\\db\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-500, 0xFFFFFFFFFFFFFFFF-500, true);
 }

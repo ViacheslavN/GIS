@@ -3,3 +3,4 @@
 3.Индыксы для БД readOnle
 4.Grafh Lock
 5.SQL
+6. установка parent-a через соседнею ноду

@@ -56,7 +56,7 @@ public:
 			pNode = findLeafNodeForInsert(key);
 			if(pNode.get())
 			{
-				bRet = InsertInLeafNode(pNode.get(), key, value, nIndex) == NULL;
+				bRet = InsertInLeafNode(pNode.get(), key, value, nIndex) != NULL;
 			}
 		}
 		

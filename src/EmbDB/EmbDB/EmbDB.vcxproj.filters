@@ -510,9 +510,6 @@
     <ClInclude Include="RectSpatialBPMapTree.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
     </ClInclude>
-    <ClInclude Include="BPMapPointSpatialIterator.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClInclude>
     <ClInclude Include="PoinMapInnerCompressor64.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
     </ClInclude>
@@ -689,6 +686,12 @@
     </ClInclude>
     <ClInclude Include="ACIntegerDiffComp.h">
       <Filter>DB\BPTrees\Compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BPMapPointSpatialIteratorOld.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="BPMapPointSpatialIterator.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

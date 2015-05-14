@@ -12,7 +12,7 @@
 #define  INSERT 1
 #define  SEARCH 2
 #define  IDENTIFY 3
-
+void TestRectZorder(int Xmax, int Ymax, int qXmin, int qYmin, int qXmax, int qYmax);
 typedef embDB::TBPRectSpatialMap<embDB::ZOrderRect2DU16, uint64,
 	embDB::ZPointComp<embDB::ZOrderRect2DU16> 
 > TBPMapRect16;
@@ -97,7 +97,9 @@ void TestRectSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndSta
 
 
 template <class TSparialTree, class TCoodType, class Tran, class TZorderType>
-void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndStart, uint64 nStep, TCoodType nSearchStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64 nTreeRootPage)
+void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndStart, uint64 nStep, 
+	TCoodType qXmin,  TCoodType qYmin,  TCoodType qXmax,  TCoodType qYmax, 
+	Tran* pTran, CommonLib::alloc_t *pAlloc, int64 nTreeRootPage)
 {
 	std::cout << "Search Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
@@ -106,7 +108,7 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 	embDB::TRect2D<TCoodType>         rectFeature;
 	embDB::TRect2D<TCoodType>         ZrectFeature;
 
-	std::vector<embDB::TRect2D<TCoodType>  > vecRrectFeature;
+ 
 	ExtentTree.m_minX = 0;
 	ExtentTree.m_minY = 0;
 	ExtentTree.m_maxX = (TCoodType)nEndStart;
@@ -131,58 +133,36 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 	int64 nCntNotQuery = 0;
 	int64 nCntInQuery = 0;
 	int64 nDubble = 0;
-	std::set<uint64> m_ODIs;
+ 
 	double searchZorderTm  = 0;
 
 	int64 nCntFull = 0;
 	int64 nCntNotQueryFull  = 0;
 	int64 nCntInQueryFull  = 0;
 	int64 nDubbleFull = 0;
-	std::set<uint64> m_ODIsFull;
+
 	double searchFullTm  = 0;
 
 	int64 nDouble = 0;
 	TZorderType zVal;
 	TZorderType zValMax;
 	TCoodType xMin, yMin, xMax, yMax;
-	nSearchStep = 1;
-	std::set<uint64> m_Zal;
-	std::set<uint64> m_OID;
-	int64 nOrderError = 0;
+  
 	TZorderType zFullVal;
- 
-	/*for (uint64 x = nStart; x <= nEndStart - nSearchStep; x +=nSearchStep)
+
 	{
-		SpatialQuery.m_minX = (TCoodType)x;
-		//SpatialQuery.m_minY = (TCoodType)x;
-		for (uint64 y = nStart; y <= nEndStart - nSearchStep; y +=nSearchStep)
-		{
-			SpatialQuery.m_minY = (TCoodType)y;
-			//SpatialQuery.m_minX = (TCoodType)y;
-			TSparialTree::TSpatialIterator it = tree.spatialQuery(SpatialQuery.m_minX, SpatialQuery.m_minY, SpatialQuery.m_maxX, SpatialQuery.m_maxY);
-			//it.findNext(false);
-			//it.next();
-			TZorderType key(SpatialQuery.m_minX , SpatialQuery.m_maxY);
-			
-			//TSparialTree::iterator it = tree.find(key);
-			it.isNull();
-		}
-	}*/
-	//for (uint64 x = nStart; x <= nEndStart - nSearchStep; x +=nSearchStep)
-	{
-		SpatialQuery.m_minX = (TCoodType)nStart;
-		SpatialQuery.m_maxX = (TCoodType)nEndStart;
-		SpatialQuery.m_minY = (TCoodType)nStart;
-		SpatialQuery.m_maxY = (TCoodType)nEndStart;
+		SpatialQuery.m_minX = (TCoodType)qXmin;
+		SpatialQuery.m_maxX = (TCoodType)qXmax;
+		SpatialQuery.m_minY = (TCoodType)qYmin;
+		SpatialQuery.m_maxY = (TCoodType)qYmax;
 	
-		//for (uint64 y = nStart; y <= nEndStart - nSearchStep; y +=nSearchStep)
+	 
 		
 			{
 				nCnt = 0;
 				nCntNotQuery = 0;
 				nCntInQuery = 0;
-				nDubble = 0;
-				m_ODIs.clear();
+	 
 				time.start();
 				TSparialTree::TSpatialIterator it = tree.spatialQuery(SpatialQuery.m_minX, SpatialQuery.m_minY, SpatialQuery.m_maxX, SpatialQuery.m_maxY);
 				if(it.isNull())
@@ -205,20 +185,7 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 						//	if(zVal > zValMax)
 						//		break;
 					
-						if(m_ODIs.find(nOID) != m_ODIs.end())
-						{
-							nDouble++;
-						}
-						else
-						{
-							m_ODIs.insert(nOID);
-						}
-									
-						if(zLast > zVal)
-						{
-							nOrderError++;
-						}
-						zLast = zVal;
+						 
 										
 						if(nCnt%nProcStep == 0)
 						{
@@ -233,10 +200,9 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 						}
 						else 
 						{
-							vecRrectFeature.push_back(ZrectFeature);
+ 
 							++nCntInQuery;
-					//		m_Zal.erase(zVal.m_nZValue);
-					//		m_OID.erase(it.value());
+ 
 						}
 						
 						if(!it.next())
@@ -253,8 +219,7 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 	
 		{
 			
-			SpatialQuery.m_minY = (TCoodType)nStart;
-			SpatialQuery.m_maxY = (TCoodType)nEndStart;
+
 			uint64 nCount = (uint64)(0xFFFF - (uint64)SpatialQuery.m_minX )/nStep;
 			nCount *= nCount;
 			uint64 nProcStep = nCount;
@@ -267,24 +232,19 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 			nCntNotQueryFull  = 0;
 			nCntInQueryFull  = 0;
 			nDubbleFull = 0;
-			m_ODIsFull.clear();
+		 
 			TSparialTree::iterator it = tree.identify(0, 0, SpatialQuery.m_minX, SpatialQuery.m_minY);
 			time.start();
 
 			while(!it.isNull())
 			{
-			
-			break;
+	
 				zFullVal = it.key();
 
 				int64 nOID = it.value();
 				if(zFullVal > zValMax)
 					break;
-				/*if(zFullVal.m_nZValue == 1229782938247337104)
-				{
-					int dd = 0;
-					dd++;
-				}*/
+ 
 				
 				++nCntFull;
 
@@ -302,8 +262,12 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 				else
 				{
 					++nCntInQueryFull;
-			//		m_Zal.insert(zFullVal.m_nZValue);
-					m_Zal.insert(it.value());
+					if(nCntInQueryFull > 82)
+					{
+						int d = 0;
+						d++;
+					}
+ 
 				}
 
 			
@@ -318,30 +282,13 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 		
 		
 
-			std::cout << "Found Zorder  time: " << searchZorderTm <<" Cnt: " << nCnt << " InQuery " <<  nCntInQuery<< " NotInQuery " << nCntNotQuery << " Order Error " << nOrderError  <<" Double " << nDouble << std::endl;
+			std::cout << "Found Zorder  time: " << searchZorderTm <<" Cnt: " << nCnt << " InQuery " <<  nCntInQuery<< " NotInQuery " << nCntNotQuery <<   std::endl;
 			std::cout << "Found Full    time: " << searchFullTm   <<" Cnt: " << nCntFull << " InQuery " <<  nCntInQueryFull<< " NotInQuery " << nCntNotQueryFull  << std::endl;
-
-			if(m_Zal.size())	
-			{
-				std::set<uint64>::iterator it = m_Zal.begin();
-				std::set<uint64>::iterator end = m_Zal.end();
-
-				for(;it != end; ++it)
-				{
-					if(m_ODIs.find((*it)) == m_ODIs.end())
-						std::cout << "Not Found " << (*it) << std::endl;
-				}
-			}
 			
 			
 			return;
 		}
 
-	
-
-
-	searchTm = time.stop();
-	std::cout << "Search end key start: " << nStart << " key end: " << nEndStart << " Not found: " << nNotFound<< " OID Error found: " << nOIDErr  << " Total time: " << searchTm << std::endl;
 
 }
 
@@ -404,7 +351,7 @@ void TestRectSpatialSearchByFeature(int32 nCacheBPTreeSize, uint64 nStart, uint6
 }
 
 template <class TSparialTree, class TCoodType, class TTran, class TZorderType>
-void TestRectSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize, int nPageSize, TCoodType nBegin, TCoodType nEnd, TCoodType nStep, TCoodType nSearchStep, int nType)
+void TestRectSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize, int nPageSize, TCoodType nBegin, TCoodType nEnd, TCoodType nStep, TCoodType qXmin,  TCoodType qYmin,  TCoodType qXmax,  TCoodType qYmax,  int nType)
 {
 	CommonLib::alloc_t *alloc = new CommonLib::simple_alloc_t();
 	CommonLib::TimeUtils::CDebugTime time;
@@ -413,14 +360,16 @@ void TestRectSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize, 
 	{
 		embDB::CStorage storage( alloc, nCacheStorageSize);
 		storage.open(sFileName, false, false,  nType != INSERT ? false : true, false, nPageSize);
-		embDB::FilePagePtr pPage = storage.getNewPage();
-		storage.setStoragePageInfo(pPage->getAddr());
-		storage.saveStorageInfo();
+	
 
-		int64 nTreeRootPage = nType != INSERT ? 3 : -1;
+		int64 nTreeRootPage = nType != INSERT ? 6 : -1;
 
 		if(nType == INSERT)
 		{
+			embDB::FilePagePtr pPage = storage.getNewPage();
+			storage.initStorage(pPage->getAddr());
+			storage.saveStorageInfo();
+
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tranUndo.data", &storage, 1);
 			tran.begin();
 			TestRectSpatialInsert<TSparialTree,TCoodType, TTran>(50, nBegin, nEnd, nStep, &tran, alloc, nTreeRootPage);
@@ -428,10 +377,11 @@ void TestRectSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize, 
 		}
 		if(nType == SEARCH)
 		{
-
+			storage.setStoragePageInfo(0);
+			storage.loadStorageInfo();
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tranSearch.data", &storage, 1);
 			tran.begin();
-			TestRectSpatialSearchByQuery<TSparialTree,TCoodType, TTran, TZorderType>(50, nBegin, nEnd, nStep, nSearchStep,  &tran, alloc, nTreeRootPage);
+			TestRectSpatialSearchByQuery<TSparialTree,TCoodType, TTran, TZorderType>(50, nBegin, nEnd, nStep,  qXmin,   qYmin,   qXmax,   qYmax,   &tran, alloc, nTreeRootPage);
 			
 		}
 		if(nType == IDENTIFY)
@@ -447,21 +397,21 @@ void TestRectSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize, 
 
 void TestRectSpatialTree()
 {
-	 //TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransactions, embDB::ZOrderRect2DU16>("d:\\dbspatialrect16.data", 50, 8192, 0, 0xFFFF, 10, 0, INSERT);
-	 TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransactions, embDB::ZOrderRect2DU16>("d:\\dbspatialrect16.data", 50, 8192, 0, 1000, 10, 10, SEARCH);
+//	 TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransactions, embDB::ZOrderRect2DU16>("d:\\db\\dbspatialrect16.data", 50, 8192, 0, 1000, 10,  0, 0, 100, 100, INSERT);
+	 TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransactions, embDB::ZOrderRect2DU16>("d:\\db\\dbspatialrect16.data", 50, 8192, 0, 2000, 10, 333, 444, 999, 1245, SEARCH);
 	// TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransactions, embDB::ZOrderRect2DU16>("d:\\dbspatialrect16.data", 50, 8192, 0, 0xFFFF,100, 1000, IDENTIFY);
-
-	//TestRectSpatial<TBPMapRect32Ugd, uint32, embDB::CDirectTransactions, ugdRectKey>("d:\\dbspatialrect32Ugd.data", 50, 8192, 0, 0xFFFF, 10, 0, INSERT);
-    //TestRectSpatial<TBPMapRect32Ugd, uint32, embDB::CDirectTransactions, ugdRectKey>("d:\\dbspatialrect32Ugd.data", 50, 8192, 0, 160, 10, 10, SEARCH);
+	  TestRectZorder(2000, 2000, 333, 444, 999, 1245);
+	//TestRectSpatial<TBPMapRect32Ugd, uint32, embDB::CDirectTransactions, ugdRectKey>("d:\\db\\dbspatialrect32Ugd.data", 50, 8192, 0, 0xFFFF, 10, 0, INSERT);
+    //TestRectSpatial<TBPMapRect32Ugd, uint32, embDB::CDirectTransactions, ugdRectKey>("d:\\db\\dbspatialrect32Ugd.data", 50, 8192, 0, 160, 10, 10, SEARCH);
 
 	
 
 
-	// TestRectSpatial<TBPMapRect32, uint32, embDB::CDirectTransactions, embDB::ZOrderRect2DU32>("d:\\dbspatialrect32.data", 50, 8192,  0 , 0xFFFF, 10, 0, INSERT);
-	// TestRectSpatial<TBPMapRect32, uint32, embDB::CDirectTransactions, embDB::ZOrderRect2DU32>("d:\\dbspatialrect32.data", 50, 8192,0, 160,10, 10, SEARCH);
-	// TestRectSpatial<TBPMapRect32, uint32, embDB::CDirectTransactions, embDB::ZOrderRect2DU32>("d:\\dbspatialrect32.data", 50, 8192, 0, 0xFFFF,10, 10, IDENTIFY);
+	// TestRectSpatial<TBPMapRect32, uint32, embDB::CDirectTransactions, embDB::ZOrderRect2DU32>("d:\\db\\dbspatialrect32.data", 50, 8192,  0 , 0xFFFF, 10, 0, INSERT);
+	// TestRectSpatial<TBPMapRect32, uint32, embDB::CDirectTransactions, embDB::ZOrderRect2DU32>("d:\\db\\dbspatialrect32.data", 50, 8192,0, 160,10, 10, SEARCH);
+	// TestRectSpatial<TBPMapRect32, uint32, embDB::CDirectTransactions, embDB::ZOrderRect2DU32>("d:\\db\\dbspatialrect32.data", 50, 8192, 0, 0xFFFF,10, 10, IDENTIFY);
 	
-	//TestRectSpatial<TBPMapRect64, uint64, embDB::CDirectTransactions, embDB::ZOrderRect2DU64>("d:\\dbspatialrect64.data", 50, 8192,   0xFFFFFFFFFFFFFFFF - 60000, 0xFFFFFFFFFFFFFFFF, 10, 0, INSERT);
-	//TestRectSpatial<TBPMapRect64, uint64, embDB::CDirectTransactions, embDB::ZOrderRect2DU64>("d:\\dbspatialrect64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF - 60000, 0xFFFFFFFFFFFFFFFF - 50000,10, 10, SEARCH);
-	//TestRectSpatial<TBPMapRect64, uint64, embDB::CDirectTransactions, embDB::ZOrderRect2DU64>("d:\\dbspatialrect64.data", 50, 8192, 0, 0xFFFF,10, 10, IDENTIFY);
+	//TestRectSpatial<TBPMapRect64, uint64, embDB::CDirectTransactions, embDB::ZOrderRect2DU64>("d:\\db\\dbspatialrect64.data", 50, 8192,   0xFFFFFFFFFFFFFFFF - 60000, 0xFFFFFFFFFFFFFFFF, 10, 0, INSERT);
+	//TestRectSpatial<TBPMapRect64, uint64, embDB::CDirectTransactions, embDB::ZOrderRect2DU64>("d:\\db\\dbspatialrect64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF - 60000, 0xFFFFFFFFFFFFFFFF - 50000,10, 10, SEARCH);
+	//TestRectSpatial<TBPMapRect64, uint64, embDB::CDirectTransactions, embDB::ZOrderRect2DU64>("d:\\db\\dbspatialrect64.data", 50, 8192, 0, 0xFFFF,10, 10, IDENTIFY);
 }

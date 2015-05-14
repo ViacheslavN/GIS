@@ -5,6 +5,18 @@
 #include "SpatialKey.h"
 namespace embDB
 {
+
+
+
+	template <class TPoint, class TZOrder, class TRect>
+	bool IsZRectOrdertInRect(const TRect& rect, const TZOrder& zOrder)   
+	{
+		TPoint xMin, xMax, yMin, yMax;
+		zOrder.getXY(xMin, yMin,  xMax, yMax);
+ 		TRect zRect(xMin, yMin, xMax, yMax);
+		return rect.isIntersection(zRect) || rect.isInRect(zRect);
+	}
+
 	struct ZOrderRect2DU16
 	{
 		typedef  int16 TPointTypei;
@@ -14,7 +26,7 @@ namespace embDB
 		ZOrderRect2DU16();
 		ZOrderRect2DU16(uint16 xMin, uint16 yMin, uint16 xMax, uint16 yMax);
 		void setZOrder(uint16 xMin, uint16 yMin, uint16 xMax, uint16 yMax);
-		void getXY(uint16& xMin, uint16& yMin, uint16& xMax, uint16& yMax);
+		void getXY(uint16& xMin, uint16& yMin, uint16& xMax, uint16& yMax) const;
 
 
 		uint64 getBit (int idx)
@@ -45,6 +57,12 @@ namespace embDB
 		{
 			return m_nZValue == Zorder.m_nZValue;
 		}
+
+		bool IsInRect(const TRect2Du16& rect) const 
+		{		 
+			return IsZRectOrdertInRect<uint16, ZOrderRect2DU16, TRect2Du16>(rect, *this);
+		}
+
 		uint64 m_nZValue;
 	};
 
@@ -56,8 +74,8 @@ namespace embDB
 		static const TPointType coordMax = 0xFFFFFFFF;	
 		ZOrderRect2DU32();
 		ZOrderRect2DU32(uint32 xMin, uint32 yMin, uint32 xMax, uint32 yMax);
-		void setZOrder(uint32 xMin, uint32 yMin, uint32 xMax, uint32 yMax);
-		void getXY(uint32& xMin, uint32& yMin, uint32& xMax, uint32& yMax);
+		void setZOrder(uint32 xMin, uint32 yMin, uint32 xMax, uint32 yMax) ;
+		void getXY(uint32& xMin, uint32& yMin, uint32& xMax, uint32& yMax) const;
 		short getBits() const
 		{
 			return 127;
@@ -95,6 +113,11 @@ namespace embDB
 		void setLowBits(int idx);
 		void clearLowBits(int idx);
 
+		bool IsInRect(const TRect2Du32& rect) const 
+		{		 
+			return IsZRectOrdertInRect<uint32, ZOrderRect2DU32, TRect2Du32>(rect, *this);
+		}
+
 		uint64 m_nZValue[2];
 	};
 
@@ -124,7 +147,7 @@ namespace embDB
 		ZOrderRect2DU64();
 		ZOrderRect2DU64(uint64 xMin, uint64 yMin, uint64 xMax, uint64 yMax);
 		void setZOrder(uint64 xMin, uint64 yMin, uint64 xMax, uint64 yMax);
-		void getXY(uint64& xMin, uint64& yMin, uint64& xMax, uint64& yMax);
+		void getXY(uint64& xMin, uint64& yMin, uint64& xMax, uint64& yMax) const;
 
 
 		short getBits() const
@@ -175,6 +198,10 @@ namespace embDB
 		void clearLowBits(int idx);
 
 
+		bool IsInRect(const TRect2Du64& rect) const 
+		{		 
+			return IsZRectOrdertInRect<uint64, ZOrderRect2DU64, TRect2Du64>(rect, *this);
+		}
 		uint64 m_nZValue[4];
 	};
 
