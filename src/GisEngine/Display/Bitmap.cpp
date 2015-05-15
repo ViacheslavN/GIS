@@ -35,12 +35,12 @@ namespace GisEngine
 
 		CBitmap::CBitmap()
 		{
-			buf_ = 0;
-			width_ = 0;
-			height_ = 0;
-			palette_ = 0;
-			release_ = false;
-			type_ = BitmapFormatType32bppARGB;
+			m_pBuf = 0;
+			m_nWidth = 0;
+			m_nHeight = 0;
+			m_pPalette = 0;
+			m_bRelease = false;
+			m_type = BitmapFormatType32bppARGB;
 		}
 
 		CBitmap::CBitmap(unsigned char* bits, size_t width, size_t height, BitmapFormatType type, Color* palette, bool release)
@@ -51,14 +51,14 @@ namespace GisEngine
 		CBitmap::CBitmap(CommonLib::IReadStream* pStream)
 		{		 
 
-			width_ = (size_t)pStream->readInt32();
-			height_ = (size_t)pStream->readInt32();
-			type_ = (BitmapFormatType)pStream->readByte();
-			init(width_, height_, type_);
-			pStream->read(buf_, size());
-			if(palette_)
+			m_nWidth = (size_t)pStream->readInt32();
+			m_nHeight = (size_t)pStream->readInt32();
+			m_type = (BitmapFormatType)pStream->readByte();
+			init(m_nWidth, m_nHeight, m_type);
+			pStream->read(m_pBuf, size());
+			if(m_pPalette)
 				for(int i = 0; i < 1 << bpp(); i++)
-					palette_[i].load(pStream);
+					m_pPalette[i].load(pStream);
 		}
 
 		CBitmap::CBitmap(size_t width, size_t height, BitmapFormatType type)
@@ -68,40 +68,40 @@ namespace GisEngine
 
 		void CBitmap::init(size_t width, size_t height, BitmapFormatType type)
 		{
-			width_ = width;
-			height_ = height;
-			type_ = type;
-			palette_ = 0;
-			buf_ = new unsigned char[size()];
-			switch(type_)
+			m_nWidth = width;
+			m_nHeight = height;
+			m_type = type;
+			m_pPalette = 0;
+			m_pBuf = new unsigned char[size()];
+			switch(m_type)
 			{
 			case BitmapFormatType1bpp:
-				palette_ = new Color[2];
+				m_pPalette = new Color[2];
 				break;
 			case BitmapFormatType4bpp:
-				palette_ = new Color[16];
+				m_pPalette = new Color[16];
 				break;
 			case BitmapFormatType8bpp:
-				palette_ = new Color[256];
+				m_pPalette = new Color[256];
 				break;
 			}
-			release_ = true;
+			m_bRelease = true;
 		}
 
 		CBitmap::CBitmap(const CBitmap& bmp)
-			: palette_(0)
-			, buf_(0)
+			: m_pPalette(0)
+			, m_pBuf(0)
 		{
 			this->operator=(bmp);
 		}
 
 		CBitmap::~CBitmap(void)
 		{
-			if(release_)
+			if(m_bRelease)
 			{
-				delete [] buf_;
-				if(palette_)
-					delete palette_;
+				delete [] m_pBuf;
+				if(m_pPalette)
+					delete m_pPalette;
 			}
 		}
 
@@ -110,41 +110,41 @@ namespace GisEngine
 			if(this == &bmp)
 				return *this;
 
-			if(release_)
+			if(m_bRelease)
 			{
-				delete [] buf_;
-				buf_ = 0;
-				if(palette_)
-					delete palette_;
-				palette_ = 0;
+				delete [] m_pBuf;
+				m_pBuf = 0;
+				if(m_pPalette)
+					delete m_pPalette;
+				m_pPalette = 0;
 			}
 
-			width_ = bmp.width_,
-				height_ = bmp.height_,
-				type_ = bmp.type_;
-			if(bmp.buf_ == 0)
+			m_nWidth = bmp.m_nWidth,
+				m_nHeight = bmp.m_nHeight,
+				m_type = bmp.m_type;
+			if(bmp.m_pBuf == 0)
 			{
-				release_ = false;
+				m_bRelease = false;
 				return *this;
 			}
-			release_ = true;
+			m_bRelease = true;
 
-			buf_ = new unsigned char[size()];
-			memcpy(buf_, bmp.buf_, size());
+			m_pBuf = new unsigned char[size()];
+			memcpy(m_pBuf, bmp.m_pBuf, size());
 
-			switch(type_)
+			switch(m_type)
 			{
 			case BitmapFormatType1bpp:
-				palette_ = new Color[2];
-				memcpy(palette_, bmp.palette_, sizeof(Color) * 2);
+				m_pPalette = new Color[2];
+				memcpy(m_pPalette, bmp.m_pPalette, sizeof(Color) * 2);
 				break;
 			case BitmapFormatType4bpp:
-				palette_ = new Color[16];
-				memcpy(palette_, bmp.palette_, sizeof(Color) * 16);
+				m_pPalette = new Color[16];
+				memcpy(m_pPalette, bmp.m_pPalette, sizeof(Color) * 16);
 				break;
 			case BitmapFormatType8bpp:
-				palette_ = new Color[256];
-				memcpy(palette_, bmp.palette_, sizeof(Color) * 256);
+				m_pPalette = new Color[256];
+				memcpy(m_pPalette, bmp.m_pPalette, sizeof(Color) * 256);
 				break;
 			}
 
@@ -153,37 +153,37 @@ namespace GisEngine
 
 		size_t CBitmap::height() const
 		{
-			return height_;
+			return m_nHeight;
 		}
 
 		size_t CBitmap::width() const
 		{
-			return width_;
+			return m_nWidth;
 		}
 
 		inline unsigned char* CBitmap::bits()
 		{
-			return buf_;
+			return m_pBuf;
 		}
 
 		const unsigned char* CBitmap::bits() const
 		{
-			return buf_;
+			return m_pBuf;
 		}
 
 		size_t CBitmap::lineSize() const
 		{
-			return 4 * ((width_ * bpp() + 31) / 32);
+			return 4 * ((m_nWidth * bpp() + 31) / 32);
 		}
 
 		size_t CBitmap::size() const
 		{
-			return lineSize() * height_;
+			return lineSize() * m_nHeight;
 		}
 
 		size_t CBitmap::bpp() const
 		{
-			switch(type_)
+			switch(m_type)
 			{
 			case BitmapFormatType1bpp:
 				return 1;
@@ -206,12 +206,12 @@ namespace GisEngine
 
 		Color* CBitmap::palette()
 		{
-			return palette_;
+			return m_pPalette;
 		}
 
 		BitmapFormatType CBitmap::type() const
 		{
-			return type_;
+			return m_type;
 		}
 
 		Color CBitmap::pixel(size_t row, size_t col)
@@ -222,55 +222,55 @@ namespace GisEngine
 			if(bpp() <= 8) // get from pallete
 			{
 				size_t idx = 0;
-				if(!palette_)
+				if(!m_pPalette)
 					return Color();
-				switch(type_)
+				switch(m_type)
 				{
 				case BitmapFormatType1bpp:
-					idx = ((buf_[ptr] >> (7 - (col % 8))) & 1) ? 1 : 0;
+					idx = ((m_pBuf[ptr] >> (7 - (col % 8))) & 1) ? 1 : 0;
 					break;
 				case BitmapFormatType4bpp:
-					idx = ((col % 2) == 0) ? (buf_[ptr] >> 4) & 0xF : buf_[ptr] & 0xF;
+					idx = ((col % 2) == 0) ? (m_pBuf[ptr] >> 4) & 0xF : m_pBuf[ptr] & 0xF;
 					return 4;
 				case BitmapFormatType8bpp:
-					idx = buf_[ptr];
+					idx = m_pBuf[ptr];
 					return 8;
 				}
-				return palette_[idx];
+				return m_pPalette[idx];
 			}
 			else
 			{
 				Color::ColorComponent r = 0, g = 0, b = 0, a = Color::Opaque;
-				switch(type_)
+				switch(m_type)
 				{
 				case BitmapFormatType16bppARGB1555:
-					a = buf_[ptr] & 1;
-					b = (buf_[ptr] >> 1) & 31;
-					g = ((*((int16*)&buf_[ptr])) >> 6) & 31;
-					r = ((*((int16*)&buf_[ptr])) >> 11) & 31;
+					a = m_pBuf[ptr] & 1;
+					b = (m_pBuf[ptr] >> 1) & 31;
+					g = ((*((int16*)&m_pBuf[ptr])) >> 6) & 31;
+					r = ((*((int16*)&m_pBuf[ptr])) >> 11) & 31;
 					break;
 				case BitmapFormatType16bppGrayScale: // type Color can store 256 grayscale gradations only
 					return Color();
 				case BitmapFormatType16bppRGB555:
-					b = (buf_[ptr] >> 1) & 31;
-					g = (*((int16*)&buf_[ptr]) >> 6) & 31;
-					r = (*((int16*)&buf_[ptr]) >> 11) & 31;
+					b = (m_pBuf[ptr] >> 1) & 31;
+					g = (*((int16*)&m_pBuf[ptr]) >> 6) & 31;
+					r = (*((int16*)&m_pBuf[ptr]) >> 11) & 31;
 					break;
 				case BitmapFormatType16bppRGB565:
-					r = ((*((int16*)&buf_[ptr])) >> 8) & 0xF8;
-					g = ((*((int16*)&buf_[ptr])) >> 3) & 0xFC; 
-					b = ((*((int16*)&buf_[ptr])) << 3) & 0xF8;
+					r = ((*((int16*)&m_pBuf[ptr])) >> 8) & 0xF8;
+					g = ((*((int16*)&m_pBuf[ptr])) >> 3) & 0xFC; 
+					b = ((*((int16*)&m_pBuf[ptr])) << 3) & 0xF8;
 					break;
 				case BitmapFormatType24bppRGB:
-					b = buf_[ptr];
-					g = buf_[ptr + 1];
-					r = buf_[ptr + 2];
+					b = m_pBuf[ptr];
+					g = m_pBuf[ptr + 1];
+					r = m_pBuf[ptr + 2];
 					break;
 				case BitmapFormatType32bppARGB:
-					b = buf_[ptr];
-					g = buf_[ptr + 1];
-					r = buf_[ptr + 2];
-					a = buf_[ptr + 3];
+					b = m_pBuf[ptr];
+					g = m_pBuf[ptr + 1];
+					r = m_pBuf[ptr + 2];
+					a = m_pBuf[ptr + 3];
 					break;
 					//return *((Color*)&buf_[ptr]);
 				}
@@ -288,9 +288,9 @@ namespace GisEngine
 				return false;
 
 			Color::ColorComponent* bits = bitmap->bits();
-			for(size_t row = 0; row < height_; row++)
+			for(size_t row = 0; row < m_nHeight; row++)
 			{
-				for(size_t col = 0; col < width_; col++, bits += 4)
+				for(size_t col = 0; col < m_nWidth; col++, bits += 4)
 				{
 					Color color = pixel(row, col);
 					bits[0] = color.GetB();
@@ -306,23 +306,36 @@ namespace GisEngine
 		void CBitmap::save(CommonLib::IWriteStream *pStream) const
 		{
 
-			pStream->write((uint32)width_);
-			pStream->write((uint32)height_);
-			pStream->write((byte)type_);
-			pStream->write(buf_, size());
-			if(palette_)
+			pStream->write((uint32)m_nWidth);
+			pStream->write((uint32)m_nHeight);
+			pStream->write((byte)m_type);
+			pStream->write(m_pBuf, size());
+			if(m_pPalette)
 				for(int i = 0; i < 1 << bpp(); i++)
-					palette_[i].save(pStream);
+					m_pPalette[i].save(pStream);
 		}
+		void  CBitmap::load(CommonLib::IReadStream *pStream)
+		{
+			m_nWidth  = pStream->readIntu32();
+			m_nHeight = pStream->readIntu32();
+			m_type = (BitmapFormatType)pStream->readByte();
+			init(m_nWidth, m_nHeight, m_type);
+			size_t nSize = size();
+			if(nSize)
+				pStream->read(m_pBuf, nSize);
+			if(m_pPalette)
+				for(int i = 0; i < 1 << bpp(); i++)
+					m_pPalette[i].load(pStream);
 
+		}
 		void CBitmap::attach(unsigned char* bits, size_t width, size_t height, BitmapFormatType type, Color* palette, bool release)
 		{
-			buf_ = bits;
-			width_ = width;
-			height_ = height;
-			type_ = type;
-			palette_ = palette_;
-			release_ = release;
+			m_pBuf = bits;
+			m_nWidth = width;
+			m_nHeight = height;
+			m_type = type;
+			m_pPalette = m_pPalette;
+			m_bRelease = release;
 		}
 
 		CBitmap* CBitmap::transform(double xScale, double yScale, double angle)

@@ -34,6 +34,7 @@ namespace CommonLib
 		virtual void read(int64& value);
 		virtual void read(float& value);
 		virtual void read(double& value);
+		virtual void read(CommonLib::str_t& str);
 
 
 		virtual bool         readBool();
@@ -47,6 +48,7 @@ namespace CommonLib
 		virtual float        readFloat();
 		virtual double       readDouble();
 
+
 		//IWriteStream
 		virtual void write(const byte* pBuffer, size_t bufLen );
 		virtual void write(bool value);
@@ -58,6 +60,7 @@ namespace CommonLib
 		virtual void write(uint64 value);
 		virtual void write(float value);
 		virtual void write(double value);
+		virtual void write(const CommonLib::str_t& str);
 
 	protected:
 		

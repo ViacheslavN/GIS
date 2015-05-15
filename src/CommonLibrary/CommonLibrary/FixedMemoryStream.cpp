@@ -232,7 +232,16 @@ namespace CommonLib
 	{
 		readT<double>(value);
 	}
-
+	void FxMemoryReadStream::read(CommonLib::str_t& str)
+	{
+		uint32 nlen = readIntu32();
+		if(nlen)
+		{
+			str.reserve(nlen);
+			read((byte*)str.wstr(), 2 *nlen);
+		}
+		
+	}
 
 
 	FxMemoryWriteStream::FxMemoryWriteStream(alloc_t *pAlloc) : FxStreamBase(pAlloc)
@@ -293,5 +302,11 @@ namespace CommonLib
 	void FxMemoryWriteStream::write(double value)
 	{
 		writeT<double>(value);
+	}
+	void FxMemoryWriteStream::write(const CommonLib::str_t& str)
+	{
+		writeT<uint32>(str.length());
+		if(str.length())
+			write((byte*)str.cwstr(), str.length() *2);
 	}
 }

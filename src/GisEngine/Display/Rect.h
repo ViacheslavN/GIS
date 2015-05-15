@@ -20,29 +20,31 @@ namespace GisEngine
 			bool operator==(const GRect&) const;
 			bool operator!=(const GRect&) const;
 
-			void set(GUnits minX, GUnits minY, GUnits maxX, GUnits maxY);
+			void set(GUnits xMin, GUnits yMin, GUnits xMax, GUnits yMax);
 			GRect& offset(GUnits xOffset, GUnits yOffset);
 			GRect& offset(const GPoint& point);
 			void inflate(GUnits dx, GUnits dy);
-			void null() { set(0,0,0,0); } 
-			void expandRect(const GRect &a);
+			void null();
+			void expandRect(const GRect &rc);
 			void expandRect(const GPoint &p);
-			GRect& intersect(const GRect &a);
-			bool IsIntersect(const GRect &a) const;
-			bool IsInRect(const GRect &a) const;
+			GRect& intersect(const GRect &rc);
+			bool isIntersect(const GRect &rc) const;
+			bool isInRect(const GRect &rc) const;
 			GUnits  width()  const;
 			GUnits  height() const;
 			bool isEmpty() const;
 			bool isNull() const;
 			GPoint CenterPoint() const;
-			void scale(double scl) { scale(scl,scl); }
+			void scale(double scl) ;
 			void scale(double sclx, double scly);
-			
-			bool     pointInRect(const GPoint &p) const;
+			bool pointInRect(const GPoint &p) const;
+			bool GRect::pointInRectEQ(const GPoint &p) const;
 
 		public:
-			GPoint Min;
-			GPoint Max;    
+			GUnits m_xMin;
+			GUnits m_yMin;
+			GUnits m_xMax;
+			GUnits m_yMax;
 		};
 	}
 }

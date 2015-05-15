@@ -46,7 +46,7 @@ namespace GisEngine
 
 		private:
 			static Color RndColor(Color::ColorComponent *rgb);
-			ColorType rgba_;
+			ColorType m_rgba;
 		};
 	}
 }

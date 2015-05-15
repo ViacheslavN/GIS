@@ -9,17 +9,17 @@ namespace GisEngine
 		{
 			int r, g, b;
 			swscanf(rgb.cwstr(), L"%2X%2X%2X", &r, &g, &b);
-			rgba_ = (static_cast<ColorType>(ColorComponent(r))
+			m_rgba = (static_cast<ColorType>(ColorComponent(r))
 				| (static_cast<ColorType>(ColorComponent(g)) << 8)
 				| (static_cast<ColorType>(ColorComponent(b)) << 16)
 				| (static_cast<ColorType>(a) << 24));
 		}
 		Color::Color(ColorType rgb, AlfaChannel a): 
-		rgba_((rgb & 0xffffff) | (static_cast<ColorType>(a) << 24))
+		m_rgba((rgb & 0xffffff) | (static_cast<ColorType>(a) << 24))
 		{
 		}
 		Color::Color(ColorComponent r, ColorComponent g, ColorComponent b, AlfaChannel a):
-		rgba_(static_cast<ColorType>(r)
+		m_rgba(static_cast<ColorType>(r)
 			| (static_cast<ColorType>(g) << 8)
 			| (static_cast<ColorType>(b) << 16)
 			| (static_cast<ColorType>(a) << 24))
@@ -28,27 +28,27 @@ namespace GisEngine
 
 		Color::ColorType Color::GetRGB() const
 		{
-			return rgba_ & 0x00ffffff;
+			return m_rgba & 0x00ffffff;
 		}
 		Color::ColorType Color::GetRGBA() const
 		{
-			return rgba_;
+			return m_rgba;
 		}
 		Color::ColorComponent Color::GetR() const 
 		{
-			return static_cast<Color::ColorComponent>(rgba_);
+			return static_cast<Color::ColorComponent>(m_rgba);
 		}
 		Color::ColorComponent Color::GetG() const
 		{
-			return static_cast<Color::ColorComponent>(rgba_ >> 8);
+			return static_cast<Color::ColorComponent>(m_rgba >> 8);
 		}
 		Color::ColorComponent Color::GetB() const 
 		{
-			return static_cast<Color::ColorComponent>(rgba_ >> 16);
+			return static_cast<Color::ColorComponent>(m_rgba >> 16);
 		}
 		Color::ColorComponent Color::GetA() const
 		{
-			return static_cast<Color::ColorComponent>(rgba_ >> 24);
+			return static_cast<Color::ColorComponent>(m_rgba >> 24);
 		}
 
 		Color Color::RndLineColor()
@@ -83,7 +83,7 @@ namespace GisEngine
 
 		bool Color::operator==(const Color& c) const
 		{
-			return rgba_ == c.rgba_;
+			return m_rgba == c.m_rgba;
 		}
 		bool Color::operator!=(const Color& c) const
 		{
@@ -92,11 +92,11 @@ namespace GisEngine
 
 		void Color::save(CommonLib::IWriteStream *pStream) const
 		{
-			pStream->write(rgba_);
+			pStream->write(m_rgba);
 		}
 		void Color::load(CommonLib::IReadStream *pStream)
 		{
-			rgba_ = pStream->readIntu32();
+			m_rgba = pStream->readIntu32();
 		}
 	}
 }

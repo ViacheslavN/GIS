@@ -79,6 +79,7 @@ public:
 	virtual void write(int64 value) = 0;
 	virtual void write(uint64 value) = 0;
 	virtual void write(float value) = 0;
+	virtual void write(const CommonLib::str_t& str) = 0;
 
 	virtual ~IWriteStream()  {}
 };
@@ -97,6 +98,7 @@ public:
 	virtual void read(uint64& value) = 0;
 	virtual void read(float& value) = 0;
 	virtual void read(double& value) = 0;
+	virtual void read(CommonLib::str_t& str) = 0;
 
 	virtual bool         readBool() = 0;
 	virtual byte         readByte() = 0;

@@ -437,14 +437,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bitmap.h" />
+    <ClInclude Include="Brush.h" />
     <ClInclude Include="Clip.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="DisplayMath.h" />
     <ClInclude Include="DisplayTransformation.h" />
     <ClInclude Include="DisplayTypes.h" />
+    <ClInclude Include="Font.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphTypes.h" />
     <ClInclude Include="Matrix4.h" />
+    <ClInclude Include="Pen.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="ReadJPG.h" />
     <ClInclude Include="ReadPng.h" />
@@ -455,7 +458,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bitmap.cpp" />
+    <ClCompile Include="Brush.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="Pen.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="ReadJPG.cpp" />
     <ClCompile Include="ReadPng.cpp" />

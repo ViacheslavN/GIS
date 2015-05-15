@@ -39,12 +39,12 @@ namespace GisEngine
 			bool                   importFromJPG(const unsigned char* data, size_t len);
 			void init(size_t width, size_t height, BitmapFormatType type);
 		private:
-			unsigned char*   buf_;
-			size_t           width_;
-			size_t           height_;
-			BitmapFormatType type_;
-			Color*           palette_;
-			bool             release_;
+			unsigned char*   m_pBuf;
+			size_t           m_nWidth;
+			size_t           m_nHeight;
+			BitmapFormatType m_type;
+			Color*           m_pPalette;
+			bool             m_bRelease;
 		};
 	}
 }

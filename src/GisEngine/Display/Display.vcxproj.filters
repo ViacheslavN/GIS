@@ -78,6 +78,15 @@
     <ClInclude Include="ReadJPG.h">
       <Filter>GraphTypes\img</Filter>
     </ClInclude>
+    <ClInclude Include="Pen.h">
+      <Filter>GraphTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Brush.h">
+      <Filter>GraphTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>GraphTypes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -99,6 +108,15 @@
       <Filter>GraphTypes</Filter>
     </ClCompile>
     <ClCompile Include="Rect.cpp">
+      <Filter>GraphTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Pen.cpp">
+      <Filter>GraphTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Brush.cpp">
+      <Filter>GraphTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
       <Filter>GraphTypes</Filter>
     </ClCompile>
   </ItemGroup>

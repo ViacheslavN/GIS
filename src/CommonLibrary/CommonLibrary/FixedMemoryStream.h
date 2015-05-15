@@ -89,6 +89,7 @@ namespace CommonLib
 		virtual void read(uint64& value);
 		virtual void read(float& value);
 		virtual void read(double& value);
+		virtual void read(CommonLib::str_t& str);
 
 		virtual bool         readBool();
 		virtual byte         readByte();
@@ -120,6 +121,7 @@ namespace CommonLib
 		virtual void write(uint64 value);
 		virtual void write(float value);
 		virtual void write(double value);
+		virtual void write(const CommonLib::str_t& str);
 	};
 
 }
