@@ -1,9 +1,47 @@
 #ifndef GIS_ENGINE_DISPLAY_GRAPHICS_AGG_H_
 #define GIS_ENGINE_DISPLAY_GRAPHICS_AGG_H_
 #include "Graphics.h"
-#include "AggRenderer.h"
 
+#include "agg/agg_renderer_base.h"
+#include "agg/agg_scanline_p.h"
+#include "agg/agg_renderer_scanline.h"
+#include "agg/agg_pixfmt_rgba.h"
+
+#include "agg/agg_rasterizer_outline.h"
+#include "agg/agg_renderer_primitives.h"
+#include "agg/agg_rasterizer_outline_aa.h"
+#include "agg/agg_renderer_outline_aa.h"
+#include "agg/agg_ellipse.h"
+#include "agg/agg_font_cache_manager.h"
+#include "agg/agg_rasterizer_scanline_aa.h"
+#include "agg/agg_conv_dash.h"
+#include "agg/agg_conv_stroke.h"
+
+
+
+#include "agg/agg_span_allocator.h"
+#include "agg/agg_span_interpolator_linear.h"
+#include "agg/agg_span_image_filter.h"
+#include "agg/agg_image_accessors.h"
+#include "agg/agg_span_image_filter_rgba.h"
+#include "agg/agg_span_pattern_rgba.h"
+
+#include "agg/agg_span_gradient.h"
+#include "agg/agg_pixfmt_gray.h"
+#include "agg/agg_pixfmt_amask_adaptor.h"
+#include "agg/agg_pixfmt_rgb_packed.h"
+#include "agg/agg_alpha_mask_u8.h"
+
+#include "agg/agg_font_cache_manager.h"
+#include "agg/agg_font_freetype.h"
+#include "agg/agg_conv_contour.h"
+#include "conv_offset.h"
+#include "agg/agg_conv_bspline.h"
+#include "agg/agg_trans_single_path.h"
+#include "agg/agg_conv_segmentator.h"
+#include "agg/agg_conv_transform.h"
 #include "agg/agg_rounded_rect.h"
+#include "VertexSrc.h"
 
 namespace GisEngine
 {
@@ -14,7 +52,8 @@ namespace GisEngine
 		class CGraphicsAgg : public IGraphics
 		{
 			public:
-				CGraphicsAgg();
+				CGraphicsAgg(unsigned char* buf, GUnits  width, GUnits height, bool bRelease, bool flipY = false);
+				CGraphicsAgg( GUnits  width, GUnits height, bool flipY = false);
 				~CGraphicsAgg();
 
 				virtual DeviceType  GetDeviceType() const;
@@ -63,10 +102,10 @@ namespace GisEngine
 
 				virtual Color GetPixel(GUnits x, GUnits y);
 
-				virtual GPoint GetViewportOrg();
+				virtual GPoint GetViewportOrg() const;
 				virtual void   SetViewportOrg(const GPoint& org);
 
-				virtual GPoint GetBrushOrg();
+				virtual GPoint GetBrushOrg() const ;
 				virtual void   SetBrushOrg(const GPoint& org);
 
 				virtual const CBitmap& GetSurface() const;
@@ -78,8 +117,85 @@ namespace GisEngine
 				virtual void Lock();
 				virtual void Release();
 
-
+			
 			private:
+#ifdef ANDROID
+				typedef agg::pixfmt_rgba32 pixfmt_t; 
+#else
+				typedef agg::pixfmt_bgra32 pixfmt_t;
+#endif
+				typedef agg::scanline_p8 scanline_t;
+ 				typedef agg::renderer_base<pixfmt_t> renderer_base_t;
+				typedef agg::renderer_scanline_aa_solid<renderer_base_t> renderer_t;
+				typedef agg::rasterizer_scanline_aa<> rasterizer_t;
+
+				// images support
+				typedef agg::span_allocator<agg::rgba8> span_allocator_t;
+				typedef agg::wrap_mode_repeat pattern_wrap_t;
+				typedef agg::image_accessor_wrap<agg::pixfmt_bgra32, pattern_wrap_t, pattern_wrap_t> pattern_accessor_t;
+				typedef agg::span_pattern_rgba<pattern_accessor_t> span_pattern_generator_t;
+
+				typedef agg::font_engine_freetype_int32 font_engine_t;
+				typedef agg::font_cache_manager<font_engine_t> font_cache_manager_t;
+				typedef agg::conv_curve<font_cache_manager_t::path_adaptor_type> conv_curve_t;
+				typedef agg::conv_contour<conv_curve_t> conv_contour_type;
+				typedef agg::conv_segmentator<conv_curve_t>                      conv_font_segm_type;
+				typedef agg::conv_transform<conv_font_segm_type, agg::trans_single_path> conv_font_trans_type;
+				typedef agg::conv_contour<conv_font_trans_type>                          trans_type_contour;
+
+		private:
+			void InCopy(const GPoint& srcPoint, const GRect& dstRect);
+			void copy(IGraphics* pSrc, const GPoint& srcPoint, const GRect& dstRect, bool bBlend = true);
+			void draw_line(const CPen* pPen);
+ 
+		private:
+				scanline_t scanline_;
+				renderer_base_t renderer_base_;
+				renderer_t renderer_;
+				rasterizer_t rasterizer_;
+				agg::rendering_buffer rbuf_;
+				pixfmt_t	rendering_buffer_;
+
+				agg::conv_stroke<offset_stroke<CVertexSrc> > conv_stroke_;
+				agg::conv_dash<CVertexSrc> dash_stroke_;
+				agg::conv_stroke<offset_stroke<agg::conv_dash<CVertexSrc> > > dash_conv_stroke_;
+				CVertexSrc vertex_src_;
+				offset_stroke<CVertexSrc>                  offset_stroke_;
+				offset_stroke<agg::conv_dash<CVertexSrc> > dash_offset_stroke_;
+				agg::ellipse ellipse_;
+				agg::rounded_rect rounded_rect_;
+
+
+				//images support
+				span_allocator_t         span_allocator_;
+				agg::pixfmt_bgra32       pattern_rgba32_;
+				agg::rendering_buffer    pattern_rbuf_;
+				span_pattern_generator_t span_pattern_generator_;
+
+
+				font_engine_t        font_engine_;
+				font_cache_manager_t font_manager_;
+				conv_curve_t         curves_;
+				conv_contour_type    contour_;
+				agg::conv_bspline<CVertexSrc>       bspline_;
+				agg::trans_single_path tcurve_;
+				conv_font_segm_type  fsegm_;
+				conv_font_trans_type ftrans_;
+				trans_type_contour fcontour_;
+				CBitmap m_surface;
+
+
+				GUnits m_nWidth;
+				GUnits m_nHeight;
+				HDC m_dc;
+#ifndef ANDROID
+				HBITMAP m_oldBitmap;
+#endif
+
+				GRect m_ClipRect;
+				bool m_bflipY;
+				GPoint m_org;
+				GPoint m_brushOrg;
 
 		};
 	}

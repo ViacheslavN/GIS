@@ -96,11 +96,11 @@
     <ClInclude Include="GraphicsAgg.h">
       <Filter>GraphicsAgg</Filter>
     </ClInclude>
-    <ClInclude Include="AggRenderer.h">
-      <Filter>GraphicsAgg</Filter>
-    </ClInclude>
     <ClInclude Include="conv_offset.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexSrc.h">
+      <Filter>GraphicsAgg</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -140,7 +140,7 @@
     <ClCompile Include="conv_offset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AggRenderer.cpp">
+    <ClCompile Include="VertexSrc.cpp">
       <Filter>GraphicsAgg</Filter>
     </ClCompile>
   </ItemGroup>

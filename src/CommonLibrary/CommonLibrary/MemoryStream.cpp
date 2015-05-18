@@ -169,7 +169,11 @@ namespace CommonLib
 	{
 		return readTR<byte>();
 	}
-	uint16 MemoryStream::readWord()
+	int16  MemoryStream::readint16()
+	{
+		return readTR<int16>();
+	}
+	uint16 MemoryStream::readintu16()
 	{
 		 return readTR<uint16>();
 	}

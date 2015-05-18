@@ -17,7 +17,7 @@ namespace GisEngine
 			const GPoint &operator+=(const GPoint &);
 			const GPoint &operator-=(const GPoint &);
 		public:
-			GUnits m_x, m_y;
+			GUnits x, y;
 		};
 	}
 }

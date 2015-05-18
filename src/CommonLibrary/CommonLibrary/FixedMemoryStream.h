@@ -81,7 +81,7 @@ namespace CommonLib
 		virtual void read( byte* pBuffer, size_t bufLen );
 		virtual void read(bool& value);
 		virtual void read(byte& value) ;
-		virtual void read(int16& value);
+ 		virtual void read(int16& value);
 		virtual void read(uint16& value);
 		virtual void read(uint32& value);
 		virtual void read(int32& value);
@@ -93,7 +93,9 @@ namespace CommonLib
 
 		virtual bool         readBool();
 		virtual byte         readByte();
-		virtual uint16       readWord();
+		virtual short		 readShort();
+		virtual int16		 readint16();
+		virtual uint16       readintu16();
 		virtual uint32       readDword();
 		virtual int32        readInt32();
 		virtual uint32       readIntu32();
@@ -114,6 +116,7 @@ namespace CommonLib
 		virtual void write(const byte* pBuffer, size_t bufLen );
 		virtual void write(bool value);
 		virtual void write(byte value);
+		virtual void write(int16 value);
 		virtual void write(uint16 value);
 		virtual void write(uint32 value);
 		virtual void write(int32 value);

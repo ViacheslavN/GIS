@@ -68,10 +68,10 @@ namespace GisEngine
 
 				virtual Color GetPixel(GUnits x, GUnits y) = 0;
 
-				virtual GPoint GetViewportOrg() = 0;
+				virtual GPoint GetViewportOrg() const= 0;
 				virtual void   SetViewportOrg(const GPoint& org) = 0;
 
-				virtual GPoint GetBrushOrg() = 0;
+				virtual GPoint GetBrushOrg() const = 0;
 				virtual void   SetBrushOrg(const GPoint& org) = 0;
 
 				virtual const CBitmap& GetSurface() const = 0;

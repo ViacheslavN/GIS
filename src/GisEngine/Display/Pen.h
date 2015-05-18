@@ -32,7 +32,7 @@ namespace GisEngine
 			GUnits getWidth() const;
 			CapType getCapType() const;
 			JoinType getJoinType() const;
-			const CBitmap* getTexture() const;
+			CBitmap* getTexture() const;
 			GUnits getOffset() const;
 			const TPenTemplates& getTemplates() const;
 

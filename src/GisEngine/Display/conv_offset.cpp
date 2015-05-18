@@ -177,26 +177,26 @@ namespace GisEngine
 
 			if(first_seg)
 			{
-				beg.m_x = GUnits(p1.m_x + vec_x_1 * double(offset));
-				beg.m_y = GUnits(p1.m_y + vec_y_1 * double(offset));
+				beg.x = GUnits(p1.x + vec_x_1 * double(offset));
+				beg.y = GUnits(p1.y + vec_y_1 * double(offset));
 			}
 			else
 			{
-				end.m_x = GUnits(p3.m_x + vec_x_2 * double(offset));
-				end.m_y = GUnits(p3.m_y + vec_y_2 * double(offset));
+				end.x = GUnits(p3.x + vec_x_2 * double(offset));
+				end.y = GUnits(p3.y + vec_y_2 * double(offset));
 			}
 
 			if(*use_both || is_parallel(A1, B1, A2, B2))
 			{
 				if(first_seg)
 				{
-					end.m_x = GUnits(p2.m_x + vec_x_1 * double(offset));
-					end.m_y = GUnits(p2.m_y + vec_y_1 * double(offset));
+					end.x = GUnits(p2.x + vec_x_1 * double(offset));
+					end.y = GUnits(p2.y + vec_y_1 * double(offset));
 				}
 				else
 				{
-					end.m_x = GUnits(p3.m_x + vec_x_2 * double(offset));
-					end.m_y = GUnits(p3.m_y + vec_y_2 * double(offset));
+					end.x = GUnits(p3.x + vec_x_2 * double(offset));
+					end.y = GUnits(p3.y + vec_y_2 * double(offset));
 				}
 			}
 			else
@@ -230,13 +230,13 @@ namespace GisEngine
 				double koef = maxlen / l;
 				if(first_seg)
 				{
-					end.m_x = GUnits(beg.m_x + koef * (end.m_x - beg.m_x));
-					end.m_y = GUnits(beg.m_y + koef * (end.m_y - beg.m_y));
+					end.x = GUnits(beg.x + koef * (end.x - beg.x));
+					end.y = GUnits(beg.y + koef * (end.y - beg.y));
 				}
 				else
 				{
-					beg.m_x = GUnits(end.m_x - koef * (end.m_x - beg.m_x));
-					beg.m_y = GUnits(end.m_y - koef * (end.m_y - beg.m_y));
+					beg.x = GUnits(end.x - koef * (end.x - beg.x));
+					beg.y = GUnits(end.y - koef * (end.y - beg.y));
 				}
 			}
 
@@ -257,10 +257,10 @@ namespace GisEngine
 			double l1 = sqrt(A1 * A1 + B1 * B1);
 			double vec_y_1 = B1 / l1, vec_x_1 = A1 / l1;
 
-			beg.m_x = GUnits(p1.m_x + vec_x_1 * double(offset));
-			beg.m_y = GUnits(p1.m_y + vec_y_1 * double(offset));
-			end.m_x = GUnits(p2.m_x + vec_x_1 * double(offset));
-			end.m_y = GUnits(p2.m_y + vec_y_1 * double(offset));
+			beg.x = GUnits(p1.x + vec_x_1 * double(offset));
+			beg.y = GUnits(p1.y + vec_y_1 * double(offset));
+			end.x = GUnits(p2.x + vec_x_1 * double(offset));
+			end.y = GUnits(p2.y + vec_y_1 * double(offset));
 			return true;
 		}
 
@@ -269,9 +269,9 @@ namespace GisEngine
 			if(p1 == p2)
 				return false;
 
-			*a = p1.m_y - p2.m_y;
-			*b = p2.m_x - p1.m_x;
-			*c = (p1.m_x * (-(*a)) - p1.m_y * (*b));
+			*a = p1.y - p2.y;
+			*b = p2.x - p1.x;
+			*c = (p1.x * (-(*a)) - p1.y * (*b));
 			return true;
 		}
 
@@ -291,8 +291,8 @@ namespace GisEngine
 		{
 			if(!is_parallel(A1, B1, A2, B2))
 			{
-				p.m_x = GUnits((B1*C2 - B2*C1) / (A1*B2 - A2*B1));
-				p.m_y = GUnits((C1*A2 - C2*A1) / (A1*B2 - A2*B1));
+				p.x = GUnits((B1*C2 - B2*C1) / (A1*B2 - A2*B1));
+				p.y = GUnits((C1*A2 - C2*A1) / (A1*B2 - A2*B1));
 				return true;
 			}
 			return false;
@@ -300,7 +300,7 @@ namespace GisEngine
 
 		double conv_offset::len(const GPoint& p1, const GPoint& p2)
 		{
-			return sqrt(double((p1.m_x - p2.m_x) * (p1.m_x - p2.m_x) + (p1.m_y - p2.m_y) * (p1.m_y - p2.m_y)));
+			return sqrt(double((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)));
 		}
 
 	}

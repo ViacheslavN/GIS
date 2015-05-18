@@ -97,7 +97,7 @@ namespace GisEngine
 		{
 			return m_joinType;
 		}
-		const CBitmap* CPen::getTexture() const
+		CBitmap* CPen::getTexture() const
 		{
 			return m_pTexture;
 		}

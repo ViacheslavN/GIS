@@ -41,10 +41,10 @@ namespace GisEngine
 			bool GRect::pointInRectEQ(const GPoint &p) const;
 
 		public:
-			GUnits m_xMin;
-			GUnits m_yMin;
-			GUnits m_xMax;
-			GUnits m_yMax;
+			GUnits xMin;
+			GUnits yMin;
+			GUnits xMax;
+			GUnits yMax;
 		};
 	}
 }

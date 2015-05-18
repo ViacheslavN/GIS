@@ -11,7 +11,7 @@ namespace GisEngine
 		}
 		GRect::GRect(const GPoint& _min, const GPoint& _max)
 		{
-			set(_min.m_x, _min.m_y, _max.m_x, _max.m_y);
+			set(_min.x, _min.y, _max.x, _max.y);
 		}
 		GRect::GRect(GUnits minX, GUnits minY, GUnits maxX, GUnits maxY)
 		{
@@ -19,25 +19,25 @@ namespace GisEngine
 		}
 		GRect::GRect(const GRect& rc)
 		{
-			set(rc.m_xMin, rc.m_yMin, rc.m_xMax, rc.m_yMax);
+			set(rc.xMin, rc.yMin, rc.xMax, rc.yMax);
 		}
 
 
 		bool GRect::operator==(const GRect& rc) const
 		{
-			return m_xMin == rc.m_xMin && m_xMax == rc.m_xMax && m_yMin == rc.m_yMin && m_yMax == rc.m_yMax;
+			return xMin == rc.xMin && xMax == rc.xMax && yMin == rc.yMin && yMax == rc.yMax;
 		}
 		bool GRect::operator!=(const GRect& rc) const
 		{
-			return m_xMin != rc.m_xMin || m_xMax != rc.m_xMax || m_yMin != rc.m_yMin || m_yMax != rc.m_yMax;
+			return xMin != rc.xMin || xMax != rc.xMax || yMin != rc.yMin || yMax != rc.yMax;
 		}
 
 		void GRect::set(GUnits xMin, GUnits yMin, GUnits xMax, GUnits yMax)
 		{
-			m_xMin = xMin;
-			m_xMax = xMax;
-			m_yMin = yMin;
-			m_yMax = yMax;
+			xMin = xMin;
+			xMax = xMax;
+			yMin = yMin;
+			yMax = yMax;
 		}
 		void GRect::null()
 		{ 
@@ -45,22 +45,22 @@ namespace GisEngine
 		}
 		GRect& GRect::offset(GUnits xOffset, GUnits yOffset)
 		{
-			 m_xMin += xOffset;
-			 m_xMax += xOffset; 
-			 m_yMin += yOffset;
-			 m_yMax += yOffset;
+			 xMin += xOffset;
+			 xMax += xOffset; 
+			 yMin += yOffset;
+			 yMax += yOffset;
 			 return *this;
 		}
 		GRect& GRect::offset(const GPoint& point)
 		{
-			return offset(point.m_x, point.m_y); 
+			return offset(point.x, point.y); 
 		}
 		void GRect::inflate(GUnits dx, GUnits dy)
 		{
-			 m_xMin -= dx; 
-			 m_xMax += dx; 
-			 m_yMin -= dy; 
-			 m_yMax += dy; 
+			 xMin -= dx; 
+			 xMax += dx; 
+			 yMin -= dy; 
+			 yMax += dy; 
 		}
  
 		void GRect::expandRect(const GRect &rc)
@@ -70,19 +70,19 @@ namespace GisEngine
 
 			if(isEmpty())
 			{
-				set(rc.m_xMin, rc.m_yMin, rc.m_xMax, rc.m_yMax);
+				set(rc.xMin, rc.yMin, rc.xMax, rc.yMax);
 			}
 			else
-				set(std::min(m_xMin, rc.m_xMin),std::min(m_yMin, rc.m_yMin), std::max(m_xMax, rc.m_xMax),std::max(m_yMax, rc.m_yMax));
+				set(std::min(xMin, rc.xMin),std::min(yMin, rc.yMin), std::max(xMax, rc.xMax),std::max(yMax, rc.yMax));
 		}
 		void GRect::expandRect(const GPoint &p)
 		{
 			if(isEmpty())
 			{
-				set(p.m_x, p.m_y, p.m_x, p.m_y);
+				set(p.x, p.y, p.x, p.y);
 			}
 			else
-				set(std::min(m_xMin, p.m_x), std::min(m_yMin, p.m_y), std::max(m_xMax, p.m_x), std::max(m_yMax, p.m_y));
+				set(std::min(xMin, p.x), std::min(yMin, p.y), std::max(xMax, p.x), std::max(yMax, p.y));
 		}
 		GRect& GRect::intersect(const GRect &rc)
 		{
@@ -95,10 +95,10 @@ namespace GisEngine
 				return *this;
 			}
 
-			m_xMin= std::max(m_xMin, rc.m_xMin);
-			m_yMin = std::max(m_yMin, rc.m_yMin);
-			m_xMax = std::min(m_xMax, rc.m_xMax);
-			m_yMax = std::min(m_yMax, rc.m_yMax);
+			xMin= std::max(xMin, rc.xMin);
+			yMin = std::max(yMin, rc.yMin);
+			xMax = std::min(xMax, rc.xMax);
+			yMax = std::min(yMax, rc.yMax);
 			return *this;
 		}
 		bool GRect::isIntersect(const GRect &rc) const
@@ -106,10 +106,10 @@ namespace GisEngine
 			if(isEmpty() || rc.isEmpty())
 				return false;
 
-			if(m_xMin >= rc.m_xMax) return false;
-			if(m_xMax <= rc.m_xMin) return false;
-			if(m_yMin >= rc.m_yMax) return false;
-			if(m_yMax <= rc.m_yMin) return false;
+			if(xMin >= rc.xMax) return false;
+			if(xMax <= rc.xMin) return false;
+			if(yMin >= rc.yMax) return false;
+			if(yMax <= rc.yMin) return false;
 			return true;
 		}
 		bool GRect::isInRect(const GRect &rc) const
@@ -117,31 +117,31 @@ namespace GisEngine
 			if(isEmpty() || rc.isEmpty())
 				return false;
 
-			if(m_xMin > rc.m_xMin) return false;
-			if(m_xMax < rc.m_xMax) return false;
-			if(m_yMin > rc.m_yMin) return false;
-			if(m_yMax < rc.m_yMax) return false;
+			if(xMin > rc.xMin) return false;
+			if(xMax < rc.xMax) return false;
+			if(yMin > rc.yMin) return false;
+			if(yMax < rc.yMax) return false;
 			return true;
 		}
 		GUnits GRect::width()  const
 		{
-			return m_xMax - m_xMin;
+			return xMax - xMin;
 		}
 		GUnits  GRect::height() const
 		{
-			return m_yMax - m_yMin;
+			return yMax - yMin;
 		}
 		bool GRect::isEmpty() const
 		{
-			return (m_xMax < m_xMin|| (m_yMax < m_yMin)); 
+			return (xMax < xMin|| (yMax < yMin)); 
 		}
 		bool GRect::isNull() const
 		{
-			return (m_xMax == m_xMin) && (m_yMax == m_yMin); 
+			return (xMax == xMin) && (yMax == yMin); 
 		}
 		GPoint GRect::CenterPoint() const
 		{
-			return GPoint((m_xMin + m_xMax)/2, (m_yMin + m_yMax)/2);
+			return GPoint((xMin + xMax)/2, (yMin + yMax)/2);
 		}
 		void GRect::scale(double scl) 
 		{ 
@@ -149,22 +149,22 @@ namespace GisEngine
 		}
 		void GRect::scale(double sclx, double scly)
 		{
-			m_xMin  = (GUnits)(m_xMin * sclx);
-			m_xMax  = (GUnits)(m_xMax * sclx);
-			m_yMin  = (GUnits)(m_yMin * scly);
-			m_yMax  = (GUnits)(m_yMax * scly);
+			xMin  = (GUnits)(xMin * sclx);
+			xMax  = (GUnits)(xMax * sclx);
+			yMin  = (GUnits)(yMin * scly);
+			yMax  = (GUnits)(yMax * scly);
 		}
 	 	
 		bool GRect::pointInRect(const GPoint &p) const
 		{
-			return (p.m_x > m_xMin) && (p.m_y > m_yMin) &&
-				(p.m_x < m_xMax) && (p.m_y < m_yMax) ;
+			return (p.x > xMin) && (p.y > yMin) &&
+				(p.x < xMax) && (p.y < yMax) ;
 		}
 
 		bool GRect::pointInRectEQ(const GPoint &p) const
 		{
-			return (p.m_x >= m_xMin) && (p.m_y >= m_yMin) &&
-				(p.m_x <= m_xMax) && (p.m_y <= m_yMax) ;
+			return (p.x >= xMin) && (p.y >= yMin) &&
+				(p.x <= xMax) && (p.y <= yMax) ;
 		}
 	}
 }

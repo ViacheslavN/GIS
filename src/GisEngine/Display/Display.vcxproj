@@ -436,7 +436,6 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AggRenderer.h" />
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Brush.h" />
     <ClInclude Include="Clip.h" />
@@ -458,9 +457,9 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Vector3d.h" />
+    <ClInclude Include="VertexSrc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AggRenderer.cpp" />
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Brush.cpp" />
     <ClCompile Include="Color.cpp" />
@@ -486,6 +485,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseShared|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="VertexSrc.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
