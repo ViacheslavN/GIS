@@ -25,6 +25,12 @@
     <Filter Include="GraphTypes\img">
       <UniqueIdentifier>{5a75d6dd-593a-45ee-94ad-2c4546efa46a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GraphicsAgg">
+      <UniqueIdentifier>{43396ac5-1fd0-46d9-873a-195ee821d474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsOpenGL">
+      <UniqueIdentifier>{cda2956f-b257-49c8-abe2-f158a1d93df4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -87,6 +93,15 @@
     <ClInclude Include="Font.h">
       <Filter>GraphTypes</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsAgg.h">
+      <Filter>GraphicsAgg</Filter>
+    </ClInclude>
+    <ClInclude Include="AggRenderer.h">
+      <Filter>GraphicsAgg</Filter>
+    </ClInclude>
+    <ClInclude Include="conv_offset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -118,6 +133,15 @@
     </ClCompile>
     <ClCompile Include="Font.cpp">
       <Filter>GraphTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsAgg.cpp">
+      <Filter>GraphicsAgg</Filter>
+    </ClCompile>
+    <ClCompile Include="conv_offset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AggRenderer.cpp">
+      <Filter>GraphicsAgg</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

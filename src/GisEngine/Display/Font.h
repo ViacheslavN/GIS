@@ -10,7 +10,7 @@ namespace GisEngine
 		{
 		public:
 			CFont(bool bIsNull = false);
-			CFont(const CommonLib::str_t& sFace, GUnits nSize, GUnits nHaloSize, );
+			CFont(const CommonLib::str_t& sFace, GUnits nSize, GUnits nHaloSize );
 
 			void save(CommonLib::IWriteStream *pStream) const;
 			void load(CommonLib::IReadStream *pStream);
