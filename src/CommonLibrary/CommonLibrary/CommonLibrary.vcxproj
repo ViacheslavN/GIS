@@ -250,7 +250,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\lib_common_ds.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibCommon32_ds.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">
@@ -415,6 +415,7 @@
     <ClInclude Include="AutoPtr.h" />
     <ClInclude Include="BoundaryBox.h" />
     <ClInclude Include="caseutils.h" />
+    <ClInclude Include="CommonLib_lib.h" />
     <ClInclude Include="CSSection.h" />
     <ClInclude Include="DebugTime.h" />
     <ClInclude Include="delegate.h" />

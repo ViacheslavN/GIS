@@ -24,10 +24,10 @@
     <ClCompile Include="MainFrm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestGraphicsView.cpp">
+    <ClCompile Include="AboutDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AboutDlg.cpp">
+    <ClCompile Include="TestGraphicsView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -23,6 +23,10 @@ extern CAppModule _Module;
 #include <atldlgs.h>
 #include <atlctrlw.h>
 
+#include "../../agg/agglib_lib.h"
+#include "../../Display/Displaylib_lib.h"
+#include "../../../CommonLibrary/CommonLibrary/CommonLib_lib.h"
+
 #if defined _M_IX86
   #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #elif defined _M_IA64

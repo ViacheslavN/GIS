@@ -50,12 +50,13 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../ThirdParty/WTL/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../ThirdParty/WTL/;../../../CommonLibrary;../../;../../../ThirdParty/freetype-2.5.4/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>../../../ThirdParty/freetype-2.5.4/lib;../../Output;../../../ThirdParty/zlib-1.2.8/lib;../../../ThirdParty/jpeg-9a/lib;../../../ThirdParty/LIBPNG-1.6.16/lib;../../../CommonLibrary/Output;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ResourceCompile>
       <Culture>0x0409</Culture>

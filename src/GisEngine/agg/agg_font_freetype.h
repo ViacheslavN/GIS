@@ -26,7 +26,7 @@
 #ifndef AGG_FONT_FREETYPE_INCLUDED
 #define AGG_FONT_FREETYPE_INCLUDED
 
-#include <ft2build.h>
+#include "Freetypelib_lib.h"
 #include FT_FREETYPE_H
 
 

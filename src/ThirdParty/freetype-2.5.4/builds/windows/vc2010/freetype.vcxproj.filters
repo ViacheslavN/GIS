@@ -151,5 +151,8 @@
     <ClInclude Include="..\..\..\include\config\ftstdlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\Freetypelib_lib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

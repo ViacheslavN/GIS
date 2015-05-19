@@ -435,6 +435,9 @@
     <ClInclude Include="agg_vcgen_dash.h">
       <Filter>integer</Filter>
     </ClInclude>
+    <ClInclude Include="agglib_lib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

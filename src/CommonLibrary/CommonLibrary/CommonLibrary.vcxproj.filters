@@ -141,6 +141,9 @@
     <ClInclude Include="FixedBitStream.h">
       <Filter>stream\bits</Filter>
     </ClInclude>
+    <ClInclude Include="CommonLib_lib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

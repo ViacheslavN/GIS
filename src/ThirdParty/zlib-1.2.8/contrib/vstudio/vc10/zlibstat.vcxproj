@@ -925,6 +925,11 @@ bld_ml64.bat</Command>
   <ItemGroup>
     <None Include="zlibvc.def" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\zconf.h" />
+    <ClInclude Include="..\..\..\zlib.h" />
+    <ClInclude Include="..\..\..\zlib_lib.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

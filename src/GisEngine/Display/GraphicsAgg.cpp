@@ -31,6 +31,8 @@ namespace GisEngine
 			rbuf_.attach(m_surface.bits(), (uint32)width, (uint32)height, flipY ? (int)line_size : -1 *(int)line_size);
 			renderer_.attach(renderer_base_);
 			renderer_base_.attach(this->rendering_buffer_);
+
+
 		}
 
 		CGraphicsAgg::CGraphicsAgg( GUnits  width, GUnits height, bool flipY): 
@@ -86,6 +88,9 @@ namespace GisEngine
 			m_surface.attach(pBuf, size_t(width), size_t(height),BitmapFormatType32bppARGB, 0, true);
 			rbuf_.attach(m_surface.bits(), (int)width, (int)height, (int)(flipY ? line_size : -line_size));
 #endif
+
+			renderer_.attach(renderer_base_);
+			renderer_base_.attach(this->rendering_buffer_);
 		}
 		CGraphicsAgg::~CGraphicsAgg()
 		{

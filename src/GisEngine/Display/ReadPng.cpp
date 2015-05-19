@@ -6,7 +6,7 @@
 
 #include "zlib.h"
 #include "zlib_lib.h"
-
+#define ZLIB_WINAPI
 #include "png.h"
 //#include "pnginfo.h"
 #include "png_lib.h"

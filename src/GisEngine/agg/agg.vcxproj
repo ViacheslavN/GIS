@@ -286,7 +286,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\agg_ds.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibAgg32_ds.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
@@ -425,6 +425,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="agglib_lib.h" />
     <ClInclude Include="agg_alpha_mask_u8.h" />
     <ClInclude Include="agg_arc.h" />
     <ClInclude Include="agg_array.h" />
