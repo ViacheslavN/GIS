@@ -41,6 +41,11 @@ Thumbs.db
 *.ipch
 *.opensdf
 *.sdf
+*.lst
+*.tlog
+*.idb
+*.map
+*.exp
 [Bb]in
 [Dd]ebug*/
 *.sbr
