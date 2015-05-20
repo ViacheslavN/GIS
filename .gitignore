@@ -46,6 +46,8 @@ Thumbs.db
 *.idb
 *.map
 *.exp
+*.lastbuildstate
+*.unsuccessfulbuild
 [Bb]in
 [Dd]ebug*/
 *.sbr
