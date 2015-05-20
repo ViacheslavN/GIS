@@ -31,6 +31,9 @@
     <Filter Include="GraphicsOpenGL">
       <UniqueIdentifier>{cda2956f-b257-49c8-abe2-f158a1d93df4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GraphicsWinGDI">
+      <UniqueIdentifier>{f639229b-a8e5-44e3-89b5-0f1ad89c7293}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -105,6 +108,9 @@
     <ClInclude Include="Displaylib_lib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsWinGDI.h">
+      <Filter>GraphicsWinGDI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -145,6 +151,9 @@
     </ClCompile>
     <ClCompile Include="VertexSrc.cpp">
       <Filter>GraphicsAgg</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsWinGDI.cpp">
+      <Filter>GraphicsWinGDI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -19,6 +19,9 @@ LRESULT CTestGraphicsView::OnPaint(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lP
 	GisEngine::Display::CPen pen;
 	pen.setWidth(10);
 	pen.setColor(GisEngine::Display::Color(0, 255, 0, 255));
+	pen.setCapType(GisEngine::Display::CapTypeRound);
+	pen.setJoinType(GisEngine::Display::JoinTypeRound);
+	pen.setPenType(GisEngine::Display::PenTypeDashDotDot);
 	if(m_pGraphicsAgg.get())
 	{
 		m_pGraphicsAgg->Erase(GisEngine::Display::Color(255, 0, 0, 255));
@@ -26,11 +29,14 @@ LRESULT CTestGraphicsView::OnPaint(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lP
 
 
 
-		BITMAPINFO bmi;
+		 ::BitBlt(dc.m_hDC, 0, 0, m_pGraphicsAgg->GetWidth(), m_pGraphicsAgg->GetHeight(), m_pGraphicsAgg->GetDC(), 0, 0, SRCCOPY);
+
+
+		/*BITMAPINFO bmi;
 		::memset(&bmi, 0, sizeof(bmi));
 		bmi.bmiHeader.biBitCount = 32;
 		bmi.bmiHeader.biCompression = BI_RGB;
-		bmi.bmiHeader.biHeight = -(int)m_pGraphicsAgg->GetSurface().height();
+		bmi.bmiHeader.biHeight = (int)m_pGraphicsAgg->GetSurface().height();
 		bmi.bmiHeader.biPlanes = 1;
 		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 		bmi.bmiHeader.biWidth = m_pGraphicsAgg->GetSurface().width();
@@ -40,7 +46,7 @@ LRESULT CTestGraphicsView::OnPaint(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lP
 			0, 0,  m_pGraphicsAgg->GetWidth(), m_pGraphicsAgg->GetHeight(),
 			m_pGraphicsAgg->GetSurface().bits(),
 			&bmi,  
-			DIB_RGB_COLORS, SRCCOPY) ;
+			DIB_RGB_COLORS, SRCCOPY) ;*/
 	}
 	
 

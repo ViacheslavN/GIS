@@ -99,7 +99,10 @@ namespace GisEngine
 			::DeleteDC(m_dc);
 #endif
 		}
-
+		HDC  CGraphicsAgg::GetDC()
+		{
+			return m_dc;
+		}
 
 		 DeviceType  CGraphicsAgg::GetDeviceType() const
 		 {
@@ -302,7 +305,7 @@ namespace GisEngine
 		 template <typename Stroke>
 		 void AppendPen(const CPen* pPen, Stroke& stroke)
 		 {
-			 switch(pPen->getPenType())
+			 switch(pPen->getCapType())
 			 {
 			 case CapTypeButt:
 				 stroke.line_cap(agg::butt_cap);

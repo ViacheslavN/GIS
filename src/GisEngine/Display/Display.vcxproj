@@ -454,6 +454,7 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsAgg.h" />
+    <ClInclude Include="GraphicsWinGDI.h" />
     <ClInclude Include="GraphTypes.h" />
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="Pen.h" />
@@ -473,6 +474,7 @@
     <ClCompile Include="conv_offset.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="GraphicsAgg.cpp" />
+    <ClCompile Include="GraphicsWinGDI.cpp" />
     <ClCompile Include="Pen.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="ReadJPG.cpp" />

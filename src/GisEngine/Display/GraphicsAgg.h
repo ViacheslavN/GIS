@@ -117,7 +117,7 @@ namespace GisEngine
 				virtual void Lock();
 				virtual void Release();
 
-			
+				HDC GetDC();
 			private:
 #ifdef ANDROID
 				typedef agg::pixfmt_rgba32 pixfmt_t; 
