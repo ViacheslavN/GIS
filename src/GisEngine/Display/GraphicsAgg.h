@@ -147,7 +147,7 @@ namespace GisEngine
 			void InCopy(const GPoint& srcPoint, const GRect& dstRect);
 			void copy(IGraphics* pSrc, const GPoint& srcPoint, const GRect& dstRect, bool bBlend = true);
 			void draw_line(const CPen* pPen);
- 
+			void draw_poly_polygon(const CBrush* pBrush, const GPoint& originMin = GPoint(), const GPoint& originMax = GPoint());
 		private:
 				scanline_t scanline_;
 				renderer_base_t renderer_base_;

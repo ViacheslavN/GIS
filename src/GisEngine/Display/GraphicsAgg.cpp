@@ -133,7 +133,14 @@ namespace GisEngine
 		 }
 		 void CGraphicsAgg::SetClipRgn(const GPoint* lpPoints, const int *lpPolyCounts, int nCount)
 		 {
-
+			 int totalCount = 0;
+			 for(int ind = 0; ind < nCount; ++ind)
+				 totalCount += lpPolyCounts[ind];
+			 std::vector<agg::point_d> aggPts;
+			 aggPts.reserve(totalCount);
+			 for(int ind = 0; ind < totalCount; ++ind)
+				 aggPts.push_back(agg::point_d(lpPoints[ind].x, lpPoints[ind].y));
+			 this->renderer_base_.set_clip_rgn(&aggPts[0], lpPolyCounts, nCount);
 		 }
 		 void CGraphicsAgg::RemoveClip() 
 		 {
@@ -253,11 +260,19 @@ namespace GisEngine
 		 }
 
 		 void CGraphicsAgg::DrawPoint(const CPen* pPen, const CBrush*  pBbrush, const GPoint& Pt)
-		 {}
+		 {
+			 DrawPoint(pPen, pBbrush, Pt.x, Pt.y);
+		 }
+
 		 void CGraphicsAgg::DrawPoint(const CPen* pPen, const CBrush*  pBbrush, GUnits dX, GUnits dY)
-		 {}
+		 {
+			
+
+		 }
 		 void CGraphicsAgg::DrawPixel(GUnits dX, GUnits dY, const Color &color)
-		 {}
+		 {
+			 
+		 }
 
 		 void CGraphicsAgg::DrawLineSeg(const CPen* pPen, const GPoint& P1, const GPoint& P2)
 		 {
@@ -394,8 +409,8 @@ namespace GisEngine
 				 CBitmap* pTexture = pPen->getTexture();
 				 int width = (int)pTexture->width();
 				 int height = (int)pTexture->height();
-				 this->pattern_rbuf_.attach(pTexture->bits(), width, height, -width*4); 
-				 this->pattern_rgba32_.attach(this->pattern_rbuf_);
+				 pattern_rbuf_.attach(pTexture->bits(), width, height, -width*4); 
+				 pattern_rgba32_.attach(this->pattern_rbuf_);
 
 				 pattern_accessor_t pattern_accessor(this->pattern_rgba32_);
 				 span_pattern_generator_t span_pattern_generator(pattern_accessor, (int)m_brushOrg.x, (int)m_brushOrg.y);
@@ -404,8 +419,133 @@ namespace GisEngine
 					 span_pattern_generator);
 			 }
 		 }
+		 void CGraphicsAgg::draw_poly_polygon(const CBrush* pBrush, const GPoint& originMin , const GPoint& originMax)
+		 {
+			 CBitmap* pTexture = pBrush->GetTexture();
+			 if(pTexture)
+				 if(pTexture->bpp() != 32)
+					 return;
 
-		 void CGraphicsAgg::DrawRoundRect(const CPen* pPen, const CBrush*  pBbrush, const GRect& Rect, GUnits radius){}
+			 const Color& color = pBrush->GetColor();
+			 const Color& bgColor = pBrush->GetBgColor();
+
+			 renderer_.color(agg::rgba8(color.GetR(),color.GetG(), color.GetB(), color.GetA()));
+			 rasterizer_.add_path(this->vertex_src_);
+
+			 if(pTexture && pBrush->GetType() == BrushTypeTextured)
+			 {
+		
+				
+				 int width = (int)pTexture->width();
+				 int height = (int)pTexture->height();
+				 this->pattern_rbuf_.attach(pTexture->bits(), width, height, -width*4); // ƒÂÎ‡ÂÏ ÔÂÂ‚Ó‡˜Ë‚‡ÌËÂ
+				 this->pattern_rgba32_.attach(this->pattern_rbuf_);
+
+				 pattern_accessor_t pattern_accessor(this->pattern_rgba32_);
+				 span_pattern_generator_t span_pattern_generator(pattern_accessor, (int)m_brushOrg.x, (int)m_brushOrg.y);
+				 agg::render_scanlines_aa(this->rasterizer_, this->scanline_,
+					 this->renderer_base_, this->span_allocator_,
+					 span_pattern_generator);
+			 }
+			 else if(pBrush->GetType() == BrushTypeGradientHorizontal)
+			 {
+				 typedef agg::span_interpolator_linear<> interpolator_t;
+				 typedef agg::gradient_linear_color<agg::rgba8> color_func_t;
+				 typedef agg::span_gradient<agg::rgba8, interpolator_t, agg::gradient_x, color_func_t> span_gradient_t;
+
+				 color_func_t color_func(agg::rgba8(color.GetR(), color.GetG(), color.GetB(), color.GetA()),
+					 agg::rgba8(bgColor.GetR(), bgColor.GetG(), bgColor.GetB(), bgColor.GetA()));
+				 agg::gradient_x gradient_func;
+				 agg::trans_affine tr;
+				 interpolator_t interpolator(tr);
+
+				 double d1 = 1000000000, d2 = 0;
+				 this->vertex_src_.rewind(0);
+
+				 if(originMin == originMax)
+				 {
+#ifdef INTEGER_VERTEX
+					 int x, y;
+					 while(this->vertex_src_.vertex(&x, &y) != agg::path_cmd_stop)
+					 {
+						 if(d1 > x * agg::poly_subpixel_scale) d1 = x * agg::poly_subpixel_scale;
+						 if(d2 < x * agg::poly_subpixel_scale) d2 = x * agg::poly_subpixel_scale;
+					 }
+#else
+					 double x, y;
+					 while(this->vertex_src_.vertex(&x, &y) != agg::path_cmd_stop)
+					 {
+						 if(d1 > x) d1 = x;
+						 if(d2 < x) d2 = x;
+					 }
+#endif
+				 }
+				 else
+				 {
+					 d1 = originMin.x;
+					 d2 = originMax.x;
+				 }
+				 span_gradient_t gradient(interpolator, gradient_func, color_func, d1, d2);
+				 agg::render_scanlines_aa(this->rasterizer_, this->scanline_,
+					 this->renderer_base_, this->span_allocator_, gradient);
+			 }
+			 else if(pBrush->GetType() == BrushTypeGradientVertical)
+			 {
+				 typedef agg::span_interpolator_linear<> interpolator_t;
+				 typedef agg::gradient_linear_color<agg::rgba8> color_func_t;
+				 typedef agg::span_gradient<agg::rgba8, interpolator_t, agg::gradient_y, color_func_t> span_gradient_t;
+
+				 color_func_t color_func(agg::rgba8(color.GetR(), color.GetG(), color.GetB(), color.GetA()),
+					 agg::rgba8(bgColor.GetR(), bgColor.GetG(), bgColor.GetB(), bgColor.GetA()));
+				 agg::gradient_y gradient_func;
+				 agg::trans_affine tr;
+				 interpolator_t interpolator(tr);
+
+				 double d1 = 1000000000, d2 = 0;
+				 this->vertex_src_.rewind(0);
+
+				 if(originMin == originMax)
+				 {
+#ifdef INTEGER_VERTEX
+					 int x, y;
+					 while(this->vertex_src_.vertex(&x, &y) != agg::path_cmd_stop)
+					 {
+						 if(d1 > y * agg::poly_subpixel_scale) d1 = y * agg::poly_subpixel_scale;
+						 if(d2 < y * agg::poly_subpixel_scale) d2 = y * agg::poly_subpixel_scale;
+					 }
+#else
+					 double x, y;
+					 while(this->vertex_src_.vertex(&x, &y) != agg::path_cmd_stop)
+					 {
+						 if(d1 > y) d1 = y;
+						 if(d2 < y) d2 = y;
+					 }
+#endif
+				 }
+				 else
+				 {
+					 d1 = originMin.y;
+					 d2 = originMax.y;
+				 }
+				 span_gradient_t gradient(interpolator, gradient_func, color_func, d1, d2);
+				 agg::render_scanlines_aa(this->rasterizer_, this->scanline_,
+					 this->renderer_base_, this->span_allocator_, gradient);
+			 }
+			 else
+				 agg::render_scanlines(this->rasterizer_, this->scanline_,
+				 this->renderer_);
+		 }
+		 void CGraphicsAgg::DrawRoundRect(const CPen* pPen, const CBrush*  pBbrush, const GRect& Rect, GUnits radius)
+		 {
+			 this->rounded_rect_.init(Rect.xMin, Rect.yMin, Rect.xMax, Rect.yMax, radius);
+			 this->rounded_rect_.normalize_radius();
+			 this->vertex_src_.attach(this->rounded_rect_);
+
+			 draw_poly_polygon(pBbrush);
+			 if(pPen && pPen->getPenType() != PenTypeNull)
+				 draw_line(pPen);
+		 }
+
 		 void CGraphicsAgg::DrawRect(const CPen* pPen, const CBrush*  pBbrush, const GRect& Rect){}
 		 void CGraphicsAgg::DrawRect(CPen* pPen, CBrush*  pBbrush, const GPoint& LTPoint, const GPoint& RBPoint){}
 		 void CGraphicsAgg::DrawRect(CPen* pPen, CBrush*  pBbrush, GUnits dLTX, GUnits dLTY, GUnits dRBX, GUnits dRBY) {}

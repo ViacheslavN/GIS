@@ -22,7 +22,7 @@ namespace GisEngine
 			BrushType GetType() const;
 			const Color& GetColor() const;
 			const Color& GetBgColor() const;
-			const CBitmap* GetTexture() const;
+			CBitmap* GetTexture() const;
 
 
 			void save(CommonLib::IWriteStream *pStream) const;

@@ -11,15 +11,57 @@ namespace GisEngine
 
 
 
-		 DeviceType  CGraphicsWinGDI::GetDeviceType() const{}
+		 DeviceType  CGraphicsWinGDI::GetDeviceType() const
+		 {
+			 switch(::GetDeviceCaps(m_hDC, TECHNOLOGY))
+			 {
+			 case DT_RASCAMERA:
+			 case DT_RASDISPLAY: 
+				 return DeviceTypeDisplay;
+			 case DT_RASPRINTER: 
+				 return DeviceTypePrinter ;
+			 case DT_PLOTTER: 
+				 return DeviceTypePlotter;
+			 case DT_CHARSTREAM:
+			 case DT_METAFILE:
+			 case DT_DISPFILE: 
+				 return DeviceTypeMetafile;
+			 }
+			 return DeviceTypeDisplay;
+		 }
 		 void        CGraphicsWinGDI::StartDrawing(){}
 		 void        CGraphicsWinGDI:: EndDrawing(){}
-		 GRect       CGraphicsWinGDI::GetClipRect() const {}
+		 GRect       CGraphicsWinGDI::GetClipRect() const 
+		 {
+			 GRect res;
+
+			 RECT rect;
+			 HRGN hrgn = ::CreateRectRgn(0, 0, 0, 0);
+			 if(ERROR != GetClipRgn(m_hDC, hrgn))
+			 {
+				 if(ERROR != GetRgnBox(hrgn, &rect))
+					 res.set(GUnits(rect.left), GUnits(rect.top), GUnits(rect.right), GUnits(rect.bottom));
+			 }
+			 else
+			 {
+				 res.set(0, 0, GUnits(GetDeviceCaps(m_hDC, HORZRES)), GUnits(GetDeviceCaps(m_hDC, VERTRES)));
+			 }
+			 ::DeleteObject(hrgn);
+
+			 return res;
+		 }
 		 void        CGraphicsWinGDI::SetClipRect(const GRect& rect){}
 		 void        CGraphicsWinGDI::SetClipRgn(const GPoint* lpPoints, const int *lpPolyCounts, int nCount){}
 		 void        CGraphicsWinGDI::RemoveClip() {}
 		 void        CGraphicsWinGDI::Erase(const Color& color, const GRect *rect) {}
-		 IGraphics*   CGraphicsWinGDI::CreateCompatibleGraphics(GUnits width, GUnits height){}
+		 IGraphics*   CGraphicsWinGDI::CreateCompatibleGraphics(GUnits width, GUnits height)
+		 {
+			 HDC hDC = ::CreateCompatibleDC(m_hDC);
+			 HBITMAP hBitmap = ::CreateCompatibleBitmap(m_hDC, (int)width, (int)height);
+			 DeleteObject(::SelectObject(hDC, hBitmap));
+			 return new CGraphicsWinGDI(hDC, true);
+
+		 }
 		 void        CGraphicsWinGDI::Copy(IGraphics* src, const GPoint& srcPoint, const GRect& dstRect, bool bBlend){}
 
 		 void CGraphicsWinGDI::DrawPoint(const CPen* pPen, const CBrush*  pBbrush, const GPoint& Pt){}
@@ -55,26 +97,91 @@ namespace GisEngine
 		 void CGraphicsWinGDI::DrawBitmap(const CBitmap* bitmap, const GRect& dstRect, bool flip_y, unsigned char alpha ){}
 		 void CGraphicsWinGDI::DrawRotatedBitmap(const CBitmap* bitmap, const GPoint& center, double angle, bool flip_y, unsigned char alpha, double scale_x, double scale_y, bool clip, bool onGrid ){}
 
-		 Color CGraphicsWinGDI::GetPixel(GUnits x, GUnits y){}
+		 Color CGraphicsWinGDI::GetPixel(GUnits x, GUnits y)
+		 {
+			 COLORREF ref = ::GetPixel(m_hDC, (int)x, (int)y);
+			 return Color(ref);
+		 }
 
-		 GPoint CGraphicsWinGDI::GetViewportOrg() const{}
+		 GPoint CGraphicsWinGDI::GetViewportOrg() const
+		 {
+			 POINT point;
+			 ::SetViewportOrgEx(m_hDC, 0, 0, &point);
+			 ::SetViewportOrgEx(m_hDC, point.x, point.y, 0);
+
+			 return GPoint((GUnits)point.x, (GUnits)point.y);
+		 }
 		 void   CGraphicsWinGDI::SetViewportOrg(const GPoint& org){}
 
-		 GPoint CGraphicsWinGDI::GetBrushOrg() const {}
+		 GPoint CGraphicsWinGDI::GetBrushOrg() const 
+		 {
+			 POINT point;
+
+			 ::SetBrushOrgEx(m_hDC, 0, 0, &point);
+			 ::SetBrushOrgEx(m_hDC, point.x, point.y, 0);
+
+			 return GPoint((GUnits)point.x, (GUnits)point.y);
+		 }
 		 void   CGraphicsWinGDI::SetBrushOrg(const GPoint& org){}
 
-		 const CBitmap& CGraphicsWinGDI::GetSurface() const{}
-		 CBitmap& CGraphicsWinGDI::GetSurface(){}
+		 const CBitmap& CGraphicsWinGDI::GetSurface() const
+		 {
+			 return m_Surface;
+		 }
+		 CBitmap& CGraphicsWinGDI::GetSurface()
+		 {
+			  return m_Surface;
+		 }
 
-		 size_t CGraphicsWinGDI::GetWidth() const{}
-		 size_t CGraphicsWinGDI::GetHeight() const{} 
+		 size_t CGraphicsWinGDI::GetWidth() const
+		 {
+			 return (size_t)m_nWidth;
+		 }
+		 size_t CGraphicsWinGDI::GetHeight() const
+		 {
+			  return (size_t)m_nHeight;
+		 } 
 
 		 void CGraphicsWinGDI::Lock(){}
 		 void CGraphicsWinGDI::Release(){}
 		void   CGraphicsWinGDI::SelectPen(const CPen* pPen){}
 		void   CGraphicsWinGDI::SelectBrush(const CBrush* pBrush){}
-		HPEN   CGraphicsWinGDI::CreatePen(const CPen* pPen){}
-		HBRUSH CGraphicsWinGDI::CreateBrush(const CBrush* pBrush){}
+		HPEN   CGraphicsWinGDI::CreatePen(const CPen* pPen)
+		{
+			LOGPEN logpen;
+			logpen.lopnColor = pPen->getColor().GetRGB();
+			logpen.lopnStyle = pPen->getPenType();
+			logpen.lopnWidth.x = (LONG)pPen->getWidth();
+			return ::CreatePenIndirect(&logpen);
+		}
+		HBRUSH CGraphicsWinGDI::CreateBrush(const CBrush* pBrush)
+		{
+			LOGBRUSH logbrush;
+			logbrush.lbColor = pBrush->GetColor().GetRGB();
+			logbrush.lbStyle = pBrush->GetType();
+			//switch(brush->htype_)
+			//{
+			//case BrushHTypeBdiagonal:
+			//  logbrush.lbHatch = HS_BDIAGONAL;
+			//  break;
+			//case BrushHTypeCross:
+			//  logbrush.lbHatch = HS_CROSS;
+			//  break;
+			//case BrushHTypeDiagcross:
+			//  logbrush.lbHatch = HS_DIAGCROSS;
+			//  break;
+			//case BrushHTypeFdiagonal:
+			//  logbrush.lbHatch = HS_FDIAGONAL;
+			//  break;
+			//case BrushHTypeHorizontal:
+			//  logbrush.lbHatch = HS_HORIZONTAL;
+			//  break;
+			//case BrushHTypeVertical:
+			//  logbrush.lbHatch = HS_VERTICAL;
+			//  break;
+			//}
+			return ::CreateBrushIndirect(&logbrush);
+		}
 		void   CGraphicsWinGDI::CreateFont(const CFont* pFont){}
 	}
 }

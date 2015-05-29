@@ -63,7 +63,7 @@ namespace GisEngine
 		{
 			return m_bgColor;
 		}
-		const CBitmap* CBrush::GetTexture() const
+		CBitmap* CBrush::GetTexture() const
 		{
 			return m_pTexture;
 		}

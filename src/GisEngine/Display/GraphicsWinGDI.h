@@ -94,6 +94,9 @@ namespace GisEngine
 			HFONT m_hfirstFont;
 			HPEN  m_hfirstPen;
 			HBRUSH  m_hfirstBrush;
+			HDC m_hDC;
+			GUnits m_nWidth;
+			GUnits m_nHeight;
 		};
 
 	}
