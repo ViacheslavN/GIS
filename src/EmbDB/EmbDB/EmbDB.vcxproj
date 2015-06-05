@@ -469,8 +469,11 @@
     <ClInclude Include="BPTreeSPLeafNodeMap.h" />
     <ClInclude Include="BPVector.h" />
     <ClInclude Include="CacheMRU.h" />
+    <ClInclude Include="CompIndexInnerCompressor.h" />
+    <ClInclude Include="CompIndexLeafCompressor.h" />
     <ClInclude Include="CompositeIndex.h" />
     <ClInclude Include="CompressorParams.h" />
+    <ClInclude Include="CompressCompIndexParams.h" />
     <ClInclude Include="CounterField.h" />
     <ClInclude Include="CRC.h" />
     <ClInclude Include="CreateFields.h" />
@@ -478,10 +481,13 @@
     <ClInclude Include="IConnection.h" />
     <ClInclude Include="ICursor.h" />
     <ClInclude Include="IDBField.h" />
+    <ClInclude Include="IDBShema.h" />
     <ClInclude Include="Index.h" />
+    <ClInclude Include="IRecordset.h" />
     <ClInclude Include="IRefCnt.h" />
     <ClInclude Include="IShape.h" />
     <ClInclude Include="ISpatialQuery.h" />
+    <ClInclude Include="IStatement.h" />
     <ClInclude Include="LeafCounterCompress.h" />
     <ClInclude Include="MemPageCache.h" />
     <ClInclude Include="MultiIndex.h" />
@@ -540,6 +546,7 @@
     <ClInclude Include="ITransactions.h" />
     <ClInclude Include="ListDBPage.h" />
     <ClInclude Include="RowIDCounter.h" />
+    <ClInclude Include="Statement.h" />
     <ClInclude Include="UniqueIndex.h" />
     <ClInclude Include="ValueField.h" />
     <ClInclude Include="FilePage.h" />
@@ -634,6 +641,7 @@
     <ClCompile Include="DBTranManager.cpp" />
     <ClCompile Include="DirectTransactions.cpp" />
     <ClCompile Include="FreePageManage.cpp" />
+    <ClCompile Include="Statement.cpp" />
     <ClCompile Include="ValueField.cpp" />
     <ClCompile Include="FilePage.cpp" />
     <ClCompile Include="MemPageCache.cpp" />

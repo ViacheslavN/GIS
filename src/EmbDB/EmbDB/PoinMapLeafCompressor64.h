@@ -14,10 +14,16 @@ namespace embDB
 		typedef _TValue TValue;
 		typedef  TBPVector<ZOrderPoint2DU64> TLeafKeyMemSet;
 		typedef  TBPVector<TValue> TLeafValueMemSet;
-
-		BPSpatialPointLeafNodeMapSimpleCompressor64(ICompressorParams *pParms = NULL) : m_nSize(0)
+		typedef CompressorParamsBaseImp TLeafCompressorParamsBase;
+		BPSpatialPointLeafNodeMapSimpleCompressor64(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParamsBase *pParms = NULL) : m_nSize(0)
 		{}
 
+
+		template<typename _Transactions  >
+		static TLeafCompressorParamsBase *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		{
+			return NULL;
+		}
 		virtual bool Load(TLeafKeyMemSet& vecKeys, TLeafValueMemSet& vecValues, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;

@@ -4,7 +4,6 @@
 namespace CommonLib
 {
 	 void setLogLevel(int level);
-	 void setLogFileName(const char* pszFileName);
 	 void setLogFileNameW(const wchar_t* pszFileName);
 	 void devent  (int level, char * format, ...);	
 	 void dwevent  (int level, wchar_t * format, ...);	

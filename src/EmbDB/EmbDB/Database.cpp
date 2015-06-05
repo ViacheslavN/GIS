@@ -17,13 +17,13 @@ namespace embDB
 	{
 
 	}
-	bool CDatabase::open(const CommonLib::str_t& sDbName, DBTransactionMode mode, const CommonLib::str_t& sWorkingPath, const CommonLib::str_t& sPassword)
+	bool CDatabase::open(const wchar_t* pszName, DBTransactionMode mode, const wchar_t* pszWorkingPath, const  wchar_t* pszPassword)
 	{
 		close();
-		bool bOpen =  m_pStorage->open(sDbName, false, false, false, false, DEFAULT_PAGE_SIZE);
+		bool bOpen =  m_pStorage->open(pszName, false, false, false, false, DEFAULT_PAGE_SIZE);
 		if(!bOpen)
 			return false;
-		bOpen = m_pTranManager->open(sDbName, sWorkingPath);
+		bOpen = m_pTranManager->open(pszName, pszWorkingPath);
 		if(!bOpen)
 			return false;
 		int64 nfSize = m_pStorage->getFileSzie();
@@ -37,7 +37,7 @@ namespace embDB
 		m_bOpen =  readRootPage(pFile.get());
 		return m_bOpen;
 	}
-	bool CDatabase::create(const CommonLib::str_t& sDbName, size_t nPageSize, DBTransactionMode mode, const CommonLib::str_t& sWorkingPath, const CommonLib::str_t& sPassword)
+	bool CDatabase::create(const wchar_t* pszName, size_t nPageSize, DBTransactionMode mode, const wchar_t* pszWorkingPath, const wchar_t* pszPassword)
 	{
 		close();
 		if(nPageSize <= 0 )
@@ -48,10 +48,10 @@ namespace embDB
 		m_dbHeader.nMagicSymbol = DB_SYMBOL;
 		
 	 
-		bool bOpen = m_pStorage->open(sDbName, false, false, true, false,  nPageSize);
+		bool bOpen = m_pStorage->open(pszName, false, false, true, false,  nPageSize);
 		if(!bOpen)
 			return false;
-		bOpen = m_pTranManager->open(sDbName, sWorkingPath);
+		bOpen = m_pTranManager->open(pszName, pszWorkingPath);
 		if(!bOpen)
 			return false;
 
@@ -177,7 +177,7 @@ namespace embDB
 				return NULL;
 
 			CStorage* pStorage = new CStorage(m_pAlloc.get());
-			if(!pStorage->open(sFileName, false, false, false, true, m_pStorage->getPageSize()))
+			if(!pStorage->open(sFileName.cwstr(), false, false, false, true, m_pStorage->getPageSize()))
 			{
 				delete pStorage;
 				return NULL;

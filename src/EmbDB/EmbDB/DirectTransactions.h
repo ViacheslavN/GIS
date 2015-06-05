@@ -3,6 +3,7 @@
 
 #include "IDBTransactions.h"
 #include "IDBStorage.h"
+
 #include <set>
 #include <iostream>
 namespace embDB
@@ -24,6 +25,10 @@ namespace embDB
 		virtual bool restore(bool Force = false){return true;}
 		bool close(){return true;}
 
+
+		virtual IStatement* createStatement(const wchar_t *pszSQLQuery) {return  NULL;}
+		virtual IRecordset* executeQuery(IStatement* pStatement) {return  NULL;}
+		virtual IRecordset* executeQuery(const wchar_t* pszQuery = NULL) {return  NULL;}
 
 		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true);
 		virtual void dropFilePage(FilePagePtr pPage);

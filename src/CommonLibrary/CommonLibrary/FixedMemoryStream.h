@@ -93,7 +93,6 @@ namespace CommonLib
 
 		virtual bool         readBool();
 		virtual byte         readByte();
-		virtual short		 readShort();
 		virtual int16		 readint16();
 		virtual uint16       readintu16();
 		virtual uint32       readDword();

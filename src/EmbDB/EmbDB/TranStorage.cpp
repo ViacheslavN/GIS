@@ -16,7 +16,7 @@ namespace embDB
 		CommonLib::enOpenFileMode nOpenMode = bNew ? CommonLib::ofmCreateAlways : CommonLib::ofmOpenExisting ;
 		CommonLib::enAccesRights nReadWrite = CommonLib::aeReadWrite;;
 		m_nPageSize = nPageSize;
-		bool bRet =  m_pFile.openFile(sTranName, nOpenMode, nReadWrite, CommonLib::smNoMode);
+		bool bRet =  m_pFile.openFile(sTranName.cwstr(), nOpenMode, nReadWrite, CommonLib::smNoMode);
 		m_sTranName = sTranName;
 		if(bRet)
 		{
@@ -32,7 +32,7 @@ namespace embDB
 		if(!bRet)
 			return false;
 		if(bDelete)
-			return CommonLib::FileSystem::deleteFile(m_sTranName);
+			return CommonLib::FileSystem::deleteFile(m_sTranName.cwstr());
 		return true;
 	}
 	int64 CTranStorage::saveFilePage(CFilePage* pPage, int64 nAddr )

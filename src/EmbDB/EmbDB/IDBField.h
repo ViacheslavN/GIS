@@ -26,25 +26,26 @@ namespace embDB
 
 	typedef IRefCntPtr<IFieldIterator> FieldIteratorPtr;
 
-
-	class IIndexIterator : public RefCounter
+	template<class TKeyType>
+	class TIIndexIterator : public RefCounter
 	{
 	public:
-		IIndexIterator(){};
-		virtual ~IIndexIterator(){};
+		TIIndexIterator(){};
+		virtual ~TIIndexIterator(){};
 		virtual bool isValid() = 0;
 		virtual bool next() = 0;
 		virtual bool isNull() = 0;
-		virtual bool getKey(IFieldVariant* pIndexKey) = 0;
+		virtual bool getKey(TKeyType* pIndexKey) = 0;
 		virtual uint64 getRowID() = 0;
 
 
 		virtual int64 addr() const = 0;
 		virtual int32 pos() const = 0;
 
-		virtual bool copy(IIndexIterator *pIter) = 0;
+		virtual bool copy(TIIndexIterator *pIter) = 0;
 	};
 
+	typedef TIIndexIterator<IFieldVariant> IIndexIterator;
 
 	typedef IRefCntPtr<IIndexIterator> IndexIteratorPtr;
 
@@ -82,7 +83,26 @@ namespace embDB
 		virtual bool commit() = 0;
 	};
 
-	class IndexFiled  
+	template<class TKeyType, class TIterator, class TIteratorPtr>
+	class TIndexFiled  
+	{
+	public:
+		TIndexFiled() {}
+		virtual ~TIndexFiled() {}
+		virtual bool insert (TKeyType* pIndexKey, uint64 nOID, TIterator* pFromIter = NULL, TIterator** pRetIter = NULL) = 0;
+		virtual bool update (TKeyType* pOldIndexKey, TKeyType* pNewIndexKey, uint64 nOID, TIterator* pFromIter = NULL, TIterator** pRetIter = NULL) = 0;
+		virtual bool remove (TKeyType* pIndexKey, TIterator** pRetIter = NULL) = 0;
+		virtual bool remove (IIndexIterator* pIter ) = 0;
+		virtual TIteratorPtr find(TKeyType* pIndexKey) = 0;
+		virtual TIteratorPtr lower_bound(TKeyType* pIndexKey) = 0;
+		virtual TIteratorPtr upper_bound(TKeyType* pIndexKey) = 0;
+		virtual bool commit() = 0;
+	};
+
+
+	typedef TIndexFiled<IFieldVariant, IIndexIterator, IndexIteratorPtr> IndexFiled;
+
+	/*class IndexFiled  
 	{
 	public:
 		IndexFiled() {}
@@ -95,7 +115,7 @@ namespace embDB
 		virtual IndexIteratorPtr lower_bound(IFieldVariant* pIndexKey) = 0;
 		virtual IndexIteratorPtr upper_bound(IFieldVariant* pIndexKey) = 0;
 		virtual bool commit() = 0;
-	};
+	};*/
 
 
 

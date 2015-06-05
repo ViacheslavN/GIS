@@ -1,29 +1,23 @@
-#ifndef _EMBEDDED_DATABASE_MULTI_INDEX_LEAF_NODE_COMPRESSOR_H_
-#define _EMBEDDED_DATABASE_MULTI_INDEX_LEAF_NODE_COMPRESSOR_H_
+#ifndef _EMBEDDED_DATABASE_COMPSITE_UNIQUE_INDEX_LEAF_NODE_COMPRESSOR_H_
+#define _EMBEDDED_DATABASE_COMPSITE_UNIQUE_INDEX_LEAF_NODE_COMPRESSOR_H_
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CompressorParams.h"
+#include "CompositeIndex.h"
 namespace embDB
 {
 
-	template<typename _TKey>
-	class BPLeafNodeMultiIndexCompressor
+	template<typename _TValue = uint64>
+	class BPLeafCompIndexCompressor
 	{
 	public:	
-		typedef _TKey TKey;
-		typedef IndexTuple<TKey> TIndex;
-		typedef TBPVector<TIndex> TLeafMemSet;
-		typedef CompressorParamsBaseImp TLeafCompressorParamsBase;
+		typedef _TValue TValue;
+		typedef TBPVector<CompositeIndexKey> TLeafKeyMemSet;
+		typedef  TBPVector<TValue> TLeafValueMemSet;
 
-		template<typename _Transactions  >
-		static TLeafCompressorParamsBase *LoadCompressorParams(int64 nPage, _Transactions *pTran)
-		{
-			return NULL;
-		}
-
-		BPLeafNodeMultiIndexCompressor(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParamsBase *pParams = NULL) : m_nSize(0)
+		BPLeafCompIndexCompressor(ICompressorParams *pParams = NULL) : m_nSize(0)
 		{}
-		virtual ~BPLeafNodeMultiIndexCompressor(){}
+		virtual ~BPLeafCompIndexCompressor(){}
 		virtual bool Load(TLeafMemSet& Set, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;
@@ -32,7 +26,7 @@ namespace embDB
 				return true;
 
 			Set.reserve(m_nSize);
- 
+
 			uint32 nKeySize =  m_nSize * (sizeof(TKey) + sizeof(int64));
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);

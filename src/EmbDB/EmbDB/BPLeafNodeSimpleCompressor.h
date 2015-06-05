@@ -13,7 +13,7 @@ namespace embDB
 	class BPLeafNodeSimpleCompressor  : public BPLeafNodeCompressorBase<_TKey, _TValue, _TComp>
 	{
 	public:
-
+		typedef CompressorParamsBaseImp TLeafCompressorParamsBase;
 		typedef  BPLeafNodeCompressorBase<_TKey, _TValue, _TComp> TBase;
 		typedef typename TBase::TKey TKey;
 		typedef typename TBase::TValue TValue;

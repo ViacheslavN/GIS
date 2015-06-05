@@ -16,7 +16,7 @@ namespace embDB
 
 
 
-	class IndexFiled;
+	//class IndexFiled;
 
 
 	class IOIDFiledRO   //read only

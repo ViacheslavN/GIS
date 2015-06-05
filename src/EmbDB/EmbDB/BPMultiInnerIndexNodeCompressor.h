@@ -20,8 +20,15 @@ namespace embDB
 		typedef int64 TLink;
 		typedef TBPVector<TIndex> TKeyMemSet;
 		typedef TBPVector<TLink> TLinkMemSet;
+		typedef CompressorParamsBaseImp TInnerCompressorParamsBase;
 
-		BPMultiIndexInnerNodeCompressor(ICompressorParams *pParams = NULL) : m_nSize(0)
+		template<typename _Transactions  >
+		static TInnerCompressorParamsBase *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		{
+			return NULL;
+		}
+
+		BPMultiIndexInnerNodeCompressor(CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParamsBase *pParams = NULL) : m_nSize(0)
 		{}
 		virtual ~BPMultiIndexInnerNodeCompressor(){}
 		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)

@@ -12,7 +12,7 @@ CFileWin32Impl::~CFileWin32Impl(){
 	}
 }
 
-bool CFileWin32Impl::openFile(const str_t & sFileName, enOpenFileMode mode, enAccesRights access, enShareMode share)
+bool CFileWin32Impl::openFile(const wchar_t *pszFileName, enOpenFileMode mode, enAccesRights access, enShareMode share)
 {
 	DWORD win_access = (access & arExecute ? GENERIC_EXECUTE: 0) | (access & arRead ? GENERIC_READ: 0) 
 		| (access & arWrite ? GENERIC_WRITE: 0);
@@ -20,7 +20,7 @@ bool CFileWin32Impl::openFile(const str_t & sFileName, enOpenFileMode mode, enAc
 		| (share & smWrite ? FILE_SHARE_WRITE: 0);
 	DWORD win_mode = mode == ofmCreateAlways  ? CREATE_ALWAYS:  mode == ofmCreateNew  ? CREATE_NEW:
 		mode == ofmOpenAlways  ? OPEN_ALWAYS:   OPEN_EXISTING;
-	m_hFile = CreateFile(sFileName.cwstr(), win_access, win_share, NULL, win_mode, NULL, NULL); 
+	m_hFile = CreateFile(pszFileName, win_access, win_share, NULL, win_mode, NULL, NULL); 
 	return isValid();
 	
 }
@@ -85,13 +85,13 @@ bool CFileWin32Impl::Flush()
 
 namespace FileSystem
 {
-	bool deleteFile(const str_t & sFileName)
+	bool deleteFile(const wchar_t* pszFileName)
 	{
-		return ::DeleteFile(sFileName.cwstr()) == TRUE;
+		return ::DeleteFile(pszFileName) == TRUE;
 	}
-	bool isFileExisit(const str_t & sFileName)
+	bool isFileExisit(const wchar_t* pszFileName)
 	{
-		DWORD dwAttr = ::GetFileAttributes(sFileName.cwstr());
+		DWORD dwAttr = ::GetFileAttributes(pszFileName);
 		return ((dwAttr != INVALID_FILE_ATTRIBUTES) && !(dwAttr & FILE_ATTRIBUTE_DIRECTORY));
 	}
 }

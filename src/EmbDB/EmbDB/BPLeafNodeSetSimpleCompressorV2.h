@@ -2,6 +2,7 @@
 #define _EMBEDDED_DATABASE_BTREE_PLUS_V2_LEAF_NODE_SET_SIMPLE_COMPRESSOR_H_
 
 #include "CommonLibrary/FixedMemoryStream.h"
+#include "CommonLibrary/alloc_t.h"
 #include "CompressorParams.h"
 namespace embDB
 {
@@ -12,8 +13,16 @@ namespace embDB
 	public:	
 		typedef _TKey TKey;
 		typedef  TBPVector<TKey> TLeafMemSet;
-		BPLeafNodeSetSimpleCompressorV2(ICompressorParams *pParams = NULL) : m_nSize(0)
+		typedef CompressorParamsBaseImp TLeafCompressorParamsBase;
+
+		BPLeafNodeSetSimpleCompressorV2(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParamsBase *pParams = NULL) : m_nSize(0)
 		{}
+
+		template<typename _Transactions  >
+		static TLeafCompressorParamsBase *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		{
+			return NULL;
+		}
 		virtual ~BPLeafNodeSetSimpleCompressorV2(){}
 		virtual bool Load(TLeafMemSet& Set, CommonLib::FxMemoryReadStream& stream)
 		{

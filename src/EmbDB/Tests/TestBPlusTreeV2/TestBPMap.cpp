@@ -162,7 +162,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		int64 nStep = nCount/100;
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  true, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  true, false, nPageSize);
 			embDB::FilePagePtr pPage = storage.getNewPage();
 			nStorageInfoPage = pPage->getAddr();
 			storage.initStorage(pPage->getAddr());
@@ -177,7 +177,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		}
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran tran1(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1);

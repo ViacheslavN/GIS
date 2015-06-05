@@ -117,10 +117,14 @@ namespace embDB
 		//typedef _TIerator iterator;
 		typedef IRefCntPtr<TBTreeNode> TBTreeNodePtr;
  
-		typedef CompressorParamsBase<Transaction> TCompressorParamsBase;
+ 
 		typedef BPTreeStatistics<int64, _Transaction, _TKey> BPTreeStatisticsInfo;
 		typedef CommonLib::delegateimpl1_t<TBPlusTreeSetV2, RefCounter*> TRemoveNodeDelegate;
 		std::auto_ptr<TRemoveNodeDelegate> m_NodeRemove;
+
+		typedef typename TInnerNode::TInnerCompressorParamsBase TInnerCompressorParamsBase;
+		typedef typename TLeafNode::TLeafCompressorParamsBase TLeafCompressorParamsBase;
+	
 /*
 		typedef TBPSetIteratorV2<TKey, TComp,Transaction, TInnerCompess, TLeafCompess,
 		TInnerNode, TLeafNode, TBTreeNode> iterator;*/
@@ -212,7 +216,11 @@ namespace embDB
 				m_BTreeInfo.setPage(m_nRTreeStaticAddr);
 				m_BTreeInfo.Load(m_pTransaction);
 			}
-			return true;
+
+			m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(m_nPageInnerCompInfo, m_pTransaction));
+			m_LeafCompParams.reset(TLeafCompess::LoadCompressorParams(m_nPageLeafPageCompInfo, m_pTransaction));
+
+			return !m_pTransaction->isError();
 		}
 
 
@@ -300,8 +308,8 @@ namespace embDB
 		
 	TBTreeNodePtr newNode(bool bIsRoot, bool bIsLeaf)
 	{
-		TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, -1, m_bMulti, bIsLeaf, m_bCheckCRC32, (ICompressorParams *)m_InnerCompParams.get(),
-				(ICompressorParams *)m_LeafCompParams.get() );
+		TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, -1, m_bMulti, bIsLeaf, m_bCheckCRC32,  m_InnerCompParams.get(),
+				 m_LeafCompParams.get() );
 			pNode->Load(m_pTransaction);
 			m_BTreeInfo.AddNode(1, bIsLeaf);
 			if(bIsRoot)
@@ -329,7 +337,7 @@ namespace embDB
 				{
 					return TBTreeNodePtr(NULL);
 				}
-				pBNode = new TBTreeNode(-1, m_pAlloc, nAddr, m_bMulti, false, m_bCheckCRC32, (ICompressorParams *)m_InnerCompParams.get(), (ICompressorParams *)m_LeafCompParams.get());
+				pBNode = new TBTreeNode(-1, m_pAlloc, nAddr, m_bMulti, false, m_bCheckCRC32,  m_InnerCompParams.get(),  m_LeafCompParams.get());
 				if(!pBNode->LoadFromPage(pFilePage.get(), m_pTransaction))
 				{
 					delete pBNode;
@@ -511,7 +519,7 @@ namespace embDB
 		bool bRet = false;
 		int nIndex = -1;
 		TBTreeNodePtr pNode;
-		if(pFromIterator)
+		if(pFromIterator && pFromIterator->m_pCurNode.get())
 		{
 			pNode = InsertInLeafNode(pFromIterator->m_pCurNode.get(), key, &nIndex,  pFromIterator->m_nIndex + 1);
 		}
@@ -1908,8 +1916,8 @@ namespace embDB
 		bool m_bMulti;
 		bool m_bCheckCRC32;
 
-		std::auto_ptr<TCompressorParamsBase*> m_LeafCompParams;
-		std::auto_ptr<TCompressorParamsBase*> m_InnerCompParams;
+		std::auto_ptr<TLeafCompressorParamsBase> m_LeafCompParams;
+		std::auto_ptr<TInnerCompressorParamsBase> m_InnerCompParams;
 		uint32 m_nStateTree;
 	};
 

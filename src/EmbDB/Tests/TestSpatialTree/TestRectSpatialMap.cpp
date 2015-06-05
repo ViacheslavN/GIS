@@ -359,7 +359,7 @@ void TestRectSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize, 
 	std::cout <<"Begin test Count: Begin: " << nBegin << " End: " << nEnd << " Step: " << nStep << " PageSize :" << nPageSize << std::endl;
 	{
 		embDB::CStorage storage( alloc, nCacheStorageSize);
-		storage.open(sFileName, false, false,  nType != INSERT ? false : true, false, nPageSize);
+		storage.open(sFileName.cwstr(), false, false,  nType != INSERT ? false : true, false, nPageSize);
 	
 
 		int64 nTreeRootPage = nType != INSERT ? 6 : -1;
@@ -397,8 +397,8 @@ void TestRectSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize, 
 
 void TestRectSpatialTree()
 {
-//	 TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransactions, embDB::ZOrderRect2DU16>("d:\\db\\dbspatialrect16.data", 50, 8192, 0, 1000, 10,  0, 0, 100, 100, INSERT);
-	 TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransactions, embDB::ZOrderRect2DU16>("d:\\db\\dbspatialrect16.data", 50, 8192, 0, 2000, 10, 333, 444, 999, 1245, SEARCH);
+	 TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransactions, embDB::ZOrderRect2DU16>("d:\\db\\dbspatialrect16.data", 50, 8192, 0, 1000, 10,  0, 0, 100, 100, INSERT);
+	// TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransactions, embDB::ZOrderRect2DU16>("d:\\db\\dbspatialrect16.data", 50, 8192, 0, 2000, 10, 333, 444, 999, 1245, SEARCH);
 	// TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransactions, embDB::ZOrderRect2DU16>("d:\\dbspatialrect16.data", 50, 8192, 0, 0xFFFF,100, 1000, IDENTIFY);
 	  TestRectZorder(2000, 2000, 333, 444, 999, 1245);
 	//TestRectSpatial<TBPMapRect32Ugd, uint32, embDB::CDirectTransactions, ugdRectKey>("d:\\db\\dbspatialrect32Ugd.data", 50, 8192, 0, 0xFFFF, 10, 0, INSERT);

@@ -15,8 +15,15 @@ namespace embDB
 		typedef int64 TLink;
 		typedef  TBPVector<TCoordPoint> TKeyMemSet;
 		typedef  TBPVector<TLink> TLinkMemSet;
+		typedef CompressorParamsBaseImp TInnerCompressorParamsBase;
 
-		BPSpatialRectInnerNodeSimpleCompressor(ICompressorParams *pParams) : m_nSize(0)
+		template<typename _Transactions  >
+		static TInnerCompressorParamsBase *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		{
+			return NULL;
+		}
+
+		BPSpatialRectInnerNodeSimpleCompressor(CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParamsBase *pParams = 0) : m_nSize(0)
 		{}
 		virtual ~BPSpatialRectInnerNodeSimpleCompressor(){}
 		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)

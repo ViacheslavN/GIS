@@ -87,7 +87,7 @@ namespace embDB
 
 	enum eGeoSpatialCoordinatesFormat
 	{
-		gsfNotDef=0,
+		gsfNotDef = 0,
 		gsfDDDDDDD,
 		gsfDDMMSS,
 		gsfDDMMMM
@@ -113,6 +113,9 @@ namespace embDB
 		virtual bool isEmpty(bool){ return true;}
 		virtual bool setEmpty(){ return false;}
 		virtual int getType(){ return ftUnknown;}
+
+		virtual bool LE(const IFieldVariant* pKey) const { return false;}
+		virtual bool EQ(const IFieldVariant* pKey) const { return false;}
 
 		virtual bool set(bool){ return false;}
 		virtual bool set(const byte*, size_t){ return false;}
@@ -176,27 +179,7 @@ namespace embDB
 
 	};
 
-	class IRecordset
-	{
-	public:
-		IRecordset(){}
-		virtual ~IRecordset(){};
-		virtual int32 count() const = 0;
-
-		virtual IFieldVariant* value(int32 nNum) = 0;
-		virtual bool set(IFieldVariant*, int32 nNum) = 0;
-	};
-
-	class INameRecordset : public IRecordset
-	{
-	public:
-		INameRecordset(){}
-		virtual ~INameRecordset(){};
-		 
-		virtual IFieldVariant* value(const CommonLib::str_t& sName) = 0;
-		virtual bool set(const CommonLib::str_t& sName, IFieldVariant*) = 0;
-	};
-
+	
 }
 
 #endif

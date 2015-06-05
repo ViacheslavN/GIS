@@ -37,7 +37,7 @@ namespace CommonLib
 		public:
 			IFile(){};
 			virtual ~IFile(){}
-			virtual bool openFile(const str_t & sFileName,  enOpenFileMode mode, enAccesRights access, enShareMode share) = 0;
+			virtual bool openFile(const wchar_t *pszFileName,  enOpenFileMode mode, enAccesRights access, enShareMode share) = 0;
 			virtual int64 getFileSize() = 0;
 			virtual bool setFilePos64(int64 nPos, enSeekOffset offset) = 0;
 			virtual bool setFilePos(uint32 nPos, enSeekOffset offset) = 0;
@@ -53,8 +53,8 @@ namespace CommonLib
 
 	namespace FileSystem
 	{
-		bool deleteFile(const str_t & sFileName);
-		bool isFileExisit(const str_t & sFileName);
+		bool deleteFile(const wchar_t *pszFileName);
+		bool isFileExisit(const wchar_t *pszFileName);
 	}
 }
 

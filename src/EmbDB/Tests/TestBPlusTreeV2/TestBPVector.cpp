@@ -9,10 +9,10 @@
 template<class _Ty>
 	struct comp
 	{	
-		bool LE(const _Ty& _Left, const _Ty& _Right){
+		bool LE(const _Ty& _Left, const _Ty& _Right) const{
 			return (_Left < _Right);
 		}
-		bool EQ(const _Ty& _Left, const _Ty& _Right){
+		bool EQ(const _Ty& _Left, const _Ty& _Right) const{
 			return (_Left == _Right);
 		}
 		/*bool MR(const _Ty& _Left, const _Ty& _Right){

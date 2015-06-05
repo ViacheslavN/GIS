@@ -11,7 +11,7 @@ namespace CommonLib
 		CFileWin32Impl();
 		~CFileWin32Impl();
 
-		virtual bool openFile(const str_t & sFileName, enOpenFileMode mode, enAccesRights access, enShareMode share);
+		virtual bool openFile(const wchar_t* pszFileName, enOpenFileMode mode, enAccesRights access, enShareMode share);
 		virtual int64 getFileSize();
 		virtual bool setFilePos64(int64 nPos, enSeekOffset offset);
 		virtual bool setFilePos(uint32 nPos, enSeekOffset offset);

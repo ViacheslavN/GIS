@@ -32,7 +32,7 @@ namespace embDB
 		{
 			return FieldType;
 		}
-		virtual bool set( Type value)
+		virtual bool set( const Type& value)
 		{ 
 			m_Value = value;
 			m_bIsEmpty = false;
@@ -42,6 +42,22 @@ namespace embDB
 		{ 
 			value = m_Value;
 			return true;
+		}
+
+		virtual bool LE(const IFieldVariant* pVariant) const
+		{
+			const IBaseFieldVariant* pBaseVariant = (IBaseFieldVariant*)pVariant;
+			if(!pBaseVariant)
+				return false;
+
+			return m_Value < pBaseVariant->m_Value;
+		}
+		virtual bool EQ(const IFieldVariant* pVariant) const
+		{
+			const IBaseFieldVariant* pBaseVariant = (IBaseFieldVariant*)pVariant;
+			if(!pBaseVariant)
+				return false;
+			return m_Value == pBaseVariant->m_Value;
 		}
 		protected:
 			TVarType m_Value;

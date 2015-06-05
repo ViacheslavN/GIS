@@ -16,16 +16,7 @@ void setLogLevel(int level)
 
 void InitLogFile()
 {
-	logFile.openFile("log.txt", ofmOpenAlways, arWrite, smRead);
-}
-void setLogFileName(const char* pszFileName)
-{
-	CSSection::scoped_lock lock(logSection);
-	if(!logFile.isValid())
-	{
-		logFile.closeFile();
-	}
-	logFile.openFile(pszFileName, ofmOpenAlways, arWrite, smRead);
+	logFile.openFile(L"log.txt", ofmOpenAlways, arWrite, smRead);
 }
 void setLogFileNameW(const wchar_t* pszFileName)
 {

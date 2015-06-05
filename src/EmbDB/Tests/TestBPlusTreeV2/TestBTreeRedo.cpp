@@ -186,14 +186,14 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 		int64 nStep = nCount/100;
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  true, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  true, false, nPageSize);
 			embDB::FilePagePtr pPage = storage.getNewPage();
 			nStorageInfoPage = pPage->getAddr();
 			storage.initStorage(pPage->getAddr());
 			pPage.release();
 			storage.saveStorageInfo();
 
-			TTran tran(alloc, embDB::rtRedo, embDB::eTT_UNDEFINED, "d:\\tran1.data", &storage, 1, nTranCache);
+			TTran tran(alloc, embDB::rtRedo, embDB::eTT_UNDEFINED, L"d:\\tran1.data", &storage, 1, nTranCache);
 			tran.begin();
 			tran.setDeleteStorage(true);
 			insertINBTreeSet <TBtree, TTran,  TKey>(nCacheBPTreeSize, 0, nCount, nStep, &tran, alloc, nTreeRootPage, true);
@@ -204,7 +204,7 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran tran1(alloc, embDB::rtRedo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1);
@@ -216,7 +216,7 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 
@@ -234,7 +234,7 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 
 				embDB::CStorage storage1( alloc, nCacheStorageSize);
 				storage1.setStoragePageInfo(nStorageInfoPage);
-				storage1.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+				storage1.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
 				storage1.loadStorageInfo();
 				TTran Undotran(alloc,  "d:\\tran1.data", &storage1, nTranCache);
 				Undotran.restore(true);
@@ -247,7 +247,7 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran tran1(alloc, embDB::rtRedo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1);
@@ -261,7 +261,7 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 		{
 			nTreeRootPage = 6;
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran remtran(alloc, embDB::rtRedo, embDB::eTT_UNDEFINED, "d:\\Remtran.data", &storage, 1, nTranCache);
@@ -274,7 +274,7 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran tran1(alloc, embDB::rtRedo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1);
@@ -287,7 +287,7 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 
 			embDB::CStorage storage1( alloc, nCacheStorageSize);
 			storage1.setStoragePageInfo(nStorageInfoPage);
-			storage1.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage1.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage1.loadStorageInfo();
 			TTran Undotran(alloc,  "d:\\Remtran.data", &storage1, nTranCache);
 			Undotran.restore(true);
@@ -295,7 +295,7 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran tran1(alloc, embDB::rtRedo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1);
@@ -307,7 +307,7 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran tran1(alloc, embDB::rtRedo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1);

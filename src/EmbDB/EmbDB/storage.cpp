@@ -24,7 +24,7 @@ namespace embDB
 	{
 		
 	}
-	bool CStorage::open(const CommonLib::str_t& sDbName, bool bReadOnly, bool bNew, bool bCreate, bool bOpenAlways, size_t nPageSize)
+	bool CStorage::open(const wchar_t* pszName, bool bReadOnly, bool bNew, bool bCreate, bool bOpenAlways, size_t nPageSize)
 	{
 		CommonLib::enOpenFileMode nOpenMode;
 		CommonLib::enAccesRights nReadWrite;
@@ -47,7 +47,7 @@ namespace embDB
 
 		nReadWrite = bReadOnly ? CommonLib::arRead : CommonLib::aeReadWrite;
 		m_nPageSize = nPageSize;
-		bool bRet =  m_pFile.openFile(sDbName, nOpenMode, nReadWrite, CommonLib::smNoMode);
+		bool bRet =  m_pFile.openFile(pszName , nOpenMode, nReadWrite, CommonLib::smNoMode);
 		if(bRet)
 		{
 			/*int64 nSize = m_pFile.getFileSize();

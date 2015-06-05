@@ -24,9 +24,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	int nType = pField->getType();
 	bool bNew = false;
 	embDB::CDatabase db;
-	if(!db.open("d:\\db\\db1.emb", "d:\\db"))
+	if(!db.open(L"d:\\db\\db1.emb", embDB::eTMSingleTransactions, L"d:\\db"))
 	{
-		if(!db.create("d:\\db\\db1.emb", 8192, "d:\\db"))
+		if(!db.create(L"d:\\db\\db1.emb", 8192, embDB::eTMSingleTransactions, L"d:\\db"))
 		{
 			std::cout << "Error create db";
 			return 0;

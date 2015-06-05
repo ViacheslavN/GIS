@@ -186,7 +186,12 @@ namespace embDB
 				m_BTreeInfo.setPage(m_nRTreeStaticAddr);
 				m_BTreeInfo.Load(m_pTransaction);
 			}
-			return true;
+
+
+			m_InnerCompParams.reset(TInnerCompess::LoadCompressor(m_nPageInnerCompInfo, m_pTransaction));
+			m_LeafCompParams.reset(TLeafCompess::LoadCompressor(m_nPageLeafPageCompInfo, m_pTransaction));
+			
+			return !m_pTransaction->isError();
 		}
 
 

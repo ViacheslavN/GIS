@@ -1,5 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_I_TRANSACTIONS_H_
 #define _EMBEDDED_DATABASE_I_TRANSACTIONS_H_
+#include "IStatement.h"
+#include "IRecordset.h"
 namespace embDB
 {
 
@@ -26,7 +28,11 @@ class ITransactions
 		virtual bool isError() const = 0 ;
 		virtual size_t getErrorMessageSize() const = 0;
 		virtual size_t getErroMessage(wchar_t * pBuf, size_t nSize) const = 0;
-	
+
+		virtual IStatement* createStatement(const wchar_t *pszSQLQuery) = 0;
+		virtual IRecordset* executeQuery(IStatement* pStatement) = 0;
+		virtual IRecordset* executeQuery(const wchar_t* pszQuery = NULL) = 0;
+
 };
 
 }

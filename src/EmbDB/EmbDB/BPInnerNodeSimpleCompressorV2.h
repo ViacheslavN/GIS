@@ -2,6 +2,7 @@
 #define _EMBEDDED_DATABASE_BTREE_PLUS_V2_INNER_NODE_SIMPLE_COMPRESSOR_H_
 
 #include "CommonLibrary/FixedMemoryStream.h"
+#include "CommonLibrary/alloc_t.h"
 #include "RBSet.h"
 #include "BPVector.h"
 #include "Key.h"
@@ -18,8 +19,17 @@ namespace embDB
 		typedef  int64 TLink;
 		typedef  TBPVector<TKey> TKeyMemSet;
 		typedef  TBPVector<TLink> TLinkMemSet;
+		typedef CompressorParamsBaseImp TInnerCompressorParamsBase;
 
-		BPInnerNodeSimpleCompressorV2(ICompressorParams *pParams = NULL) : m_nSize(0)
+
+		template<typename _Transactions  >
+		static TInnerCompressorParamsBase *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		{
+			return NULL;
+		}
+
+
+		BPInnerNodeSimpleCompressorV2(CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParamsBase *pParams = NULL) : m_nSize(0)
 		{}
 		virtual ~BPInnerNodeSimpleCompressorV2(){}
 		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)

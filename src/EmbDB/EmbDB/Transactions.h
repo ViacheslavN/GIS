@@ -59,6 +59,11 @@ namespace embDB
 		virtual bool rollback();
 
 
+		virtual IStatement* createStatement(const wchar_t *pszSQLQuery);
+		virtual IRecordset* executeQuery(IStatement* pStatement);
+		virtual IRecordset* executeQuery(const wchar_t* pszQuery = NULL);
+
+
 
 		virtual bool restore(bool bForce = false);
 

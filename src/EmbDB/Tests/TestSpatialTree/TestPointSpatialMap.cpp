@@ -292,7 +292,7 @@ void TestPointSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize,
 	std::cout <<"Begin test Count: Begin: " << nBegin << " End: " << nEnd << " Step: " << nStep << " PageSize :" << nPageSize << std::endl;
 	{
 		embDB::CStorage storage( alloc, nCacheStorageSize);
-		storage.open(sFileName, false, false,  onlySearch ? false : true, false, nPageSize);
+		storage.open(sFileName.cwstr(), false, false,  onlySearch ? false : true, false, nPageSize);
 	
 
 		int64 nTreeRootPage = onlySearch ? 6 : -1;

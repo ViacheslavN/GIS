@@ -29,7 +29,7 @@ namespace embDB
 		m_nTranID = 1;
 		CommonLib::str_t sTranLogFileName = sFileName;
 		sTranLogFileName += L".tran_log";
-		bool bOpen = m_Storage.open(sTranLogFileName, false, false, false, true, 8192);
+		bool bOpen = m_Storage.open(sTranLogFileName.cwstr(), false, false, false, true, 8192);
 		if(!bOpen)
 			return false;
 
@@ -115,7 +115,7 @@ namespace embDB
 		long nTime = 0;
 		nDate = CommonLib::TimeUtils::GetCurrentDate(&nTime);
 		sFileName.format(_T("\\%d_%d_%I64d"), nDate, nTime, m_nTranID++);
-		while(CommonLib::FileSystem::isFileExisit(sFileName))
+		while(CommonLib::FileSystem::isFileExisit(sFileName.wstr()))
 		{
 			sFileName.format(_T("\\%d_%d_%I64d"),nDate, nTime, m_nTranID++);
 		}

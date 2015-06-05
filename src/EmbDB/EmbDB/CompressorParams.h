@@ -8,7 +8,8 @@ namespace embDB
 
 	enum eCompressorParamsID
 	{
-		eBaseCompID = 1
+		eBaseCompID = 1,
+		eComposeIndexCompID = 2
 	};
 
 	class ICompressorParams
@@ -16,8 +17,8 @@ namespace embDB
 	public:
 		virtual ~ICompressorParams(){}
 		virtual eCompressorParamsID getCompressorParmasID() const = 0;
-		virtual uint32 getCompressorID() const = 0;
 		virtual int64 getRootPage() const = 0;
+		virtual void setRootPage(int64 nPageID) = 0;
 		
 	};
 
@@ -25,25 +26,46 @@ namespace embDB
 	class CompressorParamsBase : public ICompressorParams
 	{
 	public:
-		virtual eCompressorParamsID getCompressorParmasID() const {return eBaseCompID;}
-		virtual uint32 getCompressorID() const{	return m_nCompID;}
-		virtual int64 getRootPage() const{	return m_nPageID;	}
-
-		CompressorParamsBase(int64 nPageID) : m_nPageID(nPageID)
+		CompressorParamsBase()
 		{}
 		virtual ~CompressorParamsBase(){}
 
-		virtual bool read(CommonLib::FxMemoryReadStream& stream, _Transaction *pTran)
+		virtual bool read(_Transaction *pTran) = 0;
+		virtual bool save(_Transaction *pTran) = 0;
+	};
+
+
+ 
+	class CompressorParamsBaseImp : public CompressorParamsBase<IDBTransactions>
+	{
+	public:
+		CompressorParamsBaseImp() : m_nRootPage(-1)
+		{}
+		virtual ~CompressorParamsBaseImp(){}
+
+		virtual eCompressorParamsID getCompressorParmasID() const 
 		{
-			m_nCompID = stream.readInt32();
+			return eBaseCompID;
 		}
-		virtual bool save(CommonLib::FxMemoryWriteStream& stream, _Transaction *pTran)
+	 
+		virtual int64 getRootPage() const 
 		{
-			stream.write(m_nCompID);
+			return m_nRootPage;
+		}
+		virtual void setRootPage(int64 nPageID)
+		{
+			m_nRootPage = nPageID;
+		}
+		virtual bool read(IDBTransactions *pTran)
+		{
+			return true;
+		}
+		virtual bool save(IDBTransactions *pTran)
+		{
+			return true;
 		}
 	private:
-		int64 m_nPageID;
-		uint32 m_nCompID;
+		int64 m_nRootPage;
 	};
 }
 

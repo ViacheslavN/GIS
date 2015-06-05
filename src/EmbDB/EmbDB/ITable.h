@@ -28,10 +28,7 @@ namespace embDB
 		virtual IField* getField(const CommonLib::str_t& sName) const = 0;
 		virtual size_t getFieldCnt() const = 0;
 		virtual IField* getField(size_t nIdx) const = 0;
-		virtual IField* createField(SFieldProp& sFP) = 0;
-		virtual bool deleteField(IField* pField) = 0;
-		virtual bool createIndex(const CommonLib::str_t& sName, SIndexProp& ip) = 0;
-		virtual bool createCompositeIndex(std::vector<CommonLib::str_t>& vecFields, SIndexProp& ip) = 0;
+		
 
 
 

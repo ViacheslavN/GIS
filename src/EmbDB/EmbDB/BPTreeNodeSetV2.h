@@ -28,8 +28,12 @@ namespace embDB
 		typedef _TInnerNode TInnerNode;
 		typedef _TLeafNode  TLeafNode;
 
+		typedef typename TInnerCompressor::TInnerCompressorParamsBase TInnerCompressorParamsBase;
+		typedef typename TLeafCompressor::TLeafCompressorParamsBase TLeafCompressorParamsBase;
+
+
 		BPTreeNodeSetv2(int64 nParentAddr, CommonLib::alloc_t *pAlloc, int64 nPageAddr, bool bMulti, bool  bIsLeaf, bool bCheckCRC32,
-			ICompressorParams *pInnerCompParams = NULL, ICompressorParams *pLeafCompParams = NULL) :
+			TInnerCompressorParamsBase *pInnerCompParams = NULL, TLeafCompressorParamsBase *pLeafCompParams = NULL) :
 		m_bIsLeaf(bIsLeaf)
 			,m_nPageAddr(nPageAddr)
 			,m_pAlloc(pAlloc)
@@ -63,10 +67,16 @@ namespace embDB
 
 				m_nPageAddr = pFilePage->getAddr();
 				if(m_bIsLeaf)
+				{
 					m_pBaseNode = &m_LeafNode;
+					return m_LeafNode.init(m_pLeafCompParams);
+				}
 				else
+				{
 					m_pBaseNode = &m_InnerNode;
-				return m_pBaseNode->init(m_bIsLeaf ? m_pLeafCompParams : m_pInnerCompParams);
+					return m_InnerNode.init(m_pInnerCompParams);
+				}
+			
 			}
 			FilePagePtr pFilePage =  pTransactions->getFilePage(m_nPageAddr);
 			assert(pFilePage.get());
@@ -133,13 +143,16 @@ namespace embDB
 			if(m_bIsLeaf)
 			{
 				m_pBaseNode = &m_LeafNode;
+				if(!m_LeafNode.init(m_pLeafCompParams ))
+					return false;
 			}
 			else
 			{
 				m_pBaseNode = &m_InnerNode;
+				if(!m_InnerNode.init(m_pInnerCompParams))
+					return false;
 			}
-			if(!m_pBaseNode->init(m_bIsLeaf ? m_pLeafCompParams : m_pInnerCompParams))
-				return false;
+		 
 			return m_pBaseNode->Load(stream);
 
 
@@ -418,8 +431,11 @@ namespace embDB
 		TKey m_NextLeafKey;
 		bool m_bValidNextKey;
 
-		ICompressorParams *m_pInnerCompParams;
-		ICompressorParams *m_pLeafCompParams;
+ 
+
+
+		TInnerCompressorParamsBase *m_pInnerCompParams;
+		TLeafCompressorParamsBase *m_pLeafCompParams;
 
 		bool m_bCheckCRC32;
 	private:

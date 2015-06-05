@@ -50,7 +50,7 @@ namespace embDB
 
 		virtual bool saveState();
 
-		bool open(const CommonLib::str_t& sDbName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways, size_t nPageSize);
+		bool open(const wchar_t* pszName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways, size_t nPageSize);
 		bool close();
 		void setPageSize(size_t nPageSize);
 		size_t getPageSize() const;

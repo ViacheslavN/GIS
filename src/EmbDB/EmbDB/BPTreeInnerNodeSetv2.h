@@ -22,19 +22,25 @@ namespace embDB
 		typedef _TCompressor TCompressor;
 		typedef  TBPVector<TKey> TKeyMemSet;
 		typedef  TBPVector<TLink> TLinkMemSet;
+
+
+		
 				
 	public:
+
+		typedef typename _TCompressor::TInnerCompressorParamsBase TInnerCompressorParamsBase;
 		
 		BPTreeInnerNodeSetv2( CommonLib::alloc_t *pAlloc,  bool bMulti) :
-		  m_pCompressor(0), m_nLess(-1),  m_innerKeyMemSet(pAlloc), m_innerLinkMemSet(pAlloc), m_bMulti(bMulti)
+		  m_pCompressor(0), m_nLess(-1),  m_innerKeyMemSet(pAlloc), m_innerLinkMemSet(pAlloc), m_bMulti(bMulti),
+			  m_pAlloc(pAlloc)
 		{
 			
 		}
 
-		virtual bool init(ICompressorParams *pParams = NULL)
+		virtual bool init(TInnerCompressorParamsBase *pParams = NULL)
 		{
 			assert(!m_pCompressor);
-			m_pCompressor = new TCompressor(pParams);
+			m_pCompressor = new TCompressor(m_pAlloc, pParams);
 			return true;
 		}
 		~BPTreeInnerNodeSetv2()
@@ -367,6 +373,7 @@ namespace embDB
 		bool m_bMulti;
 		//TComporator m_comp;
 		TCompressor *m_pCompressor;
+		CommonLib::alloc_t *m_pAlloc;
 	};	
 }
 

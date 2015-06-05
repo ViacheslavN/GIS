@@ -109,6 +109,7 @@ namespace embDB
 	};
 
 	template<class _FType, int FieldDataType,
+	class _TInnerCompressor = embDB::BPInnerNodeSimpleCompressorV2<_FType> ,
 	class _TLeafCompressor = embDB::BPLeafNodeMapSimpleCompressorV2<_FType, uint64 >,
 	class _TComp = embDB::comp<_FType> >
 	class UniqueIndexFieldHandler : public CIndexHandlerBase 
@@ -117,7 +118,7 @@ namespace embDB
 
 		typedef _FType FType;
 		typedef _TComp TComp;
-		typedef embDB::BPInnerNodeSimpleCompressorV2<_FType> TInnerCompressor;
+		typedef _TInnerCompressor TInnerCompressor;
 		typedef _TLeafCompressor TLeafCompressor;
 
 

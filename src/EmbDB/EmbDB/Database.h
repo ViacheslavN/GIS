@@ -54,12 +54,12 @@ namespace embDB
 		public:
 			CDatabase();
 			~CDatabase();
-			virtual bool open(const CommonLib::str_t& sDbName,  DBTransactionMode mode, const CommonLib::str_t& sWorkingPath = "", const CommonLib::str_t& sPassword = "");
-			virtual bool create(const CommonLib::str_t& sDbName, size_t nPageSize, DBTransactionMode mode,  const CommonLib::str_t& sWorkingPath = "", const CommonLib::str_t& sPassword = "");
+			virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL);
+			virtual bool create(const wchar_t* pszDbName, size_t nPageSize, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL) ;
 			virtual bool close();
 			virtual ITransactions* startTransaction(eTransactionsType trType);
 			virtual bool closeTransaction(ITransactions* );
-
+			virtual IShema* getShema() {return 0;}
 			CSchema* getSchema();
 			CStorage* getMainStorage();
 			CStorage* getTableStorage(const CommonLib::str_t& sFileName, bool bCreate);

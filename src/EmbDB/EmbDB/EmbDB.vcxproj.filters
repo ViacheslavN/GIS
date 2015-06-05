@@ -163,6 +163,12 @@
     <Filter Include="DB\BPTrees\Compress">
       <UniqueIdentifier>{f4ef3e23-0e89-465d-b967-eccf7545448c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\SQL">
+      <UniqueIdentifier>{743b6d1b-87df-4ccd-92d7-c20e07f94960}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Fields\Index\CompositeIndex\Unique">
+      <UniqueIdentifier>{61a6c7f1-dc87-4aea-8cbd-b974d2a9c49c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -693,6 +699,27 @@
     <ClInclude Include="DirectTransactions.h">
       <Filter>DB\transactions\readonly</Filter>
     </ClInclude>
+    <ClInclude Include="IStatement.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="IRecordset.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Statement.h">
+      <Filter>DB\SQL</Filter>
+    </ClInclude>
+    <ClInclude Include="IDBShema.h">
+      <Filter>SDK\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="CompIndexInnerCompressor.h">
+      <Filter>DB\Fields\Index\CompositeIndex\Unique</Filter>
+    </ClInclude>
+    <ClInclude Include="CompIndexLeafCompressor.h">
+      <Filter>DB\Fields\Index\CompositeIndex\Unique</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressCompIndexParams.h">
+      <Filter>DB\Fields\Index\CompositeIndex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -793,6 +820,9 @@
     </ClCompile>
     <ClCompile Include="ValueField.cpp">
       <Filter>DB\Fields</Filter>
+    </ClCompile>
+    <ClCompile Include="Statement.cpp">
+      <Filter>DB\SQL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

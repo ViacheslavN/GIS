@@ -31,13 +31,15 @@ namespace embDB
 		typedef typename TBase::TInnerNode TInnerNode;
 		typedef typename TBase::TLeafNode  TLeafNode;
 
+		typedef typename TBase::TInnerCompressorParamsBase TInnerCompressorParamsBase;
+		typedef typename TBase::TLeafCompressorParamsBase TLeafCompressorParamsBase;
 
 
 	
 
 	
 		BPTreeNodeMapv2(int64 nParentAddr, CommonLib::alloc_t *pAlloc, int64 nPageAddr, bool bMulti, bool  bIsLeaf, bool bCheckCRC32,
-			ICompressorParams *pInnerCompParams = NULL, ICompressorParams *pLeafCompParams = NULL) : 
+			TInnerCompressorParamsBase *pInnerCompParams = NULL, TLeafCompressorParamsBase *pLeafCompParams = NULL) : 
 			TBase( nParentAddr, pAlloc, nPageAddr, bMulti,  bIsLeaf, bCheckCRC32, pInnerCompParams,pLeafCompParams)
 			{}
 		~BPTreeNodeMapv2()
