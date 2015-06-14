@@ -13,6 +13,9 @@
       <UniqueIdentifier>{74634395-5dc1-4d92-80d2-ee6e7dd0a142}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;jpg;jpeg;jpe;manifest</Extensions>
     </Filter>
+    <Filter Include="3DTestLib">
+      <UniqueIdentifier>{0c75e429-df54-4849-885c-fe1582cc47a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -30,6 +33,18 @@
     <ClCompile Include="TestGraphicsView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>3DTestLib</Filter>
+    </ClCompile>
+    <ClCompile Include="geometry.cpp">
+      <Filter>3DTestLib</Filter>
+    </ClCompile>
+    <ClCompile Include="tgaimage.cpp">
+      <Filter>3DTestLib</Filter>
+    </ClCompile>
+    <ClCompile Include="3DDrawFunc.cpp">
+      <Filter>3DTestLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -46,6 +61,18 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>3DTestLib</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry.h">
+      <Filter>3DTestLib</Filter>
+    </ClInclude>
+    <ClInclude Include="tgaimage.h">
+      <Filter>3DTestLib</Filter>
+    </ClInclude>
+    <ClInclude Include="3DDrawFunc.h">
+      <Filter>3DTestLib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

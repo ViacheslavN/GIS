@@ -86,8 +86,8 @@ namespace GisEngine
 			const CBrush*  m_pselectedBrush;
 			const CFont*   m_pselectedFont;
 	 
-			bool    m_bIsdeleteDC;
-			bool    m_bIsreleaseDC;
+			bool    m_bIsDeleteDC;
+			bool    m_bIsReleaseDC;
 			HWND    m_hWnd;
 			int     m_nSavedDC;
 			CBitmap  m_Surface;
@@ -97,6 +97,7 @@ namespace GisEngine
 			HDC m_hDC;
 			GUnits m_nWidth;
 			GUnits m_nHeight;
+			 double  m_dFontOrientation;
 		};
 
 	}

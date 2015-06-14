@@ -42,7 +42,7 @@
 #include "agg/agg_conv_transform.h"
 #include "agg/agg_rounded_rect.h"
 #include "VertexSrc.h"
-
+#include "CommonLibrary/CSSection.h"
 namespace GisEngine
 {
 	namespace Display
@@ -67,8 +67,8 @@ namespace GisEngine
 				virtual IGraphics*   CreateCompatibleGraphics(GUnits width, GUnits height);
 				virtual void        Copy(IGraphics* src, const GPoint& srcPoint, const GRect& dstRect, bool bBlend = true);
 
-				virtual void DrawPoint(const CPen* pPen, const CBrush*  pBbrush, const GPoint& Pt);
-				virtual void DrawPoint(const CPen* pPen, const CBrush*  pBbrush, GUnits dX, GUnits dY);
+				virtual void DrawPoint(const CPen* pPen, const CBrush*  pBrush, const GPoint& Pt);
+				virtual void DrawPoint(const CPen* pPen, const CBrush*  pBrush, GUnits dX, GUnits dY);
 				virtual void DrawPixel(GUnits dX, GUnits dY, const Color &color);
 
 				virtual void DrawLineSeg(const CPen* pPen, const GPoint& P1, const GPoint& P2);
@@ -76,21 +76,21 @@ namespace GisEngine
 
 				virtual void DrawLine(const CPen* pPen, const GPoint* pPoints, int nNumPoints) ;
 
-				virtual void DrawRoundRect(const CPen* pPen, const CBrush*  pBbrush, const GRect& Rect, GUnits radius);
-				virtual void DrawRect(const CPen* pPen, const CBrush*  pBbrush, const GRect& Rect);
-				virtual void DrawRect(CPen* pPen, CBrush*  pBbrush, const GPoint& LTPoint, const GPoint& RBPoint);
-				virtual void DrawRect(CPen* pPen, CBrush*  pBbrush, GUnits dLTX, GUnits dLTY, GUnits dRBX, GUnits dRBY) ;
+				virtual void DrawRoundRect(const CPen* pPen, const CBrush*  pBrush, const GRect& Rect, GUnits radius);
+				virtual void DrawRect(const CPen* pPen, const CBrush*  pBrush, const GRect& Rect);
+				virtual void DrawRect(CPen* pPen, CBrush*  pBrush, const GPoint& LTPoint, const GPoint& RBPoint);
+				virtual void DrawRect(CPen* pPen, CBrush*  pBrush, GUnits dLTX, GUnits dLTY, GUnits dRBX, GUnits dRBY) ;
 
-				virtual void DrawRectEx(const CPen* pPen, const CBrush*  pBbrush, const GRect& Rect, const GPoint& originMin, const GPoint& originMax);
-				virtual void DrawEllipse(const CPen* pPen, const CBrush*  pBbrush, const GRect& Rect);
-				virtual void DrawEllipse(const CPen* pPen, const CBrush*  pBbrush, const GPoint& LTPoint, const GPoint& RBPoint);
-				virtual void DrawEllipse(const CPen* pPen, const CBrush*  pBbrush, GUnits dLTX, GUnits dLTY, GUnits dRBX, GUnits dRBY);
+				virtual void DrawRectEx(const CPen* pPen, const CBrush*  pBrush, const GRect& Rect, const GPoint& originMin, const GPoint& originMax);
+				virtual void DrawEllipse(const CPen* pPen, const CBrush*  pBrush, const GRect& Rect);
+				virtual void DrawEllipse(const CPen* pPen, const CBrush*  pBrush, const GPoint& LTPoint, const GPoint& RBPoint);
+				virtual void DrawEllipse(const CPen* pPen, const CBrush*  pBrush, GUnits dLTX, GUnits dLTY, GUnits dRBX, GUnits dRBY);
 
-				virtual void DrawPolygon(const CPen* pPen, const CBrush*  pBbrush, const GPoint* pPoints, int nNumPoints);
-				virtual void DrawPolyPolygon(const CPen* pPen, const CBrush*  pBbrush, const GPoint* lpPoints, const int *lpPolyCounts, int nCount);
+				virtual void DrawPolygon(const CPen* pPen, const CBrush*  pBrush, const GPoint* pPoints, int nNumPoints);
+				virtual void DrawPolyPolygon(const CPen* pPen, const CBrush*  pBrush, const GPoint* lpPoints, const int *lpPolyCounts, int nCount);
 
-				virtual void DrawPolygonEx(const CPen* pPen, const CBrush*  pBbrush, const GPoint* pPoints, int nNumPoints, const GPoint& originMin, const GPoint& originMax);
-				virtual void DrawPolyPolygonEx(const CPen* pPen, const CBrush*  pBbrush, const GPoint* lpPoints, const int *lpPolyCounts, int nCount, const GPoint& originMin, const GPoint& originMax);
+				virtual void DrawPolygonEx(const CPen* pPen, const CBrush*  pBrush, const GPoint* pPoints, int nNumPoints, const GPoint& originMin, const GPoint& originMax);
+				virtual void DrawPolyPolygonEx(const CPen* pPen, const CBrush*  pBrush, const GPoint* lpPoints, const int *lpPolyCounts, int nCount, const GPoint& originMin, const GPoint& originMax);
 
 				virtual void QueryTextMetrics(const CFont* pFont, GUnits* height, GUnits* baseLine, GUnits* lineSpacing) ;
 				virtual void QueryTextMetrics(const CFont* pFont, const wchar_t* text, int len, GUnits* width, GUnits* height, GUnits* baseLine);
@@ -148,40 +148,43 @@ namespace GisEngine
 			void copy(IGraphics* pSrc, const GPoint& srcPoint, const GRect& dstRect, bool bBlend = true);
 			void draw_line(const CPen* pPen);
 			void draw_poly_polygon(const CBrush* pBrush, const GPoint& originMin = GPoint(), const GPoint& originMax = GPoint());
+			void create_font(const CFont* pFont, bool& customDecoration);
+		    CommonLib::str_t get_font_path(const CFont* pFont, bool& customDecoration);
+			void DrawUnderLine(const CFont* pFont, double xNew, double yNew, double x, double y);
 		private:
-				scanline_t scanline_;
-				renderer_base_t renderer_base_;
-				renderer_t renderer_;
-				rasterizer_t rasterizer_;
-				agg::rendering_buffer rbuf_;
-				pixfmt_t	rendering_buffer_;
+				scanline_t m_scanline;
+				renderer_base_t m_renderer_base;
+				renderer_t m_renderer;
+				rasterizer_t m_rasterizer;
+				agg::rendering_buffer m_rbuf;
+				pixfmt_t	m_rendering_buffer;
 
-				agg::conv_stroke<offset_stroke<CVertexSrc> > conv_stroke_;
-				agg::conv_dash<CVertexSrc> dash_stroke_;
-				agg::conv_stroke<offset_stroke<agg::conv_dash<CVertexSrc> > > dash_conv_stroke_;
-				CVertexSrc vertex_src_;
-				offset_stroke<CVertexSrc>                  offset_stroke_;
-				offset_stroke<agg::conv_dash<CVertexSrc> > dash_offset_stroke_;
-				agg::ellipse ellipse_;
-				agg::rounded_rect rounded_rect_;
+				agg::conv_stroke<offset_stroke<CVertexSrc> > m_conv_stroke;
+				agg::conv_dash<CVertexSrc> m_dash_stroke;
+				agg::conv_stroke<offset_stroke<agg::conv_dash<CVertexSrc> > > m_dash_conv_stroke;
+				CVertexSrc m_vertex_src;
+				offset_stroke<CVertexSrc>                  m_offset_stroke;
+				offset_stroke<agg::conv_dash<CVertexSrc> > m_dash_offset_stroke;
+				agg::ellipse m_ellipse;
+				agg::rounded_rect m_rounded_rect;
 
 
 				//images support
-				span_allocator_t         span_allocator_;
-				agg::pixfmt_bgra32       pattern_rgba32_;
-				agg::rendering_buffer    pattern_rbuf_;
-				span_pattern_generator_t span_pattern_generator_;
+				span_allocator_t         m_span_allocator;
+				agg::pixfmt_bgra32       m_pattern_rgba32;
+				agg::rendering_buffer    m_pattern_rbuf;
+				//span_pattern_generator_t m_span_pattern_generator;
 
 
-				font_engine_t        font_engine_;
-				font_cache_manager_t font_manager_;
-				conv_curve_t         curves_;
-				conv_contour_type    contour_;
-				agg::conv_bspline<CVertexSrc>       bspline_;
-				agg::trans_single_path tcurve_;
-				conv_font_segm_type  fsegm_;
-				conv_font_trans_type ftrans_;
-				trans_type_contour fcontour_;
+				font_engine_t        m_font_engine;
+				font_cache_manager_t m_font_manager;
+				conv_curve_t         m_curves;
+				conv_contour_type    m_contour;
+				agg::conv_bspline<CVertexSrc>       m_bspline;
+				agg::trans_single_path m_tcurve;
+				conv_font_segm_type  m_fsegm;
+				conv_font_trans_type m_ftrans;
+				trans_type_contour m_fcontour;
 				CBitmap m_surface;
 
 
@@ -196,6 +199,8 @@ namespace GisEngine
 				bool m_bflipY;
 				GPoint m_org;
 				GPoint m_brushOrg;
+
+				CommonLib::CSSection m_cs;
 
 		};
 	}

@@ -5,9 +5,44 @@ namespace GisEngine
 {
 	namespace Display
 	{
-		CGraphicsWinGDI::CGraphicsWinGDI(HWND hWnd){}
+		CGraphicsWinGDI::CGraphicsWinGDI(HWND hWnd) 
+			: m_bIsDeleteDC(false),
+				m_pselectedBrush(0),
+				m_pSelectedPen(0),
+				m_pselectedFont(0),
+				m_dFontOrientation(0),
+				m_hfirstFont(0),
+				m_hfirstBrush(0),
+				m_hfirstPen(0)
+		{
+			m_hDC = ::GetDC(hWnd);
+			m_bIsReleaseDC = true;
+		}
 		CGraphicsWinGDI::CGraphicsWinGDI(HDC hDC, bool dIsdeleteDC){}
-		CGraphicsWinGDI::~CGraphicsWinGDI(){}
+		CGraphicsWinGDI::~CGraphicsWinGDI()
+		{
+			if(m_hfirstFont)
+			{
+				HGDIOBJ gdiObj = ::SelectObject(m_hDC, m_hfirstFont);
+				::DeleteObject(gdiObj);
+			}
+			if(m_hfirstBrush)
+			{
+				HGDIOBJ gdiObj = ::SelectObject(m_hDC, m_hfirstBrush);
+				::DeleteObject(gdiObj);
+			}
+			if(m_hfirstFont)
+			{
+				HGDIOBJ gdiObj = ::SelectObject(m_hDC, m_hfirstFont);
+				::DeleteObject(gdiObj);
+			}
+
+			if(m_bIsDeleteDC)
+				::ReleaseDC(m_hWnd, m_hDC);
+			if(m_bIsReleaseDC)
+				::DeleteDC(m_hDC);
+
+		}
 
 
 

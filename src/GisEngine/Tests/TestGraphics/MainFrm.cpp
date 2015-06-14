@@ -109,3 +109,9 @@ LRESULT CMainFrame::OnAppAbout(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
 	dlg.DoModal();
 	return 0;
 }
+/*LRESULT CMainFrame::OnWireRender(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
+{
+
+	m_view.OnWireRender();
+	return 0;
+}*/

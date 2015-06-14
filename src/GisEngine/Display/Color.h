@@ -17,6 +17,8 @@ namespace GisEngine
 			enum
 			{
 				Black = 0x000000,
+				Red = 0xFF0000,
+				Green = 0x0000FF,
 				White = 0xffffff,
 				Transparent = 0x00,
 				SemiTransparent = 0x80,

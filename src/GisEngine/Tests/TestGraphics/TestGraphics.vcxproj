@@ -110,21 +110,29 @@
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="3DDrawFunc.cpp" />
     <ClCompile Include="AboutDlg.cpp" />
+    <ClCompile Include="geometry.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TestGraphics.cpp" />
     <ClCompile Include="TestGraphicsView.cpp" />
+    <ClCompile Include="tgaimage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AboutDlg.h" />
+    <ClInclude Include="3DDrawFunc.h" />
+    <ClInclude Include="geometry.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestGraphicsView.h" />
+    <ClInclude Include="tgaimage.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TestGraphics.rc" />
