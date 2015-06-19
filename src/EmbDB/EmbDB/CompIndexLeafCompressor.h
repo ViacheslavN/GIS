@@ -4,6 +4,7 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CompressorParams.h"
 #include "CompositeIndex.h"
+#include "CompressCompIndexParams.h"
 namespace embDB
 {
 
@@ -15,27 +16,59 @@ namespace embDB
 		typedef TBPVector<CompositeIndexKey> TLeafKeyMemSet;
 		typedef  TBPVector<TValue> TLeafValueMemSet;
 
-		BPLeafCompIndexCompressor(ICompressorParams *pParams = NULL) : m_nSize(0)
-		{}
+		typedef CompIndexParams TLeafCompressorParamsBase;
+
+		BPLeafCompIndexCompressor(CommonLib::alloc_t *pAlloc, TLeafCompressorParamsBase *pParams) 
+			: m_nSize(0), m_pAlloc(pAlloc), m_pCompParams(pParams)
+		{
+			assert(m_pCompParams);
+		}
 		virtual ~BPLeafCompIndexCompressor(){}
-		virtual bool Load(TLeafMemSet& Set, CommonLib::FxMemoryReadStream& stream)
+
+
+		template<typename _Transactions  >
+		static TLeafCompressorParamsBase *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		{
+
+			CompIndexParams *pCompParams = new  CompIndexParams();
+			pCompParams->setRootPage(nPage);
+			pCompParams->read(pTran);
+			return pCompParams;
+		}
+
+
+		virtual bool Load(TLeafKeyMemSet& vecKeys, TLeafValueMemSet& vecValues, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;
+			CommonLib::FxMemoryReadStream ValueStreams;
+
 			m_nSize = stream.readInt32();
 			if(!m_nSize)
 				return true;
 
-			Set.reserve(m_nSize);
+			vecKeys.reserve(m_nSize);
+			vecValues.reserve(m_nSize);
 
-			uint32 nKeySize =  m_nSize * (sizeof(TKey) + sizeof(int64));
+			uint32 nKeySize =  m_nSize * m_pCompParams->getRowSize();
+			uint32 nValueSize =  m_nSize * sizeof(TValue);
+
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
-			TIndex index;
+			ValueStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValueSize);
+
+		 
+			TValue value;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
-				KeyStreams.read(index.m_key);
-				KeyStreams.read(index.m_nObjectID);
-				Set.push_back(index);
+				CompositeIndexKey key(m_pAlloc);
+			
+				if(!key.load(m_pCompParams->getScheme(), KeyStreams))
+				{
+					return false;
+				}
+				ValueStreams.read(value);
+
+				vecKeys.push_back(key);
+				vecValues.push_back(value);
 			}
 
 			return true;
@@ -106,6 +139,9 @@ namespace embDB
 		}
 	private:
 		size_t m_nSize;
+		CommonLib::alloc_t* m_pAlloc;
+		TLeafCompressorParamsBase* m_pCompParams;
+
 	};
 }
 

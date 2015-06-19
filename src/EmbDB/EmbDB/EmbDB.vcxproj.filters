@@ -824,5 +824,11 @@
     <ClCompile Include="Statement.cpp">
       <Filter>DB\SQL</Filter>
     </ClCompile>
+    <ClCompile Include="CompositeIndex.cpp">
+      <Filter>DB\Fields\Index\CompositeIndex</Filter>
+    </ClCompile>
+    <ClCompile Include="CompressCompIndexParams.cpp">
+      <Filter>DB\Fields\Index\CompositeIndex</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

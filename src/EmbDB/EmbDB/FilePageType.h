@@ -62,7 +62,8 @@ namespace embDB
 	enum eIndexPageType
 	{
 		INDEX_INFO_PAGE,
-		MULTI_INDEX_INFO_PAGE
+		MULTI_INDEX_INFO_PAGE,
+		COMP_INDEX_INFO_PAGE
 	};
 
 	enum eTransactionsPageType

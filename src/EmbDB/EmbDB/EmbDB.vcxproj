@@ -636,6 +636,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="CompositeIndex.cpp" />
+    <ClCompile Include="CompressCompIndexParams.cpp" />
     <ClCompile Include="CRC.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="DBTranManager.cpp" />

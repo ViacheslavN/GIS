@@ -3,6 +3,7 @@
 #include "CommonLibrary/str_t.h"
 #include "SpatialKey.h"
 #include "IRefCnt.h"
+#include "CommonLibrary/MemoryStream.h"
 namespace embDB
 {
 	enum eDataTypes
@@ -34,6 +35,44 @@ namespace embDB
 		ftRect64,
 		ftSerializedObject
 	};
+
+
+	struct STypeSize
+	{
+		short nLineNo;
+		size_t nSize;
+	};
+
+	static STypeSize  arrTypeSizes[] = {
+		{ftUnknown,			 0},
+		{ftNull,			 0},
+		{ftInteger8,		 1},
+		{ftInteger16,		 2},
+		{ftInteger32,		 4},
+		{ftInteger64,		 8},
+		{ftUInteger8,		 1},
+		{ftUInteger16,		 2},
+		{ftUInteger32,		 4},
+		{ftUInteger64,		 8},
+		{ftOid,				 8},
+		{ftFloat,			 4},
+		{ftDouble,			 8},
+		{ftString,			 0},
+		{ftBlob,			 8},
+		{ftPoint16,			 4},
+		{ftPoint32,			 8},
+		{ftPoint64,		    16},
+		{ftShape16,			 8},
+		{ftShape32,		     8},
+		{ftShape64,			 8},
+		{ftRaster,	 		 8},
+		{ftRect16,			 8},
+		{ftRect32,			16},
+		{ftRect64,			32},
+		{ftSerializedObject, 8}
+	
+	};
+
 	enum eDataTypesExt
 	{
 		dteSimple = 0,
@@ -164,6 +203,8 @@ namespace embDB
 		virtual bool get(TRect2Du32&){ return false;}
 		virtual bool get(TRect2Du64&){ return false;}
 
+		virtual void load(CommonLib::IReadStream *pStream){}
+		virtual void save(CommonLib::IWriteStream *pStream){}
 
 		template<class TValue>
 		bool setVal(const TValue& val)

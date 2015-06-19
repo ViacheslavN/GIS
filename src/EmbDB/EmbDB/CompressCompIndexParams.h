@@ -6,32 +6,23 @@
 
 namespace embDB
 {
-class CompIndexParams : public CompressorParamsBase<IDBTransactions>
-	{
+class CompIndexParams : public CompressorParamsBaseImp
+{
 	public:
-
-		typedef CompressorParamsBase<IDBTransactions> TBase;
-		CompIndexParams(int64 nPageID) : TBase(nPageID), m_nCompID((uint32)eComposeIndexCompID)
-		{}
+		CompIndexParams();
 		~CompIndexParams();
 
-
-		virtual eCompressorParamsID getCompressorParmasID() const {return eComposeIndexCompID;}
-		virtual uint32 getCompressorID() const{	return m_nCompID;}
-		virtual int64 getRootPage() const{	return m_nPageID;	}
-
-		virtual bool read(CommonLib::FxMemoryReadStream& stream, IDBTransactions *pTran)
-		{
-			 uint32 nCount = 
-		}
-		virtual bool save(CommonLib::FxMemoryWriteStream& stream, IDBTransactions *pTran)
-		{
-			 
-		}
-
+		virtual bool read(IDBTransactions *pTran);
+		virtual bool save(IDBTransactions *pTran);
+		const std::vector<uint16>& getScheme() const {return m_vecScheme;}
+		uint32 getRowSize() const{ return m_nRowSize;}
+		void addParams(eDataTypes type, uint32 nSize = 0);
 	private:
 
-		std::vector<eDataTypes> m_vecScheme;
+		std::vector<uint16> m_vecScheme;
+		std::vector<std::pair<uint16, uint32>> m_vecSchemeParams;
+		uint32 m_nRowSize;
+
 	};
 }
 #endif

@@ -169,6 +169,10 @@ namespace CommonLib
 	{
 		return readTR<byte>();
 	}
+	char MemoryStream::readChar()
+	{
+		return readTR<char>();
+	}
 	int16  MemoryStream::readint16()
 	{
 		return readTR<int16>();
@@ -215,6 +219,10 @@ namespace CommonLib
 	void MemoryStream::read(byte& value)
 	{
 		readT<byte>(value);
+	}
+	void MemoryStream::read(char& value)
+	{
+		readT<char>(value);
 	}
 	void MemoryStream::read(uint16& value)
 	{

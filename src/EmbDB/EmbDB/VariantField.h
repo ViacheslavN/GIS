@@ -59,6 +59,15 @@ namespace embDB
 				return false;
 			return m_Value == pBaseVariant->m_Value;
 		}
+		virtual void load(CommonLib::IReadStream *pStream)
+		{
+			pStream->read(m_Value);
+		}
+		virtual void save(CommonLib::IWriteStream *pStream)
+		{
+			pStream->write(m_Value);
+		}
+
 		protected:
 			TVarType m_Value;
 			bool m_bIsEmpty;

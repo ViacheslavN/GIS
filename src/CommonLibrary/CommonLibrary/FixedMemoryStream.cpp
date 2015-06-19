@@ -150,6 +150,10 @@ namespace CommonLib
 	{
 		return readTR<byte>();
 	}
+	char  FxMemoryReadStream::readChar()
+	{
+		return readTR<char>();
+	}
 	 int16	FxMemoryReadStream::readint16()
 	 {
 		 return readTR<int16>();
@@ -205,7 +209,10 @@ namespace CommonLib
 	{
 		readT<byte>(value);
 	}
- 
+ 	void FxMemoryReadStream::read(char& value)
+	{
+		readT<char>(value);
+	}
 	void FxMemoryReadStream::read(int16& value)
 	{
 		readT<int16>(value);
@@ -273,6 +280,10 @@ namespace CommonLib
 	void FxMemoryWriteStream::write(byte value)
 	{
 		writeT<byte>(value);
+	}
+	void FxMemoryWriteStream::write(char value)
+	{
+		writeT<char>(value);
 	}
 	void FxMemoryWriteStream::write(int16 value)
 	{

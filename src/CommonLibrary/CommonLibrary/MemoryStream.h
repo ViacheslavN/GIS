@@ -26,6 +26,7 @@ namespace CommonLib
 		//IReadStream
 		virtual void read( byte* pBuffer, size_t bufLen );
 		virtual void read(bool& value);
+		virtual void read(char& value);
 		virtual void read(byte& value);
 		virtual void read(int16& value);
 		virtual void read(uint16& value);
@@ -40,6 +41,7 @@ namespace CommonLib
 
 		virtual bool         readBool();
 		virtual byte		 readByte();
+		virtual char		 readChar();
 		virtual int16        readint16();
 		virtual uint16       readintu16();
 		virtual uint32       readDword();

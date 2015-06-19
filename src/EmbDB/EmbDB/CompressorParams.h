@@ -43,11 +43,7 @@ namespace embDB
 		{}
 		virtual ~CompressorParamsBaseImp(){}
 
-		virtual eCompressorParamsID getCompressorParmasID() const 
-		{
-			return eBaseCompID;
-		}
-	 
+			 
 		virtual int64 getRootPage() const 
 		{
 			return m_nRootPage;

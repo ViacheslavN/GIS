@@ -6,8 +6,12 @@
 #include "CommonLibrary/str_t.h"
 #include "CommonLibrary/MemoryStream.h"
 #include "CommonLibrary/FixedBitStream.h"
+void testAlloc ();
 int _tmain(int argc, _TCHAR* argv[])
 {
+	testAlloc();
+	return 0;
+
 	CommonLib::alloc_t *alloc = new CommonLib::simple_alloc_t();
 	CommonLib::FxBitWriteStream writeBitStream(alloc);
 	CommonLib::FxBitReadStream  readBitStream(alloc);

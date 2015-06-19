@@ -72,6 +72,7 @@ public:
 
 	virtual void write(const byte* pBuffer, size_t bufLen ) = 0;
 	virtual void write(bool value) = 0;
+	virtual void write(char value) = 0;
 	virtual void write(byte value) = 0;
 	virtual void write(int16 value) = 0;
 	virtual void write(uint16 value) = 0;
@@ -92,6 +93,7 @@ public:
 
 	virtual void read( byte* pBuffer, size_t bufLen ) = 0;
 	virtual void read(bool& value) = 0;
+	virtual void read(char& value) = 0;
 	virtual void read(byte& value) = 0;
 	virtual void read(int16& value) = 0;
 	virtual void read(uint16& value) = 0;
@@ -105,6 +107,7 @@ public:
 
 	virtual bool         readBool() = 0;
 	virtual byte         readByte() = 0;
+	virtual char         readChar() = 0;
 	virtual int16        readint16() = 0;
 	virtual uint16       readintu16() = 0;
 	virtual uint32       readDword() = 0;
