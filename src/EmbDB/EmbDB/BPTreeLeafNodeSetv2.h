@@ -10,7 +10,8 @@
 namespace embDB
 {
 	template<typename _TKey,  /*typename _TComp,*/
-	class _Transaction, class _TCompressor>
+	class _Transaction, class _TCompressor,
+	class _TLeafMemSet = TBPVector<_TKey> >
 	class BPTreeLeafNodeSetv2Base : public  BPBaseTreeNode
 	{
 	public:
@@ -20,7 +21,7 @@ namespace embDB
 		typedef _Transaction Transaction;
 		//typedef _TComp		 TComporator;
 		typedef _TCompressor TCompressor;
-		typedef  TBPVector<TKey> TLeafMemSet;
+		typedef _TLeafMemSet TLeafMemSet;
 
 		typedef typename _TCompressor::TLeafCompressorParamsBase TLeafCompressorParamsBase;
 

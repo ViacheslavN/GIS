@@ -149,23 +149,24 @@ namespace embDB
 		IFieldVariant(){}
 		virtual ~IFieldVariant(){}
 
-		virtual bool isEmpty(bool){ return true;}
+		virtual bool isEmpty(bool) const { return true;}
 		virtual bool setEmpty(){ return false;}
-		virtual int getType(){ return ftUnknown;}
+		virtual uint16  getType() const { return ftUnknown;}
 
 		virtual bool LE(const IFieldVariant* pKey) const { return false;}
 		virtual bool EQ(const IFieldVariant* pKey) const { return false;}
+		virtual bool copy(const IFieldVariant *pVariant) { return false;}
 
 		virtual bool set(bool){ return false;}
 		virtual bool set(const byte*, size_t){ return false;}
-		virtual bool set(int16 value){ return false;}
-		virtual bool set(uint16 value){ return false;}
-		virtual bool set(int32 value){ return false;}
-		virtual bool set(uint32 value){ return false;}
-		virtual bool set(int64 value){ return false;}
-		virtual bool set(uint64 value){ return false;}
-		virtual bool set(float value) { return false;}
-		virtual bool set(double value){ return false;}
+		virtual bool set(const int16& value){ return false;}
+		virtual bool set(const uint16& value){ return false;}
+		virtual bool set(const int32& value){ return false;}
+		virtual bool set(const uint32& value){ return false;}
+		virtual bool set(const int64& value){ return false;}
+		virtual bool set(const uint64& value){ return false;}
+		virtual bool set(const float& value) { return false;}
+		virtual bool set(const double& value){ return false;}
 		virtual bool set(const TPoint2D16&	value){ return false;}
 		virtual bool set(const TPoint2D32&  value){ return false;}
 		virtual bool set(const TPoint2D64&  value){ return false;}

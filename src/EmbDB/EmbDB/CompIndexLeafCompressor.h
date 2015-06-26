@@ -5,6 +5,7 @@
 #include "CompressorParams.h"
 #include "CompositeIndex.h"
 #include "CompressCompIndexParams.h"
+#include "BPVectorNoPod.h"
 namespace embDB
 {
 
@@ -13,7 +14,7 @@ namespace embDB
 	{
 	public:	
 		typedef _TValue TValue;
-		typedef TBPVector<CompositeIndexKey> TLeafKeyMemSet;
+		typedef TBPVectorNoPOD<CompositeIndexKey> TLeafKeyMemSet;
 		typedef  TBPVector<TValue> TLeafValueMemSet;
 
 		typedef CompIndexParams TLeafCompressorParamsBase;
@@ -73,53 +74,54 @@ namespace embDB
 
 			return true;
 		}
-		virtual bool Write(TLeafMemSet& Set, CommonLib::FxMemoryWriteStream& stream)
+		virtual bool Write(TLeafKeyMemSet& vecKeys, TLeafValueMemSet& vecValues, CommonLib::FxMemoryWriteStream& stream)
 		{
-			assert(m_nSize == Set.size());
-			stream.write(m_nSize);
-			if(!m_nSize)
+			uint32 nSize = (uint32)vecKeys.size();
+			assert(m_nSize == nSize);
+			stream.write(nSize);
+			if(!nSize)
 				return true;
-			uint32 nKeySize =  m_nSize * (sizeof(TKey) + sizeof(int64));
-			/*stream.write(nKeySize);*/
+
 			CommonLib::FxMemoryWriteStream KeyStreams;
+			CommonLib::FxMemoryWriteStream valueStreams;
+
+			uint32 nKeySize =  nSize  * m_pCompParams->getRowSize();
+			uint32 nValuesSize =  nSize * sizeof(TValue);
+
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
-			for(size_t i = 0, sz = Set.size(); i < sz; ++i)
+			valueStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValuesSize);
+			stream.seek(stream.pos() + nKeySize + nValuesSize, CommonLib::soFromBegin);			 
+			for(size_t i = 0, sz = vecKeys.size(); i < sz; ++i)
 			{
-				KeyStreams.write(Set[i].m_key);
-				KeyStreams.write(Set[i].m_nObjectID);
+				vecKeys[i].write(KeyStreams);
+				valueStreams.write(vecValues[i]);
 			}
 
 			return true;
 		}
 
-		virtual bool insert(const TIndex& key)
+		virtual bool insert(const CompositeIndexKey& key, const TValue& value)
 		{
 			m_nSize++;
 			return true;
 		}
-		virtual bool add(const TLeafMemSet& Set)
+		virtual bool add(const TLeafKeyMemSet& vecKeys, const TLeafValueMemSet& vecValues)
 		{
-			m_nSize += Set.size();
+			m_nSize += vecKeys.size();
 			return true;
 		}
-		virtual bool recalc(const TLeafMemSet& Set)
+		virtual bool recalc(const TLeafKeyMemSet& vecKeys, const TLeafValueMemSet& vecValues)
 		{
-			m_nSize = Set.size();
+			m_nSize = vecKeys.size();
 			return true;
 		}
-		virtual bool update(const TIndex& key)
+		virtual bool update(const CompositeIndexKey& key, const TValue& value)
 		{
-			return true;
-		}
-		virtual bool remove(const TIndex& key)
-		{
-			m_nSize--;
 			return true;
 		}
 		virtual size_t size() const
 		{
-			return (sizeof(TKey) + sizeof(int64))*  m_nSize +  sizeof(uint32);
+			return (m_pCompParams->getRowSize() + sizeof(TValue))*  m_nSize +  sizeof(uint32);
 		}
 		virtual size_t count() const
 		{
@@ -131,11 +133,11 @@ namespace embDB
 		}
 		size_t rowSize() const
 		{
-			return (sizeof(TKey) + sizeof(int64)) *  m_nSize;
+			return (m_pCompParams->getRowSize() + sizeof(TValue)) *  m_nSize;
 		}
 		size_t tupleSize() const
 		{
-			return  sizeof(TKey) + sizeof(int64);
+			return  m_pCompParams->getRowSize() + sizeof(TValue);
 		}
 	private:
 		size_t m_nSize;

@@ -3,12 +3,16 @@
 #include "VariantField.h"
 namespace embDB
 {
-	CompositeIndexKey::CompositeIndexKey(CommonLib::alloc_t *pAlloc) : m_pAlloc(pAlloc)
-	{
-
-	}
+	CompositeIndexKey::CompositeIndexKey(CommonLib::alloc_t *pAlloc) : m_pAlloc(pAlloc),
+		m_vecVariants(pAlloc)
+	{}
 	CompositeIndexKey::~CompositeIndexKey()
 	{
+		clear();
+	}
+	void CompositeIndexKey::clear()
+	{
+
 		for (size_t i = 0, sz = m_vecVariants.size(); i < sz; ++i)
 		{
 			m_vecVariants[i]->~IFieldVariant();
@@ -16,6 +20,35 @@ namespace embDB
 		}
 
 		m_vecVariants.clear();
+		m_pAlloc = NULL;
+	}
+	CompositeIndexKey::CompositeIndexKey(const CompositeIndexKey& key) : 
+		m_pAlloc(key.m_pAlloc), m_vecVariants(key.m_pAlloc)
+	{
+		if(key.getSize() == 0)
+			return;
+
+		m_vecVariants.reserve(key.getSize());
+		for (size_t i = 0, sz = key.getSize(); i < sz; ++i)
+		{
+			addValue(key.getValue(i));
+		}
+
+	}
+	CompositeIndexKey& CompositeIndexKey::operator=(const CompositeIndexKey& key)
+	{
+		clear();
+		m_pAlloc = key.m_pAlloc;
+		m_vecVariants.setAlloc(m_pAlloc);
+		if(key.getSize() == 0)
+			return *this;
+
+		m_vecVariants.reserve(key.getSize());
+		for (size_t i = 0, sz = key.getSize(); i < sz; ++i)
+		{
+			addValue(key.getValue(i));
+		}
+		return *this;
 	}
 	bool CompositeIndexKey::LE(const CompositeIndexKey& key) const
 	{
@@ -38,6 +71,15 @@ namespace embDB
 				return false;
 		}
 		return true;
+	}
+
+	bool CompositeIndexKey::operator < (const CompositeIndexKey& key) const
+	{
+		return LE(key);
+	}
+	bool CompositeIndexKey::operator == (const CompositeIndexKey& key) const
+	{
+		return EQ(key);
 	}
 	uint32 CompositeIndexKey::getSize() const
 	{
@@ -73,7 +115,21 @@ namespace embDB
 		}
 		return true;
 	}
-
+	bool CompositeIndexKey::setValue(uint32 nNum, const IFieldVariant* pValue)
+	{
+		assert(nNum < m_vecVariants.size());
+		return m_vecVariants[nNum]->copy(pValue);
+	}
+	bool CompositeIndexKey::addValue(const IFieldVariant* pValue)
+	{
+		IFieldVariant* pVariant =  createVariant(pValue->getType());
+		if(!pValue)
+			return false;
+		if(!pVariant->copy(pValue))
+			return false;
+		m_vecVariants.push_back(pVariant);
+		return true;
+	}
 	IFieldVariant* CompositeIndexKey::createVariant(uint16 nType)
 	{
 		switch(nType)
@@ -82,7 +138,31 @@ namespace embDB
 				return new (m_pAlloc->alloc(sizeof(TFieldUINT8))) TFieldUINT8();
 				break;
 			case ftInteger8:
-				return new (m_pAlloc->alloc(sizeof(TFieldUINT8))) TFieldINT8();
+				return new (m_pAlloc->alloc(sizeof(TFieldINT8))) TFieldINT8();
+				break;
+			case ftUInteger16:
+				return new (m_pAlloc->alloc(sizeof(TFieldUINT16))) TFieldUINT16();
+				break;
+			case ftInteger16:
+				return new (m_pAlloc->alloc(sizeof(TFieldINT16))) TFieldINT16();
+				break;
+			case ftUInteger32:
+				return new (m_pAlloc->alloc(sizeof(TFieldUINT32))) TFieldUINT32();
+				break;
+			case ftInteger32:
+				return new (m_pAlloc->alloc(sizeof(TFieldINT32))) TFieldINT32();
+				break;
+			case ftUInteger64:
+				return new (m_pAlloc->alloc(sizeof(TFieldUINT64))) TFieldUINT64();
+				break;
+			case ftInteger64:
+				return new (m_pAlloc->alloc(sizeof(TFieldINT64))) TFieldINT64();
+				break;
+			case ftFloat:
+				return new (m_pAlloc->alloc(sizeof(TFieldFloat))) TFieldFloat();
+				break;
+			case ftDouble:
+				return new (m_pAlloc->alloc(sizeof(TFieldDouble))) TFieldDouble();
 				break;
 		}
 

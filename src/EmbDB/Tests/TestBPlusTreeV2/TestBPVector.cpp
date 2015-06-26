@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
-#include "../../EmbDB/BPVector.h"
+#include "../../EmbDB/BPVectorNoPod.h"
 #include <vector>
 #include <algorithm>
 #include <set>
 #include "CommonLibrary/DebugTime.h"
+#include "../../EmbDB/CompositeIndex.h"
+#include "../../EmbDB/VariantField.h"
 template<class _Ty>
 	struct comp
 	{	
@@ -75,52 +77,50 @@ void TestInsert()
 	embDB::TBPVector<int32> vec;
 	embDB::TBPVector<int32> vec1;
 	embDB::TBPVector<int32> vec3;
- 
-
-	vec.push_back(1);
-	vec.push_back(2);
-	vec.push_back(2);
-	vec.push_back(2);
-	vec.push_back(2);
-	vec.push_back(4);
-	vec.push_back(8);
-	vec.push_back(9);
-	short nType = 0;
-
-	int indexUp = vec.upper_bound(40, comp<int32>());
-	int indexLow = vec.lower_bound(40, nType, comp<int32>());
- 
-
-	vec1.push_back(2);
-	vec1.push_back(3);
-	vec1.push_back(4);
-	vec.push_back(0);
-	vec.push_back(1);
-
-	vec.push_back(6);
-	vec.push_back(7);
-	vec.push_back(8);
-
-	vec3.push_back(9);
-	vec3.push_back(10);
-	vec3.push_back(11);
-	vec3.push_back(20);
-	//ShowVector(vec);
-	vec.insert(vec1, 2, 0, vec1.size());
-	//ShowVector(vec);
-	vec.push_back(vec3);
-
+	size_t n = 20;
+	for (size_t i = 0; i < n; ++i)
+	{
+		vec.push_back(i);
+		vec1.push_back(i);
+		vec3.push_back(i);
+	}
+	ShowVector(vec);
+	std::cout << "movel 2 2  " << std::endl;
+	vec.movel(2, 2);
 	ShowVector(vec);
 
-	vec.movel(6, 6);
+	std::cout << "mover 0 3 " << std::endl;
+	vec1.mover(0, 3);
+	ShowVector(vec1);
 
-	ShowVector(vec);
+	std::cout << "mover 3  5 " << std::endl;
+	vec3.mover(3, 5);
+	ShowVector(vec3);
 }
+
+/*
+m_innerKeyMemSet.mover(0, nCnt );
+m_innerLinkMemSet.mover(0, nCnt);
+
+m_innerKeyMemSet[nCnt - 1] = LessMin;
+m_innerLinkMemSet[nCnt - 1] = m_nLess;
+
+size_t newSize = pNode->m_innerLinkMemSet.size() -nCnt;
+
+
+m_innerKeyMemSet.copy(pNode->m_innerKeyMemSet, 0, newSize + 1, pNode->m_innerKeyMemSet.size());
+m_innerLinkMemSet.copy(pNode->m_innerLinkMemSet, 0, newSize + 1, pNode->m_innerLinkMemSet.size());
+
+*/
+
+
 void TestBPVector()
 {
-	TestInsert();
+	
 
+	//TestInsert();
 
+	return;
 
 	return;
 	embDB::TBPVector<int32> vec1;

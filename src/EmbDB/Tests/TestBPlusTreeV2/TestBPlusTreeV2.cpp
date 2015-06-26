@@ -10,13 +10,17 @@ void  TestInsert();
 void TestSearch();
 void testUndo();
 void testRedo();
+void TestPODTypeVector();
+void testCompKey();
 int _tmain(int argc, _TCHAR* argv[])
 {
 
+	testCompKey();
+	//TestPODTypeVector();
 	//TestSearch();
 	// TestInsert();
 	//TestBPVector();
-	TestBRteeSet();
+	//TestBRteeSet();
 	//TestBRteeMap();
 	//testUndo();
 	//testRedo();

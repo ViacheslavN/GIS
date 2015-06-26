@@ -720,6 +720,9 @@
     <ClInclude Include="CompressCompIndexParams.h">
       <Filter>DB\Fields\Index\CompositeIndex</Filter>
     </ClInclude>
+    <ClInclude Include="BPVectorNoPod.h">
+      <Filter>DB\BPTrees\BtreePlusv2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

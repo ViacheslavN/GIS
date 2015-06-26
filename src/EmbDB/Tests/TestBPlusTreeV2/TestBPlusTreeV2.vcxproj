@@ -95,8 +95,10 @@
     <ClCompile Include="TestBPMap.cpp" />
     <ClCompile Include="TestBPSet.cpp" />
     <ClCompile Include="TestBPVector.cpp" />
+    <ClCompile Include="TestBPVectorNoPod.cpp" />
     <ClCompile Include="TestBTreeRedo.cpp" />
     <ClCompile Include="TestBTreeUndo.cpp" />
+    <ClCompile Include="TestCompositeKey.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

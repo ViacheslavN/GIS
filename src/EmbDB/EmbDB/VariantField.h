@@ -19,7 +19,7 @@ namespace embDB
 		IBaseFieldVariant(const Type& value) : m_Value(value), m_bIsEmpty(true)
 		{}
 
-		virtual bool isEmpty(bool)
+		virtual bool isEmpty(bool) const
 		{
 			return m_bIsEmpty;
 		}
@@ -28,7 +28,7 @@ namespace embDB
 			m_bIsEmpty = true;
 			return true;
 		}
-		virtual int getType()
+		virtual uint16 getType() const
 		{
 			return FieldType;
 		}
@@ -67,7 +67,16 @@ namespace embDB
 		{
 			pStream->write(m_Value);
 		}
+		bool copy(const IFieldVariant *pVariant)
+		{
+			assert(pVariant->getType() == getType());
+			const IBaseFieldVariant* pBaseVariant = (IBaseFieldVariant*)pVariant;
+			if(!pBaseVariant)
+				return false;
+			m_Value = pBaseVariant->m_Value;
+			return true;
 
+		}
 		protected:
 			TVarType m_Value;
 			bool m_bIsEmpty;

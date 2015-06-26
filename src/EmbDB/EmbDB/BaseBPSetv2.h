@@ -279,7 +279,7 @@ namespace embDB
 		{
 			m_nPageInnerCompInfo = nInnerPageInfo;
 			m_nPageLeafPageCompInfo = nLeafPageInfo;
-			saveBTreeInfo();
+		//	saveBTreeInfo();
 		}
 		bool commit()
 		{

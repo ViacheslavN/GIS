@@ -48,6 +48,7 @@ namespace embDB
 		CommonLib::FxMemoryWriteStream stream;
 		stream.attach(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream, INDEX_PAGE, COMP_INDEX_INFO_PAGE);
+		stream.write(uint32(m_vecScheme.size()));
 		for (size_t i = 0, sz = m_vecScheme.size(); i < sz; ++i)
 		{
 			stream.write(m_vecScheme[i]);

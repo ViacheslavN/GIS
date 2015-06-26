@@ -6,11 +6,13 @@
 namespace embDB
 {
 	template<typename _TKey, typename _TValue,  /* typename _TComp,*/
-	class _Transaction, class _TCompressor>
-	class BPTreeLeafNodeMapv2 : public  BPTreeLeafNodeSetv2Base<_TKey,/* _TComp,*/ _Transaction, _TCompressor>
+	class _Transaction, class _TCompressor,
+	class _TKeyMemSet = TBPVector<_TKey>,
+	class _TValueMemSet = TBPVector<_TValue> >
+	class BPTreeLeafNodeMapv2 : public  BPTreeLeafNodeSetv2Base<_TKey,/* _TComp,*/ _Transaction, _TCompressor, _TKeyMemSet>
 	{
 	public:
-		typedef BPTreeLeafNodeSetv2Base<_TKey, /*_TComp, */_Transaction, _TCompressor> TBase;
+		typedef BPTreeLeafNodeSetv2Base<_TKey, /*_TComp, */_Transaction, _TCompressor, _TKeyMemSet> TBase;
 		typedef _TValue TValue;
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;
@@ -18,7 +20,7 @@ namespace embDB
 //		typedef typename TBase::TComporator	 TComporator;
 		typedef typename TBase::TCompressor TCompressor;
 		typedef typename TBase::TLeafMemSet TLeafMemSet;
-		typedef  TBPVector<TValue> TValueMemSet;
+		typedef _TValueMemSet TValueMemSet;
 
 		BPTreeLeafNodeMapv2( CommonLib::alloc_t *pAlloc, bool bMulti) :
 			TBase(pAlloc, bMulti), m_leafValueMemSet(pAlloc)

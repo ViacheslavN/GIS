@@ -1,37 +1,67 @@
-#ifndef _EMBEDDED_DATABASE_B_PLUS_TREE_V2_VECTOR_H_
-#define _EMBEDDED_DATABASE_B_PLUS_TREE_V2_VECTOR_H_
-#include "BaseRBTree.h"
+#ifndef _EMBEDDED_DATABASE_B_PLUS_TREE_V2_VECTOR_NO_POD_H_
+#define _EMBEDDED_DATABASE_B_PLUS_TREE_V2_VECTOR_NO_POD_H_
+#include "BPVector.h"
 namespace embDB
 {
 
-	template<class T> inline void swap_elements(T& a, T& b)
-	{
-		T temp = a;
-		a = b;
-		b = temp;
-	}
-
+ 
 	template <class _TValue >
-	class TBPVector
+	class TBPVectorNoPOD : protected TBPVector<_TValue>
 	{
 	public:
 		typedef _TValue     TValue;
- 		TBPVector(CommonLib::alloc_t* alloc = NULL) : m_pData(0), m_pAlloc(alloc), m_nCapacity(0), m_nSize(0)
+		typedef TBPVector<_TValue> TBase;
+		TBPVectorNoPOD(CommonLib::alloc_t* alloc = NULL) : TBase(alloc)
 		{
-			if(!m_pAlloc)
-				m_pAlloc = &m_simple_alloc;
+
 		}
-		~TBPVector()
+		~TBPVectorNoPOD()
 		{
-			clear();
+			if(m_pData)
+			{
+				_clear(m_pData, m_nSize);
+				m_pData = NULL;
+			}
+			m_nSize = 0;
+			m_nCapacity = 0;
 		}
 		size_t size() const {return m_nSize;}
+
+		void _clear(TValue*  pData, size_t nSize)
+		{
+			for (size_t i = 0; i < nSize; ++i)
+			{
+				pData[i].~TValue();
+				
+			}
+			m_pAlloc->free(pData);
+		}
+		void _move(TValue*  pDataSrc, size_t nSizeSrc, TValue* pDataDst, size_t nSizeDst)
+		{
+			size_t i = 0;
+			for (; i < nSizeSrc; ++i)
+			{
+				new ((TValue*)&pDataDst[i]) TValue(pDataSrc[i]);
+			}
+		/*	for (; i < nSizeDst; ++i )
+			{
+				new ((TValue*)&pDataDst[i]) TValue();
+			}*/
+		}
+		void _init(TValue*  pData, size_t nSize)
+		{	
+			for (size_t i = 0; i < nSize; ++i)
+			{
+				new ((TValue*)&pData[i]) TValue();
+			}
+		}
 		void clear()
 		{
 			if(m_pData)
 			{
+				 
 				m_pAlloc->free(m_pData);
-				m_pData = 0;
+
 			}
 			m_nSize = 0;
 			m_nCapacity = 0;
@@ -53,18 +83,24 @@ namespace embDB
 					return false;
 				if(m_pData)
 				{
-					::memcpy(pNewdata, m_pData, m_nSize* sizeof(TValue));
-					m_pAlloc->free(m_pData);
+					//::memcpy(pNewdata, m_pData, m_nSize* sizeof(TValue));
+					//m_pAlloc->free(m_pData);
+					_move(m_pData, m_nSize, pNewdata, m_nCapacity);
+					_clear(m_pData, m_nSize);
 				}
+			//	else
+			//		_init(pNewdata, m_nCapacity);
 				m_pData = pNewdata;
-			
+		
+
 			}
-			m_pData[m_nSize] = val;
+			new ((TValue*)&m_pData[m_nSize]) TValue(val);
+			//m_pData[m_nSize] = val;
 			m_nSize++;
 			return true;
 		}
 
-		bool push_back(const TBPVector& vec)
+		bool push_back(const TBPVectorNoPOD& vec)
 		{
 			return copy(vec, m_nSize, 0, vec.size());
 		}
@@ -79,18 +115,19 @@ namespace embDB
 					m_nCapacity = 1;
 				reserve(2 * m_nCapacity);
 			}
-	
+
 			if(m_nSize == idx)
 				return push_back(value);
-		
-			::memmove( m_pData + idx + 1, m_pData + idx, ( m_nSize - idx)*sizeof( TValue ) );
+
+			//::memmove( m_pData + idx + 1, m_pData + idx, ( m_nSize - idx)*sizeof( TValue ) );
+			mover(idx, 1);
 			m_pData[idx] = value;
 			m_nSize++;
 			return true;
 		}
 
 
-		bool insert(const TBPVector& vec, size_t nPos, size_t nBegin, size_t nEnd)
+		bool insert(const TBPVectorNoPOD& vec, size_t nPos, size_t nBegin, size_t nEnd)
 		{		 
 			size_t nLen = nEnd - nBegin;
 			if(m_nSize + nPos + nLen >= m_nCapacity)
@@ -103,22 +140,28 @@ namespace embDB
 				return push_back(vec);
 			if(nPos < m_nSize)
 				mover(nPos, nLen);
-
-			::memcpy( m_pData + nPos, vec.m_pData + nBegin, ( nLen)*sizeof( TValue ) );
+		
+			//::memcpy( m_pData + nPos, vec.m_pData + nBegin, ( nLen)*sizeof( TValue ) );
+			copy(vec, nPos, 0, nLen);
 			return true;
 		}
 
 
 		bool remove(size_t idx)
 		{
-			if(idx > m_nSize)
+			if(idx > m_nSize - 1)
 				return false;
-			::memmove( m_pData + idx, m_pData + idx + 1, 
-				( m_nSize - idx - 1 )*sizeof( TValue ) );
+			
+			for (size_t i = idx; i < m_nSize - 1; ++i )
+			{
+				m_pData[i] = m_pData[i + 1];
+			}
+
+			m_pData[m_nSize - 1].~TValue();
 			m_nSize--;
 			return true;
 		}
-	 
+
 		bool reserve(size_t nSize)
 		{
 			if(m_nCapacity > nSize)
@@ -128,16 +171,17 @@ namespace embDB
 			TValue* tmp = (TValue*)m_pAlloc->alloc(m_nCapacity * sizeof(TValue));
 			if(!tmp)
 				return false;
+
 			if(m_pData)
 			{
-				memcpy(tmp, m_pData, m_nSize* sizeof(TValue));
-				m_pAlloc->free(m_pData);
-				m_pData = tmp;
+				//::memcpy(pNewdata, m_pData, m_nSize* sizeof(TValue));
+				//m_pAlloc->free(m_pData);
+				_move(m_pData, m_nSize, tmp, m_nCapacity);
+				_clear(m_pData, m_nSize);
 			}
-			else
-			{
-				m_pData = tmp;
-			}
+			//else
+			//	_init(tmp, m_nCapacity);
+			m_pData = tmp;
 			return true;
 		}
 		bool resize(size_t nSize)
@@ -152,7 +196,7 @@ namespace embDB
 			m_nSize = nSize;
 			return true;
 		}
-		bool copy(const TBPVector& vec, size_t nPos, size_t nBegin, size_t nEnd)
+		bool copy(const TBPVectorNoPOD& vec, size_t nPos, size_t nBegin, size_t nEnd)
 		{
 			size_t nLen = nEnd - nBegin;
 			if(m_nSize + nPos + nLen >= m_nCapacity)
@@ -160,27 +204,78 @@ namespace embDB
 				if(!reserve((2 * m_nCapacity) > (m_nSize + nPos + nLen) ? 2 * m_nCapacity :  2 * (m_nSize + nPos + nLen) ))
 					return false;
 			}
-			memcpy(m_pData + nPos, vec.m_pData + nBegin,  nLen * sizeof(TValue));
-		 
+			//memcpy(m_pData + nPos, vec.m_pData + nBegin,  nLen * sizeof(TValue));
+
+			TValue* pDstData = m_pData + nPos;
+			TValue* pSrcData = vec.m_pData + nBegin;
+			for (size_t i = 0; i < nLen; ++i)
+			{
+				if((i + nPos) < m_nSize)
+					pDstData[i] = pSrcData[i];
+				else
+					new ((TValue*)&pDstData[i]) TValue(pSrcData[i]);
+			}
+
 			if((nPos + nLen) > m_nSize)
 				m_nSize += (nPos + nLen) - m_nSize;
 			return true;
 		}
 		bool mover(size_t nPos, size_t nCnt)
 		{
+			if(nCnt > m_nSize)
+			{
+				assert(nCnt < m_nSize);
+				return false;
+			}
 			if( m_nSize + nCnt >= m_nCapacity)
 			{
 				if(!reserve((2 * m_nCapacity) > m_nSize + nCnt ? 2*m_nCapacity : 2 * (m_nSize + nCnt) ))
 					return false;
 			}
-			memmove(m_pData + nPos + nCnt, m_pData + nPos, (m_nSize - nPos)* sizeof(TValue)); 
+			//memmove(m_pData + nPos + nCnt, m_pData + nPos, (m_nSize)* sizeof(TValue));
+			//TValue* pDstData = m_pData + m_nCapacity;
+			//TValue* pSrcData = m_pData + nPos;
+			//TValue* pDstData = m_pData + nNewSize -1;
+
+			size_t nNewSize = m_nSize + nCnt;
+
+			size_t nDstIdx = nNewSize - 1;
+			size_t nSrcIdx = nDstIdx  -nCnt;
+
+			size_t nLen = m_nSize - nPos + nCnt;
+			
+			for (size_t i = 0; i < nLen; ++i)
+			{
+				//m_pData[nDstIdx - i] = m_pData[nSrcIdx - i];
+				if(nDstIdx - i < m_nSize)
+					m_pData[nDstIdx - i]  = m_pData[nSrcIdx - i];
+				else
+				//	m_pData[nDstIdx - i].~TValue();
+
+				new ((TValue*)&m_pData[nDstIdx - i] ) TValue(m_pData[nSrcIdx - i]);
+			}
+
 			m_nSize +=  nCnt;
 			return true;
 		}
 
 		bool movel(size_t nPos, size_t nCnt)
 		{
-		    memmove(m_pData + nPos - nCnt,  m_pData + nPos, (m_nSize  - nCnt)* sizeof(TValue));
+			//memmove(m_pData + nPos - nCnt,  m_pData + nPos, (m_nSize  - nCnt)* sizeof(TValue));
+
+			TValue* pDstData = m_pData + nPos - nCnt;
+			TValue* pSrcData = m_pData + nPos;
+			for (size_t i = 0, sz = m_nSize  - nCnt; i < sz; ++i )
+			{
+				//pDstData[i].~TValue();
+				//new ((TValue*)&pDstData[i]) TValue(pSrcData[i]);
+				//pSrcData[i].~TValue();
+				pDstData[i] = pSrcData[i];
+			}
+
+			for (size_t i = m_nSize - nCnt; i < m_nSize; ++i )
+				m_pData[i].~TValue();
+	
 			m_nSize -= nCnt;
 			return true;
 		}
@@ -191,7 +286,7 @@ namespace embDB
 			int32 nIndex = lower_bound(val, nType, comp);
 			return nType == FIND_KEY ? nIndex : -1;
 		}
-	
+
 
 
 		template<class _TComp >
@@ -218,10 +313,10 @@ namespace embDB
 				else nCount = nStep;
 			}
 			if(nFirst < (int32)m_nSize && comp.EQ(val, m_pData[ nFirst ]))
-			  nType = FIND_KEY;
+				nType = FIND_KEY;
 			return nFirst;
 		}
-		
+
 		template<class _TComp >
 		int32 upper_bound(const TValue& val, const _TComp& comp)  
 		{
@@ -234,7 +329,7 @@ namespace embDB
 			int32 nStep = 0;
 			int32 nCount = m_nSize;
 			while (nCount > 0)
-		   {
+			{
 				nIndex = nFirst; 
 				nStep = nCount >> 1;
 				nIndex += nStep;
@@ -285,7 +380,7 @@ namespace embDB
 			assert(m_nSize);
 			return m_pData[0];
 		}
-	
+
 		void swap(TBPVector& vec)
 		{
 			//alloc must be compatible
@@ -294,126 +389,9 @@ namespace embDB
 			std::swap(vec.m_nCapacity, m_nCapacity);
 			std::swap(vec.m_nSize, m_nSize);
 		}
-
-		
-
-		template<class _TComp >
-		void quick_sort(_TComp& comp)
-		{
-			if(m_nSize < 2) return;
-
-			TValue* e1;
-			TValue* e2;
-
-			int  stack[80];
-			int* top = stack; 
-			int  limit = m_nSize;
-			int  base = 0;
-
-			for(;;)
-			{
-				int len = limit - base;
-
-				int i;
-				int j;
-				int pivot;
-
-				if(len > 9)
-				{
-					// we use base + len/2 as the pivot
-					pivot = base + len / 2;
-					swap_elements(m_pData[base], m_pData[pivot]);
-
-					i = base + 1;
-					j = limit - 1;
-
-					// now ensure that *i <= *base <= *j 
-					e1 = &(m_pData[j]); 
-					e2 = &(m_pData[i]);
-					if(comp.LE(*e1, *e2)) swap_elements(*e1, *e2);
-
-					e1 = &(m_pData[base]); 
-					e2 = &(m_pData[i]);
-					if(comp.LE(*e1, *e2)) swap_elements(*e1, *e2);
-
-					e1 = &(m_pData[j]); 
-					e2 = &(m_pData[base]);
-					if(comp.LE(*e1, *e2)) swap_elements(*e1, *e2);
-
-					for(;;)
-					{
-						do i++; while(comp.LE(m_pData[i], m_pData[base]));
-						do j--; while(comp.LE(m_pData[base], m_pData[j]));
-
-						if(i > j)
-						{
-							break;
-						}
-
-						swap_elements(m_pData[i], m_pData[j]);
-					}
-
-					swap_elements(m_pData[base], m_pData[j]);
-
-					// now, push the largest sub-array
-					if(j - base > limit - i)
-					{
-						top[0] = base;
-						top[1] = j;
-						base   = i;
-					}
-					else
-					{
-						top[0] = i;
-						top[1] = limit;
-						limit  = j;
-					}
-					top += 2;
-				}
-				else
-				{
-					// the sub-array is small, perform insertion sort
-					j = base;
-					i = j + 1;
-
-					for(; i < limit; j = i, i++)
-					{
-						for(; comp.LE(*(e1 = &(m_pData[j + 1])), *(e2 = &(m_pData[j]))); j--)
-						{
-							swap_elements(*e1, *e2);
-							if(j == base)
-							{
-								break;
-							}
-						}
-					}
-					if(top > stack)
-					{
-						top  -= 2;
-						base  = top[0];
-						limit = top[1];
-					}
-					else
-					{
-						break;
-					}
-				}
-			}
-		}
-
-		void setAlloc(CommonLib::alloc_t* pAlloc)
-		{
-			m_pAlloc = pAlloc;
-			if(!m_pAlloc)
-				m_pAlloc = &m_simple_alloc;
-		}
-		protected:
-			TValue*  m_pData;
-			CommonLib::alloc_t* m_pAlloc;
-			size_t m_nCapacity;
-			size_t m_nSize;
-			CommonLib::simple_alloc_t m_simple_alloc;
-		};
+	private:
+	
+	};
 }
 
 #endif

@@ -12,7 +12,8 @@
 namespace embDB
 {
 	template<typename _TKey,/* typename _TComp,*/
-	class _Transaction, class _TCompressor>
+	class _Transaction, class _TCompressor,
+	class _TKeyMemSet = TBPVector<_TKey> >
 	class BPTreeInnerNodeSetv2 :   public  BPBaseTreeNode
 	{
 		typedef _TKey TKey;
@@ -20,7 +21,7 @@ namespace embDB
 		typedef _Transaction Transaction;
 		//typedef _TComp		 TComporator;
 		typedef _TCompressor TCompressor;
-		typedef  TBPVector<TKey> TKeyMemSet;
+		typedef _TKeyMemSet TKeyMemSet;
 		typedef  TBPVector<TLink> TLinkMemSet;
 
 

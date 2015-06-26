@@ -4,7 +4,7 @@
 #include "IField.h"
 #include "CommonLibrary/alloc_t.h"
 #include "CommonLibrary/FixedMemoryStream.h"
-
+#include "BPVector.h"
 
 namespace embDB
 {
@@ -14,10 +14,17 @@ namespace embDB
 	class CompositeIndexKey
 	{
 	public:
-		CompositeIndexKey(CommonLib::alloc_t *pAlloc);
+		CompositeIndexKey(CommonLib::alloc_t *pAlloc = nullptr);
 		~CompositeIndexKey();
+
+		CompositeIndexKey(const CompositeIndexKey& key);
+		CompositeIndexKey& operator=(const CompositeIndexKey& key);
+		
 		bool LE(const CompositeIndexKey& key) const;
 		bool EQ(const CompositeIndexKey& key) const;
+
+		bool operator < (const CompositeIndexKey& key) const;
+		bool operator == (const CompositeIndexKey& key) const;
 
 		uint32 getSize() const;
  
@@ -29,11 +36,11 @@ namespace embDB
 		void write(CommonLib::FxMemoryWriteStream& stream);
 		bool load(const std::vector<uint16>& vecScheme, CommonLib::FxMemoryReadStream& stream);
 	private:
+		void clear();
 		IFieldVariant* createVariant(uint16 nType);
 	private:
-		std::vector<IFieldVariant*> m_vecVariants;
+		TBPVector<IFieldVariant*> m_vecVariants;
 		CommonLib::alloc_t *m_pAlloc;
-
 
 	};
 

@@ -36,7 +36,7 @@ namespace embDB
 
 
  
-	class CompressorParamsBaseImp : public CompressorParamsBase<IDBTransactions>
+	class CompressorParamsBaseImp
 	{
 	public:
 		CompressorParamsBaseImp() : m_nRootPage(-1)
