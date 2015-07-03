@@ -74,9 +74,7 @@ namespace embDB
 					FilePagePtr pFilePage(m_pTransaction->getNewPage());
 					if(!pFilePage.get())
 					{
-						CommonLib::str_t sMsg;
-						sMsg.format(_T("BTREE: Error create new root page"));
-						m_pTransaction->error(sMsg);
+						m_pTransaction->error(_T("BTREE: Error create new root page"));
 						return false;
 					}
 					m_nRTreeStaticAddr = pFilePage->getAddr();
@@ -92,9 +90,7 @@ namespace embDB
 			}
 			if(!m_pRoot)
 			{
-				CommonLib::str_t sMsg;
-				sMsg.format(_T("BTREE: Error load root page: %I64d"), (int64)m_nRootAddr);
-				m_pTransaction->error(sMsg);
+				m_pTransaction->error(_T("BTREE: Error load root page: %I64d"), (int64)m_nRootAddr);
 				return false;
 			}
 			if(m_pRoot-> isLeaf())
@@ -135,9 +131,7 @@ namespace embDB
 			assert(pNode->isLeaf());
 			if(!pNode->insertInLeaf(key, val))
 			{
-				CommonLib::str_t sMsg;
-				sMsg.format(_T("BTREE: Error insert"));
-				m_pTransaction->error(sMsg);
+				m_pTransaction->error(_T("BTREE: Error insert"));
 				return false;
 			}
 			pNode->setFlags(CHANGE_NODE |BUSY_NODE, true);
@@ -154,9 +148,7 @@ namespace embDB
 					pParentNode  = newNode(true, false);
 					if(!pParentNode)
 					{
-						CommonLib::str_t sMsg;
-						sMsg.format(_T("BTREE: Error create new root node"));
-						m_pTransaction->error(sMsg);
+						m_pTransaction->error(_T("BTREE: Error create new root node"));
 						return false;
 					}
 					bNewRoot = true;

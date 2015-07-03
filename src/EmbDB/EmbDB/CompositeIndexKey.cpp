@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CompositeIndex.h"
+#include "CompositeIndexKey.h"
 #include "VariantField.h"
 namespace embDB
 {

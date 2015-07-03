@@ -44,9 +44,9 @@ namespace embDB
 
 		virtual void addInnerTransactions(IDBTransactions *pTran) = 0;
 
-		virtual void error(const CommonLib::str_t& sError, uint32 nErrorID = 0) = 0;
+		virtual void error(const wchar_t *pszFormat, ...) = 0;
 		virtual uint32 getLogLevel() const = 0;
-		virtual void log(uint32 nLevel, const CommonLib::str_t& sMessage) = 0;
+		virtual void log(uint32 nLevel, const wchar_t *pszFormat, ...) = 0;
 
 		virtual void addDBBTree(IDBBtree *pTree) = 0;
 		virtual int64 getID() const = 0;

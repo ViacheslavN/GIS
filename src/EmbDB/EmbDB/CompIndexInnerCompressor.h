@@ -3,7 +3,7 @@
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CompressorParams.h"
-#include "CompositeIndex.h"
+#include "CompositeIndexKey.h"
 #include "CompressCompIndexParams.h"
 #include "BPVectorNoPod.h"
 namespace embDB

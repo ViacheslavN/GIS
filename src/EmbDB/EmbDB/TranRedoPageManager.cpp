@@ -84,7 +84,7 @@ bool  CTranRedoPageManager::redo(CTranStorage *pTranStorage, IDBStorage* pDBStor
 			FilePagePtr pPage(pTranStorage->getFilePage(pageInfo.nTranAddr));
 			if(!pPage.get())
 			{
-				m_pTran->error("TRAN: Can't get page from Tran");
+				m_pTran->error(L"TRAN: Can't get page from Tran");
 				return false;
 			}
 			bool bNew = (pageInfo.nFlags & eFP_NEW) != 0;

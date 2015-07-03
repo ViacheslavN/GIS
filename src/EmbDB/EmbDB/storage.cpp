@@ -10,7 +10,9 @@ namespace embDB
 		,m_nMaxPageBuf(nCacheSize) 
 		,m_Chache(pAlloc)
 		,m_nPageSize(DEFAULT_PAGE_SIZE)
+#ifdef USE_FREE_PAGES
 		,m_FreePageManager(this, pAlloc)
+#endif
 		,m_nLastAddr(0)
 		//,m_StorageStateInfo(this)
 		, m_bDirty(false)
@@ -158,13 +160,23 @@ namespace embDB
 		 {
 			 delete pFindPage;
 		 }
+#ifdef USE_FREE_PAGES
 		return m_FreePageManager.addPage(nAddr);
+#else
+		 return true;
+#endif
+
 	}
 	bool CStorage::removeFromFreePage(int64 nAddr)
 	{
+
 		if(!m_bCommitState)
 			return false;
+#ifdef USE_FREE_PAGES
 		return m_FreePageManager.removeFromFreePage(nAddr);
+#else
+		return true;
+#endif
 	}
 	bool CStorage::dropFilePage(int64 nAddr)
 	{		
@@ -177,13 +189,18 @@ namespace embDB
 		{
 			delete pPage;
 		}
+#ifdef USE_FREE_PAGES
 		return m_FreePageManager.addPage(nAddr);
+#else
+		return true;
+#endif
 	}
 	bool CStorage::isValid() const{
 		return m_pFile.isValid();
 	}
 	FilePagePtr CStorage::getNewPage(bool bWrite)
 	{
+#ifdef USE_FREE_PAGES
 		int64 nAddr = m_FreePageManager.getFreePage(m_bCommitState);
 		bool bFree = false;
 		if(nAddr == -1)
@@ -195,8 +212,15 @@ namespace embDB
 		{
 			bFree = true;
 		}
+#else
+		int64 nAddr = m_nLastAddr;
+		m_nLastAddr += 1;
+#endif
+		
 		CFilePage* pPage = new CFilePage(&m_MemCache, m_nPageSize, nAddr);
+#ifdef USE_FREE_PAGES
 		pPage->setFlag(eFP_FROM_FREE_PAGES, bFree);
+#endif
 		/*bool bRet = m_pFile.setFilePos64(m_nLastAddr, CommonLib::soFromBegin);
 		assert(bRet);
 		CFilePage* pPage = new CFilePage(m_pAlloc, m_nPageSize, m_nLastAddr);
@@ -231,6 +255,7 @@ namespace embDB
 	}
 	int64 CStorage::getNewPageAddr(uint32* nType)
 	{
+#ifdef USE_FREE_PAGES
 		int64 nAddr = m_FreePageManager.getFreePage(m_bCommitState);
 		if(nAddr != -1)
 		{
@@ -240,6 +265,10 @@ namespace embDB
 			return nAddr;
 		}
 		nAddr = m_nLastAddr;
+#else
+		int64 nAddr = m_nLastAddr;
+#endif
+		
 		m_nLastAddr += 1;
 		return nAddr;
 	}
@@ -318,7 +347,11 @@ namespace embDB
 	bool  CStorage::initStorage(int64 nStorageInfo)
 	{
 		m_nStorageInfo = nStorageInfo;
+#ifdef USE_FREE_PAGES
 		return m_FreePageManager.init(getNewPageAddr(), true);
+#else
+		return true;
+#endif
 
 	}
 	bool CStorage::saveStorageInfo()
@@ -326,8 +359,11 @@ namespace embDB
 		FilePagePtr pPage = getFilePage(m_nStorageInfo);
 		if(!pPage.get())
 			return false;
-
+#ifdef USE_FREE_PAGES
 		int64 nFreeRootPage = m_FreePageManager.getRoot();
+#else
+		int64 nFreeRootPage = -1;
+#endif
 		CommonLib::FxMemoryWriteStream stream;
 		stream.attach(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream, STORAGE_PAGE, STORAGE_INFO_PAGE);
@@ -376,11 +412,17 @@ namespace embDB
 			m_sTranName = CommonLib::str_t(&buf[0]);
 		}
 		m_MemCache.init(m_nPageSize, m_nMaxPageBuf);
+#ifdef USE_FREE_PAGES
 		return m_FreePageManager.init(nFreeRootPage, false);
+#else
+		return true;
+#endif
 	}
 	bool CStorage::commit()
 	{
+#ifdef USE_FREE_PAGES
 		m_FreePageManager.save();
+#endif
 		return m_pFile.Flush();
 	}
 
@@ -464,8 +506,11 @@ namespace embDB
 
 	bool  CStorage::saveForUndoState(IDBTransactions *pTran)
 	{
-		
+#ifdef USE_FREE_PAGES		
 		return m_FreePageManager.saveForUndoState(pTran);
+#else
+		return true;
+#endif
 	}
 	bool  CStorage::undo(IDBTransactions *pTran)
 	{

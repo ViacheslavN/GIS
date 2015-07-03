@@ -13,6 +13,8 @@
 #include "StorageInfo.h"
 #include "MemPageCache.h"
 #include "PageCrypto.h"
+
+//#define USE_FREE_PAGES
 namespace embDB
 {
 	class CStorage : public IDBStorage
@@ -78,7 +80,9 @@ namespace embDB
 		 //TPageList   m_FreePageDisk;
 		 size_t m_nPageSize;
 		 int64 m_nLastAddr;
+#ifdef USE_FREE_PAGES
 		 CFreePageManager m_FreePageManager;
+#endif
 		 //CStorageInfo m_StorageStateInfo;
 
 		 bool m_bDirty;

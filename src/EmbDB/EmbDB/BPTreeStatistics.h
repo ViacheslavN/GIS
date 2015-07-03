@@ -37,16 +37,12 @@ namespace embDB
  
 			if(!pFilePage->isCheck() && !header.isValid())
 			{
-				CommonLib::str_t sMsg;
-				sMsg.format(_T("BTREE: Page %I64d Error CRC for static btree page"), pFilePage->getAddr());
-				pTransaction->error(sMsg);
+				pTransaction->error(_T("BTREE: Page %I64d Error CRC for static btree page"), pFilePage->getAddr());
 				return false;
 			}
 			if(header.m_nObjectPageType != BTREE_PAGE || header.m_nSubObjectPageType != BTREE_STATIC_PAGE)
 			{
-				CommonLib::str_t sMsg;
-				sMsg.format(_T("BTREE: Page %I64d is not BTreeStaticPage"), (int64)m_nRootPage);
-				pTransaction->error(sMsg);
+				pTransaction->error(_T("BTREE: Page %I64d is not BTreeStaticPage"), (int64)m_nRootPage);
 				return false;
 			}
 			pFilePage->setCheck(true);

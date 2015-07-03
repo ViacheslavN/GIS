@@ -113,17 +113,13 @@ namespace embDB
 			header.read(stream, !pPage->isCheck());
 			if(!pPage->isCheck() && header.m_nCRC32 != header.m_nCalcCRC32)
 			{
-				CommonLib::str_t sMsg;
-				sMsg.format(_T("BTREE: Page %I64d Error CRC for info page"), (int64)m_nPageBTreeInfo);
-				m_pTransaction->error(sMsg);
+				m_pTransaction->error(_T("BTREE: Page %I64d Error CRC for info page"), (int64)m_nPageBTreeInfo);
 				return false;
 			}
 			pPage->setCheck(true);
 			if(header.m_nObjectPageType != BTREE_PAGE || header.m_nSubObjectPageType != BTREE_INFO_PAGE)
 			{
-				CommonLib::str_t sMsg;
-				sMsg.format(_T("BTREE: Page %I64d is not BTreeInfoPage"), (int64)m_nPageBTreeInfo);
-				m_pTransaction->error(sMsg);
+				m_pTransaction->error(_T("BTREE: Page %I64d is not BTreeInfoPage"), (int64)m_nPageBTreeInfo);
 				return false;
 			}
 			m_nRootAddr = stream.readInt64();

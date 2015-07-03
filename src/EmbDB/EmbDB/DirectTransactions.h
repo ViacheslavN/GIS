@@ -54,16 +54,15 @@ namespace embDB
 			return 0;
 		}
 
-		virtual void error(const CommonLib::str_t& sError, uint32 nErrorID = 0)
+		virtual void error(const wchar_t *pszFormat, ...)
 		{
-			std::cout << "Tran Error: " << sError.cstr() << std::endl;
 			m_bError = true;
 		}
 		virtual uint32 getLogLevel() const 
 		{
 			return 0;
 		}
-		virtual void log(uint32 nLevel, const CommonLib::str_t& sMessage)
+		virtual void log(uint32 nLevel, const wchar_t *pszFormat, ...)
 		{
 
 		}

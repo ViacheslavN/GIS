@@ -245,7 +245,7 @@ namespace embDB
 		if(!pTable->isCanBeRemoving())
 		{
 			pTable->unlock();
-			pTran->error(""); //TO DO Error msg
+			pTran->error(L""); //TO DO Error msg
 			return false;
 		}
 		if(!m_nTablesAddr.remove(pTable->getAddr(), pTran))

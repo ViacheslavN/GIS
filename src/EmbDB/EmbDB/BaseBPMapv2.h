@@ -78,9 +78,7 @@ public:
 		nRetIndex = pNode->insertInLeaf(m_comp, key, value, nToIndex);
 		if(nRetIndex == -1)
 		{
-			CommonLib::str_t sMsg;
-			sMsg.format(_T("BTREE: Error insert"));
-			m_pTransaction->error(sMsg);
+			m_pTransaction->error(_T("BTREE: Error insert"));
 			return TBTreeNodePtr(NULL);
 		}
 		pNode->setFlags(CHANGE_NODE |BUSY_NODE, true);

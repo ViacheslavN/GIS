@@ -678,9 +678,6 @@
     <ClInclude Include="UniqueIndex.h">
       <Filter>DB\Fields\Index\UniqueIndex</Filter>
     </ClInclude>
-    <ClInclude Include="CompositeIndex.h">
-      <Filter>DB\Fields\Index\CompositeIndex</Filter>
-    </ClInclude>
     <ClInclude Include="PageCrypto.h">
       <Filter>Crypto</Filter>
     </ClInclude>
@@ -695,9 +692,6 @@
     </ClInclude>
     <ClInclude Include="BPMapPointSpatialIterator.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectTransactions.h">
-      <Filter>DB\transactions\readonly</Filter>
     </ClInclude>
     <ClInclude Include="IStatement.h">
       <Filter>SDK</Filter>
@@ -722,6 +716,15 @@
     </ClInclude>
     <ClInclude Include="BPVectorNoPod.h">
       <Filter>DB\BPTrees\BtreePlusv2</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeIndexKey.h">
+      <Filter>DB\Fields\Index\CompositeIndex</Filter>
+    </ClInclude>
+    <ClInclude Include="UniqueCompIndexBase.h">
+      <Filter>DB\Fields\Index\CompositeIndex\Unique</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectTransactions.h">
+      <Filter>DB\transactions\DirectTran</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -827,10 +830,10 @@
     <ClCompile Include="Statement.cpp">
       <Filter>DB\SQL</Filter>
     </ClCompile>
-    <ClCompile Include="CompositeIndex.cpp">
+    <ClCompile Include="CompressCompIndexParams.cpp">
       <Filter>DB\Fields\Index\CompositeIndex</Filter>
     </ClCompile>
-    <ClCompile Include="CompressCompIndexParams.cpp">
+    <ClCompile Include="CompositeIndexKey.cpp">
       <Filter>DB\Fields\Index\CompositeIndex</Filter>
     </ClCompile>
   </ItemGroup>

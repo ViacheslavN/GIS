@@ -472,7 +472,7 @@
     <ClInclude Include="CacheMRU.h" />
     <ClInclude Include="CompIndexInnerCompressor.h" />
     <ClInclude Include="CompIndexLeafCompressor.h" />
-    <ClInclude Include="CompositeIndex.h" />
+    <ClInclude Include="CompositeIndexKey.h" />
     <ClInclude Include="CompressorParams.h" />
     <ClInclude Include="CompressCompIndexParams.h" />
     <ClInclude Include="CounterField.h" />
@@ -548,6 +548,7 @@
     <ClInclude Include="ListDBPage.h" />
     <ClInclude Include="RowIDCounter.h" />
     <ClInclude Include="Statement.h" />
+    <ClInclude Include="UniqueCompIndexBase.h" />
     <ClInclude Include="UniqueIndex.h" />
     <ClInclude Include="ValueField.h" />
     <ClInclude Include="FilePage.h" />
@@ -637,7 +638,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="CompositeIndex.cpp" />
+    <ClCompile Include="CompositeIndexKey.cpp" />
     <ClCompile Include="CompressCompIndexParams.cpp" />
     <ClCompile Include="CRC.cpp" />
     <ClCompile Include="Database.cpp" />

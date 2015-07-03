@@ -39,7 +39,7 @@ namespace embDB
 			CFilePage *pFilePage = pTranStorage->getFilePage(pageInfo.nTranAddr);
 			if(!pFilePage)
 			{
-				m_pTran->error("TRAN: Can't get page from Tran");
+				m_pTran->error(L"TRAN: Can't get page from Tran");
 				return false;
 			}
 			pFilePage->setAddr(pageInfo.nDBAddr);

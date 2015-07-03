@@ -87,16 +87,12 @@ public:
 		  sFilePageHeader header(stream);
 		  if(!header.isValid())
 		  {
-			  CommonLib::str_t sMsg;
-			  sMsg.format(_T("IndexField: Page %I64d Error CRC for node page"), pPage->getAddr());
-			  m_pDBTransactions->error(sMsg); //TO DO log error
+			  m_pDBTransactions->error(_T("IndexField: Page %I64d Error CRC for node page"), pPage->getAddr()); //TO DO log error
 			  return false;
 		  }
 		  if(header.m_nObjectPageType != FIELD_PAGE || header.m_nSubObjectPageType != INDEX_INFO_PAGE)
 		  {
-			  CommonLib::str_t sMsg;
-			  sMsg.format(_T("IndexField: Page %I64d Not field info page"), pPage->getAddr());
-			  m_pDBTransactions->error(sMsg); //TO DO log error
+			  m_pDBTransactions->error(_T("IndexField: Page %I64d Not field info page"), pPage->getAddr()); //TO DO log error
 			  return false;
 		  }
 		  stream.read(m_nBTreeRootPage);

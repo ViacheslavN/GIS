@@ -68,18 +68,14 @@ namespace embDB
 		bool bOpen =  m_TranStorage.open(m_sFileName, m_pDBStorage->getPageSize(), true);
 		if(!bOpen)
 		{
-			CommonLib::str_t sMsg;
-			sMsg.format(_T("Transactions: Can't create storage %s"), m_sFileName.cstr());
-			error(sMsg);
+			error(_T("Transactions: Can't create storage %s"), m_sFileName.cstr());
 			return false;
 		}
 		m_LogStateManager.setState(eTS_BEGIN);
 		CFilePage* pFilePage = m_TranStorage.getNewPage();
 		if(!pFilePage)
 		{
-			CommonLib::str_t sMsg;
-			sMsg.format(_T("Transactions: Can't create page addr:0"));
-			error(sMsg);
+			error(_T("Transactions: Can't create page addr:0"));
 			return false;
 		}
 		m_Header.nRestoreType = m_nRestoreType;
@@ -320,16 +316,33 @@ namespace embDB
 	}
 
 
-	void CTransactions::error(const CommonLib::str_t& sError, uint32 nErrorID)
+	void CTransactions::error(const wchar_t *pszFormat, ...)
 	{
 		m_bError = true;
+		va_list args;
+		wchar_t* buffer;
+		int len;
+
+		va_start(args, pszFormat);
+#if defined(_WIN32) && !defined(_WIN32_WCE)
+		len = _vscwprintf(pszFormat, args);
+#else
+		len = 1000;
+#endif
+		buffer = (wchar_t*)m_pAlloc->alloc((len + 1)* sizeof (wchar_t)); 
+		vswprintf(buffer, len, pszFormat, args);
+
+		//TO DO WRITE
+
+		m_pAlloc->free(buffer);
+
 
 	}
 	uint32 CTransactions::getLogLevel() const
 	{
 		return 1;
 	}
-	void CTransactions::log(uint32 nLevel, const CommonLib::str_t& sMessage)
+	void CTransactions::log(uint32 nLevel, const wchar_t *pszFormat, ...)
 	{
 
 	}
@@ -350,8 +363,7 @@ namespace embDB
 		if(nTranAddr == -1)
 		{
 			CommonLib::str_t sMsg;
-			sMsg.format(_T("Transactions: Error save page: %I64d"), pPage->getAddr());
-			error(sMsg);
+			error(_T("Transactions: Error save page: %I64d"), pPage->getAddr());
 			return false;
 		}
 		if(m_nRestoreType == rtUndo)

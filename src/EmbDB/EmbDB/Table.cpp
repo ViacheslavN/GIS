@@ -265,18 +265,14 @@ namespace embDB
 		 {
 			 if(!pTran)
 				 return false;
-			 CommonLib::str_t sMsg;
-			 sMsg.format(_T("TABLE: Page %I64d Error CRC for field header page"), nAddr);
-			 pTran->error(sMsg);
+			 pTran->error(_T("TABLE: Page %I64d Error CRC for field header page"), nAddr);
 			  return false;
 		 }
 		 if(header.m_nObjectPageType != TABLE_PAGE || header.m_nSubObjectPageType != TABLE_FIELD_PAGE )
 		 {
 			 if(!pTran)
 				 return false;
-			 CommonLib::str_t sMsg;
-			 sMsg.format(_T("TABLE: Page %I64d is not field info"), nAddr);
-			 pTran->error(sMsg);
+			 pTran->error(_T("TABLE: Page %I64d is not field info"), nAddr);
 			  return false;
 		 }
 	 
@@ -299,18 +295,14 @@ namespace embDB
 		{
 			if(!pTran)
 				return false;
-			CommonLib::str_t sMsg;
-			sMsg.format(_T("TABLE: Page %I64d Error CRC for field header page"), nAddr);
-			pTran->error(sMsg);
+			pTran->error(_T("TABLE: Page %I64d Error CRC for field header page"), nAddr);
 			return false;
 		}
 		if(header.m_nObjectPageType != TABLE_PAGE || header.m_nSubObjectPageType != TABLE_INDEX_PAGE )
 		{
 			if(!pTran)
 				return false;
-			CommonLib::str_t sMsg;
-			sMsg.format(_T("TABLE: Page %I64d is not field info"), nAddr);
-			pTran->error(sMsg);
+			pTran->error(_T("TABLE: Page %I64d is not field info"), nAddr);
 			return false;
 		}
 
@@ -569,13 +561,13 @@ namespace embDB
 		if(!pField->isCanBeRemoving())
 		{
 			pField->unlock();
-			pTran->error(""); //TO DO add  message
+			pTran->error(L""); //TO DO add  message
 			return false;
 		}
 		if(!m_nFieldsAddr.remove(pField->getFieldInfoType()->m_nFIPage, pTran))
 		{
 			pField->unlock();
-			pTran->error(""); //TO DO add  message
+			pTran->error(L""); //TO DO add  message
 			return false;
 		}
 
@@ -594,7 +586,7 @@ namespace embDB
 		TFieldByName::iterator it = m_FieldByName.find(sFieldName);
 		if(it != m_FieldByName.end())
 		{
-			pTran->error("");//TO DO error msg
+			pTran->error(L"");//TO DO error msg
 			return false;
 		}
 		return delField(it->second, pTran);
@@ -606,7 +598,7 @@ namespace embDB
 		TFieldByID::iterator it = m_FieldByID.find(nID);
 		if(it == m_FieldByID.end())
 		{
-			pTran->error("");//TO DO error msg
+			pTran->error(L"");//TO DO error msg
 			return false;
 		}
 		return delField(it->second, pTran);
