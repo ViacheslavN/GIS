@@ -37,12 +37,26 @@ namespace embDB
 	}
 	CompositeIndexKey& CompositeIndexKey::operator=(const CompositeIndexKey& key)
 	{
+		if(key.getSize() == 0)
+		{
+			clear();
+			m_pAlloc = key.m_pAlloc;
+			return *this;
+		}
+		if(m_pAlloc == key.m_pAlloc)
+		{
+			if(key.getSize() != getSize())
+				m_vecVariants.resize(key.getSize());
+			for (size_t i = 0, sz = key.getSize(); i < sz; ++i)
+			{
+				setValue(i, key.getValue(i));
+			}
+			return *this;
+		}
+
 		clear();
 		m_pAlloc = key.m_pAlloc;
 		m_vecVariants.setAlloc(m_pAlloc);
-		if(key.getSize() == 0)
-			return *this;
-
 		m_vecVariants.reserve(key.getSize());
 		for (size_t i = 0, sz = key.getSize(); i < sz; ++i)
 		{
@@ -80,6 +94,10 @@ namespace embDB
 	bool CompositeIndexKey::operator == (const CompositeIndexKey& key) const
 	{
 		return EQ(key);
+	}
+	bool CompositeIndexKey::operator != (const CompositeIndexKey& key) const
+	{
+		return !EQ(key);
 	}
 	uint32 CompositeIndexKey::getSize() const
 	{

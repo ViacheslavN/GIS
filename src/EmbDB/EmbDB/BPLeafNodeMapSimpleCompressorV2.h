@@ -103,7 +103,7 @@ namespace embDB
 		{
 			return true;
 		}
-		virtual bool remove(const TKey& key)
+		virtual bool remove(const TKey& key, const TValue& value)
 		{
 			m_nSize--;
 			return true;

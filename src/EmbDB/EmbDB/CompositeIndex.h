@@ -25,6 +25,8 @@ namespace embDB
 
 		bool operator < (const CompositeIndexKey& key) const;
 		bool operator == (const CompositeIndexKey& key) const;
+		bool operator != (const CompositeIndexKey& key) const;
+
 
 		uint32 getSize() const;
  

@@ -148,6 +148,105 @@ void searchINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 
 }
 
+
+
+template<class TBtree, class Tran, class TKey>
+void removeFromBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64& nTreeRootPage)
+{
+	std::cout << "Remove Test"  << std::endl;
+	CommonLib::TimeUtils::CDebugTime time;
+	double tmRemove = 0;
+	double treeCom = 0;
+	double tranCom  = 0;
+	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	tree.loadBTreeInfo();
+	time.start();
+	int64 i = nStart;
+	int64 n = 0;
+
+	
+	if(nStart < nEndStart)
+	{
+		int64 nCount = nEndStart - nStart;
+		for (; i < nEndStart; ++i)
+		{	
+
+
+		
+			
+
+			if(!tree.remove(TKey(i)))
+			{
+				std::cout << "Error remove,  not found " << i << std::endl;
+			}
+			n++;
+
+			
+
+			TBtree::iterator it = tree.find(TKey(i));
+			if(!it.isNull())
+			{
+				std::cout << "Error remove,  found " << i << std::endl;
+ 
+			}
+			/*else if( i != it.key())
+			{
+				std::cout << "Key not EQ " << i << std::endl;
+				nNotFound++;
+			}*/
+
+			if(i%nStep == 0)
+			{
+				std::cout << n  << "  " << (n* 100)/nCount << " %" << '\r';
+			}
+		}
+
+	}
+	else
+	{
+
+		int64 nCount = nStart - nEndStart;
+		 
+		for (; i > nEndStart; --i)
+		{	
+			
+			if(!tree.remove(TKey(i)))
+			{
+				std::cout << "Error remove,  not found " << i << std::endl;
+			}
+						
+			TBtree::iterator it = tree.find(TKey(i));
+			if(!it.isNull())
+			{
+				std::cout << "Error remove,  found " << i << std::endl;
+
+			}
+			n++;
+			if(i%nStep == 0)
+			{
+				std::cout << n  << "  " << (n* 100)/nCount << " %" << '\r';
+			}
+		}
+	}
+	tmRemove = time.stop();
+	time.start();
+	tree.commit();
+
+	treeCom = time.stop();
+	time.start();
+
+	pTran->commit();
+	tranCom = time.stop();
+	pTran->OutDebugInfo();
+	nTreeRootPage = tree.getPageBTreeInfo();
+
+	std::cout << "Remove end key start: " << nStart << " key end: " << nEndStart << " Total time: " << (tmRemove + treeCom + tranCom) <<
+		" time remove: " << tmRemove << " time tree commit: " << treeCom << " Tran commit: " << tranCom <<	std::endl;
+	std::cout << "Tree inner node : " << tree.m_BTreeInfo.m_nInnerNodeCounts<< " Tree leaf node : " << tree.m_BTreeInfo.m_nLeafNodeCounts <<	std::endl;
+}
+
+
+
 template<class TBtree,  class TTran, class TKey, class TValue>
 void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize, int32 nCacheBPTreeSize)
 {
@@ -187,25 +286,25 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		}
 	/*	{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran tran5(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran3.data", &storage, 1);
 			tran5.begin();
 			testOrderINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize,  nStep, &tran5, alloc, nTreeRootPage, true);
 			storage.close();
-		}
-		{
+		}*/
+	/*	{
 
 			TTran tran5(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran4.data", &storage, 1);
 			tran5.begin();
 			testOrderINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize,  nStep, &tran5, alloc, nTreeRootPage, false);
-		}
-	//	int64 mRemConst =246762;
+		}*/
+		//int64 mRemConst =246762;
 		int64 mRemConst =nCount/2;
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran remtran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran5.data", &storage, 1);
@@ -214,7 +313,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 			storage.close();
 		}
-	
+	/*
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);

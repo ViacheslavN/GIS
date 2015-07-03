@@ -445,6 +445,8 @@
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Brush.h" />
     <ClInclude Include="Clip.h" />
+    <ClInclude Include="ClipRectAlloc.h" />
+    <ClInclude Include="RectClipper.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="conv_offset.h" />
     <ClInclude Include="Displaylib_lib.h" />
@@ -470,6 +472,7 @@
   <ItemGroup>
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Brush.cpp" />
+    <ClCompile Include="RectClipper.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="conv_offset.cpp" />
     <ClCompile Include="Font.cpp" />

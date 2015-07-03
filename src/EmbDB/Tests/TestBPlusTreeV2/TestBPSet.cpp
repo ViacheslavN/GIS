@@ -443,18 +443,14 @@ void removeFromBTreeSetByIT  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndSt
 	{	
 
 			//it.m_nIndex =  it.m_pCurNode->count() - 1;
-			it = tree.remove(it, bRet);
+			bRet = tree.remove(TKey(i));
 
 
-			if(bRet)
+			if(!bRet)
 			{
 				std::cout << "Error remove,  not found " << i << std::endl;
 			}
-			nKey = it.key();
-			if(!it.isNull() && nKey - i != 1)
-			{
-				std::cout << "Error iterator next " << i << std::endl;
-			}
+	
 			n++;
 						
 
@@ -539,7 +535,7 @@ void removeFromBTreeSetByITLast  (int32 nCacheBPTreeSize,  int64 nStep, Tran* pT
 		{
 			std::cout << "Error remove,  found " << i << std::endl;
 
-		}
+		} 
 		if(i%nStep == 0)
 		{
 			std::cout << n  << "  " << (n* 100)/nCount << " %" << '\r';
@@ -649,21 +645,21 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			storage.close();
 		}*/
 
-		/*{
+		{
 			nTreeRootPage = 6;
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
-			TTran remtran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran5.data", &storage, 1, nTranCache);
+			TTran remtran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, L"d:\\tran5.data", &storage, 1, nTranCache);
 			remtran.begin();
 			removeFromBTreeSetByIT <TBtree, TTran, TKey>(nCacheBPTreeSize, 0, mRemConst, nStep, &remtran, alloc, nTreeRootPage);
 			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 			storage.close();
-		}*/
+		}
 
 
-		{
+	/*	{
 			nTreeRootPage = 6;
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
@@ -675,7 +671,7 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 			storage.close();
 		}
-			return;
+			return;*/
 		
  		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);

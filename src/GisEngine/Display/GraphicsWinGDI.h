@@ -83,8 +83,8 @@ namespace GisEngine
 			void   CreateFont(const CFont* pFont);
 		private:
 			const CPen*    m_pSelectedPen;
-			const CBrush*  m_pselectedBrush;
-			const CFont*   m_pselectedFont;
+			const CBrush*  m_pSelectedBrush;
+			const CFont*   m_pSelectedFont;
 	 
 			bool    m_bIsDeleteDC;
 			bool    m_bIsReleaseDC;
@@ -92,8 +92,8 @@ namespace GisEngine
 			int     m_nSavedDC;
 			CBitmap  m_Surface;
 			HFONT m_hfirstFont;
-			HPEN  m_hfirstPen;
-			HBRUSH  m_hfirstBrush;
+			HPEN  m_hFirstPen;
+			HBRUSH  m_hFirstBrush;
 			HDC m_hDC;
 			GUnits m_nWidth;
 			GUnits m_nHeight;

@@ -381,9 +381,10 @@ namespace embDB
 			return m_pData[0];
 		}
 
-		void swap(TBPVector& vec)
+		void swap(TBPVectorNoPOD& vec)
 		{
 			//alloc must be compatible
+		
 
 			std::swap(vec.m_pData, m_pData);
 			std::swap(vec.m_nCapacity, m_nCapacity);

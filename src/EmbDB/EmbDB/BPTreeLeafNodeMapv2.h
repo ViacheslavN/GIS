@@ -100,6 +100,24 @@ namespace embDB
 		{
 			m_pCompressor->recalc(m_leafKeyMemSet, m_leafValueMemSet);
 		}
+
+		bool removeByIndex(int32 nIndex)
+		{
+			m_pCompressor->remove(m_leafKeyMemSet[nIndex], m_leafValueMemSet[nIndex]);
+			bool bRet = m_leafKeyMemSet.remove(nIndex);
+			if(!bRet)
+			{
+				//TO DO Logs
+				return false;
+			}
+			 bRet = m_leafValueMemSet.remove(nIndex);
+			if(!bRet)
+			{
+				//TO DO Logs
+				return false;
+			}
+			return true;
+		}
 	public:
 		TValueMemSet m_leafValueMemSet;
 	

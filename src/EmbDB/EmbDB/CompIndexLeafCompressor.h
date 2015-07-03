@@ -119,6 +119,11 @@ namespace embDB
 		{
 			return true;
 		}
+		virtual bool remove(const CompositeIndexKey& key, const TValue& value)
+		{
+			m_nSize--;
+			return true;
+		}
 		virtual size_t size() const
 		{
 			return (m_pCompParams->getRowSize() + sizeof(TValue))*  m_nSize +  sizeof(uint32);

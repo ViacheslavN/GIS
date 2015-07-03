@@ -73,6 +73,7 @@ namespace embDB
 			const IBaseFieldVariant* pBaseVariant = (IBaseFieldVariant*)pVariant;
 			if(!pBaseVariant)
 				return false;
+			m_bIsEmpty = pBaseVariant->m_bIsEmpty;
 			m_Value = pBaseVariant->m_Value;
 			return true;
 

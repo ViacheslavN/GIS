@@ -124,7 +124,7 @@ namespace embDB
 			if(m_nCapacity > nSize)
 				return true;
 
-			m_nCapacity = nSize;
+			m_nCapacity = m_nCapacity + nSize;
 			TValue* tmp = (TValue*)m_pAlloc->alloc(m_nCapacity * sizeof(TValue));
 			if(!tmp)
 				return false;

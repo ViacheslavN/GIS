@@ -78,9 +78,6 @@
     <ClInclude Include="Bitmap.h">
       <Filter>GraphTypes</Filter>
     </ClInclude>
-    <ClInclude Include="Clip.h">
-      <Filter>Clip</Filter>
-    </ClInclude>
     <ClInclude Include="ReadPng.h">
       <Filter>GraphTypes\img</Filter>
     </ClInclude>
@@ -110,6 +107,15 @@
     </ClInclude>
     <ClInclude Include="GraphicsWinGDI.h">
       <Filter>GraphicsWinGDI</Filter>
+    </ClInclude>
+    <ClInclude Include="RectClipper.h">
+      <Filter>Clip</Filter>
+    </ClInclude>
+    <ClInclude Include="Clip.h">
+      <Filter>Clip</Filter>
+    </ClInclude>
+    <ClInclude Include="ClipRectAlloc.h">
+      <Filter>Clip</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="GraphicsWinGDI.cpp">
       <Filter>GraphicsWinGDI</Filter>
+    </ClCompile>
+    <ClCompile Include="RectClipper.cpp">
+      <Filter>Clip</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
