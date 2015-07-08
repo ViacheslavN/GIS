@@ -9,8 +9,24 @@
 #endif
 
 #include "CommonLibrary/BoundaryBox.h"
+#include "CommonLibrary/GeoShape.h"
+#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/stream.h"
 #include <vector>
+#include <algorithm>
 
+struct GisXYZPoint
+{
+	double dX;
+	double dY;
+	double dZ;
+};
+
+struct GisXYPoint
+{
+	double dX;
+	double dY;
+};
 
 
 #ifndef M_PI

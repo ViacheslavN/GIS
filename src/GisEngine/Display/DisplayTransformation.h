@@ -6,7 +6,7 @@
 #include "DisplayTypes.h"
 #include "Point.h"
 #include "Rect.h"
-
+#include "GisGeometry/ISpatialReference.h"
 namespace GisEngine
 {
 	namespace Display
@@ -17,8 +17,8 @@ namespace GisEngine
 				IDisplayTransformation(){}
 				virtual ~IDisplayTransformation(){}
 
-				virtual void SetMapPos(const GisXYZPoint &map_pos, double new_scale) = 0;
-				virtual const GisXYZPoint& GetMapPos() const= 0;
+				virtual void SetMapPos(const GisXYPoint &map_pos, double new_scale) = 0;
+				virtual const GisXYPoint& GetMapPos() const= 0;
 
 				virtual void SetMapVisibleRect(const GisBoundingBox& bound) = 0;
 				virtual const GisBoundingBox& GetFittedBounds() const = 0;
@@ -51,7 +51,7 @@ namespace GisEngine
 	 
 				virtual void MapToDevice(const GisXYPoint *pIn, GPoint *pOut, int nPoints) = 0;
 
-				virtual void MapToDevice(const GisGeometry& geom, GPoint **pOut, int** partCounts, int* count) = 0;
+				virtual void MapToDevice(const CommonLib::CGeoShape& geom, GPoint **pOut, int** partCounts, int* count) = 0;
 				virtual void DeviceToMap(const GPoint *pIn,  GisXYPoint *pOut, int nPoints) = 0;
 				virtual void MapToDevice(const GisBoundingBox& mapBox, GRect& rect) = 0;
 				virtual void DeviceToMap(const GRect& rect, GisBoundingBox& mapBox) = 0;

@@ -33,12 +33,12 @@ pj_mkparam(char *str) {
 /*                                                                      */
 /************************************************************************/
 
-	PVALUE /* test for presence or get parameter value */
+	PVALUEPROJ4 /* test for presence or get parameter value */
 pj_param(projCtx ctx, paralist *pl, const char *opt) {
 
 	int type;
 	unsigned l;
-	PVALUE value;
+	PVALUEPROJ4 value;
 
 	if( ctx == NULL )
 		ctx = pj_get_default_ctx();

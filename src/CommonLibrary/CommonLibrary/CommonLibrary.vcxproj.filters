@@ -144,6 +144,9 @@
     <ClInclude Include="CommonLib_lib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GeoShape.h">
+      <Filter>SpatialData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -196,6 +199,9 @@
     </ClCompile>
     <ClCompile Include="FixedBitStream.cpp">
       <Filter>stream\bits</Filter>
+    </ClCompile>
+    <ClCompile Include="GeoShape.cpp">
+      <Filter>SpatialData</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

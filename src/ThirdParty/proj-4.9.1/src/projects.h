@@ -158,7 +158,7 @@ typedef struct { double x, y; }     XY;
 typedef struct { double lam, phi; } LP;
 #endif
 
-typedef union { double  f; int  i; char *s; } PVALUE;
+typedef union { double  f; int  i; char *s; } PVALUEPROJ4;
 struct PJconsts;
     
 struct PJ_LIST {
@@ -397,7 +397,7 @@ void set_rtodms(int, int);
 char *rtodms(char *, double, int, int);
 double adjlon(double);
 double aacos(projCtx,double), aasin(projCtx,double), asqrt(double), aatan2(double, double);
-PVALUE pj_param(projCtx ctx, paralist *, const char *);
+PVALUEPROJ4 pj_param(projCtx ctx, paralist *, const char *);
 paralist *pj_mkparam(char *);
 int pj_ell_set(projCtx ctx, paralist *, double *, double *);
 int pj_datum_set(projCtx,paralist *, PJ *);

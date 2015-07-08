@@ -233,7 +233,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj432dx.lib</OutputFile>
+      <OutputFile>$(OutDir)\Proj432dx-4.9.1.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">
@@ -250,7 +250,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj432ds.lib</OutputFile>
+      <OutputFile>$(OutDir)\Proj432ds-4.9.1.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -281,7 +281,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj464dx.lib</OutputFile>
+      <OutputFile>$(OutDir)\Proj464dx-4.9.1.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
@@ -298,7 +298,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj464ds.lib</OutputFile>
+      <OutputFile>$(OutDir)\Proj464ds-4.9.1.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -335,7 +335,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj432rx.lib</OutputFile>
+      <OutputFile>$(OutDir)\Proj432rx-4.9.1.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">
@@ -355,7 +355,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj432rs.lib</OutputFile>
+      <OutputFile>$(OutDir)\Proj432rs-4.9.1.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -394,7 +394,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj464rx.lib</OutputFile>
+      <OutputFile>$(OutDir)\Proj464rx-4.9.1.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">
@@ -415,7 +415,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj464rs.lib</OutputFile>
+      <OutputFile>$(OutDir)\Proj464rs-4.9.1.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -573,6 +573,18 @@
     <ClCompile Include="src\proj_rouss.c" />
     <ClCompile Include="src\rtodms.c" />
     <ClCompile Include="src\vector1.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="proj4_lib.h" />
+    <ClInclude Include="src\emess.h" />
+    <ClInclude Include="src\geocent.h" />
+    <ClInclude Include="src\geodesic.h" />
+    <ClInclude Include="src\geod_interface.h" />
+    <ClInclude Include="src\org_proj4_PJ.h" />
+    <ClInclude Include="src\org_proj4_Projections.h" />
+    <ClInclude Include="src\pj_list.h" />
+    <ClInclude Include="src\projects.h" />
+    <ClInclude Include="src\proj_api.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
