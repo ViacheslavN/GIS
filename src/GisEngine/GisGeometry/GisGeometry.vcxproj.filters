@@ -19,6 +19,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
+    <None Include="esri.inc">
+      <Filter>SpatialReferenceProj4</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -33,12 +36,18 @@
     <ClInclude Include="SpatialReferenceProj4.h">
       <Filter>SpatialReferenceProj4</Filter>
     </ClInclude>
+    <ClInclude Include="CodeProj.h">
+      <Filter>SpatialReferenceProj4</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpatialReferenceProj4.cpp">
+      <Filter>SpatialReferenceProj4</Filter>
+    </ClCompile>
+    <ClCompile Include="CodeProj.cpp">
       <Filter>SpatialReferenceProj4</Filter>
     </ClCompile>
   </ItemGroup>

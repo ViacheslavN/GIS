@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SpatialReferenceProj4.h"
 #include "proj4_lib.h"
-
+#include "CodeProj.h"
 namespace GisEngine
 {
 	namespace Geometry
@@ -166,11 +166,11 @@ namespace GisEngine
 
 		void CSpatialReferenceProj4::save(CommonLib::IWriteStream *pStream) const
 		{
-
+			pStream->write(m_prj4Str);
 		}
 		void CSpatialReferenceProj4::load(CommonLib::IReadStream *pStream)
 		{
-
+			pStream->read(m_prj4Str);
 		}
 
 
@@ -189,15 +189,16 @@ namespace GisEngine
 				  }
 			}
 
-			m_hHandle = pj_init(0, &m_prjCode);
-			/*if(m_Handle != 0)
+			if(m_prjCode != 0)
 			{
-				// Try to parse string
-				const char* proj4String = getPrjParameters(0, &m_prjCode);
-				m_prj4String = proj4String;
-				PrepareGeometries();
-				return;
-			}*/
+				m_prj4Str = CodeToProj4Str(m_prjCode);
+				m_hHandle = pj_init_plus(m_prj4Str.cstr());
+				if(m_hHandle != 0)
+				{
+					PrepareGeometries();
+				}
+			}
+		
 
 		}
 
@@ -207,16 +208,16 @@ namespace GisEngine
 			if(pj_is_latlong((PJ*)m_hHandle))
 				return;
 
-		/*	double cut_meridian = get_cut_meridian((PJ*)m_Handle);
+			double cut_meridian = get_cut_meridian((PJ*)m_hHandle);
 			if(cut_meridian == HUGE_VAL)
 				return;
 
 			double bottom_parallel;
 			double top_parallel;
 
-			get_parallel_range((PJ*)m_Handle, &bottom_parallel, &top_parallel);
+			get_parallel_range((PJ*)m_hHandle, &bottom_parallel, &top_parallel);
 
-			PrepareGeometry(&m_LeftShp, cut_meridian - 359.9, bottom_parallel, cut_meridian - 0.01, top_parallel);
+			/*PrepareGeometry(&m_LeftShp, cut_meridian - 359.9, bottom_parallel, cut_meridian - 0.01, top_parallel);
 			PrepareGeometry(&m_RightShp, cut_meridian + 0.01, bottom_parallel, cut_meridian + 359.9, top_parallel);
 			PrepareCutMeridian(cut_meridian, bottom_parallel, top_parallel);
 
