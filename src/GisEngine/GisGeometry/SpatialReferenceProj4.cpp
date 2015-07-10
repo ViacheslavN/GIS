@@ -140,7 +140,7 @@ namespace GisEngine
 			point_sp_x = pPoint->dX*koef;
 			point_sp_y = pPoint->dY*koef;
 
-			int ret = pj_transform((PJ*)m_hHandle, pj, 1L, 0, &point_sp_x, &point_sp_y, 0);
+			int ret = pj_transform((PJ*)m_hHandle, pj, 1, 1, &point_sp_x, &point_sp_y, 0);
 			if (ret)
 				return false;
 

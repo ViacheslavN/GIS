@@ -172,6 +172,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">
     <OutDir>.\lib\</OutDir>
     <IntDir>Obj\Win32_DebugStatic\</IntDir>
+    <TargetName>LibProj432ds-4.9.1</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">
     <OutDir>.\lib\</OutDir>
@@ -245,13 +246,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj432ds-4.9.1.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibProj432ds-4.9.1.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -498,6 +500,7 @@
     <ClCompile Include="src\PJ_krovak.c" />
     <ClCompile Include="src\PJ_labrd.c" />
     <ClCompile Include="src\PJ_laea.c" />
+    <ClCompile Include="src\PJ_lagrng.c" />
     <ClCompile Include="src\PJ_larr.c" />
     <ClCompile Include="src\PJ_lask.c" />
     <ClCompile Include="src\pj_latlong.c" />

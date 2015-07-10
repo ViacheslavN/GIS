@@ -13,15 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="SpatialReferenceProj4">
-      <UniqueIdentifier>{1db963c4-9912-4c56-b7e3-1efe945ce6bc}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
-    <None Include="esri.inc">
-      <Filter>SpatialReferenceProj4</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -30,28 +24,13 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ISpatialReference.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GisGeometryLib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CodeProj.h">
-      <Filter>SpatialReferenceProj4</Filter>
-    </ClInclude>
-    <ClInclude Include="SpatialReferenceProj4.h">
-      <Filter>SpatialReferenceProj4</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CodeProj.cpp">
-      <Filter>SpatialReferenceProj4</Filter>
-    </ClCompile>
-    <ClCompile Include="SpatialReferenceProj4.cpp">
-      <Filter>SpatialReferenceProj4</Filter>
+    <ClCompile Include="TestProj.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

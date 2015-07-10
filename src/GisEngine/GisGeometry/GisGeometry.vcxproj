@@ -174,7 +174,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">
     <IntDir>$(SolutionDir)Obj\$(Configuration)\_$(PlatformName)\$(ConfigurationName)\$(TargetName)\</IntDir>
-    <TargetName>GisGeometry_ds</TargetName>
+    <TargetName>LibGeometry32_ds</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)Output\</OutDir>
@@ -314,7 +314,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\GisGeometry_ds.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibGeometry32_ds.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
@@ -448,11 +448,14 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="esri.inc" />
+    <None Include="esri.inc">
+      <FileType>Document</FileType>
+    </None>
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CodeProj.h" />
+    <ClInclude Include="GisGeometryLib.h" />
     <ClInclude Include="ISpatialReference.h" />
     <ClInclude Include="SpatialReferenceProj4.h" />
     <ClInclude Include="stdafx.h" />

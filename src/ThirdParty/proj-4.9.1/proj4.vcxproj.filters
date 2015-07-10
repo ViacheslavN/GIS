@@ -489,6 +489,9 @@
     <ClCompile Include="src\pj_apply_vgridshift.c">
       <Filter>Source Files\support</Filter>
     </ClCompile>
+    <ClCompile Include="src\PJ_lagrng.c">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\emess.h">
