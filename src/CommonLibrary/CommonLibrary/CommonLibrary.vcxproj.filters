@@ -147,6 +147,9 @@
     <ClInclude Include="GeoShape.h">
       <Filter>SpatialData</Filter>
     </ClInclude>
+    <ClInclude Include="IGeoShape.h">
+      <Filter>SpatialData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

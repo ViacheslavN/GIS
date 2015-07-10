@@ -110,9 +110,15 @@ namespace CommonLib
 			virtual ~IGeoShape(){}
 			virtual eShapeType type() const = 0;
 			virtual uint32  size() const = 0;
-			virtual uint32  getPartCount() const = 0;
-			virtual uint32  getPartSize(size_t idx) const = 0;
 
+			virtual uint32  getPartCount() const = 0;
+			virtual uint32  getPartSize(uint32 idx) const = 0;
+
+			virtual GeoPt* getPoint() = 0;
+			virtual const GeoPt* getPoint() const = 0;
+
+			virtual GeoPt* getPoint(uint32 partNum) = 0;
+			virtual const GeoPt* getPoint(uint32 partNum) const = 0;
 
 	};
 }
