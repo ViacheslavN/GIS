@@ -11,7 +11,7 @@
 #include "alloc_t.h"
 
 #if _MSC_VER>=1300
-#include <xhash>
+//#include <xhash>
 #else
 #define _HASH_SEED	(size_t)0xdeadbeef
 #endif

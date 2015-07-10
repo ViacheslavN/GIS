@@ -217,16 +217,16 @@ namespace GisEngine
 
 			get_parallel_range((PJ*)m_hHandle, &bottom_parallel, &top_parallel);
 
-			/*PrepareGeometry(&m_LeftShp, cut_meridian - 359.9, bottom_parallel, cut_meridian - 0.01, top_parallel);
+			PrepareGeometry(&m_LeftShp, cut_meridian - 359.9, bottom_parallel, cut_meridian - 0.01, top_parallel);
 			PrepareGeometry(&m_RightShp, cut_meridian + 0.01, bottom_parallel, cut_meridian + 359.9, top_parallel);
 			PrepareCutMeridian(cut_meridian, bottom_parallel, top_parallel);
 
 			GisBoundingBox rbbox;
-			m_RightShp.bbox(rbbox);
+		//	m_RightShp.bbox(rbbox);
 			PrepareBoundShape(rbbox);
 			GisBoundingBox lbbox;
-			m_LeftShp.bbox(lbbox);
-			PrepareBoundShape(lbbox);*/
+		//	m_LeftShp.bbox(lbbox);
+			PrepareBoundShape(lbbox);
 		}
 
 
@@ -271,6 +271,51 @@ namespace GisEngine
 			return true;
 		}
 
+		void CSpatialReferenceProj4::PrepareGeometry(CommonLib::CGeoShape *pShp, double left_meridian, double bottom_parallel, double right_meridian, double top_parallel)
+		{
+			GisBoundingBox bbox;
+			bbox.xMin = left_meridian;
+			bbox.xMax = right_meridian;
+			bbox.yMin = bottom_parallel;
+			bbox.yMax = top_parallel;
 
+			CommonLib::CGeoShape geom;
+			DensifyBoundBox(&geom, bbox, 20);
+
+			//*pShp = geom;
+			//m_fullExtent.expand(geom.bbox());
+		}
+
+		void CSpatialReferenceProj4::DensifyBoundBox(CommonLib::CGeoShape *pShp, const GisBoundingBox &bbox, int precision) const
+		{
+			const int pntCount = precision * 4;
+
+			double w = bbox.xMax - bbox.xMin;
+			double h = bbox.yMax - bbox.yMin;
+
+			w /= precision;
+			h /= precision;
+
+		/*	shp->create(decore::shape_type_polygon, pntCount + 1, 1);
+			GisXYPoint* xy = shp->getXYs();
+
+			for(int i = 0; i < precision; i++)
+			{
+				xy[i + 0].x = bbox.xMin + w * i;
+				xy[i + 0].y = bbox.yMin;
+				xy[i + precision].x = bbox.xMax;
+				xy[i + precision].y = bbox.yMin + h * i;
+				xy[i + 2*precision].x = bbox.xMax - w * i;
+				xy[i + 2*precision].y = bbox.yMax;
+				xy[i + 3*precision].x = bbox.xMin;
+				xy[i + 3*precision].y = bbox.yMax - h * i;
+			}
+			xy[pntCount].x = bbox.xMin;
+			xy[pntCount].y = bbox.yMin;
+
+			shp->partStart(0) = 0;
+			shp->calcBBox();
+			shp->finishExternalChanges();*/
+		}
 	}
 }

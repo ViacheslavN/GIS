@@ -16,6 +16,9 @@
     <Filter Include="SpatialReferenceProj4">
       <UniqueIdentifier>{1db963c4-9912-4c56-b7e3-1efe945ce6bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TopologicalOperator">
+      <UniqueIdentifier>{9d95a0b4-5f8e-4fe0-b1a0-32c1e8ea248b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -42,6 +45,12 @@
     <ClInclude Include="SpatialReferenceProj4.h">
       <Filter>SpatialReferenceProj4</Filter>
     </ClInclude>
+    <ClInclude Include="TopologicalOperator.h">
+      <Filter>TopologicalOperator</Filter>
+    </ClInclude>
+    <ClInclude Include="clipper.hpp">
+      <Filter>TopologicalOperator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -52,6 +61,12 @@
     </ClCompile>
     <ClCompile Include="SpatialReferenceProj4.cpp">
       <Filter>SpatialReferenceProj4</Filter>
+    </ClCompile>
+    <ClCompile Include="TopologicalOperator.cpp">
+      <Filter>TopologicalOperator</Filter>
+    </ClCompile>
+    <ClCompile Include="clipper.cpp">
+      <Filter>TopologicalOperator</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
