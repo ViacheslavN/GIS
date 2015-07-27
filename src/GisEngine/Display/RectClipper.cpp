@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "RectClipper.h"
-
+#include "ClipRectAlloc.h"
 namespace GisEngine
 {
 
@@ -16,6 +16,16 @@ namespace GisEngine
 			for(int i = 0; i < pointCount - 1; i++)
 				S += (points[i + 1].y + points[i].y) * (points[i + 1].x - points[i].x);
 			return S >= 0;
+		}
+
+
+		CRectClipper::CRectClipper(CClipRectAlloc *pAlloc) : m_pAlloc(pAlloc)
+		{
+
+		}
+		CRectClipper::~CRectClipper()
+		{
+
 		}
 
 		int CRectClipper::clipLine(const GRect& clipper, GPoint*beg, GPoint* end)
@@ -131,8 +141,8 @@ namespace GisEngine
 
 			int pointBufferSize = total_points(*points, *pointCounts, *count);
 			int partBufferSize = *count;
-			GPoint* outPoints = (GPoint*)SharedBuffer::threadAlloc(pointBufferSize * sizeof(GPoint), out_points_slot);
-			int* outParts = (int*)SharedBuffer::threadAlloc(partBufferSize * sizeof(int), out_parts_slot);
+			GPoint* outPoints = m_pAlloc->getPointBuf(pointBufferSize, out_points_slot); 
+			int* outParts = m_pAlloc->getPartsBuf(partBufferSize, out_parts_slot);
 
 			for(int part = 0; part < inCount; part++)
 			{
@@ -153,7 +163,7 @@ namespace GisEngine
 					if(!partStarted)
 					{
 						if(outPartOffset >= partBufferSize)
-							outParts = (int*)SharedBuffer::threadAlloc((++partBufferSize) * sizeof(int), out_parts_slot);
+							outParts = m_pAlloc->getPartsBuf(++partBufferSize, out_parts_slot);
 
 						outParts[outPartOffset++] = outPointOffset;
 						partStarted = true;
@@ -164,7 +174,7 @@ namespace GisEngine
 
 					if(pointBufferSize < outPointOffset + 2)
 					{
-						outPoints = (GPoint*)SharedBuffer::threadAlloc((outPointOffset + 2) * sizeof(int), out_points_slot);
+						outPoints = m_pAlloc->getPointBuf(outPointOffset + 2, out_points_slot);
 						pointBufferSize = outPointOffset + 2;
 					}
 
@@ -338,12 +348,12 @@ namespace GisEngine
 		};
 
 		template <typename T>
-		bool clip_ring_op(GPoint** points, int* pointCount, const T& op_, size_t slot)
+		bool clip_ring_op(GPoint** points, int* pointCount, const T& op_, size_t slot, CClipRectAlloc *pAlloc)
 		{
 			if(op_.all_in(*points, *pointCount))
 				return true;
 
-			GPoint* outPoints = (GPoint*)SharedBuffer::threadAlloc(sizeof(GPoint) * (*pointCount), slot);
+			GPoint* outPoints = pAlloc->getPointBuf(*pointCount, slot);
 			int bufferSize = *pointCount;
 			GPoint* inPoints = *points;
 			int pointOffset = 0;
@@ -353,7 +363,7 @@ namespace GisEngine
 				if(bufferSize < pointOffset + 2)
 				{
 					bufferSize = pointOffset + 2;
-					outPoints = (GPoint*)SharedBuffer::threadAlloc(sizeof(GPoint) * bufferSize, slot);
+					outPoints = pAlloc->getPointBuf(bufferSize, slot);
 				}
 
 				int res = op_.compare(inPoints[point], inPoints[point + 1]);
@@ -372,7 +382,7 @@ namespace GisEngine
 			{
 				pointOffset++;
 				if(bufferSize < pointOffset)
-					outPoints = (GPoint*)SharedBuffer::threadAlloc(sizeof(GPoint) * pointOffset, slot);
+					outPoints = (GPoint*)pAlloc->getPointBuf(pointOffset, slot);
 				outPoints[pointOffset - 1] = outPoints[0];
 			}
 
@@ -399,16 +409,16 @@ namespace GisEngine
 
 			int slot = base_slot;
 
-			if(!clip_ring_op(points, pointCount, left_op(clipper.xMin), slot))
+			if(!clip_ring_op(points, pointCount, left_op(clipper.xMin), slot, m_pAlloc))
 				slot++;
 
-			if(!clip_ring_op(points, pointCount, top_op(clipper.yMax), slot))
+			if(!clip_ring_op(points, pointCount, top_op(clipper.yMax), slot, m_pAlloc))
 				slot++;
 
-			if(!clip_ring_op(points, pointCount, right_op(clipper.xMax), slot))
+			if(!clip_ring_op(points, pointCount, right_op(clipper.xMax), slot, m_pAlloc))
 				slot++;
 
-			if(!clip_ring_op(points, pointCount, bottom_op(clipper.yMin), slot))
+			if(!clip_ring_op(points, pointCount, bottom_op(clipper.yMin), slot, m_pAlloc))
 				slot++;
 
 			if(clockwise != is_clockwise(*points, *pointCount)) 
@@ -456,8 +466,8 @@ namespace GisEngine
 				pointBufferSize += ringPointCount;
 				partBufferSize++;
 
-				outPoints = (GPoint*)SharedBuffer::threadAlloc(sizeof(GPoint) * pointBufferSize, out_points_slot);
-				outParts = (int*)SharedBuffer::threadAlloc(sizeof(int) * partBufferSize, out_parts_slot);
+				outPoints = m_pAlloc->getPointBuf(pointBufferSize, out_points_slot);
+				outParts = m_pAlloc->getPartsBuf(partBufferSize, out_parts_slot);
 
 				::memcpy(&outPoints[outPointOffset], ringPoints, sizeof(GPoint) * ringPointCount);
 				outParts[outPartOffset++] = ringPointCount;

@@ -2,17 +2,17 @@
 #define GIS_ENGINE_DISPLAY_RECT_CLIP_H_
 
 #include "Clip.h"
-#include "CommonLibrary/alloc_t.h"
-#include "ClipRectAlloc.h"
+ 
 namespace GisEngine
 {
 	namespace Display
 	{
+		class CClipRectAlloc;
 		
 		class CRectClipper : public IClip
 		{
 		public:
-			 CRectClipper(CommonLib::alloc_t *pAlloc);
+			 CRectClipper(CClipRectAlloc *pAlloc);
 			 ~CRectClipper();
 			 virtual int  clipLine(const GRect& clipper, GPoint* pBeg, GPoint* pEnd) = 0;
 			 virtual void clipLine(const GRect& clipper, GPoint** ppPoints, int** ppnPointCounts, int* pCount) = 0;
@@ -52,8 +52,7 @@ namespace GisEngine
 			bool  has_poly_intersections(const GRect& clipper, GPoint* points, int count);
 			int   total_points(GPoint* points, int* pointCounts, int count);
 		private:
-			CommonLib::alloc_t *m_pAlloc;
-			CommonLib::simple_alloc_t m_alloc;
+			CClipRectAlloc* m_pAlloc;
 		};
 	}
 }

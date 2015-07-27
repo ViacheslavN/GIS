@@ -27,10 +27,10 @@ namespace CommonLib
 			{
 				 if(m_pAlloc == &vec.m_alloc)
 					 m_pAlloc = &m_alloc;
-				if(m_nSize ! = 0)
+				if(m_nSize != 0)
 				{
 					m_pData = (TValue *)m_pAlloc->alloc(m_nCapacity);
-					memcpy(m_pData, vec.m_pData, m_nSize)
+					memcpy(m_pData, vec.m_pData, m_nSize);
 				}
 			}
 

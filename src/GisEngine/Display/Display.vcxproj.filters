@@ -164,5 +164,8 @@
     <ClCompile Include="RectClipper.cpp">
       <Filter>Clip</Filter>
     </ClCompile>
+    <ClCompile Include="ClipRectAlloc.cpp">
+      <Filter>Clip</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

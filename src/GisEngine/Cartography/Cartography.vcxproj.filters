@@ -24,10 +24,13 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Symbol.h">
+    <ClInclude Include="IMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Layer.h">
+    <ClInclude Include="ILayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ISymbol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

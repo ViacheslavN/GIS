@@ -425,9 +425,10 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Layer.h" />
+    <ClInclude Include="IMap.h" />
+    <ClInclude Include="ILayer.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Symbol.h" />
+    <ClInclude Include="ISymbol.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>

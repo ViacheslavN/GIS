@@ -3,27 +3,33 @@
 
 #include "CommonLibrary/alloc_t.h"
 #include "CommonLibrary/PodVector.h"
+#include <map>
 namespace GisEngine
 {
 	namespace Display
 	{
 		class CClipRectAlloc
 		{
-			typedef CommonLib::TPodVector<uint32> TVecParts;
+			typedef CommonLib::TPodVector<int> TVecParts;
 			typedef CommonLib::TPodVector<GPoint> TVecGPoints;
+
+			typedef std::map<uint32, TVecParts> TMapParts;
+			typedef std::map<uint32, TVecGPoints> TMapPoints;
 		public:
 			CClipRectAlloc(CommonLib::alloc_t *pAlloc);
-
-			uint32 *getPartsBuf(bool bIn);
-			GPoint* getPointBuf(bool bIb);
+			~CClipRectAlloc();
+			int *getPartsBuf(uint32 nCount, uint32 nSlot);
+			GPoint* getPointBuf(uint32 nCount, uint32 nSlot);
 
 		private:
 			CommonLib::alloc_t *m_pAlloc;
+			CommonLib::simple_alloc_t m_alloc;
+	 
 
-			TVecParts m_vecInParts;
-			TVecParts m_vecOutParts;
-			TVecGPoints m_vecInPoints;
-			TVecGPoints m_vecOutPoints;
+
+			TMapParts m_mapParts;
+			TMapPoints m_mapPoints;
+	
 
 		};
 	}

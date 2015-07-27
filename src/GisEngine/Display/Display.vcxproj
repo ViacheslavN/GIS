@@ -472,6 +472,7 @@
   <ItemGroup>
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Brush.cpp" />
+    <ClCompile Include="ClipRectAlloc.cpp" />
     <ClCompile Include="RectClipper.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="conv_offset.cpp" />
