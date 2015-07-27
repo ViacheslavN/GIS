@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_BP_MAP_RECT_SPATIAL_H_
 #define _EMBEDDED_DATABASE_BP_MAP_RECT_SPATIAL_H_
-#include "SpatialKey.h"
+#include "CommonLibrary/SpatialKey.h"
 #include "PointSpatialBPMapTree.h"
 #include "RectMapLeafCompressor.h"
 #include "RectMapInnerCompressor.h"
@@ -28,7 +28,7 @@ namespace embDB
 		typedef _TValue      TValue;
 		typedef _TComp      TComp;
 		typedef _Transaction      Transaction;
-		typedef TRect2D<TPointType>         TRect;
+		typedef CommonLib::TRect2D<TPointType>         TRect;
 		typedef typename TBase::TBTreeNode  TBTreeNode;
 		typedef typename TBase::TLeafNode  TLeafNode;
 		typedef typename TBase::iterator iterator;

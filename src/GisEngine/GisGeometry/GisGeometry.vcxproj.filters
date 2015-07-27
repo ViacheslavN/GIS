@@ -51,6 +51,9 @@
     <ClInclude Include="clipper.hpp">
       <Filter>TopologicalOperator</Filter>
     </ClInclude>
+    <ClInclude Include="ConvertorWorldToInt.h">
+      <Filter>TopologicalOperator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

@@ -15,7 +15,7 @@ namespace embDB
 
 		for (size_t i = 0, sz = m_vecVariants.size(); i < sz; ++i)
 		{
-			m_vecVariants[i]->~IFieldVariant();
+			m_vecVariants[i]->~IVariant();
 			m_pAlloc->free(m_vecVariants[i]);
 		}
 
@@ -103,12 +103,12 @@ namespace embDB
 	{
 		return m_vecVariants.size();
 	}
-	IFieldVariant * CompositeIndexKey::getValue(uint32 nNum)
+	CommonLib::IVariant * CompositeIndexKey::getValue(uint32 nNum)
 	{
 		assert(nNum < m_vecVariants.size());
 		return m_vecVariants[nNum];
 	}
-	const IFieldVariant * CompositeIndexKey::getValue(uint32 nNum) const
+	const CommonLib::IVariant * CompositeIndexKey::getValue(uint32 nNum) const
 	{
 		assert(nNum < m_vecVariants.size());
 		return m_vecVariants[nNum];
@@ -125,7 +125,7 @@ namespace embDB
 	{
 		for (size_t i = 0, sz = vecScheme.size(); i < sz; ++i)
 		{
-			IFieldVariant *pVariant = createVariant(vecScheme[i]);
+			CommonLib::IVariant *pVariant = createVariant(vecScheme[i]);
 			if(!pVariant)
 				return false;
 			pVariant->load(&stream);
@@ -133,14 +133,14 @@ namespace embDB
 		}
 		return true;
 	}
-	bool CompositeIndexKey::setValue(uint32 nNum, const IFieldVariant* pValue)
+	bool CompositeIndexKey::setValue(uint32 nNum, const CommonLib::IVariant* pValue)
 	{
 		assert(nNum < m_vecVariants.size());
 		return m_vecVariants[nNum]->copy(pValue);
 	}
-	bool CompositeIndexKey::addValue(const IFieldVariant* pValue)
+	bool CompositeIndexKey::addValue(const CommonLib::IVariant* pValue)
 	{
-		IFieldVariant* pVariant =  createVariant(pValue->getType());
+		CommonLib::IVariant* pVariant =  createVariant(pValue->getType());
 		if(!pValue)
 			return false;
 		if(!pVariant->copy(pValue))
@@ -148,39 +148,39 @@ namespace embDB
 		m_vecVariants.push_back(pVariant);
 		return true;
 	}
-	IFieldVariant* CompositeIndexKey::createVariant(uint16 nType)
+	CommonLib::IVariant* CompositeIndexKey::createVariant(uint16 nType)
 	{
 		switch(nType)
 		{
-			case ftUInteger8:
-				return new (m_pAlloc->alloc(sizeof(TFieldUINT8))) TFieldUINT8();
+			case CommonLib::dtUInteger8:
+				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarUINT8))) CommonLib::TVarUINT8();
 				break;
-			case ftInteger8:
-				return new (m_pAlloc->alloc(sizeof(TFieldINT8))) TFieldINT8();
+			case CommonLib::dtInteger8:
+				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarINT8))) CommonLib::TVarINT8();
 				break;
-			case ftUInteger16:
-				return new (m_pAlloc->alloc(sizeof(TFieldUINT16))) TFieldUINT16();
+			case CommonLib::dtUInteger16:
+				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarUINT16))) CommonLib::TVarUINT16();
 				break;
-			case ftInteger16:
-				return new (m_pAlloc->alloc(sizeof(TFieldINT16))) TFieldINT16();
+			case CommonLib::dtInteger16:
+				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarINT16))) CommonLib::TVarINT16();
 				break;
-			case ftUInteger32:
-				return new (m_pAlloc->alloc(sizeof(TFieldUINT32))) TFieldUINT32();
+			case CommonLib::dtUInteger32:
+				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarUINT32))) CommonLib::TVarUINT32();
 				break;
-			case ftInteger32:
-				return new (m_pAlloc->alloc(sizeof(TFieldINT32))) TFieldINT32();
+			case CommonLib::dtInteger32:
+				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarINT32))) CommonLib::TVarINT32();
 				break;
-			case ftUInteger64:
-				return new (m_pAlloc->alloc(sizeof(TFieldUINT64))) TFieldUINT64();
+			case CommonLib::dtUInteger64:
+				return new (m_pAlloc->alloc(sizeof(CommonLib::TFVarUINT64))) CommonLib::TFVarUINT64();
 				break;
-			case ftInteger64:
-				return new (m_pAlloc->alloc(sizeof(TFieldINT64))) TFieldINT64();
+			case CommonLib::dtInteger64:
+				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarINT64))) CommonLib::TVarINT64();
 				break;
-			case ftFloat:
-				return new (m_pAlloc->alloc(sizeof(TFieldFloat))) TFieldFloat();
+			case CommonLib::dtFloat:
+				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarFloat))) CommonLib::TVarFloat();
 				break;
-			case ftDouble:
-				return new (m_pAlloc->alloc(sizeof(TFieldDouble))) TFieldDouble();
+			case CommonLib::dtDouble:
+				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarDouble))) CommonLib::TVarDouble();
 				break;
 		}
 

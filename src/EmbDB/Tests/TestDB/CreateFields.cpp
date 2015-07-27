@@ -7,7 +7,7 @@ void CreateField(const CommonLib::str_t& sName, const CommonLib::str_t& sAlias, 
 {
 
 	embDB::SFieldProp fp;
-	fp.dataType = (embDB::eDataTypes)nFieldType;
+	fp.dataType = (CommonLib::eDataTypes)nFieldType;
 	fp.dateTypeExt = embDB::dteSimple;
 	fp.sFieldName = sName;
 	fp.sFieldAlias = sAlias;
@@ -31,16 +31,16 @@ void CreateTables(embDB::CDatabase* pDb)
 	embDB::CTable *pTable = pSchema->getTable("Table");
 
 
-	CreateField("Field64", "AliasField64", embDB::ftInteger64, pTable);
-	CreateField("FieldU64", "AliasFieldU64", embDB::ftUInteger64, pTable);
-	CreateField("Field32", "AliasField32", embDB::ftInteger32, pTable);
-	CreateField("FieldU32", "AliasFieldU32", embDB::ftUInteger32, pTable);
-	CreateField("Field16", "AliasField16", embDB::ftInteger16, pTable);
-	CreateField("FieldU16", "AliasFieldU16", embDB::ftUInteger16, pTable);
-	CreateField("Field8", "AliasField8",	embDB::ftInteger8, pTable);
-	CreateField("FieldU8", "AliasFieldU8",	embDB::ftUInteger8, pTable);
-	CreateField("FieldDouble", "AliasDouble", embDB::ftDouble, pTable);
-	CreateField("FieldFloat", "AliasFloat", embDB::ftFloat, pTable);
+	CreateField("Field64", "AliasField64", CommonLib::dtInteger64, pTable);
+	CreateField("FieldU64", "AliasFieldU64", CommonLib::dtUInteger64, pTable);
+	CreateField("Field32", "AliasField32", CommonLib::dtInteger32, pTable);
+	CreateField("FieldU32", "AliasFieldU32", CommonLib::dtUInteger32, pTable);
+	CreateField("Field16", "AliasField16", CommonLib::dtInteger16, pTable);
+	CreateField("FieldU16", "AliasFieldU16", CommonLib::dtUInteger16, pTable);
+	CreateField("Field8", "AliasField8",	CommonLib::dtInteger8, pTable);
+	CreateField("FieldU8", "AliasFieldU8",	CommonLib::dtUInteger8, pTable);
+	CreateField("FieldDouble", "AliasDouble", CommonLib::dtDouble, pTable);
+	CreateField("FieldFloat", "AliasFloat", CommonLib::dtFloat, pTable);
 
 /*	for (int i = 0; i < 1000; ++i)
 	{				

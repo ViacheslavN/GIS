@@ -425,7 +425,9 @@
     <ClInclude Include="FixedMemoryStream.h" />
     <ClInclude Include="general.h" />
     <ClInclude Include="GeneralTypes.h" />
-    <ClInclude Include="GeoShape.h" />
+    <ClInclude Include="GeoPoint.h" />
+    <ClInclude Include="GeoShapeBuf.h" />
+    <ClInclude Include="BaseVariant.h" />
     <ClInclude Include="IGeoShape.h" />
     <ClInclude Include="Interlocked.h" />
     <ClInclude Include="log.h" />
@@ -434,14 +436,19 @@
     <ClInclude Include="Mutex.h" />
     <ClInclude Include="Nocopy.h" />
     <ClInclude Include="FixedBitStream.h" />
+    <ClInclude Include="GeoShape.h" />
+    <ClInclude Include="PodVector.h" />
+    <ClInclude Include="SpatialKey.h" />
     <ClInclude Include="sprintf.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="stl_alloc.h" />
     <ClInclude Include="stream.h" />
     <ClInclude Include="str_buffer.h" />
     <ClInclude Include="str_t.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="thread.h" />
     <ClInclude Include="TimeUtils.h" />
+    <ClInclude Include="Variant.h" />
     <ClInclude Include="WaitForGraph.h" />
   </ItemGroup>
   <ItemGroup>
@@ -453,6 +460,8 @@
     <ClCompile Include="FixedBitStream.cpp" />
     <ClCompile Include="FixedMemoryStream.cpp" />
     <ClCompile Include="GeoShape.cpp" />
+    <ClCompile Include="GeoShapeBuf.cpp" />
+    <ClCompile Include="IGeoShape.cpp" />
     <ClCompile Include="Interlocked.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="MemoryStream.cpp">

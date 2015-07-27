@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "../../EmbDB/SpatialKey.h"
+#include "CommonLibrary/SpatialKey.h"
 #include "../../EmbDB/SpatialPointQuery.h"
 #include <iostream>
 #include <vector>
@@ -24,7 +24,7 @@ void testZPoint(TCoord nBegin, TCoord nEnd)
 }
 struct TQuery
 {
-	typedef  embDB::TRect2D<uint64>  TRect;
+	typedef  CommonLib::TRect2D<uint64>  TRect;
 	TRect m_Rect;
 	embDB::ZOrderPoint2DU64  m_zMin;
 	embDB::ZOrderPoint2DU64  m_zMax;

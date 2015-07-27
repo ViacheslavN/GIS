@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <set>
 #include "CommonLibrary/DebugTime.h"
-#include "../../EmbDB/CompositeIndex.h"
+#include "../../EmbDB/CompositeIndexKey.h"
 #include "../../EmbDB/VariantField.h"
 
 
@@ -71,9 +71,9 @@ void TestPODTypeVector()
 	*/
  
 	
-	embDB::TFieldINT32 valint32;
+	CommonLib::TVarINT32 valint32;
 	valint32.set(12);
-	embDB::TFieldINT64 valint64;
+	CommonLib::TVarINT64 valint64;
 	valint64.set(124587536454);
 	
 	int n = 10;

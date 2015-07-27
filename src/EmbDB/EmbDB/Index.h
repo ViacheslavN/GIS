@@ -28,7 +28,7 @@ public:
 	{
 		return !m_ParentIt.isNull();
 	}
-	virtual bool getKey(IFieldVariant* pVal)
+	virtual bool getKey(CommonLib::IVariant* pVal)
 	{
 		return pVal->setVal(m_ParentIt.key());
 	}
@@ -184,9 +184,9 @@ public:
 		return true;
 	}
 
-	eDataTypes getType() const
+	CommonLib::eDataTypes getType() const
 	{
-		return (eDataTypes)m_fi.m_nFieldDataType;
+		return (CommonLib::eDataTypes)m_fi.m_nFieldDataType;
 	}
 	const CommonLib::str_t& getName() const
 	{

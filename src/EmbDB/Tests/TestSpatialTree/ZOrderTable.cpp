@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "../../EmbDB/SpatialKey.h"
+#include "CommonLibrary/SpatialKey.h"
 #include "../../EmbDB/SpatialPointQuery.h"
 #include <iostream>
 

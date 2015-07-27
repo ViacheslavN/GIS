@@ -73,7 +73,7 @@ namespace GisEngine
 
 #endif
 
-	typedef  CommonLib::bbox_t   GisBoundingBox;
+	typedef  CommonLib::bbox   GisBoundingBox;
 
 
 

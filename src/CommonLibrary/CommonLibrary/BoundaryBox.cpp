@@ -4,7 +4,7 @@
 namespace CommonLib
 {
 
-	bbox_t::bbox_t() : 
+	bbox::bbox() : 
 		type(bbox_type_null),
 		 xMin(0.),
 		 xMax(0.),
@@ -17,7 +17,7 @@ namespace CommonLib
 	{
 
 	}
-	bbox_t::bbox_t(const bbox_t& bbox)
+	bbox::bbox(const bbox& bbox)
 		: type(bbox.type)
 		, xMin(bbox.xMin)
 		, xMax(bbox.xMax)
@@ -29,7 +29,7 @@ namespace CommonLib
 		, mMax(bbox.mMax)
 	{}
 
-	bbox_t& bbox_t::operator=(const bbox_t& bbox)
+	bbox& bbox::operator=(const bbox& bbox)
 	{
 		if(this == &bbox)
 			return *this;
@@ -47,7 +47,7 @@ namespace CommonLib
 		return *this;
 	}
 
-	bool bbox_t::operator==(const bbox_t &bbox) const
+	bool bbox::operator==(const bbox &bbox) const
 	{
 		if(type != bbox.type)
 			return false;
@@ -70,12 +70,12 @@ namespace CommonLib
 		return true;
 	}
 
-	bool bbox_t::operator!=(const bbox_t &bbox) const
+	bool bbox::operator!=(const bbox &bbox) const
 	{
 		return !(this->operator ==(bbox));
 	}
 
-	bool bbox_t::operator<(const bbox_t &bbox) const
+	bool bbox::operator<(const bbox &bbox) const
 	{
 		if(type != bbox.type)
 			return type < bbox.type;
@@ -102,7 +102,7 @@ namespace CommonLib
 		return false;
 	}
 
-	bool bbox_t::doesInclude(const bbox_t &bbox, bool useZ /*= false*/, bool useM /*= false*/) const
+	bool bbox::doesInclude(const bbox &bbox, bool useZ /*= false*/, bool useM /*= false*/) const
 	{
 		if(type == bbox_type_invalid || bbox.type == bbox_type_invalid)
 			return false;
@@ -131,12 +131,12 @@ namespace CommonLib
 		return true;
 	}
 
-	bool bbox_t::contains(const bbox_t &bbox, bool useZ, bool useM) const
+	bool bbox::contains(const bbox &bbox, bool useZ, bool useM) const
 	{
 		return doesInclude(bbox, useZ, useM);
 	}
 
-	bool bbox_t::intersects(const bbox_t &bbox, bool useZ, bool useM) const
+	bool bbox::intersects(const bbox &bbox, bool useZ, bool useM) const
 	{
 		if(type == bbox_type_invalid || bbox.type == bbox_type_invalid)
 			return false;
@@ -159,7 +159,7 @@ namespace CommonLib
 		return true;
 	}
 
-	bbox_t& bbox_t::expand(const bbox_t &bbox)
+	bbox& bbox::expand(const bbox &bbox)
 	{
 		if(this == &bbox)
 			return *this;

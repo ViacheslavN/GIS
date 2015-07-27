@@ -228,8 +228,43 @@ namespace GisEngine
 		//	m_LeftShp.bbox(lbbox);
 			PrepareBoundShape(lbbox);
 		}
+		void CSpatialReferenceProj4::PrepareCutMeridian(double cut_meridian, double bottom_parallel, double top_parallel)
+		{
+			m_cutMeridian.type = CommonLib::bbox_type_normal;
+			m_cutMeridian.xMin = cut_meridian - 0.01;
+			m_cutMeridian.yMin = bottom_parallel;
+			m_cutMeridian.xMax = cut_meridian + 0.01;
+			m_cutMeridian.yMax = top_parallel;
+		}
+		void CSpatialReferenceProj4::PrepareBoundShape(const GisBoundingBox& bbox)
+		{
+			CommonLib::CGeoShape shp;
+			GisBoundingBox bbox_ = bbox;
+
+			const int precision = 20;
+			if(bbox_.xMin < -180) bbox_.xMin = -180;
+			if(bbox_.xMax > 180) bbox_.xMax = 180;
+			bbox_.yMax -= 1;
+			bbox_.yMin += 1;
+			bbox_.xMax -= 0.01;
+			bbox_.xMin += 0.01;
 
 
+			DensifyBoundBox(&shp, bbox_, precision);
+			/*for(int i = 0, sz = (int)shp.pointCount(); i < sz; i++)
+			{
+				projUV pnt;
+				pnt.u = shp.ptX(i) * DEG_TO_RAD;
+				pnt.v = shp.ptY(i) * DEG_TO_RAD;
+				pnt = pj_fwd(pnt, (PJ*)handle_);
+				shp.ptX(i) = pnt.u;
+				shp.ptY(i) = pnt.v;
+			}
+
+			shp.calcBBox();
+			shp.finishExternalChanges();*/
+			m_BoundShape = shp;
+		}
 		bool CSpatialReferenceProj4::IsEqual(CSpatialReferenceProj4* ref) const
 		{
 			if(!ref)

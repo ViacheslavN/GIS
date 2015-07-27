@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_B_STATIAL_POINT_QUERY_H_
 #define _EMBEDDED_DATABASE_B_STATIAL_POINT_QUERY_H_
 #include "CommonLibrary/general.h"
-#include "SpatialKey.h"
+#include "CommonLibrary/SpatialKey.h"
 namespace embDB
 {
 
@@ -118,9 +118,9 @@ namespace embDB
 			uint32 bit = uint32 (1) << uint32 (idx & 0x3f);
 			m_nZValue |= bit;
 		}
-		bool IsInRect(const TRect2Du16& rect) const 
+		bool IsInRect(const CommonLib::TRect2Du16& rect) const 
 		{		 
-			return IsZPointOrdertInRect<uint16, ZOrderPoint2DU16, TRect2Du16>(rect, *this);
+			return IsZPointOrdertInRect<uint16, ZOrderPoint2DU16, CommonLib::TRect2Du16>(rect, *this);
 		}
 				
 		void getXY(uint16& x,  uint16& y) const;
@@ -204,9 +204,9 @@ namespace embDB
 			return 63;
 		}
 
-		bool IsInRect(const  TRect2Du32& rect) const 
+		bool IsInRect(const  CommonLib::TRect2Du32& rect) const 
 		{		 
-			return IsZPointOrdertInRect<uint32, ZOrderPoint2DU32, TRect2Du32>(rect, *this);
+			return IsZPointOrdertInRect<uint32, ZOrderPoint2DU32, CommonLib::TRect2Du32>(rect, *this);
 		}
 		uint64 m_nZValue;
 	};
@@ -292,9 +292,9 @@ namespace embDB
 			return 127;
 		}
 
-		bool IsInRect(const  TRect2Du64& rect) const 
+		bool IsInRect(const  CommonLib::TRect2Du64& rect) const 
 		{		 
-			return IsZPointOrdertInRect<uint64, ZOrderPoint2DU64, TRect2Du64>(rect, *this);
+			return IsZPointOrdertInRect<uint64, ZOrderPoint2DU64, CommonLib::TRect2Du64>(rect, *this);
 		}
 	};
 

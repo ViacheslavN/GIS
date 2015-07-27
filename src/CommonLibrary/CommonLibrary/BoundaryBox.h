@@ -19,7 +19,7 @@ namespace CommonLib
 		bbox_modifier_mask   = 0xFF000000
 	};
 
-	struct bbox_t
+	struct bbox
 	{
 		bbox_type type;
 		double xMin;
@@ -31,16 +31,16 @@ namespace CommonLib
 		double mMin;
 		double mMax;
 
-		bbox_t();
-		bbox_t(const bbox_t& bbox);
-		bbox_t& operator=(const bbox_t& bbox);
-		bool    operator==(const bbox_t &bbox) const; 
-		bool    operator!=(const bbox_t &bbox) const;
-		bool    operator<(const bbox_t &bbox) const;
-		bool    doesInclude(const bbox_t &bbox, bool useZ = false, bool useM = false) const;
-		bool    contains(const bbox_t &bbox, bool useZ = false, bool useM = false) const;
-		bool    intersects(const bbox_t &bbox, bool useZ = false, bool useM = false) const;
-		bbox_t& expand(const bbox_t &bbox);
+		bbox();
+		bbox(const bbox& bbox);
+		bbox& operator=(const bbox& bbox);
+		bool    operator==(const bbox &bbox) const; 
+		bool    operator!=(const bbox &bbox) const;
+		bool    operator<(const bbox &bbox) const;
+		bool    doesInclude(const bbox &bbox, bool useZ = false, bool useM = false) const;
+		bool    contains(const bbox &bbox, bool useZ = false, bool useM = false) const;
+		bool    intersects(const bbox &bbox, bool useZ = false, bool useM = false) const;
+		bbox& expand(const bbox &bbox);
 	};
 
 }

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 //#include "../../EmbDB/PointSpatialBPMaTraits.h"
 #include "../../EmbDB/PointSpatialBPMapTree.h"
-#include "../../EmbDB/SpatialKey.h"
+#include "CommonLibrary/SpatialKey.h"
 #include "../../EmbDB/SpatialPointQuery.h"
 #include "../../EmbDB/Transactions.h"
 #include "../../EmbDB/DirectTransactions.h"
@@ -39,7 +39,7 @@ void TestPointSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndSt
 	double tmInsert = 0;
 	double treeCom = 0;
 	double tranCom  = 0;
-	embDB::TRect2D<TCoodType>         ExtentTree;
+	CommonLib::TRect2D<TCoodType>         ExtentTree;
 	ExtentTree.m_minX = 0;
 	ExtentTree.m_minY = 0;
 	ExtentTree.m_maxX =  (TCoodType)nEndStart;
@@ -92,7 +92,7 @@ void TestPointSpatialSearchByFeature(int32 nCacheBPTreeSize, uint64 nStart, uint
 {
 	std::cout << "Search Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
-	embDB::TRect2D<TCoodType>         ExtentTree;
+	CommonLib::TRect2D<TCoodType>         ExtentTree;
 	ExtentTree.m_minX = 0;
 	ExtentTree.m_minY = 0;
 	ExtentTree.m_maxX = (TCoodType)nEndStart;
@@ -151,8 +151,8 @@ void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64
 {
 	std::cout << "Search Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
-	embDB::TRect2D<TCoodType>         ExtentTree;
-	embDB::TRect2D<TCoodType>         SpatialQuery;
+	CommonLib::TRect2D<TCoodType>         ExtentTree;
+	CommonLib::TRect2D<TCoodType>         SpatialQuery;
 	ExtentTree.m_minX = 0;
 	ExtentTree.m_minY = 0;
 	ExtentTree.m_maxX = (TCoodType)nEndStart;

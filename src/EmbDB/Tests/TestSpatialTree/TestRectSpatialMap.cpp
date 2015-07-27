@@ -42,7 +42,7 @@ void TestRectSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndSta
 	double tmInsert = 0;
 	double treeCom = 0;
 	double tranCom  = 0;
-	embDB::TRect2D<TCoodType>         ExtentTree;
+	CommonLib::TRect2D<TCoodType>         ExtentTree;
 	ExtentTree.m_minX = 0;
 	ExtentTree.m_minY = 0;
 	ExtentTree.m_maxX =  (TCoodType)nEndStart;
@@ -59,7 +59,7 @@ void TestRectSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndSta
 	if(!nProcStep)
 		nProcStep = 1000000;
 
-	embDB::TRect2D<TCoodType>         feature;
+	CommonLib::TRect2D<TCoodType>         feature;
 	for (uint64 x = nStart; x < nEndStart - nStep; x +=nStep)
 	{
 		for (uint64 y = nStart; y < nEndStart - nStep; y +=nStep)
@@ -103,10 +103,10 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 {
 	std::cout << "Search Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
-	embDB::TRect2D<TCoodType>         ExtentTree;
-	embDB::TRect2D<TCoodType>         SpatialQuery;
-	embDB::TRect2D<TCoodType>         rectFeature;
-	embDB::TRect2D<TCoodType>         ZrectFeature;
+	CommonLib::TRect2D<TCoodType>         ExtentTree;
+	CommonLib::TRect2D<TCoodType>         SpatialQuery;
+	CommonLib::TRect2D<TCoodType>         rectFeature;
+	CommonLib::TRect2D<TCoodType>         ZrectFeature;
 
  
 	ExtentTree.m_minX = 0;
@@ -298,7 +298,7 @@ void TestRectSpatialSearchByFeature(int32 nCacheBPTreeSize, uint64 nStart, uint6
 {
 	std::cout << "Search Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
-	embDB::TRect2D<TCoodType>         ExtentTree;
+	CommonLib::TRect2D<TCoodType>         ExtentTree;
 	ExtentTree.m_minX = 0;
 	ExtentTree.m_minY = 0;
 	ExtentTree.m_maxX = (TCoodType)nEndStart;

@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_B_STATIAL_RECT_QUERY_H_
 #
 #include "CommonLibrary/general.h"
-#include "SpatialKey.h"
+#include "CommonLibrary/SpatialKey.h"
 namespace embDB
 {
 
@@ -58,9 +58,9 @@ namespace embDB
 			return m_nZValue == Zorder.m_nZValue;
 		}
 
-		bool IsInRect(const TRect2Du16& rect) const 
+		bool IsInRect(const CommonLib::TRect2Du16& rect) const 
 		{		 
-			return IsZRectOrdertInRect<uint16, ZOrderRect2DU16, TRect2Du16>(rect, *this);
+			return IsZRectOrdertInRect<uint16, ZOrderRect2DU16, CommonLib::TRect2Du16>(rect, *this);
 		}
 
 		uint64 m_nZValue;
@@ -113,9 +113,9 @@ namespace embDB
 		void setLowBits(int idx);
 		void clearLowBits(int idx);
 
-		bool IsInRect(const TRect2Du32& rect) const 
+		bool IsInRect(const CommonLib::TRect2Du32& rect) const 
 		{		 
-			return IsZRectOrdertInRect<uint32, ZOrderRect2DU32, TRect2Du32>(rect, *this);
+			return IsZRectOrdertInRect<uint32, ZOrderRect2DU32, CommonLib::TRect2Du32>(rect, *this);
 		}
 
 		uint64 m_nZValue[2];
@@ -198,9 +198,9 @@ namespace embDB
 		void clearLowBits(int idx);
 
 
-		bool IsInRect(const TRect2Du64& rect) const 
+		bool IsInRect(const CommonLib::TRect2Du64& rect) const 
 		{		 
-			return IsZRectOrdertInRect<uint64, ZOrderRect2DU64, TRect2Du64>(rect, *this);
+			return IsZRectOrdertInRect<uint64, ZOrderRect2DU64, CommonLib::TRect2Du64>(rect, *this);
 		}
 		uint64 m_nZValue[4];
 	};

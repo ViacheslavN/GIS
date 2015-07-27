@@ -456,6 +456,7 @@
   <ItemGroup>
     <ClInclude Include="clipper.hpp" />
     <ClInclude Include="CodeProj.h" />
+    <ClInclude Include="ConvertorWorldToInt.h" />
     <ClInclude Include="GisGeometryLib.h" />
     <ClInclude Include="ISpatialReference.h" />
     <ClInclude Include="SpatialReferenceProj4.h" />

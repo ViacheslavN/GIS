@@ -109,16 +109,26 @@ namespace CommonLib
 			IGeoShape(){};
 			virtual ~IGeoShape(){}
 			virtual eShapeType type() const = 0;
-			virtual uint32  size() const = 0;
+ 
 
 			virtual uint32  getPartCount() const = 0;
 			virtual uint32  getPartSize(uint32 idx) const = 0;
+			virtual const uint32*  getParts() const = 0;
+			virtual uint32*  getParts() = 0;
 
-			virtual GeoPt* getPoint() = 0;
-			virtual const GeoPt* getPoint() const = 0;
+			virtual GeoPt* getPoints() = 0;
+			virtual const GeoPt* getPoints() const = 0;
 
-			virtual GeoPt* getPoint(uint32 partNum) = 0;
-			virtual const GeoPt* getPoint(uint32 partNum) const = 0;
+			virtual uint32 getPointCnt() const= 0;
+
+
+
+
+
+			static bool isTypeSimple(eShapeType shapeType);
+			static void getTypeParams(eShapeType shapeType, eShapeType* genType, bool* has_z, bool* has_m, bool* has_curve, bool* has_id);
+			static eShapeType generalType(eShapeType type);
+
 
 	};
 }

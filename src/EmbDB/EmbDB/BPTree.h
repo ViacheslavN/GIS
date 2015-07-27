@@ -15,7 +15,7 @@ namespace embDB
 		virtual bool insert(const Tkey& key, const TValue& value ) = 0;
 		virtual bool remove(const Tkey& key) = 0;
 		virtual bool update(const Tkey& key, const TValue& value ) = 0;
-		virtual bool search(const Tkey& key, IFieldVariant* value) = 0;
+		virtual bool search(const Tkey& key, CommonLib::IVariant* value) = 0;
 
 	};
 }

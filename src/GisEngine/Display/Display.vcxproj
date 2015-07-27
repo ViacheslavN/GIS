@@ -451,7 +451,7 @@
     <ClInclude Include="conv_offset.h" />
     <ClInclude Include="Displaylib_lib.h" />
     <ClInclude Include="DisplayMath.h" />
-    <ClInclude Include="DisplayTransformation.h" />
+    <ClInclude Include="IDisplayTransformation.h" />
     <ClInclude Include="DisplayTypes.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="Graphics.h" />

@@ -4,7 +4,7 @@
 #include "CommonLibrary/str_t.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "Key.h"
-#include "SpatialKey.h"
+#include "CommonLibrary/SpatialKey.h"
 #include "IDBField.h"
 
 namespace embDB
@@ -30,7 +30,7 @@ namespace embDB
 	{
 		sFieldInfo() : 
 			m_nFieldType(0)
-			,m_nFieldDataType(ftUnknown)
+			,m_nFieldDataType(CommonLib::dtUnknown)
 			,m_nBaseFieldProp(0)
 			,m_nIndexType(0)
 			,m_bPrimeryKey(false)
@@ -58,7 +58,7 @@ namespace embDB
 		int64 m_nFieldPage;
 		int64 m_nFIPage;
 		bool m_bCheckCRC32;
-		TRect2D64 m_Extent;
+		CommonLib::TRect2D64 m_Extent;
 		uint64	  m_nOffsetX;
 		uint64	  m_nOffsetY;
 
@@ -122,7 +122,7 @@ namespace embDB
 
 		}
 		int32 m_nFieldPointType;
-		TRect2D64 m_nExtent;
+		CommonLib::TRect2D64 m_nExtent;
 
 		bool Read(CommonLib::FxMemoryReadStream* pStream)
 		{
@@ -265,9 +265,9 @@ namespace embDB
 			return true;
 		}
 
-		eDataTypes getType() const
+		CommonLib::eDataTypes getType() const
 		{
-			return (eDataTypes)m_fi.m_nFieldDataType;
+			return (CommonLib::eDataTypes)m_fi.m_nFieldDataType;
 		}
 		const CommonLib::str_t& getName() const
 		{

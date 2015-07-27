@@ -11,8 +11,8 @@ namespace embDB
 	public:
 		IQuery(){}
 		virtual ~IQuery(){}
-		virtual bool setValue(const CommonLib::str_t& sValueName, IFieldVariant* pVal) = 0;
-		virtual IFieldVariant* getValue(const CommonLib::str_t& sValueName)= 0;
+		virtual bool setValue(const CommonLib::str_t& sValueName, IVariant* pVal) = 0;
+		virtual IVariant* getValue(const CommonLib::str_t& sValueName)= 0;
 		virtual IField* getField(uint32 nCount) = 0;
 		virtual uint32 getFieldCount() const = 0;
 

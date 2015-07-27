@@ -6,6 +6,17 @@ namespace GisEngine
 
 	namespace Display
 	{
+		inline bool is_clockwise(const GPoint* points, int pointCount)
+		{
+#ifdef _FLOAT_GUNITS_
+			double S = 0;
+#else
+			int64 S = 0;
+#endif
+			for(int i = 0; i < pointCount - 1; i++)
+				S += (points[i + 1].y + points[i].y) * (points[i + 1].x - points[i].x);
+			return S >= 0;
+		}
 
 		int CRectClipper::clipLine(const GRect& clipper, GPoint*beg, GPoint* end)
 		{
@@ -14,20 +25,20 @@ namespace GisEngine
 			int ret = clip_contains;
 
 			if(begCode != 0 && endCode == 0)
-				if((end->x == clipper.Min.x) ||
-					(end->x == clipper.Max.x) ||
-					(end->y == clipper.Min.y) ||
-					(end->y == clipper.Max.y))
+				if((end->x == clipper.xMin) ||
+					(end->x == clipper.xMax) ||
+					(end->y == clipper.yMin) ||
+					(end->y == clipper.yMax))
 				{
 					*beg = *end;
 					return ret;
 				}
 
 				if(begCode == 0 && endCode != 0)
-					if((beg->x == clipper.Min.x) ||
-						(beg->x == clipper.Max.x) ||
-						(beg->y == clipper.Min.y) ||
-						(beg->y == clipper.Max.y))
+					if((beg->x == clipper.xMin) ||
+						(beg->x == clipper.xMax) ||
+						(beg->y == clipper.yMin) ||
+						(beg->y == clipper.yMax))
 					{
 						*beg = *end;
 						return ret;
@@ -59,41 +70,41 @@ namespace GisEngine
 						if (code & clip_left) 
 						{
 #ifdef _FLOAT_GUNITS_
-							p->y += (GUnits)(double(beg->y - end->y) * double(clipper.Min.x - p->x) / (beg->x - end->x));
+							p->y += (GUnits)(double(beg->y - end->y) * double(clipper.xMin - p->x) / (beg->x - end->x));
 #else
 							p->y += GUnits(int64(beg->y - end->y) * int64(clipper.Min.x - p->x) / (beg->x - end->x));
 #endif
-							p->x = clipper.Min.x;
+							p->x = clipper.xMin;
 							ret |= bit;
 						} 
 						else if (code & clip_right) 
 						{
 #ifdef _FLOAT_GUNITS_
-							p->y += (GUnits)(double(beg->y - end->y) * double(clipper.Max.x - p->x) / (beg->x - end->x));
+							p->y += (GUnits)(double(beg->y - end->y) * double(clipper.xMax - p->x) / (beg->x - end->x));
 #else
 							p->y += GUnits(int64(beg->y - end->y) * int64(clipper.Max.x - p->x) / (beg->x - end->x));
 #endif
-							p->x = clipper.Max.x;
+							p->x = clipper.xMax;
 							ret |= bit;
 						}
 						if (code & clip_bottom) 
 						{
 #ifdef _FLOAT_GUNITS_
-							p->x += (GUnits)(double(beg->x - end->x) * double(clipper.Min.y - p->y) / (beg->y - end->y));
+							p->x += (GUnits)(double(beg->x - end->x) * double(clipper.yMin - p->y) / (beg->y - end->y));
 #else
 							p->x += GUnits(int64(beg->x - end->x) * int64(clipper.Min.y - p->y) / (beg->y - end->y));
 #endif
-							p->y = clipper.Min.y;
+							p->y = clipper.yMin;
 							ret |= bit;
 						} 
 						else if (code & clip_top) 
 						{
 #ifdef _FLOAT_GUNITS_
-							p->x += (GUnits)(double(beg->x - end->x) * double(clipper.Max.y - p->y) / (beg->y - end->y));
+							p->x += (GUnits)(double(beg->x - end->x) * double(clipper.yMax - p->y) / (beg->y - end->y));
 #else
 							p->x += GUnits(int64(beg->x - end->x) * int64(clipper.Max.y - p->y) / (beg->y - end->y));
 #endif
-							p->y = clipper.Max.y;
+							p->y = clipper.yMax;
 							ret |= bit;
 						}
 
@@ -388,16 +399,16 @@ namespace GisEngine
 
 			int slot = base_slot;
 
-			if(!clip_ring_op(points, pointCount, left_op(clipper.Min.x), slot))
+			if(!clip_ring_op(points, pointCount, left_op(clipper.xMin), slot))
 				slot++;
 
-			if(!clip_ring_op(points, pointCount, top_op(clipper.Max.y), slot))
+			if(!clip_ring_op(points, pointCount, top_op(clipper.yMax), slot))
 				slot++;
 
-			if(!clip_ring_op(points, pointCount, right_op(clipper.Max.x), slot))
+			if(!clip_ring_op(points, pointCount, right_op(clipper.xMax), slot))
 				slot++;
 
-			if(!clip_ring_op(points, pointCount, bottom_op(clipper.Min.y), slot))
+			if(!clip_ring_op(points, pointCount, bottom_op(clipper.yMin), slot))
 				slot++;
 
 			if(clockwise != is_clockwise(*points, *pointCount)) 
@@ -460,10 +471,10 @@ namespace GisEngine
 
 		int CRectClipper::getCode(const GRect& clipper, const GPoint& pnt)
 		{
-			int code = (clipper.Min.x > pnt.x) ? clip_left : 0;
-			code |= (clipper.Max.x < pnt.x) ? clip_right : 0;
-			code |= (clipper.Min.y > pnt.y) ? clip_bottom: 0;
-			code |= (clipper.Max.y < pnt.y) ? clip_top : 0;
+			int code = (clipper.xMin > pnt.x) ? clip_left : 0;
+			code |= (clipper.xMax < pnt.x) ? clip_right : 0;
+			code |= (clipper.yMin > pnt.y) ? clip_bottom: 0;
+			code |= (clipper.yMax < pnt.y) ? clip_top : 0;
 			return code;
 		}
 

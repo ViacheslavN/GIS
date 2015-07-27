@@ -1,77 +1,13 @@
 #ifndef _EMBEDDED_DATABASE_I_FIELD_H_
 #define _EMBEDDED_DATABASE_I_FIELD_H_
 #include "CommonLibrary/str_t.h"
-#include "SpatialKey.h"
+#include "CommonLibrary/SpatialKey.h"
 #include "IRefCnt.h"
 #include "CommonLibrary/MemoryStream.h"
+#include "CommonLibrary/Variant.h"
 namespace embDB
 {
-	enum eDataTypes
-	{
-		ftUnknown   = 0,
-		ftNull,
-		ftInteger8,
-		ftInteger16,
-		ftInteger32,
-		ftInteger64,
-		ftUInteger8,
-		ftUInteger16,
-		ftUInteger32,
-		ftUInteger64,
-		ftOid,
-		ftFloat,
-		ftDouble,
-		ftString,
-		ftBlob ,
-		ftPoint16,
-		ftPoint32,
-		ftPoint64,
-		ftShape16,
-		ftShape32,
-		ftShape64,
-		ftRaster,
-		ftRect16,
-		ftRect32,
-		ftRect64,
-		ftSerializedObject
-	};
 
-
-	struct STypeSize
-	{
-		short nLineNo;
-		size_t nSize;
-	};
-
-	static STypeSize  arrTypeSizes[] = {
-		{ftUnknown,			 0},
-		{ftNull,			 0},
-		{ftInteger8,		 1},
-		{ftInteger16,		 2},
-		{ftInteger32,		 4},
-		{ftInteger64,		 8},
-		{ftUInteger8,		 1},
-		{ftUInteger16,		 2},
-		{ftUInteger32,		 4},
-		{ftUInteger64,		 8},
-		{ftOid,				 8},
-		{ftFloat,			 4},
-		{ftDouble,			 8},
-		{ftString,			 0},
-		{ftBlob,			 8},
-		{ftPoint16,			 4},
-		{ftPoint32,			 8},
-		{ftPoint64,		    16},
-		{ftShape16,			 8},
-		{ftShape32,		     8},
-		{ftShape64,			 8},
-		{ftRaster,	 		 8},
-		{ftRect16,			 8},
-		{ftRect32,			16},
-		{ftRect64,			32},
-		{ftSerializedObject, 8}
-	
-	};
 
 	enum eDataTypesExt
 	{
@@ -138,24 +74,24 @@ namespace embDB
 		public:
 			IField(){}
 			virtual ~IField(){}
-			virtual eDataTypes getType() const = 0;
+			virtual CommonLib::eDataTypes getType() const = 0;
 			virtual const CommonLib::str_t& getName() const = 0;
 
 	};
 
-	class IFieldVariant
+	/*class IVariant
 	{
 	public:
-		IFieldVariant(){}
-		virtual ~IFieldVariant(){}
+		IVariant(){}
+		virtual ~IVariant(){}
 
 		virtual bool isEmpty(bool) const { return true;}
 		virtual bool setEmpty(){ return false;}
-		virtual uint16  getType() const { return ftUnknown;}
+		virtual uint16  getType() const { return CommonLib::dtUnknown;}
 
-		virtual bool LE(const IFieldVariant* pKey) const { return false;}
-		virtual bool EQ(const IFieldVariant* pKey) const { return false;}
-		virtual bool copy(const IFieldVariant *pVariant) { return false;}
+		virtual bool LE(const IVariant* pKey) const { return false;}
+		virtual bool EQ(const IVariant* pKey) const { return false;}
+		virtual bool copy(const IVariant *pVariant) { return false;}
 
 		virtual bool set(bool){ return false;}
 		virtual bool set(const byte*, size_t){ return false;}
@@ -219,7 +155,7 @@ namespace embDB
 			return get(val);
 		}
 
-	};
+	};*/
 
 	
 }

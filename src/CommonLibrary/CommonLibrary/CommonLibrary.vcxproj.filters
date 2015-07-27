@@ -43,6 +43,9 @@
     <Filter Include="stream\bits">
       <UniqueIdentifier>{92084605-44d3-4e94-ba55-9952d4bba969}</UniqueIdentifier>
     </Filter>
+    <Filter Include="variant">
+      <UniqueIdentifier>{ddea3504-817e-46eb-8cdf-be1c7c515d1b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -144,10 +147,31 @@
     <ClInclude Include="CommonLib_lib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IGeoShape.h">
+      <Filter>SpatialData</Filter>
+    </ClInclude>
+    <ClInclude Include="GeoPoint.h">
+      <Filter>SpatialData</Filter>
+    </ClInclude>
+    <ClInclude Include="stl_alloc.h">
+      <Filter>alloc</Filter>
+    </ClInclude>
+    <ClInclude Include="GeoShapeBuf.h">
+      <Filter>SpatialData</Filter>
+    </ClInclude>
     <ClInclude Include="GeoShape.h">
       <Filter>SpatialData</Filter>
     </ClInclude>
-    <ClInclude Include="IGeoShape.h">
+    <ClInclude Include="PodVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Variant.h">
+      <Filter>variant</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseVariant.h">
+      <Filter>variant</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialKey.h">
       <Filter>SpatialData</Filter>
     </ClInclude>
   </ItemGroup>
@@ -202,6 +226,12 @@
     </ClCompile>
     <ClCompile Include="FixedBitStream.cpp">
       <Filter>stream\bits</Filter>
+    </ClCompile>
+    <ClCompile Include="GeoShapeBuf.cpp">
+      <Filter>SpatialData</Filter>
+    </ClCompile>
+    <ClCompile Include="IGeoShape.cpp">
+      <Filter>SpatialData</Filter>
     </ClCompile>
     <ClCompile Include="GeoShape.cpp">
       <Filter>SpatialData</Filter>

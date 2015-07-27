@@ -1,15 +1,12 @@
-#ifndef _EMBEDDED_DATABASE_VARIANT_FIELD_H_
-#define _EMBEDDED_DATABASE_VARIANT_FIELD_H_
-#include "key.h"
-#include "CommonLibrary/general.h"
-#include "IField.h"
-#include "CommonLibrary/BaseVariant.h"
-namespace embDB
-{
+#ifndef _LIB_COMMON_BASE_VARIANT_H_
+#define _LIB_COMMON_BASE_VARIANT_H_
+#include "general.h"
+#include "Variant.h"
 
+namespace CommonLib
+{
 	
-	
-	/*template <class Type, int FieldType>
+	template <class Type, int DataType>
 	class IBaseVariant : public IVariant
 	{
 	public:
@@ -30,7 +27,7 @@ namespace embDB
 		}
 		virtual uint16 getType() const
 		{
-			return FieldType;
+			return DataType;
 		}
 		virtual bool set( const Type& value)
 		{ 
@@ -78,9 +75,9 @@ namespace embDB
 			return true;
 
 		}
-		protected:
-			TVarType m_Value;
-			bool m_bIsEmpty;
+	protected:
+		TVarType m_Value;
+		bool m_bIsEmpty;
 	};
 
 	typedef IBaseVariant<char, dtInteger8> TVarINT8;
@@ -92,6 +89,6 @@ namespace embDB
 	typedef IBaseVariant<int64, dtInteger64> TVarINT64;
 	typedef IBaseVariant<uint64, dtUInteger64> TFVarUINT64;
 	typedef IBaseVariant<float, dtFloat> TVarFloat;
-	typedef IBaseVariant<double, dtDouble> TVarDouble;*/
+	typedef IBaseVariant<double, dtDouble> TVarDouble;
 }
 #endif

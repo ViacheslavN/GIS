@@ -27,7 +27,7 @@ void testZRect(TCoord nBegin, TCoord nEnd, TCoord nLen)
 template <class TPointType, class TCoord>
 struct TQuery
 {
-	typedef  embDB::TRect2D<TPointType>  TRect;
+	typedef  CommonLib::TRect2D<TPointType>  TRect;
 
 	TRect m_minRect;
 	TRect m_maxRect;

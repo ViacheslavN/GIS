@@ -3,7 +3,7 @@
 #include "BaseBPMapv2.h"
  
 //#include "PointSpatialBPMaTraits.h"
-#include "SpatialKey.h"
+#include "CommonLibrary/SpatialKey.h"
 #include "PoinMapInnerCompressor.h"
 #include "PoinMapLeafCompressor.h"
 #include "BPMapPointSpatialIterator.h"
@@ -35,12 +35,12 @@ namespace embDB
 		typedef _TValue      TValue;
 		typedef _TComp      TComp;
 		typedef _Transaction      Transaction;
-		typedef TRect2D<TPointType>         TRect;
+		typedef CommonLib::TRect2D<TPointType>         TRect;
 		typedef typename TBase::TInnerNode  TInnerNode;
 		typedef typename TBase::TBTreeNode  TBTreeNode;
 		typedef typename TBase::TLeafNode  TLeafNode;
 		typedef typename TBase::iterator iterator;
-		typedef TPoint2D<TPointType> TPoint;
+		typedef CommonLib::TPoint2D<TPointType> TPoint;
 
 	
 		typedef TBPTSpatialPointIteratorMap<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess,

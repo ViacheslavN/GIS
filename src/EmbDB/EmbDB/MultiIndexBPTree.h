@@ -29,7 +29,7 @@ namespace embDB
 		{
 			return !m_ParentIt.isNull();
 		}
-		virtual bool getKey(IFieldVariant* pVal)
+		virtual bool getKey(CommonLib::IVariant* pVal)
 		{
 			return pVal->setVal(m_ParentIt.key().m_key);
 		}
@@ -83,7 +83,7 @@ namespace embDB
 		}
 		~MultiIndex(){}
 
-		virtual bool insert (IFieldVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		virtual bool insert (CommonLib::IVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
 
 			iterator *pFromIterator = NULL;
@@ -110,7 +110,7 @@ namespace embDB
 			}
 			return bRet;
 		}
-		virtual bool update (IFieldVariant* pOldIndexKey, IFieldVariant* pNewIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		virtual bool update (CommonLib::IVariant* pOldIndexKey, CommonLib::IVariant* pNewIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
 			//FType val;
 			//pIndexKey->getVal(val);
@@ -118,7 +118,7 @@ namespace embDB
 			return true;
 			 
 		}
-		virtual bool remove (IFieldVariant* pIndexKey, IIndexIterator** pRetIter = NULL)
+		virtual bool remove (CommonLib::IVariant* pIndexKey, IIndexIterator** pRetIter = NULL)
 		{
 			return true;
 		}
@@ -126,7 +126,7 @@ namespace embDB
 		{
 			return true;
 		}
-		virtual IndexIteratorPtr find(IFieldVariant* pIndexKey)
+		virtual IndexIteratorPtr find(CommonLib::IVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -136,7 +136,7 @@ namespace embDB
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
 			return IndexIteratorPtr(pIndexIterator);
 		}
-		virtual IndexIteratorPtr lower_bound(IFieldVariant* pIndexKey)
+		virtual IndexIteratorPtr lower_bound(CommonLib::IVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -146,7 +146,7 @@ namespace embDB
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
 			return IndexIteratorPtr(pIndexIterator);
 		}
-		virtual IndexIteratorPtr upper_bound(IFieldVariant* pIndexKey)
+		virtual IndexIteratorPtr upper_bound(CommonLib::IVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -158,7 +158,7 @@ namespace embDB
 		}
 
 
-		IndexIteratorPtr find(IFieldVariant* pIndexKey, uint64 nOID)
+		IndexIteratorPtr find(CommonLib::IVariant* pIndexKey, uint64 nOID)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -168,7 +168,7 @@ namespace embDB
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
 			return IndexIteratorPtr(pIndexIterator);
 		}
-		IndexIteratorPtr lower_bound(IFieldVariant* pIndexKey, uint64 nOID)
+		IndexIteratorPtr lower_bound(CommonLib::IVariant* pIndexKey, uint64 nOID)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -178,7 +178,7 @@ namespace embDB
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
 			return IndexIteratorPtr(pIndexIterator);
 		}
-		IndexIteratorPtr upper_bound(IFieldVariant* pIndexKey, uint64 nOID)
+		IndexIteratorPtr upper_bound(CommonLib::IVariant* pIndexKey, uint64 nOID)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -188,7 +188,7 @@ namespace embDB
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
 			return IndexIteratorPtr(pIndexIterator);
 		}
-		bool remove (IFieldVariant* pIndexKey, uint64 nOID)
+		bool remove (CommonLib::IVariant* pIndexKey, uint64 nOID)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -261,16 +261,16 @@ namespace embDB
 
 
 
-	typedef MultiIndexFieldHandler<int64,  ftInteger64> TMultiIndexNT64;
-	typedef MultiIndexFieldHandler<uint64, ftUInteger64> TMultiIndexUINT64;
-	typedef MultiIndexFieldHandler<int32,  ftInteger32> TMultiIndexINT32;
-	typedef MultiIndexFieldHandler<uint32, ftUInteger32> TMultiIndexUINT32;
-	typedef MultiIndexFieldHandler<int16,  ftInteger16> TMultiIndexINT16;
-	typedef MultiIndexFieldHandler<uint16, ftUInteger16> TMultiIndexUINT16;
-	typedef MultiIndexFieldHandler<int32,  ftUInteger8> TMultiIndexINT8;
-	typedef MultiIndexFieldHandler<uint32, ftInteger8> TMultiIndexUINT8;
-	typedef MultiIndexFieldHandler<double, ftDouble> TMultiIndexDouble;
-	typedef MultiIndexFieldHandler<float,  ftFloat> TMultiIndexFloat;
+	typedef MultiIndexFieldHandler<int64,  CommonLib::dtInteger64> TMultiIndexNT64;
+	typedef MultiIndexFieldHandler<uint64, CommonLib::dtUInteger64> TMultiIndexUINT64;
+	typedef MultiIndexFieldHandler<int32,  CommonLib::dtInteger32> TMultiIndexINT32;
+	typedef MultiIndexFieldHandler<uint32, CommonLib::dtUInteger32> TMultiIndexUINT32;
+	typedef MultiIndexFieldHandler<int16,  CommonLib::dtInteger16> TMultiIndexINT16;
+	typedef MultiIndexFieldHandler<uint16, CommonLib::dtUInteger16> TMultiIndexUINT16;
+	typedef MultiIndexFieldHandler<int32,  CommonLib::dtUInteger8> TMultiIndexINT8;
+	typedef MultiIndexFieldHandler<uint32, CommonLib::dtInteger8> TMultiIndexUINT8;
+	typedef MultiIndexFieldHandler<double, CommonLib::dtDouble> TMultiIndexDouble;
+	typedef MultiIndexFieldHandler<float,  CommonLib::dtFloat> TMultiIndexFloat;
 }
 
 #endif

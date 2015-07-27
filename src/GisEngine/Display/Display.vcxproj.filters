@@ -69,9 +69,6 @@
     <ClInclude Include="Vector3d.h">
       <Filter>Transformation</Filter>
     </ClInclude>
-    <ClInclude Include="DisplayTransformation.h">
-      <Filter>Transformation</Filter>
-    </ClInclude>
     <ClInclude Include="Matrix4.h">
       <Filter>Transformation</Filter>
     </ClInclude>
@@ -116,6 +113,9 @@
     </ClInclude>
     <ClInclude Include="ClipRectAlloc.h">
       <Filter>Clip</Filter>
+    </ClInclude>
+    <ClInclude Include="IDisplayTransformation.h">
+      <Filter>Transformation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

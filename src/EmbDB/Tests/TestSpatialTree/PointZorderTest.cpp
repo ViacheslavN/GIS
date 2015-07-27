@@ -69,8 +69,8 @@ bool FindMinZVal(const TZVal& zVal,
 	return true;
 }
 
-void TestFullScan(embDB::TBPVector<embDB::ZOrderPoint2DU16>& vecPoint, embDB::TRect2D<short>& extent);
-void TestWithSubQuery(embDB::TBPVector<embDB::ZOrderPoint2DU16>& vecPoint, embDB::TRect2D<short>& extent);
+void TestFullScan(embDB::TBPVector<embDB::ZOrderPoint2DU16>& vecPoint, CommonLib::TRect2D<short>& extent);
+void TestWithSubQuery(embDB::TBPVector<embDB::ZOrderPoint2DU16>& vecPoint, CommonLib::TRect2D<short>& extent);
 void TestPointZorder()
 {
 	 
@@ -106,7 +106,7 @@ void TestPointZorder()
 	}
 
 	embDB::ZPointComp<embDB::ZOrderPoint2DU16> comp;
-	embDB::TRect2D<short>  extent(qXmin, qYmin, qXmax, qYmax);
+	CommonLib::TRect2D<short>  extent(qXmin, qYmin, qXmax, qYmax);
 	vecPoint.quick_sort(comp);
  
 	std::cout<< "Search" << std::endl;
@@ -114,7 +114,7 @@ void TestPointZorder()
 	TestWithSubQuery(vecPoint, extent);
 };
 
-void TestFullScan(embDB::TBPVector<embDB::ZOrderPoint2DU16>& vecPoint, embDB::TRect2D<short>& extent)
+void TestFullScan(embDB::TBPVector<embDB::ZOrderPoint2DU16>& vecPoint, CommonLib::TRect2D<short>& extent)
 {
 	embDB::ZOrderPoint2DU16 zMin(extent.m_minX, extent.m_minY);
 	embDB::ZOrderPoint2DU16 zMax(extent.m_maxX, extent.m_maxY);
@@ -145,7 +145,7 @@ void TestFullScan(embDB::TBPVector<embDB::ZOrderPoint2DU16>& vecPoint, embDB::TR
 	std::cout<< "TestFullScan InRect " << nInRect << " InOut " << nInOut << " Total " << nTotal << std::endl;
 }
 
-void TestWithSubQuery(embDB::TBPVector<embDB::ZOrderPoint2DU16>& vecPoint, embDB::TRect2D<short>& extent)
+void TestWithSubQuery(embDB::TBPVector<embDB::ZOrderPoint2DU16>& vecPoint, CommonLib::TRect2D<short>& extent)
 {
 	embDB::TBPVector<embDB::ZOrderPoint2DU16> vecQueryPoint;
 

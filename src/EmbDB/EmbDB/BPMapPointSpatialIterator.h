@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_B_PLUS_TREE_SPATIAL_POINT_ITERATOR_MAP_H_
 //#include "PointSpatialBPMaTraits.h"
 #include "BPTreeNodeMap.h"
-#include "SpatialKey.h"
+#include "CommonLibrary/SpatialKey.h"
 #include "simple_stack.h"
 namespace embDB
 {
@@ -25,7 +25,7 @@ namespace embDB
 		typedef	 _Transaction  Transaction;
 		typedef _TLeafNode TBTreeLeafNode;
 		typedef  _TBTreeNode TBTreeNode;
-		typedef TRect2D<TPointType>         TRect;
+		typedef CommonLib::TRect2D<TPointType>         TRect;
 		typedef IRefCntPtr<TBTreeNode> TBTreeNodePtr;
 		TComp m_comp;
 

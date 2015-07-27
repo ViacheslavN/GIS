@@ -82,8 +82,8 @@ bool FindRectMinZVal(const TZVal& zVal,
 }
 
 
-void TestFullRectScan(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, embDB::TRect2D<short>& extent, uint16 xMax, uint16 yMax, std::set<int> *pSet = NULL);
-void TestRectWithSubQuery(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, embDB::TRect2D<short>& extent, uint16 xMax, uint16 yMax, std::set<int> *pSet = NULL);
+void TestFullRectScan(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, CommonLib::TRect2D<short>& extent, uint16 xMax, uint16 yMax, std::set<int> *pSet = NULL);
+void TestRectWithSubQuery(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, CommonLib::TRect2D<short>& extent, uint16 xMax, uint16 yMax, std::set<int> *pSet = NULL);
 
 void TestRectZorder()
 {
@@ -119,7 +119,7 @@ void TestRectZorder()
 	}
 
 	embDB::ZPointComp<embDB::ZOrderRect2DU16> comp;
-	embDB::TRect2D<short>  extent(qXmin, qYmin, qXmax, qYmax);
+	CommonLib::TRect2D<short>  extent(qXmin, qYmin, qXmax, qYmax);
 	vecRect.quick_sort(comp);
 	std::set<int> fullset, subset;
 	TestFullRectScan(vecRect, extent, Xmax , Ymax, &fullset );
@@ -150,14 +150,14 @@ void TestRectZorder(int Xmax, int Ymax, int qXmin, int qYmin, int qXmax, int qYm
 	}
 
 	embDB::ZPointComp<embDB::ZOrderRect2DU16> comp;
-	embDB::TRect2D<short>  extent(qXmin, qYmin, qXmax, qYmax);
+	CommonLib::TRect2D<short>  extent(qXmin, qYmin, qXmax, qYmax);
 	vecRect.quick_sort(comp);
 
 	TestFullRectScan(vecRect, extent, 0xFFFF, 0xFFFF);
 	TestRectWithSubQuery(vecRect, extent, 0xFFFF, 0xFFFF);
 }
 
-void TestFullRectScan(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, embDB::TRect2D<short>& extent, uint16 xMax, uint16 yMax,  std::set<int> *pSet)
+void TestFullRectScan(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, CommonLib::TRect2D<short>& extent, uint16 xMax, uint16 yMax,  std::set<int> *pSet)
 {
 	embDB::ZOrderRect2DU16 zKeyMin(extent.m_minX, extent.m_minY, 0, 0);
 	embDB::ZOrderRect2DU16 zKeyMax(extent.m_maxX, extent.m_maxY, xMax, yMax);
@@ -177,7 +177,7 @@ void TestFullRectScan(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, embDB::
 		uint16 xMin,  yMin,  xMax,  yMax;
 		embDB::ZOrderRect2DU16& zVal = vecRect[i];
 		zVal.getXY(xMin,yMin, xMax, yMax);
-		embDB::TRect2D<short> rectFeature;
+		CommonLib::TRect2D<short> rectFeature;
 		rectFeature.set(xMin, yMin, xMax, yMax);
 		if(!extent.isIntersection(rectFeature) && !extent.isInRect(rectFeature))
 		{
@@ -196,7 +196,7 @@ void TestFullRectScan(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, embDB::
 }
 
 
-void TestRectWithSubQuery(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, embDB::TRect2D<short>& extent, uint16 xMax, uint16 yMax,  std::set<int> *pSet )
+void TestRectWithSubQuery(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, CommonLib::TRect2D<short>& extent, uint16 xMax, uint16 yMax,  std::set<int> *pSet )
 {
 	embDB::ZOrderRect2DU16 zKeyMin(extent.m_minX, extent.m_minY, 0, 0);
 	embDB::ZOrderRect2DU16 zKeyMax(extent.m_maxX, extent.m_maxY, xMax, yMax);
@@ -222,7 +222,7 @@ void TestRectWithSubQuery(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, emb
 		uint16 xMin1,  yMin1,  xMax1,  yMax1;
 		
 		zVal.getXY(xMin1,yMin1, xMax1, yMax1);
-		embDB::TRect2D<short> rectFeature;
+		CommonLib::TRect2D<short> rectFeature;
 		rectFeature.set(xMin1, yMin1, xMax1, yMax1);
 		if(!extent.isIntersection(rectFeature) && !extent.isInRect(rectFeature))
 		{

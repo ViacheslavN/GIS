@@ -28,9 +28,9 @@ namespace embDB
 		for (size_t i = 0; i < nCount; ++i)
 		{
 			short nType = stream.readintu16();
-			assert(nType >= ftUnknown && nType <= _countof(arrTypeSizes));
-			uint32 nFieldSize = arrTypeSizes[nType].nSize;
-			if(nType == ftString)
+			assert(nType >= CommonLib::dtUnknown && nType <= _countof(CommonLib::arrTypeSizes));
+			uint32 nFieldSize = CommonLib::arrTypeSizes[nType].nSize;
+			if(nType == CommonLib::dtString)
 				nFieldSize = stream.readIntu32();
 			m_nRowSize += nFieldSize;
 			m_vecScheme.push_back(nType);
@@ -52,7 +52,7 @@ namespace embDB
 		for (size_t i = 0, sz = m_vecScheme.size(); i < sz; ++i)
 		{
 			stream.write(m_vecScheme[i]);
-			if(m_vecScheme[i] == ftString)
+			if(m_vecScheme[i] == CommonLib::dtString)
 			{
 				stream.write(m_vecSchemeParams[i].second);
 			}
@@ -64,7 +64,7 @@ namespace embDB
 		return true;
 	}
 
-	void CompIndexParams::addParams(eDataTypes type, uint32 nSize)
+	void CompIndexParams::addParams(CommonLib::eDataTypes type, uint32 nSize)
 	{
 		m_vecScheme.push_back(type);
 		m_vecSchemeParams.push_back(std::make_pair(type, nSize));
