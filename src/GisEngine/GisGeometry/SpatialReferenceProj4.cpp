@@ -137,16 +137,16 @@ namespace GisEngine
 			bool is_latlong = pj_is_latlong((PJ*)m_hHandle) != 0;
 			double koef = is_latlong ? DEG_TO_RAD : 1.0;
 
-			point_sp_x = pPoint->dX*koef;
-			point_sp_y = pPoint->dY*koef;
+			point_sp_x = pPoint->x*koef;
+			point_sp_y = pPoint->y*koef;
 
 			int ret = pj_transform((PJ*)m_hHandle, pj, 1, 1, &point_sp_x, &point_sp_y, 0);
 			if (ret)
 				return false;
 
 			koef = pj_is_latlong(pj) != 0 ? RAD_TO_DEG : 1.0;
-			pPoint->dX = point_sp_x * koef;
-			pPoint->dY = point_sp_y * koef;
+			pPoint->x = point_sp_x * koef;
+			pPoint->y = point_sp_y * koef;
 			 return true;
 
 		}

@@ -309,13 +309,13 @@ namespace CommonLib
 		return NULL;
 	}
 
-	GeoPt* CGeoShapeBuf::getPoints()
+	GisXYPoint* CGeoShapeBuf::getPoints()
 	{
 		if(m_params.m_bIsValid)
-			return const_cast<GeoPt*>(m_params.m_pPoints);
-		return const_cast<GeoPt*>(getXYs(m_pBuffer));
+			return const_cast<GisXYPoint*>(m_params.m_pPoints);
+		return const_cast<GisXYPoint*>(getXYs(m_pBuffer));
 	}
-	const GeoPt* CGeoShapeBuf::getPoints() const
+	const GisXYPoint* CGeoShapeBuf::getPoints() const
 	{
 		if(m_params.m_bIsValid)
 			return m_params.m_pPoints;
@@ -444,14 +444,14 @@ namespace CommonLib
 		return 0;
 	}
 
-	const GeoPt* CGeoShapeBuf::getXYs(const unsigned char* buf)
+	const GisXYPoint* CGeoShapeBuf::getXYs(const unsigned char* buf)
 	{
 		eShapeType genType = generalType(buf);
 		size_t nparts = partCount(buf);
 		return getXYs(buf, genType, nparts);
 	}
 
-	const GeoPt* CGeoShapeBuf::getXYs(const unsigned char* buf, eShapeType general_type, uint32 partCount)
+	const GisXYPoint* CGeoShapeBuf::getXYs(const unsigned char* buf, eShapeType general_type, uint32 partCount)
 	{
 		eShapeType genType = general_type;
 		uint32 nparts = partCount;
@@ -475,7 +475,7 @@ namespace CommonLib
 			return NULL;
 		}
 
-		return reinterpret_cast<const GeoPt*>(buf);
+		return reinterpret_cast<const GisXYPoint*>(buf);
 	}
 
 

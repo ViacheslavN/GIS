@@ -7,7 +7,7 @@ namespace CommonLib
 	class CGeoShape : public IGeoShape
 	{
 
-		typedef TPodVector<GeoPt> TVecGeoPt;
+		typedef TPodVector<GisXYPoint> TVecGeoPt;
 		typedef TPodVector<double> TVecZ;
 		typedef TPodVector<double> TVecM;
 		typedef TPodVector<uint32> TVecParts;
@@ -32,8 +32,8 @@ namespace CommonLib
 		virtual uint32  getPartSize(uint32 idx) const;
 		virtual const uint32*  getParts() const;
 		virtual uint32*  getParts();
-		virtual GeoPt* getPoints();
-		virtual const GeoPt* getPoints() const;
+		virtual GisXYPoint* getPoints();
+		virtual const GisXYPoint* getPoints() const;
 
 		virtual uint32 getPointCnt() const;
 

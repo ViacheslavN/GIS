@@ -96,7 +96,7 @@ namespace CommonLib
 		elliptic_arc_flag_is_minor    = 4096,
 		elliptic_arc_flag_is_complete = 8192
 	};
-	struct GeoPt
+	struct GisXYPoint
 	{
 		double x;
 		double y;
@@ -116,8 +116,8 @@ namespace CommonLib
 			virtual const uint32*  getParts() const = 0;
 			virtual uint32*  getParts() = 0;
 
-			virtual GeoPt* getPoints() = 0;
-			virtual const GeoPt* getPoints() const = 0;
+			virtual GisXYPoint* getPoints() = 0;
+			virtual const GisXYPoint* getPoints() const = 0;
 
 			virtual uint32 getPointCnt() const= 0;
 

@@ -22,12 +22,8 @@ struct GisXYZPoint
 	double dZ;
 };
 
-struct GisXYPoint
-{
-	double dX;
-	double dY;
-};
-
+typedef CommonLib::GisXYPoint GisXYPoint;
+ 
 
 #ifndef M_PI
 #define M_PI            3.14159265358979323846

@@ -84,11 +84,11 @@ namespace CommonLib
 	{
 		return m_vecParts.begin();
 	}
-	GeoPt* CGeoShape::getPoints()
+	GisXYPoint* CGeoShape::getPoints()
 	{
 		return m_vecPoints.begin();
 	}
-	const GeoPt* CGeoShape::getPoints() const
+	const GisXYPoint* CGeoShape::getPoints() const
 	{
 		return m_vecPoints.begin();
 	}

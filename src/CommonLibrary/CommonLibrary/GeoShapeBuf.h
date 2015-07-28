@@ -9,7 +9,7 @@ namespace CommonLib
 	{
 		union
 		{
-			GeoPt   centerPoint;
+			GisXYPoint   centerPoint;
 			double angles[2];
 		};
 
@@ -18,14 +18,14 @@ namespace CommonLib
 
 	struct segment_bezier_curve_t
 	{
-		GeoPt controlPoints[2];
+		GisXYPoint controlPoints[2];
 	};
 
 	struct segment_elliptic_arc_t
 	{
 		union
 		{
-			GeoPt center;
+			GisXYPoint center;
 			double vs[2];
 		};
 
@@ -76,8 +76,8 @@ namespace CommonLib
 			virtual const uint32*  getParts() const ;
 			virtual uint32*  getParts();
 
-			virtual GeoPt* getPoints();
-			virtual const GeoPt* getPoints() const;
+			virtual GisXYPoint* getPoints();
+			virtual const GisXYPoint* getPoints() const;
 			virtual uint32 getPointCnt() const;
 
 
@@ -111,8 +111,8 @@ namespace CommonLib
 			static eShapeType  type(const unsigned char* buf);
 			static eShapeType  generalType(const unsigned char* buf);
 			
-			static const GeoPt* getXYs(const unsigned char* buf);
-			static const GeoPt* getXYs(const unsigned char* buf, eShapeType  general_type, uint32 partCount);
+			static const GisXYPoint* getXYs(const unsigned char* buf);
+			static const GisXYPoint* getXYs(const unsigned char* buf, eShapeType  general_type, uint32 partCount);
 
 		private:
 			
@@ -136,7 +136,7 @@ namespace CommonLib
 				eShapeType m_general_type;
 				uint32 m_nPointCount;
 				uint32 m_nPartCount;
-				const GeoPt *m_pPoints;
+				const GisXYPoint *m_pPoints;
 				bool m_bIsValid;
 			};
 
