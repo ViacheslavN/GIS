@@ -1,6 +1,7 @@
 #ifndef _LIB_COMMON_I_VATIANT_H_
 #define _LIB_COMMON_I_VATIANT_H_
 #include "SpatialKey.h"
+#include "stream.h"
 namespace CommonLib
 {
 	enum eDataTypes
@@ -83,6 +84,7 @@ namespace CommonLib
 		virtual bool LE(const IVariant* pKey) const { return false;}
 		virtual bool EQ(const IVariant* pKey) const { return false;}
 		virtual bool copy(const IVariant *pVariant) { return false;}
+		virtual IVariant* clone() const {return NULL;}
 
 		virtual bool set(bool){ return false;}
 		virtual bool set(const byte*, size_t){ return false;}

@@ -33,12 +33,21 @@
     <ClInclude Include="GisEngineCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleEnum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertySet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Units.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PropertySet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

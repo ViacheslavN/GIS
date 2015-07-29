@@ -14,6 +14,7 @@
 #include "CommonLibrary/stream.h"
 #include <vector>
 #include <algorithm>
+#include <map>
 
 struct GisXYZPoint
 {

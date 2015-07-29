@@ -33,9 +33,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ISpatialReference.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GisGeometryLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -53,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="ConvertorWorldToInt.h">
       <Filter>TopologicalOperator</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

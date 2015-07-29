@@ -1,7 +1,7 @@
 #ifndef GIS_ENGINE_GEOMETRY_I_SPATIAL_REFERENCE_PROJ4_H_
 #define GIS_ENGINE_GEOMETRY_I_SPATIAL_REFERENCE_PROJ4_H_
 
-#include "ISpatialReference.h"
+#include "Geometry.h"
 
 
 namespace GisEngine

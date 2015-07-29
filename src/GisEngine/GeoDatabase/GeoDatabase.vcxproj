@@ -455,10 +455,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeoDatabase.h" />
+    <ClInclude Include="ShapefileFeatureClass.h" />
+    <ClInclude Include="ShapefileWorkspace.h" />
+    <ClInclude Include="shapelib\shapefil.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ShapefileFeatureClass.cpp" />
+    <ClCompile Include="ShapefileWorkspace.cpp" />
+    <ClCompile Include="shapelib\dbfopen.cpp" />
+    <ClCompile Include="shapelib\shpopen.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugShared|Win32'">Create</PrecompiledHeader>
