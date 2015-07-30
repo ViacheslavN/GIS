@@ -1,30 +1,31 @@
-#ifndef _EMBEDDED_DATABASE_I_REF_CNT_H_
-#define _EMBEDDED_DATABASE_I_REF_CNT_H_
+#ifndef _COMMON_LIB_I_REF_CNT_H_
+#define _COMMON_LIB_I_REF_CNT_H_
 
-#include "CommonLibrary/Interlocked.h"
-#include "CommonLibrary/delegate.h"
-namespace embDB
+#include "Interlocked.h"
+#include "delegate.h"
+namespace CommonLib
 {
-	class IRefCnt {
+	class IRefCnt
+	{
 	public:
 		virtual int AddRef() const =0;
-		virtual int Release() =0;
+		virtual int Release() = 0;
 	protected:
 		virtual ~IRefCnt() {}
 	};
 
 	class RefCounter;
-	typedef CommonLib::delegate1_t<RefCounter*> TRemoveFunk;
+	typedef delegate1_t<RefCounter*> TRemoveFunk;
 	class RefCounter : public IRefCnt
 	{
 	public:
 		RefCounter(TRemoveFunk *pRem = NULL) : m_nCounter(0), m_pRemFunk(pRem)
 		{}
-		RefCounter(LONG val, TRemoveFunk *pRem = NULL) : m_nCounter(val) {}
+		RefCounter(Interlocked::inc_type val, TRemoveFunk *pRem = NULL) : m_nCounter(val) {}
 		~RefCounter(){};
-		virtual int AddRef() const { return CommonLib::Interlocked::Increment(&m_nCounter);}
+		virtual int AddRef() const { return Interlocked::Increment(&m_nCounter);}
 		virtual int Release()  {
-			if(CommonLib::Interlocked::Decrement(&m_nCounter) != 0)
+			if(Interlocked::Decrement(&m_nCounter) != 0)
 			{
 				return m_nCounter;
 			}
@@ -38,8 +39,8 @@ namespace embDB
 		TRemoveFunk* m_pRemFunk;
 	private:
 		mutable CommonLib::Interlocked::inc_type m_nCounter;
-	
-		
+
+
 	};
 
 
@@ -49,11 +50,11 @@ namespace embDB
 	public:
 		AutoRefCounter() : m_nCounter(0)
 		{}
-		AutoRefCounter(LONG val) : m_nCounter(val) {}
+		AutoRefCounter(Interlocked::inc_type val) : m_nCounter(val) {}
 		~AutoRefCounter(){};
-		virtual int AddRef() const { return CommonLib::Interlocked::Increment(&m_nCounter);}
+		virtual int AddRef() const { return Interlocked::Increment(&m_nCounter);}
 		virtual int Release()  {
-			if(CommonLib::Interlocked::Decrement(&m_nCounter) != 0)
+			if(Interlocked::Decrement(&m_nCounter) != 0)
 			{
 				return m_nCounter;
 			}
@@ -62,7 +63,7 @@ namespace embDB
 		}
 		bool isRemovable() const { return 0 == m_nCounter; }
 	private:
-		mutable CommonLib::Interlocked::inc_type m_nCounter;
+		mutable Interlocked::inc_type m_nCounter;
 
 
 	};
@@ -154,7 +155,7 @@ namespace embDB
 	private:
 		Obj* m_pObj;
 	};
-	 
+
 }
 #endif
 

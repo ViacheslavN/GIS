@@ -4,8 +4,9 @@
 #include "CommonLibrary/Variant.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/MemoryStream.h"
+#include "CommonLibrary/IRefCnt.h"
 #include "Common.h"
-
+ 
 namespace GisEngine
 {
 	namespace Common
@@ -21,7 +22,7 @@ namespace GisEngine
 			virtual void load(CommonLib::IReadStream* pReadStream) = 0;
 		};
 
-		class IPropertySet
+		class IPropertySet : public CommonLib::AutoRefCounter
 		{
 		public:
 			IPropertySet(){}
@@ -34,6 +35,8 @@ namespace GisEngine
 			virtual void  RemoveAllProperties() = 0;
 
 		};
+
+		typedef CommonLib::IRefCntPtr<IPropertySet> IPropertySetPtr;
 	}
 }
 

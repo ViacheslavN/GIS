@@ -55,6 +55,11 @@ namespace CommonLib
 	{
 		bool deleteFile(const wchar_t *pszFileName);
 		bool isFileExisit(const wchar_t *pszFileName);
+		void getFiles(const str_t& path, std::vector<str_t>& vecFiles);
+		str_t  FindFileName(const str_t& sFullFileName);
+		str_t  FindOnlyFileName(const str_t& sFullFileName);
+		str_t  FindFileExtension(const str_t& sFullFileName);
+		str_t  FindFilePath(const str_t& sFullFileName);
 	}
 }
 

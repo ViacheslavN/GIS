@@ -94,6 +94,21 @@ namespace FileSystem
 		DWORD dwAttr = ::GetFileAttributes(pszFileName);
 		return ((dwAttr != INVALID_FILE_ATTRIBUTES) && !(dwAttr & FILE_ATTRIBUTE_DIRECTORY));
 	}
+	void getFiles(const str_t& path, std::vector<str_t>& vecFiles)
+	{
+		WIN32_FIND_DATAW findData;
+		HANDLE hFind;
+
+		hFind = FindFirstFileW(path.cwstr(), &findData);
+		if(hFind != INVALID_HANDLE_VALUE)
+		{
+			do
+			{ 
+				vecFiles.push_back(findData.cFileName);
+			}
+			while(::FindNextFileW(hFind, &findData));
+		}
+	}
 }
 
 }

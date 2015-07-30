@@ -3,7 +3,7 @@
 
 #include "Common/Common.h"
 #include "Common/Units.h"
-
+#include "CommonLibrary/IRefCnt.h"
 
 namespace GisEngine
 {
@@ -11,7 +11,7 @@ namespace GisEngine
 	{
 
 	
-		class ISpatialReference
+		class ISpatialReference : public CommonLib::AutoRefCounter
 		{
 		public:
 			ISpatialReference(){};
@@ -30,6 +30,8 @@ namespace GisEngine
 			virtual void save(CommonLib::IWriteStream *pStream) const = 0;
 			virtual void load(CommonLib::IReadStream *pStream) = 0;
 		};
+
+		typedef CommonLib::IRefCntPtr<ISpatialReference> ISpatialReferencePtr;
 	}
 }
 

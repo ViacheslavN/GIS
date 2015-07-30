@@ -485,7 +485,6 @@
     <ClInclude Include="IDBShema.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IRecordset.h" />
-    <ClInclude Include="IRefCnt.h" />
     <ClInclude Include="IShape.h" />
     <ClInclude Include="ISpatialQuery.h" />
     <ClInclude Include="IStatement.h" />

@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_I_FIELD_H_
 #include "CommonLibrary/str_t.h"
 #include "CommonLibrary/SpatialKey.h"
-#include "IRefCnt.h"
+#include "CommonLibrary/IRefCnt.h"
 #include "CommonLibrary/MemoryStream.h"
 #include "CommonLibrary/Variant.h"
 namespace embDB

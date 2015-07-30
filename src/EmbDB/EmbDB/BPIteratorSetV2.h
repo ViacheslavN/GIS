@@ -26,7 +26,7 @@ namespace embDB
 		typedef _TInnerNode	TInnerNode;
 		typedef _TLeafNode TBTreeLeafNode;
 		typedef _TBTreeNode TBTreeNode;
-		typedef IRefCntPtr<TBTreeNode> TBTreeNodePtr;
+		typedef CommonLib::IRefCntPtr<TBTreeNode> TBTreeNodePtr;
 
 		typedef  TBPVector<TKey> TLeafMemSet;
 		/*typedef BPTreeNodeSetv2<TKey, TComp, Transaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode, TBTreeNode> TBTreeNode;

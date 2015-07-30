@@ -8,14 +8,23 @@ namespace GisEngine
 {
 	namespace Geometry
 	{
+		enum eSPRefParamType
+		{
+			eSPRefTypePRJFilePath = 1,
+			eSPRefTypePRJ4String = 2
+		};
+
+
 		class CSpatialReferenceProj4 : public ISpatialReference
 		{
 		public:
 			 typedef void* Handle;
 
-			CSpatialReferenceProj4(const CommonLib::str_t& prj4Str);
+			CSpatialReferenceProj4(const CommonLib::str_t& prj4Str, eSPRefParamType paramType= eSPRefTypePRJ4String);
 			CSpatialReferenceProj4(int prjCode);
 			CSpatialReferenceProj4(Handle hHandle);
+			CSpatialReferenceProj4(const GisBoundingBox& bbox);
+			 
 			virtual ~CSpatialReferenceProj4();
 
 			virtual bool  IsValid();

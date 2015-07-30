@@ -115,11 +115,11 @@ namespace embDB
 		typedef _TLeafNode	TLeafNode;
 		typedef _TBTreeNode TBTreeNode;
 		//typedef _TIerator iterator;
-		typedef IRefCntPtr<TBTreeNode> TBTreeNodePtr;
+		typedef CommonLib::IRefCntPtr<TBTreeNode> TBTreeNodePtr;
  
  
 		typedef BPTreeStatistics<int64, _Transaction, _TKey> BPTreeStatisticsInfo;
-		typedef CommonLib::delegateimpl1_t<TBPlusTreeSetV2, RefCounter*> TRemoveNodeDelegate;
+		typedef CommonLib::delegateimpl1_t<TBPlusTreeSetV2, CommonLib::RefCounter*> TRemoveNodeDelegate;
 		std::auto_ptr<TRemoveNodeDelegate> m_NodeRemove;
 
 		typedef typename TInnerNode::TInnerCompressorParamsBase TInnerCompressorParamsBase;
@@ -363,7 +363,7 @@ namespace embDB
 		//delete pNode;
 		return true;
 	}
-	void deleteNodeRef(RefCounter *pRefPtr)
+	void deleteNodeRef(CommonLib::RefCounter *pRefPtr)
 	{
 		TBTreeNode* pNode = (TBTreeNode*)pRefPtr;
 		if(pNode->getFlags() & REMOVE_NODE)

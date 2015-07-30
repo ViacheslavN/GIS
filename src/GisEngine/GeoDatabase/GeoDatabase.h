@@ -6,6 +6,8 @@
 #include "CommonLibrary/Variant.h"
 #include "CommonLibrary/IGeoShape.h"
 #include "GisGeometry/Geometry.h"
+#include "CommonLibrary/IRefCnt.h"
+
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -39,25 +41,39 @@ namespace GisEngine
 		struct ICursor;
 		struct IDatasetContainer;
 		struct IDataset;
+		struct IFields;
+		struct IFeatureClass;
+		struct ITable;
 
 		struct IWorkspace
 		{
 				IWorkspace(){}
 				virtual ~IWorkspace(){}
 				virtual const CommonLib::str_t& GetWorkspaceName() const = 0; 
-				virtual Common::IPropertySet*  GetConnectionProperties() const = 0; 
+				virtual Common::IPropertySetPtr GetConnectionProperties() const = 0; 
 				virtual eWorkspaceID GetWorkspaceID() const = 0;
-				virtual IDatasetContainer* GetDatasetContainer() = 0;
+				//virtual IDatasetContainer* GetDatasetContainer() = 0;
+				virtual uint32 GetDatasetCount() const = 0;
+				virtual IDataset* GetDataset(uint32 nIdx) const = 0;
+				virtual void RemoveDataset(uint32 nIdx) = 0;
+				virtual void RemoveDataset(IDataset *pDataset) = 0;
+
+				virtual ITable*  CreateTable(const CommonLib::str_t& name, IFields* fields) = 0;
+				virtual IFeatureClass* CreateFeatureClass(const CommonLib::str_t& name, IFields* fields, const CommonLib::str_t& shapeFieldName) = 0;
+
+				virtual ITable*  OpenTable(const CommonLib::str_t& name) = 0;
+				virtual IFeatureClass* OpenFeatureClass(const CommonLib::str_t& name) = 0;
+
 		};
 
 
-		struct IDatasetContainer
+		/*struct IDatasetContainer 
 		{
 			IDatasetContainer();
 			virtual ~IDatasetContainer();
 			virtual void reset() = 0;
 			virtual bool next(IDataset** pObj) = 0;
-		};
+		};*/
 		
 		struct IDataset  
 		{
@@ -66,6 +82,7 @@ namespace GisEngine
 			virtual eDatasetType  GetDatasetType() const = 0;
 			virtual IWorkspace*    GetWorkspace() const = 0;
 			virtual const CommonLib::str_t&   GetDatasetName() const = 0;
+			virtual const CommonLib::str_t&   GetDatasetViewName() const = 0;
 		};
 
  
@@ -79,7 +96,7 @@ namespace GisEngine
 			virtual IFields*             GetFields() const  = 0;
 			virtual bool                 HasOIDField() const = 0;
 			virtual const CommonLib::str_t& GetOIDFieldName() const = 0;
-			virtual IRow*				  GetRow(int id) = 0;
+			virtual IRow*				  GetRow(int64 id) = 0;
 			virtual ICursor*			  Search(IQueryFilter* filter, bool recycling) = 0;
 		};
 
@@ -103,7 +120,7 @@ namespace GisEngine
 			virtual const CommonLib::str_t& GetName() const = 0;
 			virtual void                 SetName( const CommonLib::str_t& name) = 0;
 			virtual  const CommonLib::str_t&  GetAliasName() const = 0;
-			virtual void                 SetAliasName(const  const CommonLib::str_t&  name) = 0;
+			virtual void                 SetAliasName(const   CommonLib::str_t&  name) = 0;
 			virtual bool                 GetIsEditable() const = 0;
 			virtual void                 SetIsEditable(bool flag) = 0;
 			virtual bool                 GetIsNullable() const = 0;
@@ -133,8 +150,8 @@ namespace GisEngine
 			virtual void      SetField(int index, IField* field) = 0;
 			virtual void      AddField(IField* field) = 0;
 			virtual void      RemoveField(int index) = 0;
-			virtual int       FindField(const const CommonLib::str_t& name) const = 0;
-			virtual bool      FieldExists(const const CommonLib::str_t& name) const = 0;
+			virtual int       FindField(const CommonLib::str_t& name) const = 0;
+			virtual bool      FieldExists(const CommonLib::str_t& name) const = 0;
 		};
 
 
@@ -219,9 +236,36 @@ namespace GisEngine
 			virtual void                    SetShapeField(const CommonLib::str_t& name) = 0;
 			virtual CommonLib::IGeoShape*	GetShape() const = 0;
 			virtual void                    SetShape( CommonLib::IGeoShape* pShape) = 0;
-			virtual double                  GetPrecision() const = 0; // “очность в единицах данных, 0.0 - максимальна€ точность
+			virtual double                  GetPrecision() const = 0; 
 			virtual void                    SetPrecision(double precision) = 0;
 		};
 
+
+
+		struct  IGeometryDef : public CommonLib::AutoRefCounter
+		{
+			 
+			virtual  CommonLib::eShapeType			  GetGeometryType() const = 0;
+			virtual void                              SetGeometryType(CommonLib::eShapeType type) = 0;
+			virtual bool                              GetHasZ() const = 0;
+			virtual void                              SetHasZ(bool flag) = 0;
+			virtual bool                              GetHasM() const = 0;
+			virtual void                              SetHasM(bool flag) = 0;
+			virtual Geometry::ISpatialReferencePtr    GetSpatialReference() const = 0;
+			virtual void                              SetSpatialReference(Geometry::ISpatialReference* ref) = 0;
+			virtual GisBoundingBox					  GetBaseExtent() const = 0;
+			virtual void                              SetBaseExtent(const GisBoundingBox& box) = 0;
+		};
+		typedef CommonLib::IRefCntPtr<IGeometryDef> IGeometryDefPtr;
+
+		struct  IShapeField : public IField
+		{
+			IShapeField(){}
+			virtual ~IShapeField(){}
+			virtual IGeometryDefPtr  GetGeometryDef() const = 0;
+			virtual void            SetGeometryDef(IGeometryDef* def) = 0;
+		};
 	}
 }
+
+#endif

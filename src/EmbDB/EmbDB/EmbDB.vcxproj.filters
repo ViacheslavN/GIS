@@ -612,9 +612,6 @@
     <ClInclude Include="BPLeafNodeMapSimpleCompressorV2.h">
       <Filter>DB\BPTrees\BtreePlusv2\Compressors</Filter>
     </ClInclude>
-    <ClInclude Include="IRefCnt.h">
-      <Filter>SDK\internal</Filter>
-    </ClInclude>
     <ClInclude Include="PageVectorLazySave.h">
       <Filter>utils</Filter>
     </ClInclude>

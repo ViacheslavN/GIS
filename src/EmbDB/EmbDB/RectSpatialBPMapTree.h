@@ -32,7 +32,7 @@ namespace embDB
 		typedef typename TBase::TBTreeNode  TBTreeNode;
 		typedef typename TBase::TLeafNode  TLeafNode;
 		typedef typename TBase::iterator iterator;
-		typedef IRefCntPtr<TBTreeNode> TBTreeNodePtr;
+		typedef CommonLib::IRefCntPtr<TBTreeNode> TBTreeNodePtr;
 
 		/*template <class _TCoord, class _TValue, class _TComp, 	class _TInnerCompess ,	class _TLeafCompess,
 		class _Transaction,	class _TBTreeNode, class _TLeftMemset,  class _TLeftNode>*/

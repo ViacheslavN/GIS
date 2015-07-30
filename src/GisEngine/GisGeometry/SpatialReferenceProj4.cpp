@@ -2,11 +2,13 @@
 #include "SpatialReferenceProj4.h"
 #include "proj4_lib.h"
 #include "CodeProj.h"
+#include "CommonLibrary/File.h"
 namespace GisEngine
 {
 	namespace Geometry
 	{
-
+		const wchar_t c_WGS84_ESRI_STRING[] = L"GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.0174532925199433]]";
+		const char c_WGS84_PROJ4_STRING[] = "+proj=longlat +ellps=WGS84 +datum=WGS84";
 
 		double get_cut_meridian(PJ* pj)
 		{
@@ -73,12 +75,33 @@ namespace GisEngine
 			}
 		}
 
-		CSpatialReferenceProj4::CSpatialReferenceProj4(const CommonLib::str_t& prj4Str) :
+		CSpatialReferenceProj4::CSpatialReferenceProj4(const CommonLib::str_t& prj4Str, eSPRefParamType paramType) :
 			m_prjCode(0)
 			,m_hHandle(0)
 		{
-			m_prj4Str = prj4Str;
-			CreateProjection();
+			if(paramType == eSPRefTypePRJ4String)
+			{
+				m_prj4Str = prj4Str;
+				CreateProjection();
+			}
+			else
+			{
+				CommonLib::CFile file;
+				file.openFile(prj4Str.cwstr(), CommonLib::ofmOpenExisting, CommonLib::arRead, CommonLib::smNoMode);
+				if(file.isValid())
+				{
+					uint32 fsize = (uint32)file.getFileSize();
+					std::vector<char> buf(fsize + 1);
+					uint32 res = file.readFile(&buf[0], fsize); 
+					file.closeFile();
+					buf[fsize] = 0;
+
+					if (res == fsize)
+						m_prj4Str = &buf[0];
+					CreateProjection();
+				}
+			}
+			
 		}
 		CSpatialReferenceProj4::CSpatialReferenceProj4(int prjCode) :
 		m_prjCode(prjCode)
@@ -91,6 +114,26 @@ namespace GisEngine
 			,m_hHandle(hHandle)
 		{
 
+		}
+		CSpatialReferenceProj4::CSpatialReferenceProj4(const GisBoundingBox& bbox): m_prjCode(0)
+			,m_hHandle(0)
+		{
+			bool degrees = true;
+
+			if(bbox.xMin < -1000.0 || bbox.xMin > 1000.0)
+				degrees = false;
+			if(bbox.xMax < -1000.0 || bbox.xMax > 1000.0)
+				degrees = false;
+			if(bbox.yMin < -1000.0 || bbox.yMin > 1000.0)
+				degrees = false;
+			if(bbox.yMax < -1000.0 || bbox.yMax > 1000.0)
+				degrees = false;
+
+			if(degrees)
+			{
+				m_prj4Str = c_WGS84_PROJ4_STRING;
+				CreateProjection();
+			}
 		}
 		CSpatialReferenceProj4::~CSpatialReferenceProj4()
 		{

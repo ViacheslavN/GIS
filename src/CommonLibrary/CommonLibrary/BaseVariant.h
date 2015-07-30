@@ -95,5 +95,6 @@ namespace CommonLib
 	typedef BaseVariant<uint64, dtUInteger64> TFVarUINT64;
 	typedef BaseVariant<float, dtFloat> TVarFloat;
 	typedef BaseVariant<double, dtDouble> TVarDouble;
+	typedef BaseVariant<str_t, dtString> TVarString;
 }
 #endif

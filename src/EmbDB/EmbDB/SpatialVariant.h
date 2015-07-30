@@ -6,11 +6,11 @@ namespace embDB
 {
 
 	template <class _TCoordType, int FieldType>
-	class PointFieldVariant : public CommonLib::IBaseVariant<CommonLib::TPoint2D<_TCoordType> , FieldType>
+	class PointFieldVariant : public CommonLib::BaseVariant<CommonLib::TPoint2D<_TCoordType> , FieldType>
 	{
 	public:
 		typedef _TCoordType TCoordType ;
-		typedef CommonLib::IBaseVariant<CommonLib::TPoint2D<TCoordType> , FieldType> TBase;
+		typedef CommonLib::BaseVariant<CommonLib::TPoint2D<TCoordType> , FieldType> TBase;
 		typedef CommonLib::TPoint2D<TCoordType> TPoint;
 		PointFieldVariant(){};
 		PointFieldVariant(TCoordType x, TCoordType y) 
@@ -23,11 +23,11 @@ namespace embDB
 	};
 
 	template <class _TCoordType, int FieldType>
-	class RectFieldVariant : public CommonLib::IBaseVariant<CommonLib::TRect2D<_TCoordType> , FieldType>
+	class RectFieldVariant : public CommonLib::BaseVariant<CommonLib::TRect2D<_TCoordType> , FieldType>
 	{
 	public:
 		typedef _TCoordType TCoordType ;
-		typedef IBaseVariant<CommonLib::TRect2D<TCoordType> , FieldType> TBase;
+		typedef BaseVariant<CommonLib::TRect2D<TCoordType> , FieldType> TBase;
 		typedef CommonLib::TRect2D<TCoordType> TPoint;
 		RectFieldVariant(){};
 		RectFieldVariant(TCoordType xMin, TCoordType yMin, TCoordType xMax, TCoordType yMax) 

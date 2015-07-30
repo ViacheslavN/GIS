@@ -155,7 +155,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">
-    <TargetName>lib_common_ds</TargetName>
+    <TargetName>LibCommon32_ds</TargetName>
     <OutDir>$(SolutionDir)Output\</OutDir>
     <IntDir>$(SolutionDir)Obj\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -430,6 +430,7 @@
     <ClInclude Include="BaseVariant.h" />
     <ClInclude Include="IGeoShape.h" />
     <ClInclude Include="Interlocked.h" />
+    <ClInclude Include="IRefCnt.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="MemoryStream.h" />
     <ClInclude Include="multibyte.h" />
@@ -456,6 +457,7 @@
     <ClCompile Include="BoundaryBox.cpp" />
     <ClCompile Include="caseutils.cpp" />
     <ClCompile Include="DebugTime.cpp" />
+    <ClCompile Include="File.cpp" />
     <ClCompile Include="FileWin32.cpp" />
     <ClCompile Include="FixedBitStream.cpp" />
     <ClCompile Include="FixedMemoryStream.cpp" />

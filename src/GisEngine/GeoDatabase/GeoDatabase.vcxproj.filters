@@ -45,6 +45,9 @@
     <ClInclude Include="ShapefileFeatureClass.h">
       <Filter>GeoDatabaseShape</Filter>
     </ClInclude>
+    <ClInclude Include="ShapefileUtils.h">
+      <Filter>GeoDatabaseShape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -60,6 +63,9 @@
       <Filter>GeoDatabaseShape</Filter>
     </ClCompile>
     <ClCompile Include="ShapefileFeatureClass.cpp">
+      <Filter>GeoDatabaseShape</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapefileUtils.cpp">
       <Filter>GeoDatabaseShape</Filter>
     </ClCompile>
   </ItemGroup>

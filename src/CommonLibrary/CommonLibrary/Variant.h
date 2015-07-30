@@ -31,6 +31,8 @@ namespace CommonLib
 		dtRect16,
 		dtRect32,
 		dtRect64,
+		dtDate,
+		dtGeometry,
 		dtSerializedObject
 	};
 
@@ -67,6 +69,8 @@ namespace CommonLib
 		{dtRect16,			 8},
 		{dtRect32,			16},
 		{dtRect64,			32},
+		{dtDate,	         4},
+		{dtGeometry,	     0},
 		{dtSerializedObject, 8}
 
 	};
@@ -108,6 +112,7 @@ namespace CommonLib
 		virtual bool set(const TRect2Du16&  value){ return false;}
 		virtual bool set(const TRect2Du32&  value){ return false;}
 		virtual bool set(const TRect2Du64&  value){ return false;}
+		virtual bool set(const str_t&  value){ return false;}
 
 
 		virtual bool get(bool&){ return false;}
@@ -132,9 +137,12 @@ namespace CommonLib
 		virtual bool get(TRect2Du16&){ return false;}
 		virtual bool get(TRect2Du32&){ return false;}
 		virtual bool get(TRect2Du64&){ return false;}
+		virtual bool get(str_t&){ return false;}
+
 
 		virtual void load(CommonLib::IReadStream *pStream){}
 		virtual void save(CommonLib::IWriteStream *pStream){}
+
 
 		template<class TValue>
 		bool setVal(const TValue& val)

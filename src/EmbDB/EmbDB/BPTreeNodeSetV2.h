@@ -5,7 +5,7 @@
 #include "CompressorParams.h"
 #include "BPTreeInnerNodeSetv2.h"
 #include "BPTreeLeafNodeSetv2.h"
-#include "IRefCnt.h"
+#include "CommonLibrary/IRefCnt.h"
 namespace embDB
 {
 
@@ -15,7 +15,7 @@ namespace embDB
 	class _TInnerCompressor, class _TLeafCompressor, 
 	class _TInnerNode,
 	class _TLeafNode >
-	class BPTreeNodeSetv2 : public RefCounter
+	class BPTreeNodeSetv2 : public CommonLib::RefCounter
 	{
 	public:
 
@@ -383,7 +383,7 @@ namespace embDB
 			else
 				return m_InnerNode.isKey(comp, key, nIndex);
 		}
-		typedef IRefCntPtr<IRefCnt> TParentNodePtr;
+		typedef CommonLib::IRefCntPtr<CommonLib::IRefCnt> TParentNodePtr;
 
 		void setParent(BPTreeNodeSetv2 *pNode, int32 nFoundIndex = -1)
 		{

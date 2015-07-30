@@ -6,7 +6,7 @@
 namespace embDB
 {
 
-	class IFieldIterator : public AutoRefCounter
+	class IFieldIterator : public CommonLib::AutoRefCounter
 	{
 	public:
 		IFieldIterator(){};
@@ -24,10 +24,10 @@ namespace embDB
 		virtual bool copy(IFieldIterator *pIter) = 0;
 	};
 
-	typedef IRefCntPtr<IFieldIterator> FieldIteratorPtr;
+	typedef CommonLib::IRefCntPtr<IFieldIterator> FieldIteratorPtr;
 
 	template<class TKeyType>
-	class TIIndexIterator : public RefCounter
+	class TIIndexIterator : public CommonLib::RefCounter
 	{
 	public:
 		TIIndexIterator(){};
@@ -47,9 +47,9 @@ namespace embDB
 
 	typedef TIIndexIterator<CommonLib::IVariant> IIndexIterator;
 
-	typedef IRefCntPtr<IIndexIterator> IndexIteratorPtr;
+	typedef CommonLib::IRefCntPtr<IIndexIterator> IndexIteratorPtr;
 
-	class IIndexPageIterator  : public RefCounter
+	class IIndexPageIterator  : public CommonLib::RefCounter
 	{
 	public:
 		IIndexPageIterator();
@@ -63,11 +63,11 @@ namespace embDB
 		virtual uint32 getPos() = 0;
 	};
 
-	typedef IRefCntPtr<IIndexPageIterator> IndexPageIteratorPtr;
+	typedef CommonLib::IRefCntPtr<IIndexPageIterator> IndexPageIteratorPtr;
 
 
 
-	class IValueFiled: public RefCounter
+	class IValueFiled: public CommonLib::RefCounter
 	{
 	public:
 		IValueFiled() {}
@@ -119,7 +119,7 @@ namespace embDB
 
 
 
-	class ICounterFiled: public RefCounter
+	class ICounterFiled: public CommonLib::RefCounter
 	{
 	public:
 		ICounterFiled() {}
