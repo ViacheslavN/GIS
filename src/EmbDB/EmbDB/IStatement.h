@@ -5,7 +5,7 @@
 namespace embDB
 {
 
-	class IStatement
+	class IStatement : public CommonLib::AutoRefCounter
 	{
 	public:
 
@@ -16,5 +16,6 @@ namespace embDB
 		virtual IField* getField(uint32 nCount) = 0;
 		virtual uint32 getFieldCount() const = 0;
 	};
+	typedef CommonLib::IRefCntPtr<IStatement> IStatementPtr;
 }
 #endif

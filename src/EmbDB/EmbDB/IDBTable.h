@@ -17,8 +17,8 @@ namespace embDB
 		virtual bool unlockWrite() = 0;
 
 
-		virtual bool insert(IRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
-		virtual bool insert(INameRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
+	//	virtual bool insert(IRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
+	//	virtual bool insert(INameRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
 
 		virtual IField* createField(SFieldProp& sFP) = 0;
 		virtual bool deleteField(IField* pField) = 0;

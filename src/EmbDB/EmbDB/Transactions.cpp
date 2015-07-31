@@ -506,17 +506,5 @@ namespace embDB
 		 m_TranPerfCounter.OutDebugInfo();
 	}
 
-
-	IStatement*  CTransactions::createStatement(const wchar_t *pszSQLQuery)
-	{
-		return NULL;
-	}
-	IRecordset*  CTransactions::executeQuery(IStatement* pStatement)
-	{
-		return NULL;
-	}
-	IRecordset*  CTransactions::executeQuery(const wchar_t* pszQuery )
-	{
-		return NULL;
-	}
+ 
 }

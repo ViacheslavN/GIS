@@ -711,14 +711,6 @@ namespace embDB
 	}
 
 
-	bool CTable::insert(IRecordset *pRecordSet, IDBTransactions *Tran)
-	{
-		return true;
-	}
-	bool CTable::insert(INameRecordset *pRecordSet, IDBTransactions *Tran)
-	{
-		return true;
-	}
 
 	bool CTable::BuildIndex(IDBIndexHandler* pIndexHandler, IDBFieldHandler *pFieldHandler, IDBTransactions* pTran)
 	{

@@ -26,9 +26,13 @@ namespace embDB
 		bool close(){return true;}
 
 
-		virtual IStatement* createStatement(const wchar_t *pszSQLQuery) {return  NULL;}
-		virtual IRecordset* executeQuery(IStatement* pStatement) {return  NULL;}
-		virtual IRecordset* executeQuery(const wchar_t* pszQuery = NULL) {return  NULL;}
+		virtual IStatementPtr createStatement(const wchar_t *pszSQLQuery) {return  IStatementPtr();}
+		virtual ICursorPtr executeQuery(IStatement* pStatement) {return  ICursorPtr();}
+		virtual ICursorPtr executeQuery(const wchar_t* pszQuery = NULL) {return  ICursorPtr();}
+
+		virtual IInsertCursorPtr createInsertCursor() {return  IInsertCursorPtr();}
+		virtual IUpdateCursorPtr createUpdateCursor() {return  IUpdateCursorPtr();}
+		virtual IDeleteCursorPtr createDeleteCursor() {return  IDeleteCursorPtr();}
 
 		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true);
 		virtual void dropFilePage(FilePagePtr pPage);

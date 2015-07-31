@@ -60,7 +60,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">
     <OutDir>$(SolutionDir)Output\</OutDir>
     <IntDir>$(SolutionDir)Obj\$(Configuration)\</IntDir>
-    <TargetName>DatasetLite_ds</TargetName>
+    <TargetName>DatasetLite_ds32</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">
     <OutDir>$(SolutionDir)Output\</OutDir>
@@ -81,7 +81,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\DatasetLite_ds.lib</OutputFile>
+      <OutputFile>$(OutDir)\DatasetLite_ds32.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">

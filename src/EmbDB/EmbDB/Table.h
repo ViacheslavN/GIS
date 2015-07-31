@@ -71,10 +71,6 @@ namespace embDB
 		
 
 
-			virtual bool insert(IRecordset *pRecordSet, IDBTransactions *Tran = NULL);
-			virtual bool insert(INameRecordset *pRecordSet, IDBTransactions *Tran = NULL);
-
-
 			virtual bool isLockWrite(){return true;}
 			virtual bool lockWrite(){return true;}
 			virtual bool try_lockWrite(){return true;}

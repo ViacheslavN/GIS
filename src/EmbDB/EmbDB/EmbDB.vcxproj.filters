@@ -723,6 +723,9 @@
     <ClInclude Include="DirectTransactions.h">
       <Filter>DB\transactions\DirectTran</Filter>
     </ClInclude>
+    <ClInclude Include="IRow.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

@@ -59,10 +59,14 @@ namespace embDB
 		virtual bool rollback();
 
 
-		virtual IStatement* createStatement(const wchar_t *pszSQLQuery);
-		virtual IRecordset* executeQuery(IStatement* pStatement);
-		virtual IRecordset* executeQuery(const wchar_t* pszQuery = NULL);
 
+		virtual IStatementPtr createStatement(const wchar_t *pszSQLQuery) {return  IStatementPtr();}
+		virtual ICursorPtr executeQuery(IStatement* pStatement) {return  ICursorPtr();}
+		virtual ICursorPtr executeQuery(const wchar_t* pszQuery = NULL) {return  ICursorPtr();}
+
+		virtual IInsertCursorPtr createInsertCursor() {return  IInsertCursorPtr();}
+		virtual IUpdateCursorPtr createUpdateCursor() {return  IUpdateCursorPtr();}
+		virtual IDeleteCursorPtr createDeleteCursor() {return  IDeleteCursorPtr();}
 
 
 		virtual bool restore(bool bForce = false);
