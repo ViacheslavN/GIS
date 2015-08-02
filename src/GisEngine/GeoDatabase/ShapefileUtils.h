@@ -11,13 +11,13 @@ namespace GisEngine
 		namespace ShapefileUtils
 		{
 			CommonLib::str_t  NormalizePath(const CommonLib::str_t& path);
-
-
+			CommonLib::eShapeType SHPTypeToGeometryType(int shpType, bool* hasZ, bool* hasM);
+			CommonLib::eDataTypes SHPFieldInfoToFieldInfo(DBFFieldType ftype, int width, int dec, int* length, int* precision, int* scale);
 
 
 			struct SHPGuard
 			{
-				shapelib::SHPHandle file;
+				SHPHandle file;
 				SHPGuard()
 					: file(NULL)
 				{}
@@ -28,14 +28,14 @@ namespace GisEngine
 				void clear()
 				{
 					if(file)
-						shapelib::SHPClose(file);
+						SHPClose(file);
 					file = NULL;
 				}
 			};
 
 			struct DBFGuard
 			{
-				shapelib::DBFHandle file;
+				DBFHandle file;
 				DBFGuard()
 					: file(NULL)
 				{}
@@ -46,7 +46,7 @@ namespace GisEngine
 				void clear()
 				{
 					if(file)
-						shapelib::DBFClose(file);
+						DBFClose(file);
 					file = NULL;
 				}
 			};

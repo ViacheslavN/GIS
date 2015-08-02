@@ -44,8 +44,23 @@ namespace GisEngine
 		struct IFields;
 		struct IFeatureClass;
 		struct ITable;
+		struct IGeometryDef;
+		struct IDomain;
+		struct IShapeField;
 
-		struct IWorkspace
+		COMMON_LIB_REFPTR_TYPEDEF(IRow);
+		COMMON_LIB_REFPTR_TYPEDEF(IQueryFilter);
+		COMMON_LIB_REFPTR_TYPEDEF(IField);
+		COMMON_LIB_REFPTR_TYPEDEF(IGeometryDef);
+		COMMON_LIB_REFPTR_TYPEDEF(IDataset);
+		COMMON_LIB_REFPTR_TYPEDEF(IFields);
+		COMMON_LIB_REFPTR_TYPEDEF(ITable);
+		COMMON_LIB_REFPTR_TYPEDEF(IFeatureClass);
+		COMMON_LIB_REFPTR_TYPEDEF(IDomain);
+		COMMON_LIB_REFPTR_TYPEDEF(IShapeField);
+		COMMON_LIB_REFPTR_TYPEDEF(ICursor);
+
+		struct IWorkspace  : public CommonLib::AutoRefCounter
 		{
 				IWorkspace(){}
 				virtual ~IWorkspace(){}
@@ -54,15 +69,15 @@ namespace GisEngine
 				virtual eWorkspaceID GetWorkspaceID() const = 0;
 				//virtual IDatasetContainer* GetDatasetContainer() = 0;
 				virtual uint32 GetDatasetCount() const = 0;
-				virtual IDataset* GetDataset(uint32 nIdx) const = 0;
+				virtual IDatasetPtr GetDataset(uint32 nIdx) const = 0;
 				virtual void RemoveDataset(uint32 nIdx) = 0;
 				virtual void RemoveDataset(IDataset *pDataset) = 0;
 
-				virtual ITable*  CreateTable(const CommonLib::str_t& name, IFields* fields) = 0;
-				virtual IFeatureClass* CreateFeatureClass(const CommonLib::str_t& name, IFields* fields, const CommonLib::str_t& shapeFieldName) = 0;
+				virtual ITablePtr  CreateTable(const CommonLib::str_t& name, IFields* fields) = 0;
+				virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::str_t& name, IFields* fields, const CommonLib::str_t& shapeFieldName) = 0;
 
-				virtual ITable*  OpenTable(const CommonLib::str_t& name) = 0;
-				virtual IFeatureClass* OpenFeatureClass(const CommonLib::str_t& name) = 0;
+				virtual ITablePtr OpenTable(const CommonLib::str_t& name) = 0;
+				virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::str_t& name) = 0;
 
 		};
 
@@ -75,7 +90,7 @@ namespace GisEngine
 			virtual bool next(IDataset** pObj) = 0;
 		};*/
 		
-		struct IDataset  
+		struct IDataset : public CommonLib::AutoRefCounter
 		{
 			IDataset(){}
 			virtual ~IDataset(){}
@@ -93,27 +108,26 @@ namespace GisEngine
 			virtual ~ITable(){}
 			virtual void                 AddField(IField* field) = 0;
 			virtual void                 DeleteField(const CommonLib::str_t& fieldName) = 0;
-			virtual IFields*             GetFields() const  = 0;
+			virtual IFieldsPtr             GetFields() const  = 0;
 			virtual bool                 HasOIDField() const = 0;
 			virtual const CommonLib::str_t& GetOIDFieldName() const = 0;
-			virtual IRow*				  GetRow(int64 id) = 0;
-			virtual ICursor*			  Search(IQueryFilter* filter, bool recycling) = 0;
+			virtual IRowPtr				  GetRow(int64 id) = 0;
+			virtual ICursorPtr			  Search(IQueryFilter* filter, bool recycling) = 0;
 		};
 
 
-		struct IFeatureClass : public ITable
+		struct IFeatureClass : public ITable 
 		{
 			IFeatureClass(){}
 			virtual ~IFeatureClass(){}
 			virtual CommonLib::eShapeType GetGeometryType() const = 0;
-			virtual bool     IsGeometryTypeSupported(CommonLib::eShapeType type) const = 0;
 			virtual const CommonLib::str_t&         GetShapeFieldName() const = 0;
 			virtual const GisBoundingBox& GetExtent() const = 0;
-			virtual Geometry::ISpatialReference* GetSpatialReference() const = 0;
+			virtual Geometry::ISpatialReferencePtr GetSpatialReference() const = 0;
 		};
 
 
-		struct IField 
+		struct IField  : public CommonLib::AutoRefCounter
 		{
 			IField(){}
 			virtual ~IField(){}
@@ -136,26 +150,29 @@ namespace GisEngine
 			virtual int                  GetScale() const = 0;
 			virtual void                 SetScale(int scale) = 0;
 			virtual bool                 CheckValue(CommonLib::IVariant* value) = 0;
+			virtual IDomainPtr           GetDomain() const = 0;
+			virtual void                 SetDomain(IDomain* domain) = 0;
 		};
 
 
-		struct IFields
+		struct IFields: public CommonLib::AutoRefCounter
 		{
 
 			IFields(){}
 			virtual ~IFields(){}
 			virtual int       GetFieldCount() const = 0;
 			virtual void      SetFieldCount(int count) = 0;
-			virtual IField*   GetField(int index) const = 0;
+			virtual IFieldPtr GetField(int index) const = 0;
 			virtual void      SetField(int index, IField* field) = 0;
 			virtual void      AddField(IField* field) = 0;
 			virtual void      RemoveField(int index) = 0;
 			virtual int       FindField(const CommonLib::str_t& name) const = 0;
 			virtual bool      FieldExists(const CommonLib::str_t& name) const = 0;
+			virtual void	  Clear() = 0;
 		};
 
 
-		struct IFieldSet
+		struct IFieldSet: public CommonLib::AutoRefCounter
 		{
 			IFieldSet(){}
 			virtual ~IFieldSet(){}
@@ -169,7 +186,7 @@ namespace GisEngine
 		};
 
 
-		struct IRow
+		struct IRow : public CommonLib::AutoRefCounter
 		{
 			IRow(){}
 			virtual ~IRow(){}
@@ -191,7 +208,7 @@ namespace GisEngine
 			virtual void                  SetShape(CommonLib::IGeoShape* pShape) = 0;
 		};
 
-		struct ICursor
+		struct ICursor : public CommonLib::AutoRefCounter
 		{
 			ICursor(){}
 			virtual ~ICursor(){}
@@ -215,7 +232,7 @@ namespace GisEngine
 		};
 
 
-		struct IQueryFilter
+		struct IQueryFilter : public CommonLib::AutoRefCounter
 		{
 			IQueryFilter(){}
 			virtual ~IQueryFilter(){}
@@ -256,7 +273,7 @@ namespace GisEngine
 			virtual GisBoundingBox					  GetBaseExtent() const = 0;
 			virtual void                              SetBaseExtent(const GisBoundingBox& box) = 0;
 		};
-		typedef CommonLib::IRefCntPtr<IGeometryDef> IGeometryDefPtr;
+	
 
 		struct  IShapeField : public IField
 		{
@@ -264,6 +281,19 @@ namespace GisEngine
 			virtual ~IShapeField(){}
 			virtual IGeometryDefPtr  GetGeometryDef() const = 0;
 			virtual void            SetGeometryDef(IGeometryDef* def) = 0;
+		};
+
+
+		struct IDomain : public CommonLib::AutoRefCounter
+		{
+			IDomain(){}
+			virtual ~IDomain(){}
+			virtual const CommonLib::str_t& GetName() const = 0;
+			virtual void                 SetName(const CommonLib::str_t& name) = 0;
+			virtual const CommonLib::str_t& GetDescription() const = 0;
+			virtual void                 SetDescription(const CommonLib::str_t& description) = 0;
+			virtual CommonLib::eDataTypes  GetFieldType() const = 0;
+			virtual void                 SetFieldType(CommonLib::eDataTypes ) = 0;
 		};
 	}
 }

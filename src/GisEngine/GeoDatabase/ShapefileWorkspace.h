@@ -26,23 +26,26 @@ namespace GisEngine
 				//virtual IDatasetContainer* GetDatasetContainer();
 
 				virtual uint32 GetDatasetCount() const = 0;
-				virtual IDataset* GetDataset(uint32 nIdx) const = 0;
+				virtual IDatasetPtr GetDataset(uint32 nIdx) const = 0;
 				virtual void RemoveDataset(uint32 nIdx) = 0;
 				virtual void RemoveDataset(IDataset *pDataset) = 0;
 
-				virtual ITable*  CreateTable(const CommonLib::str_t& name, IFields* fields);
-				virtual IFeatureClass* CreateFeatureClass(const CommonLib::str_t& name, IFields* fields, const CommonLib::str_t& shapeFieldName);
-				virtual ITable*  OpenTable(const CommonLib::str_t& name);
-				virtual IFeatureClass* OpenFeatureClass(const CommonLib::str_t& name);
+				virtual ITablePtr  CreateTable(const CommonLib::str_t& name, IFields* fields);
+				virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::str_t& name, IFields* fields, const CommonLib::str_t& shapeFieldName);
+				virtual ITablePtr  OpenTable(const CommonLib::str_t& name);
+				virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::str_t& name);
  			private:
 				void load();
 				void clear();
 			private:
+				IWorkspace *m_pWorkSpace;
+				IFieldsPtr m_FieldsPtr;
+
 				bool m_bLoad;
 				CommonLib::str_t m_sPath;
 				CommonLib::str_t m_sName;
 				Common::IPropertySetPtr  m_ConnectProp;
-				typedef std::vector<IFeatureClass*> TVecDataset;
+				typedef std::vector<IDatasetPtr> TVecDataset;
 				TVecDataset m_vecDatasets;
 				//TDatasetContainer m_DatasetContainer;
 

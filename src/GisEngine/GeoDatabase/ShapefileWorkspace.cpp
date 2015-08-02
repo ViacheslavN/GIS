@@ -65,7 +65,7 @@ namespace GisEngine
 		{
 			return m_vecDatasets.size();
 		}
-		IDataset* CShapefileWorkspace::GetDataset(uint32 nIdx) const
+		IDatasetPtr CShapefileWorkspace::GetDataset(uint32 nIdx) const
 		{
 			return m_vecDatasets[nIdx];
 		}
@@ -88,9 +88,9 @@ namespace GisEngine
 
 			for (size_t i = 0, sz = vecFiles.size(); i < sz; ++i)
 			{
-				IFeatureClass* pFClass = OpenFeatureClass(vecFiles[i]);
-				if(pFClass)
-					m_vecDatasets.push_back(pFClass);
+				IFeatureClassPtr pFClass = OpenFeatureClass(vecFiles[i]);
+				if(pFClass.get())
+					m_vecDatasets.push_back(IDatasetPtr((IDataset*)pFClass.get()));
 			}
 			
 
@@ -98,38 +98,39 @@ namespace GisEngine
 		}
 		void CShapefileWorkspace::clear()
 		{
-			for (size_t i = 0, sz = m_vecDatasets.size(); i < sz; ++i)
+			/*for (size_t i = 0, sz = m_vecDatasets.size(); i < sz; ++i)
 			{
 				delete m_vecDatasets[i];
 			}
-			m_vecDatasets.clear();
+			m_vecDatasets.clear();*/
 		}
-		ITable*  CShapefileWorkspace::OpenTable(const CommonLib::str_t& sName)
+		ITablePtr  CShapefileWorkspace::OpenTable(const CommonLib::str_t& sName)
 		{
-			return NULL;
+			return ITablePtr();
 		}
-		IFeatureClass* CShapefileWorkspace::OpenFeatureClass(const CommonLib::str_t& sName)
+		IFeatureClassPtr CShapefileWorkspace::OpenFeatureClass(const CommonLib::str_t& sName)
 		{
 			CommonLib::str_t sViewName = CommonLib::FileSystem::FindOnlyFileName(sName);
-			CShapefileFeatureClass *pFeatureClass = new CShapefileFeatureClass(this, m_sPath, sViewName + L".shp", sViewName);
-			bool bLoad = pFeatureClass->load();
+			CShapefileFeatureClass * pFeatureClass =new CShapefileFeatureClass(this, m_sPath, sViewName + L".shp", sViewName);
+			bool bLoad = pFeatureClass->reload(false);
 			if(!bLoad)
 			{
 				delete pFeatureClass;
 			}
-			return pFeatureClass;
+			IFeatureClassPtr pFeaturePtr((IFeatureClass*)pFeatureClass);
+			return pFeaturePtr;
 		}
  
-		ITable*  CShapefileWorkspace::CreateTable(const CommonLib::str_t& name, IFields* fields)
+		ITablePtr  CShapefileWorkspace::CreateTable(const CommonLib::str_t& name, IFields* fields)
 		{
-			return NULL;
+			return ITablePtr();
 		}
-		IFeatureClass* CShapefileWorkspace::CreateFeatureClass(const CommonLib::str_t& sName, IFields* pFields, const CommonLib::str_t& sShapeFieldName)
+		IFeatureClassPtr CShapefileWorkspace::CreateFeatureClass(const CommonLib::str_t& sName, IFields* pFields, const CommonLib::str_t& sShapeFieldName)
 		{
 			if(sName.isEmpty())
-				return NULL; //TO DO Error
+				return IFeatureClassPtr(); //TO DO Error
 			  if(!pFields)
-				 return NULL; //TO DO Error
+				 return IFeatureClassPtr(); //TO DO Error
 
 			  int shapeType = CommonLib::shape_type_null;
 			  int fieldCount = pFields->GetFieldCount();
@@ -137,7 +138,7 @@ namespace GisEngine
 
 			  for(int i = 0; i < fieldCount; ++i)
 			  {
-				  IField* pField = pFields->GetField(i);
+				  IFieldPtr pField = pFields->GetField(i);
 				  switch(pField->GetType())
 				  {
 				  case CommonLib::dtInteger8:
@@ -154,32 +155,32 @@ namespace GisEngine
 					  break;
 				  case CommonLib::dtGeometry:
 					  {
-						  IShapeField* pShpField = (IShapeField*)pField;
+						  IShapeField* pShpField = (IShapeField*)pField.get();
 						  CommonLib::eShapeType gtype = pShpField->GetGeometryDef()->GetGeometryType();
 						  if(gtype == CommonLib::shape_type_point )
-							  shapeType = shapelib::SHPT_MULTIPOINT;
+							  shapeType = SHPT_MULTIPOINT;
 						  else if(gtype == CommonLib::shape_type_polyline)
 						  {
-							  shapeType = shapelib::SHPT_ARC;
+							  shapeType = SHPT_ARC;
 						  }
 						  if(gtype == CommonLib::shape_type_polygon)
 						  {
-							  shapeType = shapelib::SHPT_POLYGON;
+							  shapeType = SHPT_POLYGON;
 						  }
 						  if(gtype == CommonLib::shape_type_multipatch)
 						  {
-							  shapeType = shapelib::SHPT_MULTIPATCH;
+							  shapeType = SHPT_MULTIPATCH;
 						  }
 						  pSprefPtr = pShpField->GetGeometryDef()->GetSpatialReference();
 					  }
 					  break;
 				  default:
-					 return NULL; //to do error
+					 return IFeatureClassPtr(); //to do error
 				  }
 			  }
 
 			  if(shapeType == CommonLib::shape_type_null)
-				   return NULL; //to do error
+				   return IFeatureClassPtr(); //to do error
 
 
 			CommonLib::str_t filePathBase = m_sPath + sName;
@@ -190,16 +191,16 @@ namespace GisEngine
 			 CommonLib::str_t prjFileName = filePathBase + L".prj";
 
 
-			 shapelib::SHPHandle shp = shapelib::SHPCreate(shpFilePath.cwstr(), shapeType);
+			 SHPHandle shp = SHPCreate(shpFilePath.cstr(), shapeType);
 			 if(!shp)
-				return NULL;  //to do error
-			 shapelib::SHPClose(shp);
+				return IFeatureClassPtr();  //to do error
+			 SHPClose(shp);
 
-			 shapelib::DBFHandle dbf = shapelib::DBFCreate(dbfFilePath.cwstr());
+			 DBFHandle dbf = DBFCreate(dbfFilePath.cstr());
 			 if(!dbf)
 			 {
 				 CommonLib::FileSystem::deleteFile(shpFilePath.cwstr());
-				 return NULL;  //to do error
+				 return IFeatureClassPtr();  //to do error
 			 }
 			 if(pSprefPtr.get())
 			 {
@@ -210,7 +211,7 @@ namespace GisEngine
 
 			 for(int i = 0; i < fieldCount; ++i)
 			 {
-				 IField* pField = pFields->GetField(i);
+				 IFieldPtr pField = pFields->GetField(i);
 				 switch(pField->GetType())
 				 {
 					 case CommonLib::dtInteger8:
@@ -222,17 +223,17 @@ namespace GisEngine
 					case CommonLib::dtUInteger32:
 					case CommonLib::dtUInteger64:
 				
-						shapelib::DBFAddField(dbf, pField->GetName().cstr(), shapelib::FTInteger, pField->GetPrecision(), pField->GetScale());
+						DBFAddField(dbf, pField->GetName().cstr(), FTInteger, pField->GetPrecision(), pField->GetScale());
 						break;
 					case CommonLib::dtFloat:
 					case CommonLib::dtDouble:
-						shapelib::DBFAddField(dbf, pField->GetName().cstr(), shapelib::FTDouble, pField->GetPrecision(), pField->GetScale());
+						DBFAddField(dbf, pField->GetName().cstr(), FTDouble, pField->GetPrecision(), pField->GetScale());
 						break;
 					case CommonLib::dtString:
-						shapelib::DBFAddField(dbf, pField->GetName().cstr(), shapelib::FTString, pField->GetLength(), 0);
+						DBFAddField(dbf, pField->GetName().cstr(), FTString, pField->GetLength(), 0);
 						break;
 					case CommonLib::dtDate:
-						shapelib::DBFAddField(dbf, pField->GetName().cstr(), shapelib::FTDate, pField->GetLength(), 0);
+						DBFAddField(dbf, pField->GetName().cstr(), FTDate, pField->GetLength(), 0);
 						break;
 					case CommonLib::dtOid:
 						break;
@@ -240,11 +241,11 @@ namespace GisEngine
 						break;
 			 
 				 default:
-					 return NULL;
+					 return IFeatureClassPtr();
 				 }
 			 }
 
-			 shapelib::DBFClose(dbf);
+			 DBFClose(dbf);
 			 return OpenFeatureClass(sName);
 
 		}

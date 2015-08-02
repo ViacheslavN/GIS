@@ -124,6 +124,11 @@ namespace CommonLib
 		{
 			return m_pObj == pObj;
 		}
+		bool operator!() const
+		{
+			return m_pObj == NULL;
+		}
+
 
 
 		~IRefCntPtr()
@@ -157,6 +162,10 @@ namespace CommonLib
 	};
 
 }
+
+
+#define COMMON_LIB_REFPTR_TYPEDEF(Interface) \
+	typedef CommonLib::IRefCntPtr<Interface> Interface ## Ptr
 #endif
 
 

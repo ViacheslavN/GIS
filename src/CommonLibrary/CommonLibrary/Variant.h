@@ -33,7 +33,8 @@ namespace CommonLib
 		dtRect64,
 		dtDate,
 		dtGeometry,
-		dtSerializedObject
+		dtSerializedObject,
+		dtAnnotation 
 	};
 
 
@@ -71,7 +72,8 @@ namespace CommonLib
 		{dtRect64,			32},
 		{dtDate,	         4},
 		{dtGeometry,	     0},
-		{dtSerializedObject, 8}
+		{dtSerializedObject, 8},
+		{dtAnnotation,		 0}
 
 	};
 

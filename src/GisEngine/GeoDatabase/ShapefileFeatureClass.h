@@ -4,11 +4,12 @@
 
 #include "GeoDatabase.h"
 #include "ShapefileUtils.h"
+
 namespace GisEngine
 {
 	namespace GeoDatabase
 	{
-		class CShapefileFeatureClass : public IFeatureClass
+		class CShapefileFeatureClass : IFeatureClass
 		{
 		public:
 			CShapefileFeatureClass(IWorkspace *pWorkSpace, const CommonLib::str_t& sPath, const CommonLib::str_t& sName, const CommonLib::str_t& sViewName);
@@ -23,33 +24,41 @@ namespace GisEngine
 			//ITable
 			virtual void                 AddField(IField* field);
 			virtual void                 DeleteField(const CommonLib::str_t& fieldName);
-			virtual IFields*             GetFields() const;
+			virtual IFieldsPtr             GetFields() const;
 			virtual bool                 HasOIDField() const;
 			virtual const CommonLib::str_t& GetOIDFieldName() const;
-			virtual IRow*				  GetRow(int64 id);
-			virtual ICursor*			  Search(IQueryFilter* filter, bool recycling);
+			virtual IRowPtr				  GetRow(int64 id);
+			virtual ICursorPtr			  Search(IQueryFilter* filter, bool recycling);
 
 			//IFeatureClass
 			virtual CommonLib::eShapeType GetGeometryType() const;
-			virtual bool     IsGeometryTypeSupported(CommonLib::eShapeType type) const;
 			virtual const CommonLib::str_t&         GetShapeFieldName() const;
 			virtual const GisBoundingBox& GetExtent() const;
-			virtual Geometry::ISpatialReference* GetSpatialReference() const;
+			virtual Geometry::ISpatialReferencePtr GetSpatialReference() const;
 
 
-			bool load(bool write);
+			bool reload(bool write);
 		private:
 			IWorkspace *m_pWorkSpace;
+			IShapeFieldPtr m_pShapeField;
+			IFieldPtr m_pOIDField;
+			IFieldsPtr m_FieldsPtr;
+
 			CommonLib::str_t m_sPath;
 			CommonLib::str_t m_sName;
 			CommonLib::str_t m_sViewName;
+			CommonLib::str_t m_sShapeFieldName;
+			CommonLib::str_t m_sOIDName;
+
 
 			ShapefileUtils::SHPGuard m_shp;
 			ShapefileUtils::DBFGuard m_dbf;
-			CommonLib::eShapeType m_ShapeType;
-			CommonLib::str_t m_sShapeFieldName;
 			GisBoundingBox m_Extent;
-			std::auto_ptr<Geometry::ISpatialReference> m_pSpatialReference;
+			CommonLib::eShapeType m_ShapeType;
+			Geometry::ISpatialReferencePtr m_pSpatialReferencePtr;
+			
+
+	
 
 		};
 	}

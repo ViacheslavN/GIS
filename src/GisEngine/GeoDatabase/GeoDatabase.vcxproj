@@ -454,7 +454,11 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Field.h" />
+    <ClInclude Include="Fields.h" />
+    <ClInclude Include="FieldSet.h" />
     <ClInclude Include="GeoDatabase.h" />
+    <ClInclude Include="GeometryDef.h" />
     <ClInclude Include="ShapefileFeatureClass.h" />
     <ClInclude Include="ShapefileUtils.h" />
     <ClInclude Include="ShapefileWorkspace.h" />
@@ -463,11 +467,18 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Field.cpp" />
+    <ClCompile Include="Fields.cpp" />
+    <ClCompile Include="FieldSet.cpp" />
+    <ClCompile Include="GeometryDef.cpp" />
     <ClCompile Include="ShapefileFeatureClass.cpp" />
     <ClCompile Include="ShapefileUtils.cpp" />
     <ClCompile Include="ShapefileWorkspace.cpp" />
     <ClCompile Include="shapelib\dbfopen.cpp" />
     <ClCompile Include="shapelib\shpopen.cpp" />
+    <ClCompile Include="shptree.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugShared|Win32'">Create</PrecompiledHeader>

@@ -12,19 +12,21 @@ namespace GisEngine
 	namespace Common
 	{
 
-		class IStreamSerialize
+		struct IPropertySet;
+
+
+		COMMON_LIB_REFPTR_TYPEDEF(IPropertySet);
+
+		struct IStreamSerialize
 		{
-		public:
 			IStreamSerialize(void){}
 			virtual ~IStreamSerialize(void){}
-		public:
 			virtual void save(CommonLib::IWriteStream *pWriteStream) const = 0;
 			virtual void load(CommonLib::IReadStream* pReadStream) = 0;
 		};
 
-		class IPropertySet : public CommonLib::AutoRefCounter
+		struct IPropertySet : public CommonLib::AutoRefCounter
 		{
-		public:
 			IPropertySet(){}
 			virtual ~IPropertySet(){}
 			virtual int  count() const = 0;
@@ -35,8 +37,6 @@ namespace GisEngine
 			virtual void  RemoveAllProperties() = 0;
 
 		};
-
-		typedef CommonLib::IRefCntPtr<IPropertySet> IPropertySetPtr;
 	}
 }
 

@@ -542,7 +542,6 @@ typedef enum {
   FTInteger,
   FTDouble,
   FTLogical,
-  FTDate,
   FTInvalid
 } DBFFieldType;
 
