@@ -216,6 +216,27 @@ namespace GisEngine
 		};
 
 
+		struct  IInsertCursor : public ICursor
+		{
+			IInsertCursor(){}
+			virtual ~IInsertCursor(){}
+			virtual int InsertRow(IRow* pRow) = 0;
+		};
+
+		struct  IUpdateCursor : public ICursor
+		{
+			IUpdateCursor(){}
+			virtual ~IUpdateCursor(){}
+			virtual void UpdateRow(IRow* pRow) = 0;
+		};
+
+		struct IDeleteCursor : public ICursor
+		{
+			IDeleteCursor(){}
+			virtual ~IDeleteCursor(){}
+			virtual void DeleteRow(int64 oid) = 0;
+		};
+
 		struct  IOIDSet 
 		{
 			IOIDSet(){}

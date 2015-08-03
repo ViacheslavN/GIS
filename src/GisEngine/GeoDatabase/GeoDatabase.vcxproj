@@ -460,6 +460,7 @@
     <ClInclude Include="GeoDatabase.h" />
     <ClInclude Include="GeometryDef.h" />
     <ClInclude Include="ShapefileFeatureClass.h" />
+    <ClInclude Include="ShapefileRowCursor.h" />
     <ClInclude Include="ShapefileUtils.h" />
     <ClInclude Include="ShapefileWorkspace.h" />
     <ClInclude Include="shapelib\shapefil.h" />
@@ -472,6 +473,7 @@
     <ClCompile Include="FieldSet.cpp" />
     <ClCompile Include="GeometryDef.cpp" />
     <ClCompile Include="ShapefileFeatureClass.cpp" />
+    <ClCompile Include="ShapefileRowCursor.cpp" />
     <ClCompile Include="ShapefileUtils.cpp" />
     <ClCompile Include="ShapefileWorkspace.cpp" />
     <ClCompile Include="shapelib\dbfopen.cpp" />

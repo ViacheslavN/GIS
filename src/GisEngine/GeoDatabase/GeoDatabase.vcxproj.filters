@@ -60,6 +60,9 @@
     <ClInclude Include="GeometryDef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ShapefileRowCursor.h">
+      <Filter>GeoDatabaseShape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -94,6 +97,9 @@
     </ClCompile>
     <ClCompile Include="GeometryDef.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapefileRowCursor.cpp">
+      <Filter>GeoDatabaseShape</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
