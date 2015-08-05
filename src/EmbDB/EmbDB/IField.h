@@ -4,7 +4,7 @@
 #include "CommonLibrary/SpatialKey.h"
 #include "CommonLibrary/IRefCnt.h"
 #include "CommonLibrary/MemoryStream.h"
-#include "CommonLibrary/Variant.h"
+#include "CommonLibrary/IVariant.h"
 namespace embDB
 {
 

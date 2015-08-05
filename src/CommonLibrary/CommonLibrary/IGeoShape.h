@@ -3,6 +3,7 @@
 #include "general.h"
 #include "alloc_t.h"
 #include "BoundaryBox.h"
+#include "IRefCnt.h"
 namespace CommonLib
 {
 	enum eShapeType
@@ -103,7 +104,7 @@ namespace CommonLib
 	};
 
 
-	class IGeoShape
+	class IGeoShape : AutoRefCounter
 	{
 		public:
 			IGeoShape(){};
@@ -131,5 +132,7 @@ namespace CommonLib
 
 
 	};
+
+	COMMON_LIB_REFPTR_TYPEDEF(IGeoShape);
 }
 #endif

@@ -47,6 +47,7 @@ namespace GisEngine
 		struct IGeometryDef;
 		struct IDomain;
 		struct IShapeField;
+		struct IFieldSet;
 
 		COMMON_LIB_REFPTR_TYPEDEF(IRow);
 		COMMON_LIB_REFPTR_TYPEDEF(IQueryFilter);
@@ -54,6 +55,7 @@ namespace GisEngine
 		COMMON_LIB_REFPTR_TYPEDEF(IGeometryDef);
 		COMMON_LIB_REFPTR_TYPEDEF(IDataset);
 		COMMON_LIB_REFPTR_TYPEDEF(IFields);
+		COMMON_LIB_REFPTR_TYPEDEF(IFieldSet);
 		COMMON_LIB_REFPTR_TYPEDEF(ITable);
 		COMMON_LIB_REFPTR_TYPEDEF(IFeatureClass);
 		COMMON_LIB_REFPTR_TYPEDEF(IDomain);
@@ -190,10 +192,10 @@ namespace GisEngine
 		{
 			IRow(){}
 			virtual ~IRow(){}
-			virtual IFieldSet*			   GetFieldSet() const = 0;
-			virtual IFields*               GetSourceFields() const = 0;
+			virtual IFieldSetPtr		   GetFieldSet() const = 0;
+			virtual IFieldsPtr             GetSourceFields() const = 0;
 			virtual bool                   IsFieldSelected(int index) const = 0;
-			virtual CommonLib::IVariant*   GetValue(int index) const = 0;
+			virtual CommonLib::IVariantPtr   GetValue(int index) const = 0;
 			virtual void                   SetValue(int index, CommonLib::IVariant* value) = 0;
 			virtual bool                   HasOID() const = 0;
 			virtual int64                  GetOID() const = 0;
@@ -204,7 +206,7 @@ namespace GisEngine
 		{
 			IFeature(){}
 			virtual ~IFeature(){}
-			virtual CommonLib::IGeoShape* GetShape() const = 0;
+			virtual CommonLib::IGeoShapePtr GetShape() const = 0;
 			virtual void                  SetShape(CommonLib::IGeoShape* pShape) = 0;
 		};
 
@@ -212,6 +214,9 @@ namespace GisEngine
 		{
 			ICursor(){}
 			virtual ~ICursor(){}
+			virtual IFieldSetPtr GetFieldSet() const = 0;
+			virtual IFieldsPtr   GetSourceFields() const = 0;
+			virtual bool         IsFieldSelected(int index) const = 0;
 			virtual bool NextRow(IRow** row) = 0;
 		};
 

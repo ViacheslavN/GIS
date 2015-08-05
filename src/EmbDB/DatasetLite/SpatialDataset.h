@@ -2,7 +2,7 @@
 #define _DATASET_LITE_I_SPATIAL_DATASET_H_
 #include "CommonLibrary/str_t.h"
 #include "CommonLibrary/IGeoShape.h"
-#include "CommonLibrary/Variant.h"
+#include "CommonLibrary/IVariant.h"
 #include "CommonLibrary/IRefCnt.h"
 #include "../../EmbDB/ITransactions.h"
 #include "../../EmbDB/ICursor.h"

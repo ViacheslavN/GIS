@@ -436,6 +436,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Units.h" />
+    <ClInclude Include="GisVariant.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PropertySet.cpp" />

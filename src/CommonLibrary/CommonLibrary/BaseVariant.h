@@ -1,24 +1,23 @@
 #ifndef _LIB_COMMON_BASE_VARIANT_H_
 #define _LIB_COMMON_BASE_VARIANT_H_
 #include "general.h"
-#include "Variant.h"
-
+#include "IVariant.h"
 namespace CommonLib
 {
-	
-	template <class Type, int DataType>
+
+	template <class ObjType, int DataType>
 	class BaseVariant : public IVariant
 	{
 	public:
-		typedef Type TVarType;
-		typedef BaseVariant<Type, DataType> TSelfType;
+		typedef ObjType TVarType;
+		typedef BaseVariant<ObjType, DataType> TSelfType;
 		BaseVariant() : m_bIsEmpty(true)
 		{}
-		BaseVariant(const Type& value) : m_Value(value), m_bIsEmpty(true)
+		BaseVariant(const ObjType& value) : m_Value(value), m_bIsEmpty(true)
 		{}
 		virtual IVariant* clone() const 
 		{
-			return new TSelfType(m_Value);
+			return new TSelfType(m_Value); //TO DO USE alloc
 		}
 
 		virtual bool isEmpty(bool) const
@@ -34,13 +33,13 @@ namespace CommonLib
 		{
 			return DataType;
 		}
-		virtual bool set( const Type& value)
+		virtual bool set( const ObjType& value)
 		{ 
 			m_Value = value;
 			m_bIsEmpty = false;
 			return true;
 		}
-		virtual bool get(Type& value)
+		virtual bool get(ObjType& value)
 		{ 
 			value = m_Value;
 			return true;
@@ -80,10 +79,14 @@ namespace CommonLib
 			return true;
 
 		}
+
+	
 	protected:
 		TVarType m_Value;
 		bool m_bIsEmpty;
 	};
+
+ 
 
 	typedef BaseVariant<char, dtInteger8> TVarINT8;
 	typedef BaseVariant<byte, dtUInteger8> TVarUINT8;
@@ -92,9 +95,12 @@ namespace CommonLib
 	typedef BaseVariant<int32, dtInteger32> TVarINT32;
 	typedef BaseVariant<uint32, dtUInteger32> TVarUINT32;
 	typedef BaseVariant<int64, dtInteger64> TVarINT64;
+	typedef BaseVariant<int64, dtOid> TVarOID;
 	typedef BaseVariant<uint64, dtUInteger64> TFVarUINT64;
 	typedef BaseVariant<float, dtFloat> TVarFloat;
 	typedef BaseVariant<double, dtDouble> TVarDouble;
 	typedef BaseVariant<str_t, dtString> TVarString;
+ 
+
 }
 #endif

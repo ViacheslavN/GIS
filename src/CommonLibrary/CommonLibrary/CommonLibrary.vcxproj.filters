@@ -31,9 +31,6 @@
     <Filter Include="stream">
       <UniqueIdentifier>{5588d998-9603-4d88-9206-3230d802b2d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="time">
-      <UniqueIdentifier>{6927862c-551b-488a-a3d5-6301b6ed1e88}</UniqueIdentifier>
-    </Filter>
     <Filter Include="thread\Wait For Graph">
       <UniqueIdentifier>{d9cc7b27-e426-4ff1-ac4a-a89b78b38da7}</UniqueIdentifier>
     </Filter>
@@ -45,6 +42,9 @@
     </Filter>
     <Filter Include="variant">
       <UniqueIdentifier>{ddea3504-817e-46eb-8cdf-be1c7c515d1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="time">
+      <UniqueIdentifier>{6927862c-551b-488a-a3d5-6301b6ed1e88}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -165,9 +165,6 @@
     <ClInclude Include="PodVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Variant.h">
-      <Filter>variant</Filter>
-    </ClInclude>
     <ClInclude Include="BaseVariant.h">
       <Filter>variant</Filter>
     </ClInclude>
@@ -176,6 +173,12 @@
     </ClInclude>
     <ClInclude Include="IRefCnt.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IVariant.h">
+      <Filter>variant</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjVariant.h">
+      <Filter>variant</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -241,6 +244,9 @@
     </ClCompile>
     <ClCompile Include="File.cpp">
       <Filter>file</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseVariant.cpp">
+      <Filter>variant</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

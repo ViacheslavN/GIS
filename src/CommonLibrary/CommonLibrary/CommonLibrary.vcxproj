@@ -438,6 +438,7 @@
     <ClInclude Include="Nocopy.h" />
     <ClInclude Include="FixedBitStream.h" />
     <ClInclude Include="GeoShape.h" />
+    <ClInclude Include="ObjVariant.h" />
     <ClInclude Include="PodVector.h" />
     <ClInclude Include="SpatialKey.h" />
     <ClInclude Include="sprintf.h" />
@@ -449,11 +450,12 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="thread.h" />
     <ClInclude Include="TimeUtils.h" />
-    <ClInclude Include="Variant.h" />
+    <ClInclude Include="IVariant.h" />
     <ClInclude Include="WaitForGraph.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="alloc_t.cpp" />
+    <ClCompile Include="BaseVariant.cpp" />
     <ClCompile Include="BoundaryBox.cpp" />
     <ClCompile Include="caseutils.cpp" />
     <ClCompile Include="DebugTime.cpp" />

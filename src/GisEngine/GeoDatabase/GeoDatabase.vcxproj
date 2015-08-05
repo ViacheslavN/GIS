@@ -454,6 +454,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Feature.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="Fields.h" />
     <ClInclude Include="FieldSet.h" />
@@ -468,6 +469,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Feature.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Fields.cpp" />
     <ClCompile Include="FieldSet.cpp" />
