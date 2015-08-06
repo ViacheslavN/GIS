@@ -114,6 +114,10 @@ namespace CommonLib
 			return m_pObj == refCntPtr.m_pObj;
 		}
 
+		bool operator < (const IRefCntPtr& refCntPtr)
+		{
+			return m_pObj < refCntPtr.m_pObj;
+		}
 
 
 		bool operator != (const Obj* pObj)
@@ -128,7 +132,7 @@ namespace CommonLib
 		{
 			return m_pObj == NULL;
 		}
-
+ 
 
 
 		~IRefCntPtr()
@@ -160,12 +164,14 @@ namespace CommonLib
 	private:
 		Obj* m_pObj;
 	};
-
+		typedef IRefCntPtr<IRefCnt> IRefObjectPtr;
 }
 
 
 #define COMMON_LIB_REFPTR_TYPEDEF(Interface) \
 	typedef CommonLib::IRefCntPtr<Interface> Interface ## Ptr
+
+
 #endif
 
 

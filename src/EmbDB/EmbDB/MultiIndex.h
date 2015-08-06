@@ -11,10 +11,10 @@ namespace embDB
 	public:
 		MultiIndexFiled() {}
 		virtual ~MultiIndexFiled() {}
-		virtual IndexIteratorPtr find(CommonLib::IVariant* pIndexKey, uint64 nOID) = 0;
-		virtual IndexIteratorPtr lower_bound(CommonLib::IVariant* pIndexKey, uint64 nOID) = 0;
-		virtual IndexIteratorPtr upper_bound(CommonLib::IVariant* pIndexKey, uint64 nOID) = 0;
-		virtual bool remove (CommonLib::IVariant* pIndexKey, uint64 nOID) = 0;
+		virtual IndexIteratorPtr find(IVariant* pIndexKey, uint64 nOID) = 0;
+		virtual IndexIteratorPtr lower_bound(IVariant* pIndexKey, uint64 nOID) = 0;
+		virtual IndexIteratorPtr upper_bound(IVariant* pIndexKey, uint64 nOID) = 0;
+		virtual bool remove (IVariant* pIndexKey, uint64 nOID) = 0;
 	};
 
 

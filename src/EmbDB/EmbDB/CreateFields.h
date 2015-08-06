@@ -9,34 +9,34 @@ namespace embDB
 		IDBFieldHandler* pField = NULL;
 		switch(fi.m_nFieldType)
 		{
-		case CommonLib::dtInteger8:
+		case dtInteger8:
 			pField = (IDBFieldHandler*)new TValFieldINT8(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtUInteger8:
+		case dtUInteger8:
 			pField = (IDBFieldHandler*)new TValFieldUINT8(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtInteger16:
+		case dtInteger16:
 			pField = (IDBFieldHandler*)new TValFieldINT16(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtUInteger16:
+		case dtUInteger16:
 			pField = (IDBFieldHandler*)new TValFieldUINT16(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtInteger32:
+		case dtInteger32:
 			pField = (IDBFieldHandler*)new TValFieldINT32(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtUInteger32:
+		case dtUInteger32:
 			pField = (IDBFieldHandler*)new TValFieldUINT32(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtInteger64:
+		case dtInteger64:
 			pField =(IDBFieldHandler*) new TValFieldINT64(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtUInteger64:
+		case dtUInteger64:
 			pField = (IDBFieldHandler*)new TValFieldUINT64(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtFloat:
+		case dtFloat:
 			pField = (IDBFieldHandler*)new TValFieldFloat(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtDouble:
+		case dtDouble:
 			pField = (IDBFieldHandler*)new TValFieldDouble(pDB->getBTreeAlloc());
 			break;
 		}
@@ -53,34 +53,34 @@ namespace embDB
 		IDBIndexHandler* pIndex = NULL;
 		switch(fi.m_nFieldType)
 		{
-		case CommonLib::dtInteger8:
+		case dtInteger8:
 			pIndex = new TMultiIndexINT8(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtUInteger8:
+		case dtUInteger8:
 			pIndex = new TMultiIndexUINT8(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtInteger16:
+		case dtInteger16:
 			pIndex = new TMultiIndexINT16(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtUInteger16:
+		case dtUInteger16:
 			pIndex = new TMultiIndexUINT16(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtInteger32:
+		case dtInteger32:
 			pIndex = new TMultiIndexINT32(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtUInteger32:
+		case dtUInteger32:
 			pIndex = new TMultiIndexUINT32(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtInteger64:
+		case dtInteger64:
 			pIndex = new TMultiIndexNT64(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtUInteger64:
+		case dtUInteger64:
 			pIndex = new TMultiIndexNT64(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtFloat:
+		case dtFloat:
 			pIndex = new TMultiIndexFloat(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtDouble:
+		case dtDouble:
 			pIndex = new TMultiIndexDouble(pDB->getBTreeAlloc());
 			break;
 		}
@@ -95,34 +95,34 @@ namespace embDB
 		IDBIndexHandler* pIndex = NULL;
 		switch(fi.m_nFieldType)
 		{
-		case CommonLib::dtInteger8:
+		case dtInteger8:
 			pIndex = new TUniqueIndexINT8(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtUInteger8:
+		case dtUInteger8:
 			pIndex = new TUniqueIndexUINT8(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtInteger16:
+		case dtInteger16:
 			pIndex = new TUniqueIndexINT16(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtUInteger16:
+		case dtUInteger16:
 			pIndex = new TUniqueIndexUINT16(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtInteger32:
+		case dtInteger32:
 			pIndex = new TUniqueIndexINT32(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtUInteger32:
+		case dtUInteger32:
 			pIndex = new TUniqueIndexUINT32(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtInteger64:
+		case dtInteger64:
 			pIndex = new TUniqueIndexNT64(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtUInteger64:
+		case dtUInteger64:
 			pIndex = new TUniqueIndexNT64(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtFloat:
+		case dtFloat:
 			pIndex = new TUniqueIndexFloat(pDB->getBTreeAlloc());
 			break;
-		case CommonLib::dtDouble:
+		case dtDouble:
 			pIndex = new TUniqueIndexDouble(pDB->getBTreeAlloc());
 			break;
 		}

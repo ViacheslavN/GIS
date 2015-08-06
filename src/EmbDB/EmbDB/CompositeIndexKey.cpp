@@ -103,12 +103,12 @@ namespace embDB
 	{
 		return m_vecVariants.size();
 	}
-	CommonLib::IVariant * CompositeIndexKey::getValue(uint32 nNum)
+	IVariant * CompositeIndexKey::getValue(uint32 nNum)
 	{
 		assert(nNum < m_vecVariants.size());
 		return m_vecVariants[nNum];
 	}
-	const CommonLib::IVariant * CompositeIndexKey::getValue(uint32 nNum) const
+	const IVariant * CompositeIndexKey::getValue(uint32 nNum) const
 	{
 		assert(nNum < m_vecVariants.size());
 		return m_vecVariants[nNum];
@@ -125,7 +125,7 @@ namespace embDB
 	{
 		for (size_t i = 0, sz = vecScheme.size(); i < sz; ++i)
 		{
-			CommonLib::IVariant *pVariant = createVariant(vecScheme[i]);
+			IVariant *pVariant = createVariant(vecScheme[i]);
 			if(!pVariant)
 				return false;
 			pVariant->load(&stream);
@@ -133,14 +133,14 @@ namespace embDB
 		}
 		return true;
 	}
-	bool CompositeIndexKey::setValue(uint32 nNum, const CommonLib::IVariant* pValue)
+	bool CompositeIndexKey::setValue(uint32 nNum, const IVariant* pValue)
 	{
 		assert(nNum < m_vecVariants.size());
 		return m_vecVariants[nNum]->copy(pValue);
 	}
-	bool CompositeIndexKey::addValue(const CommonLib::IVariant* pValue)
+	bool CompositeIndexKey::addValue(const IVariant* pValue)
 	{
-		CommonLib::IVariant* pVariant =  createVariant(pValue->getType());
+		IVariant* pVariant =  createVariant(pValue->getType());
 		if(!pValue)
 			return false;
 		if(!pVariant->copy(pValue))
@@ -148,39 +148,39 @@ namespace embDB
 		m_vecVariants.push_back(pVariant);
 		return true;
 	}
-	CommonLib::IVariant* CompositeIndexKey::createVariant(uint16 nType)
+	IVariant* CompositeIndexKey::createVariant(uint16 nType)
 	{
 		switch(nType)
 		{
-			case CommonLib::dtUInteger8:
-				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarUINT8))) CommonLib::TVarUINT8();
+			case dtUInteger8:
+				return new (m_pAlloc->alloc(sizeof(TVarUINT8))) TVarUINT8();
 				break;
-			case CommonLib::dtInteger8:
-				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarINT8))) CommonLib::TVarINT8();
+			case dtInteger8:
+				return new (m_pAlloc->alloc(sizeof(TVarINT8))) TVarINT8();
 				break;
-			case CommonLib::dtUInteger16:
-				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarUINT16))) CommonLib::TVarUINT16();
+			case dtUInteger16:
+				return new (m_pAlloc->alloc(sizeof(TVarUINT16))) TVarUINT16();
 				break;
-			case CommonLib::dtInteger16:
-				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarINT16))) CommonLib::TVarINT16();
+			case dtInteger16:
+				return new (m_pAlloc->alloc(sizeof(TVarINT16))) TVarINT16();
 				break;
-			case CommonLib::dtUInteger32:
-				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarUINT32))) CommonLib::TVarUINT32();
+			case dtUInteger32:
+				return new (m_pAlloc->alloc(sizeof(TVarUINT32))) TVarUINT32();
 				break;
-			case CommonLib::dtInteger32:
-				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarINT32))) CommonLib::TVarINT32();
+			case dtInteger32:
+				return new (m_pAlloc->alloc(sizeof(TVarINT32))) TVarINT32();
 				break;
-			case CommonLib::dtUInteger64:
-				return new (m_pAlloc->alloc(sizeof(CommonLib::TFVarUINT64))) CommonLib::TFVarUINT64();
+			case dtUInteger64:
+				return new (m_pAlloc->alloc(sizeof(TFVarUINT64))) TFVarUINT64();
 				break;
-			case CommonLib::dtInteger64:
-				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarINT64))) CommonLib::TVarINT64();
+			case dtInteger64:
+				return new (m_pAlloc->alloc(sizeof(TVarINT64))) TVarINT64();
 				break;
-			case CommonLib::dtFloat:
-				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarFloat))) CommonLib::TVarFloat();
+			case dtFloat:
+				return new (m_pAlloc->alloc(sizeof(TVarFloat))) TVarFloat();
 				break;
-			case CommonLib::dtDouble:
-				return new (m_pAlloc->alloc(sizeof(CommonLib::TVarDouble))) CommonLib::TVarDouble();
+			case dtDouble:
+				return new (m_pAlloc->alloc(sizeof(TVarDouble))) TVarDouble();
 				break;
 		}
 

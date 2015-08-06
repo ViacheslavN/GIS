@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ShapefileWorkspace.h"
-#include "CommonLibrary/BaseVariant.h"
+#include "CommonLibrary/Variant.h"
 #include "Common/PropertySet.h"
 #include "ShapefileUtils.h"
 #include "CommonLibrary/File.h"
@@ -16,16 +16,16 @@ namespace GisEngine
 		CShapefileWorkspace::CShapefileWorkspace(Common::IPropertySetPtr& protSetPtr) : m_bLoad(false)
 		{
 			m_ConnectProp = protSetPtr;
-			CommonLib::IVariant *pVarName = m_ConnectProp->GetProperty(c_PropertyName);
-			CommonLib::IVariant *pVarPath = m_ConnectProp->GetProperty(c_PropertyPath);
-			if(pVarPath && pVarPath->getType() == CommonLib::dtString)
+			const CommonLib::CVariant *pVarName = m_ConnectProp->GetProperty(c_PropertyName);
+			const CommonLib::CVariant *pVarPath = m_ConnectProp->GetProperty(c_PropertyPath);
+			if(pVarPath)
 			{
-				pVarPath->getVal(m_sPath);
-				m_sPath = ShapefileUtils::NormalizePath(m_sPath);
+				CommonLib::ToStringVisitor vis;
+				m_sPath = ShapefileUtils::NormalizePath(CommonLib::apply_visitor<CommonLib::ToStringVisitor>(*pVarPath, vis));
 			}
-			if(pVarName && pVarName->getType() == CommonLib::dtString)
+			if(pVarName)
 			{
-				pVarName->getVal(m_sName);
+				m_sName = ShapefileUtils::NormalizePath(CommonLib::apply_visitor<CommonLib::ToStringVisitor>(*pVarName, CommonLib::ToStringVisitor()));
 			}
 			load();
 		}
@@ -35,11 +35,11 @@ namespace GisEngine
 			m_sPath = ShapefileUtils::NormalizePath(pszPath);
 
 			m_ConnectProp = new Common::CPropertySet();
-			CommonLib::TVarString varName(m_sName);
-			CommonLib::TVarString varPath(m_sPath);
+			CommonLib::CVariant varName(m_sName);
+			CommonLib::CVariant varPath(m_sPath);
 
-			m_ConnectProp->SetProperty(c_PropertyName, &varName);
-			m_ConnectProp->SetProperty(c_PropertyPath, &varPath);
+			m_ConnectProp->SetProperty(c_PropertyName, varName);
+			m_ConnectProp->SetProperty(c_PropertyPath, varPath);
 			load();
 		}
 		 
@@ -141,19 +141,19 @@ namespace GisEngine
 				  IFieldPtr pField = pFields->GetField(i);
 				  switch(pField->GetType())
 				  {
-				  case CommonLib::dtInteger8:
-				  case CommonLib::dtUInteger8:
-				  case CommonLib::dtInteger16:
-				  case CommonLib::dtUInteger16:
-				  case CommonLib::dtInteger32:
-				  case CommonLib::dtUInteger32:
-				  case CommonLib::dtInteger64:
-				  case CommonLib::dtUInteger64:
-				  case CommonLib::dtString:
-				  case CommonLib::dtDate:
-				  case CommonLib::dtOid:
+				  case dtInteger8:
+				  case dtUInteger8:
+				  case dtInteger16:
+				  case dtUInteger16:
+				  case dtInteger32:
+				  case dtUInteger32:
+				  case dtInteger64:
+				  case dtUInteger64:
+				  case dtString:
+				  case dtDate:
+				  case dtOid:
 					  break;
-				  case CommonLib::dtGeometry:
+				  case dtGeometry:
 					  {
 						  IShapeField* pShpField = (IShapeField*)pField.get();
 						  CommonLib::eShapeType gtype = pShpField->GetGeometryDef()->GetGeometryType();
@@ -191,12 +191,12 @@ namespace GisEngine
 			 CommonLib::str_t prjFileName = filePathBase + L".prj";
 
 
-			 SHPHandle shp = SHPCreate(shpFilePath.cstr(), shapeType);
+			 ShapeLib::SHPHandle shp = ShapeLib::SHPCreate(shpFilePath.cstr(), shapeType);
 			 if(!shp)
 				return IFeatureClassPtr();  //to do error
 			 SHPClose(shp);
 
-			 DBFHandle dbf = DBFCreate(dbfFilePath.cstr());
+			 ShapeLib::DBFHandle dbf = ShapeLib::DBFCreate(dbfFilePath.cstr());
 			 if(!dbf)
 			 {
 				 CommonLib::FileSystem::deleteFile(shpFilePath.cwstr());
@@ -214,30 +214,30 @@ namespace GisEngine
 				 IFieldPtr pField = pFields->GetField(i);
 				 switch(pField->GetType())
 				 {
-					 case CommonLib::dtInteger8:
-					case CommonLib::dtInteger16:
-					case CommonLib::dtInteger32:
-					case CommonLib::dtInteger64:
-					case CommonLib::dtUInteger8:
-					case CommonLib::dtUInteger16:
-					case CommonLib::dtUInteger32:
-					case CommonLib::dtUInteger64:
+					case dtInteger8:
+					case dtInteger16:
+					case dtInteger32:
+					case dtInteger64:
+					case dtUInteger8:
+					case dtUInteger16:
+					case dtUInteger32:
+					case dtUInteger64:
 				
-						DBFAddField(dbf, pField->GetName().cstr(), FTInteger, pField->GetPrecision(), pField->GetScale());
+						ShapeLib::DBFAddField(dbf, pField->GetName().cstr(), ShapeLib::FTInteger, pField->GetPrecision(), pField->GetScale());
 						break;
-					case CommonLib::dtFloat:
-					case CommonLib::dtDouble:
-						DBFAddField(dbf, pField->GetName().cstr(), FTDouble, pField->GetPrecision(), pField->GetScale());
+					case dtFloat:
+					case dtDouble:
+						ShapeLib::DBFAddField(dbf, pField->GetName().cstr(), ShapeLib::FTDouble, pField->GetPrecision(), pField->GetScale());
 						break;
-					case CommonLib::dtString:
-						DBFAddField(dbf, pField->GetName().cstr(), FTString, pField->GetLength(), 0);
+					case dtString:
+						ShapeLib::DBFAddField(dbf, pField->GetName().cstr(), ShapeLib::FTString, pField->GetLength(), 0);
 						break;
-					case CommonLib::dtDate:
-						DBFAddField(dbf, pField->GetName().cstr(), FTDate, pField->GetLength(), 0);
+					case dtDate:
+						ShapeLib::DBFAddField(dbf, pField->GetName().cstr(), ShapeLib::FTDate, pField->GetLength(), 0);
 						break;
-					case CommonLib::dtOid:
+					case dtOid:
 						break;
-					case CommonLib::dtGeometry:
+					case dtGeometry:
 						break;
 			 
 				 default:

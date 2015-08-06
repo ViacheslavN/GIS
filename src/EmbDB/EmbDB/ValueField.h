@@ -24,7 +24,7 @@ namespace embDB
 	public:
 		IOIDFiledRO() {}
 		virtual ~IOIDFiledRO() {}
-		virtual bool find(int64 nOID, CommonLib::IVariant* pFieldVal) = 0;
+		virtual bool find(int64 nOID, IVariant* pFieldVal) = 0;
 	};
 
 	//TBaseBPlusTree(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false) :
@@ -118,7 +118,7 @@ namespace embDB
 		{
 			return m_ParentIt.isNull();
 		}
-		virtual bool getVal(CommonLib::IVariant* pVal)
+		virtual bool getVal(IVariant* pVal)
 		{
 			return pVal->setVal(m_ParentIt.value());
 		}
@@ -185,7 +185,7 @@ namespace embDB
 			typedef typename TBTree::iterator  iterator;
 			typedef _FType FType;
 		
-			virtual bool insert (uint64 nOID, CommonLib::IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
+			virtual bool insert (uint64 nOID, IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
 				iterator *pFromIterator = NULL;
 				iterator RetIterator;
@@ -210,7 +210,7 @@ namespace embDB
 				}
 				return bRet;
 			}
-			virtual uint64 insert (CommonLib::IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
+			virtual uint64 insert (IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
 
 				iterator *pFromIterator = NULL;
@@ -237,7 +237,7 @@ namespace embDB
 				}
 				return nOID;
 			}
-			virtual bool update (uint64 nOID, CommonLib::IVariant* pFieldVal)
+			virtual bool update (uint64 nOID, IVariant* pFieldVal)
 			{
 				FType val;
 				pFieldVal->getVal(val);
@@ -257,7 +257,7 @@ namespace embDB
 				else
 					return m_tree.remove(nOID);
 			}
-			virtual bool find(uint64 nOID, CommonLib::IVariant* pFieldVal)
+			virtual bool find(uint64 nOID, IVariant* pFieldVal)
 			{
 				TBTree::iterator it = m_tree.find(nOID);
 				if(it.isNull())
@@ -331,16 +331,16 @@ namespace embDB
 			}
 	};
  
-	typedef ValueFieldHandler<int64, CommonLib::dtInteger64> TValFieldINT64;
-	typedef ValueFieldHandler<uint64, CommonLib::dtUInteger64> TValFieldUINT64;
-	typedef ValueFieldHandler<int32, CommonLib::dtInteger32> TValFieldINT32;
-	typedef ValueFieldHandler<uint32, CommonLib::dtUInteger32> TValFieldUINT32;
-	typedef ValueFieldHandler<int16, CommonLib::dtInteger16> TValFieldINT16;
-	typedef ValueFieldHandler<uint16, CommonLib::dtUInteger16> TValFieldUINT16;
-	typedef ValueFieldHandler<int32, CommonLib::dtUInteger8> TValFieldINT8;
-	typedef ValueFieldHandler<uint32, CommonLib::dtInteger8> TValFieldUINT8;
-	typedef ValueFieldHandler<double, CommonLib::dtDouble> TValFieldDouble;
-	typedef ValueFieldHandler<float, CommonLib::dtFloat> TValFieldFloat;
+	typedef ValueFieldHandler<int64, dtInteger64> TValFieldINT64;
+	typedef ValueFieldHandler<uint64,dtUInteger64> TValFieldUINT64;
+	typedef ValueFieldHandler<int32, dtInteger32> TValFieldINT32;
+	typedef ValueFieldHandler<uint32,dtUInteger32> TValFieldUINT32;
+	typedef ValueFieldHandler<int16, dtInteger16> TValFieldINT16;
+	typedef ValueFieldHandler<uint16,dtUInteger16> TValFieldUINT16;
+	typedef ValueFieldHandler<int32, dtUInteger8> TValFieldINT8;
+	typedef ValueFieldHandler<uint32,dtInteger8> TValFieldUINT8;
+	typedef ValueFieldHandler<double,dtDouble> TValFieldDouble;
+	typedef ValueFieldHandler<float, dtFloat> TValFieldFloat;
  
 }
 #endif

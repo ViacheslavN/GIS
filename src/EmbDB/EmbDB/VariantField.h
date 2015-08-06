@@ -3,20 +3,19 @@
 #include "key.h"
 #include "CommonLibrary/general.h"
 #include "IField.h"
-#include "CommonLibrary/BaseVariant.h"
 namespace embDB
 {
 
 	
 	
-	/*template <class Type, int FieldType>
-	class IBaseVariant : public IVariant
+	template <class Type, int FieldType>
+	class BaseVariant : public IVariant
 	{
 	public:
 		typedef Type TVarType;
-		IBaseVariant() : m_bIsEmpty(true)
+		BaseVariant() : m_bIsEmpty(true)
 		{}
-		IBaseVariant(const Type& value) : m_Value(value), m_bIsEmpty(true)
+		BaseVariant(const Type& value) : m_Value(value), m_bIsEmpty(true)
 		{}
 
 		virtual bool isEmpty(bool) const
@@ -46,7 +45,7 @@ namespace embDB
 
 		virtual bool LE(const IVariant* pVariant) const
 		{
-			const IBaseVariant* pBaseVariant = (IBaseVariant*)pVariant;
+			const BaseVariant* pBaseVariant = (BaseVariant*)pVariant;
 			if(!pBaseVariant)
 				return false;
 
@@ -54,7 +53,7 @@ namespace embDB
 		}
 		virtual bool EQ(const IVariant* pVariant) const
 		{
-			const IBaseVariant* pBaseVariant = (IBaseVariant*)pVariant;
+			const BaseVariant* pBaseVariant = (BaseVariant*)pVariant;
 			if(!pBaseVariant)
 				return false;
 			return m_Value == pBaseVariant->m_Value;
@@ -70,7 +69,7 @@ namespace embDB
 		bool copy(const IVariant *pVariant)
 		{
 			assert(pVariant->getType() == getType());
-			const IBaseVariant* pBaseVariant = (IBaseVariant*)pVariant;
+			const BaseVariant* pBaseVariant = (BaseVariant*)pVariant;
 			if(!pBaseVariant)
 				return false;
 			m_bIsEmpty = pBaseVariant->m_bIsEmpty;
@@ -83,15 +82,16 @@ namespace embDB
 			bool m_bIsEmpty;
 	};
 
-	typedef IBaseVariant<char, dtInteger8> TVarINT8;
-	typedef IBaseVariant<byte, dtUInteger8> TVarUINT8;
-	typedef IBaseVariant<int16, dtInteger16> TVarINT16;
-	typedef IBaseVariant<uint16, dtUInteger16> TVarUINT16;
-	typedef IBaseVariant<int32, dtInteger32> TVarINT32;
-	typedef IBaseVariant<uint32, dtUInteger32> TVarUINT32;
-	typedef IBaseVariant<int64, dtInteger64> TVarINT64;
-	typedef IBaseVariant<uint64, dtUInteger64> TFVarUINT64;
-	typedef IBaseVariant<float, dtFloat> TVarFloat;
-	typedef IBaseVariant<double, dtDouble> TVarDouble;*/
+	typedef BaseVariant<char, dtInteger8> TVarINT8;
+	typedef BaseVariant<byte, dtUInteger8> TVarUINT8;
+	typedef BaseVariant<int16, dtInteger16> TVarINT16;
+	typedef BaseVariant<uint16, dtUInteger16> TVarUINT16;
+	typedef BaseVariant<int32, dtInteger32> TVarINT32;
+	typedef BaseVariant<uint32, dtUInteger32> TVarUINT32;
+	typedef BaseVariant<int64, dtInteger64> TVarINT64;
+	typedef BaseVariant<uint64, dtUInteger64> TFVarUINT64;
+	typedef BaseVariant<float, dtFloat> TVarFloat;
+	typedef BaseVariant<double, dtDouble> TVarDouble;
+		typedef BaseVariant<CommonLib::str_t, dtString> TVarString;
 }
 #endif

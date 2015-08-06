@@ -27,7 +27,7 @@ namespace embDB
 			{}
 		~CUniqueIndex(){}
 
-		virtual bool insert (CommonLib::IVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		virtual bool insert (IVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
 
 			iterator *pFromIterator = NULL;
@@ -53,7 +53,7 @@ namespace embDB
 			}
 			return bRet;
 		}
-		virtual bool update (CommonLib::IVariant* pOldIndexKey, CommonLib::IVariant* pNewIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		virtual bool update (IVariant* pOldIndexKey, IVariant* pNewIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
 			//FType val;
 			//pIndexKey->getVal(val);
@@ -61,7 +61,7 @@ namespace embDB
 			return true;
 
 		}
-		virtual bool remove (CommonLib::IVariant* pIndexKey, IIndexIterator** pRetIter = NULL)
+		virtual bool remove (IVariant* pIndexKey, IIndexIterator** pRetIter = NULL)
 		{
 			return true;
 		}
@@ -69,7 +69,7 @@ namespace embDB
 		{
 			return true;
 		}
-		virtual IndexIteratorPtr find(CommonLib::IVariant* pIndexKey)
+		virtual IndexIteratorPtr find(IVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -77,7 +77,7 @@ namespace embDB
 			TIndexIterator *pIndexIterator = new TIndexIterator(it);
 			return IndexIteratorPtr(pIndexIterator);
 		}
-		virtual IndexIteratorPtr lower_bound(CommonLib::IVariant* pIndexKey)
+		virtual IndexIteratorPtr lower_bound(IVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -86,7 +86,7 @@ namespace embDB
 			TIndexIterator *pIndexIterator = new TIndexIterator(it);
 			return IndexIteratorPtr(pIndexIterator);
 		}
-		virtual IndexIteratorPtr upper_bound(CommonLib::IVariant* pIndexKey)
+		virtual IndexIteratorPtr upper_bound(IVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -95,7 +95,7 @@ namespace embDB
 			return IndexIteratorPtr(pIndexIterator);
 		}
 
-		bool remove (CommonLib::IVariant* pIndexKey)
+		bool remove (IVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -189,16 +189,16 @@ namespace embDB
 	};
 
 
-	typedef UniqueIndexFieldHandler<int64,  CommonLib::dtInteger64> TUniqueIndexNT64;
-	typedef UniqueIndexFieldHandler<uint64, CommonLib::dtUInteger64> TUniqueIndexUINT64;
-	typedef UniqueIndexFieldHandler<int32,  CommonLib::dtInteger32> TUniqueIndexINT32;
-	typedef UniqueIndexFieldHandler<uint32, CommonLib::dtUInteger32> TUniqueIndexUINT32;
-	typedef UniqueIndexFieldHandler<int16,  CommonLib::dtInteger16> TUniqueIndexINT16;
-	typedef UniqueIndexFieldHandler<uint16, CommonLib::dtUInteger16> TUniqueIndexUINT16;
-	typedef UniqueIndexFieldHandler<int32,  CommonLib::dtUInteger8> TUniqueIndexINT8;
-	typedef UniqueIndexFieldHandler<uint32, CommonLib::dtInteger8> TUniqueIndexUINT8;
-	typedef UniqueIndexFieldHandler<double, CommonLib::dtDouble> TUniqueIndexDouble;
-	typedef UniqueIndexFieldHandler<float,  CommonLib::dtFloat> TUniqueIndexFloat;
+	typedef UniqueIndexFieldHandler<int64,  dtInteger64> TUniqueIndexNT64;
+	typedef UniqueIndexFieldHandler<uint64, dtUInteger64> TUniqueIndexUINT64;
+	typedef UniqueIndexFieldHandler<int32,  dtInteger32> TUniqueIndexINT32;
+	typedef UniqueIndexFieldHandler<uint32, dtUInteger32> TUniqueIndexUINT32;
+	typedef UniqueIndexFieldHandler<int16,  dtInteger16> TUniqueIndexINT16;
+	typedef UniqueIndexFieldHandler<uint16, dtUInteger16> TUniqueIndexUINT16;
+	typedef UniqueIndexFieldHandler<int32,  dtUInteger8> TUniqueIndexINT8;
+	typedef UniqueIndexFieldHandler<uint32, dtInteger8> TUniqueIndexUINT8;
+	typedef UniqueIndexFieldHandler<double, dtDouble> TUniqueIndexDouble;
+	typedef UniqueIndexFieldHandler<float,  dtFloat> TUniqueIndexFloat;
 
 }
 

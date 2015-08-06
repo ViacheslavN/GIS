@@ -31,8 +31,8 @@ namespace GisEngine
 			virtual ~IPropertySet(){}
 			virtual int  count() const = 0;
 			virtual bool  PropertyExists(const wchar_t *name) const = 0;
-			virtual CommonLib::IVariant* GetProperty(const wchar_t *name) const = 0;
-			virtual void  SetProperty(const wchar_t *name, CommonLib::IVariant* value) = 0;
+			virtual const CommonLib::CVariant* GetProperty(const wchar_t *name) const = 0;
+			virtual void  SetProperty(const wchar_t *name, const CommonLib::CVariant& value) = 0;
 			virtual void  RemoveProperty(const wchar_t *name) = 0;
 			virtual void  RemoveAllProperties() = 0;
 

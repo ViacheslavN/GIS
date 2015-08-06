@@ -13,6 +13,30 @@ namespace GisEngine
 	namespace GeoDatabase
 	{
 
+		enum eDataTypes
+		{
+			dtUnknown   = 0,
+			dtNull,
+			dtInteger8,
+			dtInteger16,
+			dtInteger32,
+			dtInteger64,
+			dtUInteger8,
+			dtUInteger16,
+			dtUInteger32,
+			dtUInteger64,
+			dtOid,
+			dtFloat,
+			dtDouble,
+			dtString,
+			dtBlob,
+			dtRaster,
+			dtDate,
+			dtGeometry,
+			dtSerializedObject,
+			dtAnnotation 
+		};
+
 		enum eWorkspaceID
 		{
 			wiShapeFile = 1,
@@ -143,15 +167,14 @@ namespace GisEngine
 			virtual void                 SetIsNullable(bool flag) = 0;
 			virtual bool                 GetIsRequired() const = 0;
 			virtual void                 SetIsRequired(bool flag) = 0;
-			virtual CommonLib::eDataTypes      GetType() const = 0;
-			virtual void                 SetType(CommonLib::eDataTypes type) = 0;
+			virtual eDataTypes			 GetType() const = 0;
+			virtual void                 SetType(eDataTypes type) = 0;
 			virtual int                  GetLength() const = 0;
 			virtual void                 SetLength(int length) = 0;
 			virtual int                  GetPrecision() const = 0;
 			virtual void                 SetPrecision(int precision) = 0;
 			virtual int                  GetScale() const = 0;
 			virtual void                 SetScale(int scale) = 0;
-			virtual bool                 CheckValue(CommonLib::IVariant* value) = 0;
 			virtual IDomainPtr           GetDomain() const = 0;
 			virtual void                 SetDomain(IDomain* domain) = 0;
 		};
@@ -195,8 +218,8 @@ namespace GisEngine
 			virtual IFieldSetPtr		   GetFieldSet() const = 0;
 			virtual IFieldsPtr             GetSourceFields() const = 0;
 			virtual bool                   IsFieldSelected(int index) const = 0;
-			virtual CommonLib::IVariantPtr   GetValue(int index) const = 0;
-			virtual void                   SetValue(int index, CommonLib::IVariant* value) = 0;
+			virtual const CommonLib::CVariant*   GetValue(int index) const = 0;
+			virtual void                   SetValue(int index, const CommonLib::CVariant& value) = 0;
 			virtual bool                   HasOID() const = 0;
 			virtual int64                  GetOID() const = 0;
 			virtual void                   SetOID(int64 id) = 0;

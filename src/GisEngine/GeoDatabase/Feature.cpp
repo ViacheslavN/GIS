@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #include "Feature.h"
 #include "GeoDatabase/FieldSet.h"
-#include "CommonLibrary/BaseVariant.h"
+#include "CommonLibrary/Variant.h"
 namespace GisEngine
 {
 	namespace GeoDatabase
 	{
 
-		Feature::Feature(IFieldSet* fieldSet, IFields* fields)
+		CFeature::CFeature(IFieldSet* fieldSet, IFields* fields)
 			: fieldSet_(fieldSet)
 			, fields_(fields)
 			, oidFieldIndex_(-1)
@@ -38,13 +38,13 @@ namespace GisEngine
 				}
 
 				int fieldIndex = fields_->FindField(fieldName);
-				CommonLib::eDataTypes fieldType = fields_->GetField(fieldIndex)->GetType();
+				eDataTypes fieldType = fields_->GetField(fieldIndex)->GetType();
 
-				if(fieldType == CommonLib::dtOid && oidFieldIndex_ < 0)
+				if(fieldType == dtOid && oidFieldIndex_ < 0)
 					oidFieldIndex_ = fieldIndex;
-				else if(fieldType == CommonLib::dtGeometry && (shapeFieldIndex_ < 0 || shapeFieldIndex_ > fieldIndex))
+				else if(fieldType == dtGeometry && (shapeFieldIndex_ < 0 || shapeFieldIndex_ > fieldIndex))
 					shapeFieldIndex_ = fieldIndex;
-				else if(fieldType == CommonLib::dtAnnotation && (annoFieldIndex_ < 0 || annoFieldIndex_ > fieldIndex))
+				else if(fieldType == dtAnnotation && (annoFieldIndex_ < 0 || annoFieldIndex_ > fieldIndex))
 					annoFieldIndex_ = fieldIndex;
 			}
 
@@ -59,123 +59,98 @@ namespace GisEngine
 			{
 				int fieldIndex = fields_->FindField(fieldName);
 				fieldMap_[fieldIndex] = i;
-				CommonLib::eDataTypes fieldType = fields_->GetField(fieldIndex)->GetType();
-				values_[i] = CommonLib::CreateBaseVariant(fieldType);
+				values_[i] = CommonLib::CVariant();
 				++i;
 			}
 		}
 
-		Feature::~Feature()
+		CFeature::~CFeature()
 		{}
 
 		// IRow
-		IFieldSetPtr Feature::GetFieldSet() const
+		IFieldSetPtr CFeature::GetFieldSet() const
 		{
 			return fieldSet_;
 		}
 
-		IFieldsPtr Feature::GetSourceFields() const
+		IFieldsPtr CFeature::GetSourceFields() const
 		{
 			return fields_;
 		}
 
-		bool Feature::IsFieldSelected(int index) const
+		bool CFeature::IsFieldSelected(int index) const
 		{
 			return fieldMap_[index] >= 0;
 		}
 
-		CommonLib::IVariantPtr Feature::GetValue(int index) const
+		const CommonLib::CVariant* CFeature::GetValue(int index) const
 		{
 			if(fieldMap_[index] < 0)
-				CommonLib::IVariantPtr();
+				return NULL;
 
-			return values_[fieldMap_[index]];
+			return &values_[fieldMap_[index]];
 		}
 
-		void Feature::SetValue(int index, CommonLib::IVariant* pValue)
+		void CFeature::SetValue(int index, const CommonLib::CVariant& value)
 		{
 			if(fieldMap_[index] < 0)
 				return;
 
-			values_[fieldMap_[index]] = pValue;
+			values_[fieldMap_[index]] = value;
 		}
 
 		// IRow
-		bool Feature::HasOID() const
+		bool CFeature::HasOID() const
 		{
 			return oidFieldIndex_ >= 0;
 		}
 
-		int64 Feature::GetOID() const
+		int64 CFeature::GetOID() const
 		{
 			if(oidFieldIndex_ < 0)
 				return -1;
 
 			int64 nOID = 0;
-			values_[fieldMap_[oidFieldIndex_]]->getVal(nOID);
-			return nOID;
+			return values_[fieldMap_[oidFieldIndex_]].Get<int64>();
+			 
 		}
 
-		void Feature::SetOID(int64 nOID)
+		void CFeature::SetOID(int64 nOID)
 		{
 			if(oidFieldIndex_ < 0)
 				return;
 
-			CommonLib::IVariantPtr pVar = values_[fieldMap_[oidFieldIndex_]];
-			pVar->set(nOID);
+			values_[fieldMap_[oidFieldIndex_]] = nOID;
 		}
 
 		// IFeature
-		CommonLib::IGeoShapePtr Feature::GetShape() const
+		CommonLib::IGeoShapePtr CFeature::GetShape() const
 		{
 			if(shapeFieldIndex_ < 0 && annoFieldIndex_ < 0)
 				CommonLib::IGeoShapePtr();
 
-			CommonLib::IGeoShape *pShape;
+			CommonLib::IRefObjectPtr ptr;
 			if(shapeFieldIndex_ < 0)
 			{
-				values_[fieldMap_[annoFieldIndex_]]->Get(pShape);
+				ptr = values_[fieldMap_[annoFieldIndex_]].Get<CommonLib::IRefObjectPtr>();
 			}
 			else
 			{
-				values_[fieldMap_[shapeFieldIndex_]]->Get(pShape);
+				ptr = values_[fieldMap_[shapeFieldIndex_]].Get<CommonLib::IRefObjectPtr>();
 			}
 
-			return CommonLib::IGeoShapePtr(pShape);
+			return CommonLib::IGeoShapePtr((CommonLib::IGeoShape*)ptr.get());
 
-			//  return GIS_VARIANT_GET(values_[fieldMap_[shapeFieldIndex_]]->Get(), gisCommon::IObjectPtr);
 		}
 
-		void Feature::SetShape(CommonLib::IGeoShape* pShape)
+		void CFeature::SetShape(CommonLib::IGeoShape* pShape)
 		{
 			if(shapeFieldIndex_ < 0)
 				return;
 
-			IVariantEditPtr var = values_[fieldMap_[shapeFieldIndex_]];
-			var->Get() = IObjectPtr(shape);
+			CommonLib::IRefObjectPtr ptr((IRefCnt*)pShape);
+
+			values_[fieldMap_[shapeFieldIndex_]] = ptr;
 		}
-
-	/*	bool Feature::HasAnnotation() const
-		{
-			return annoFieldIndex_ >= 0;
-		}
-
-		gisCommon::IObjectPtr Feature::GetAnnotation() const
-		{
-			if(annoFieldIndex_ < 0)
-				GIS_THROW_DEFAULT_EXCEPTION(L"Cannot get Annotation");
-
-			return GIS_VARIANT_GET(values_[fieldMap_[annoFieldIndex_]]->Get(), gisCommon::IObjectPtr);
-		}
-
-		void Feature::SetAnnotation(gisCommon::IObject* element)
-		{
-			if(annoFieldIndex_ < 0)
-				GIS_THROW_DEFAULT_EXCEPTION(L"Cannot set Anotation. There is not found anno field");
-
-			IVariantEditPtr var = values_[fieldMap_[annoFieldIndex_]];
-			var->Get() = gisCommon::IObjectPtr(element);
-		}*/
-
 	}
 }

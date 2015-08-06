@@ -96,7 +96,7 @@ bool ShapefileRowCursor::NextRowEx(IRowPtr* row, IRow* rowCache)
 			if(rowCache)
 				currentRow_ = rowCache;
 			else
-				currentRow_ = Feature::CreateInstance(filter_->GetFieldSet().get(), sourceFields_.get());
+				currentRow_ = CFeature::CreateInstance(filter_->GetFieldSet().get(), sourceFields_.get());
 			if(shapeFieldIndex_ >= 0 && IsFieldSelected(shapeFieldIndex_))
 			{
 				IFeature* feature = gis_interface_cast<IFeature>(currentRow_.get());

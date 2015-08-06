@@ -306,7 +306,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty;../../ThirdParty/ShapeLib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -464,7 +464,6 @@
     <ClInclude Include="ShapefileRowCursor.h" />
     <ClInclude Include="ShapefileUtils.h" />
     <ClInclude Include="ShapefileWorkspace.h" />
-    <ClInclude Include="shapelib\shapefil.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -475,14 +474,11 @@
     <ClCompile Include="FieldSet.cpp" />
     <ClCompile Include="GeometryDef.cpp" />
     <ClCompile Include="ShapefileFeatureClass.cpp" />
-    <ClCompile Include="ShapefileRowCursor.cpp" />
+    <ClCompile Include="ShapefileRowCursor.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="ShapefileUtils.cpp" />
     <ClCompile Include="ShapefileWorkspace.cpp" />
-    <ClCompile Include="shapelib\dbfopen.cpp" />
-    <ClCompile Include="shapelib\shpopen.cpp" />
-    <ClCompile Include="shptree.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugShared|Win32'">Create</PrecompiledHeader>

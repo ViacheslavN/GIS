@@ -299,6 +299,8 @@ typedef unsigned int	      int32;
 #     define snprintf _snprintf
 #  endif
 #endif
+namespace ShapeLib
+{
 
 static int 	bBigEndian;
 
@@ -2385,4 +2387,5 @@ SHPRewindObject( SHPHandle hSHP, SHPObject * psObject )
     }
 
     return bAltered;
+}
 }

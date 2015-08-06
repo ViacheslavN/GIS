@@ -5,14 +5,14 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
-		CField::CField(CommonLib::str_t& sName, CommonLib::str_t& sAliasName, bool bIsEditable,	bool bIsNullable, bool bIsRquired, CommonLib::eDataTypes type,
+		CField::CField(CommonLib::str_t& sName, CommonLib::str_t& sAliasName, bool bIsEditable,	bool bIsNullable, bool bIsRquired, eDataTypes type,
 			int nLength, int nPrecision, int nScale, IGeometryDef* pGeometry, IDomain* pDomain) : 
 			m_sName(sName), m_sAliasName(sAliasName), m_bIsEditable(bIsEditable), m_bIsNullable(bIsNullable), m_bIsRquired(bIsRquired), m_type(type),
 				m_nLength(nLength), m_nPrecision(nPrecision), m_nScale(nScale), m_pGeometryDefPtr(pGeometry), m_pDomainPtr(pDomain)
 		{
 
 		}
-		CField::CField() : m_bIsEditable(true), m_bIsNullable(true), m_bIsRquired(false), m_type(CommonLib::dtUnknown), m_nLength(0), m_nPrecision(0), m_nScale(0)
+		CField::CField() : m_bIsEditable(true), m_bIsNullable(true), m_bIsRquired(false), m_type(dtUnknown), m_nLength(0), m_nPrecision(0), m_nScale(0)
 			
 		{
 
@@ -90,11 +90,11 @@ namespace GisEngine
 		{
 			m_bIsRquired = bIsRquired;
 		}
-		CommonLib::eDataTypes  CField::GetType() const
+		eDataTypes  CField::GetType() const
 		{
 			return m_type;
 		}
-		void  CField::SetType(CommonLib::eDataTypes type)
+		void  CField::SetType(eDataTypes type)
 		{
 			m_type = type;
 		}
@@ -122,10 +122,7 @@ namespace GisEngine
 		{
 			m_nScale = scale;
 		}
-		bool CField::CheckValue(CommonLib::IVariant* pValue)
-		{
-			return GetType() == pValue->getType();
-		}
+		
 		IDomainPtr CField::GetDomain() const
 		{
 			return m_pDomainPtr;

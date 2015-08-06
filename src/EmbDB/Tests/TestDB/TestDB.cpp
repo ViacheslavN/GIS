@@ -10,15 +10,15 @@ void TestSpatialField(embDB::CDatabase& db);
 int _tmain(int argc, _TCHAR* argv[])
 {
 	
-	CommonLib::TVarINT32 int32key;
+	embDB::TVarINT32 int32key;
 
 	//CommonLib::alloc_t* alloc;
 	//embDB::BNodeVector<embDB::TFieldINT32> vec(NULL);
 
 
-	CommonLib::TVarINT64 int64key;
+	embDB::TVarINT64 int64key;
 
-	CommonLib::IVariant *pField = &int32key;
+	embDB::IVariant *pField = &int32key;
 	pField->set((double)34.566);
 	pField->set((int)100);
 	int nType = pField->getType();

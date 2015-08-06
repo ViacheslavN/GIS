@@ -30,18 +30,18 @@ namespace embDB
 
 		uint32 getSize() const;
  
-		CommonLib::IVariant * getValue(uint32 nNum);
-		const CommonLib::IVariant * getValue(uint32 nNum) const;
-		bool setValue(uint32 nNum, const CommonLib::IVariant* pValue);
-		bool addValue(const CommonLib::IVariant* pValue);
+		IVariant * getValue(uint32 nNum);
+		const IVariant * getValue(uint32 nNum) const;
+		bool setValue(uint32 nNum, const IVariant* pValue);
+		bool addValue(const IVariant* pValue);
 
 		void write(CommonLib::FxMemoryWriteStream& stream);
 		bool load(const std::vector<uint16>& vecScheme, CommonLib::FxMemoryReadStream& stream);
 	private:
 		void clear();
-		CommonLib::IVariant* createVariant(uint16 nType);
+		IVariant* createVariant(uint16 nType);
 	private:
-		TBPVector<CommonLib::IVariant*> m_vecVariants;
+		TBPVector<IVariant*> m_vecVariants;
 		CommonLib::alloc_t *m_pAlloc;
 
 	};

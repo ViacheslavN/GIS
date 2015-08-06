@@ -104,7 +104,7 @@ namespace CommonLib
 	};
 
 
-	class IGeoShape : AutoRefCounter
+	class IGeoShape : public AutoRefCounter
 	{
 		public:
 			IGeoShape(){};

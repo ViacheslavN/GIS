@@ -30,7 +30,7 @@ namespace embDB
 	{
 		sFieldInfo() : 
 			m_nFieldType(0)
-			,m_nFieldDataType(CommonLib::dtUnknown)
+			,m_nFieldDataType(dtUnknown)
 			,m_nBaseFieldProp(0)
 			,m_nIndexType(0)
 			,m_bPrimeryKey(false)
@@ -265,9 +265,9 @@ namespace embDB
 			return true;
 		}
 
-		CommonLib::eDataTypes getType() const
+		eDataTypes getType() const
 		{
-			return (CommonLib::eDataTypes)m_fi.m_nFieldDataType;
+			return (eDataTypes)m_fi.m_nFieldDataType;
 		}
 		const CommonLib::str_t& getName() const
 		{

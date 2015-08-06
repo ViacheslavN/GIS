@@ -3,7 +3,7 @@
 
 
 #include "GeoDatabase.h"
-#include "shapelib/shapefil.h"
+#include "ShapeLib/shapefil.h"
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -12,12 +12,12 @@ namespace GisEngine
 		{
 			CommonLib::str_t  NormalizePath(const CommonLib::str_t& path);
 			CommonLib::eShapeType SHPTypeToGeometryType(int shpType, bool* hasZ, bool* hasM);
-			CommonLib::eDataTypes SHPFieldInfoToFieldInfo(DBFFieldType ftype, int width, int dec, int* length, int* precision, int* scale);
+			eDataTypes SHPFieldInfoToFieldInfo(ShapeLib::DBFFieldType ftype, int width, int dec, int* length, int* precision, int* scale);
 
 
 			struct SHPGuard
 			{
-				SHPHandle file;
+				ShapeLib::SHPHandle file;
 				SHPGuard()
 					: file(NULL)
 				{}
@@ -28,14 +28,14 @@ namespace GisEngine
 				void clear()
 				{
 					if(file)
-						SHPClose(file);
+						ShapeLib::SHPClose(file);
 					file = NULL;
 				}
 			};
 
 			struct DBFGuard
 			{
-				DBFHandle file;
+				ShapeLib::DBFHandle file;
 				DBFGuard()
 					: file(NULL)
 				{}
@@ -46,7 +46,7 @@ namespace GisEngine
 				void clear()
 				{
 					if(file)
-						DBFClose(file);
+						ShapeLib::DBFClose(file);
 					file = NULL;
 				}
 			};

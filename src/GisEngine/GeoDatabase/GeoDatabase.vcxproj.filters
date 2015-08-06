@@ -19,9 +19,6 @@
     <Filter Include="GeoDatabaseEmbDB">
       <UniqueIdentifier>{be2a12a8-95a8-44dc-89f9-4809fca6f6e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GeoDatabaseShape\shapelib">
-      <UniqueIdentifier>{b39f3fd4-7b6a-438d-b877-360fcdbf8bab}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -35,9 +32,6 @@
     </ClInclude>
     <ClInclude Include="GeoDatabase.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="shapelib\shapefil.h">
-      <Filter>GeoDatabaseShape\shapelib</Filter>
     </ClInclude>
     <ClInclude Include="ShapefileWorkspace.h">
       <Filter>GeoDatabaseShape</Filter>
@@ -64,18 +58,12 @@
       <Filter>GeoDatabaseShape</Filter>
     </ClInclude>
     <ClInclude Include="Feature.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="shapelib\dbfopen.cpp">
-      <Filter>GeoDatabaseShape\shapelib</Filter>
-    </ClCompile>
-    <ClCompile Include="shapelib\shpopen.cpp">
-      <Filter>GeoDatabaseShape\shapelib</Filter>
     </ClCompile>
     <ClCompile Include="ShapefileWorkspace.cpp">
       <Filter>GeoDatabaseShape</Filter>
@@ -88,9 +76,6 @@
     </ClCompile>
     <ClCompile Include="Field.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="shptree.c">
-      <Filter>GeoDatabaseShape\shapelib</Filter>
     </ClCompile>
     <ClCompile Include="FieldSet.cpp">
       <Filter>Source Files</Filter>

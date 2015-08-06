@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "general.h"
+
 #include "Interlocked.h"
 #ifdef __IPHONE_3_1
 #include <libkern/OSAtomic.h>

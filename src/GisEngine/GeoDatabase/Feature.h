@@ -6,26 +6,26 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
-		class  Feature : public IFeature
+		class  CFeature : public IFeature
 		{
 		public:
-			Feature(IFieldSet* fieldSet, IFields* fields);
-			virtual ~Feature();
+			CFeature(IFieldSet* fieldSet, IFields* fields);
+			virtual ~CFeature();
 
 		private:
-			Feature(const Feature&);
-			Feature& operator=(const Feature&);
+			CFeature(const CFeature&);
+			CFeature& operator=(const CFeature&);
 
 		public:
 			//IRow
-			virtual IFieldSetPtr			   GetFieldSet() const = 0;
-			virtual IFieldsPtr               GetSourceFields() const = 0;
-			virtual bool                   IsFieldSelected(int index) const = 0;
-			virtual CommonLib::IVariantPtr   GetValue(int index) const = 0;
-			virtual void                   SetValue(int index, CommonLib::IVariant* value) = 0;
-			virtual bool                   HasOID() const = 0;
-			virtual int64                  GetOID() const = 0;
-			virtual void                   SetOID(int64 id) = 0;
+			virtual IFieldSetPtr		   GetFieldSet() const;
+			virtual IFieldsPtr             GetSourceFields() const ;
+			virtual bool                   IsFieldSelected(int index) const;
+			virtual const CommonLib::CVariant*   GetValue(int index) const;
+			virtual void                   SetValue(int index, const CommonLib::CVariant& value);
+			virtual bool                   HasOID() const;
+			virtual int64                  GetOID() const;
+			virtual void                   SetOID(int64 id);
 
 			// IFeature
 			virtual CommonLib::IGeoShapePtr GetShape() const;
@@ -37,7 +37,7 @@ namespace GisEngine
 			int                                 shapeFieldIndex_;
 			int                                 annoFieldIndex_;
 			std::vector<int>                    fieldMap_;
-			std::vector<CommonLib::IVariantPtr> values_;
+			std::vector<CommonLib::CVariant>	values_;
 		};
 	}
 }

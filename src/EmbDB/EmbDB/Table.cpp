@@ -438,25 +438,25 @@ namespace embDB
 
 		switch(fi.m_nFieldDataType)
 		{
-			case CommonLib::dtPoint16:
+			case dtPoint16:
 				pSpatialField = new TPoint16Field(m_pDB->getBTreeAlloc());
 				break;
-			case CommonLib::dtPoint32:
+			case dtPoint32:
 				pSpatialField = new TPoint32Field(m_pDB->getBTreeAlloc());
 				break;
-			case CommonLib::dtPoint64:
+			case dtPoint64:
 				pSpatialField = new TPoint64Field(m_pDB->getBTreeAlloc());
 				break;
-			case CommonLib::dtShape16:
-			case CommonLib::dtRect16:
+			case dtShape16:
+			case dtRect16:
 				pSpatialField = new TRect16Field(m_pDB->getBTreeAlloc());
 					break;
-			case CommonLib::dtShape32:
-			case CommonLib::dtRect32:
+			case dtShape32:
+			case dtRect32:
 					pSpatialField = new TRect32Field(m_pDB->getBTreeAlloc());
 					break;
-			case CommonLib::dtShape64:
-			case CommonLib::dtRect64:
+			case dtShape64:
+			case dtRect64:
 				pSpatialField = new TRect64Field(m_pDB->getBTreeAlloc());
 					break;
 		
@@ -721,7 +721,7 @@ namespace embDB
 			 return false;
 
 		FieldIteratorPtr pFieldIterator =  pField->begin();
-		CommonLib::IVariant val;
+		IVariant val;
 		while (!pFieldIterator->isNull())
 		{
 			if(!pFieldIterator->getVal(&val))

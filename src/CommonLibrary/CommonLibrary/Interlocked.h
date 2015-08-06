@@ -1,5 +1,6 @@
-#ifndef UGLITE_SYSTEM_INTERLOCKED_H
-#define UGLITE_SYSTEM_INTERLOCKED_H
+#ifndef _LIB_COMMON_INTERLOCKED_H
+#define _LIB_COMMON_INTERLOCKED_H
+#include "general.h"
 namespace CommonLib
 {
 

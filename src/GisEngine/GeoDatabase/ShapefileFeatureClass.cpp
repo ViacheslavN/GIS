@@ -89,10 +89,10 @@ namespace GisEngine
 			CommonLib::str_t prjFileName = filePathBase + L".prj";
 
 			  const char* szAccess = write ? "r+b" : "rb";
-			 m_shp.file = SHPOpen(shpFilePath.cstr(), szAccess);
+			 m_shp.file = ShapeLib::SHPOpen(shpFilePath.cstr(), szAccess);
 			 if(!m_shp.file)
 				return false; //TO DO Error log
-			 m_dbf.file = DBFOpen(dbfFilePath.cstr(), szAccess);
+			 m_dbf.file = ShapeLib::DBFOpen(dbfFilePath.cstr(), szAccess);
 			 if(!m_dbf.file)
 				 return false; //TO DO Error log
 
@@ -127,15 +127,15 @@ namespace GisEngine
 			 CommonLib::eShapeType geomType = ShapefileUtils::SHPTypeToGeometryType(shapeType, &hasZ, &hasM);
 			 IGeometryDefPtr pGeometryDefPtr(new  CGeometryDef(geomType, hasZ, hasM));
 
-			 int fieldCount = DBFGetFieldCount(m_dbf.file);
+			 int fieldCount = ShapeLib::DBFGetFieldCount(m_dbf.file);
 			 for(int fieldNum = 0; fieldNum < fieldCount; ++fieldNum)
 			 {
 				 char name[33];
 				 int width;
 				 int dec;
-				 DBFFieldType shpFieldType = DBFGetFieldInfo(m_dbf.file, fieldNum, name, &width, &dec);
+				 ShapeLib::DBFFieldType shpFieldType = ShapeLib::DBFGetFieldInfo(m_dbf.file, fieldNum, name, &width, &dec);
 
-				 CommonLib::eDataTypes fieldType;
+				 eDataTypes fieldType;
 				 int length;
 				 int precision;
 				 int scale;
@@ -170,7 +170,7 @@ namespace GisEngine
 			 pOidField->SetIsEditable(false);
 			 pOidField->SetIsNullable(false);
 			 pOidField->SetIsRequired(true);;
-			 pOidField->SetType(CommonLib::dtOid);
+			 pOidField->SetType(dtOid);
 			 m_sOIDName = L"ObjectID";
 			 i = 0;
 			 while(m_FieldsPtr->FieldExists(m_sOIDName))

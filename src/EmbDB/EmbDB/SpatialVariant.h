@@ -6,11 +6,11 @@ namespace embDB
 {
 
 	template <class _TCoordType, int FieldType>
-	class PointFieldVariant : public CommonLib::BaseVariant<CommonLib::TPoint2D<_TCoordType> , FieldType>
+	class PointFieldVariant : public BaseVariant<CommonLib::TPoint2D<_TCoordType> , FieldType>
 	{
 	public:
 		typedef _TCoordType TCoordType ;
-		typedef CommonLib::BaseVariant<CommonLib::TPoint2D<TCoordType> , FieldType> TBase;
+		typedef BaseVariant<CommonLib::TPoint2D<TCoordType> , FieldType> TBase;
 		typedef CommonLib::TPoint2D<TCoordType> TPoint;
 		PointFieldVariant(){};
 		PointFieldVariant(TCoordType x, TCoordType y) 
@@ -23,7 +23,7 @@ namespace embDB
 	};
 
 	template <class _TCoordType, int FieldType>
-	class RectFieldVariant : public CommonLib::BaseVariant<CommonLib::TRect2D<_TCoordType> , FieldType>
+	class RectFieldVariant : public BaseVariant<CommonLib::TRect2D<_TCoordType> , FieldType>
 	{
 	public:
 		typedef _TCoordType TCoordType ;
@@ -44,13 +44,13 @@ namespace embDB
 
 
 
-	typedef PointFieldVariant<uint16, CommonLib::dtPoint16> TVariantPointField16;
-	typedef PointFieldVariant<uint32, CommonLib::dtPoint16> TVariantPointField32;
-	typedef PointFieldVariant<uint64, CommonLib::dtPoint64> TVariantPointField64;
+	typedef PointFieldVariant<uint16, dtPoint16> TVariantPointField16;
+	typedef PointFieldVariant<uint32, dtPoint16> TVariantPointField32;
+	typedef PointFieldVariant<uint64, dtPoint64> TVariantPointField64;
 
-	typedef RectFieldVariant<uint16, CommonLib::dtShape16> TVariantShapeField16;
-	typedef RectFieldVariant<uint32, CommonLib::dtShape32> TVariantShapeField32;
-	typedef RectFieldVariant<uint64, CommonLib::dtShape64> TVariantShapeField64;
+	typedef RectFieldVariant<uint16, dtShape16> TVariantShapeField16;
+	typedef RectFieldVariant<uint32, dtShape32> TVariantShapeField32;
+	typedef RectFieldVariant<uint64, dtShape64> TVariantShapeField64;
 }
 
 #endif

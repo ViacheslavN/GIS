@@ -27,7 +27,7 @@ namespace GisEngine
 
 				return normalizedPath;
 			}
-			CommonLib::eDataTypes SHPFieldInfoToFieldInfo(DBFFieldType ftype, int width, int dec, int* length, int* precision, int* scale)
+			eDataTypes SHPFieldInfoToFieldInfo(ShapeLib::DBFFieldType ftype, int width, int dec, int* length, int* precision, int* scale)
 			{
 				*length = 0;
 				*precision = 0;
@@ -35,20 +35,20 @@ namespace GisEngine
 
 				switch(ftype)
 				{
-				case FTString:
+				case ShapeLib::FTString:
 					*length = width;
-					return CommonLib::dtString;
-				case FTInteger:
+					return dtString;
+				case ShapeLib::FTInteger:
 					*precision = width - 1;
-					return CommonLib::dtInteger32;
-				case FTDouble:
+					return dtInteger32;
+				case ShapeLib::FTDouble:
 					*precision = width - 1;
 					*scale = dec;
-					return CommonLib::dtDouble;
-				case FTDate:
-					return CommonLib::dtDate;
+					return dtDouble;
+				case ShapeLib::FTDate:
+					return dtDate;
 				}
-				return CommonLib::dtUnknown;
+				return dtUnknown;
 			}
 
 			CommonLib::eShapeType SHPTypeToGeometryType(int shpType, bool* hasZ, bool* hasM)

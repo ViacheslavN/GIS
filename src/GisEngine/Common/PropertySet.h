@@ -14,14 +14,14 @@ namespace GisEngine
 			~CPropertySet();
 			virtual int  count() const;
 			virtual bool  PropertyExists(const wchar_t *name) const;
-			virtual CommonLib::IVariant* GetProperty(const wchar_t *name) const;
-			virtual void  SetProperty(const wchar_t *name, CommonLib::IVariant* value);
+			virtual const CommonLib::CVariant* GetProperty(const wchar_t *name) const;
+			virtual void  SetProperty(const wchar_t *name, const CommonLib::CVariant& value);
 			virtual void  RemoveProperty(const wchar_t *name);
 			virtual void  RemoveAllProperties();
 		private:
 			void clear();
 		private:
-			typedef std::map<CommonLib::str_t, CommonLib::IVariant*> TMapProp;
+			typedef std::map<CommonLib::str_t, CommonLib::CVariant> TMapProp;
 			TMapProp m_mapProp;
 
 		};

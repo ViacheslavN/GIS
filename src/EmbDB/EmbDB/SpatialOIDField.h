@@ -76,7 +76,7 @@ namespace embDB
 		}
 
 
-		virtual bool insert (CommonLib::IVariant* pFieldVal, uint64 nOID)
+		virtual bool insert (IVariant* pFieldVal, uint64 nOID)
 		{
 			TSpatialObject obj;
 			pFieldVal->getVal(obj);
@@ -127,9 +127,9 @@ namespace embDB
 			}
 
 
-			CommonLib::eDataTypes getType() const
+			eDataTypes getType() const
 			{
-				return (CommonLib::eDataTypes)m_fi.m_nFieldDataType;
+				return (eDataTypes)m_fi.m_nFieldDataType;
 			}
 			const CommonLib::str_t& getName() const
 			{

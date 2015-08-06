@@ -16,7 +16,7 @@ class CompIndexParams : public CompressorParamsBaseImp
 		virtual bool save(IDBTransactions *pTran);
 		const std::vector<uint16>& getScheme() const {return m_vecScheme;}
 		uint32 getRowSize() const{ return m_nRowSize;}
-		void addParams(CommonLib::eDataTypes type, uint32 nSize = 0);
+		void addParams(eDataTypes type, uint32 nSize = 0);
 	private:
 
 		std::vector<uint16> m_vecScheme;

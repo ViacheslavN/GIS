@@ -9,7 +9,7 @@ namespace embDB
 	{
 		CommonLib::str_t sFieldName;
 		CommonLib::str_t sFieldAlias;
-		CommonLib::eDataTypes dataType;
+		eDataTypes dataType;
 		eDataTypesExt dateTypeExt;
 	};
 

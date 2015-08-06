@@ -15,7 +15,7 @@ namespace embDB
 		virtual bool next() = 0;
 		virtual bool back() = 0;
 		virtual bool isNull() = 0;
-		virtual bool getVal(CommonLib::IVariant* pVal) = 0;
+		virtual bool getVal(IVariant* pVal) = 0;
 		virtual uint64 getRowID() = 0;
 
 		virtual int64 addr() const = 0;
@@ -45,7 +45,7 @@ namespace embDB
 		virtual bool copy(TIIndexIterator *pIter) = 0;
 	};
 
-	typedef TIIndexIterator<CommonLib::IVariant> IIndexIterator;
+	typedef TIIndexIterator<IVariant> IIndexIterator;
 
 	typedef CommonLib::IRefCntPtr<IIndexIterator> IndexIteratorPtr;
 
@@ -58,7 +58,7 @@ namespace embDB
 		virtual bool next() = 0;
 		virtual bool back() = 0;
 		virtual bool isNull() = 0;
-		virtual bool getKey(CommonLib::IVariant* pIndexKey) = 0;
+		virtual bool getKey(IVariant* pIndexKey) = 0;
 		virtual uint64 getPage() = 0;
 		virtual uint32 getPos() = 0;
 	};
@@ -72,11 +72,11 @@ namespace embDB
 	public:
 		IValueFiled() {}
 		virtual ~IValueFiled() {}
-		virtual bool insert (uint64 nOID, CommonLib::IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
-		virtual uint64 insert (CommonLib::IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
-		virtual bool update (uint64 nRowID, CommonLib::IVariant* pFieldVal) = 0;
+		virtual bool insert (uint64 nOID, IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
+		virtual uint64 insert (IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
+		virtual bool update (uint64 nRowID, IVariant* pFieldVal) = 0;
 		virtual bool remove (uint64 nRowID, IFieldIterator **pRetIter = NULL) = 0;
-		virtual bool find(uint64 nOID, CommonLib::IVariant* pFieldVal) = 0;
+		virtual bool find(uint64 nOID, IVariant* pFieldVal) = 0;
 		virtual FieldIteratorPtr find(uint64 nRowID) = 0;
 		virtual FieldIteratorPtr begin() = 0;
 		virtual FieldIteratorPtr last() = 0;
@@ -100,7 +100,7 @@ namespace embDB
 	};
 
 
-	typedef TIndexFiled<CommonLib::IVariant, IIndexIterator, IndexIteratorPtr> IndexFiled;
+	typedef TIndexFiled<IVariant, IIndexIterator, IndexIteratorPtr> IndexFiled;
 
 	/*class IndexFiled  
 	{
@@ -125,9 +125,9 @@ namespace embDB
 		ICounterFiled() {}
 		virtual ~ICounterFiled() {}
 		virtual bool insert (uint64 nRowID, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
-		virtual bool update (uint64 nRowID, CommonLib::IVariant* pFieldVal) = 0;
+		virtual bool update (uint64 nRowID, IVariant* pFieldVal) = 0;
 		virtual bool remove (uint64 nRowID, IFieldIterator **pRetIter = NULL) = 0;
-		virtual bool find(uint64 nOID, CommonLib::IVariant* pFieldVal) = 0;
+		virtual bool find(uint64 nOID, IVariant* pFieldVal) = 0;
 		virtual FieldIteratorPtr find(uint64 nOID) = 0;
 		virtual FieldIteratorPtr begin() = 0;
 		virtual FieldIteratorPtr last() = 0;

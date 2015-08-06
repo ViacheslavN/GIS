@@ -146,6 +146,11 @@
 #include <dbmalloc.h>
 #endif
 
+
+namespace ShapeLib
+{
+
+ 
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -643,6 +648,8 @@ const char SHPAPI_CALL1(*)
 
 #ifdef __cplusplus
 }
-#endif
 
+
+#endif
+}
 #endif /* ndef SHAPEFILE_H_INCLUDED */

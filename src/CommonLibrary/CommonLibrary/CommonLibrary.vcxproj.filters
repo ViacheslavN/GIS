@@ -165,19 +165,16 @@
     <ClInclude Include="PodVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseVariant.h">
-      <Filter>variant</Filter>
-    </ClInclude>
     <ClInclude Include="SpatialKey.h">
       <Filter>SpatialData</Filter>
     </ClInclude>
     <ClInclude Include="IRefCnt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IVariant.h">
+    <ClInclude Include="Variant.h">
       <Filter>variant</Filter>
     </ClInclude>
-    <ClInclude Include="ObjVariant.h">
+    <ClInclude Include="VartTypeList.h">
       <Filter>variant</Filter>
     </ClInclude>
   </ItemGroup>
@@ -245,7 +242,7 @@
     <ClCompile Include="File.cpp">
       <Filter>file</Filter>
     </ClCompile>
-    <ClCompile Include="BaseVariant.cpp">
+    <ClCompile Include="Variant.cpp">
       <Filter>variant</Filter>
     </ClCompile>
   </ItemGroup>
