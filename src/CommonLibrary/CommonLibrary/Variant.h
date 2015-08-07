@@ -179,6 +179,11 @@ namespace CommonLib
 		{
 			return (m_id == type2int<CNullVariant>::typeId);
 		}
+		template <typename T>
+		bool isType() const
+		{
+			return (m_id == type2int<T>::typeId);
+		}
 		CVariant& operator=(const CVariant& variant)
 		{
 			eDataTypes destId=variant.GetTypeID();

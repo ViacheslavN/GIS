@@ -244,7 +244,46 @@ namespace GisEngine
 		
 
 		}
+		bool CSpatialReferenceProj4::IsEqual(ISpatialReference* pSpRef) const
+		{
+			if(!pSpRef)
+				return false;
 
+			std::vector<CommonLib::str_t> orgParams;
+			std::vector<CommonLib::str_t> clnParams;
+
+			PJ* orgPrj = (PJ*)m_hHandle;
+			PJ* clnPrj = (PJ*)(pSpRef->GetHandle());
+			if(orgPrj == clnPrj)
+				return true;
+
+			paralist* pl;
+			pl = orgPrj->params;
+			while(pl)
+			{
+				if(pl->used && strcmp(pl->param, "no_defs") != 0)
+					orgParams.push_back(pl->param);
+				pl = pl->next;
+			}
+			std::sort(orgParams.begin(), orgParams.end());
+
+			pl = clnPrj->params;
+			while(pl)
+			{
+				if(pl->used && strcmp(pl->param, "no_defs") != 0)
+					clnParams.push_back(pl->param);
+				pl = pl->next;
+			}
+			std::sort(clnParams.begin(), clnParams.end());
+			if(orgParams.size() != clnParams.size())
+				return false;
+
+			for(int ind = 0; ind < (int)orgParams.size(); ++ind)
+				if(orgParams[ind] != clnParams[ind])
+					return false;
+
+			return true;
+		}
 
 		void CSpatialReferenceProj4::PrepareGeometries()
 		{
@@ -308,16 +347,16 @@ namespace GisEngine
 			shp.finishExternalChanges();*/
 			m_BoundShape = shp;
 		}
-		bool CSpatialReferenceProj4::IsEqual(CSpatialReferenceProj4* ref) const
+		bool CSpatialReferenceProj4::IsEqual(CSpatialReferenceProj4* pSpRef) const
 		{
-			if(!ref)
+			if(!pSpRef)
 				return false;
 
 			std::vector<CommonLib::str_t> orgParams;
 			std::vector<CommonLib::str_t> clnParams;
 
 			PJ* orgPrj = (PJ*)m_hHandle;
-			PJ* clnPrj = (PJ*)(ref->GetHandle());
+			PJ* clnPrj = (PJ*)(pSpRef->GetHandle());
 			if(orgPrj == clnPrj)
 				return true;
 

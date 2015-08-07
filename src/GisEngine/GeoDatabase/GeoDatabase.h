@@ -148,7 +148,7 @@ namespace GisEngine
 			virtual ~IFeatureClass(){}
 			virtual CommonLib::eShapeType GetGeometryType() const = 0;
 			virtual const CommonLib::str_t&         GetShapeFieldName() const = 0;
-			virtual const GisBoundingBox& GetExtent() const = 0;
+			virtual Geometry::IEnvelopePtr			 GetExtent() const = 0;
 			virtual Geometry::ISpatialReferencePtr GetSpatialReference() const = 0;
 		};
 

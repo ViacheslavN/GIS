@@ -8,58 +8,58 @@ namespace GisEngine
 	{
 
 		CFeature::CFeature(IFieldSet* fieldSet, IFields* fields)
-			: fieldSet_(fieldSet)
-			, fields_(fields)
-			, oidFieldIndex_(-1)
-			, shapeFieldIndex_(-1)
-			, annoFieldIndex_(-1)
+			: m_pFieldSet(fieldSet)
+			, m_pFields(fields)
+			, m_nOidFieldIndex(-1)
+			, m_nShapeFieldIndex(-1)
+			, m_nAnnoFieldIndex(-1)
 		{
 			int fieldCount = fields->GetFieldCount();
-			fieldMap_.resize(fieldCount, -1);
+			m_vecFieldMap.resize(fieldCount, -1);
 
-			if(!fieldSet_.get())
+			if(!m_pFieldSet.get())
 			{
-				fieldSet_ = new CFieldSet();
+				m_pFieldSet = new CFieldSet();
 				for(int i = 0; i < fieldCount; ++i)
-					fieldSet_->Add(fields->GetField(i)->GetName());
+					m_pFieldSet->Add(fields->GetField(i)->GetName());
 			}
 
 			CommonLib::str_t fieldName;
-			fieldSet_->Reset();
-			while(fieldSet_->Next(&fieldName))
+			m_pFieldSet->Reset();
+			while(m_pFieldSet->Next(&fieldName))
 			{
 				if(fieldName == L"*")
 				{
-					fieldSet_->Clear();
+					m_pFieldSet->Clear();
 					for(int i = 0; i < fieldCount; ++i)
-						fieldSet_->Add(fields_->GetField(i)->GetName());
-					fieldSet_->Reset();
+						m_pFieldSet->Add(m_pFields->GetField(i)->GetName());
+					m_pFieldSet->Reset();
 					continue;
 				}
 
-				int fieldIndex = fields_->FindField(fieldName);
-				eDataTypes fieldType = fields_->GetField(fieldIndex)->GetType();
+				int fieldIndex = m_pFields->FindField(fieldName);
+				eDataTypes fieldType = m_pFields->GetField(fieldIndex)->GetType();
 
-				if(fieldType == dtOid && oidFieldIndex_ < 0)
-					oidFieldIndex_ = fieldIndex;
-				else if(fieldType == dtGeometry && (shapeFieldIndex_ < 0 || shapeFieldIndex_ > fieldIndex))
-					shapeFieldIndex_ = fieldIndex;
-				else if(fieldType == dtAnnotation && (annoFieldIndex_ < 0 || annoFieldIndex_ > fieldIndex))
-					annoFieldIndex_ = fieldIndex;
+				if(fieldType == dtOid && m_nOidFieldIndex < 0)
+					m_nOidFieldIndex = fieldIndex;
+				else if(fieldType == dtGeometry && (m_nShapeFieldIndex < 0 || m_nShapeFieldIndex > fieldIndex))
+					m_nShapeFieldIndex = fieldIndex;
+				else if(fieldType == dtAnnotation && (m_nAnnoFieldIndex < 0 || m_nAnnoFieldIndex > fieldIndex))
+					m_nAnnoFieldIndex = fieldIndex;
 			}
 
 
 			/*for(int v = fieldSet_->GetCount(); v > 0;)
 				values_[--v] = CommonLib::CreateBaseVariant(fieldSet_->)*/
 
-			 values_.resize(fieldSet_->GetCount());
-			fieldSet_->Reset();
+			 m_vecValues.resize(m_pFieldSet->GetCount());
+			m_pFieldSet->Reset();
 			int i = 0;
-			while(fieldSet_->Next(&fieldName))
+			while(m_pFieldSet->Next(&fieldName))
 			{
-				int fieldIndex = fields_->FindField(fieldName);
-				fieldMap_[fieldIndex] = i;
-				values_[i] = CommonLib::CVariant();
+				int fieldIndex = m_pFields->FindField(fieldName);
+				m_vecFieldMap[fieldIndex] = i;
+				m_vecValues[i] = CommonLib::CVariant();
 				++i;
 			}
 		}
@@ -70,73 +70,73 @@ namespace GisEngine
 		// IRow
 		IFieldSetPtr CFeature::GetFieldSet() const
 		{
-			return fieldSet_;
+			return m_pFieldSet;
 		}
 
 		IFieldsPtr CFeature::GetSourceFields() const
 		{
-			return fields_;
+			return m_pFields;
 		}
 
 		bool CFeature::IsFieldSelected(int index) const
 		{
-			return fieldMap_[index] >= 0;
+			return m_vecFieldMap[index] >= 0;
 		}
 
 		const CommonLib::CVariant* CFeature::GetValue(int index) const
 		{
-			if(fieldMap_[index] < 0)
+			if(m_vecFieldMap[index] < 0)
 				return NULL;
 
-			return &values_[fieldMap_[index]];
+			return &m_vecValues[m_vecFieldMap[index]];
 		}
 
 		void CFeature::SetValue(int index, const CommonLib::CVariant& value)
 		{
-			if(fieldMap_[index] < 0)
+			if(m_vecFieldMap[index] < 0)
 				return;
 
-			values_[fieldMap_[index]] = value;
+			m_vecValues[m_vecFieldMap[index]] = value;
 		}
 
 		// IRow
 		bool CFeature::HasOID() const
 		{
-			return oidFieldIndex_ >= 0;
+			return m_nOidFieldIndex >= 0;
 		}
 
 		int64 CFeature::GetOID() const
 		{
-			if(oidFieldIndex_ < 0)
+			if(m_nOidFieldIndex < 0)
 				return -1;
 
 			int64 nOID = 0;
-			return values_[fieldMap_[oidFieldIndex_]].Get<int64>();
+			return m_vecValues[m_vecFieldMap[m_nOidFieldIndex]].Get<int64>();
 			 
 		}
 
 		void CFeature::SetOID(int64 nOID)
 		{
-			if(oidFieldIndex_ < 0)
+			if(m_nOidFieldIndex < 0)
 				return;
 
-			values_[fieldMap_[oidFieldIndex_]] = nOID;
+			m_vecValues[m_vecFieldMap[m_nOidFieldIndex]] = nOID;
 		}
 
 		// IFeature
 		CommonLib::IGeoShapePtr CFeature::GetShape() const
 		{
-			if(shapeFieldIndex_ < 0 && annoFieldIndex_ < 0)
+			if(m_nShapeFieldIndex < 0 && m_nAnnoFieldIndex < 0)
 				CommonLib::IGeoShapePtr();
 
 			CommonLib::IRefObjectPtr ptr;
-			if(shapeFieldIndex_ < 0)
+			if(m_nShapeFieldIndex < 0)
 			{
-				ptr = values_[fieldMap_[annoFieldIndex_]].Get<CommonLib::IRefObjectPtr>();
+				ptr = m_vecValues[m_vecFieldMap[m_nAnnoFieldIndex]].Get<CommonLib::IRefObjectPtr>();
 			}
 			else
 			{
-				ptr = values_[fieldMap_[shapeFieldIndex_]].Get<CommonLib::IRefObjectPtr>();
+				ptr = m_vecValues[m_vecFieldMap[m_nShapeFieldIndex]].Get<CommonLib::IRefObjectPtr>();
 			}
 
 			return CommonLib::IGeoShapePtr((CommonLib::IGeoShape*)ptr.get());
@@ -145,12 +145,12 @@ namespace GisEngine
 
 		void CFeature::SetShape(CommonLib::IGeoShape* pShape)
 		{
-			if(shapeFieldIndex_ < 0)
+			if(m_nShapeFieldIndex < 0)
 				return;
 
 			CommonLib::IRefObjectPtr ptr((IRefCnt*)pShape);
 
-			values_[fieldMap_[shapeFieldIndex_]] = ptr;
+			m_vecValues[m_vecFieldMap[m_nShapeFieldIndex]] = ptr;
 		}
 	}
 }

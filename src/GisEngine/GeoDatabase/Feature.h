@@ -31,13 +31,13 @@ namespace GisEngine
 			virtual CommonLib::IGeoShapePtr GetShape() const;
 			virtual void                   SetShape(CommonLib::IGeoShape* pShape);
 		private:
-			IFieldSetPtr                        fieldSet_;
-			IFieldsPtr                          fields_;
-			int                                 oidFieldIndex_;
-			int                                 shapeFieldIndex_;
-			int                                 annoFieldIndex_;
-			std::vector<int>                    fieldMap_;
-			std::vector<CommonLib::CVariant>	values_;
+			IFieldSetPtr                        m_pFieldSet;
+			IFieldsPtr                          m_pFields;
+			int                                 m_nOidFieldIndex;
+			int                                 m_nShapeFieldIndex;
+			int                                 m_nAnnoFieldIndex;
+			std::vector<int>                    m_vecFieldMap;
+			std::vector<CommonLib::CVariant>	m_vecValues;
 		};
 	}
 }

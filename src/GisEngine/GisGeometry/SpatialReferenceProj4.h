@@ -36,6 +36,7 @@ namespace GisEngine
 			virtual const CommonLib::str_t& GetProjectionString() const;
 			virtual int   GetProjectionCode() const;
 			virtual bool  IsProjection() const;
+			virtual bool IsEqual(ISpatialReference* pSpatRef) const;
 
 			virtual void save(CommonLib::IWriteStream *pStream) const;
 			virtual void load(CommonLib::IReadStream *pStream);
@@ -43,7 +44,7 @@ namespace GisEngine
 			void CreateProjection();
 			void PrepareGeometries();
 			void PreTransform(CommonLib::CGeoShape *shp) const;
-			bool IsEqual(CSpatialReferenceProj4* ref) const;
+			bool IsEqual(CSpatialReferenceProj4* pSpRef) const;
 			void TestBounds(CommonLib::CGeoShape *geom) const;
 			void PrepareGeometry(CommonLib::CGeoShape *pShp, double left_meridian, double bottom_parallel, double right_meridian, double top_parallel);
 			void PrepareCutMeridian(double cut_meridian, double bottom_parallel, double top_parallel);

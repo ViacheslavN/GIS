@@ -98,11 +98,7 @@ namespace GisEngine
 		}
 		void CShapefileWorkspace::clear()
 		{
-			/*for (size_t i = 0, sz = m_vecDatasets.size(); i < sz; ++i)
-			{
-				delete m_vecDatasets[i];
-			}
-			m_vecDatasets.clear();*/
+
 		}
 		ITablePtr  CShapefileWorkspace::OpenTable(const CommonLib::str_t& sName)
 		{

@@ -3,6 +3,7 @@
 #include "CommonLibrary/File.h"
 #include "Fields.h"
 #include "GisGeometry/SpatialReferenceProj4.h"
+#include "GisGeometry/Envelope.h"
 #include "GeometryDef.h"
 #include "Field.h"
 namespace GisEngine
@@ -64,15 +65,19 @@ namespace GisEngine
 		{
 			return m_sShapeFieldName;
 		}
-		const GisBoundingBox& CShapefileFeatureClass::GetExtent() const
+		Geometry::IEnvelopePtr CShapefileFeatureClass::GetExtent() const
 		{
-			return m_Extent;
+			return m_pExtent;
 		}
 		Geometry::ISpatialReferencePtr CShapefileFeatureClass::GetSpatialReference() const
 		{
 			return m_pSpatialReferencePtr;
 		}
-
+		void CShapefileFeatureClass::close()
+		{
+			m_shp.clear();
+			m_dbf.clear();
+		}
 
 		bool CShapefileFeatureClass::reload(bool write)
 		{
@@ -80,8 +85,9 @@ namespace GisEngine
 				return false; //TO DO Error log
 
 			m_FieldsPtr->Clear();
+			m_pExtent.release();
 			m_pSpatialReferencePtr.release();
-			m_Extent = GisBoundingBox();
+			
 
 			CommonLib::str_t filePathBase = m_sPath + m_sViewName;
 			CommonLib::str_t shpFilePath = filePathBase + L".shp";
@@ -102,26 +108,29 @@ namespace GisEngine
 			 double minBounds[4];
 			 double maxBounds[4];
 			 SHPGetInfo(m_shp.file, &objectCount, &shapeType, &minBounds[0], &maxBounds[0]);
-
+			  GisBoundingBox bounds;
 		 
 			 if(objectCount > 0)
 			 {
-				 m_Extent.type = CommonLib::bbox_type_normal;
-				 m_Extent.xMin = minBounds[0];
-				 m_Extent.xMax = maxBounds[0];
-				 m_Extent.yMin = minBounds[1];
-				 m_Extent.yMax = maxBounds[1];
-				 m_Extent.zMin = minBounds[2];
-				 m_Extent.zMax = maxBounds[2];
-				 m_Extent.mMin = minBounds[3];
-				 m_Extent.mMax = maxBounds[3];
+				 bounds.type = CommonLib::bbox_type_normal;
+				 bounds.xMin = minBounds[0];
+				 bounds.xMax = maxBounds[0];
+				 bounds.yMin = minBounds[1];
+				 bounds.yMax = maxBounds[1];
+				 bounds.zMin = minBounds[2];
+				 bounds.zMax = maxBounds[2];
+				 bounds.mMin = minBounds[3];
+				 bounds.mMax = maxBounds[3];
 			 }
 
+			
 			 m_pSpatialReferencePtr = new Geometry::CSpatialReferenceProj4(prjFileName, Geometry::eSPRefTypePRJFilePath);
 			 if(!m_pSpatialReferencePtr->IsValid())
 			 {
-				 m_pSpatialReferencePtr = new Geometry::CSpatialReferenceProj4(m_Extent);
+				 m_pSpatialReferencePtr = new Geometry::CSpatialReferenceProj4(bounds);
 			 }
+
+			 m_pExtent = new Geometry::CEnvelope(bounds, m_pSpatialReferencePtr.get());
 			 bool hasZ;
 			 bool hasM;
 			 CommonLib::eShapeType geomType = ShapefileUtils::SHPTypeToGeometryType(shapeType, &hasZ, &hasM);
@@ -181,5 +190,16 @@ namespace GisEngine
 
 			 return true;
 		}
+
+		ShapefileUtils::SHPGuard* CShapefileFeatureClass::GetSHP()
+		{
+			return &m_shp;
+		}
+		ShapefileUtils::DBFGuard* CShapefileFeatureClass::GetDBF()
+		{
+			return& m_dbf;
+		}
 	}
+
+	
 }

@@ -457,6 +457,7 @@
     <ClInclude Include="clipper.hpp" />
     <ClInclude Include="CodeProj.h" />
     <ClInclude Include="ConvertorWorldToInt.h" />
+    <ClInclude Include="Envelope.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GisGeometryLib.h" />
     <ClInclude Include="SpatialReferenceProj4.h" />
@@ -467,6 +468,7 @@
   <ItemGroup>
     <ClCompile Include="clipper.cpp" />
     <ClCompile Include="CodeProj.cpp" />
+    <ClCompile Include="Envelope.cpp" />
     <ClCompile Include="SpatialReferenceProj4.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
