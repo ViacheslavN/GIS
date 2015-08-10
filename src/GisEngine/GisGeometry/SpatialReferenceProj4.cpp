@@ -3,6 +3,11 @@
 #include "proj4_lib.h"
 #include "CodeProj.h"
 #include "CommonLibrary/File.h"
+
+
+#include "ogr/ogr_spatialref.h"
+#include "cpl/cpl_conv.h"
+
 namespace GisEngine
 {
 	namespace Geometry
@@ -229,6 +234,28 @@ namespace GisEngine
 				  {
 					  PrepareGeometries();
 					  return;
+				  }
+				  else
+				  {
+
+					  OGRSpatialReference spatRef(m_prj4Str.cstr());
+					  char* prj4String;
+					  
+					  if(spatRef.morphToESRI() != 0)
+						   return;
+
+					  if(spatRef.exportToProj4(&prj4String) != 0)
+						   return;
+
+					  m_prj4Str = prj4String;
+					  CPLFree(prj4String);
+					  m_hHandle = pj_init_plus(m_prj4Str.cstr());
+					  if(m_hHandle != 0)
+					  {
+						  PrepareGeometries();
+						  return;
+					  }
+
 				  }
 			}
 

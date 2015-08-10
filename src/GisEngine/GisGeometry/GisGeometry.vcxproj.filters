@@ -19,6 +19,12 @@
     <Filter Include="TopologicalOperator">
       <UniqueIdentifier>{9d95a0b4-5f8e-4fe0-b1a0-32c1e8ea248b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="cpl">
+      <UniqueIdentifier>{1319deb2-4430-40b4-815b-be24e5f825b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="org">
+      <UniqueIdentifier>{a139495c-5fd7-45eb-af75-19acfb039919}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -57,6 +63,96 @@
     <ClInclude Include="Envelope.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cpl\cpl_config.h">
+      <Filter>cpl</Filter>
+    </ClInclude>
+    <ClInclude Include="cpl\cpl_conv.h">
+      <Filter>cpl</Filter>
+    </ClInclude>
+    <ClInclude Include="cpl\cpl_csv.h">
+      <Filter>cpl</Filter>
+    </ClInclude>
+    <ClInclude Include="cpl\cpl_error.h">
+      <Filter>cpl</Filter>
+    </ClInclude>
+    <ClInclude Include="cpl\cpl_minixml.h">
+      <Filter>cpl</Filter>
+    </ClInclude>
+    <ClInclude Include="cpl\cpl_port.h">
+      <Filter>cpl</Filter>
+    </ClInclude>
+    <ClInclude Include="cpl\cpl_string.h">
+      <Filter>cpl</Filter>
+    </ClInclude>
+    <ClInclude Include="cpl\cpl_vsi.h">
+      <Filter>cpl</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogr_api.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogr_core.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogr_expat.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogr_feature.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogr_featurestyle.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogr_geocoding.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogr_geometry.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogr_geos.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogr_p.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogr_spatialref.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogr_srs_api.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogr_srs_esri_names.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ograpispy.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogrgeomediageometry.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\ogrpgeogeometry.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\osr_cs_wkt.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\osr_cs_wkt_parser.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="ogr\swq.h">
+      <Filter>org</Filter>
+    </ClInclude>
+    <ClInclude Include="cpl\cpl_atomic_ops.h">
+      <Filter>cpl</Filter>
+    </ClInclude>
+    <ClInclude Include="cpl\cpl_http.h">
+      <Filter>cpl</Filter>
+    </ClInclude>
+    <ClInclude Include="cpl\cpl_multiproc.h">
+      <Filter>cpl</Filter>
+    </ClInclude>
+    <ClInclude Include="cpl\gdal_csv.h">
+      <Filter>cpl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -76,6 +172,111 @@
     </ClCompile>
     <ClCompile Include="Envelope.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_conv.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_csv.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_error.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_findfile.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_minixml.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_path.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_string.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cplgetsymbol.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_multiproc.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="ogr\ogr_fromepsg.cpp">
+      <Filter>org</Filter>
+    </ClCompile>
+    <ClCompile Include="ogr\ogr_srs_esri.cpp">
+      <Filter>org</Filter>
+    </ClCompile>
+    <ClCompile Include="ogr\ogr_srs_proj4.cpp">
+      <Filter>org</Filter>
+    </ClCompile>
+    <ClCompile Include="ogr\ogr_srs_xml.cpp">
+      <Filter>org</Filter>
+    </ClCompile>
+    <ClCompile Include="ogr\ogr_srsnode.cpp">
+      <Filter>org</Filter>
+    </ClCompile>
+    <ClCompile Include="ogr\ogrct.cpp">
+      <Filter>org</Filter>
+    </ClCompile>
+    <ClCompile Include="ogr\ogrspatialreference.cpp">
+      <Filter>org</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_atomic_ops.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_http.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_vsisimple.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_recode.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_strtod.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="ogr\ogr_srs_dict.cpp">
+      <Filter>org</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cplstring.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_recode_stub.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_vsil.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cplstringlist.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_vsi_mem.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_vsil_tar.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_vsil_sparsefile.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_vsil_stdin.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_vsil_stdout.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_vsil_subfile.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_vsil_win32.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_vsil_abstract_archive.cpp">
+      <Filter>cpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cpl\cpl_vsil_cache.cpp">
+      <Filter>cpl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

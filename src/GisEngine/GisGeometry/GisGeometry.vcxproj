@@ -248,7 +248,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;;cpl</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -261,7 +261,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;;cpl</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -277,7 +277,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;;cpl</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -290,7 +290,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;;cpl</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -306,7 +306,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/proj-4.9.1</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/proj-4.9.1;cpl</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -323,7 +323,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;;cpl</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -342,7 +342,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;;cpl</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -359,7 +359,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;;cpl</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -379,7 +379,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;;cpl</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -397,7 +397,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;;cpl</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -414,7 +414,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;;cpl</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -434,7 +434,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;;cpl</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -457,9 +457,39 @@
     <ClInclude Include="clipper.hpp" />
     <ClInclude Include="CodeProj.h" />
     <ClInclude Include="ConvertorWorldToInt.h" />
+    <ClInclude Include="cpl\cpl_atomic_ops.h" />
+    <ClInclude Include="cpl\cpl_config.h" />
+    <ClInclude Include="cpl\cpl_conv.h" />
+    <ClInclude Include="cpl\cpl_csv.h" />
+    <ClInclude Include="cpl\cpl_error.h" />
+    <ClInclude Include="cpl\cpl_http.h" />
+    <ClInclude Include="cpl\cpl_minixml.h" />
+    <ClInclude Include="cpl\cpl_multiproc.h" />
+    <ClInclude Include="cpl\cpl_port.h" />
+    <ClInclude Include="cpl\cpl_string.h" />
+    <ClInclude Include="cpl\cpl_vsi.h" />
+    <ClInclude Include="cpl\gdal_csv.h" />
     <ClInclude Include="Envelope.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GisGeometryLib.h" />
+    <ClInclude Include="ogr\ograpispy.h" />
+    <ClInclude Include="ogr\ogrgeomediageometry.h" />
+    <ClInclude Include="ogr\ogrpgeogeometry.h" />
+    <ClInclude Include="ogr\ogr_api.h" />
+    <ClInclude Include="ogr\ogr_core.h" />
+    <ClInclude Include="ogr\ogr_expat.h" />
+    <ClInclude Include="ogr\ogr_feature.h" />
+    <ClInclude Include="ogr\ogr_featurestyle.h" />
+    <ClInclude Include="ogr\ogr_geocoding.h" />
+    <ClInclude Include="ogr\ogr_geometry.h" />
+    <ClInclude Include="ogr\ogr_geos.h" />
+    <ClInclude Include="ogr\ogr_p.h" />
+    <ClInclude Include="ogr\ogr_spatialref.h" />
+    <ClInclude Include="ogr\ogr_srs_api.h" />
+    <ClInclude Include="ogr\ogr_srs_esri_names.h" />
+    <ClInclude Include="ogr\osr_cs_wkt.h" />
+    <ClInclude Include="ogr\osr_cs_wkt_parser.h" />
+    <ClInclude Include="ogr\swq.h" />
     <ClInclude Include="SpatialReferenceProj4.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -468,7 +498,42 @@
   <ItemGroup>
     <ClCompile Include="clipper.cpp" />
     <ClCompile Include="CodeProj.cpp" />
+    <ClCompile Include="cpl\cplgetsymbol.cpp" />
+    <ClCompile Include="cpl\cplstring.cpp" />
+    <ClCompile Include="cpl\cplstringlist.cpp" />
+    <ClCompile Include="cpl\cpl_atomic_ops.cpp" />
+    <ClCompile Include="cpl\cpl_conv.cpp" />
+    <ClCompile Include="cpl\cpl_csv.cpp" />
+    <ClCompile Include="cpl\cpl_error.cpp" />
+    <ClCompile Include="cpl\cpl_findfile.cpp" />
+    <ClCompile Include="cpl\cpl_http.cpp" />
+    <ClCompile Include="cpl\cpl_minixml.cpp" />
+    <ClCompile Include="cpl\cpl_multiproc.cpp" />
+    <ClCompile Include="cpl\cpl_path.cpp" />
+    <ClCompile Include="cpl\cpl_recode.cpp" />
+    <ClCompile Include="cpl\cpl_recode_stub.cpp" />
+    <ClCompile Include="cpl\cpl_string.cpp" />
+    <ClCompile Include="cpl\cpl_strtod.cpp" />
+    <ClCompile Include="cpl\cpl_vsil.cpp" />
+    <ClCompile Include="cpl\cpl_vsil_abstract_archive.cpp" />
+    <ClCompile Include="cpl\cpl_vsil_cache.cpp" />
+    <ClCompile Include="cpl\cpl_vsil_sparsefile.cpp" />
+    <ClCompile Include="cpl\cpl_vsil_stdin.cpp" />
+    <ClCompile Include="cpl\cpl_vsil_stdout.cpp" />
+    <ClCompile Include="cpl\cpl_vsil_subfile.cpp" />
+    <ClCompile Include="cpl\cpl_vsil_tar.cpp" />
+    <ClCompile Include="cpl\cpl_vsil_win32.cpp" />
+    <ClCompile Include="cpl\cpl_vsisimple.cpp" />
+    <ClCompile Include="cpl\cpl_vsi_mem.cpp" />
     <ClCompile Include="Envelope.cpp" />
+    <ClCompile Include="ogr\ogrct.cpp" />
+    <ClCompile Include="ogr\ogrspatialreference.cpp" />
+    <ClCompile Include="ogr\ogr_fromepsg.cpp" />
+    <ClCompile Include="ogr\ogr_srsnode.cpp" />
+    <ClCompile Include="ogr\ogr_srs_dict.cpp" />
+    <ClCompile Include="ogr\ogr_srs_esri.cpp" />
+    <ClCompile Include="ogr\ogr_srs_proj4.cpp" />
+    <ClCompile Include="ogr\ogr_srs_xml.cpp" />
     <ClCompile Include="SpatialReferenceProj4.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
