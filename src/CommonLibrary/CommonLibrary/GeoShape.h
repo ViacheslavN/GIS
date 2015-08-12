@@ -21,11 +21,14 @@ namespace CommonLib
 
 		~CGeoShape();
 
-		void create(eShapeType shapeType);
-		void create(eShapeType shapeType, size_t npoints, size_t nparts = 1, size_t ncurves = 0, size_t mpatchSpecificSize = 0);
+		virtual bool create(eShapeType shapeType) = 0;
+		virtual bool create(eShapeType shapeType, size_t npoints, size_t nparts = 1, size_t ncurves = 0, size_t mpatchSpecificSize = 0) = 0;
+
  
 
-
+		virtual void calcBB();
+		virtual const bbox& getBB() const;
+		virtual bbox& getBB();
 
 		virtual eShapeType type() const;
 	 	virtual uint32  getPartCount() const;
@@ -37,17 +40,25 @@ namespace CommonLib
 
 		virtual uint32 getPointCnt() const;
 
+
+		virtual double* getZs();
+		virtual const double* getZs() const;
+
+		virtual double* getMs();
+		virtual const double* getMs() const;
+
 	private:
 		simple_alloc_t m_alloc;
 		alloc_t *m_pAlloc;
 
 		TVecParts m_vecParts;
 		TVecGeoPt m_vecPoints;
-		TVecZ	  m_vecZ;
-		TVecM	  m_vecM;
+		TVecZ	  m_vecZs;
+		TVecM	  m_vecMs;
 
 		eShapeType m_type;
 		eShapeType m_general_type;
+		bbox m_bbox;
 
 	};
 

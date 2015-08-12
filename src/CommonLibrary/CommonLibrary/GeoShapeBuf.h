@@ -81,9 +81,16 @@ namespace CommonLib
 			virtual uint32 getPointCnt() const;
 
 
+			virtual double* getZs();
+			virtual const double* getZs() const;
+
+			virtual double* getMs();
+			virtual const double* getMs() const;
+
+
 			void create(size_t nSize);
-			void create(eShapeType shapeType);
-			void create(eShapeType shapeType, size_t npoints, size_t nparts = 1, size_t ncurves = 0, size_t mpatchSpecificSize = 0);
+			virtual bool create(eShapeType shapeType);
+			virtual bool  create(eShapeType shapeType, size_t npoints, size_t nparts = 1, size_t ncurves = 0, size_t mpatchSpecificSize = 0);
 			void create(unsigned char* pBuf, size_t nSize, eShapeType shapeType, size_t npoints, size_t nparts = 1, size_t ncurves = 0);
 			void import(const unsigned char* extBuf, size_t extBufSize);
 			void attach(unsigned char* extBuf, size_t extBufSize);

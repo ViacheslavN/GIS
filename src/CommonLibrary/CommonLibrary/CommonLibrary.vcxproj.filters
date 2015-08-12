@@ -156,9 +156,6 @@
     <ClInclude Include="stl_alloc.h">
       <Filter>alloc</Filter>
     </ClInclude>
-    <ClInclude Include="GeoShapeBuf.h">
-      <Filter>SpatialData</Filter>
-    </ClInclude>
     <ClInclude Include="GeoShape.h">
       <Filter>SpatialData</Filter>
     </ClInclude>
@@ -229,9 +226,6 @@
     </ClCompile>
     <ClCompile Include="FixedBitStream.cpp">
       <Filter>stream\bits</Filter>
-    </ClCompile>
-    <ClCompile Include="GeoShapeBuf.cpp">
-      <Filter>SpatialData</Filter>
     </ClCompile>
     <ClCompile Include="IGeoShape.cpp">
       <Filter>SpatialData</Filter>

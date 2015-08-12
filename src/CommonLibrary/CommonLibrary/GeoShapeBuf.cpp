@@ -339,7 +339,7 @@ namespace CommonLib
 			m_pBuffer = (byte*)m_pAlloc->alloc(m_nBufSize);
 		m_params.reset();
 	}
-	void CGeoShapeBuf::create(eShapeType shapeType)
+	bool CGeoShapeBuf::create(eShapeType shapeType)
 	{
 		if(m_bAttach && m_pBuffer)
 		{
@@ -350,6 +350,7 @@ namespace CommonLib
 
 			create(shapeType, 0);
 		}
+		return true;
 		
 	}
 	void CGeoShapeBuf::create(unsigned char* pBuf, size_t nSize, eShapeType shapeType, size_t npoints, size_t nparts, size_t ncurves)
@@ -358,7 +359,7 @@ namespace CommonLib
 		m_params.set(pBuf);
 	}
 
-	void CGeoShapeBuf::create(eShapeType shapeType, size_t npoints, size_t nparts, size_t ncurves, size_t mpatchSpecificSize)
+	bool CGeoShapeBuf::create(eShapeType shapeType, size_t npoints, size_t nparts, size_t ncurves, size_t mpatchSpecificSize)
 	{
 		if(m_pBuffer)
 			m_pAlloc->free(m_pBuffer);
@@ -372,6 +373,7 @@ namespace CommonLib
 				initShapeBufferBuffer(m_pBuffer, shapeType, npoints, nparts, ncurves);
 		}
 		m_params.set(m_pBuffer);
+		return true;
 	}
 
 	void CGeoShapeBuf::import(const unsigned char* extBuf, size_t extBufSize)
@@ -477,7 +479,23 @@ namespace CommonLib
 
 		return reinterpret_cast<const GisXYPoint*>(buf);
 	}
+	double* CGeoShapeBuf::getZs()
+	{
+		return m_vecZ.begin();
+	}
+	const double* CGeoShapeBuf::getZs() const
+	{
+		return m_vecZ.begin();
+	}
 
+	double* CGeoShapeBuf::getMs()
+	{
+		return m_vecM.begin();
+	}
+	const double* CGeoShapeBuf::getMs() const
+	{
+		return m_vecM.begin();
+	}
 
 	////////////////////////////////////////////////////////
 

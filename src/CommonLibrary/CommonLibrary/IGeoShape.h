@@ -120,8 +120,22 @@ namespace CommonLib
 			virtual GisXYPoint* getPoints() = 0;
 			virtual const GisXYPoint* getPoints() const = 0;
 
+
+			virtual double* getZs() = 0;
+			virtual const double* getZs() const = 0;
+
+			virtual double* getMs() = 0;
+			virtual const double* getMs() const = 0;
+
 			virtual uint32 getPointCnt() const= 0;
 
+
+			virtual void calcBB() = 0;
+			virtual const bbox& getBB() const = 0;
+			virtual bbox& getBB()  = 0;
+
+			virtual bool create(eShapeType shapeType) = 0;
+			virtual bool create(eShapeType shapeType, size_t npoints, size_t nparts = 1, size_t ncurves = 0, size_t mpatchSpecificSize = 0) = 0;
 
 
 
