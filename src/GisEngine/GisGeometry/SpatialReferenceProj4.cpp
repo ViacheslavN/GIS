@@ -7,6 +7,7 @@
 
 #include "ogr/ogr_spatialref.h"
 #include "cpl/cpl_conv.h"
+#include "CommonLibrary/GeoShape.h"
 
 namespace GisEngine
 {
@@ -80,10 +81,17 @@ namespace GisEngine
 			}
 		}
 
-		CSpatialReferenceProj4::CSpatialReferenceProj4(const CommonLib::str_t& prj4Str, eSPRefParamType paramType) :
+		CSpatialReferenceProj4::CSpatialReferenceProj4(const CommonLib::str_t& prj4Str, eSPRefParamType paramType, CommonLib::alloc_t *pAlloc) :
 			m_prjCode(0)
-			,m_hHandle(0)
+			,m_prjHandle(0)
+			,m_pAlloc(pAlloc)
+			, m_pBufferX(0)
+			, m_pBufferY(0)
+			, m_pBufferZ(0)
 		{
+
+			if(!m_pAlloc)
+				m_pAlloc = &m_alloc;
 			if(paramType == eSPRefTypePRJ4String)
 			{
 				m_prj4Str = prj4Str;
@@ -108,21 +116,40 @@ namespace GisEngine
 			}
 			
 		}
-		CSpatialReferenceProj4::CSpatialReferenceProj4(int prjCode) :
+		CSpatialReferenceProj4::CSpatialReferenceProj4(int prjCode, CommonLib::alloc_t *pAlloc) :
 		m_prjCode(prjCode)
-			,m_hHandle(0)
+			,m_prjHandle(0)
+			,m_pAlloc(pAlloc)
+			, m_pBufferX(0)
+			, m_pBufferY(0)
+			, m_pBufferZ(0)
 		{
+			if(!m_pAlloc)
+				m_pAlloc = &m_alloc;
 			CreateProjection();
 		}
-		CSpatialReferenceProj4::CSpatialReferenceProj4(Handle hHandle) :
+		CSpatialReferenceProj4::CSpatialReferenceProj4(Handle hHandle, CommonLib::alloc_t *pAlloc) :
 		m_prjCode(0)
-			,m_hHandle(hHandle)
+			,m_prjHandle(hHandle)
+			,m_pAlloc(pAlloc)
+			, m_pBufferX(0)
+			, m_pBufferY(0)
+			, m_pBufferZ(0)
+		{
+			if(!m_pAlloc)
+				m_pAlloc = &m_alloc;
+		}
+		CSpatialReferenceProj4::CSpatialReferenceProj4(const GisBoundingBox& bbox, CommonLib::alloc_t *pAlloc): m_prjCode(0)
+			,m_prjHandle(0)
+			,m_pAlloc(pAlloc)
+			, m_pBufferX(0)
+			, m_pBufferY(0)
+			, m_pBufferZ(0)
 		{
 
-		}
-		CSpatialReferenceProj4::CSpatialReferenceProj4(const GisBoundingBox& bbox): m_prjCode(0)
-			,m_hHandle(0)
-		{
+			if(!m_pAlloc)
+				m_pAlloc = &m_alloc;
+
 			bool degrees = true;
 
 			if(bbox.xMin < -1000.0 || bbox.xMin > 1000.0)
@@ -142,26 +169,186 @@ namespace GisEngine
 		}
 		CSpatialReferenceProj4::~CSpatialReferenceProj4()
 		{
-
+			if (m_prjHandle)
+				pj_free((PJ*)m_prjHandle);
+			if (m_pBufferX)
+				m_pAlloc->free(m_pBufferX);
+			if (m_pBufferY)
+				m_pAlloc->free(m_pBufferY);
+			if (m_pBufferZ)
+				m_pAlloc->free(m_pBufferZ);
 		}
 
 
 
 		bool  CSpatialReferenceProj4::IsValid()
 		{
-			 return m_hHandle != 0;
+			 return m_prjHandle != 0;
 		}
 		void*  CSpatialReferenceProj4::GetHandle()
 		{
-			return m_hHandle;
+			return m_prjHandle;
 		}
 		bool CSpatialReferenceProj4::Project(ISpatialReference* destSpatRef, CommonLib::CGeoShape* pShape)
 		{
-			return true;
+			if (destSpatRef == NULL)
+				return false;
+
+			PJ *pj = (PJ*)destSpatRef->GetHandle();
+			if (!pj)
+				return false;
+
+			if(pj_is_latlong((PJ*)m_prjHandle) && !pj_is_latlong((PJ*)pj))
+				((CSpatialReferenceProj4*)destSpatRef)->PreTransform(pShape);
+
+			if(!pj_is_latlong((PJ*)m_prjHandle) && pj_is_latlong((PJ*)pj))
+				TestBounds(pShape);
+
+			size_t pointCount = pShape->getPointCnt();
+			double *pZs = pShape->getZs();
+			CommonLib::GisXYPoint* pPt = pShape->getPoints();
+			if (pointCount > m_nBufferSize)
+			{
+
+				m_pAlloc->free(m_pBufferX);
+				m_pBufferX = (double*)m_pAlloc->alloc(sizeof(double) * pointCount);
+
+	
+				m_pAlloc->free(m_pBufferY);
+				m_pBufferY = (double*)m_pAlloc->alloc(sizeof(double) * pointCount);
+
+				m_nBufferSize = pointCount;
+				if (pZs)
+				{
+					m_pAlloc->free(m_pBufferZ);
+					m_pBufferZ = (double*)m_pAlloc->alloc(sizeof(double) * pointCount);
+				}
+			}
+
+			if (!pZs && m_pBufferZ)
+			{
+				m_pAlloc->free(m_pBufferZ);
+				m_pBufferZ = NULL;
+			}
+
+			
+			bool is_latlong = pj_is_latlong((PJ*)m_prjHandle) != 0;
+			double koef = is_latlong ? DEG_TO_RAD : 1.0;
+			for (size_t idx = 0; idx < pointCount; ++idx)
+			{
+				m_pBufferX[idx] = pPt[idx].x*koef;
+				m_pBufferY[idx] = pPt[idx].y*koef;
+			
+				if (m_pBufferZ && pZs)
+					m_pBufferZ[idx] = pZs[idx];
+			}
+
+			int ret = pj_transform((PJ*)m_prjHandle, pj, (long)pointCount, 0, m_pBufferX, m_pBufferY, m_pBufferZ);
+			if (ret == 0)
+			{
+				koef = pj_is_latlong(pj) ? RAD_TO_DEG : 1.0;
+				std::set<int> badPoints;
+
+				for (size_t idx = 0; idx < pointCount; ++idx)
+				{
+					if(m_pBufferX[idx] == HUGE_VAL || m_pBufferY[idx] == HUGE_VAL)
+						badPoints.insert((int)idx);
+				}
+
+				if(badPoints.size() == pointCount)
+				{
+					pShape->create(CommonLib::shape_type_null);
+					return false;
+				}
+
+				if(badPoints.size() == 0)
+				{
+					for (size_t idx = 0; idx < pointCount; ++idx)
+					{
+						pPt[idx].x = m_pBufferX[idx]*koef;
+						pPt[idx].y = m_pBufferY[idx]*koef;
+						if (pZs && m_pBufferZ)
+							pZs[idx] = m_pBufferZ[idx];
+					}
+				}
+				else
+				{
+					std::vector<long> newPartsStarts;
+					std::vector<GisXYPoint> newPoints;
+					std::vector<double> newZs;
+
+					int nparts = (int)pShape->getPartCount();
+
+					if(nparts != 0)
+						newPartsStarts.reserve(nparts);
+					newPoints.reserve(pointCount);
+					newZs.reserve(pointCount);
+
+					
+
+					int npointall = 0;
+					if(nparts == 0)
+					{
+						for(size_t npoint = 0; npoint < pointCount; ++npoint, ++npointall)
+						{
+							if(badPoints.find(npointall) != badPoints.end())
+								continue;
+
+							GisXYPoint p;
+							p.x = m_pBufferX[npointall] * koef;
+							p.y = m_pBufferY[npointall] * koef;
+							newPoints.push_back(p);
+							if(pZs && m_pBufferZ)
+								newZs.push_back(m_pBufferZ[npointall]);
+						}
+					}
+					else
+					{
+						uint32* npartsstarts = pShape->getParts();
+						for(int npart = 0; npart < nparts; ++npart)
+						{
+							int npartpointcount;
+							if(npart == nparts - 1)
+								npartpointcount = (int)pointCount - npartsstarts[npart];
+							else
+								npartpointcount = npartsstarts[npart + 1] - npartsstarts[npart];
+
+							bool pointIsFirstInPart = true;
+						
+						}
+					}
+					
+
+					pShape->create(pShape->type(), newPoints.size(), newPartsStarts.size());
+					pShape->setPoints((double*)&newPoints[0]);
+					if(!newPartsStarts.empty())
+						memcpy(pShape->getParts(), &newPartsStarts[0], newPartsStarts.size() * sizeof(long));
+					if(pZs)
+						pShape->setZs(&newZs[0]);
+				}
+
+				pShape->calcBB();
+				return true;
+			}
+
+			return false;
 		}
 		bool CSpatialReferenceProj4::Project(ISpatialReference* destSpatRef, GisBoundingBox& bbox)
 		{
+			if(!destSpatRef)
+				return false;
+			CommonLib::CGeoShape geom;
+			DensifyBoundBox(&geom, bbox);
+			geom.calcBB();
+ 
+
+			if(!CSpatialReferenceProj4::Project(destSpatRef, &geom))
+				return false;
+
+			geom.calcBB();
+			bbox = geom.getBB();
 			return true;
+
 		}
 		bool CSpatialReferenceProj4::Project(ISpatialReference *pDestSpatRef, GisXYPoint* pPoint)
 		{
@@ -182,13 +369,13 @@ namespace GisEngine
 			double point_sp_x;
 			double point_sp_y;
 
-			bool is_latlong = pj_is_latlong((PJ*)m_hHandle) != 0;
+			bool is_latlong = pj_is_latlong((PJ*)m_prjHandle) != 0;
 			double koef = is_latlong ? DEG_TO_RAD : 1.0;
 
 			point_sp_x = pPoint->x*koef;
 			point_sp_y = pPoint->y*koef;
 
-			int ret = pj_transform((PJ*)m_hHandle, pj, 1, 1, &point_sp_x, &point_sp_y, 0);
+			int ret = pj_transform((PJ*)m_prjHandle, pj, 1, 1, &point_sp_x, &point_sp_y, 0);
 			if (ret)
 				return false;
 
@@ -224,13 +411,14 @@ namespace GisEngine
 
 		void CSpatialReferenceProj4::CreateProjection()
 		{
-			if (m_hHandle)
-				pj_free((PJ*)m_hHandle);
+			if (m_prjHandle)
+				pj_free((PJ*)m_prjHandle);
+
 
 			if(!m_prj4Str.isEmpty())
 			{
-				  m_hHandle = pj_init_plus(m_prj4Str.cstr());
-				  if(m_hHandle != 0)
+				  m_prjHandle = pj_init_plus(m_prj4Str.cstr());
+				  if(m_prjHandle != 0)
 				  {
 					  PrepareGeometries();
 					  return;
@@ -249,8 +437,8 @@ namespace GisEngine
 
 					  m_prj4Str = prj4String;
 					  CPLFree(prj4String);
-					  m_hHandle = pj_init_plus(m_prj4Str.cstr());
-					  if(m_hHandle != 0)
+					  m_prjHandle = pj_init_plus(m_prj4Str.cstr());
+					  if(m_prjHandle != 0)
 					  {
 						  PrepareGeometries();
 						  return;
@@ -262,8 +450,8 @@ namespace GisEngine
 			if(m_prjCode != 0)
 			{
 				m_prj4Str = CodeToProj4Str(m_prjCode);
-				m_hHandle = pj_init_plus(m_prj4Str.cstr());
-				if(m_hHandle != 0)
+				m_prjHandle = pj_init_plus(m_prj4Str.cstr());
+				if(m_prjHandle != 0)
 				{
 					PrepareGeometries();
 				}
@@ -279,7 +467,7 @@ namespace GisEngine
 			std::vector<CommonLib::str_t> orgParams;
 			std::vector<CommonLib::str_t> clnParams;
 
-			PJ* orgPrj = (PJ*)m_hHandle;
+			PJ* orgPrj = (PJ*)m_prjHandle;
 			PJ* clnPrj = (PJ*)(pSpRef->GetHandle());
 			if(orgPrj == clnPrj)
 				return true;
@@ -314,28 +502,32 @@ namespace GisEngine
 
 		void CSpatialReferenceProj4::PrepareGeometries()
 		{
-			if(pj_is_latlong((PJ*)m_hHandle))
+			if(pj_is_latlong((PJ*)m_prjHandle))
 				return;
 
-			double cut_meridian = get_cut_meridian((PJ*)m_hHandle);
+			double cut_meridian = get_cut_meridian((PJ*)m_prjHandle);
 			if(cut_meridian == HUGE_VAL)
 				return;
 
 			double bottom_parallel;
 			double top_parallel;
 
-			get_parallel_range((PJ*)m_hHandle, &bottom_parallel, &top_parallel);
+			get_parallel_range((PJ*)m_prjHandle, &bottom_parallel, &top_parallel);
 
 			PrepareGeometry(&m_LeftShp, cut_meridian - 359.9, bottom_parallel, cut_meridian - 0.01, top_parallel);
 			PrepareGeometry(&m_RightShp, cut_meridian + 0.01, bottom_parallel, cut_meridian + 359.9, top_parallel);
 			PrepareCutMeridian(cut_meridian, bottom_parallel, top_parallel);
 
-			GisBoundingBox rbbox;
-		//	m_RightShp.bbox(rbbox);
-			PrepareBoundShape(rbbox);
-			GisBoundingBox lbbox;
-		//	m_LeftShp.bbox(lbbox);
-			PrepareBoundShape(lbbox);
+					
+			PrepareBoundShape(m_RightShp.getBB());
+			PrepareBoundShape(m_LeftShp.getBB());
+
+			if(m_pTopoOp.get())
+			{
+				m_pTopoOp->ClearIntersect();
+				m_pTopoOp->AddShapeToIntersect(&m_BoundShape);
+			}
+
 		}
 		void CSpatialReferenceProj4::PrepareCutMeridian(double cut_meridian, double bottom_parallel, double top_parallel)
 		{
@@ -360,19 +552,39 @@ namespace GisEngine
 
 
 			DensifyBoundBox(&shp, bbox_, precision);
-			/*for(int i = 0, sz = (int)shp.pointCount(); i < sz; i++)
+
+			GisXYPoint* pPt = shp.getPoints();
+			for (size_t i = 0, sz = shp.getPointCnt(); i < sz; ++i)
 			{
 				projUV pnt;
-				pnt.u = shp.ptX(i) * DEG_TO_RAD;
-				pnt.v = shp.ptY(i) * DEG_TO_RAD;
-				pnt = pj_fwd(pnt, (PJ*)handle_);
-				shp.ptX(i) = pnt.u;
-				shp.ptY(i) = pnt.v;
-			}
+				pnt.u = pPt[i].x * DEG_TO_RAD;
+				pnt.v = pPt[i].y * DEG_TO_RAD;
+				pnt = pj_fwd(pnt, (PJ*)m_prjHandle);
 
-			shp.calcBBox();
-			shp.finishExternalChanges();*/
-			m_BoundShape = shp;
+				pPt[i].x  = pnt.u;
+				pPt[i].y = pnt.v;
+			}
+			//shp.calcBB();
+			if(m_BoundShape.type() == CommonLib::shape_type_null)
+			{
+				m_BoundShape = shp;
+				m_BoundShape.AddRef();
+			}
+			else
+				m_BoundShape += shp;
+
+			m_BoundShape.calcBB();
+		}
+
+		void CSpatialReferenceProj4::TestBounds(CommonLib::CGeoShape *pShape) const
+		{
+			if(m_BoundShape.type() == CommonLib::shape_type_null || m_pTopoOp.get() == NULL)
+				return;
+
+			CommonLib::IGeoShapePtr pRes = m_pTopoOp->Intersect(pShape);
+			if(pRes.get())
+				*pShape = *(CommonLib::CGeoShape*)pRes.get();
+
 		}
 		bool CSpatialReferenceProj4::IsEqual(CSpatialReferenceProj4* pSpRef) const
 		{
@@ -382,7 +594,7 @@ namespace GisEngine
 			std::vector<CommonLib::str_t> orgParams;
 			std::vector<CommonLib::str_t> clnParams;
 
-			PJ* orgPrj = (PJ*)m_hHandle;
+			PJ* orgPrj = (PJ*)m_prjHandle;
 			PJ* clnPrj = (PJ*)(pSpRef->GetHandle());
 			if(orgPrj == clnPrj)
 				return true;
@@ -426,8 +638,8 @@ namespace GisEngine
 			CommonLib::CGeoShape geom;
 			DensifyBoundBox(&geom, bbox, 20);
 
-			//*pShp = geom;
-			//m_fullExtent.expand(geom.bbox());
+			*pShp = geom;
+			m_fullExtent.expand(geom.getBB());
 		}
 
 		void CSpatialReferenceProj4::DensifyBoundBox(CommonLib::CGeoShape *pShp, const GisBoundingBox &bbox, int precision) const
@@ -440,26 +652,25 @@ namespace GisEngine
 			w /= precision;
 			h /= precision;
 
-		/*	shp->create(decore::shape_type_polygon, pntCount + 1, 1);
-			GisXYPoint* xy = shp->getXYs();
+			pShp->create(CommonLib::shape_type_polygon, pntCount + 1, 0);
+			GisXYPoint* pPt = pShp->getPoints();
 
 			for(int i = 0; i < precision; i++)
 			{
-				xy[i + 0].x = bbox.xMin + w * i;
-				xy[i + 0].y = bbox.yMin;
-				xy[i + precision].x = bbox.xMax;
-				xy[i + precision].y = bbox.yMin + h * i;
-				xy[i + 2*precision].x = bbox.xMax - w * i;
-				xy[i + 2*precision].y = bbox.yMax;
-				xy[i + 3*precision].x = bbox.xMin;
-				xy[i + 3*precision].y = bbox.yMax - h * i;
+				pPt[i + 0].x = bbox.xMin + w * i;
+				pPt[i + 0].y = bbox.yMin;
+				pPt[i + precision].x = bbox.xMax;
+				pPt[i + precision].y = bbox.yMin + h * i;
+				pPt[i + 2*precision].x = bbox.xMax - w * i;
+				pPt[i + 2*precision].y = bbox.yMax;
+				pPt[i + 3*precision].x = bbox.xMin;
+				pPt[i + 3*precision].y = bbox.yMax - h * i;
 			}
-			xy[pntCount].x = bbox.xMin;
-			xy[pntCount].y = bbox.yMin;
-
-			shp->partStart(0) = 0;
-			shp->calcBBox();
-			shp->finishExternalChanges();*/
+			pPt[pntCount].x = bbox.xMin;
+			pPt[pntCount].y = bbox.yMin;
+		
+			pShp->calcBB();
+		
 		}
 	}
 }

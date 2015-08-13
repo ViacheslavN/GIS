@@ -25,7 +25,10 @@ namespace GisEngine
 
 
 			bool NextRowEx(IRowPtr* row, IRow* rowCache);
-
+			bool EOC();
+			bool FillRow(IRow* row);
+			void SimpleNext();
+			bool AlterShape(CommonLib::CGeoShape* pShape) const;
 		protected:
 			IQueryFilterPtr filter_;
 			int currentRowID_;
@@ -56,6 +59,7 @@ namespace GisEngine
 			int                        oidFieldIndex_;
 			int                        shapeFieldIndex_;
 			int                        annoFieldIndex_;
+			eSpatialRel				   spatialRel_;
 		};
 	}
 }

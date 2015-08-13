@@ -65,8 +65,7 @@ namespace GisEngine
 
 
 		private:
-			std::auto_ptr<Clipper> m_pClipper;
-			
+			std::auto_ptr<Clipper> m_pClipper;			
 		}
 	}
 }

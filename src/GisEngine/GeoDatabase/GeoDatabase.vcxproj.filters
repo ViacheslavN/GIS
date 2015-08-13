@@ -60,6 +60,9 @@
     <ClInclude Include="Feature.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OIDSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -90,6 +93,9 @@
       <Filter>GeoDatabaseShape</Filter>
     </ClCompile>
     <ClCompile Include="Feature.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OIDSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

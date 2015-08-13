@@ -92,27 +92,27 @@ namespace GisEngine
 				Geometry::ISpatialReferencePtr spatRefSource(pFClass->GetSpatialReference());
 
 				ISpatialFilter* spatFilter = (ISpatialFilter*)filter_.get();
-				spatialRel_ = gisGeoDatabase::gisSpatialRelUndefined;
+				spatialRel_ =  srlUndefined;
 				if(spatFilter)
 					spatialRel_ = spatFilter->GetSpatialRel();
 
-				if(spatialRel_ != gisGeoDatabase::gisSpatialRelUndefined)
+				if(spatialRel_ != srlUndefined)
 				{
-					gisGeometry::IShapePtr shape = spatFilter->GetShape();
-					extentOutput_ = gisSystem::IClonePtr(shape->GetEnvelope())->Clone();
-					extentSource_ = gisSystem::IClonePtr(extentOutput_)->Clone();
+					CommonLib::IGeoShapePtr pShape(spatFilter->GetShape());
+					extentOutput_ = new Geometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
+					extentSource_ = new Geometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
 					extentOutput_->Project(spatRefOutput.get());
 					extentSource_->Project(spatRefSource.get());
 				}
 				else
 				{
-					extentOutput_ = gisGeometry::Envelope::CreateInstance(gisCommon::GisBoundingBox(), spatRefOutput.get());
-					extentSource_ = gisGeometry::Envelope::CreateInstance(gisCommon::GisBoundingBox(), spatRefSource.get());
+					extentOutput_ = new Geometry::CEnvelope(GisBoundingBox(), spatRefOutput.get());
+					extentSource_ = new Geometry::CEnvelope(GisBoundingBox(), spatRefSource.get());
 				}
 
 				needTransform_ = spatRefOutput != NULL 
 					&& spatRefSource != NULL 
-					&& !gisCommon::gis_interface_cast<gisSystem::IClone>(spatRefOutput.get())->IsEqual(gisCommon::gis_interface_cast<gisSystem::IClone>(spatRefSource.get()));
+					&& !spatRefOutput->IsEqual(spatRefSource.get());
 				
 
 			if(!invalidCursor_)
@@ -156,15 +156,10 @@ namespace GisEngine
 						currentRow_ = new  CFeature(filter_->GetFieldSet().get(), sourceFields_.get());
 					if(shapeFieldIndex_ >= 0 && IsFieldSelected(shapeFieldIndex_))
 					{
-						IFeature* feature = gis_interface_cast<IFeature>(currentRow_.get());
+						IFeature* feature = (IFeature*)(currentRow_.get());
 						if(feature)
 						{
-							cacheShape_ = Shape::CreateInstance();//feature->GetShape();
-							IShapeEdit* shapeEdit = gis_interface_cast<IShapeEdit>(cacheShape_.get());
-							IGeometryPtr geom = Geometry::CreateInstance();
-							IGeometryEdit* geomEdit = gis_interface_cast<IGeometryEdit>(geom.get());
-							cacheGeometry_ = &geomEdit->Get();
-							shapeEdit->AddGeometry(geom.get());
+							cacheShape_ = new CommonLib::CGeoShape();
 							feature->SetShape(cacheShape_.get());
 						}
 					}
@@ -173,15 +168,13 @@ namespace GisEngine
 				recordGood = FillRow(currentRow_.get());
 
 				SimpleNext();
-				if(matches_.list)
-					matches_.list->next();
+				
 			}
 
 			*row = currentRow_.get();
 
 			if(rowCache)
 			{
-				cacheGeometry_ = 0;
 				cacheShape_.reset();
 				currentRow_.reset();
 			}
@@ -189,141 +182,112 @@ namespace GisEngine
 			return true;
 		}
 
-		// IRowCursor
+
 		bool CShapefileRowCursor::NextRow(IRowPtr* row)
 		{
 			return NextRowEx(row, 0);
 		}
 
-		// IRowCursor2
-		bool CShapefileRowCursor::QueryRow(IRow* row)
-		{
-			IRowPtr row2;
-			return NextRowEx(&row2, row);
-		}
 
-		// ICursorImpl
-		IQueryFilterPtr CShapefileRowCursor::AlterQueryFilter(IQueryFilter* filter, ITable* table)
-		{
-			// Add shape field if filter is a spatial filter
-			if(filter && table)
-			{
-				ISpatialFilter* filter2 = gis_interface_cast<ISpatialFilter>(filter);
-				IFeatureClass* fclass = gis_interface_cast<IFeatureClass>(table);
-				if(filter2 && fclass)
-				{
-					if(filter2->GetSpatialRel() != gisSpatialRelUndefined)
-						filter->GetFieldSet()->Add(fclass->GetShapeFieldName());
-				}
-			}
-
-			return filter;
-		}
-
-		// Private
 		bool CShapefileRowCursor::FillRow(IRow* row)
 		{
 			for(int i = 0; i < (int)actualFieldsIndexes_.size(); ++i)
 			{
 				int fieldIndex = actualFieldsIndexes_[i];
 
-				IVariantEditPtr varEdit = row->GetValue(fieldIndex);
+				CommonLib::CVariant* pValue = row->GetValue(fieldIndex);
 
 				if(fieldIndex == 0) // OID
-				{
-					//row->SetValue(fieldIndex, VariantHolder::CreateInstance(GisVariant((int)currentRowID_)).get());
-					varEdit->Get() = (int)currentRowID_;
+				{				
+					*pValue = (int)currentRowID_;
 					continue;
 				}
 
 				if(fieldIndex == 1) // Shape
 				{
-					//  // start bb changes
-					//  //cacheObject_ = shapelib::SHPReadObject(shp_->file, currentRowID_, cacheObject_);
-					//  cacheObject_ = shapelib::SHPReadObject(shp_->file, currentRowID_, 0);
-					//  ShapefileUtils::SHPObjectToGeometry(cacheObject_, *cacheGeometry_);
-					//  if ( cacheObject_ )
-					//  {
-					//    shapelib::SHPDestroyObject(cacheObject_);
-					//    cacheObject_ = 0;
-					//  }
-					//  // end bb changes
-					//  
-					//  gisGeometry::IShapeEditPtr(cacheShape_)->SetSpatialReference(extentSource_->GetSpatialReference().get());
-					//  if(!AlterShape(cacheShape_.get()))
-					//    return false;
-					//  varEdit->Get() = IObjectPtr(cacheShape_);
-					//  
 					continue;
 				}
 
 				int shpFieldIndex = fieldIndex - 2;
-				GisString strVal;
+				CommonLib::str_t strVal;
 				double dblVal;
 				int intVal;
-				GisVariant& value = varEdit->Get();
-
+		
 				switch(actualFieldsTypes_[i])
 				{
-				case gisFieldTypeString:
-					strVal = shapelib::DBFReadStringAttribute(dbf_->file, currentRowID_, shpFieldIndex);
-					value = strVal;
-					break;
-				case gisFieldTypeInteger:
-					intVal = shapelib::DBFReadIntegerAttribute(dbf_->file, currentRowID_, shpFieldIndex);
-					value = intVal;
-					break;
-				case gisFieldTypeDouble:
-					dblVal = shapelib::DBFReadDoubleAttribute(dbf_->file, currentRowID_, shpFieldIndex);
-					value = dblVal;
-					break;
-				case gisFieldTypeDate:
-					{
-						decore::str_t tm_str = shapelib::DBFReadDateAttribute(dbf_->file, currentRowID_, shpFieldIndex);
-						int year = atoi(tm_str.left(4).cstr());
-						int month = atoi(tm_str.mid(4, 2).cstr());
-						int day = atoi(tm_str.right(2).cstr());
-						value = decore::datetime_t(year, month, day);
+					case dtString:
+						strVal = ShapeLib::DBFReadStringAttribute(dbf_->file, currentRowID_, shpFieldIndex);
+						*pValue  = strVal;
 						break;
-					}
-				default:
-					GIS_THROW_DEFAULT_EXCEPTION(L"Invalid field type");
+					case dtInteger8:
+					case dtInteger16:
+					case dtInteger32:
+					case dtUInteger8:
+					case dtUInteger16:
+					case dtUInteger32:
+						intVal = ShapeLib::DBFReadIntegerAttribute(dbf_->file, currentRowID_, shpFieldIndex);
+						*pValue  = intVal;
+						break;
+					case dtDouble:
+						dblVal = ShapeLib::DBFReadDoubleAttribute(dbf_->file, currentRowID_, shpFieldIndex);
+						*pValue  = dblVal;
+						break;
+					default:
+						return false;
 				}
 			}
 
-			// Test for where
-			if(!AlterRow(currentRow_.get()))
-				return false;
-
 			if(shapeFieldIndex_ >= 0) // Shape
 			{
-				IVariantEditPtr varEdit = row->GetValue(shapeFieldIndex_);
-				// start bb changes
-				//cacheObject_ = shapelib::SHPReadObject(shp_->file, currentRowID_, cacheObject_);
-				cacheObject_ = shapelib::SHPReadObject(shp_->file, currentRowID_);//, 0);
-				ShapefileUtils::SHPObjectToGeometry(cacheObject_, *cacheGeometry_);
+				CommonLib::CVariant* pShapeVar = row->GetValue(shapeFieldIndex_);
+				cacheObject_ = ShapeLib::SHPReadObject(shp_->file, currentRowID_);
+				ShapefileUtils::SHPObjectToGeometry(cacheObject_, *cacheShape_);
 				if ( cacheObject_ )
 				{
-					shapelib::SHPDestroyObject(cacheObject_);
+					ShapeLib::SHPDestroyObject(cacheObject_);
 					cacheObject_ = 0;
 				}
 				// end bb changes
-
-				gisGeometry::IShapeEditPtr(cacheShape_)->SetSpatialReference(extentSource_->GetSpatialReference().get());
+							
 				if(!AlterShape(cacheShape_.get()))
 					return false;
-				varEdit->Get() = IObjectPtr(cacheShape_);
+				*pShapeVar  = CommonLib::IRefObjectPtr(cacheShape_.get());
 			}
 
 			return true;
 		}
+
+		 
+		bool CShapefileRowCursor::AlterShape(CommonLib::CGeoShape* pShape) const
+		{
+			if(!pShape)
+				return !(extentOutput_->GetBoundingBox().type & CommonLib::bbox_type_normal);
+
+			if (needTransform_&& pShape)
+				extentSource_->GetSpatialReference()->Project(extentOutput_->GetSpatialReference().get(), pShape);
+		
+
+			GisBoundingBox boxShape = pShape->getBB();
+			GisBoundingBox boxOutput = extentOutput_->GetBoundingBox();
+			if((boxShape.type & CommonLib::bbox_type_normal) && (boxOutput.type & CommonLib::bbox_type_normal))
+			{
+				if (boxShape.xMin > boxOutput.xMax || boxShape.xMax < boxOutput.xMin || 
+					boxShape.yMin > boxOutput.yMax || boxShape.yMax < boxOutput.yMin)
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 
 		bool CShapefileRowCursor::EOC()
 		{
 			if(invalidCursor_)
 				return true;
 
-			if(currentRowID_ >= recordCount_ || (oids_.size() > 0 && rowIDIt_ == oids_.end()) || (matches_.list && matches_.list->eol()))
+			if(currentRowID_ >= recordCount_ || (oids_.size() > 0 && rowIDIt_ == oids_.end()))
 				return true;
 
 			return false;

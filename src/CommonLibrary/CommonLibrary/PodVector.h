@@ -25,7 +25,9 @@ namespace CommonLib
 
 			TPodVector(const TSelfType& vec) : m_nSize(vec.m_nSize),  m_pData(NULL), m_nCapacity(vec.m_nCapacity), m_pAlloc(vec.m_pAlloc)
 			{
-				 if(m_pAlloc == &vec.m_alloc)
+				 if(vec.m_pAlloc != &vec.m_alloc)
+					 m_pAlloc = m_pAlloc;
+				 else
 					 m_pAlloc = &m_alloc;
 				if(m_nSize != 0)
 				{
@@ -128,8 +130,19 @@ namespace CommonLib
 			{
 				if(m_nSize == m_nCapacity)
 					reserve( m_nSize != 0 ? m_nSize *2 : 2);
-				m_pData[m_nSize] = val;
+				m_pData[m_nSize] = value;
 				m_nSize++;
+			}
+
+			void push_back(const TSelfType& vec)
+			{
+				size_t nNewSize = m_nSize + vec.size();
+				 if(nNewSize >= m_nCapacity)
+					 reserve(2 * m_nCapacity > nNewSize ? 2* m_nCapacity : nNewSize);
+
+				 memcpy(m_pData + m_nSize, vec.m_pData,  vec.size() * sizeof(TValue));
+
+				 m_nSize += vec.size();
 			}
 
 			bool remove(size_t idx)

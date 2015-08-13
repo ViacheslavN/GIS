@@ -60,7 +60,7 @@
 #include <functional>
 #include <queue>
 
-#include "CommonLibrary/IGeoShape.h"
+#include "CommonLibrary/GeoShape.h"
 
 
 namespace ClipperLib {
@@ -227,7 +227,7 @@ namespace ClipperLib {
 		virtual ~ClipperBase();
 		bool AddPath(const Path &pg, PolyType PolyTyp, bool Closed);
 		bool AddPaths(const Paths &ppg, PolyType PolyTyp, bool Closed);
-		bool AddPath(const CommonLib::IGeoShape* pShape,  PolyType PolyTyp, bool Closed);
+		bool AddPath(const CommonLib::CGeoShape* pShape,  PolyType PolyTyp, bool Closed);
 		virtual void Clear();
 		IntRect GetBounds();
 		bool PreserveCollinear() {return m_PreserveCollinear;};

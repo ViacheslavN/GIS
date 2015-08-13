@@ -4,7 +4,7 @@
 
 namespace CommonLib
 {
-	bool IGeoShape::isTypeSimple(eShapeType shapeType)
+/*	bool IGeoShape::isTypeSimple(eShapeType shapeType)
 	{
 		return shapeType<= shape_type_multipatch  && shapeType >= shape_type_null;
 	}
@@ -160,5 +160,5 @@ namespace CommonLib
 				*has_id = (shapeType & shape_has_ids) != 0;
 		}
 
-	}
+	}*/
 }

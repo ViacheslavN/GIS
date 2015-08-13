@@ -1,6 +1,8 @@
 #ifndef GIS_ENGINE_GEO_DATABASE_H_
 #define GIS_ENGINE_GEO_DATABASE_H_
 
+#include <set>
+
 #include "CommonLibrary/str_t.h" 
 #include "Common/GisEngineCommon.h"
 #include "CommonLibrary/Variant.h"
@@ -57,7 +59,19 @@ namespace GisEngine
 			dtTypeAny      = -1
 		};
 
-
+		enum eSpatialRel
+		{
+			srlUndefined          = 0,
+			srlIntersects         = 1,
+			srlEnvelopeIntersects = 2,
+			srlIndexIntersects    = 3,
+			srlTouches            = 4,
+			srlOverlaps           = 5,
+			srlCrosses            = 6,
+			srlWithin             = 7,
+			srlContains           = 8,
+			srlRelation           = 9
+		};
 
 		struct IField;
 		struct IRow;
@@ -72,6 +86,7 @@ namespace GisEngine
 		struct IDomain;
 		struct IShapeField;
 		struct IFieldSet;
+		struct IOIDSet;
 
 		COMMON_LIB_REFPTR_TYPEDEF(IRow);
 		COMMON_LIB_REFPTR_TYPEDEF(IQueryFilter);
@@ -85,7 +100,9 @@ namespace GisEngine
 		COMMON_LIB_REFPTR_TYPEDEF(IDomain);
 		COMMON_LIB_REFPTR_TYPEDEF(IShapeField);
 		COMMON_LIB_REFPTR_TYPEDEF(ICursor);
+		COMMON_LIB_REFPTR_TYPEDEF(IOIDSet);
 
+		
 		struct IWorkspace  : public CommonLib::AutoRefCounter
 		{
 				IWorkspace(){}
@@ -220,6 +237,7 @@ namespace GisEngine
 			virtual bool                   IsFieldSelected(int index) const = 0;
 			virtual const CommonLib::CVariant*   GetValue(int index) const = 0;
 			virtual void                   SetValue(int index, const CommonLib::CVariant& value) = 0;
+			virtual CommonLib::CVariant*   GetValue(int index) = 0;
 			virtual bool                   HasOID() const = 0;
 			virtual int64                  GetOID() const = 0;
 			virtual void                   SetOID(int64 id) = 0;
@@ -230,7 +248,7 @@ namespace GisEngine
 			IFeature(){}
 			virtual ~IFeature(){}
 			virtual CommonLib::IGeoShapePtr GetShape() const = 0;
-			virtual void                  SetShape(CommonLib::IGeoShape* pShape) = 0;
+			virtual void                  SetShape(CommonLib::CGeoShape* pShape) = 0;
 		};
 
 		struct ICursor : public CommonLib::AutoRefCounter
@@ -265,7 +283,7 @@ namespace GisEngine
 			virtual void DeleteRow(int64 oid) = 0;
 		};
 
-		struct  IOIDSet 
+		struct  IOIDSet : public CommonLib::AutoRefCounter
 		{
 			IOIDSet(){}
 			virtual ~IOIDSet(){}
@@ -285,13 +303,13 @@ namespace GisEngine
 		{
 			IQueryFilter(){}
 			virtual ~IQueryFilter(){}
-			virtual IFieldSet*                        GetFieldSet() const = 0;
+			virtual IFieldSetPtr                        GetFieldSet() const = 0;
 			virtual void                              SetFieldSet(IFieldSet* fieldSet) = 0;
 			virtual Geometry::ISpatialReference*      GetOutputSpatialReference() const = 0;
 			virtual void                              SetOutputSpatialReference(Geometry::ISpatialReference* spatRef) = 0;
 			virtual const CommonLib::str_t&           GetWhereClause() const = 0;
 			virtual void                              SetWhereClause(const CommonLib::str_t& where) = 0;
-			virtual IOIDSet*                          GetOIDSet() const = 0;
+			virtual IOIDSetPtr                          GetOIDSet() const = 0;
 			virtual void                              SetOIDSet(IOIDSet* oidSet) = 0;
 		};
 
@@ -300,10 +318,12 @@ namespace GisEngine
 	
 			virtual const CommonLib::str_t&    GetShapeField() const = 0;
 			virtual void                    SetShapeField(const CommonLib::str_t& name) = 0;
-			virtual CommonLib::IGeoShape*	GetShape() const = 0;
-			virtual void                    SetShape( CommonLib::IGeoShape* pShape) = 0;
+			virtual CommonLib::IGeoShapePtr	GetShape() const = 0;
+			virtual void                    SetShape( CommonLib::CGeoShape* pShape) = 0;
 			virtual double                  GetPrecision() const = 0; 
 			virtual void                    SetPrecision(double precision) = 0;
+			virtual eSpatialRel             GetSpatialRel() const = 0;
+			virtual void                    SetSpatialRel(eSpatialRel rel) = 0;
 		};
 
 

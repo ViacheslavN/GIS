@@ -91,6 +91,14 @@ namespace GisEngine
 			return &m_vecValues[m_vecFieldMap[index]];
 		}
 
+		CommonLib::CVariant* CFeature::GetValue(int index)
+		{
+			if(m_vecFieldMap[index] < 0)
+				return NULL;
+
+			return &m_vecValues[m_vecFieldMap[index]];
+		}
+
 		void CFeature::SetValue(int index, const CommonLib::CVariant& value)
 		{
 			if(m_vecFieldMap[index] < 0)
@@ -139,11 +147,11 @@ namespace GisEngine
 				ptr = m_vecValues[m_vecFieldMap[m_nShapeFieldIndex]].Get<CommonLib::IRefObjectPtr>();
 			}
 
-			return CommonLib::IGeoShapePtr((CommonLib::IGeoShape*)ptr.get());
+			return CommonLib::IGeoShapePtr((CommonLib::CGeoShape*)ptr.get());
 
 		}
 
-		void CFeature::SetShape(CommonLib::IGeoShape* pShape)
+		void CFeature::SetShape(CommonLib::CGeoShape* pShape)
 		{
 			if(m_nShapeFieldIndex < 0)
 				return;

@@ -2,7 +2,7 @@
 #define GIS_ENGINE_GEOMETRY_I_SPATIAL_REFERENCE_PROJ4_H_
 
 #include "Geometry.h"
-
+#include "CommonLibrary/alloc_t.h"
 
 namespace GisEngine
 {
@@ -20,10 +20,10 @@ namespace GisEngine
 		public:
 			 typedef void* Handle;
 
-			CSpatialReferenceProj4(const CommonLib::str_t& prj4Str, eSPRefParamType paramType= eSPRefTypePRJ4String);
-			CSpatialReferenceProj4(int prjCode);
-			CSpatialReferenceProj4(Handle hHandle);
-			CSpatialReferenceProj4(const GisBoundingBox& bbox);
+			CSpatialReferenceProj4(const CommonLib::str_t& prj4Str, eSPRefParamType paramType= eSPRefTypePRJ4String, CommonLib::alloc_t *pAlloc = NULL);
+			CSpatialReferenceProj4(int prjCode, CommonLib::alloc_t *pAlloc = NULL);
+			CSpatialReferenceProj4(Handle hHandle, CommonLib::alloc_t *pAlloc = NULL);
+			CSpatialReferenceProj4(const GisBoundingBox& bbox, CommonLib::alloc_t *pAlloc = NULL);
 			 
 			virtual ~CSpatialReferenceProj4();
 
@@ -51,7 +51,7 @@ namespace GisEngine
 			void PrepareBoundShape(const GisBoundingBox& bbox);
 			void DensifyBoundBox(CommonLib::CGeoShape *shp, const GisBoundingBox &bbox, int precision = 10) const;
 		private:
-			Handle m_hHandle;
+			Handle m_prjHandle;
 			int m_prjCode;
 			CommonLib::str_t m_prj4Str;
 
@@ -60,6 +60,15 @@ namespace GisEngine
 			CommonLib::CGeoShape m_BoundShape; 
 			GisBoundingBox m_cutMeridian;
 			GisBoundingBox m_fullExtent;
+			
+			mutable size_t m_nBufferSize;
+			mutable double *m_pBufferX;
+			mutable double *m_pBufferY;
+			mutable double *m_pBufferZ;
+
+			CommonLib::alloc_t* m_pAlloc;
+			CommonLib::simple_alloc_t m_alloc;
+			ITopologicalOperatorPtr m_pTopoOp;
 		};
 	}
 }

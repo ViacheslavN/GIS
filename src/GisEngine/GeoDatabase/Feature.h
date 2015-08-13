@@ -22,6 +22,7 @@ namespace GisEngine
 			virtual IFieldsPtr             GetSourceFields() const ;
 			virtual bool                   IsFieldSelected(int index) const;
 			virtual const CommonLib::CVariant*   GetValue(int index) const;
+			virtual CommonLib::CVariant*   GetValue(int index);
 			virtual void                   SetValue(int index, const CommonLib::CVariant& value);
 			virtual bool                   HasOID() const;
 			virtual int64                  GetOID() const;
@@ -29,7 +30,7 @@ namespace GisEngine
 
 			// IFeature
 			virtual CommonLib::IGeoShapePtr GetShape() const;
-			virtual void                   SetShape(CommonLib::IGeoShape* pShape);
+			virtual void                   SetShape(CommonLib::CGeoShape* pShape);
 		private:
 			IFieldSetPtr                        m_pFieldSet;
 			IFieldsPtr                          m_pFields;
