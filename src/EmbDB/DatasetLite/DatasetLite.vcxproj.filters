@@ -33,12 +33,21 @@
     <ClInclude Include="ShapeFileIndex.h">
       <Filter>ShapeFileIndex</Filter>
     </ClInclude>
+    <ClInclude Include="ShapeCursor.h">
+      <Filter>ShapeFileIndex</Filter>
+    </ClInclude>
+    <ClInclude Include="PointIndex.h">
+      <Filter>ShapeFileIndex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ShapeFileIndex.cpp">
+      <Filter>ShapeFileIndex</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeCursor.cpp">
       <Filter>ShapeFileIndex</Filter>
     </ClCompile>
   </ItemGroup>

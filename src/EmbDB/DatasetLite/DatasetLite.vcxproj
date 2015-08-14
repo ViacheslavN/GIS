@@ -122,12 +122,15 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PointIndex.h" />
+    <ClInclude Include="ShapeCursor.h" />
     <ClInclude Include="ShapeFileIndex.h" />
     <ClInclude Include="SpatialDataset.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ShapeCursor.cpp" />
     <ClCompile Include="ShapeFileIndex.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">Create</PrecompiledHeader>
