@@ -10,13 +10,13 @@
 #include "Pen.h"
 #include "Font.h"
 #include "Brush.h"
-
+#include "CommonLibrary/IRefCnt.h"
 namespace GisEngine
 {
 	namespace Display
 	{
 
-		class IGraphics
+		class IGraphics : public CommonLib::AutoRefCounter
 		{
 			public:
 				IGraphics(){}
@@ -85,6 +85,8 @@ namespace GisEngine
 
 
 		};
+
+		COMMON_LIB_REFPTR_TYPEDEF(IGraphics);
 	}
 }
 

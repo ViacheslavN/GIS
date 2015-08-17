@@ -446,6 +446,7 @@
     <ClInclude Include="Brush.h" />
     <ClInclude Include="Clip.h" />
     <ClInclude Include="ClipRectAlloc.h" />
+    <ClInclude Include="Display.h" />
     <ClInclude Include="RectClipper.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="conv_offset.h" />

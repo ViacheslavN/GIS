@@ -37,6 +37,14 @@ namespace GisEngine
 			virtual void  RemoveAllProperties() = 0;
 
 		};
+
+		struct ITrackCancel
+		{
+			ITrackCancel(){}
+			virtual ~ITrackCancel(){}
+			virtual void Cancel() = 0;
+			virtual bool Continue() = 0; 
+		};
 	}
 }
 

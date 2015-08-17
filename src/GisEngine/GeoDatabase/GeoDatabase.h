@@ -73,6 +73,7 @@ namespace GisEngine
 			srlRelation           = 9
 		};
 
+
 		struct IField;
 		struct IRow;
 		struct IQueryFilter;
@@ -305,7 +306,7 @@ namespace GisEngine
 			virtual ~IQueryFilter(){}
 			virtual IFieldSetPtr                        GetFieldSet() const = 0;
 			virtual void                              SetFieldSet(IFieldSet* fieldSet) = 0;
-			virtual Geometry::ISpatialReference*      GetOutputSpatialReference() const = 0;
+			virtual Geometry::ISpatialReferencePtr      GetOutputSpatialReference() const = 0;
 			virtual void                              SetOutputSpatialReference(Geometry::ISpatialReference* spatRef) = 0;
 			virtual const CommonLib::str_t&           GetWhereClause() const = 0;
 			virtual void                              SetWhereClause(const CommonLib::str_t& where) = 0;

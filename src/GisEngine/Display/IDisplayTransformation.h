@@ -6,12 +6,12 @@
 #include "DisplayTypes.h"
 #include "Point.h"
 #include "Rect.h"
-#include "GisGeometry/ISpatialReference.h"
+#include "GisGeometry/Geometry.h"
 namespace GisEngine
 {
 	namespace Display
 	{
-		class IDisplayTransformation
+		class IDisplayTransformation : public CommonLib::AutoRefCounter
 		{
 			public:
 				IDisplayTransformation(){}
@@ -46,7 +46,7 @@ namespace GisEngine
 
 
 				virtual void   SetSpatialReference(Geometry::ISpatialReference *pSp) = 0;
-				virtual Geometry::ISpatialReference* GetSpatialReference() const = 0;
+				virtual Geometry::ISpatialReferencePtr GetSpatialReference() const = 0;
 
 	 
 				virtual void MapToDevice(const GisXYPoint *pIn, GPoint *pOut, int nPoints) = 0;
@@ -74,6 +74,8 @@ namespace GisEngine
 				virtual bool  ClipExists() = 0;
 				virtual void  RemoveClip() = 0;
 		};
+
+		COMMON_LIB_REFPTR_TYPEDEF(IDisplayTransformation);
 	}
 }
 

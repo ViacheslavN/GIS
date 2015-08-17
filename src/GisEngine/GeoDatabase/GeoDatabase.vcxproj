@@ -461,6 +461,7 @@
     <ClInclude Include="GeoDatabase.h" />
     <ClInclude Include="GeometryDef.h" />
     <ClInclude Include="OIDSet.h" />
+    <ClInclude Include="QueryFilter.h" />
     <ClInclude Include="ShapefileFeatureClass.h" />
     <ClInclude Include="ShapefileRowCursor.h" />
     <ClInclude Include="ShapefileUtils.h" />
@@ -475,6 +476,7 @@
     <ClCompile Include="FieldSet.cpp" />
     <ClCompile Include="GeometryDef.cpp" />
     <ClCompile Include="OIDSet.cpp" />
+    <ClCompile Include="QueryFilter.cpp" />
     <ClCompile Include="ShapefileFeatureClass.cpp" />
     <ClCompile Include="ShapefileRowCursor.cpp" />
     <ClCompile Include="ShapefileUtils.cpp" />

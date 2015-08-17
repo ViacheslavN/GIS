@@ -3,12 +3,13 @@
 #include "GraphTypes.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "Color.h"
+#include "CommonLibrary/IRefCnt.h"
 namespace GisEngine
 {
 	namespace Display
 	{
 
-		class CBitmap
+		class CBitmap : public CommonLib::AutoRefCounter
 		{
 		public:
 			CBitmap();
@@ -46,6 +47,8 @@ namespace GisEngine
 			Color*           m_pPalette;
 			bool             m_bRelease;
 		};
+
+		typedef CommonLib::IRefCntPtr<CBitmap> BitmapPtr;
 	}
 }
 
