@@ -33,8 +33,8 @@ int64 CreateCompParams(embDB::IDBTransactions* pTran)
 
 	int64 nCompRootPage = pPage->getAddr();
 	compParmas.setRootPage(nCompRootPage);
-	compParmas.addParams(CommonLib::dtInteger64);
-	compParmas.addParams(CommonLib::dtInteger64);
+	compParmas.addParams(embDB::dtInteger64);
+	compParmas.addParams(embDB::dtInteger64);
 	compParmas.save(pTran);
 	return nCompRootPage;
 	
@@ -63,7 +63,7 @@ void insertINBTreeCompKey  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStar
 	time.start();
 	int64 n = 0;
 	bool bFind = false;
-	CommonLib::TVarINT64 valint64;
+	embDB::TVarINT64 valint64;
 	valint64.setVal(0);
 	embDB::CompositeIndexKey key(pAlloc);
 
@@ -153,7 +153,7 @@ void searchINBTreeCompKey (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart
 	double searchTm  = 0;
 	int64 n = 0;
 	time.start();
-	CommonLib::TVarINT64 valint64;
+	embDB::TVarINT64 valint64;
 	valint64.setVal(0);
 	embDB::CompositeIndexKey key(pAlloc);
 
@@ -243,7 +243,7 @@ void removeFromBTreeCompKey  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndSt
 	int64 i = nStart;
 	int64 n = 0;
 
-	CommonLib::TVarINT64 valint64;
+	embDB::TVarINT64 valint64;
 	valint64.setVal(0);
 	embDB::CompositeIndexKey key(pAlloc);
 

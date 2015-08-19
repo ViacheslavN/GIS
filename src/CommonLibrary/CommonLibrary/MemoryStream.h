@@ -6,7 +6,7 @@
 #include "Stream.h"
 namespace CommonLib
 {
-	class MemoryStream : public IStream, public IReadStream, public IWriteStream
+	class MemoryStream : public IStream, public IReadStreamBase, public IWriteStreamBase
 	{
 	public:
 		MemoryStream(alloc_t *pAlloc);
@@ -24,7 +24,7 @@ namespace CommonLib
 		virtual void create(size_t nSize);
 		virtual byte* buffer();
 		//IReadStream
-		virtual void read( byte* pBuffer, size_t bufLen );
+/*		virtual void read( byte* pBuffer, size_t bufLen );
 		virtual void read(bool& value);
 		virtual void read(char& value);
 		virtual void read(byte& value);
@@ -64,15 +64,15 @@ namespace CommonLib
 		virtual void write(uint64 value);
 		virtual void write(float value);
 		virtual void write(double value);
-		virtual void write(const CommonLib::str_t& str);
+		virtual void write(const CommonLib::str_t& str);*/
 
-	protected:
+ 
 		
-		void read_bytes(byte* dst, size_t size);
-		void read_inverse(byte* buffer, size_t size);
-		void write_bytes(const byte* buffer, size_t size);
-		void write_inverse(const byte* buffer, size_t size);
-		template <typename T>
+		virtual void read_bytes(byte* dst, size_t size);
+		virtual void read_inverse(byte* buffer, size_t size);
+		virtual void write_bytes(const byte* buffer, size_t size);
+		virtual void write_inverse(const byte* buffer, size_t size);
+	/*	template <typename T>
 		void readT(T& val)
 		{
 
@@ -100,7 +100,7 @@ namespace CommonLib
 			else
 				read_bytes((byte*)&ret, sizeof(T));
 			return ret;
-		}
+		}*/
 		
 
 		void resize(size_t nSize);

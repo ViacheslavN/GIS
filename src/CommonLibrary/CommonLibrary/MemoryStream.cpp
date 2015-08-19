@@ -151,6 +151,7 @@ namespace CommonLib
 			m_pBuffer[m_nPos + size - i - 1] = buffer[i];
 		assert(m_nPos <= m_nSize);
 	}
+	/*
 	void MemoryStream::read( byte* pBuffer, size_t bufLen)
 	{
 		if(m_bIsBigEndian)
@@ -318,5 +319,5 @@ namespace CommonLib
 		writeT<uint32>(str.length());
 		if(str.length())
 			write((byte*)str.cwstr(), str.length() *2);
-	}
+	}*/
 }

@@ -1253,7 +1253,7 @@ namespace GisEngine
 		 {
 			 m_cs.lock();
 		 }
-		 void CGraphicsAgg::Release()
+		 void CGraphicsAgg::UnLock()
 		 {
 			 m_cs.release();
 		 }

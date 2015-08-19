@@ -101,36 +101,22 @@ namespace CommonLib
 		}
 		m_pBuffer = 0;
 	}
-	void FxStreamBase::read_bytes(byte* dst, size_t size)
+	
+	
+	void FxMemoryReadStream::read_bytes(byte* dst, size_t size)
 	{
 		::memcpy(dst, m_pBuffer + m_nPos, size);
 		m_nPos += size;
 		assert(m_nPos <= m_nSize);
 	}
 
-	void FxStreamBase::read_inverse(byte* buffer, size_t size)
+	void FxMemoryReadStream::read_inverse(byte* buffer, size_t size)
 	{
 		for(size_t i = 0; i < size; m_nPos++, i++)
 			buffer[i] = m_pBuffer[m_nPos + size - i - 1];
 		m_nPos += size;
 		assert(m_nPos <= m_nSize);
 	}
-	void FxStreamBase::write_bytes(const byte* buffer, size_t size)
-	{
-		if(size > 0)
-		{
-			::memcpy(m_pBuffer + m_nPos, buffer, size);
-			m_nPos += size;
-		}
-		assert(m_nPos <= m_nSize);
-	}
-	void FxStreamBase::write_inverse(const byte* buffer, size_t size)
-	{
-		for(size_t i = 0; i < size; m_nPos++, i++)
-			m_pBuffer[m_nPos + size - i - 1] = buffer[i];
-		assert(m_nPos <= m_nSize);
-	}
-	
 
 
 	FxMemoryReadStream::FxMemoryReadStream(alloc_t *pAlloc) : FxStreamBase(pAlloc)
@@ -141,7 +127,8 @@ namespace CommonLib
 	{
 
 	}
-
+	
+	/*
 	bool  FxMemoryReadStream::readBool()
 	{
 		return (readTR<byte>() == 1) ? true : false;
@@ -255,7 +242,7 @@ namespace CommonLib
 		}
 		
 	}
-
+	*/
 
 	FxMemoryWriteStream::FxMemoryWriteStream(alloc_t *pAlloc) : FxStreamBase(pAlloc)
 	{
@@ -266,7 +253,24 @@ namespace CommonLib
 
 	}
 
-	void  FxMemoryWriteStream::write(const byte* pBuffer, size_t bufLen )
+
+	void FxMemoryWriteStream::write_bytes(const byte* buffer, size_t size)
+	{
+		if(size > 0)
+		{
+			::memcpy(m_pBuffer + m_nPos, buffer, size);
+			m_nPos += size;
+		}
+		assert(m_nPos <= m_nSize);
+	}
+	void FxMemoryWriteStream::write_inverse(const byte* buffer, size_t size)
+	{
+		for(size_t i = 0; i < size; m_nPos++, i++)
+			m_pBuffer[m_nPos + size - i - 1] = buffer[i];
+		assert(m_nPos <= m_nSize);
+	}
+
+	/*void  FxMemoryWriteStream::write(const byte* pBuffer, size_t bufLen )
 	{
 		if(m_bIsBigEndian)
 			write_inverse(pBuffer, bufLen);
@@ -327,5 +331,5 @@ namespace CommonLib
 		writeT<uint32>(str.length());
 		if(str.length())
 			write((byte*)str.cwstr(), str.length() *2);
-	}
+	}*/
 }

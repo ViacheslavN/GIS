@@ -34,6 +34,9 @@
     <Filter Include="GraphicsWinGDI">
       <UniqueIdentifier>{f639229b-a8e5-44e3-89b5-0f1ad89c7293}</UniqueIdentifier>
     </Filter>
+    <Filter Include="symbols">
+      <UniqueIdentifier>{a97f4b37-6934-4d24-8435-2cea51b09f54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />

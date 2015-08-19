@@ -74,7 +74,7 @@ namespace GisEngine
 			virtual size_t GetHeight() const; 
 
 			virtual void Lock();
-			virtual void Release();
+			virtual void UnLock();
 		private:
 			void   SelectPen(const CPen* pPen);
 			void   SelectBrush(const CBrush* pBrush);

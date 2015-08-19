@@ -6,11 +6,49 @@
 #include "CommonLibrary/str_t.h"
 #include "CommonLibrary/MemoryStream.h"
 #include "CommonLibrary/FixedBitStream.h"
-#include "CommonLibrary/File.h"
+#include "CommonLibrary/FixedMemoryStream.h"
+#include "CommonLibrary/FileStream.h"
 void testAlloc ();
 int _tmain(int argc, _TCHAR* argv[])
 {
+	CommonLib::alloc_t *alloc = new CommonLib::simple_alloc_t();
+	CommonLib::FxMemoryReadStream readStrim(alloc);
+	CommonLib::MemoryStream memStream(alloc);
 
+
+
+	CommonLib::CWriteFileStream writeFSteam;
+	writeFSteam.open(L"D:\\1.fs", CommonLib::ofmCreateAlways,  CommonLib::arWrite,  CommonLib::smNoMode);
+
+
+	writeFSteam.write((uint64)23);
+	writeFSteam.write((uint32)15);
+	writeFSteam.write((byte)1);
+
+	writeFSteam.close();
+
+	CommonLib::CReadFileStream readFSteam;
+	readFSteam.open(L"D:\\1.fs", CommonLib::ofmOpenExisting,  CommonLib::arRead,  CommonLib::smNoMode);
+
+	uint64 retu64 = readFSteam.readIntu64();
+	uint64 retu32 = readFSteam.readIntu32();
+	byte retByte = readFSteam.readByte();
+
+
+	readFSteam.close();
+	memStream.write((uint64)23);
+	memStream.write((uint32)15);
+	memStream.write((byte)1);
+
+
+	readStrim.attach(memStream.buffer(), memStream.size());
+	uint64 nType;
+	readStrim.read(nType);
+	
+	CommonLib::FxMemoryWriteStream writeStrim(alloc);
+
+
+	
 
 	std::vector<CommonLib::str_t> vecFiles;
 	CommonLib::FileSystem::getFiles(CommonLib::str_t(L"D:\\2\\") + L"*.shp", vecFiles);
@@ -51,7 +89,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	testAlloc();
 	return 0;
 
-	CommonLib::alloc_t *alloc = new CommonLib::simple_alloc_t();
+
 	CommonLib::FxBitWriteStream writeBitStream(alloc);
 	CommonLib::FxBitReadStream  readBitStream(alloc);
 

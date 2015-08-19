@@ -3,13 +3,37 @@
 namespace CommonLib
 {
 
-CFileWin32Impl::CFileWin32Impl() : m_hFile(INVALID_HANDLE_VALUE){
+CFileWin32Impl::CFileWin32Impl() : m_hFile(INVALID_HANDLE_VALUE), m_bAttach(false)
+{
 }
-CFileWin32Impl::~CFileWin32Impl(){
-	if(m_hFile != INVALID_HANDLE_VALUE){
-		::CloseHandle(m_hFile);
-		m_hFile = INVALID_HANDLE_VALUE;
+CFileWin32Impl::~CFileWin32Impl()
+{
+	if(!m_bAttach)
+	{
+		if(m_hFile != INVALID_HANDLE_VALUE)
+		{
+			::CloseHandle(m_hFile);
+			m_hFile = INVALID_HANDLE_VALUE;
+		}
 	}
+	
+}
+
+
+bool CFileWin32Impl::attach(FileHandle handle)
+{
+	if(!m_bAttach)
+		closeFile();
+	m_hFile = handle;
+	return isValid();
+}
+FileHandle CFileWin32Impl::deattach()
+{
+	FileHandle handle = m_hFile;
+	m_bAttach = false;
+	m_hFile = INVALID_HANDLE_VALUE;
+	return handle;
+
 }
 
 bool CFileWin32Impl::openFile(const wchar_t *pszFileName, enOpenFileMode mode, enAccesRights access, enShareMode share)
@@ -24,14 +48,15 @@ bool CFileWin32Impl::openFile(const wchar_t *pszFileName, enOpenFileMode mode, e
 	return isValid();
 	
 }
-int64 CFileWin32Impl::getFileSize(){
+int64 CFileWin32Impl::getFileSize() const
+{
 	if(!isValid())
 		return -1;
 	LARGE_INTEGER FileSize;
 	::GetFileSizeEx(m_hFile, &FileSize);
 	return (int64)FileSize.QuadPart;
 }
-bool CFileWin32Impl::setFilePos64(int64 nPos, enSeekOffset offset){
+bool CFileWin32Impl::setFilePos64(uint64 nPos, enSeekOffset offset){
 
 	  LARGE_INTEGER lpos;
 	  lpos.QuadPart = nPos;
@@ -43,8 +68,13 @@ bool CFileWin32Impl::setFilePos(uint32 nPos, enSeekOffset offset){
 	 return 0 != ::SetFilePointer(m_hFile, nPos, 0, offset == soFromBegin ? FILE_BEGIN : offset == soFromCurrent ? FILE_CURRENT
  		: FILE_END);
 }
-int64 CFileWin32Impl::getFilePos(){
-	 return 0 ;
+int64 CFileWin32Impl::getFilePos() const
+{
+	LARGE_INTEGER lpos;
+	lpos.QuadPart = 0;
+	 LARGE_INTEGER ret;
+	::SetFilePointerEx(m_hFile, lpos, &ret,  FILE_CURRENT);
+	return ret.QuadPart;
 }
 bool CFileWin32Impl::setFileEnd(){
 	return FALSE != ::SetEndOfFile(m_hFile);

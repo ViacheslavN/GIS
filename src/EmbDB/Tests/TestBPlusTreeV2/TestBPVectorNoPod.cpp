@@ -71,9 +71,9 @@ void TestPODTypeVector()
 	*/
  
 	
-	CommonLib::TVarINT32 valint32;
+	embDB::TVarINT32 valint32;
 	valint32.set(12);
-	CommonLib::TVarINT64 valint64;
+	embDB::TVarINT64 valint64;
 	valint64.set(124587536454);
 	
 	int n = 10;

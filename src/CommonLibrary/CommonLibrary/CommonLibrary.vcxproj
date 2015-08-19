@@ -421,6 +421,7 @@
     <ClInclude Include="delegate.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="File.h" />
+    <ClInclude Include="FileStream.h" />
     <ClInclude Include="FileWin32.h" />
     <ClInclude Include="FixedMemoryStream.h" />
     <ClInclude Include="general.h" />
@@ -457,6 +458,7 @@
     <ClCompile Include="caseutils.cpp" />
     <ClCompile Include="DebugTime.cpp" />
     <ClCompile Include="File.cpp" />
+    <ClCompile Include="FileStream.cpp" />
     <ClCompile Include="FileWin32.cpp" />
     <ClCompile Include="FixedBitStream.cpp" />
     <ClCompile Include="FixedMemoryStream.cpp" />
@@ -481,6 +483,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="stream.cpp" />
     <ClCompile Include="str_t.cpp" />
     <ClCompile Include="thread.cpp" />
     <ClCompile Include="TimeUtils.cpp" />

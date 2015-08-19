@@ -11,11 +11,13 @@ namespace CommonLib
 		CFileWin32Impl();
 		~CFileWin32Impl();
 
+		virtual bool attach(FileHandle handle);
+		virtual FileHandle deattach();
 		virtual bool openFile(const wchar_t* pszFileName, enOpenFileMode mode, enAccesRights access, enShareMode share);
-		virtual int64 getFileSize();
-		virtual bool setFilePos64(int64 nPos, enSeekOffset offset);
+		virtual int64 getFileSize() const;
+		virtual bool setFilePos64(uint64 nPos, enSeekOffset offset);
 		virtual bool setFilePos(uint32 nPos, enSeekOffset offset);
-		virtual int64 getFilePos();
+		virtual int64 getFilePos() const;
 		virtual bool setFileEnd();
 		virtual bool setFileBegin();
 		virtual uint32 writeFile(const void* pData, uint32 nSize);
@@ -25,6 +27,7 @@ namespace CommonLib
 		virtual bool Flush();
 	private:
 		HANDLE m_hFile;
+		bool m_bAttach;
 	};
 
 	typedef CFileWin32Impl CFile;

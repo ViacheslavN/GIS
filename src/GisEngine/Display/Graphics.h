@@ -81,7 +81,7 @@ namespace GisEngine
 				virtual size_t GetHeight() const= 0; 
  
 				virtual void Lock() = 0;
-				virtual void Release() = 0;
+				virtual void UnLock() = 0;
 
 
 		};

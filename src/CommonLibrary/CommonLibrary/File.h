@@ -31,17 +31,22 @@ namespace CommonLib
 	};
 
 
+#ifdef WIN32
+typedef   HANDLE  FileHandle;
+#endif
 
 	class IFile
 	{
 		public:
 			IFile(){};
 			virtual ~IFile(){}
+			virtual bool attach(FileHandle handle) = 0;
+			virtual FileHandle deattach() = 0;
 			virtual bool openFile(const wchar_t *pszFileName,  enOpenFileMode mode, enAccesRights access, enShareMode share) = 0;
-			virtual int64 getFileSize() = 0;
-			virtual bool setFilePos64(int64 nPos, enSeekOffset offset) = 0;
+			virtual int64 getFileSize() const= 0;
+			virtual bool setFilePos64(uint64 nPos, enSeekOffset offset) = 0;
 			virtual bool setFilePos(uint32 nPos, enSeekOffset offset) = 0;
-			virtual int64 getFilePos() = 0;
+			virtual int64 getFilePos() const = 0;
 			virtual bool setFileEnd() = 0;
 			virtual bool setFileBegin() = 0;
 			virtual uint32 writeFile(const void* pData, uint32 nSize) = 0;

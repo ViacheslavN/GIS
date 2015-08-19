@@ -511,7 +511,7 @@ namespace GisEngine
 		 } 
 
 		 void CGraphicsWinGDI::Lock(){}
-		 void CGraphicsWinGDI::Release(){}
+		 void CGraphicsWinGDI::UnLock(){}
 		void   CGraphicsWinGDI::SelectPen(const CPen* pPen)
 		{
 			if(pPen != m_pSelectedPen && pPen)

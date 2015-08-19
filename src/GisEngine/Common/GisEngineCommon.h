@@ -13,16 +13,25 @@ namespace GisEngine
 	{
 
 		struct IPropertySet;
-
+		struct IXMLWriter;
+		struct IXMLReader;
 
 		COMMON_LIB_REFPTR_TYPEDEF(IPropertySet);
 
 		struct IStreamSerialize
 		{
-			IStreamSerialize(void){}
-			virtual ~IStreamSerialize(void){}
+			IStreamSerialize(){}
+			virtual ~IStreamSerialize(){}
 			virtual void save(CommonLib::IWriteStream *pWriteStream) const = 0;
 			virtual void load(CommonLib::IReadStream* pReadStream) = 0;
+		};
+
+		struct IXMLSerialize
+		{
+			IXMLSerialize(){}
+			virtual ~IXMLSerialize(){}
+			virtual void save(IXMLWriter* pWriteXML) const = 0;
+			virtual void load(IXMLReader* pReadXML) = 0;
 		};
 
 		struct IPropertySet : public CommonLib::AutoRefCounter
@@ -44,6 +53,13 @@ namespace GisEngine
 			virtual ~ITrackCancel(){}
 			virtual void Cancel() = 0;
 			virtual bool Continue() = 0; 
+		};
+
+		struct IXMLWriter
+		{
+
+			IXMLWriter(){}
+			virtual ~IXMLWriter(){}
 		};
 	}
 }
