@@ -131,7 +131,6 @@ namespace GisEngine
 				pStream->write(m_vecTemplates[i].first);
 				pStream->write(m_vecTemplates[i].second);
 			}
-
 		}
 		void CPen::load(CommonLib::IReadStream *pStream)
 		{
@@ -154,6 +153,29 @@ namespace GisEngine
 				pStream->read(val2);
 				m_vecTemplates.push_back(std::make_pair(val1, val2));
 			}
+		}
+
+
+		void CPen::save(GisCommon::IXMLNode* pXmlNode) const
+		{
+			pXmlNode->AddProperty("PenType", CommonLib::CVariant(uint16(m_type)));
+			m_color.save(pXmlNode);
+			pXmlNode->AddProperty("JoinType", CommonLib::CVariant(uint16(m_joinType)));
+			pXmlNode->AddProperty("Width", CommonLib::CVariant(m_nWidth));
+			pXmlNode->AddProperty("CapType", CommonLib::CVariant(uint16(m_capType)));
+
+			if(m_pTexture && m_bRelease) 
+			{
+				pXmlNode->AddProperty("Release", CommonLib::CVariant(m_bRelease));
+				m_pTexture->save(pXmlNode);
+			}
+			else
+				pXmlNode->AddProperty("Release", CommonLib::CVariant((bool)false));
+
+		}
+		void CPen::load(GisCommon::IXMLNode* pXmlNode)
+		{
+
 		}
 	}
 }

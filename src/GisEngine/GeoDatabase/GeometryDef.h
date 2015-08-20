@@ -23,15 +23,15 @@ namespace GisEngine
 			virtual void SetHasZ(bool flag);
 			virtual bool GetHasM() const;
 			virtual void SetHasM(bool flag);
-			virtual Geometry::ISpatialReferencePtr GetSpatialReference() const;
-			virtual void SetSpatialReference(Geometry::ISpatialReference* pSpRef);
+			virtual GisGeometry::ISpatialReferencePtr GetSpatialReference() const;
+			virtual void SetSpatialReference(GisGeometry::ISpatialReference* pSpRef);
 			virtual GisBoundingBox	GetBaseExtent() const;
 			virtual void SetBaseExtent(const GisBoundingBox& box);
 		private:
 			CommonLib::eShapeType m_geometryType;
 			bool m_bIsHasZ;
 			bool m_bHasM;
-			Geometry::ISpatialReferencePtr m_pSpatialRefPtr;
+			GisGeometry::ISpatialReferencePtr m_pSpatialRefPtr;
 			GisBoundingBox m_baseExtent;
 		};
 

@@ -5,18 +5,21 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/MemoryStream.h"
 #include "CommonLibrary/IRefCnt.h"
+#include "CommonLibrary/blob.h"
 #include "Common.h"
  
 namespace GisEngine
 {
-	namespace Common
+	namespace GisCommon
 	{
 
 		struct IPropertySet;
 		struct IXMLWriter;
 		struct IXMLReader;
+		struct IXMLNode;
 
 		COMMON_LIB_REFPTR_TYPEDEF(IPropertySet);
+		COMMON_LIB_REFPTR_TYPEDEF(IXMLNode);
 
 		struct IStreamSerialize
 		{
@@ -30,8 +33,36 @@ namespace GisEngine
 		{
 			IXMLSerialize(){}
 			virtual ~IXMLSerialize(){}
-			virtual void save(IXMLWriter* pWriteXML) const = 0;
-			virtual void load(IXMLReader* pReadXML) = 0;
+			virtual void save(IXMLNode* pXmlNode) const = 0;
+			virtual void load(IXMLNode* pXmlNode) = 0;
+		};
+
+
+		struct IXMLNode : CommonLib::AutoRefCounter
+		{
+			IXMLNode(){}
+			virtual ~IXMLNode(){}
+
+			virtual void                   AddChildNode(IXMLNode* child) = 0;
+			virtual IXMLNodePtr			   CreateChildNode() = 0;
+			virtual uint32				   GetChildCnt() const = 0;
+			virtual IXMLNodePtr			   GetChild(uint32 nIndex) const = 0;
+
+
+
+			virtual const CommonLib::str_t&  GetName() const = 0;
+			virtual void                   SetName( const CommonLib::str_t& name) = 0;
+			virtual const CommonLib::str_t&  GetText() const = 0;
+			virtual void                   SetText(const CommonLib::str_t&) = 0;
+			virtual const CommonLib::str_t&   GetCDATA() const = 0;
+			virtual void                   SetCDATA(const   CommonLib::str_t& cdata) = 0;
+			virtual CommonLib::CBlob&      GetBlobCDATA() const = 0;
+
+			virtual void                   SetBlobCDATA(const CommonLib::CBlob &data) = 0;
+			virtual void                   AddProperty(const CommonLib::str_t& sName, const CommonLib::CVariant& val) = 0;
+			virtual CommonLib::CVariant*   GetProperty(const CommonLib::str_t& sName) = 0;
+			virtual uint32				   GetPropertyCnt() const = 0;
+			virtual CommonLib::CVariant*   GetProperty(uint32 nIndex) = 0;
 		};
 
 		struct IPropertySet : public CommonLib::AutoRefCounter

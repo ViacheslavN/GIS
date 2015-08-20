@@ -12,7 +12,7 @@ namespace ClipperLib
 
 namespace GisEngine
 {
-	namespace Geometry
+	namespace GisGeometry
 	{
 		class CTopologicalOperator : public ITopologicalOperator
 		{

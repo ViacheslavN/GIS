@@ -3,6 +3,7 @@
 #include "GraphTypes.h"
 #include "Bitmap.h"
 #include <vector>
+#include "Common/GisEngineCommon.h"
 namespace GisEngine
 {
 	namespace Display
@@ -39,6 +40,10 @@ namespace GisEngine
 
 			void save(CommonLib::IWriteStream *pStream) const;
 			void load(CommonLib::IReadStream *pStream);
+
+			void save(GisCommon::IXMLNode* pXmlNode) const;
+			void load(GisCommon::IXMLNode* pXmlNode);
+
 
 		private:
 

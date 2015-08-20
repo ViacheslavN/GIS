@@ -88,8 +88,8 @@ namespace GisEngine
 
 			// Spatial queries
 		
-				Geometry::ISpatialReferencePtr spatRefOutput(filter_->GetOutputSpatialReference());
-				Geometry::ISpatialReferencePtr spatRefSource(pFClass->GetSpatialReference());
+				GisGeometry::ISpatialReferencePtr spatRefOutput(filter_->GetOutputSpatialReference());
+				GisGeometry::ISpatialReferencePtr spatRefSource(pFClass->GetSpatialReference());
 
 				ISpatialFilter* spatFilter = (ISpatialFilter*)filter_.get();
 				spatialRel_ =  srlUndefined;
@@ -99,15 +99,15 @@ namespace GisEngine
 				if(spatialRel_ != srlUndefined)
 				{
 					CommonLib::IGeoShapePtr pShape(spatFilter->GetShape());
-					extentOutput_ = new Geometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
-					extentSource_ = new Geometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
+					extentOutput_ = new GisGeometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
+					extentSource_ = new GisGeometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
 					extentOutput_->Project(spatRefOutput.get());
 					extentSource_->Project(spatRefSource.get());
 				}
 				else
 				{
-					extentOutput_ = new Geometry::CEnvelope(GisBoundingBox(), spatRefOutput.get());
-					extentSource_ = new Geometry::CEnvelope(GisBoundingBox(), spatRefSource.get());
+					extentOutput_ = new GisGeometry::CEnvelope(GisBoundingBox(), spatRefOutput.get());
+					extentSource_ = new GisGeometry::CEnvelope(GisBoundingBox(), spatRefSource.get());
 				}
 
 				needTransform_ = spatRefOutput != NULL 

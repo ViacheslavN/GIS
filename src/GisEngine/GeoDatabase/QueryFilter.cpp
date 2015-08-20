@@ -34,12 +34,12 @@ namespace GisEngine
 			m_pFieldSet = fieldSet;
 		}
 
-		Geometry::ISpatialReferencePtr CQueryFilter::GetOutputSpatialReference() const
+		GisGeometry::ISpatialReferencePtr CQueryFilter::GetOutputSpatialReference() const
 		{
 			return m_pOutputSpatialRef;
 		}
 
-		void CQueryFilter::SetOutputSpatialReference(Geometry::ISpatialReference* spatRef)
+		void CQueryFilter::SetOutputSpatialReference(GisGeometry::ISpatialReference* spatRef)
 		{
 			m_pOutputSpatialRef = spatRef;
 		}

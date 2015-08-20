@@ -12,16 +12,21 @@ namespace GisEngine
 		class CBitmap : public CommonLib::AutoRefCounter
 		{
 		public:
-			CBitmap();
-			CBitmap(CommonLib::IReadStream *pStream);
-			CBitmap(size_t width, size_t height, BitmapFormatType type);
-			CBitmap(unsigned char* bits, size_t width, size_t height, BitmapFormatType type, Color* palette = 0, bool release = false);
+			CBitmap(CommonLib::alloc_t *pAlloc = NULL);
+			CBitmap(CommonLib::IReadStream *pStream, CommonLib::alloc_t *pAlloc = NULL);
+			CBitmap(size_t width, size_t height, BitmapFormatType type, CommonLib::alloc_t *pAlloc = NULL);
+			CBitmap(unsigned char* bits, size_t width, size_t height, 
+				BitmapFormatType type, Color* palette = 0, bool release = false, CommonLib::alloc_t *pAlloc = NULL);
 			CBitmap(const CBitmap& bmp);
 			~CBitmap(void);
 			CBitmap& operator=(const CBitmap& bmp);
 
 			void save(CommonLib::IWriteStream *pStream) const;
 			void load(CommonLib::IReadStream *pStream);
+
+			void save(GisCommon::IXMLNode* pXmlNode) const;
+			void load(GisCommon::IXMLNode* pXmlNode);
+
 		public:
 			size_t                 height() const;
 			size_t                 width() const;
@@ -46,6 +51,8 @@ namespace GisEngine
 			BitmapFormatType m_type;
 			Color*           m_pPalette;
 			bool             m_bRelease;
+			CommonLib::alloc_t*		m_pAlloc;
+			CommonLib::simple_alloc_t m_alloc;
 		};
 
 		typedef CommonLib::IRefCntPtr<CBitmap> BitmapPtr;

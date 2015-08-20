@@ -3,7 +3,7 @@
 
 namespace GisEngine
 {
-	namespace Common
+	namespace GisCommon
 	{
 		CPropertySet::CPropertySet()
 		{

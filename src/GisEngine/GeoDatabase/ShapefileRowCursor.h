@@ -52,8 +52,8 @@ namespace GisEngine
 
 
 			// Spatial Queries
-			Geometry::IEnvelopePtr  extentOutput_;
-			Geometry::IEnvelopePtr  extentSource_;
+			GisGeometry::IEnvelopePtr  extentOutput_;
+			GisGeometry::IEnvelopePtr  extentSource_;
 			bool needTransform_;
 
 			int                        oidFieldIndex_;

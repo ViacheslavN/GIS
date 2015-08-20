@@ -33,8 +33,8 @@ namespace GisEngine
 			//IFeatureClass
 			virtual CommonLib::eShapeType GetGeometryType() const;
 			virtual const CommonLib::str_t&         GetShapeFieldName() const;
-			virtual Geometry::IEnvelopePtr			 GetExtent() const ;
-			virtual Geometry::ISpatialReferencePtr GetSpatialReference() const;
+			virtual GisGeometry::IEnvelopePtr			 GetExtent() const ;
+			virtual GisGeometry::ISpatialReferencePtr GetSpatialReference() const;
 
 
 			bool reload(bool write);
@@ -56,9 +56,9 @@ namespace GisEngine
 
 			ShapefileUtils::SHPGuard m_shp;
 			ShapefileUtils::DBFGuard m_dbf;
-			Geometry::IEnvelopePtr	 m_pExtent;
+			GisGeometry::IEnvelopePtr	 m_pExtent;
 			CommonLib::eShapeType m_ShapeType;
-			Geometry::ISpatialReferencePtr m_pSpatialReferencePtr;
+			GisGeometry::ISpatialReferencePtr m_pSpatialReferencePtr;
 			
 
 	

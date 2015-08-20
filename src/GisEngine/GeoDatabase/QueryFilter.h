@@ -22,8 +22,8 @@ namespace GisEngine
 			// IQueryFilter
 			virtual IFieldSetPtr                      GetFieldSet() const;
 			virtual void                              SetFieldSet(IFieldSet* fieldSet);
-			virtual Geometry::ISpatialReferencePtr    GetOutputSpatialReference() const;
-			virtual void                              SetOutputSpatialReference(Geometry::ISpatialReference* spatRef);
+			virtual GisGeometry::ISpatialReferencePtr    GetOutputSpatialReference() const;
+			virtual void                              SetOutputSpatialReference(GisGeometry::ISpatialReference* spatRef);
 			virtual const CommonLib::str_t& 		  GetWhereClause() const;
 			virtual void                              SetWhereClause(const CommonLib::str_t& where);
 			virtual IOIDSetPtr                        GetOIDSet() const;
@@ -43,7 +43,7 @@ namespace GisEngine
 			CommonLib::str_t             m_sWhereClause;
 			mutable IFieldSetPtr              m_pFieldSet;
 			mutable IOIDSetPtr                m_pOidSet;
-			Geometry::ISpatialReferencePtr m_pOutputSpatialRef;
+			GisGeometry::ISpatialReferencePtr m_pOutputSpatialRef;
 			CommonLib::str_t               m_sShapeField;
 			CommonLib::IGeoShapePtr            m_pShape;
 			eSpatialRel                     m_SpatialRel;

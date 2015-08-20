@@ -13,7 +13,7 @@ namespace GisEngine
 		const wchar_t CShapefileWorkspace::c_PropertyName[] = L"NAME";
 		const wchar_t CShapefileWorkspace::c_PropertyPath[] = L"PATH";
 
-		CShapefileWorkspace::CShapefileWorkspace(Common::IPropertySetPtr& protSetPtr) : m_bLoad(false)
+		CShapefileWorkspace::CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr) : m_bLoad(false)
 		{
 			m_ConnectProp = protSetPtr;
 			const CommonLib::CVariant *pVarName = m_ConnectProp->GetProperty(c_PropertyName);
@@ -34,7 +34,7 @@ namespace GisEngine
 
 			m_sPath = ShapefileUtils::NormalizePath(pszPath);
 
-			m_ConnectProp = new Common::CPropertySet();
+			m_ConnectProp = new GisCommon::CPropertySet();
 			CommonLib::CVariant varName(m_sName);
 			CommonLib::CVariant varPath(m_sPath);
 
@@ -48,7 +48,7 @@ namespace GisEngine
 		{
 			return m_sPath;
 		}
-		Common::IPropertySetPtr  CShapefileWorkspace::GetConnectionProperties() const
+		GisCommon::IPropertySetPtr  CShapefileWorkspace::GetConnectionProperties() const
 		{
 			return m_ConnectProp;
 		}
@@ -130,7 +130,7 @@ namespace GisEngine
 
 			  int shapeType = CommonLib::shape_type_null;
 			  int fieldCount = pFields->GetFieldCount();
-			  Geometry::ISpatialReferencePtr pSprefPtr;
+			  GisGeometry::ISpatialReferencePtr pSprefPtr;
 
 			  for(int i = 0; i < fieldCount; ++i)
 			  {

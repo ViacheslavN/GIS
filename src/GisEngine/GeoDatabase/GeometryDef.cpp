@@ -49,12 +49,12 @@ namespace GisEngine
 			m_bHasM = flag;
 		}
 
-		Geometry::ISpatialReferencePtr CGeometryDef::GetSpatialReference() const
+		GisGeometry::ISpatialReferencePtr CGeometryDef::GetSpatialReference() const
 		{
 			return m_pSpatialRefPtr;
 		}
 
-		void CGeometryDef::SetSpatialReference(Geometry::ISpatialReference* pSpRef)
+		void CGeometryDef::SetSpatialReference(GisGeometry::ISpatialReference* pSpRef)
 		{
 			m_pSpatialRefPtr = pSpRef;
 		}

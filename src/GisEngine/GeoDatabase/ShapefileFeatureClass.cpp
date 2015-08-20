@@ -65,11 +65,11 @@ namespace GisEngine
 		{
 			return m_sShapeFieldName;
 		}
-		Geometry::IEnvelopePtr CShapefileFeatureClass::GetExtent() const
+		GisGeometry::IEnvelopePtr CShapefileFeatureClass::GetExtent() const
 		{
 			return m_pExtent;
 		}
-		Geometry::ISpatialReferencePtr CShapefileFeatureClass::GetSpatialReference() const
+		GisGeometry::ISpatialReferencePtr CShapefileFeatureClass::GetSpatialReference() const
 		{
 			return m_pSpatialReferencePtr;
 		}
@@ -124,13 +124,13 @@ namespace GisEngine
 			 }
 
 			
-			 m_pSpatialReferencePtr = new Geometry::CSpatialReferenceProj4(prjFileName, Geometry::eSPRefTypePRJFilePath);
+			 m_pSpatialReferencePtr = new GisGeometry::CSpatialReferenceProj4(prjFileName, GisGeometry::eSPRefTypePRJFilePath);
 			 if(!m_pSpatialReferencePtr->IsValid())
 			 {
-				 m_pSpatialReferencePtr = new Geometry::CSpatialReferenceProj4(bounds);
+				 m_pSpatialReferencePtr = new GisGeometry::CSpatialReferenceProj4(bounds);
 			 }
 
-			 m_pExtent = new Geometry::CEnvelope(bounds, m_pSpatialReferencePtr.get());
+			 m_pExtent = new GisGeometry::CEnvelope(bounds, m_pSpatialReferencePtr.get());
 			 bool hasZ;
 			 bool hasM;
 			 CommonLib::eShapeType geomType = ShapefileUtils::SHPTypeToGeometryType(shapeType, &hasZ, &hasM);

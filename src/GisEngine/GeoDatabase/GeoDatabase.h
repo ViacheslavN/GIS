@@ -109,7 +109,7 @@ namespace GisEngine
 				IWorkspace(){}
 				virtual ~IWorkspace(){}
 				virtual const CommonLib::str_t& GetWorkspaceName() const = 0; 
-				virtual Common::IPropertySetPtr GetConnectionProperties() const = 0; 
+				virtual GisCommon::IPropertySetPtr GetConnectionProperties() const = 0; 
 				virtual eWorkspaceID GetWorkspaceID() const = 0;
 				//virtual IDatasetContainer* GetDatasetContainer() = 0;
 				virtual uint32 GetDatasetCount() const = 0;
@@ -166,8 +166,8 @@ namespace GisEngine
 			virtual ~IFeatureClass(){}
 			virtual CommonLib::eShapeType GetGeometryType() const = 0;
 			virtual const CommonLib::str_t&         GetShapeFieldName() const = 0;
-			virtual Geometry::IEnvelopePtr			 GetExtent() const = 0;
-			virtual Geometry::ISpatialReferencePtr GetSpatialReference() const = 0;
+			virtual GisGeometry::IEnvelopePtr			 GetExtent() const = 0;
+			virtual GisGeometry::ISpatialReferencePtr GetSpatialReference() const = 0;
 		};
 
 
@@ -306,8 +306,8 @@ namespace GisEngine
 			virtual ~IQueryFilter(){}
 			virtual IFieldSetPtr                        GetFieldSet() const = 0;
 			virtual void                              SetFieldSet(IFieldSet* fieldSet) = 0;
-			virtual Geometry::ISpatialReferencePtr      GetOutputSpatialReference() const = 0;
-			virtual void                              SetOutputSpatialReference(Geometry::ISpatialReference* spatRef) = 0;
+			virtual GisGeometry::ISpatialReferencePtr      GetOutputSpatialReference() const = 0;
+			virtual void                              SetOutputSpatialReference(GisGeometry::ISpatialReference* spatRef) = 0;
 			virtual const CommonLib::str_t&           GetWhereClause() const = 0;
 			virtual void                              SetWhereClause(const CommonLib::str_t& where) = 0;
 			virtual IOIDSetPtr                          GetOIDSet() const = 0;
@@ -338,8 +338,8 @@ namespace GisEngine
 			virtual void                              SetHasZ(bool flag) = 0;
 			virtual bool                              GetHasM() const = 0;
 			virtual void                              SetHasM(bool flag) = 0;
-			virtual Geometry::ISpatialReferencePtr    GetSpatialReference() const = 0;
-			virtual void                              SetSpatialReference(Geometry::ISpatialReference* ref) = 0;
+			virtual GisGeometry::ISpatialReferencePtr    GetSpatialReference() const = 0;
+			virtual void                              SetSpatialReference(GisGeometry::ISpatialReference* ref) = 0;
 			virtual GisBoundingBox					  GetBaseExtent() const = 0;
 			virtual void                              SetBaseExtent(const GisBoundingBox& box) = 0;
 		};

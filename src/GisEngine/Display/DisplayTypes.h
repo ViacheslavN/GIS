@@ -9,7 +9,7 @@ namespace GisEngine
 	namespace Display
 	{
 
-		enum DisplayCacheType
+		enum eDisplayCacheType
 		{
 			DisplayCacheDefault    = 0,
 			DisplayCacheGeography  = 1,
@@ -17,7 +17,7 @@ namespace GisEngine
 			DisplayCacheSelection  = 3
 		};
 
-		enum  SimpleLineStyle
+		enum  eSimpleLineStyle
 		{  
 			SimpleLineStyleSolid = 0,// The line is solid. 
 			SimpleLineStyleDash = 1,// The line is dashed -------. 
@@ -27,7 +27,7 @@ namespace GisEngine
 			SimpleLineStyleNull = 5 // Null line 
 		};
 
-		enum SimpleFillStyle
+		enum eSimpleFillStyle
 		{
 			SimpleFillStyleSolid            = 0,
 			SimpleFillStyleNull             = 1,  
@@ -39,14 +39,14 @@ namespace GisEngine
 			SimpleFillStyleDiagonalCross    = 7
 		};
 
-		enum MarkerFillStyle
+		enum eMarkerFillStyle
 		{
 			MarkerFillStyleGrid            = 0,
 			MarkerFillStyleRandom          = 1
 		};
 
 
-		enum SimpleMarkerStyle
+		enum eSimpleMarkerStyle
 		{
 			SimpleMarkerStyleCircle  = 0,
 			SimpleMarkerStyleSquare  = 1,
@@ -55,13 +55,13 @@ namespace GisEngine
 			SimpleMarkerStyleDiamond = 4
 		};
 
-		enum ArrowMarkerStyle
+		enum eArrowMarkerStyle
 		{
 			ArrowMarkerStylePlain    = 0,
 			ArrowMarkerStylePosition = 1
 		};
 
-		enum DisplayTransformationPreserve
+		enum eDisplayTransformationPreserve
 		{
 			DisplayTransformationPreserveScale = 0,
 			DisplayTransformationPreserveCenterExtent = 1

@@ -41,8 +41,8 @@ namespace GisEngine
 		{
 			ILayer(){}
 			virtual ~ILayer(){}
-			virtual Geometry::IEnvelopePtr GetExtent() const = 0;
-			virtual void                      Draw(eDrawPhase phase, Display::IDisplay* display, Common::ITrackCancel* trackCancel) = 0;
+			virtual GisGeometry::IEnvelopePtr GetExtent() const = 0;
+			virtual void                      Draw(eDrawPhase phase, Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel) = 0;
 			virtual double                    GetMaximumScale() const = 0;
 			virtual void                      SetMaximumScale(double scale) = 0;
 			virtual double                    GetMinimumScale() const = 0;

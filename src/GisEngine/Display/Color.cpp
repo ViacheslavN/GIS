@@ -98,5 +98,16 @@ namespace GisEngine
 		{
 			m_rgba = pStream->readIntu32();
 		}
+
+		void Color::save(GisCommon::IXMLNode* pXmlNode) const
+		{
+			pXmlNode->AddProperty(L"color", CommonLib::CVariant(uint32 (m_rgba)));
+		}
+		void Color::load(GisCommon::IXMLNode* pXmlNode)
+		{
+			CommonLib::CVariant *pVarRGBA = pXmlNode->GetProperty(L"color");
+			if(pVarRGBA)
+				m_rgba = pVarRGBA->Get<uint32>();
+		}
 	}
 }

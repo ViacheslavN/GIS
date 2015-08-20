@@ -465,6 +465,7 @@
     <ClInclude Include="ReadJPG.h" />
     <ClInclude Include="ReadPng.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="SimpleLineSymbol.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Vector3d.h" />
@@ -485,6 +486,7 @@
     <ClCompile Include="ReadJPG.cpp" />
     <ClCompile Include="ReadPng.cpp" />
     <ClCompile Include="Rect.cpp" />
+    <ClCompile Include="SimpleLineSymbol.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugShared|Win32'">Create</PrecompiledHeader>

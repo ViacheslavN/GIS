@@ -8,8 +8,13 @@ namespace CommonLib
 {
 	class MemoryStream : public IStream, public IReadStreamBase, public IWriteStreamBase
 	{
+
+	private:
+
+		MemoryStream(const MemoryStream& stream);
+		MemoryStream& operator=(const MemoryStream& stream);
 	public:
-		MemoryStream(alloc_t *pAlloc);
+		MemoryStream(alloc_t *pAlloc = NULL);
 		~MemoryStream();
 
 		//IStream
@@ -23,6 +28,8 @@ namespace CommonLib
 		virtual void close();
 		virtual void create(size_t nSize);
 		virtual byte* buffer();
+
+
 		//IReadStream
 /*		virtual void read( byte* pBuffer, size_t bufLen );
 		virtual void read(bool& value);
@@ -112,6 +119,7 @@ namespace CommonLib
 		bool m_bIsBigEndian;
 		alloc_t *m_pAlloc;
 		bool m_bAttach;
+		simple_alloc_t m_alloc;
 	};
 
 

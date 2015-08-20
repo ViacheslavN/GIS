@@ -10,6 +10,9 @@ namespace CommonLib
 	,m_nSize(0)
 	,m_bAttach(false)
 	{
+		if(!m_pAlloc)
+			m_pAlloc = &m_alloc;
+
 		m_bIsBigEndian = IStream::isBigEndian();
 	}
 	MemoryStream::~MemoryStream()

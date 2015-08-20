@@ -4,6 +4,7 @@
 #include "GeneralTypes.h"
 #include "IRefCnt.h"
 #include "str_t.h"
+#include "blob.h"
 namespace CommonLib
 {
 	struct CNullVariant
@@ -61,6 +62,7 @@ namespace CommonLib
 		virtual void Visit(const double         & val) = 0;
 		virtual void Visit(const str_t      & val) = 0;
 		virtual void Visit(const IRefObjectPtr     & val) = 0;
+		virtual void Visit(const CBlob     & val) = 0;
 	};
 
 
@@ -343,6 +345,8 @@ private:
 	virtual void Visit(const str_t      & val)
 	{ val_ = val;}
 	virtual void Visit(const IRefObjectPtr     &)
+	{ val_ = str_t();}
+	virtual void Visit(const CBlob     &)
 	{ val_ = str_t();}
 
 

@@ -4,7 +4,7 @@
 
 namespace GisEngine
 {
-	namespace Geometry
+	namespace GisGeometry
 	{
 
 		CEnvelope::CEnvelope()

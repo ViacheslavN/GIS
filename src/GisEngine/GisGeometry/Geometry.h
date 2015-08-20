@@ -8,7 +8,7 @@
 
 namespace GisEngine
 {
-	namespace Geometry
+	namespace GisGeometry
 	{
 
 		enum ePolygonOpType

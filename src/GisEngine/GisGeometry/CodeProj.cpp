@@ -3,7 +3,7 @@
 #include "esri.inc"
 namespace GisEngine
 {
-	namespace Geometry
+	namespace GisGeometry
 	{
 		int Proj4StrToCode(const CommonLib::str_t& sProj4Str)
 		{

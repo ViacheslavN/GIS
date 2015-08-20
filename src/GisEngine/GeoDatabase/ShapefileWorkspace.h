@@ -16,12 +16,12 @@ namespace GisEngine
 				static const wchar_t c_PropertyName[];
 				static const wchar_t c_PropertyPath[];
 
-				CShapefileWorkspace(Common::IPropertySetPtr& protSetPtr);
+				CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr);
 				CShapefileWorkspace(const wchar_t *pszName, const wchar_t *pszPath);
 				~CShapefileWorkspace();
 			
 				virtual const CommonLib::str_t& GetWorkspaceName() const; 
-				virtual Common::IPropertySetPtr  GetConnectionProperties() const; 
+				virtual GisCommon::IPropertySetPtr  GetConnectionProperties() const; 
 				virtual eWorkspaceID GetWorkspaceID() const;
 				//virtual IDatasetContainer* GetDatasetContainer();
 
@@ -44,7 +44,7 @@ namespace GisEngine
 				bool m_bLoad;
 				CommonLib::str_t m_sPath;
 				CommonLib::str_t m_sName;
-				Common::IPropertySetPtr  m_ConnectProp;
+				GisCommon::IPropertySetPtr  m_ConnectProp;
 				typedef std::vector<IDatasetPtr> TVecDataset;
 				TVecDataset m_vecDatasets;
 				//TDatasetContainer m_DatasetContainer;

@@ -5,7 +5,7 @@
 
 namespace GisEngine
 {
-	namespace Common
+	namespace GisCommon
 	{
 		class CPropertySet : public IPropertySet
 		{

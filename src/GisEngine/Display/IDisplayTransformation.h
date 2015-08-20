@@ -23,7 +23,7 @@ namespace GisEngine
 				virtual void SetMapVisibleRect(const GisBoundingBox& bound) = 0;
 				virtual const GisBoundingBox& GetFittedBounds() const = 0;
 
-				virtual void         SetDeviceRect(const GRect& bound, DisplayTransformationPreserve preserve_type = DisplayTransformationPreserveCenterExtent) = 0;
+				virtual void         SetDeviceRect(const GRect& bound, eDisplayTransformationPreserve preserve_type = DisplayTransformationPreserveCenterExtent) = 0;
 				virtual const GRect& GetDeviceRect() const = 0;
 
 				virtual void SetDeviceClipRect(const GRect& devRect) = 0;
@@ -45,8 +45,8 @@ namespace GisEngine
 				virtual Common::Units GetUnits() const = 0;
 
 
-				virtual void   SetSpatialReference(Geometry::ISpatialReference *pSp) = 0;
-				virtual Geometry::ISpatialReferencePtr GetSpatialReference() const = 0;
+				virtual void   SetSpatialReference(GisGeometry::ISpatialReference *pSp) = 0;
+				virtual GisGeometry::ISpatialReferencePtr GetSpatialReference() const = 0;
 
 	 
 				virtual void MapToDevice(const GisXYPoint *pIn, GPoint *pOut, int nPoints) = 0;

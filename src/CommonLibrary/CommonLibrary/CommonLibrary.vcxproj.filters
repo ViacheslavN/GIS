@@ -177,6 +177,9 @@
     <ClInclude Include="FileStream.h">
       <Filter>stream</Filter>
     </ClInclude>
+    <ClInclude Include="blob.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -247,6 +250,9 @@
     </ClCompile>
     <ClCompile Include="stream.cpp">
       <Filter>stream</Filter>
+    </ClCompile>
+    <ClCompile Include="blob.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

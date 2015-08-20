@@ -123,6 +123,9 @@
     <ClInclude Include="Display.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleLineSymbol.h">
+      <Filter>symbols</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -172,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="ClipRectAlloc.cpp">
       <Filter>Clip</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleLineSymbol.cpp">
+      <Filter>symbols</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

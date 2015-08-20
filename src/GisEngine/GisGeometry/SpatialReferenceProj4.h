@@ -6,7 +6,7 @@
 
 namespace GisEngine
 {
-	namespace Geometry
+	namespace GisGeometry
 	{
 		enum eSPRefParamType
 		{

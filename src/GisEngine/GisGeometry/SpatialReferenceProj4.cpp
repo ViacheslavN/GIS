@@ -11,7 +11,7 @@
 
 namespace GisEngine
 {
-	namespace Geometry
+	namespace GisGeometry
 	{
 		const wchar_t c_WGS84_ESRI_STRING[] = L"GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.0174532925199433]]";
 		const char c_WGS84_PROJ4_STRING[] = "+proj=longlat +ellps=WGS84 +datum=WGS84";

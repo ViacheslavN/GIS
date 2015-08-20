@@ -18,43 +18,10 @@ namespace GisEngine
 	namespace Display
 	{
 
-		enum eSimpleMarkerStyle
-		{
-			SimpleMarkerStyleCircle  = 0,
-			SimpleMarkerStyleSquare  = 1,
-			SimpleMarkerStyleCross   = 2, 
-			SimpleMarkerStyleX       = 3,
-			SimpleMarkerStyleDiamond = 4
-		};
 
-		enum eSimpleFillStyle
-		{
-			SimpleFillStyleSolid            = 0,
-			SimpleFillStyleNull             = 1,  
-			SimpleFillStyleHorizontal       = 2,
-			SimpleFillStyleVertical         = 3,
-			SimpleFillStyleForwardDiagonal  = 4,
-			SimpleFillStyleBackwardDiagonal = 5,
-			SimpleFillStyleCross            = 6,
-			SimpleFillStyleDiagonalCross    = 7
-		};
+	
 
-		enum eMarkerFillStyle
-		{
-			MarkerFillStyleGrid            = 0,
-			MarkerFillStyleRandom          = 1
-		};
-
-
-		enum eSimpleMarkerStyle
-		{
-			SimpleMarkerStyleCircle  = 0,
-			SimpleMarkerStyleSquare  = 1,
-			SimpleMarkerStyleCross   = 2, 
-			SimpleMarkerStyleX       = 3,
-			SimpleMarkerStyleDiamond = 4
-		};
-
+	
 
 		struct ISymbol;
 		struct ILineSymbol;
@@ -104,7 +71,7 @@ namespace GisEngine
 
 			virtual void Reset() = 0;
 			virtual void Draw(IDisplay* display, CommonLib::CGeoShape* pShape) = 0;
-		    virtual void FlushBuffers(IDisplay* display, Common::ITrackCancel* trackCancel);
+		    virtual void FlushBuffers(IDisplay* display, GisCommon::ITrackCancel* trackCancel);
 			virtual void GetBoundaryRect(CommonLib::CGeoShape* pShape, IDisplay* display, GisBoundingBox &bbox) const = 0;
 			virtual bool GetScaleDependent() const = 0;
 			virtual void SetScaleDependent(bool flag) = 0;
@@ -287,7 +254,7 @@ namespace GisEngine
 			virtual double GetSize() const = 0;
 			virtual void SetSize(double size) = 0;
 			virtual  const CommonLib::str_t& GetText() const = 0;
-			virtual void SetText( const  const CommonLib::str_t& szText ) = 0;
+			virtual void SetText(const CommonLib::str_t& szText ) = 0;
 			virtual ITextBackgroundPtr GetTextBackground() const = 0;
 			virtual void SetTextBackground( ITextBackground *bg ) = 0;
 		};

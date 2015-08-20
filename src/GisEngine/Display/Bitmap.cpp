@@ -33,7 +33,7 @@ namespace GisEngine
 	namespace Display
 	{
 
-		CBitmap::CBitmap()
+		CBitmap::CBitmap(CommonLib::alloc_t *pAlloc) : m_pAlloc(pAlloc)
 		{
 			m_pBuf = 0;
 			m_nWidth = 0;
@@ -41,15 +41,23 @@ namespace GisEngine
 			m_pPalette = 0;
 			m_bRelease = false;
 			m_type = BitmapFormatType32bppARGB;
+
+			if(!m_pAlloc)
+				m_pAlloc = &m_alloc;
 		}
 
-		CBitmap::CBitmap(unsigned char* bits, size_t width, size_t height, BitmapFormatType type, Color* palette, bool release)
+		CBitmap::CBitmap(unsigned char* bits, size_t width, size_t height, BitmapFormatType type, 
+			Color* palette, bool release, CommonLib::alloc_t *pAlloc): m_pAlloc(pAlloc)
 		{
+			if(!m_pAlloc)
+				m_pAlloc = &m_alloc;
 			attach(bits, width, height, type, palette, release);
 		}
 
-		CBitmap::CBitmap(CommonLib::IReadStream* pStream)
+		CBitmap::CBitmap(CommonLib::IReadStream* pStream, CommonLib::alloc_t *pAlloc) : m_pAlloc(pAlloc)
 		{		 
+			if(!m_pAlloc)
+				m_pAlloc = &m_alloc;
 
 			m_nWidth = (size_t)pStream->readInt32();
 			m_nHeight = (size_t)pStream->readInt32();
@@ -61,8 +69,11 @@ namespace GisEngine
 					m_pPalette[i].load(pStream);
 		}
 
-		CBitmap::CBitmap(size_t width, size_t height, BitmapFormatType type)
+		CBitmap::CBitmap(size_t width, size_t height, BitmapFormatType type, CommonLib::alloc_t *pAlloc) : m_pAlloc(pAlloc)
 		{
+			if(!m_pAlloc)
+				m_pAlloc = &m_alloc;
+
 			init(width, height, type);
 		}
 
@@ -92,6 +103,12 @@ namespace GisEngine
 			: m_pPalette(0)
 			, m_pBuf(0)
 		{
+			if(bmp.m_pAlloc != &bmp.m_alloc)
+				m_pAlloc = bmp.m_pAlloc ;
+			else
+				m_pAlloc = &m_alloc;
+
+
 			this->operator=(bmp);
 		}
 
@@ -99,25 +116,29 @@ namespace GisEngine
 		{
 			if(m_bRelease)
 			{
-				delete [] m_pBuf;
+				m_pAlloc->free(m_pBuf);
 				if(m_pPalette)
-					delete m_pPalette;
+					m_pAlloc->free(m_pPalette);
 			}
 		}
 
 		CBitmap& CBitmap::operator=(const CBitmap& bmp)
 		{
-			if(this == &bmp)
+			 if(this == &bmp)
 				return *this;
 
-			if(m_bRelease)
+			 
+			if(m_bRelease && m_pBuf)
 			{
-				delete [] m_pBuf;
+				m_pAlloc->free(m_pBuf);
 				m_pBuf = 0;
 				if(m_pPalette)
-					delete m_pPalette;
+					m_pAlloc->free(m_pPalette);
 				m_pPalette = 0;
 			}
+
+			if(m_pAlloc != bmp.m_pAlloc && bmp.m_pAlloc != &bmp.m_alloc)
+				m_pAlloc = bmp.m_pAlloc;
 
 			m_nWidth = bmp.m_nWidth,
 				m_nHeight = bmp.m_nHeight,
@@ -129,21 +150,21 @@ namespace GisEngine
 			}
 			m_bRelease = true;
 
-			m_pBuf = new unsigned char[size()];
+			m_pBuf = (byte*)m_pAlloc->alloc(size());
 			memcpy(m_pBuf, bmp.m_pBuf, size());
 
 			switch(m_type)
 			{
 			case BitmapFormatType1bpp:
-				m_pPalette = new Color[2];
+				m_pPalette = (Color*)m_pAlloc->alloc(sizeof(Color) * 2);
 				memcpy(m_pPalette, bmp.m_pPalette, sizeof(Color) * 2);
 				break;
 			case BitmapFormatType4bpp:
-				m_pPalette = new Color[16];
+				m_pPalette = (Color*)m_pAlloc->alloc(sizeof(Color) * 16);
 				memcpy(m_pPalette, bmp.m_pPalette, sizeof(Color) * 16);
 				break;
 			case BitmapFormatType8bpp:
-				m_pPalette = new Color[256];
+				m_pPalette = (Color*)m_pAlloc->alloc(sizeof(Color) * 256);
 				memcpy(m_pPalette, bmp.m_pPalette, sizeof(Color) * 256);
 				break;
 			}
@@ -328,6 +349,34 @@ namespace GisEngine
 					m_pPalette[i].load(pStream);
 
 		}
+
+		void CBitmap::save(GisCommon::IXMLNode* pXmlNode) const
+		{
+			GisCommon::IXMLNodePtr pBlobNode = pXmlNode->CreateChildNode();
+			pBlobNode->SetName("bitmap");
+			CommonLib::MemoryStream stream(m_pAlloc);
+			save(&stream);
+			CommonLib::CBlob blob(stream.buffer(), stream.size(), true, NULL);
+			pBlobNode->SetBlobCDATA(blob);
+
+
+		}
+		void CBitmap::load(GisCommon::IXMLNode* pXmlNode)
+		{
+			GisCommon::IXMLNodePtr pBlobNode = pXmlNode->GetChild(0);
+			if(!pBlobNode.get())
+				return;
+			if(pBlobNode->GetName() != L"bitmap")
+				return;
+			CommonLib::CBlob& blob = pBlobNode->GetBlobCDATA();
+			CommonLib::FxMemoryReadStream stream;
+			stream.attach(blob.buffer(), blob.size());
+			load(&stream);
+
+		}
+
+
+
 		void CBitmap::attach(unsigned char* bits, size_t width, size_t height, BitmapFormatType type, Color* palette, bool release)
 		{
 			m_pBuf = bits;
@@ -345,7 +394,7 @@ namespace GisEngine
 			size_t newWidth = size_t(this->width() * xScale);
 			size_t newHeight = size_t(this->height() * yScale);
 
-			CBitmap* ret = new CBitmap(newWidth, newHeight, this->type());
+			CBitmap* ret = new CBitmap(newWidth, newHeight, this->type(), m_pAlloc);
 			memset(ret->bits(), 0, ret->size());
 
 			int w = (int)this->width();
