@@ -15,7 +15,7 @@ namespace GisEngine
 
 
 
-			virtual DeviceType  GetDeviceType() const;
+			virtual eDeviceType  GetDeviceType() const;
 			virtual void        StartDrawing();
 			virtual void        EndDrawing();
 			virtual GRect       GetClipRect() const ;

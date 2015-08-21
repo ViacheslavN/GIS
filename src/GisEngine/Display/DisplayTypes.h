@@ -67,6 +67,22 @@ namespace GisEngine
 			DisplayTransformationPreserveCenterExtent = 1
 		};
 
+
+
+		static ePenType LineStyle2PenType( eSimpleLineStyle lineType )
+		{
+			switch(lineType)
+			{
+			case SimpleLineStyleSolid: return PenTypeSolid;
+			case SimpleLineStyleDash: return PenTypeDash;
+			case SimpleLineStyleDot: return PenTypeDot;
+			case SimpleLineStyleDashDot: return PenTypeDashDot;
+			case SimpleLineStyleDashDotDot: return PenTypeDashDotDot;
+			case SimpleLineStyleNull: return PenTypeNull;
+			}
+			return PenTypeSolid;
+		}
+
 	}
 
 }

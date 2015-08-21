@@ -5,6 +5,8 @@
 #include "Common/Common.h"
 #include "Common/Units.h"
 #include "CommonLibrary/IRefCnt.h"
+#include "Common/GisEngineCommon.h"
+#include "CommonLibrary/stream.h"
 
 namespace GisEngine
 {
@@ -36,7 +38,7 @@ namespace GisEngine
 		COMMON_LIB_REFPTR_TYPEDEF(IEnvelope);
 
 
-		struct ISpatialReference : public CommonLib::AutoRefCounter
+		struct ISpatialReference : public CommonLib::AutoRefCounter, public GisCommon::IStreamSerialize, public GisCommon::IXMLSerialize
 		{
 		public:
 			ISpatialReference(){};
@@ -52,8 +54,6 @@ namespace GisEngine
 			virtual int   GetProjectionCode() const = 0;
 			virtual bool  IsProjection() const = 0;
 
-			virtual void save(CommonLib::IWriteStream *pStream) const = 0;
-			virtual void load(CommonLib::IReadStream *pStream) = 0;
 			virtual bool IsEqual(ISpatialReference* pSpatRef) const= 0;
 		};
 

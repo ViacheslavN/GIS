@@ -11,7 +11,7 @@ namespace GisEngine
 		public:
 			CFont();
 			CFont(const CommonLib::str_t& sFace, GUnits nSize, short nCharSet, Color color, int  nStyle, double dOrientation,
-				Color    bgColor, bool  bIsTransparent, TextVAlignment vAlignmen, TextHAlignment hAlignment, GUnits nHaloSize);
+				Color    bgColor, bool  bIsTransparent, eTextVAlignment vAlignmen, eTextHAlignment hAlignment, GUnits nHaloSize);
 
 
 			void setFace(const CommonLib::str_t& sFace);
@@ -22,8 +22,8 @@ namespace GisEngine
 			void setOrientation(double dOrientation);
 			void setBgColor(const Color& color);
 			void setTransparent(bool bIsTransparent);
-			void setTextVAlignment(TextVAlignment vAlignmen);
-			void setTextHAlignment(TextHAlignment hAlignment);
+			void setTextVAlignment(eTextVAlignment vAlignmen);
+			void setTextHAlignment(eTextHAlignment hAlignment);
 			void setHaloSize(GUnits nHaloSize);
 
 
@@ -35,8 +35,8 @@ namespace GisEngine
 			double getOrientation() const;
 			const Color& getBgColor() const;
 			bool getTransparent() const;
-			TextVAlignment getTextVAlignment() const;
-			TextHAlignment getTextHAlignment() const;
+			eTextVAlignment getTextVAlignment() const;
+			eTextHAlignment getTextHAlignment() const;
 			GUnits getHaloSize() const;
 
 
@@ -54,8 +54,8 @@ namespace GisEngine
 			double         m_dOrientation;
 			Color          m_bgColor;
 			bool           m_bIsTransparent;
-			TextVAlignment m_vAlignment;
-			TextHAlignment m_hAlignment;
+			eTextVAlignment m_vAlignment;
+			eTextHAlignment m_hAlignment;
 			GUnits         m_nHaloSize;
 
 

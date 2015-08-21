@@ -10,16 +10,16 @@ namespace GisEngine
 		{
 		public:
 			CBrush(bool bIsNull = false);
-			CBrush(BrushType type, const Color& color, const Color& bgColor, CBitmap* pTexture, bool bRelease = false);
+			CBrush(eBrushType type, const Color& color, const Color& bgColor, CBitmap* pTexture, bool bRelease = false);
 			~CBrush();
 		
-			void setType(BrushType type);
+			void setType(eBrushType type);
 			void setColor(const Color& color);
 			void setBgColor(const Color& color);
 			void setTexture(CBitmap* pTexture, bool bRelease = false);
 
 
-			BrushType GetType() const;
+			eBrushType GetType() const;
 			const Color& GetColor() const;
 			const Color& GetBgColor() const;
 			CBitmap* GetTexture() const;
@@ -29,7 +29,7 @@ namespace GisEngine
 			void load(CommonLib::IReadStream *pStream);
 
 		private:
-			BrushType  m_type;
+			eBrushType  m_type;
 			Color      m_color;
 			Color      m_bgColor;
 			CBitmap*    m_pTexture;

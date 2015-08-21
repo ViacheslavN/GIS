@@ -14,7 +14,7 @@ namespace GisEngine
 			m_pTexture = NULL;
 			m_bRelease = false;
 		}
-		CBrush::CBrush(BrushType type, const Color& color, const Color& bgColor, CBitmap* pTexture, bool bRelease) :
+		CBrush::CBrush(eBrushType type, const Color& color, const Color& bgColor, CBitmap* pTexture, bool bRelease) :
 			m_type(type), m_color(color), m_bgColor(bgColor), m_pTexture(pTexture), m_bRelease(bRelease)
 		{
 
@@ -27,7 +27,7 @@ namespace GisEngine
 				m_pTexture = NULL;
 			}
 		}
-		void CBrush::setType(BrushType type)
+		void CBrush::setType(eBrushType type)
 		{
 			m_type = type;
 		}
@@ -51,7 +51,7 @@ namespace GisEngine
 
 
 
-		BrushType CBrush::GetType() const
+		eBrushType CBrush::GetType() const
 		{
 			return m_type;
 		}
@@ -84,7 +84,7 @@ namespace GisEngine
 		}
 		void CBrush::load(CommonLib::IReadStream *pStream)
 		{
-			m_type = (BrushType)pStream->readByte();
+			m_type = (eBrushType)pStream->readByte();
 			m_color.load(pStream);
 			m_bgColor.load(pStream);
 			m_bRelease = pStream->readBool();

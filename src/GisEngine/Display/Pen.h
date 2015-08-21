@@ -13,45 +13,45 @@ namespace GisEngine
 		{
 		public:
 			CPen(bool bisNull = false);
-			CPen(PenType penType, const Color& color, GUnits nWidth, CapType capType, JoinType joinType,
+			CPen(ePenType penType, const Color& color, GUnits nWidth, eCapType capType, eJoinType joinType,
 				GUnits nOffset, CBitmap* pTexture, bool bRelease = false);
 			~CPen();
 
-			void setPenType(PenType penType);
+			void setPenType(ePenType penType);
 			void setColor(const Color& color); 
 			void setWidth(GUnits nWidth);
-			void setCapType(CapType capType);
-			void setJoinType(JoinType joinType);
+			void setCapType(eCapType capType);
+			void setJoinType(eJoinType joinType);
 			void setTexture(CBitmap* pTexture, bool bRelease = false);
 			void setOffset(GUnits nOffset);
 			void addTemplate(GUnits par, GUnits tem);
 			void clearTmplates();
 
 
-			PenType getPenType() const;
+			ePenType getPenType() const;
 			const Color& getColor() const;
 			GUnits getWidth() const;
-			CapType getCapType() const;
-			JoinType getJoinType() const;
+			eCapType getCapType() const;
+			eJoinType getJoinType() const;
 			CBitmap* getTexture() const;
 			GUnits getOffset() const;
 			const TPenTemplates& getTemplates() const;
 
 
-			void save(CommonLib::IWriteStream *pStream) const;
-			void load(CommonLib::IReadStream *pStream);
+			bool save(CommonLib::IWriteStream *pStream) const;
+			bool load(CommonLib::IReadStream *pStream);
 
-			void save(GisCommon::IXMLNode* pXmlNode) const;
-			void load(GisCommon::IXMLNode* pXmlNode);
+			bool save(GisCommon::IXMLNode* pXmlNode) const;
+			bool load(GisCommon::IXMLNode* pXmlNode);
 
 
 		private:
 
-			PenType  m_type;
+			ePenType  m_type;
 			Color    m_color;
 			GUnits   m_nWidth;
-			CapType  m_capType;
-			JoinType m_joinType;
+			eCapType  m_capType;
+			eJoinType m_joinType;
 			CBitmap*  m_pTexture;
 			GUnits    m_nOffset;
 			TPenTemplates m_vecTemplates;

@@ -69,7 +69,10 @@ namespace CommonLib
 		assert(nRead == size);
 	}
 
-
+	bool CReadFileStream::checkRead(uint32 nSize) const
+	{
+		return (size() - pos()) >= nSize;
+	}
 
 	CWriteFileStream::CWriteFileStream()
 	{
@@ -90,6 +93,7 @@ namespace CommonLib
 		uint32 nWrite = m_File.writeFile(buffer, size); //To do inverse
 		assert(nWrite == size);
 	}
+	
 	
 
 }

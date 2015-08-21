@@ -106,7 +106,7 @@ namespace GisEngine
 			return m_dc;
 		}
 
-		 DeviceType  CGraphicsAgg::GetDeviceType() const
+		 eDeviceType  CGraphicsAgg::GetDeviceType() const
 		 {
 			   return DeviceTypeDisplay;
 		 }

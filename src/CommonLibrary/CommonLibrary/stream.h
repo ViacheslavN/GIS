@@ -126,6 +126,8 @@ public:
 	virtual float        readFloat() = 0;
 	virtual double       readDouble() = 0;
 
+	virtual bool checkRead(uint32 nSize) const= 0;
+
 };
 
 
@@ -229,50 +231,16 @@ public:
 };
 
 
+}
+
+
 #define  SAFE_READ(pStream, Val, size)  \
-		if((pStream->size() - pStream->pos()) >= size)\
-			pStream->read(Val);
- 
+	if(pStream->checkRead(size))\
+		pStream->read(Val);
+
 #define  SAFE_READ_RES(pStream, Val, size)  \
-		if((pStream->size() - pStream->pos()) < size)\
-			return false;					\
-		else							\
-			pStream->read(Val); 
-
-
-
-
-template<typename TValue>
-void safe_read(IReadStream *pStream, TValue& val, uint32 nSize = sizeof(TValue))
-{
-	if((pStream->size() - pStream->pos()) >= nSize)
-		pStream->read(val);
-}
-
-
-template<typename TValue>
-bool safe_read_res(IReadStream *pStream, TValue& val, uint32 nSize = sizeof(TValue))
-{
-	if((pStream->size() - pStream->pos()) < nSize)
-		return false;
-
-		pStream->read(val); 
-		return true;
-}
-
-
-
-template<typename TValue>
-TValue safe_read_ret(IReadStream *pStream, const TValue& DefVal)
-{
-	if((pStream->size() - pStream->pos()) < nSize)
-		return DefVal;
-
-	return pStream->readTR<TValue>(); 
-}
-
-
-
-}
-
+	if(!pStream->checkRead(size))\
+		return false;					\
+	else							\
+		pStream->read(Val); 
 #endif

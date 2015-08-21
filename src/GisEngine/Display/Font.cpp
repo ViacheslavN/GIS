@@ -14,8 +14,8 @@ namespace GisEngine
 		double         m_dOrientation;
 		Color          m_bgColor;
 		bool           m_bIsTransparent;
-		TextVAlignment m_vAlignment;
-		TextHAlignment m_hAlignment;
+		eTextVAlignment m_vAlignment;
+		eTextHAlignment m_hAlignment;
 		GUnits         m_nHaloSize;
 
 		CFont::CFont()
@@ -33,7 +33,7 @@ namespace GisEngine
 			m_nHaloSize = 0;
 		}
 		CFont::CFont(const CommonLib::str_t& sFace, GUnits nSize, short nCharSet, Color color, int  nStyle, double dOrientation,
-			Color    bgColor, bool  bIsTransparent, TextVAlignment vAlignmen, TextHAlignment hAlignment, GUnits nHaloSize) :
+			Color    bgColor, bool  bIsTransparent, eTextVAlignment vAlignmen, eTextHAlignment hAlignment, GUnits nHaloSize) :
 			m_sFace(sFace), m_nSize(nSize), m_nCharSet(nCharSet), m_nStyle(nStyle), m_color(color), m_dOrientation(dOrientation),
 				m_bgColor(bgColor), m_vAlignment(vAlignmen), m_hAlignment(hAlignment), m_bIsTransparent(m_bIsTransparent),
 				m_nHaloSize(nHaloSize)
@@ -74,11 +74,11 @@ namespace GisEngine
 		{
 			m_bIsTransparent = bIsTransparent;
 		}
-		void CFont::setTextVAlignment(TextVAlignment vAlignmen)
+		void CFont::setTextVAlignment(eTextVAlignment vAlignmen)
 		{
 			m_vAlignment = vAlignmen;
 		}
-		void CFont::setTextHAlignment(TextHAlignment hAlignment)
+		void CFont::setTextHAlignment(eTextHAlignment hAlignment)
 		{
 			m_hAlignment = hAlignment;
 		}
@@ -120,11 +120,11 @@ namespace GisEngine
 		{
 			return m_bIsTransparent;
 		}
-		TextVAlignment CFont::getTextVAlignment() const
+		eTextVAlignment CFont::getTextVAlignment() const
 		{
 			return m_vAlignment;
 		}
-		TextHAlignment CFont::getTextHAlignment() const
+		eTextHAlignment CFont::getTextHAlignment() const
 		{
 			return m_hAlignment;
 		}
@@ -158,8 +158,8 @@ namespace GisEngine
 			pStream->read(m_dOrientation);
 			m_bgColor.load(pStream);
 			pStream->read(m_bIsTransparent);
-			m_vAlignment = (TextVAlignment)pStream->readByte();
-			m_hAlignment = (TextHAlignment)pStream->readByte();
+			m_vAlignment = (eTextVAlignment)pStream->readByte();
+			m_hAlignment = (eTextHAlignment)pStream->readByte();
 			pStream->read(m_nHaloSize);
 		}
 

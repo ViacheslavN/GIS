@@ -16,7 +16,7 @@ namespace GisEngine
 			m_nOffset = 0;
 			m_bRelease = false;
 		}
-		CPen::CPen(PenType penType, const Color& color, GUnits nWidth, CapType capType, JoinType joinType,
+		CPen::CPen(ePenType penType, const Color& color, GUnits nWidth, eCapType capType, eJoinType joinType,
 			GUnits nOffset, CBitmap* pTexture,  bool bRelease) : m_type(penType), m_color(color), m_nWidth(nWidth), m_capType(capType),
 			m_joinType(joinType), m_pTexture(pTexture), m_nOffset(nOffset), m_bRelease(bRelease)
 
@@ -32,7 +32,7 @@ namespace GisEngine
 
 		}
 
-		void CPen::setPenType(PenType penType)
+		void CPen::setPenType(ePenType penType)
 		{
 			m_type = penType;
 		}
@@ -44,11 +44,11 @@ namespace GisEngine
 		{
 			m_nWidth = nWidth;
 		}
-		void CPen::setCapType(CapType capType)
+		void CPen::setCapType(eCapType capType)
 		{
 			m_capType = capType;
 		}
-		void CPen::setJoinType(JoinType joinType)
+		void CPen::setJoinType(eJoinType joinType)
 		{
 			m_joinType = joinType;
 		}
@@ -77,7 +77,7 @@ namespace GisEngine
 		}
 
 
-		PenType CPen::getPenType() const
+		ePenType CPen::getPenType() const
 		{
 			return m_type;
 		}
@@ -89,11 +89,11 @@ namespace GisEngine
 		{
 			return m_nWidth;
 		}
-		CapType CPen::getCapType() const
+		eCapType CPen::getCapType() const
 		{
 			return m_capType;
 		}
-		JoinType CPen::getJoinType() const
+		eJoinType CPen::getJoinType() const
 		{
 			return m_joinType;
 		}
@@ -111,7 +111,7 @@ namespace GisEngine
 		}
 
 
-		void CPen::save(CommonLib::IWriteStream *pStream) const
+		bool CPen::save(CommonLib::IWriteStream *pStream) const
 		{
 			pStream->write(byte(m_type));
 			m_color.save(pStream);
@@ -131,14 +131,15 @@ namespace GisEngine
 				pStream->write(m_vecTemplates[i].first);
 				pStream->write(m_vecTemplates[i].second);
 			}
+			return true;
 		}
-		void CPen::load(CommonLib::IReadStream *pStream)
+		bool CPen::load(CommonLib::IReadStream *pStream)
 		{
-			m_type = (PenType)pStream->readByte();
+			m_type = (ePenType)pStream->readByte();
 			m_color.load(pStream);
-			m_joinType = (JoinType)pStream->readByte();
+			m_joinType = (eJoinType)pStream->readByte();
 			pStream->read(m_nWidth);
-			m_capType = (CapType)pStream->readByte();
+			m_capType = (eCapType)pStream->readByte();
 			m_bRelease = pStream->readBool();
 			if(m_bRelease)
 			{
@@ -153,10 +154,11 @@ namespace GisEngine
 				pStream->read(val2);
 				m_vecTemplates.push_back(std::make_pair(val1, val2));
 			}
+			return true;
 		}
 
 
-		void CPen::save(GisCommon::IXMLNode* pXmlNode) const
+		bool CPen::save(GisCommon::IXMLNode* pXmlNode) const
 		{
 			pXmlNode->AddProperty("PenType", CommonLib::CVariant(uint16(m_type)));
 			m_color.save(pXmlNode);
@@ -172,10 +174,19 @@ namespace GisEngine
 			else
 				pXmlNode->AddProperty("Release", CommonLib::CVariant((bool)false));
 
-		}
-		void CPen::load(GisCommon::IXMLNode* pXmlNode)
-		{
+			CommonLib::MemoryStream stream;
+			stream.write((uint32)m_vecTemplates.size());
+			for (size_t i = 0; i < m_vecTemplates.size(); ++i)
+			{
+				stream.write(m_vecTemplates[i].first);
+				stream.write(m_vecTemplates[i].second);
+			}
+			return true;
 
+		}
+		bool CPen::load(GisCommon::IXMLNode* pXmlNode)
+		{
+			return true;
 		}
 	}
 }

@@ -1,7 +1,7 @@
 #ifndef GIS_ENGINE_DISPLAY_SIMPLE_LINE_SYMBOL_
 #define GIS_ENGINE_DISPLAY_SIMPLE_LINE_SYMBOL_
 
-#include "Display.h"
+#include "Symbol.h"
 #include "Common/GisEngineCommon.h"
 
 namespace GisEngine
@@ -9,18 +9,18 @@ namespace GisEngine
 	namespace Display
 	{
 
-		class CSimpleLineSymbol : public ISimpleLineSymbol, public GisCommon::IStreamSerialize, public GisCommon::IXMLSerialize
+		class CSimpleLineSymbol : public CSymbol
 		{
 			public:
-				//ISymbol
-				virtual void Init( IDisplay* pDisplay ) ;
-				virtual void Reset() ;
-				virtual void Draw(IDisplay* pDisplay, CommonLib::CGeoShape* pShape) ;
-				virtual void FlushBuffers(IDisplay* pDisplay, GisCommon::ITrackCancel* trackCancel);
-				virtual void GetBoundaryRect(CommonLib::CGeoShape* pShape, IDisplay* pDisplay, GisBoundingBox &bbox) const ;
-				virtual bool GetScaleDependent() const ;
-				virtual void SetScaleDependent(bool flag) ;
-				virtual void DrawDirectly(IDisplay* pDisplay, const GPoint* lpPoints, const int *lpPolyCounts, int nCount ) ;
+
+				CSimpleLineSymbol();
+				CSimpleLineSymbol( const Color &color, double width, eSimpleLineStyle style = SimpleLineStyleSolid );
+				virtual ~CSimpleLineSymbol();
+
+				virtual void DrawDirectly(IDisplay* display, const GPoint* lpPoints, const int *lpPolyCounts, int nCount );
+				//CSymbol
+				virtual void  DrawGeometryEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount);
+				virtual void  QueryBoundaryRectEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount,  GRect &rect) const;
 				
 				//ILineSymbol
 				virtual Color  GetColor() const ;
@@ -29,28 +29,27 @@ namespace GisEngine
 				virtual void   SetWidth(double width) ;
 
 				//ISimpleLineSymbol
-				virtual PenType				GetStyle() const ;
-				virtual void                SetStyle( PenType style ) ;
-				virtual CapType             GetCapType() const ;
-				virtual void                SetCapType( CapType cap ) ;
-				virtual JoinType            GetJoinType() const ;
-				virtual void                SetJoinType( JoinType join ) ;
+				virtual ePenType				GetStyle() const ;
+				virtual void                SetStyle( ePenType style ) ;
+				virtual eCapType             GetCapType() const ;
+				virtual void                SetCapType( eCapType cap ) ;
+				virtual eJoinType            GetJoinType() const ;
+				virtual void                SetJoinType( eJoinType join ) ;
 				
 				//IStreamSerialize
-				virtual void save(CommonLib::IWriteStream *pWriteStream) const;
-				virtual void load(CommonLib::IReadStream* pReadStream);
+				virtual bool save(CommonLib::IWriteStream *pWriteStream) const;
+				virtual bool load(CommonLib::IReadStream* pReadStream);
 
 
 				//IXMLSerialize
-				virtual void save(GisCommon::IXMLNode* pXmlNode) const;
-				virtual void load(GisCommon::IXMLNode* pXmlNode);
+				virtual bool save(GisCommon::IXMLNode* pXmlNode) const;
+				virtual bool load(GisCommon::IXMLNode* pXmlNode);
 		private:
-			CPen pPen_;
-			eSimpleLineStyle lineType_;
-			Color color_;
-			double width_;  
-			JoinType joinType_;
-			CapType  capType_;
+
+			void Draw( IGraphics *pGraphics, IDisplayTransformation* pDT, GisXYPoint *pPt, uint32 nCnt);
+		private:
+			CPen m_Pen;
+			
 			
 		
 		};

@@ -70,11 +70,14 @@ namespace GisEngine
 			virtual void Init( IDisplay* display  ) = 0;
 
 			virtual void Reset() = 0;
+			virtual bool CanDraw(CommonLib::CGeoShape* pShape) const = 0;
 			virtual void Draw(IDisplay* display, CommonLib::CGeoShape* pShape) = 0;
 		    virtual void FlushBuffers(IDisplay* display, GisCommon::ITrackCancel* trackCancel);
-			virtual void GetBoundaryRect(CommonLib::CGeoShape* pShape, IDisplay* display, GisBoundingBox &bbox) const = 0;
+			virtual void GetBoundaryRect(CommonLib::CGeoShape* pShape, IDisplay* display,  GRect &rect) const = 0;
 			virtual bool GetScaleDependent() const = 0;
 			virtual void SetScaleDependent(bool flag) = 0;
+			virtual bool GetDrawToBuffers() const = 0;
+			virtual void SetDrawToBuffers(bool flag) = 0;
 			virtual void DrawDirectly(IDisplay* display, const GPoint* lpPoints, const int *lpPolyCounts, int nCount ) = 0;
 		};
 
@@ -107,12 +110,12 @@ namespace GisEngine
 		{
 			ISimpleLineSymbol(){}
 			virtual ~ISimpleLineSymbol(){}
-			virtual PenType				 GetStyle() const = 0;
-			virtual void                SetStyle( PenType style ) = 0;
-			virtual CapType             GetCapType() const = 0;
-			virtual void                SetCapType( CapType cap ) = 0;
-			virtual JoinType            GetJoinType() const = 0;
-			virtual void                SetJoinType( JoinType join ) = 0;
+			virtual ePenType				 GetStyle() const = 0;
+			virtual void                SetStyle( ePenType style ) = 0;
+			virtual eCapType             GetCapType() const = 0;
+			virtual void                SetCapType( eCapType cap ) = 0;
+			virtual eJoinType            GetJoinType() const = 0;
+			virtual void                SetJoinType( eJoinType join ) = 0;
 		};
 
 		struct  IMarkerSymbol : public ISymbol

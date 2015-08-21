@@ -59,7 +59,7 @@ namespace GisEngine
 
 
 
-		 DeviceType  CGraphicsWinGDI::GetDeviceType() const
+		 eDeviceType  CGraphicsWinGDI::GetDeviceType() const
 		 {
 			 switch(::GetDeviceCaps(m_hDC, TECHNOLOGY))
 			 {

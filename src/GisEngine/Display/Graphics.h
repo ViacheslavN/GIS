@@ -22,7 +22,7 @@ namespace GisEngine
 				IGraphics(){}
 				virtual ~IGraphics(){}
 
-				virtual DeviceType  GetDeviceType() const = 0;
+				virtual eDeviceType  GetDeviceType() const = 0;
 				virtual void        StartDrawing() = 0;
 				virtual void        EndDrawing() = 0;
 				virtual GRect       GetClipRect() const = 0;

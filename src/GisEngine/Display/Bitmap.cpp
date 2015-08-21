@@ -46,7 +46,7 @@ namespace GisEngine
 				m_pAlloc = &m_alloc;
 		}
 
-		CBitmap::CBitmap(unsigned char* bits, size_t width, size_t height, BitmapFormatType type, 
+		CBitmap::CBitmap(unsigned char* bits, size_t width, size_t height, eBitmapFormatType type, 
 			Color* palette, bool release, CommonLib::alloc_t *pAlloc): m_pAlloc(pAlloc)
 		{
 			if(!m_pAlloc)
@@ -61,7 +61,7 @@ namespace GisEngine
 
 			m_nWidth = (size_t)pStream->readInt32();
 			m_nHeight = (size_t)pStream->readInt32();
-			m_type = (BitmapFormatType)pStream->readByte();
+			m_type = (eBitmapFormatType)pStream->readByte();
 			init(m_nWidth, m_nHeight, m_type);
 			pStream->read(m_pBuf, size());
 			if(m_pPalette)
@@ -69,7 +69,7 @@ namespace GisEngine
 					m_pPalette[i].load(pStream);
 		}
 
-		CBitmap::CBitmap(size_t width, size_t height, BitmapFormatType type, CommonLib::alloc_t *pAlloc) : m_pAlloc(pAlloc)
+		CBitmap::CBitmap(size_t width, size_t height, eBitmapFormatType type, CommonLib::alloc_t *pAlloc) : m_pAlloc(pAlloc)
 		{
 			if(!m_pAlloc)
 				m_pAlloc = &m_alloc;
@@ -77,7 +77,7 @@ namespace GisEngine
 			init(width, height, type);
 		}
 
-		void CBitmap::init(size_t width, size_t height, BitmapFormatType type)
+		void CBitmap::init(size_t width, size_t height, eBitmapFormatType type)
 		{
 			m_nWidth = width;
 			m_nHeight = height;
@@ -230,7 +230,7 @@ namespace GisEngine
 			return m_pPalette;
 		}
 
-		BitmapFormatType CBitmap::type() const
+		eBitmapFormatType CBitmap::type() const
 		{
 			return m_type;
 		}
@@ -339,7 +339,7 @@ namespace GisEngine
 		{
 			m_nWidth  = pStream->readIntu32();
 			m_nHeight = pStream->readIntu32();
-			m_type = (BitmapFormatType)pStream->readByte();
+			m_type = (eBitmapFormatType)pStream->readByte();
 			init(m_nWidth, m_nHeight, m_type);
 			size_t nSize = size();
 			if(nSize)
@@ -377,7 +377,7 @@ namespace GisEngine
 
 
 
-		void CBitmap::attach(unsigned char* bits, size_t width, size_t height, BitmapFormatType type, Color* palette, bool release)
+		void CBitmap::attach(unsigned char* bits, size_t width, size_t height, eBitmapFormatType type, Color* palette, bool release)
 		{
 			m_pBuf = bits;
 			m_nWidth = width;

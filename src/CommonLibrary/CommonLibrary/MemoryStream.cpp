@@ -154,6 +154,10 @@ namespace CommonLib
 			m_pBuffer[m_nPos + size - i - 1] = buffer[i];
 		assert(m_nPos <= m_nSize);
 	}
+	bool MemoryStream::checkRead(uint32 nSize) const
+	{
+		return (m_nSize - m_nPos) >= nSize;
+	}
 	/*
 	void MemoryStream::read( byte* pBuffer, size_t bufLen)
 	{

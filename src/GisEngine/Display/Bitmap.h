@@ -14,9 +14,9 @@ namespace GisEngine
 		public:
 			CBitmap(CommonLib::alloc_t *pAlloc = NULL);
 			CBitmap(CommonLib::IReadStream *pStream, CommonLib::alloc_t *pAlloc = NULL);
-			CBitmap(size_t width, size_t height, BitmapFormatType type, CommonLib::alloc_t *pAlloc = NULL);
+			CBitmap(size_t width, size_t height, eBitmapFormatType type, CommonLib::alloc_t *pAlloc = NULL);
 			CBitmap(unsigned char* bits, size_t width, size_t height, 
-				BitmapFormatType type, Color* palette = 0, bool release = false, CommonLib::alloc_t *pAlloc = NULL);
+				eBitmapFormatType type, Color* palette = 0, bool release = false, CommonLib::alloc_t *pAlloc = NULL);
 			CBitmap(const CBitmap& bmp);
 			~CBitmap(void);
 			CBitmap& operator=(const CBitmap& bmp);
@@ -36,19 +36,19 @@ namespace GisEngine
 			size_t                 size() const;
 			size_t                 bpp() const;
 			Color*                 palette();
-			BitmapFormatType       type() const;
+			eBitmapFormatType       type() const;
 			Color                  pixel(size_t row, size_t col);
 			bool                   copy_to(CBitmap* bitmap);
-			void                   attach(unsigned char* bits, size_t width, size_t height, BitmapFormatType type, Color* palette = 0, bool release = false);
+			void                   attach(unsigned char* bits, size_t width, size_t height, eBitmapFormatType type, Color* palette = 0, bool release = false);
 			CBitmap*                transform(double xScale, double yScale, double angle = 0);
 			bool                   importFromPNG(const unsigned char* data, size_t len);
 			bool                   importFromJPG(const unsigned char* data, size_t len);
-			void init(size_t width, size_t height, BitmapFormatType type);
+			void init(size_t width, size_t height, eBitmapFormatType type);
 		private:
 			unsigned char*   m_pBuf;
 			size_t           m_nWidth;
 			size_t           m_nHeight;
-			BitmapFormatType m_type;
+			eBitmapFormatType m_type;
 			Color*           m_pPalette;
 			bool             m_bRelease;
 			CommonLib::alloc_t*		m_pAlloc;

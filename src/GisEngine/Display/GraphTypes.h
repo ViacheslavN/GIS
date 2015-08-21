@@ -7,7 +7,7 @@ namespace GisEngine
 {
 	namespace Display
 	{
-		enum DeviceType
+		enum eDeviceType
 		{
 			DeviceTypeDisplay  = 0,
 			DeviceTypePrinter  = 1,
@@ -15,7 +15,7 @@ namespace GisEngine
 			DeviceTypeMetafile = 3
 		};
 
-		enum GradientType
+		enum eGradientType
 		{
 			GradientTypeBdiagonal  = 0,
 			GradientTypeFdiagonal  = 1,
@@ -23,7 +23,7 @@ namespace GisEngine
 			GradientTypeVertical   = 3
 		};
 
-		enum PenType
+		enum ePenType
 		{
 			PenTypeSolid       = 0,
 			PenTypeDash        = 1,
@@ -33,21 +33,21 @@ namespace GisEngine
 			PenTypeNull        = 5
 		};
 
-		enum CapType
+		enum eCapType
 		{
 			CapTypeButt      = 0,
 			CapTypeRound     = 1,
 			CapTypeSquare    = 2
 		};
 
-		enum JoinType
+		enum eJoinType
 		{
 			JoinTypeMiter     = 0,
 			JoinTypeRound     = 1,
 			JoinTypeBevel     = 2
 		};
 
-		enum BrushType
+		enum eBrushType
 		{
 			BrushTypeSolid     = 0,
 			BrushTypeNull      = 1,
@@ -58,7 +58,7 @@ namespace GisEngine
 		};
 
 		
-		enum FontStyle
+		enum eFontStyle
 		{ 
 			FontStyleRegular    = 0,
 			FontStyleBold       = 1,
@@ -67,7 +67,7 @@ namespace GisEngine
 		};
 
 
-		enum TextVAlignment
+		enum eTextVAlignment
 		{
 			TextVAlignmentTop      = 0,
 			TextVAlignmentCenter   = 1,
@@ -75,21 +75,21 @@ namespace GisEngine
 			TextVAlignmentBottom   = 3
 		};
 
-		enum TextHAlignment
+		enum eTextHAlignment
 		{
 			TextHAlignmentLeft     = 0,
 			TextHAlignmentCenter   = 1,
 			TextHAlignmentRight    = 2
 		};
 
-		enum TextDraw
+		enum eTextDraw
 		{
 			TextDrawHaloOnly = 1,
 			TextDrawTextOnly = 2,
 			TextDrawAll = 3
 		};
 
-		enum BitmapFormatType
+		enum eBitmapFormatType
 		{
 			BitmapFormatType1bpp           = 0,  //Specifies that the format is 1 bit per pixel, indexed.
 			BitmapFormatType4bpp           = 1,  //Specifies that the format is 4 bit per pixel, indexed.

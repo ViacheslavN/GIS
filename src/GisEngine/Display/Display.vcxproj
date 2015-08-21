@@ -467,6 +467,7 @@
     <ClInclude Include="Rect.h" />
     <ClInclude Include="SimpleLineSymbol.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Symbol.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Vector3d.h" />
     <ClInclude Include="VertexSrc.h" />
@@ -501,6 +502,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseShared|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Symbol.cpp" />
     <ClCompile Include="VertexSrc.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

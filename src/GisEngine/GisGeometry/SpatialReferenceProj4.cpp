@@ -399,15 +399,26 @@ namespace GisEngine
 			return true;
 		}
 
-		void CSpatialReferenceProj4::save(CommonLib::IWriteStream *pStream) const
+		bool CSpatialReferenceProj4::save(CommonLib::IWriteStream *pStream) const
 		{
 			pStream->write(m_prj4Str);
+			return true;
 		}
-		void CSpatialReferenceProj4::load(CommonLib::IReadStream *pStream)
+		bool CSpatialReferenceProj4::load(CommonLib::IReadStream *pStream)
 		{
-			pStream->read(m_prj4Str);
+			SAFE_READ_RES(pStream, m_prj4Str, 1)
+			return true;
 		}
 
+		bool CSpatialReferenceProj4::save(GisCommon::IXMLNode* pXmlNode) const
+		{
+			pXmlNode->AddProperty(L"proj", )
+			return true;
+		}
+		bool CSpatialReferenceProj4::load(GisCommon::IXMLNode* pXmlNode)
+		{
+			return true;
+		}
 
 		void CSpatialReferenceProj4::CreateProjection()
 		{

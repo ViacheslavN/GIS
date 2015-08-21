@@ -118,7 +118,10 @@ namespace CommonLib
 		assert(m_nPos <= m_nSize);
 	}
 
-
+	bool FxMemoryReadStream::checkRead(uint32 nSize) const
+	{
+		return (m_nSize - m_nPos) >= nSize;
+	}
 	FxMemoryReadStream::FxMemoryReadStream(alloc_t *pAlloc) : FxStreamBase(pAlloc)
 	{
 
@@ -269,7 +272,7 @@ namespace CommonLib
 			m_pBuffer[m_nPos + size - i - 1] = buffer[i];
 		assert(m_nPos <= m_nSize);
 	}
-
+	
 	/*void  FxMemoryWriteStream::write(const byte* pBuffer, size_t bufLen )
 	{
 		if(m_bIsBigEndian)

@@ -56,7 +56,7 @@ namespace GisEngine
 				CGraphicsAgg( GUnits  width, GUnits height, bool flipY = false);
 				~CGraphicsAgg();
 
-				virtual DeviceType  GetDeviceType() const;
+				virtual eDeviceType  GetDeviceType() const;
 				virtual void        StartDrawing();
 				virtual void        EndDrawing();
 				virtual GRect       GetClipRect() const ;

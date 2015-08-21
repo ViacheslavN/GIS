@@ -81,7 +81,7 @@ namespace CommonLib
 
 		virtual void read_bytes(byte* dst, size_t size);
 		virtual void read_inverse(byte* buffer, size_t size);
-
+		virtual bool checkRead(uint32 nSize) const;
 		/*virtual void read( byte* pBuffer, size_t bufLen );
 		virtual void read(bool& value);
 		virtual void read(char& value) ;
@@ -120,7 +120,7 @@ namespace CommonLib
 
 		virtual void write_bytes(const byte* buffer, size_t size);
 		virtual void write_inverse(const byte* buffer, size_t size);
-
+		
 		/*virtual void write(const byte* pBuffer, size_t bufLen );
 		virtual void write(bool value);
 		virtual void write(byte value);

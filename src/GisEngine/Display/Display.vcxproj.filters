@@ -126,6 +126,9 @@
     <ClInclude Include="SimpleLineSymbol.h">
       <Filter>symbols</Filter>
     </ClInclude>
+    <ClInclude Include="Symbol.h">
+      <Filter>symbols</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -177,6 +180,9 @@
       <Filter>Clip</Filter>
     </ClCompile>
     <ClCompile Include="SimpleLineSymbol.cpp">
+      <Filter>symbols</Filter>
+    </ClCompile>
+    <ClCompile Include="Symbol.cpp">
       <Filter>symbols</Filter>
     </ClCompile>
   </ItemGroup>

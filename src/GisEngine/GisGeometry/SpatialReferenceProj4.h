@@ -38,8 +38,11 @@ namespace GisEngine
 			virtual bool  IsProjection() const;
 			virtual bool IsEqual(ISpatialReference* pSpatRef) const;
 
-			virtual void save(CommonLib::IWriteStream *pStream) const;
-			virtual void load(CommonLib::IReadStream *pStream);
+			virtual bool save(CommonLib::IWriteStream *pStream) const;
+			virtual bool load(CommonLib::IReadStream *pStream);
+
+			virtual bool save(GisCommon::IXMLNode* pXmlNode) const;
+			virtual bool load(GisCommon::IXMLNode* pXmlNode);
 		private:
 			void CreateProjection();
 			void PrepareGeometries();
