@@ -158,34 +158,84 @@ namespace GisEngine
 		}
 
 
-		bool CPen::save(GisCommon::IXMLNode* pXmlNode) const
+		bool CPen::saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName) const
 		{
-			pXmlNode->AddProperty("PenType", CommonLib::CVariant(uint16(m_type)));
-			m_color.save(pXmlNode);
-			pXmlNode->AddProperty("JoinType", CommonLib::CVariant(uint16(m_joinType)));
+			pXmlNode->AddPropertyInt16U(L"PenType", uint16(m_type));
+			pXmlNode->AddPropertyInt16U(L"JoinType", uint16(m_joinType));
 			pXmlNode->AddProperty("Width", CommonLib::CVariant(m_nWidth));
-			pXmlNode->AddProperty("CapType", CommonLib::CVariant(uint16(m_capType)));
+			pXmlNode->AddPropertyInt16U(L"CapType", uint16(m_capType));
+
+			m_color.saveXML(pXmlNode);
 
 			if(m_pTexture && m_bRelease) 
 			{
-				pXmlNode->AddProperty("Release", CommonLib::CVariant(m_bRelease));
-				m_pTexture->save(pXmlNode);
+				pXmlNode->AddPropertyBool(L"Release", m_bRelease);
+				m_pTexture->saveXML(pXmlNode);
 			}
 			else
-				pXmlNode->AddProperty("Release", CommonLib::CVariant((bool)false));
+				pXmlNode->AddPropertyBool(L"Release", false);
 
-			CommonLib::MemoryStream stream;
-			stream.write((uint32)m_vecTemplates.size());
-			for (size_t i = 0; i < m_vecTemplates.size(); ++i)
+			if(m_vecTemplates.size())
 			{
-				stream.write(m_vecTemplates[i].first);
-				stream.write(m_vecTemplates[i].second);
+				CommonLib::MemoryStream stream;
+				stream.write((uint32)m_vecTemplates.size());
+				for (size_t i = 0; i < m_vecTemplates.size(); ++i)
+				{
+					stream.write(m_vecTemplates[i].first);
+					stream.write(m_vecTemplates[i].second);
+				}
+
+				CommonLib::CBlob blob(stream.buffer(), stream.size(), true, NULL);
+
+				GisCommon::IXMLNodePtr pBlobNode = pXmlNode->CreateChildNode(L"Templates");
+				pBlobNode->SetBlobCDATA(blob);
+
 			}
+			
 			return true;
 
 		}
-		bool CPen::load(GisCommon::IXMLNode* pXmlNode)
+		bool CPen::load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName)
 		{
+			GisCommon::IXMLNodePtr pPenNode = pXmlNode->GetChild(pszName);
+			if(!pPenNode.get())
+				return false;
+
+			m_type = (ePenType)pPenNode->GetPropertyInt16U(L"PenType", PenTypeNull);
+			m_joinType = (eJoinType)pPenNode->GetPropertyInt16U(L"JoinType", JoinTypeMiter);
+			m_capType = (eCapType)pPenNode->GetPropertyInt16U(L"CapType", CapTypeButt);
+			CommonLib::CVariant* pWidthVar =  pPenNode->GetProperty(L"Width");
+			if(pWidthVar)
+				m_nWidth = pWidthVar->Get<GUnits>();
+			
+			m_bRelease = pPenNode->GetPropertyBool(L"Release", false);
+			if(m_bRelease) 
+			{
+				m_pTexture = new CBitmap();
+				m_pTexture->load(pPenNode.get());
+			}
+	
+
+			GisCommon::IXMLNodePtr pTemplatesNode = pXmlNode->GetChild(L"Templates");
+			if(pTemplatesNode.get())
+			{
+				CommonLib::CBlob& blob = pTemplatesNode->GetBlobCDATA();
+				CommonLib::FxMemoryReadStream stream;
+				stream.attach(blob.buffer(), blob.size());
+
+				CommonLib::FxMemoryReadStream *pStream = &stream;
+				uint32 nSize = 0;
+				SAFE_READ(pStream, nSize)
+				if(nSize)
+				{
+					m_vecTemplates.reserve(nSize);
+					for (size_t i = 0; i < nSize; ++i)
+					{
+						SAFE_READ(pStream, m_vecTemplates[i].first)
+						SAFE_READ(pStream, m_vecTemplates[i].second)
+					}
+				}
+			}
 			return true;
 		}
 	}

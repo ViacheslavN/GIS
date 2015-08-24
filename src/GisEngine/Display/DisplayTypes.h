@@ -39,6 +39,9 @@ namespace GisEngine
 			SimpleFillStyleDiagonalCross    = 7
 		};
 
+
+
+		
 		enum eMarkerFillStyle
 		{
 			MarkerFillStyleGrid            = 0,
@@ -81,6 +84,24 @@ namespace GisEngine
 			case SimpleLineStyleNull: return PenTypeNull;
 			}
 			return PenTypeSolid;
+		}
+
+
+
+		static eBrushType FillStyle2BrushType( eSimpleFillStyle FillStyle)
+		{
+			switch(FillStyle)
+			{
+			case SimpleFillStyleSolid: return BrushTypeSolid;
+			case SimpleFillStyleHorizontal: return BrushTypeTextured;
+			case SimpleFillStyleVertical: return BrushTypeTextured;
+			case SimpleFillStyleForwardDiagonal: return BrushTypeTextured;
+			case SimpleFillStyleBackwardDiagonal: return BrushTypeTextured;
+			case SimpleFillStyleCross: return BrushTypeTextured;
+			case SimpleFillStyleDiagonalCross: return BrushTypeTextured;
+			case SimpleFillStyleNull: return BrushTypeNull;
+			}
+			return BrushTypeSolid;
 		}
 
 	}

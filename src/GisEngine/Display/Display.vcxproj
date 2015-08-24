@@ -447,6 +447,8 @@
     <ClInclude Include="Clip.h" />
     <ClInclude Include="ClipRectAlloc.h" />
     <ClInclude Include="Display.h" />
+    <ClInclude Include="SymbolFillBase.h" />
+    <ClInclude Include="LoaderSymbols.h" />
     <ClInclude Include="RectClipper.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="conv_offset.h" />
@@ -465,9 +467,10 @@
     <ClInclude Include="ReadJPG.h" />
     <ClInclude Include="ReadPng.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="SimpleFillSymbol.h" />
     <ClInclude Include="SimpleLineSymbol.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Symbol.h" />
+    <ClInclude Include="SymbolBase.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Vector3d.h" />
     <ClInclude Include="VertexSrc.h" />
@@ -476,6 +479,7 @@
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Brush.cpp" />
     <ClCompile Include="ClipRectAlloc.cpp" />
+    <ClCompile Include="LoaderSymbols.cpp" />
     <ClCompile Include="RectClipper.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="conv_offset.cpp" />
@@ -487,6 +491,7 @@
     <ClCompile Include="ReadJPG.cpp" />
     <ClCompile Include="ReadPng.cpp" />
     <ClCompile Include="Rect.cpp" />
+    <ClCompile Include="SimpleFillSymbol.cpp" />
     <ClCompile Include="SimpleLineSymbol.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -502,7 +507,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseShared|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Symbol.cpp" />
     <ClCompile Include="VertexSrc.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

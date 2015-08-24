@@ -44,12 +44,12 @@ namespace GisEngine
 			bool operator==(const Color& a) const;
 			bool operator!=(const Color& a) const;
 
-			void save(CommonLib::IWriteStream *pStream) const;
-			void load(CommonLib::IReadStream *pStream);
+			bool save(CommonLib::IWriteStream *pStream) const;
+			bool load(CommonLib::IReadStream *pStream);
 
 
-			void save(GisCommon::IXMLNode* pXmlNode) const;
-			void load(GisCommon::IXMLNode* pXmlNode);
+			bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
+			bool load(GisCommon::IXMLNode* pXmlNode);
 			
 
 		private:

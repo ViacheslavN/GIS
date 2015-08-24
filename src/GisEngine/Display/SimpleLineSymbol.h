@@ -1,7 +1,7 @@
 #ifndef GIS_ENGINE_DISPLAY_SIMPLE_LINE_SYMBOL_
 #define GIS_ENGINE_DISPLAY_SIMPLE_LINE_SYMBOL_
 
-#include "Symbol.h"
+#include "SymbolBase.h"
 #include "Common/GisEngineCommon.h"
 
 namespace GisEngine
@@ -9,9 +9,11 @@ namespace GisEngine
 	namespace Display
 	{
 
-		class CSimpleLineSymbol : public CSymbol
+		class CSimpleLineSymbol : public CSymbolBase<ISimpleLineSymbol>
 		{
 			public:
+
+				typedef CSymbolBase<ISimpleLineSymbol> TBase;
 
 				CSimpleLineSymbol();
 				CSimpleLineSymbol( const Color &color, double width, eSimpleLineStyle style = SimpleLineStyleSolid );
@@ -21,7 +23,7 @@ namespace GisEngine
 				//CSymbol
 				virtual void  DrawGeometryEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount);
 				virtual void  QueryBoundaryRectEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount,  GRect &rect) const;
-				
+				virtual void  Prepare(IDisplay* pDisplay){}
 				//ILineSymbol
 				virtual Color  GetColor() const ;
 				virtual void   SetColor(const Color &color) ;
@@ -42,7 +44,7 @@ namespace GisEngine
 
 
 				//IXMLSerialize
-				virtual bool save(GisCommon::IXMLNode* pXmlNode) const;
+				virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
 				virtual bool load(GisCommon::IXMLNode* pXmlNode);
 		private:
 

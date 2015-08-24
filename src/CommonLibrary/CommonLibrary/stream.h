@@ -234,13 +234,31 @@ public:
 }
 
 
-#define  SAFE_READ(pStream, Val, size)  \
+#define  SAFE_READ_EX(pStream, Val, size)  \
 	if(pStream->checkRead(size))\
 		pStream->read(Val);
 
-#define  SAFE_READ_RES(pStream, Val, size)  \
+#define  SAFE_READ(pStream, Val)  \
+	if(pStream->checkRead(sizeof(Val)))\
+		pStream->read(Val);
+
+#define  SAFE_READ_RES_EX(pStream, Val, size)  \
 	if(!pStream->checkRead(size))\
 		return false;					\
 	else							\
 		pStream->read(Val); 
+ 
+#define  SAFE_READ_RES(pStream, Val)  \
+	if(!pStream->checkRead(sizeof(Val)))\
+		return false;					\
+	else							\
+		pStream->read(Val); 
+
+#define  SAFE_READ_BOOL_RES(pStream, bVal)  \
+	if(!pStream->checkRead(sizeof(byte)))\
+		return false;					\
+	else							\
+		bVal = pStream->readBool(); 
+
+
 #endif

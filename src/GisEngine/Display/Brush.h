@@ -25,8 +25,13 @@ namespace GisEngine
 			CBitmap* GetTexture() const;
 
 
-			void save(CommonLib::IWriteStream *pStream) const;
-			void load(CommonLib::IReadStream *pStream);
+			bool save(CommonLib::IWriteStream *pStream) const;
+			bool load(CommonLib::IReadStream *pStream);
+
+
+			bool saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Brush") const;
+			bool load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Brush");
+
 
 		private:
 			eBrushType  m_type;

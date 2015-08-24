@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="TinyXML">
+      <UniqueIdentifier>{4f70041e-aa09-4b82-a7db-fdd8efa0be1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="XML">
+      <UniqueIdentifier>{9ccd941d-0d2d-4396-8b76-990931834a85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -39,6 +45,21 @@
     <ClInclude Include="PropertySet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TinyXML\tinystr.h">
+      <Filter>TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyXML\tinyxml.h">
+      <Filter>TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLSerialize.h">
+      <Filter>XML</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLNode.h">
+      <Filter>XML</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLUtils.h">
+      <Filter>XML</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -49,6 +70,27 @@
     </ClCompile>
     <ClCompile Include="PropertySet.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinystr.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxml.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlerror.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlparser.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLSerialize.cpp">
+      <Filter>XML</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLNode.cpp">
+      <Filter>XML</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLUtils.cpp">
+      <Filter>XML</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

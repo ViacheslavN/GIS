@@ -7,13 +7,15 @@ namespace GisEngine
 	{
 		CSimpleLineSymbol::CSimpleLineSymbol()
 		{
-			 
+			 m_nSymbolID = SimpleLineSymbolID;
 		}
-		CSimpleLineSymbol::CSimpleLineSymbol( const Color &color, double width, eSimpleLineStyle style) 
+		CSimpleLineSymbol::CSimpleLineSymbol( const Color &color, double width, eSimpleLineStyle style)
 		{
 			m_Pen.setColor(color);
 			m_Pen.setWidth(width);
 			m_Pen.setPenType(LineStyle2PenType( style));
+
+			m_nSymbolID = SimpleLineSymbolID;
 		}
 		CSimpleLineSymbol::~CSimpleLineSymbol()
 		{
@@ -94,14 +96,14 @@ namespace GisEngine
 		//IStreamSerialize
 		bool CSimpleLineSymbol::save(CommonLib::IWriteStream *pWriteStream) const
 		{
-			if(!CSymbol::save(pWriteStream))
+			if(!TBase::save(pWriteStream))
 				return false;
 
 			return m_Pen.save(pWriteStream);
 		}
 		bool CSimpleLineSymbol::load(CommonLib::IReadStream* pReadStream)
 		{
-			if(!CSymbol::load(pReadStream))
+			if(!TBase::load(pReadStream))
 				return false;
 
 			return m_Pen.load(pReadStream);
@@ -109,16 +111,16 @@ namespace GisEngine
 
 
 		//IXMLSerialize
-		bool CSimpleLineSymbol::save(GisCommon::IXMLNode* pXmlNode) const
+		bool CSimpleLineSymbol::saveXML(GisCommon::IXMLNode* pXmlNode) const
 		{
-			if(!CSymbol::save(pXmlNode))
+			if(!TBase::saveXML(pXmlNode))
 				return false;
 
-			return m_Pen.save(pXmlNode);
+			return m_Pen.saveXML(pXmlNode);
 		}
 		bool CSimpleLineSymbol::load(GisCommon::IXMLNode* pXmlNode)
 		{
-			if(!CSymbol::load(pXmlNode))
+			if(!TBase::load(pXmlNode))
 				return false;
 
 			return m_Pen.load(pXmlNode);

@@ -2,7 +2,13 @@
 #include "blob.h"
 namespace CommonLib
 {
-	CBlob::CBlob(alloc_t *pAlloc, uint32 nSize) : m_pAlloc(pAlloc)
+	CBlob::CBlob(alloc_t *pAlloc) : m_pAlloc(pAlloc)
+		,m_pBuffer(NULL), m_nSize(0), m_nCapacity(0), m_bAttach(false)
+	{
+		if(!m_pAlloc)
+			m_pAlloc = &m_alloc;
+	}
+	CBlob::CBlob(uint32 nSize, alloc_t *pAlloc) : m_pAlloc(pAlloc)
 		,m_pBuffer(NULL), m_nSize(0), m_nCapacity(0), m_bAttach(false)
 	{
 		if(!m_pAlloc)
@@ -111,7 +117,15 @@ namespace CommonLib
 	{
 		return compare(blob) >= 0;
 	}
+	const unsigned char& CBlob::operator [](size_t index) const
+	{
+		return *(buffer() + index);
+	}
 
+	unsigned char& CBlob::operator [](size_t index)
+	{
+		return buffer()[index];
+	}
 	int CBlob::equals(const unsigned char *buffer, size_t _size) const
 	{
 		return compare(buffer, _size) == 0;

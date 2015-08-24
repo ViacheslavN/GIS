@@ -324,7 +324,7 @@ namespace GisEngine
 			return true;
 		}
 
-		void CBitmap::save(CommonLib::IWriteStream *pStream) const
+		bool CBitmap::save(CommonLib::IWriteStream *pStream) const
 		{
 
 			pStream->write((uint32)m_nWidth);
@@ -334,45 +334,59 @@ namespace GisEngine
 			if(m_pPalette)
 				for(int i = 0; i < 1 << bpp(); i++)
 					m_pPalette[i].save(pStream);
+			return true;
 		}
-		void  CBitmap::load(CommonLib::IReadStream *pStream)
+		bool  CBitmap::load(CommonLib::IReadStream *pStream)
 		{
-			m_nWidth  = pStream->readIntu32();
-			m_nHeight = pStream->readIntu32();
-			m_type = (eBitmapFormatType)pStream->readByte();
+
+			SAFE_READ_RES(pStream, m_nWidth)
+			SAFE_READ_RES(pStream, m_nHeight);
+			byte type = 0;
+			SAFE_READ_RES(pStream, type);
+			m_type = (eBitmapFormatType)type;
 			init(m_nWidth, m_nHeight, m_type);
 			size_t nSize = size();
 			if(nSize)
 				pStream->read(m_pBuf, nSize);
 			if(m_pPalette)
+			{
 				for(int i = 0; i < 1 << bpp(); i++)
-					m_pPalette[i].load(pStream);
+				{
+					if(!m_pPalette[i].load(pStream))
+						return false;
+				}
+			}
+			return true;
 
 		}
 
-		void CBitmap::save(GisCommon::IXMLNode* pXmlNode) const
+		bool CBitmap::saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszNodeName) const
 		{
 			GisCommon::IXMLNodePtr pBlobNode = pXmlNode->CreateChildNode();
-			pBlobNode->SetName("bitmap");
+			pBlobNode->SetName(pszNodeName);
 			CommonLib::MemoryStream stream(m_pAlloc);
 			save(&stream);
 			CommonLib::CBlob blob(stream.buffer(), stream.size(), true, NULL);
 			pBlobNode->SetBlobCDATA(blob);
-
+			return true;
 
 		}
-		void CBitmap::load(GisCommon::IXMLNode* pXmlNode)
+		bool CBitmap::load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszNodeName)
 		{
-			GisCommon::IXMLNodePtr pBlobNode = pXmlNode->GetChild(0);
-			if(!pBlobNode.get())
-				return;
-			if(pBlobNode->GetName() != L"bitmap")
-				return;
-			CommonLib::CBlob& blob = pBlobNode->GetBlobCDATA();
-			CommonLib::FxMemoryReadStream stream;
-			stream.attach(blob.buffer(), blob.size());
-			load(&stream);
-
+			 uint32 nCnt = pXmlNode->GetChildCnt();
+			 for(uint32 i = 0; i < nCnt; ++i)
+			 {
+				 GisCommon::IXMLNodePtr pBlobNode = pXmlNode->GetChild(i);
+				 if(!pBlobNode.get())
+					continue;
+				 if(pBlobNode->GetName() != pszNodeName)
+					 continue;
+				 CommonLib::CBlob& blob = pBlobNode->GetBlobCDATA();
+				 CommonLib::FxMemoryReadStream stream;
+				 stream.attach(blob.buffer(), blob.size());
+				 return load(&stream);
+			 }
+			 return false;
 		}
 
 

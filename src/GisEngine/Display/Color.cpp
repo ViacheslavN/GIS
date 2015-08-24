@@ -90,24 +90,30 @@ namespace GisEngine
 			return !(this->operator ==(c));
 		}
 
-		void Color::save(CommonLib::IWriteStream *pStream) const
+		bool Color::save(CommonLib::IWriteStream *pStream) const
 		{
 			pStream->write(m_rgba);
+			return true;
 		}
-		void Color::load(CommonLib::IReadStream *pStream)
+		bool Color::load(CommonLib::IReadStream *pStream)
 		{
-			m_rgba = pStream->readIntu32();
+			SAFE_READ_RES(pStream, m_rgba, sizeof(uint32));
+			return true;
 		}
 
-		void Color::save(GisCommon::IXMLNode* pXmlNode) const
+		bool Color::saveXML(GisCommon::IXMLNode* pXmlNode) const
 		{
 			pXmlNode->AddProperty(L"color", CommonLib::CVariant(uint32 (m_rgba)));
+			return true;
 		}
-		void Color::load(GisCommon::IXMLNode* pXmlNode)
+		bool Color::load(GisCommon::IXMLNode* pXmlNode)
 		{
 			CommonLib::CVariant *pVarRGBA = pXmlNode->GetProperty(L"color");
-			if(pVarRGBA)
-				m_rgba = pVarRGBA->Get<uint32>();
+			if(!pVarRGBA)
+				return false;
+			
+			m_rgba = pVarRGBA->Get<uint32>();
+			return true;
 		}
 	}
 }

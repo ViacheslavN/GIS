@@ -126,7 +126,16 @@
     <ClInclude Include="SimpleLineSymbol.h">
       <Filter>symbols</Filter>
     </ClInclude>
-    <ClInclude Include="Symbol.h">
+    <ClInclude Include="SimpleFillSymbol.h">
+      <Filter>symbols</Filter>
+    </ClInclude>
+    <ClInclude Include="SymbolBase.h">
+      <Filter>symbols</Filter>
+    </ClInclude>
+    <ClInclude Include="LoaderSymbols.h">
+      <Filter>symbols</Filter>
+    </ClInclude>
+    <ClInclude Include="SymbolFillBase.h">
       <Filter>symbols</Filter>
     </ClInclude>
   </ItemGroup>
@@ -182,7 +191,10 @@
     <ClCompile Include="SimpleLineSymbol.cpp">
       <Filter>symbols</Filter>
     </ClCompile>
-    <ClCompile Include="Symbol.cpp">
+    <ClCompile Include="SimpleFillSymbol.cpp">
+      <Filter>symbols</Filter>
+    </ClCompile>
+    <ClCompile Include="LoaderSymbols.cpp">
       <Filter>symbols</Filter>
     </ClCompile>
   </ItemGroup>

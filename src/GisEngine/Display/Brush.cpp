@@ -69,7 +69,7 @@ namespace GisEngine
 		}
 
 
-		void CBrush::save(CommonLib::IWriteStream *pStream) const
+		bool CBrush::save(CommonLib::IWriteStream *pStream) const
 		{
 			pStream->write((byte)m_type);
 			m_color.save(pStream);
@@ -81,18 +81,58 @@ namespace GisEngine
 			}
 			else
 				pStream->write(false);
+			return true;
 		}
-		void CBrush::load(CommonLib::IReadStream *pStream)
+		bool CBrush::load(CommonLib::IReadStream *pStream)
 		{
-			m_type = (eBrushType)pStream->readByte();
-			m_color.load(pStream);
-			m_bgColor.load(pStream);
-			m_bRelease = pStream->readBool();
+			byte nType = 0;
+			SAFE_READ_RES(pStream, nType);
+
+			m_type = (eBrushType)nType;
+			if(!m_color.load(pStream))
+				return false;
+			if(!m_bgColor.load(pStream))
+				return false;
+			SAFE_READ_RES(pStream, m_bRelease);
 			if(m_bRelease)
 			{
 				m_pTexture = new CBitmap();
-				m_pTexture->load(pStream);
+				return m_pTexture->load(pStream);
 			}
+			return true;
 		}
+
+
+
+		bool  CBrush::saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName) const
+		{
+			GisCommon::IXMLNodePtr pBrushNode = pXmlNode->CreateChildNode();
+
+			pBrushNode->AddPropertyInt16U(L"Type", m_type);
+			m_color.saveXML(pBrushNode.get());
+			m_bgColor.saveXML(pBrushNode.get());
+			if(m_pTexture && m_bRelease) 
+			{
+				pBrushNode->AddPropertyBool(L"Release", m_bRelease);
+				return m_pTexture->saveXML(pBrushNode.get());
+			}
+			else
+				pBrushNode->AddPropertyBool(L"Release", false);
+			return true;
+		}
+		bool  CBrush::load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName)
+		{
+			GisCommon::IXMLNodePtr pBrushNode = pXmlNode->GetChild(pszName);
+			if(!pBrushNode.get())
+				return false;
+			m_color.load(pBrushNode.get());
+			m_bgColor.load(pBrushNode.get());
+			m_type = (eBrushType)pBrushNode->GetPropertyInt16(L"Type", BrushTypeNull);
+			m_bRelease = pBrushNode->GetPropertyBool(L"Release", false);
+			if(m_bRelease)
+				return m_pTexture->load(pBrushNode.get());
+			return true;
+		}
+
 	}
 }

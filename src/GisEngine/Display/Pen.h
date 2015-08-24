@@ -41,8 +41,8 @@ namespace GisEngine
 			bool save(CommonLib::IWriteStream *pStream) const;
 			bool load(CommonLib::IReadStream *pStream);
 
-			bool save(GisCommon::IXMLNode* pXmlNode) const;
-			bool load(GisCommon::IXMLNode* pXmlNode);
+			bool saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Pen") const;
+			bool load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Pen");
 
 
 		private:

@@ -19,6 +19,23 @@ namespace GisEngine
 	{
 
 
+		enum eSymbolID
+		{
+			UndefineSymbolID,
+			SimpleLineSymbolID,
+			MarkerLineSymboID,
+			HashLineSymbolID,
+			MarkerLineSymbolID,
+			PictureLineSymbol,
+			SimpleFillSymbolID,
+			LineFillSymbolID,
+			TextFillSymbolID,
+			TextSymbolID,
+			MultiLayerSymbolID,
+			
+
+		};
+
 	
 
 	
@@ -63,12 +80,15 @@ namespace GisEngine
 		};
 
 
-		struct  ISymbol : public CommonLib::AutoRefCounter
+		struct  ISymbol : public CommonLib::AutoRefCounter , 
+						  public GisCommon::IStreamSerialize, 
+						  public GisCommon::IXMLSerialize
 		{
 			ISymbol(){}
 			virtual ~ISymbol(){}
+			
+			virtual uint32 GetSymbolID() const = 0;
 			virtual void Init( IDisplay* display  ) = 0;
-
 			virtual void Reset() = 0;
 			virtual bool CanDraw(CommonLib::CGeoShape* pShape) const = 0;
 			virtual void Draw(IDisplay* display, CommonLib::CGeoShape* pShape) = 0;
@@ -79,6 +99,10 @@ namespace GisEngine
 			virtual bool GetDrawToBuffers() const = 0;
 			virtual void SetDrawToBuffers(bool flag) = 0;
 			virtual void DrawDirectly(IDisplay* display, const GPoint* lpPoints, const int *lpPolyCounts, int nCount ) = 0;
+
+			virtual void  DrawGeometryEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount) = 0;
+			virtual void  QueryBoundaryRectEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount,   GRect &rect) const= 0;
+			virtual void  Prepare(IDisplay* pDisplay) = 0;
 		};
 
 		struct  IMultiLayerSymbol 

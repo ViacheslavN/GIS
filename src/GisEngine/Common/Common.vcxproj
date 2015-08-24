@@ -435,7 +435,12 @@
     <ClInclude Include="SimpleEnum.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TinyXML\tinystr.h" />
+    <ClInclude Include="TinyXML\tinyxml.h" />
     <ClInclude Include="Units.h" />
+    <ClInclude Include="XMLNode.h" />
+    <ClInclude Include="XMLSerialize.h" />
+    <ClInclude Include="XMLUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PropertySet.cpp" />
@@ -453,7 +458,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TinyXML\tinystr.cpp" />
+    <ClCompile Include="TinyXML\tinyxml.cpp" />
+    <ClCompile Include="TinyXML\tinyxmlerror.cpp" />
+    <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
     <ClCompile Include="Units.cpp" />
+    <ClCompile Include="XMLNode.cpp" />
+    <ClCompile Include="XMLSerialize.cpp" />
+    <ClCompile Include="XMLUtils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

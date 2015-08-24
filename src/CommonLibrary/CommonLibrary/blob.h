@@ -10,8 +10,8 @@ namespace CommonLib
 	class CBlob : AutoRefCounter
 	{
 	public:
-
-		CBlob(alloc_t *pAlloc = NULL, uint32 nSize = 0);
+		CBlob(alloc_t *pAlloc = NULL);
+		CBlob(uint32 nSize, alloc_t *pAlloc = NULL);
 		CBlob(const CBlob& blob);
 		CBlob(byte* pBuf, uint32 nSize, bool bAttach = true, alloc_t *pAlloc = NULL);
 		CBlob& operator = (const CBlob& blob);
@@ -24,6 +24,10 @@ namespace CommonLib
 		bool operator >(const CBlob& blob) const;
 		bool operator <=(const CBlob& blob) const;
 		bool operator >=(const CBlob& blob) const;
+
+
+		const unsigned char& operator [](size_t index) const;
+		unsigned char& operator [](size_t index);
 
 		int  equals(const unsigned char *buffer, size_t _size = (size_t)-1) const;
 		int  equals(const CBlob& blob) const;
