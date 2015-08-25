@@ -51,14 +51,17 @@
     <ClInclude Include="TinyXML\tinyxml.h">
       <Filter>TinyXML</Filter>
     </ClInclude>
-    <ClInclude Include="XMLSerialize.h">
-      <Filter>XML</Filter>
-    </ClInclude>
     <ClInclude Include="XMLNode.h">
       <Filter>XML</Filter>
     </ClInclude>
     <ClInclude Include="XMLUtils.h">
       <Filter>XML</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLDoc.h">
+      <Filter>XML</Filter>
+    </ClInclude>
+    <ClInclude Include="GisCommonLib.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -83,13 +86,13 @@
     <ClCompile Include="TinyXML\tinyxmlparser.cpp">
       <Filter>TinyXML</Filter>
     </ClCompile>
-    <ClCompile Include="XMLSerialize.cpp">
-      <Filter>XML</Filter>
-    </ClCompile>
     <ClCompile Include="XMLNode.cpp">
       <Filter>XML</Filter>
     </ClCompile>
     <ClCompile Include="XMLUtils.cpp">
+      <Filter>XML</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLDoc.cpp">
       <Filter>XML</Filter>
     </ClCompile>
   </ItemGroup>

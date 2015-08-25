@@ -122,6 +122,10 @@ namespace CommonLib
 	{
 		return (m_nSize - m_nPos) >= nSize;
 	}
+	bool FxMemoryReadStream::IsEndOfStream() const
+	{
+		return m_nSize == m_nPos;
+	}
 	FxMemoryReadStream::FxMemoryReadStream(alloc_t *pAlloc) : FxStreamBase(pAlloc)
 	{
 

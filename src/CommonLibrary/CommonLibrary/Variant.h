@@ -316,8 +316,6 @@ public:
 	ToStringVisitor (){}
 	operator str_t()const{return val_;};
 
-private:
-	str_t val_;
 
 	virtual void Visit(const CNullVariant&){val_ = str_t();}
 	virtual void Visit(const bool           & val)
@@ -348,6 +346,8 @@ private:
 	{ val_ = str_t();}
 	virtual void Visit(const CBlob     &)
 	{ val_ = str_t();}
+private:
+	str_t val_;
 
 
 };

@@ -82,6 +82,7 @@ namespace CommonLib
 		virtual void read_bytes(byte* dst, size_t size);
 		virtual void read_inverse(byte* buffer, size_t size);
 		virtual bool checkRead(uint32 nSize) const;
+		virtual bool IsEndOfStream() const;
 		/*virtual void read( byte* pBuffer, size_t bufLen );
 		virtual void read(bool& value);
 		virtual void read(char& value) ;

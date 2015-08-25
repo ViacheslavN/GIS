@@ -166,7 +166,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">
     <OutDir>$(SolutionDir)Output\</OutDir>
     <IntDir>$(SolutionDir)Obj\$(Configuration)\_$(PlatformName)\$(ConfigurationName)\$(TargetName)\</IntDir>
-    <TargetName>gis_common_ds</TargetName>
+    <TargetName>LibGisCommon32_ds</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
     <OutDir>$(SolutionDir)Output\</OutDir>
@@ -295,7 +295,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\gis_common_ds.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibGisCommon32_ds.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
@@ -430,6 +430,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="GisCommonLib.h" />
     <ClInclude Include="GisEngineCommon.h" />
     <ClInclude Include="PropertySet.h" />
     <ClInclude Include="SimpleEnum.h" />
@@ -439,7 +440,7 @@
     <ClInclude Include="TinyXML\tinyxml.h" />
     <ClInclude Include="Units.h" />
     <ClInclude Include="XMLNode.h" />
-    <ClInclude Include="XMLSerialize.h" />
+    <ClInclude Include="XMLDoc.h" />
     <ClInclude Include="XMLUtils.h" />
   </ItemGroup>
   <ItemGroup>
@@ -464,7 +465,7 @@
     <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
     <ClCompile Include="Units.cpp" />
     <ClCompile Include="XMLNode.cpp" />
-    <ClCompile Include="XMLSerialize.cpp" />
+    <ClCompile Include="XMLDoc.cpp" />
     <ClCompile Include="XMLUtils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

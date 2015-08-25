@@ -179,11 +179,24 @@ void IWriteStreamBase::write(double value)
 {
 	writeT<double>(value);
 }
-void IWriteStreamBase::write(const CommonLib::str_t& str)
+void IWriteStreamBase::write(const CommonLib::str_t& str, bool bwchar)
 {
 	writeT<uint32>(str.length());
 	if(str.length())
-		write((byte*)str.cwstr(), str.length() *2);
+	{
+		if(bwchar)
+			write((byte*)str.cwstr(), str.length() *2);
+		else
+			write((byte*)str.cstr(), str.length());
+	}
 }
 
+void IWriteStreamBase::write(const char* pszStr)
+{
+	write((byte*)pszStr, strlen(pszStr));
+}
+void IWriteStreamBase::write(const wchar_t* pszStr)
+{
+	write((byte*)pszStr, 2* wcslen(pszStr));
+}
 }

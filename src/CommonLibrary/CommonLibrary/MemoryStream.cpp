@@ -158,6 +158,10 @@ namespace CommonLib
 	{
 		return (m_nSize - m_nPos) >= nSize;
 	}
+	bool MemoryStream::IsEndOfStream() const
+	{
+		return m_nSize == m_nPos;
+	}
 	/*
 	void MemoryStream::read( byte* pBuffer, size_t bufLen)
 	{

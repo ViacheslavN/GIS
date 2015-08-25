@@ -73,7 +73,10 @@ namespace CommonLib
 	{
 		return (size() - pos()) >= nSize;
 	}
-
+	bool CReadFileStream::IsEndOfStream() const
+	{
+		return size() == pos();
+	}
 	CWriteFileStream::CWriteFileStream()
 	{
 

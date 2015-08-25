@@ -1,0 +1,54 @@
+#ifndef _LIB_GIS_ENGINE_COMMON_XML_DOC_H_
+#define _LIB_GIS_ENGINE_COMMON_XML_DOC_H_
+
+#include "GisEngineCommon.h"
+
+namespace GisEngine
+{
+	namespace GisCommon
+	{
+		class CXMLDoc : public IXMLDoc
+		{
+			public:
+
+				enum enXmlLoadingState
+				{
+					xlsParseTag,
+					xlsParseName,
+					xlsParseCloseName,
+					xlsParseAttributes,
+				};
+
+				CXMLDoc();
+				~CXMLDoc();
+
+				virtual bool  Open(const CommonLib::str_t& xml);
+				virtual bool  Open(CommonLib::IReadStream* pStream);
+
+				virtual bool  Save(const CommonLib::str_t& xml);
+				virtual bool  Save(CommonLib::IWriteStream* pStream);
+
+				virtual IXMLNodePtr			   GetRoot() const;
+				virtual void 				   SetRoot(IXMLNode* pNode); 
+		private:
+				//praser
+			bool get_char(CommonLib::IReadStream* pStream);
+			bool get_token (CommonLib::IReadStream* pStream);
+			bool skip_space(CommonLib::IReadStream* pStream);
+			bool is_empty_char();
+			bool is_escape_symbol();
+
+			void parseName(CommonLib::IReadStream* pStream, enXmlLoadingState& state);
+
+			private:
+
+			char  m_char;
+			std::string m_token;
+			uint32 m_nCurrCol;
+			uint32 m_nCurrRow;
+			IXMLNodePtr m_pRoot;
+
+		};
+	}
+}
+#endif

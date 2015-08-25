@@ -21,12 +21,14 @@ namespace GisEngine
 		}
 		std::vector<char> utf16_to_utf8(const wchar_t* str16)
 		{
+#ifdef WIN32
 			int len = (int)wcslen(str16);
 			int size = ::WideCharToMultiByte(CP_UTF8, 0, str16, len, 0, 0, 0, 0);
 			std::vector<char> str8(size + 1);
 			::WideCharToMultiByte(CP_UTF8, 0, str16, len, &str8[0], size, 0, 0);
 			str8[size] = 0;
 			return str8;
+#endif
 		}
 
 		CommonLib::str_t blob_to_string(const CommonLib::CBlob& blob)

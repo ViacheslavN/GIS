@@ -44,10 +44,12 @@ namespace GisEngine
 			virtual ~IXMLNode(){}
 
 			virtual void                   AddChildNode(IXMLNode* child) = 0;
-			virtual IXMLNodePtr			   CreateChildNode(const wchar_t *pszName = L"") = 0;
+			virtual IXMLNodePtr			   CreateChildNode(const CommonLib::str_t& sName) = 0;
 			virtual uint32				   GetChildCnt() const = 0;
 			virtual IXMLNodePtr			   GetChild(uint32 nIndex) const = 0;
 			virtual IXMLNodePtr			   GetChild(const wchar_t *pszName) = 0;
+
+			virtual IXMLNodePtr			  GetParent() const= 0;
 
 
 
@@ -60,36 +62,36 @@ namespace GisEngine
 			virtual const CommonLib::str_t&   GetCDATA() const = 0;
 			virtual void                   SetCDATA(const   CommonLib::str_t& cdata) = 0;
 
-			virtual CommonLib::CBlob&      GetBlobCDATA() const = 0;
+			virtual const CommonLib::CBlob&      GetBlobCDATA() const = 0;
 			virtual void                   SetBlobCDATA(const CommonLib::CBlob &data) = 0;
 			
 	
 			virtual void                 AddProperty(const CommonLib::str_t& sName, const CommonLib::CVariant& val) = 0;
-			virtual void				 AddPropertyInt16(const wchar_t *name, int16 value ) = 0;
-			virtual void				 AddPropertyInt16U(const wchar_t *name, uint16 value)  = 0;
-			virtual void				 AddPropertyInt32(const wchar_t *name, int32 value)  = 0;
-			virtual void				 AddPropertyInt32U(const wchar_t *name, uint32 value)  = 0;
-			virtual void				 AddPropertyInt64(const wchar_t *name, int64 value)  = 0;
-			virtual void				 AddPropertyIntU64(const wchar_t *name, uint64 value)  = 0;
-			virtual void				 AddPropertyDouble(const wchar_t *name, double value)  = 0;
-			virtual void                 AddPropertyBool(const wchar_t *name, bool value)  = 0;
-			virtual void				 AddPropertyString(const wchar_t *name, const CommonLib::str_t& value)  = 0;
+			virtual void				 AddPropertyInt16(const CommonLib::str_t& sName, int16 value ) = 0;
+			virtual void				 AddPropertyInt16U(const CommonLib::str_t& sName, uint16 value)  = 0;
+			virtual void				 AddPropertyInt32(const CommonLib::str_t& sName, int32 value)  = 0;
+			virtual void				 AddPropertyInt32U(const CommonLib::str_t& sName, uint32 value)  = 0;
+			virtual void				 AddPropertyInt64(const CommonLib::str_t& sName, int64 value)  = 0;
+			virtual void				 AddPropertyIntU64(const CommonLib::str_t& sName, uint64 value)  = 0;
+			virtual void				 AddPropertyDouble(const CommonLib::str_t& sName, double value)  = 0;
+			virtual void                 AddPropertyBool(const CommonLib::str_t& sName, bool value)  = 0;
+			virtual void				 AddPropertyString(const CommonLib::str_t& sName, const CommonLib::str_t& value)  = 0;
 
 		
-			virtual bool				   PropertyExists(const wchar_t *name) const = 0;
-			virtual CommonLib::CVariant*   GetProperty(const wchar_t *name) = 0;
+			virtual bool				   PropertyExists(const CommonLib::str_t& sName) const = 0;
+			virtual const CommonLib::str_t*   GetProperty(const CommonLib::str_t& sName) const= 0;
 			virtual uint32				   GetPropertyCnt() const = 0;
-			virtual CommonLib::CVariant*   GetProperty(uint32 nIndex) = 0;
+			virtual const CommonLib::str_t*   GetProperty(uint32 nIndex) const= 0;
 						
-			virtual int16				 GetPropertyInt16(const wchar_t *name, int16 defValue) const = 0;
-			virtual uint16				 GetPropertyInt16U(const wchar_t *name, uint16 defValue) const = 0;
-			virtual int32				 GetPropertyInt32(const wchar_t *name, int32 defValue) const = 0;
-			virtual uint32				 GetPropertyInt32U(const wchar_t *name, uint32 defValue) const = 0;
-			virtual int64				 GetPropertyInt64(const wchar_t *name, int64 defValue) const = 0;
-			virtual uint64				 GetPropertyIntU64(const wchar_t *name, uint64 defValue) const = 0;
-			virtual double               GetPropertyDouble(const wchar_t *name, double defValue) const = 0;
-			virtual bool                 GetPropertyBool(const wchar_t *name, bool defValue) const = 0;
-			virtual CommonLib::str_t	 GetPropertyString(const wchar_t *name, const CommonLib::str_t& defValue) const = 0;
+			virtual int16				 GetPropertyInt16(const CommonLib::str_t& sName, int16 defValue) const = 0;
+			virtual uint16				 GetPropertyInt16U(const CommonLib::str_t& sName, uint16 defValue) const = 0;
+			virtual int32				 GetPropertyInt32(const CommonLib::str_t& sName, int32 defValue) const = 0;
+			virtual uint32				 GetPropertyInt32U(const CommonLib::str_t& sName, uint32 defValue) const = 0;
+			virtual int64				 GetPropertyInt64(const CommonLib::str_t& sName, int64 defValue) const = 0;
+			virtual uint64				 GetPropertyIntU64(const CommonLib::str_t& sName, uint64 defValue) const = 0;
+			virtual double               GetPropertyDouble(const CommonLib::str_t& sName, double defValue) const = 0;
+			virtual bool                 GetPropertyBool(const CommonLib::str_t& sName, bool defValue) const = 0;
+			virtual CommonLib::str_t	 GetPropertyString(const CommonLib::str_t& sName, const CommonLib::str_t& defValue) const = 0;
 
 		};
 
@@ -99,15 +101,13 @@ namespace GisEngine
 			virtual ~IXMLDoc(){}
 
 			virtual bool  Open(const CommonLib::str_t& xml) = 0;
-			virtual bool  Open(const CommonLib::IReadStream* pStream) = 0;
+			virtual bool  Open(CommonLib::IReadStream* pStream) = 0;
 
 			virtual bool  Save(const CommonLib::str_t& xml) = 0;
-			virtual bool  Save(const CommonLib::IWriteStream* pStream) = 0;
+			virtual bool  Save(CommonLib::IWriteStream* pStream) = 0;
 
-			virtual IXMLNodePtr			   CreateChildNode(const wchar_t *pszName = L"") = 0;
-			virtual uint32				   GetChildCnt() const = 0;
-			virtual IXMLNodePtr			   GetChild(uint32 nIndex) const = 0;
-			virtual IXMLNodePtr			   GetChild(const wchar_t *pszName) = 0;
+			virtual IXMLNodePtr			   GetRoot() const = 0;
+			virtual void 				   SetRoot(IXMLNode* pNode)= 0;
 
 
 		};
