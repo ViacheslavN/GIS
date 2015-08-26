@@ -106,8 +106,9 @@ namespace GisEngine
 			virtual bool  Save(const CommonLib::str_t& xml) = 0;
 			virtual bool  Save(CommonLib::IWriteStream* pStream) = 0;
 
-			virtual IXMLNodePtr			   GetRoot() const = 0;
-			virtual void 				   SetRoot(IXMLNode* pNode)= 0;
+			virtual IXMLNodePtr			   GetNodes() const = 0;
+			virtual void	Clear() = 0;
+			virtual const CommonLib::str_t& GetError() const = 0;
 
 
 		};

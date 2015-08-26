@@ -83,7 +83,7 @@ public:
 	virtual void write(uint64 value) = 0;
 	virtual void write(float value) = 0;
 	virtual void write(double value) = 0;
-	virtual void write(const CommonLib::str_t& str, bool bwchar) = 0;
+	virtual void write(const CommonLib::str_t& str) = 0;
 
 	virtual void write(const char* pszStr) = 0;
 	virtual void write(const wchar_t* pszStr) = 0;
@@ -234,7 +234,7 @@ public:
 	virtual void write(uint64 value);
 	virtual void write(float value);
 	virtual void write(double value);
-	virtual void write(const CommonLib::str_t& str, bool bwchar);
+	virtual void write(const CommonLib::str_t& str);
 	virtual void write(const char* pszStr);
 	virtual void write(const wchar_t* pszStr);
 };

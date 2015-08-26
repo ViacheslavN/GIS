@@ -2,6 +2,7 @@
 #include "XMLDoc.h"
 #include "CommonLibrary/FileStream.h"
 #include "XMLNode.h"
+#include "XMLUtils.h"
 namespace GisEngine
 {
 	namespace GisCommon
@@ -10,16 +11,18 @@ namespace GisEngine
 		{
 			m_char = 0;
 			m_token.reserve(1000);
-			m_nCurrCol = 0;
-			m_nCurrRow = 0;
-
+			m_nCurrCol = 1;
+			m_nCurrRow = 1;
 			m_pRoot = new CXMLNode();
 		}
 		CXMLDoc::~CXMLDoc()
 		{
 
 		}
-
+		const CommonLib::str_t& CXMLDoc::GetError() const
+		{
+			return m_sError;
+		}
 		bool  CXMLDoc::Open(const CommonLib::str_t& xml)
 		{
 			CommonLib::CReadFileStream fStream;
@@ -29,9 +32,11 @@ namespace GisEngine
 		}
 		bool  CXMLDoc::Open(CommonLib::IReadStream* pStream)
 		{
-			m_nCurrCol = 0;
-			m_nCurrRow = 0;
-			IXMLNodePtr pParentNode;
+
+			Clear();
+			m_nCurrCol = 1;
+			m_nCurrRow = 1;
+
 			IXMLNodePtr pNode;
 			enXmlLoadingState state = xlsParseTag;
 			while (get_token(pStream))
@@ -45,6 +50,8 @@ namespace GisEngine
 					}
 					else
 					{
+						m_sError.format(L"Open tag waiting, but found: %s, row: %d, col %d", m_token.c_str(), m_nCurrRow, m_nCurrCol);
+						Clear();
 						return false;
 					}
 					break;
@@ -94,12 +101,13 @@ namespace GisEngine
 						}
 						else
 						{
-							m_pRoot->AddChildNode(pNode.get());
+							pNode = m_pRoot->CreateChildNode(m_token.c_str());
 						}
 						state = xlsParseAttributes;
 					}
+					break;
 				case xlsParseAttributes:
-					/*if( m_token == "/" )
+					if( m_token == "/" )
 					{
 						get_token(pStream);
 						if( m_token == ">" )
@@ -109,30 +117,60 @@ namespace GisEngine
 						}
 						else
 						{
+							m_sError.format(L"Missed close branch in node: %s, row: %d, col %d", pNode->GetName().cstr(), m_nCurrRow, m_nCurrCol);
+							Clear();
 							return false;
 						}
 					}            
 					else if ( m_token == ">" )
 					{
-						find_open_tag( );
+						find_open_tag(pStream );
 						state = xlsParseTag;
-						pNode->set_text( m_token );
+
+						if(!m_vecText.empty())
+						{
+							if(m_vecText.back() != 0)
+								m_vecText.push_back(0);
+							CommonLib::str_t sText;
+							utf8_to_utf16((const char *)&m_vecText[0], sText);
+							pNode->SetText( sText );
+						}
+
+						
 					}
 					else
 					{
-						cXmlNode* i = pNode->create_attrib( m_token );
-						get_token();
+						CommonLib::str_t sAttrName = m_token.c_str();
+						get_token(pStream);
 						if( m_token != "=")
 						{
-							Error("Xml::Expected '=' but found %s\n", m_token.c_str());
-							delete pRoot;
-							return NULL;//Assert(true, "Closed tag!");
+							m_sError.format(L"Expected '=' but found: %s, row: %d, col %d", m_token.c_str(), m_nCurrRow, m_nCurrCol);
+							Clear();
+							return false; 
 						}
-						get_string();
-						i->set_text( m_token );
-					}*/
+						get_string(pStream);
+						if(!m_vecText.empty())
+						{
+							if(m_vecText.back() != 0)
+								m_vecText.push_back(0);
+							CommonLib::str_t sText;
+							utf8_to_utf16((const char *)&m_vecText[0], sText);
+							pNode->AddPropertyString(sAttrName, sText);
+						}
+					}
 					break;
 				case  xlsParseCloseName:
+					if( CommonLib::str_t(m_token.c_str()) != pNode->GetName() )
+					{						
+						m_sError.format(L"Error not close tag: %s, row: %d, col %d", m_token.c_str(), m_nCurrRow, m_nCurrCol);
+						return false;
+					}
+					else
+					{
+						pNode = pNode->GetParent();
+						while( get_token(pStream) && m_token != ">" ){}
+						state = xlsParseTag;
+					}
 					break;
 				}
 			}
@@ -147,7 +185,7 @@ namespace GisEngine
 			if(m_char=='\n')
 			{
 				m_nCurrRow++;
-				m_nCurrCol = 0;
+				m_nCurrCol = 1;
 			}
 			else
 				m_nCurrCol++;
@@ -156,6 +194,9 @@ namespace GisEngine
 		}
 		bool CXMLDoc::get_token (CommonLib::IReadStream* pStream)
 		{
+			if(pStream->IsEndOfStream())
+				return false;
+
 			m_token = "";
 			skip_space(pStream);
 			m_token	= m_char;
@@ -187,7 +228,33 @@ namespace GisEngine
 		{
 			return m_char == '<' || m_char == '"'|| m_char=='>'|| m_char==' '|| m_char == '='|| m_char=='/';
 		}
+		bool CXMLDoc::find_open_tag(CommonLib::IReadStream* pStream )
+		{
+			m_vecText.clear();
+			while( is_empty_char() && get_char(pStream) );
 
+			m_token = "";
+			while( m_char != '<' )
+			{
+				m_vecText.push_back(m_char);
+				if( !get_char(pStream) )
+					break;
+			}
+			m_token = m_char;
+			//utils::trim( m_token );
+			return pStream->IsEndOfStream();
+		}
+		bool CXMLDoc::get_string( CommonLib::IReadStream* pStream )
+		{
+			m_vecText.clear();
+			skip_space(pStream);
+			while( m_char != '\"' && get_char(pStream) ) ;
+			m_token = "";
+			while( get_char(pStream) && m_char != '\"' ) 
+				m_vecText.push_back(m_char);
+			m_char = 0;
+			return pStream->IsEndOfStream();
+		}
 		bool  CXMLDoc::Save(const CommonLib::str_t& xml)
 		{
 
@@ -199,7 +266,7 @@ namespace GisEngine
 		bool  CXMLDoc::Save(CommonLib::IWriteStream* pStream)
 		{
 
-			pStream->write("<?xml version=\"1.0\"  encoding=\"utf-8\"?>\n");
+			pStream->write("<?xml version=\"1.0\"  encoding=\"UTF-8\"?>\n");
 	
 			for(uint32 i = 0; i < m_pRoot->GetChildCnt(); ++i)
 			{
@@ -209,13 +276,16 @@ namespace GisEngine
 			}
 			return true;
 		}
-		IXMLNodePtr	CXMLDoc::GetRoot() const
+		IXMLNodePtr	CXMLDoc::GetNodes() const
 		{
 			return m_pRoot;
 		}
-		void CXMLDoc::SetRoot(IXMLNode* pNode)
+		 
+		void CXMLDoc::Clear()
 		{
-			m_pRoot = pNode;
+			CXMLNode *pNode = (CXMLNode*)(m_pRoot.get());
+			if(pNode)
+				pNode->clear();
 		}
 	}
 }

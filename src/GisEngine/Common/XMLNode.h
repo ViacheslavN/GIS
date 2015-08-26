@@ -68,7 +68,9 @@ namespace GisEngine
 			virtual CommonLib::str_t	 GetPropertyString(const CommonLib::str_t &name, const CommonLib::str_t& defValue) const;
 
 			void save(CommonLib::IWriteStream *pSteam);
-
+			void clear();
+		private:
+			void writeUtf16(CommonLib::IWriteStream *pSteam, const CommonLib::str_t& str);
 		private:
 
 			  CommonLib::str_t m_sName;

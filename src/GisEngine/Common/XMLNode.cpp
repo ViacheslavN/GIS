@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "XMLNode.h"
-
+#include "XMLUtils.h"
 namespace GisEngine
 {
 	namespace GisCommon
@@ -296,13 +296,11 @@ namespace GisEngine
 					 pSteam->write(" ");
 					 pSteam->write(m_Props[i].first.cstr());
 					 pSteam->write("=\"");
-					 pSteam->write(m_Props[i].second.cstr());
+					 writeUtf16(pSteam, m_Props[i].second);
 					 pSteam->write("\"");
 				}
 
 			}
-		
-
 			if(m_sText.isEmpty() && m_sCAData.isEmpty() && m_blob.size() == 0 && m_Nodes.empty())
 			{
 				pSteam->write("/>\n");
@@ -320,12 +318,34 @@ namespace GisEngine
 			else if(!m_sText.isEmpty())
 			{
 				pSteam->write(">");
-				pSteam->write(m_sText.cstr());
+				writeUtf16(pSteam, m_sText);
 			}
-
 			pSteam->write("</");
 			pSteam->write(m_sName.cstr());
 			pSteam->write(">\n");
 		}
+
+
+		void CXMLNode::writeUtf16(CommonLib::IWriteStream *pSteam, const CommonLib::str_t& str)
+		{
+			std::vector<char> vecUtf8 =  utf16_to_utf8(str);
+			if(!vecUtf8.empty())
+			{
+				pSteam->write((byte*)&vecUtf8[0], vecUtf8.back() == 0 ? vecUtf8.size() - 1 : vecUtf8.size());
+			}
+		}
+
+		void CXMLNode::clear()
+		{
+			m_sName.clear();
+			m_sText.clear();
+			m_sCAData.clear();
+			m_blob.clear();
+			m_Nodes.clear();
+			m_NodeByName.clear();
+			m_Props.clear();
+			m_PropsByName.clear();
+		}
 	}
+
 }

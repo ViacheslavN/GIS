@@ -28,13 +28,18 @@ namespace GisEngine
 				virtual bool  Save(const CommonLib::str_t& xml);
 				virtual bool  Save(CommonLib::IWriteStream* pStream);
 
-				virtual IXMLNodePtr			   GetRoot() const;
-				virtual void 				   SetRoot(IXMLNode* pNode); 
+				virtual IXMLNodePtr			   GetNodes() const;
+				virtual void Clear();
+
+				const CommonLib::str_t& GetError() const;
 		private:
 				//praser
 			bool get_char(CommonLib::IReadStream* pStream);
 			bool get_token (CommonLib::IReadStream* pStream);
 			bool skip_space(CommonLib::IReadStream* pStream);
+			bool find_open_tag(CommonLib::IReadStream* pStream );
+			bool get_string( CommonLib::IReadStream* pStream );
+
 			bool is_empty_char();
 			bool is_escape_symbol();
 
@@ -44,10 +49,11 @@ namespace GisEngine
 
 			char  m_char;
 			std::string m_token;
+			std::vector<char> m_vecText;
 			uint32 m_nCurrCol;
 			uint32 m_nCurrRow;
 			IXMLNodePtr m_pRoot;
-
+			CommonLib::str_t m_sError;
 		};
 	}
 }
