@@ -29,6 +29,9 @@ namespace GisEngine
 		struct ILayers;
 		struct IGraphicsContainer;
 		struct IFeatureRenderer;
+		struct ISelection;
+		struct ILabelEngine;
+		struct IBookmarks;
 
 		COMMON_LIB_REFPTR_TYPEDEF(ILayer);
 		COMMON_LIB_REFPTR_TYPEDEF(IMap);
@@ -36,8 +39,39 @@ namespace GisEngine
 		COMMON_LIB_REFPTR_TYPEDEF(ILayers);
 		COMMON_LIB_REFPTR_TYPEDEF(IGraphicsContainer);
 		COMMON_LIB_REFPTR_TYPEDEF(IFeatureRenderer);
+		COMMON_LIB_REFPTR_TYPEDEF(ISelection);
+		COMMON_LIB_REFPTR_TYPEDEF(ILabelEngine);
+		COMMON_LIB_REFPTR_TYPEDEF(IBookmarks);
 
-		struct  ILayer : public CommonLib::AutoRefCounter
+		struct IMap : public  CommonLib::AutoRefCounter , 
+					  public GisCommon::IStreamSerialize, 
+					  public GisCommon::IXMLSerialize
+		{
+			IMap(){}
+			~IMap(){}
+			virtual CommonLib::str_t	              GetName() const = 0;
+			virtual void                              SetName(const  CommonLib::str_t& name) = 0;
+			virtual ILayersPtr                        GetLayers() const = 0;
+			virtual ISelectionPtr                     GetSelection() const = 0;
+			virtual GisGeometry::IEnvelopePtr         GetFullExtent(GisGeometry::ISpatialReference* spatRef = NULL) const = 0;
+			virtual void                              SetFullExtent(GisGeometry::IEnvelope* env) = 0;
+			virtual GisGeometry::ISpatialReferencePtr GetSpatialReference() const = 0;
+			virtual void                              SetSpatialReference(GisGeometry::ISpatialReference* spatRef) = 0;
+			virtual void                              Draw(Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel) = 0;
+			virtual void                              PartialDraw( eDrawPhase phase, Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel) = 0;
+			virtual ILabelEnginePtr                   GetLabelEngine() const = 0;
+			virtual void                              SetLabelEngine(ILabelEngine* engine) = 0;
+			virtual  GisCommon::Units		          GetMapUnits() const = 0;
+			virtual void                              SetMapUnits( GisCommon::Units units ) = 0;
+			virtual IGraphicsContainerPtr             GetGraphicsContainer() const = 0;
+			virtual void                              SetDelayDrawing(bool delay) = 0;
+			virtual IBookmarksPtr                     GetBookmarks() const = 0;
+			virtual GisCommon::IPropertySetPtr        GetMapProperties() = 0;
+		};
+
+		struct  ILayer : public CommonLib::AutoRefCounter , 
+						 public GisCommon::IStreamSerialize, 
+						  public GisCommon::IXMLSerialize
 		{
 			ILayer(){}
 			virtual ~ILayer(){}
@@ -53,7 +87,7 @@ namespace GisEngine
 			virtual bool                      IsValid() const = 0;
 			virtual bool                      GetVisible() const = 0;
 			virtual void                      SetVisible(bool flag) = 0;
-			virtual bool                      IsActiveOnScale(double scale) const = 0; // If layer can be shown on specified scale
+			virtual bool                      IsActiveOnScale(double scale) const = 0; 
 		};
 
 		struct  ILayers : public CommonLib::AutoRefCounter

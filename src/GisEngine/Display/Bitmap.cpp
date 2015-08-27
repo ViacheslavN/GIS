@@ -362,8 +362,7 @@ namespace GisEngine
 
 		bool CBitmap::saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszNodeName) const
 		{
-			GisCommon::IXMLNodePtr pBlobNode = pXmlNode->CreateChildNode();
-			pBlobNode->SetName(pszNodeName);
+			GisCommon::IXMLNodePtr pBlobNode = pXmlNode->CreateChildNode(pszNodeName);
 			CommonLib::MemoryStream stream(m_pAlloc);
 			save(&stream);
 			CommonLib::CBlob blob(stream.buffer(), stream.size(), true, NULL);
@@ -381,7 +380,8 @@ namespace GisEngine
 					continue;
 				 if(pBlobNode->GetName() != pszNodeName)
 					 continue;
-				 CommonLib::CBlob& blob = pBlobNode->GetBlobCDATA();
+				 CommonLib::CBlob blob;
+				 pBlobNode->GetBlobCDATA(blob);
 				 CommonLib::FxMemoryReadStream stream;
 				 stream.attach(blob.buffer(), blob.size());
 				 return load(&stream);

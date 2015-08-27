@@ -82,13 +82,13 @@ namespace GisEngine
 			m_sCAData = cdata;
 		}
 
-		const CommonLib::CBlob&  CXMLNode::GetBlobCDATA() const
+		void CXMLNode::GetBlobCDATA(CommonLib::CBlob& data) const
 		{
-			return m_blob;
+			 string_to_blob(m_sCAData, data);
 		}
 		void   CXMLNode::SetBlobCDATA(const CommonLib::CBlob &data)
 		{
-			m_blob = data;
+			blob_to_string(data, m_sCAData);
 		}
 
 
@@ -281,7 +281,7 @@ namespace GisEngine
 		{
 			CommonLib::str_t sName;
 			 sName.format(L"<%ls", m_sName.wstr());
-			if(m_Props.empty() && m_sText.isEmpty() && m_sCAData.isEmpty() && m_blob.size() == 0 && m_Nodes.empty())
+			if(m_Props.empty() && m_sText.isEmpty() && m_sCAData.isEmpty() && m_Nodes.empty())
 			{
 			  sName += L"/>\n";
 			  pSteam->write(sName.cstr());
@@ -301,25 +301,45 @@ namespace GisEngine
 				}
 
 			}
-			if(m_sText.isEmpty() && m_sCAData.isEmpty() && m_blob.size() == 0 && m_Nodes.empty())
+			if(m_sText.isEmpty() && m_sCAData.isEmpty() && m_Nodes.empty())
 			{
 				pSteam->write("/>\n");
 				return;
 			}
-			
+			bool bClose = false;
 			if(!m_Nodes.empty())
 			{
+				bClose = true;
 				pSteam->write(">\n");
 				for (size_t i = 0, sz = m_Nodes.size(); i < sz; ++i)
 				{
 					((CXMLNode*)(m_Nodes[i].get()))->save(pSteam);
 				}
 			}
-			else if(!m_sText.isEmpty())
+			if(!m_sText.isEmpty())
 			{
-				pSteam->write(">");
+				if(!bClose)
+				{
+					pSteam->write(">");
+					bClose = true;
+				}
 				writeUtf16(pSteam, m_sText);
 			}
+
+			if(!m_sCAData.isEmpty())
+			{
+				if(!bClose)
+				{
+					pSteam->write(">");
+					bClose = true;
+				}
+
+				pSteam->write("<![CDATA[ ");
+				pSteam->write(m_sCAData.cstr());
+				pSteam->write(" ]]>");
+			}
+
+			
 			pSteam->write("</");
 			pSteam->write(m_sName.cstr());
 			pSteam->write(">\n");
@@ -328,7 +348,8 @@ namespace GisEngine
 
 		void CXMLNode::writeUtf16(CommonLib::IWriteStream *pSteam, const CommonLib::str_t& str)
 		{
-			std::vector<char> vecUtf8 =  utf16_to_utf8(str);
+			std::vector<char> vecUtf8;
+			utf16_to_utf8(str, vecUtf8);
 			if(!vecUtf8.empty())
 			{
 				pSteam->write((byte*)&vecUtf8[0], vecUtf8.back() == 0 ? vecUtf8.size() - 1 : vecUtf8.size());
@@ -340,7 +361,6 @@ namespace GisEngine
 			m_sName.clear();
 			m_sText.clear();
 			m_sCAData.clear();
-			m_blob.clear();
 			m_Nodes.clear();
 			m_NodeByName.clear();
 			m_Props.clear();

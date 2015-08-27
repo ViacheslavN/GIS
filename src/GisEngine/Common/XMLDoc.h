@@ -13,10 +13,14 @@ namespace GisEngine
 
 				enum enXmlLoadingState
 				{
+					//xlsBeginParse,
+					//xlsOpenTag
 					xlsParseTag,
+					//xlsParseInTag,
 					xlsParseName,
 					xlsParseCloseName,
-					xlsParseAttributes,
+					xlsParseAttributes
+
 				};
 
 				CXMLDoc();

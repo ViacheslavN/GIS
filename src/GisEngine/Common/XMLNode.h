@@ -36,7 +36,7 @@ namespace GisEngine
 			virtual const CommonLib::str_t&   GetCDATA() const;
 			virtual void                   SetCDATA(const   CommonLib::str_t& cdata);
 
-			virtual const CommonLib::CBlob&      GetBlobCDATA() const;
+			virtual void			       GetBlobCDATA(CommonLib::CBlob& data) const;
 			virtual void                   SetBlobCDATA(const CommonLib::CBlob &data);
 
 
@@ -76,7 +76,6 @@ namespace GisEngine
 			  CommonLib::str_t m_sName;
 			  CommonLib::str_t m_sText;
 			  CommonLib::str_t m_sCAData;
-			  CommonLib::CBlob m_blob;
 
 			  IXMLNodePtr m_pParent;
 			  typedef std::vector<IXMLNodePtr> TNodes;

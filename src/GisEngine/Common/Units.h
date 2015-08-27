@@ -4,7 +4,7 @@
 
 namespace GisEngine
 {
-	namespace Common
+	namespace GisCommon
 	{
 		enum Units
 		{ 

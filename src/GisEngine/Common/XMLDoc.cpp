@@ -39,6 +39,7 @@ namespace GisEngine
 
 			IXMLNodePtr pNode;
 			enXmlLoadingState state = xlsParseTag;
+			//enXmlLoadingState prevState = xlsParseTag;
 			while (get_token(pStream))
 			{
 				switch(state)
@@ -69,7 +70,8 @@ namespace GisEngine
 					{
 						while( get_token(pStream) && m_token != "--" ){}
 						while( get_token(pStream) && m_token != ">" ){}
-						state = xlsParseTag;
+						//prevState = state;
+						//state = xlsParseTag;
 					}
 					else if ( m_token == "![CDATA[" )
 					{
@@ -83,9 +85,10 @@ namespace GisEngine
 									pNode->SetCDATA(CommonLib::str_t(t.c_str()) );
 									break;
 								}
-								t+= ']';
+								//t+= ']';
 							}
-							t+= m_char;
+							if(m_char != ' ')
+								t+= m_char;
 						}
 						while( get_char(pStream) );
 						while( get_token(pStream) && m_token != ">" ){}
@@ -169,6 +172,17 @@ namespace GisEngine
 					{
 						pNode = pNode->GetParent();
 						while( get_token(pStream) && m_token != ">" ){}
+
+						find_open_tag(pStream );
+						if(!m_vecText.empty())
+						{
+							if(m_vecText.back() != 0)
+								m_vecText.push_back(0);
+							CommonLib::str_t sText;
+							utf8_to_utf16((const char *)&m_vecText[0], sText);
+							pNode->SetText( sText );
+						}
+						
 						state = xlsParseTag;
 					}
 					break;
@@ -179,7 +193,8 @@ namespace GisEngine
 
 		bool CXMLDoc::get_char(CommonLib::IReadStream* pStream)
 		{
-			
+			if(pStream->IsEndOfStream())
+				return false;
 			pStream->read(m_char);
 
 			if(m_char=='\n')
@@ -194,8 +209,7 @@ namespace GisEngine
 		}
 		bool CXMLDoc::get_token (CommonLib::IReadStream* pStream)
 		{
-			if(pStream->IsEndOfStream())
-				return false;
+			
 
 			m_token = "";
 			skip_space(pStream);

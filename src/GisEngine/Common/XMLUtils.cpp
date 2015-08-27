@@ -15,26 +15,30 @@ namespace GisEngine
 			str16[size] = 0;
 #endif
 		}
-		std::vector<char> utf16_to_utf8(const CommonLib::str_t& str16)
+		void  utf16_to_utf8(const CommonLib::str_t& str16, std::vector<char> &str8 )
 		{
-			 return utf16_to_utf8(str16.cwstr());
+			 utf16_to_utf8(str16.cwstr(), str8);
 		}
-		std::vector<char> utf16_to_utf8(const wchar_t* str16)
+		void utf16_to_utf8(const wchar_t* str16, std::vector<char> &str8)
 		{
 #ifdef WIN32
 			int len = (int)wcslen(str16);
 			int size = ::WideCharToMultiByte(CP_UTF8, 0, str16, len, 0, 0, 0, 0);
-			std::vector<char> str8(size + 1);
+			if(size == 0)
+				return;
+
+			str8.resize(size + 1);
 			::WideCharToMultiByte(CP_UTF8, 0, str16, len, &str8[0], size, 0, 0);
 			str8[size] = 0;
-			return str8;
-#endif
+	#endif
 		}
 
-		CommonLib::str_t blob_to_string(const CommonLib::CBlob& blob)
+		void  blob_to_string(const CommonLib::CBlob& blob, CommonLib::str_t& result)
 		{
 			const unsigned char* cbuffer = blob.buffer();
-			CommonLib::str_t result;
+			if(!cbuffer || blob.size() == 0)
+				return;
+
 			result.reserve(blob.size() * 2 + 1);
 			for(size_t i = 0; i < blob.size(); ++i)
 			{
@@ -45,13 +49,13 @@ namespace GisEngine
 				result[(int)i * 2 + 1] = right <= 9 ? (right + L'0') : ((right - 10) + L'A');
 			}
 			result[(int)blob.size() * 2] = 0;
-
-			return result;
 		}
-		CommonLib::CBlob string_to_blob(const CommonLib::str_t& str)
+		void string_to_blob(const CommonLib::str_t& str, CommonLib::CBlob& blob)
 		{
 			int len = (int)str.length() / 2;
-			CommonLib::CBlob result(len, NULL);
+			if(len == 0)
+				return;
+			blob.resize(len);
 
 			for(int i = 0; i < len; ++i)
 			{
@@ -74,9 +78,8 @@ namespace GisEngine
 				else
 					CommonLib::str_t();
 
-				result[i] = (unsigned char)((leftVal & 0xF) << 4 | (rightVal & 0xF));
+				blob[i] = (unsigned char)((leftVal & 0xF) << 4 | (rightVal & 0xF));
 			}
-			return result;
 		}
 	}
 }

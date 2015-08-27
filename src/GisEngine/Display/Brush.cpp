@@ -106,7 +106,7 @@ namespace GisEngine
 
 		bool  CBrush::saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName) const
 		{
-			GisCommon::IXMLNodePtr pBrushNode = pXmlNode->CreateChildNode();
+			GisCommon::IXMLNodePtr pBrushNode = pXmlNode->CreateChildNode(pszName);
 
 			pBrushNode->AddPropertyInt16U(L"Type", m_type);
 			m_color.saveXML(pBrushNode.get());

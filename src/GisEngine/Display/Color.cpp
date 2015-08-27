@@ -103,16 +103,12 @@ namespace GisEngine
 
 		bool Color::saveXML(GisCommon::IXMLNode* pXmlNode) const
 		{
-			pXmlNode->AddProperty(L"color", CommonLib::CVariant(uint32 (m_rgba)));
+			pXmlNode->AddPropertyInt32U(L"color", m_rgba);
 			return true;
 		}
 		bool Color::load(GisCommon::IXMLNode* pXmlNode)
 		{
-			CommonLib::CVariant *pVarRGBA = pXmlNode->GetProperty(L"color");
-			if(!pVarRGBA)
-				return false;
-			
-			m_rgba = pVarRGBA->Get<uint32>();
+			m_rgba = pXmlNode->GetPropertyInt32U(L"color", m_rgba);
 			return true;
 		}
 	}

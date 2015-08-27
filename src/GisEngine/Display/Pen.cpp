@@ -162,7 +162,7 @@ namespace GisEngine
 		{
 			pXmlNode->AddPropertyInt16U(L"PenType", uint16(m_type));
 			pXmlNode->AddPropertyInt16U(L"JoinType", uint16(m_joinType));
-			pXmlNode->AddProperty("Width", CommonLib::CVariant(m_nWidth));
+			pXmlNode->AddPropertyDouble("Width", m_nWidth);
 			pXmlNode->AddPropertyInt16U(L"CapType", uint16(m_capType));
 
 			m_color.saveXML(pXmlNode);
@@ -204,10 +204,7 @@ namespace GisEngine
 			m_type = (ePenType)pPenNode->GetPropertyInt16U(L"PenType", PenTypeNull);
 			m_joinType = (eJoinType)pPenNode->GetPropertyInt16U(L"JoinType", JoinTypeMiter);
 			m_capType = (eCapType)pPenNode->GetPropertyInt16U(L"CapType", CapTypeButt);
-			CommonLib::CVariant* pWidthVar =  pPenNode->GetProperty(L"Width");
-			if(pWidthVar)
-				m_nWidth = pWidthVar->Get<GUnits>();
-			
+			m_nWidth = (GUnits)pPenNode->GetPropertyDouble(L"Width", 1);
 			m_bRelease = pPenNode->GetPropertyBool(L"Release", false);
 			if(m_bRelease) 
 			{
@@ -219,7 +216,8 @@ namespace GisEngine
 			GisCommon::IXMLNodePtr pTemplatesNode = pXmlNode->GetChild(L"Templates");
 			if(pTemplatesNode.get())
 			{
-				CommonLib::CBlob& blob = pTemplatesNode->GetBlobCDATA();
+				CommonLib::CBlob blob; 
+				pTemplatesNode->GetBlobCDATA(blob);
 				CommonLib::FxMemoryReadStream stream;
 				stream.attach(blob.buffer(), blob.size());
 

@@ -54,7 +54,7 @@ namespace GisEngine
 
 
 			virtual const CommonLib::str_t&  GetName() const = 0;
-			virtual void                   SetName( const CommonLib::str_t& name) = 0;
+			//virtual void                   SetName( const CommonLib::str_t& name) = 0;
 
 			virtual const CommonLib::str_t&  GetText() const = 0;
 			virtual void                   SetText(const CommonLib::str_t&) = 0;
@@ -62,7 +62,7 @@ namespace GisEngine
 			virtual const CommonLib::str_t&   GetCDATA() const = 0;
 			virtual void                   SetCDATA(const   CommonLib::str_t& cdata) = 0;
 
-			virtual const CommonLib::CBlob&      GetBlobCDATA() const = 0;
+			virtual	void				   GetBlobCDATA(CommonLib::CBlob& data) const = 0;
 			virtual void                   SetBlobCDATA(const CommonLib::CBlob &data) = 0;
 			
 	

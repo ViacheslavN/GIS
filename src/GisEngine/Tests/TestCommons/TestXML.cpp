@@ -18,10 +18,21 @@ void testWriteXML()
 	GisEngine::GisCommon::IXMLNodePtr pRoot = xmlDoc.GetNodes();
 
 	GisEngine::GisCommon::IXMLNodePtr pBody = pRoot->CreateChildNode(L"Body");
+	CommonLib::MemoryStream memStream;
+
+	memStream.write(int64(456));
+	memStream.write(int(457));
+	memStream.write("строка");
+	memStream.write(L"Юникоде");
+
+	CommonLib::CBlob blob(memStream.size(), 0);
+	blob.copy(memStream.buffer(), memStream.size());
+
 
 	pBody->AddPropertyDouble("double", 1.34);
 	pBody->AddPropertyBool("bool", true);
 	GisEngine::GisCommon::IXMLNodePtr pChild0 =  pBody->CreateChildNode(L"Child0");
+	pChild0->SetBlobCDATA(blob);
 	pChild0->AddPropertyInt16(L"int", 10);
 	pChild0->AddPropertyString(L"Text", "Текст");
 	GisEngine::GisCommon::IXMLNodePtr pChild1 = pBody->CreateChildNode(L"Child1");
@@ -29,10 +40,11 @@ void testWriteXML()
 	for (size_t i = 0; i < 10; ++i)
 	{
 		GisEngine::GisCommon::IXMLNodePtr pRow = pChild1->CreateChildNode("Row");
+		pRow->SetText(L"Текст Row");
 		pRow->AddPropertyInt16(L"id", i);
 		pRow->AddPropertyInt32(L"td", i + 1);
 		pRow->AddPropertyString("text", "row");
-		for (size_t j = 0; j < 5; ++j)
+		for (size_t j = 0; j < 1; ++j)
 		{
 			GisEngine::GisCommon::IXMLNodePtr pCell = pRow->CreateChildNode("cell");
 			
@@ -57,8 +69,31 @@ void testLoadXML()
 	uint16 nVal = 30;
 	sString.format(L"%u", nVal);
 	GisEngine::GisCommon::CXMLDoc xmlDoc;
-	xmlDoc.Open(L"D:\\xml\\test.xml");
-	xmlDoc.Save(L"D:\\xml\\test2.xml");
+	if(xmlDoc.Open(L"D:\\xml\\test.xml"))
+	{
+		GisEngine::GisCommon::IXMLNodePtr pRoot = xmlDoc.GetNodes();
+		GisEngine::GisCommon::IXMLNodePtr pBody = pRoot->GetChild(L"Body");
+		GisEngine::GisCommon::IXMLNodePtr pChild0 =  pBody->GetChild(L"Child0");
+		if(pChild0.get())
+		{
+			CommonLib::CBlob blob;
+			pChild0->GetBlobCDATA(blob);
+
+			CommonLib::FxMemoryReadStream memStream;
+			memStream.attach(blob.buffer(), blob.size());
+			int64 nVal;
+			int intVal;
+			memStream.read(nVal);
+			memStream.read(intVal);
+
+
+		}
+		xmlDoc.Save(L"D:\\xml\\test2.xml");
+	}
+
+
+
+	
 
 
 }
