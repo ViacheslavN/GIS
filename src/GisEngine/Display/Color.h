@@ -37,12 +37,16 @@ namespace GisEngine
 			ColorComponent GetR() const;
 			ColorComponent GetG() const;
 			ColorComponent GetB() const;
+			void SetRGBA(ColorType rgba);
 
 			static Color RndLineColor();
 			static Color RndFillColor();
 
 			bool operator==(const Color& a) const;
 			bool operator!=(const Color& a) const;
+
+			Color& operator=(const Color& a);
+			Color& operator=(ColorType rgba);
 
 			bool save(CommonLib::IWriteStream *pStream) const;
 			bool load(CommonLib::IReadStream *pStream);

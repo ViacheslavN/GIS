@@ -108,7 +108,7 @@ namespace GisEngine
 		{
 			return m_nCharSet;
 		}
-		double CFont::getOrientation() const
+		GUnits CFont::getOrientation() const
 		{
 			return m_dOrientation;
 		}
@@ -162,6 +162,38 @@ namespace GisEngine
 			m_hAlignment = (eTextHAlignment)pStream->readByte();
 			pStream->read(m_nHaloSize);
 		}
+		bool CFont::saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName) const
+		{
+			GisCommon::IXMLNodePtr pNode = pXmlNode->CreateChildNode(pszName);
+			pNode->AddPropertyString("face", m_sFace);
+			pNode->AddPropertyDouble("Size", m_nSize);
+			pNode->AddPropertyInt16("CharSet", m_nCharSet);
+			pNode->AddPropertyInt32U("color", m_color.GetRGBA());
+			pNode->AddPropertyDouble("Orientation", m_dOrientation);
+			pNode->AddPropertyInt32U("BgColor", m_bgColor.GetRGBA());
+			pNode->AddPropertyBool("Transparent", m_bIsTransparent);
+			pNode->AddPropertyInt16("vAlignment", m_vAlignment);
+			pNode->AddPropertyInt16("hAlignment", m_hAlignment);
+			pNode->AddPropertyDouble("HaloSize", m_nHaloSize);
+			return true;
+		}
+		bool CFont::load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName)
+		{
+			GisCommon::IXMLNodePtr pNode = pXmlNode->GetChild(pszName);
+			if(pNode.get())
+				return false;
 
+			m_sFace = pNode->GetPropertyString("face", m_sFace);
+			m_nSize = pNode->GetPropertyDouble("Size", m_nSize);
+			m_nCharSet = pNode->GetPropertyInt16("CharSet", m_nCharSet);
+			m_color = pNode->GetPropertyInt32U("color", m_color.GetRGBA());
+			m_dOrientation = pNode->GetPropertyDouble("Orientation", m_dOrientation);
+			m_bgColor = pNode->GetPropertyInt32U("BgColor", m_bgColor.GetRGBA());
+			m_bIsTransparent = pNode->GetPropertyBool("Transparent", m_bIsTransparent);
+			m_vAlignment = (eTextVAlignment)pNode->GetPropertyInt16("vAlignment", m_vAlignment);
+			m_hAlignment = (eTextHAlignment)pNode->GetPropertyInt16("hAlignment", m_hAlignment);
+			m_nHaloSize = pNode->GetPropertyDouble("HaloSize", m_nHaloSize);
+			return true;
+		}
 	}
 }

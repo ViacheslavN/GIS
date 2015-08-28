@@ -447,6 +447,7 @@
     <ClInclude Include="Clip.h" />
     <ClInclude Include="ClipRectAlloc.h" />
     <ClInclude Include="Display.h" />
+    <ClInclude Include="DisplayUtils.h" />
     <ClInclude Include="SymbolFillBase.h" />
     <ClInclude Include="LoaderSymbols.h" />
     <ClInclude Include="RectClipper.h" />
@@ -472,6 +473,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SymbolBase.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TextSymbol.h" />
     <ClInclude Include="Vector3d.h" />
     <ClInclude Include="VertexSrc.h" />
   </ItemGroup>
@@ -479,6 +481,7 @@
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Brush.cpp" />
     <ClCompile Include="ClipRectAlloc.cpp" />
+    <ClCompile Include="DisplayUtils.cpp" />
     <ClCompile Include="LoaderSymbols.cpp" />
     <ClCompile Include="RectClipper.cpp" />
     <ClCompile Include="Color.cpp" />
@@ -507,6 +510,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseShared|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TextSymbol.cpp" />
     <ClCompile Include="VertexSrc.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

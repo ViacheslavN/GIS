@@ -138,6 +138,12 @@
     <ClInclude Include="SymbolFillBase.h">
       <Filter>symbols</Filter>
     </ClInclude>
+    <ClInclude Include="TextSymbol.h">
+      <Filter>symbols</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -196,6 +202,12 @@
     </ClCompile>
     <ClCompile Include="LoaderSymbols.cpp">
       <Filter>symbols</Filter>
+    </ClCompile>
+    <ClCompile Include="TextSymbol.cpp">
+      <Filter>symbols</Filter>
+    </ClCompile>
+    <ClCompile Include="DisplayUtils.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

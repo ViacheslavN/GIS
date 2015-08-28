@@ -22,6 +22,13 @@ namespace GisEngine
 			DrawPhaseAll        = 0xFFFF
 		};
 
+		enum eLabelStrategy
+		{
+			LabelStrategyAlone   = 0,
+			LabelStrategySimple  = 1,
+			LabelStrategyComplex = 2
+		};
+
 		struct ILayer;
 		struct IMap;
 		struct IFeatureLayer;
@@ -32,6 +39,13 @@ namespace GisEngine
 		struct ISelection;
 		struct ILabelEngine;
 		struct IBookmarks;
+		struct ILegendGroup;
+		struct ILegendClass;
+		struct IGeoBookmark;
+		struct ISymbolAssigner;
+		struct ILabelCache;
+		struct ILabelingOptions;
+		struct ILabel;
 
 		COMMON_LIB_REFPTR_TYPEDEF(ILayer);
 		COMMON_LIB_REFPTR_TYPEDEF(IMap);
@@ -42,6 +56,12 @@ namespace GisEngine
 		COMMON_LIB_REFPTR_TYPEDEF(ISelection);
 		COMMON_LIB_REFPTR_TYPEDEF(ILabelEngine);
 		COMMON_LIB_REFPTR_TYPEDEF(IBookmarks);
+		COMMON_LIB_REFPTR_TYPEDEF(ILegendGroup);
+		COMMON_LIB_REFPTR_TYPEDEF(ILegendClass);
+		COMMON_LIB_REFPTR_TYPEDEF(IGeoBookmark);
+		COMMON_LIB_REFPTR_TYPEDEF(ISymbolAssigner);
+		COMMON_LIB_REFPTR_TYPEDEF(ILabelCache);
+		COMMON_LIB_REFPTR_TYPEDEF(ILabelingOptions);
 
 		struct IMap : public  CommonLib::AutoRefCounter , 
 					  public GisCommon::IStreamSerialize, 
@@ -52,6 +72,7 @@ namespace GisEngine
 			virtual CommonLib::str_t	              GetName() const = 0;
 			virtual void                              SetName(const  CommonLib::str_t& name) = 0;
 			virtual ILayersPtr                        GetLayers() const = 0;
+			virtual  void							  SelectFeatures(const GisBoundingBox& extent, bool resetSelection) = 0;
 			virtual ISelectionPtr                     GetSelection() const = 0;
 			virtual GisGeometry::IEnvelopePtr         GetFullExtent(GisGeometry::ISpatialReference* spatRef = NULL) const = 0;
 			virtual void                              SetFullExtent(GisGeometry::IEnvelope* env) = 0;
@@ -67,6 +88,28 @@ namespace GisEngine
 			virtual void                              SetDelayDrawing(bool delay) = 0;
 			virtual IBookmarksPtr                     GetBookmarks() const = 0;
 			virtual GisCommon::IPropertySetPtr        GetMapProperties() = 0;
+			virtual Display::ISymbolPtr				  GetBackgroundSymbol() const= 0;
+			virtual void							  SetBackgroundSymbol(Display::ISymbol* symbol) = 0;
+			virtual Display::ISymbolPtr				  GetForegroundSymbol() const= 0;
+			virtual void							  SetForegroundSymbol(Display::ISymbol* symbol) = 0;
+			virtual void							  SetViewPos(const Display::ViewPosition& pos) = 0;
+			virtual Display::ViewPosition			  GetViewPos(bool calc_if_absent, Display::IDisplayTransformation *pTrans) = 0;
+			virtual void							  SetExtent(GisGeometry::IEnvelope *extent) = 0;
+			virtual GisGeometry::IEnvelopePtr		  GetExtent(GisGeometry::ISpatialReference* spatRef, bool calc_if_absent, Display::IDisplayTransformation *pTrans) = 0;
+			virtual void							  SetVerticalFlip(bool flag) = 0;
+			virtual bool							  GetVerticalFlip() const = 0;
+			virtual void							  SetHorizontalFlip(bool flag) = 0;
+			virtual bool							  GetHorizontalFlip() const = 0;
+
+			virtual double							  GetMinimumScale() = 0;
+			virtual void							  SetMinimumScale(double scale) = 0;
+			virtual double							  GetMaximumScale() = 0;
+			virtual void							  SetMaximumScale(double scale) = 0;
+			virtual bool							  GetHasReferenceScale() const = 0;
+			virtual void							  SetHasReferenceScale(bool flag) = 0;
+			virtual double							  GetReferenceScale() const = 0;
+			virtual void							  SetReferenceScale(double scale) = 0;
+
 		};
 
 		struct  ILayer : public CommonLib::AutoRefCounter , 
@@ -172,6 +215,255 @@ namespace GisEngine
 			virtual void                   SetMinimumScale(double scale) = 0;
 			virtual const CommonLib::str_t&  GetShapeField() const = 0;
 			virtual void                   SetShapeField(const CommonLib::str_t&  field) = 0;
+			virtual bool Draw(eDrawPhase phase, GeoDatabase::IFeatureClass* featureClass, GeoDatabase::IQueryFilter* filter, 
+				Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel, Display::ISymbol* customSymbol = 0, bool drawAlways = false) = 0;
+		};
+
+
+
+		struct ILegendClass : public CommonLib::AutoRefCounter
+		{
+			ILegendClass(){}
+			virtual ~ILegendClass(){}
+			virtual const CommonLib::str_t&	   GetLabel() const = 0;
+			virtual void					   SetLabel(const CommonLib::str_t &label) = 0;
+			virtual Display::ISymbolPtr		   GetSymbol() const = 0;
+			virtual void					   SetSymbol( Display::ISymbol *symbol ) = 0;        
+		};
+
+
+		struct  ILegendInfo : public CommonLib::AutoRefCounter
+		{
+
+			virtual ILegendGroupPtr GetLegendGroup( int index ) const = 0;    
+			virtual int             GetLegendGroupCount() const = 0;
+		};
+
+		struct  ILegendGroup : public CommonLib::AutoRefCounter
+		{
+			ILegendGroup(){}
+			virtual ~ILegendGroup(){}
+			virtual int                   AddClass( ILegendClass *legendClass ) = 0;          
+			virtual ILegendClassPtr       GetClass( int index) const = 0;                     
+			virtual int                   GetClassCount() const = 0;                          
+			virtual void                  ClearClasses() = 0;                                 
+			virtual const CommonLib::str_t&	  GetCaption() const = 0;                         
+			virtual void                  SetCaption(const CommonLib::str_t&caption)  = 0;    
+			virtual bool                  GetVisible() const = 0;                             
+			virtual void                  SetVisible( bool bVisible ) = 0;                     
+		};
+
+		struct ILabelRenderer : public CommonLib::AutoRefCounter
+		{
+			ILabelRenderer(){}
+			virtual ~ILabelRenderer(){}
+			virtual ILabelEnginePtr      GetLabelEngine() const = 0;
+			virtual void                 SetLabelEngine(ILabelEngine* engine) = 0;
+			virtual CommonLib::str_t	 GetLabelField() const = 0;
+			virtual void                 SetLabelField(const CommonLib::str_t& field) = 0;
+			virtual eLabelStrategy       GetStrategy() const = 0;
+			virtual void                 SetStrategy(const eLabelStrategy& strategy) = 0;
+			virtual int                  GetClassIndex() const = 0;
+			virtual void                 SetClassIndex(int index) = 0;
+		 
+		};
+
+
+		struct ILabelEngine : public CommonLib::AutoRefCounter
+		{
+			ILabelEngine(){}
+			virtual ~ILabelEngine(){}
+			virtual ILabelCachePtr GetLabelCache() const = 0;
+			virtual void           BeginLabeling(Display::IDisplay* display) = 0;
+			virtual void           OptimizeLabels(GisCommon::ITrackCancel* trackCancel) = 0;
+			virtual void           DrawLabels(GisCommon::ITrackCancel* trackCancel) = 0;
+			virtual void           EndLabeling() = 0;
+		};
+
+		struct ILabelCache : public CommonLib::AutoRefCounter
+		{
+			ILabelCache(){}
+			virtual ~ILabelCache(){}
+			virtual void           Setup(Display::IDisplay* pDisplay) = 0;
+			virtual void           Clear() = 0;
+			virtual void           AddLabel(const CommonLib::str_t& text,
+				CommonLib::CGeoShape* shape,
+				double angle,
+				double width,
+				double height,
+				Display::ITextSymbol* symbol,
+				int classIndex,
+				ILabelingOptions* options) = 0;
+			virtual int  GetLabelCount() const = 0;
+			virtual const ILabel*  GetLabel(int idx) const = 0;
+		};
+
+
+		struct ILabel
+		{
+			ILabel(){}
+			virtual ~ILabel(){}
+			virtual CommonLib::str_t       GetText() const = 0;
+			virtual Display::ITextSymbolPtr GetSymbol() const = 0;
+
+		};
+
+		struct  IBookmarks : public CommonLib::AutoRefCounter
+		{
+			IBookmarks(){}
+			virtual ~IBookmarks(){}
+			virtual int                 GetBookmarkCount() const = 0;
+			virtual IGeoBookmarkPtr		GetBookmark(int index) const = 0;
+			virtual void                AddBookmark(IGeoBookmark* bookmark) = 0;
+			virtual void                RemoveBookmark(IGeoBookmark* bookmark) = 0;
+			virtual void                RemoveAllBookmarks() = 0;
+		};
+
+		struct  IGeoBookmark  : public CommonLib::AutoRefCounter
+		{
+			IGeoBookmark(){}
+			virtual ~IGeoBookmark(){}
+			virtual const CommonLib::str_t&       GetName() const = 0;  
+			virtual void                          SetName(const CommonLib::str_t& csName ) = 0; 
+			virtual Display::ViewPosition		  GetPosition() const = 0;
+			virtual void                          SetPosition(const Display::ViewPosition& pos) = 0;
+			virtual GisGeometry::IEnvelopePtr     GetExtent() const = 0;
+			virtual void                          SetExtent( GisGeometry::IEnvelope *extent ) = 0 ;
+			virtual void                          ZoomTo( Display::IDisplayTransformation *pTrans ) const = 0;
+		};
+
+
+		struct  ISymbolAssigner  : public CommonLib::AutoRefCounter
+		{
+			ISymbolAssigner(){}
+			virtual ~ISymbolAssigner(){}
+			virtual bool                   CanAssign(GeoDatabase::IFeatureClass* cls) const = 0;
+			virtual void                   PrepareFilter(GeoDatabase::IFeatureClass* cls, GeoDatabase::IQueryFilter* filter) const = 0;
+			virtual Display::ISymbolPtr	   GetSymbolByFeature(GeoDatabase::IFeature* feature) const = 0;
+			virtual void                   SetupSymbols(Display::IDisplay* display) = 0;
+			virtual void                   ResetSymbols() = 0;
+		};
+
+		struct ISimpleSymbolAssigner : public ISymbolAssigner
+		{
+			ISimpleSymbolAssigner(){}
+			virtual ~ISimpleSymbolAssigner(){}
+			virtual const CommonLib::str_t&		GetDescription() const = 0;
+			virtual void						SetDescription(const CommonLib::str_t& sDesc) = 0;
+			virtual  const CommonLib::str_t&    GetLabel() const = 0;
+			virtual void						SetLabel(const CommonLib::str_t& sLabel) = 0;
+			virtual Display::ISymbolPtr			GetSymbol() const = 0;
+			virtual void						SetSymbol(Display::ISymbol* symbol) = 0;
+		};
+
+
+		struct  IClassBreaksSymbolAssigner : public ISymbolAssigner
+		{
+			IClassBreaksSymbolAssigner(){}
+			virtual ~IClassBreaksSymbolAssigner();
+			virtual const CommonLib::str_t&	    GetField() const = 0;
+			virtual void						SetField(const CommonLib::str_t& field) = 0;
+			virtual double						GetBreak(int index) const = 0;
+			virtual void						SetBreak(int index, double val) = 0;
+			virtual bool						GetBreakValueIncluded(int index) const = 0;
+			virtual void						SetBreakValueIncluded(int index, bool val) = 0;
+			virtual int							GetBreakCount() const = 0;
+			virtual void						SetBreakCount(int count) = 0;
+			virtual const CommonLib::str_t&		GetLabel(int index) const = 0;
+			virtual void						SetLabel(int index,  const CommonLib::str_t&	val) = 0;
+			virtual const CommonLib::str_t&		GetDescription(int index) const = 0;
+			virtual void						SetDescription(int index,  const CommonLib::str_t& val) = 0;
+			virtual Display::ISymbolPtr			GetSymbol(int index) const = 0;
+			virtual void						SetSymbol(int index, Display::ISymbol* symbol) = 0;
+			virtual double						GetMinimumBreak() const = 0;
+			virtual void						SetMinimumBreak(double val) = 0;
+			virtual bool						GetMinimumBreakIncluded() const = 0;
+			virtual void						SetMinimumBreakIncluded(bool val) = 0;
+			virtual Display::ISymbolPtr			GetDefaultSymbol() const = 0;
+			virtual void						SetDefaultSymbol(Display::ISymbol* symbol) = 0;
+			virtual  const CommonLib::str_t&	GetDefaultLabel() const = 0;
+			virtual void						SetDefaultLabel( const CommonLib::str_t&	g& val) = 0;
+			virtual bool						GetUseDefaultSymbol() const = 0;
+			virtual void						SetUseDefaultSymbol(bool use) = 0;
+		};
+
+		struct IUniqueValueSymbolAssigner : public ISymbolAssigner
+		{
+			IUniqueValueSymbolAssigner(){}
+			virtual ~IUniqueValueSymbolAssigner(){}
+			virtual int							GetFieldCount() const = 0;
+			virtual void						SetFieldCount(int fieldCount) = 0;
+			virtual const CommonLib::str_t&		GetField(int fieldIndex) const = 0;
+			virtual void						SetField(int fieldIndex, const CommonLib::str_t& fieldName) = 0;
+			virtual CommonLib::CVariant*		GetValue(int index, int fieldIndex) const = 0;
+			virtual void						SetValue(int index, int fieldIndex, CommonLib::CVariant& val) = 0;
+			virtual int							GetValueCount() const = 0;
+			virtual void						SetValueCount(int count) = 0;
+			virtual const CommonLib::str_t&		GetLabel(int index) const = 0;
+			virtual void						SetLabel(int index, const CommonLib::str_t& val) = 0;
+			virtual const CommonLib::str_t&		GetDescription(int index) const = 0;
+			virtual void						SetDescription(int index, const CommonLib::str_t& val) = 0;
+			virtual Display::ISymbolPtr			GetSymbol(int index) const = 0;
+			virtual void						SetSymbol(int index, Display::ISymbol* symbol) = 0;
+			virtual int							GetGroup(int index) const = 0;
+			virtual void						SetGroup(int index, int group) = 0;
+			virtual Display::ISymbolPtr			GetDefaultSymbol() const = 0;
+			virtual void						SetDefaultSymbol(Display::ISymbol* symbol) = 0;
+			virtual const CommonLib::str_t&		GetDefaultLabel() const = 0;
+			virtual void						SetDefaultLabel(const CommonLib::str_t& val) = 0;
+			virtual bool						GetUseDefaultSymbol() const = 0;
+			virtual void						SetUseDefaultSymbol(bool use) = 0;
+			virtual const CommonLib::str_t&		GetHeadingLabel() const = 0;
+			virtual void						SetHeadingLabel( const CommonLib::str_t& val ) = 0;
+		};
+
+
+		struct IRangeSymbolAssigner : public ISymbolAssigner
+		{
+			IRangeSymbolAssigner(){}
+			virtual ~IRangeSymbolAssigner(){}
+			virtual const CommonLib::str_t&     GetField() const = 0;
+			virtual void						SetField(const CommonLib::str_t&  field) = 0;
+			virtual void						GetRange(int index, CommonLib::CVariant& valFrom, CommonLib::CVariant& valTo) const = 0;
+			virtual void						SetRange(int index, CommonLib::CVariant& valFrom, CommonLib::CVariant& valTo) = 0;
+			virtual int							GetRangeCount() const = 0;
+			virtual void						SetRangeCount(int count) = 0;
+			virtual const CommonLib::str_t&     GetLabel(int index) const = 0;
+			virtual void						SetLabel(int index, const CommonLib::str_t&  val) = 0;
+			virtual const CommonLib::str_t&     GetDescription(int index) const = 0;
+			virtual void						SetDescription(int index, const CommonLib::str_t&  val) = 0;
+			virtual Display::ISymbolPtr			GetSymbol(int index) const = 0;
+			virtual void						SetSymbol(int index, Display::ISymbol* symbol) = 0;
+			virtual Display::ISymbolPtr			GetDefaultSymbol() const = 0;
+			virtual void						SetDefaultSymbol(Display::ISymbol* symbol) = 0;
+			virtual const CommonLib::str_t&     GetDefaultLabel() const = 0;
+			virtual void					    SetDefaultLabel(const const CommonLib::str_t& val) = 0;
+			virtual bool						GetUseDefaultSymbol() const = 0;
+			virtual void						SetUseDefaultSymbol(bool use) = 0;
+			virtual void						SortRanges() = 0;
+		};
+
+
+		struct  IExpressionSymbolAssigner : public ISymbolAssigner
+		{
+			IExpressionSymbolAssigner(){}
+			virtual ~IExpressionSymbolAssigner(){}
+			virtual const CommonLib::str_t&  GetExpression(int index) const = 0;
+			virtual void                     SetExpression(int index, const CommonLib::str_t& expr) = 0;
+			virtual int						 GetExpressionCount() const = 0;
+			virtual void					 SetExpressionCount(int count) = 0;
+			virtual const CommonLib::str_t&  GetLabel(int index) const = 0;
+			virtual void					 SetLabel(int index, const  CommonLib::str_t& val) = 0;
+			virtual const CommonLib::str_t&  GetDescription(int index) const = 0;
+			virtual void                     SetDescription(int index, const CommonLib::str_t& val) = 0;
+			virtual Display::ISymbolPtr		 GetSymbol(int index) const = 0;
+			virtual void					 SetSymbol(int index, Display::ISymbol* symbol) = 0;
+			virtual Display::ISymbolPtr		 GetDefaultSymbol() const = 0;
+			virtual void					 SetDefaultSymbol(Display::ISymbol* symbol) = 0;
+			virtual const CommonLib::str_t&  GetDefaultLabel() const = 0;
+			virtual void					 SetDefaultLabel(const CommonLib::str_t& val) = 0;
+			virtual bool					 GetUseDefaultSymbol() const = 0;
+			virtual void					 SetUseDefaultSymbol(bool use) = 0;
 		};
 	}
 }

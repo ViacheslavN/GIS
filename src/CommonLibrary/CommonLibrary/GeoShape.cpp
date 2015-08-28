@@ -307,6 +307,10 @@ namespace CommonLib
 	{
 		return m_type;
 	}
+	eShapeType CGeoShape::GetGeneralType() const
+	{
+		return m_general_type;
+	}
 	uint32  CGeoShape::getPartCount() const
 	{
 		return m_vecParts.size();

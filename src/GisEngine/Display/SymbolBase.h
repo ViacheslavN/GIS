@@ -4,10 +4,6 @@
 #include "Display.h"
 #include "Common/GisEngineCommon.h"
 
-
-
-
-
 namespace GisEngine
 {
 	namespace Display
@@ -57,9 +53,11 @@ namespace GisEngine
 				pDisplay->GetTransformation()->MapToDevice(*pShape, &points, &parts, &count);
 				if(count > 0)
 				{
-					if(m_bDrawToBuffers)
+					if(!m_bDrawToBuffers)
 					{
+						m_pGeom = pShape;
 						DrawGeometryEx(pDisplay, points, parts, count);
+						m_pGeom = NULL;
 					}
 					else
 					{
@@ -102,6 +100,11 @@ namespace GisEngine
 				m_bDirty = true;
 			}
 
+			void setDirty(bool  bDirty)
+			{
+				m_bDirty = bDirty;
+			}
+
 			//IStreamSerialize
 			bool save(CommonLib::IWriteStream *pWriteStream) const
 			{
@@ -132,6 +135,8 @@ namespace GisEngine
 				return true;
 			}
 		protected:
+
+			const CommonLib::CGeoShape* m_pGeom;
 			bool m_bScaleDependent;
 			bool m_bDrawToBuffers;
 			uint32 m_nSymbolID;

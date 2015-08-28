@@ -41,8 +41,8 @@ namespace GisEngine
 				virtual void SetResolution(double pDpi) = 0;
 				virtual double GetResolution()= 0;
 
-				virtual void SetUnits(Common::Units units) = 0;
-				virtual Common::Units GetUnits() const = 0;
+				virtual void SetUnits(GisCommon::Units units) = 0;
+				virtual GisCommon::Units GetUnits() const = 0;
 
 
 				virtual void   SetSpatialReference(GisGeometry::ISpatialReference *pSp) = 0;

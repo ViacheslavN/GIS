@@ -45,13 +45,15 @@ namespace GisEngine
 		struct IMarkerSymbol;
 		struct ITextBackground;
 		struct ITextSymbol;
+		struct IFillSymbol;
 
 		COMMON_LIB_REFPTR_TYPEDEF(ISymbol);
 		COMMON_LIB_REFPTR_TYPEDEF(ILineSymbol);
 		COMMON_LIB_REFPTR_TYPEDEF(IMarkerSymbol);
 		COMMON_LIB_REFPTR_TYPEDEF(ITextBackground);
 		COMMON_LIB_REFPTR_TYPEDEF(ITextSymbol);
-
+		COMMON_LIB_REFPTR_TYPEDEF(IFillSymbol);
+		
 
 		struct ViewPosition
 		{
@@ -270,22 +272,23 @@ namespace GisEngine
 		{
 			ITextSymbol(){}
 			virtual ~ITextSymbol(){}
-			virtual double GetAngle() const = 0;
-			virtual void   SetAngle( double dAngle ) = 0;
+			virtual GUnits GetAngle() const = 0;
+			virtual void   SetAngle( GUnits dAngle ) = 0;
 			virtual Color  GetColor() const = 0;
 			virtual void   SetColor(const Color &color ) = 0;
 			virtual const CFont& GetFont() const = 0;
 			virtual     CFont& GetFont()  = 0;
 			virtual void   SetFont(const  CFont& font ) = 0;
-			virtual void GetTextSize(IDisplay* display, const CommonLib::str_t& szText, double *pxSize , double *pySize) const = 0; // Gets the x and y dimensions of 'text' in points (1/72 inch). 
-			virtual double GetSize() const = 0;
-			virtual void SetSize(double size) = 0;
+			virtual void GetTextSize(IDisplay* display, const CommonLib::str_t& szText, GUnits *pxSize , GUnits *pySize, GUnits* baseLine) const = 0;
+			virtual GUnits GetSize() const = 0;
+			virtual void SetSize(GUnits size) = 0;
 			virtual  const CommonLib::str_t& GetText() const = 0;
 			virtual void SetText(const CommonLib::str_t& szText ) = 0;
 			virtual ITextBackgroundPtr GetTextBackground() const = 0;
 			virtual void SetTextBackground( ITextBackground *bg ) = 0;
+			virtual int   GetTextDrawFlags() const = 0;
+			virtual void  SetTextDrawFlags(int flags) = 0;
 		};
-
 
 
 		struct ITextBackground : public CommonLib::AutoRefCounter
@@ -293,10 +296,10 @@ namespace GisEngine
 			ITextBackground(){}
 			virtual ~ITextBackground(){}
 			virtual void                      Setup( IDisplay* display  ) = 0;
-			virtual void                      Draw() = 0;
+			virtual void                      Draw(IDisplay* display, const GRect& rect) = 0;
 			virtual void                      Reset() = 0;
 			virtual void                      GetBoundaryRect(IDisplay* display, GisBoundingBox &bbox) const = 0;
-			virtual ITextSymbolPtr           GetTextSymbol() const = 0;
+			virtual ITextSymbolPtr            GetTextSymbol() const = 0;
 			virtual void                      SetTextSymbol( ITextSymbol *symbol ) = 0;
 			virtual void                      SetTextBox( const GisBoundingBox &box ) = 0;
 		};

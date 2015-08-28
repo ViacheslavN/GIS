@@ -32,7 +32,7 @@ namespace GisEngine
 			const Color&  getColor() const;
 			short getCharSet() const;
 			int getStyle() const;
-			double getOrientation() const;
+			GUnits getOrientation() const;
 			const Color& getBgColor() const;
 			bool getTransparent() const;
 			eTextVAlignment getTextVAlignment() const;
@@ -42,6 +42,9 @@ namespace GisEngine
 
 			void save(CommonLib::IWriteStream *pStream) const;
 			void load(CommonLib::IReadStream *pStream);
+
+			bool saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Font") const;
+			bool load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Font");
 
 		private:
 

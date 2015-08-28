@@ -89,6 +89,20 @@ namespace GisEngine
 		{
 			return !(this->operator ==(c));
 		}
+		Color& Color::operator=(const Color& a)
+		{
+			m_rgba = c.m_rgba;
+			return *this;
+		}
+		Color& Color::operator=(ColorType rgba)
+		{
+			m_rgba = rgba;
+			return *this;
+		}
+		void Color::SetRGBA(ColorType rgba)
+		{
+			m_rgba = rgba;
+		}
 
 		bool Color::save(CommonLib::IWriteStream *pStream) const
 		{
