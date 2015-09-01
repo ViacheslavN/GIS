@@ -12,6 +12,8 @@ namespace GisEngine
 		class CTextSymbol : public CSymbolBase<ITextSymbol>
 		{
 			public:
+
+				typedef CSymbolBase<ITextSymbol> TBase;
 				CTextSymbol();
 				virtual ~CTextSymbol();
 
@@ -36,6 +38,17 @@ namespace GisEngine
 				virtual void  DrawGeometryEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount);
 				virtual void  QueryBoundaryRectEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount,   GRect &rect) const;
 				virtual void  Prepare(IDisplay* pDisplay);
+
+
+				//IStreamSerialize
+				bool save(CommonLib::IWriteStream *pWriteStream) const;
+				bool load(CommonLib::IReadStream* pReadStream);
+			
+				//IXMLSerialize
+				bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
+				bool load(GisCommon::IXMLNode* pXmlNode);
+				
+
 			private:
 				void PolygonCenterPoint(const CommonLib::CGeoShape* geom, GisXYPoint* pt);
 				void QueryBoundaryRectEx1(IDisplay* pDisplay, const GPoint& point, GRect& rect) const;

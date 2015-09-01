@@ -40,8 +40,8 @@ namespace GisEngine
 			GUnits getHaloSize() const;
 
 
-			void save(CommonLib::IWriteStream *pStream) const;
-			void load(CommonLib::IReadStream *pStream);
+			bool save(CommonLib::IWriteStream *pStream) const;
+			bool load(CommonLib::IReadStream *pStream);
 
 			bool saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Font") const;
 			bool load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Font");

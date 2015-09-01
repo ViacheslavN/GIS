@@ -291,7 +291,9 @@ namespace GisEngine
 		};
 
 
-		struct ITextBackground : public CommonLib::AutoRefCounter
+		struct ITextBackground : public CommonLib::AutoRefCounter	, 
+								 public GisCommon::IStreamSerialize, 
+									public GisCommon::IXMLSerialize
 		{
 			ITextBackground(){}
 			virtual ~ITextBackground(){}

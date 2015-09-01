@@ -91,7 +91,7 @@ namespace GisEngine
 		}
 		Color& Color::operator=(const Color& a)
 		{
-			m_rgba = c.m_rgba;
+			m_rgba = a.m_rgba;
 			return *this;
 		}
 		Color& Color::operator=(ColorType rgba)

@@ -3,13 +3,14 @@
 #include "DisplayUtils.h"
 #include "Common/Common.h"
 #include "../agg/agg_trans_affine.h"
+#include "LoaderSymbols.h"
 namespace GisEngine
 {
 	namespace Display
 	{
 		CTextSymbol::CTextSymbol()
 		{
-
+			 m_nSymbolID = TextSymbolID;
 		}
 		CTextSymbol::~CTextSymbol()
 		{
@@ -301,6 +302,75 @@ namespace GisEngine
 				rect.yMin = (GUnits)min(p[0].y, min(p[1].y, min(p[2].y, p[3].y)));
 				rect.yMax = (GUnits)max(p[0].y, max(p[1].y, max(p[2].y, p[3].y)));
 			}
+		}
+
+
+		//IStreamSerialize
+		bool CTextSymbol::save(CommonLib::IWriteStream *pWriteStream) const
+		{
+			if(!TBase::save(pWriteStream))
+				return false;
+
+			pWriteStream->write(m_sText);
+			if(m_pTextBg.get())
+			{
+				pWriteStream->write(true);
+				m_pTextBg->save(pWriteStream);
+			}
+			else
+				pWriteStream->write(false);
+			pWriteStream->write(m_nTextDrawFlags);
+			
+			return m_Font.save(pWriteStream);
+		}
+		bool CTextSymbol::load(CommonLib::IReadStream* pReadStream)
+		{
+			if(!TBase::load(pReadStream))
+				return false;
+			SAFE_READ_RES_EX(pReadStream, m_sText, 1);
+			bool bBgSymbol = false;
+			SAFE_READ_BOOL_RES(pReadStream, bBgSymbol);
+			if(bBgSymbol)
+			{
+
+				m_pTextBg =  (ITextBackground*)LoadSymbol(pReadStream).get();
+			}
+			SAFE_READ_RES(pReadStream, m_nTextDrawFlags);
+			
+			return m_Font.load(pReadStream);
+		}
+
+
+		//IXMLSerialize
+		bool CTextSymbol::saveXML(GisCommon::IXMLNode* pXmlNode) const
+		{	
+			if(!TBase::saveXML(pXmlNode))
+				return false;
+			 
+			pXmlNode->AddPropertyString("text", m_sText);
+			pXmlNode->AddPropertyBool("TextBg", m_pTextBg.get() ? true : false);
+			if(m_pTextBg.get())
+				m_pTextBg->saveXML(pXmlNode);
+	
+			pXmlNode->AddPropertyInt32("DrawFlags", m_nTextDrawFlags);
+		
+			return m_Font.saveXML(pXmlNode);
+		}
+		bool CTextSymbol::load(GisCommon::IXMLNode* pXmlNode)
+		{
+			if(!TBase::load(pXmlNode))
+				return false;
+
+
+
+			m_sText = pXmlNode->GetPropertyString("text", m_sText);
+			bool bBgSymbol = pXmlNode->GetPropertyBool("TextBg", false);
+			if(bBgSymbol)
+				m_pTextBg =  (ITextBackground*)LoadSymbol(pXmlNode).get();
+		
+			m_nTextDrawFlags = pXmlNode->GetPropertyInt32("DrawFlags", m_nTextDrawFlags);
+
+			return m_Font.load(pXmlNode);
 		}
 	}
 }

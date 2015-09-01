@@ -134,7 +134,7 @@ namespace GisEngine
 		}
  
 
-		void CFont::save(CommonLib::IWriteStream *pStream) const
+		bool CFont::save(CommonLib::IWriteStream *pStream) const
 		{
 			pStream->write(m_sFace);
 			pStream->write(m_nSize);
@@ -147,8 +147,9 @@ namespace GisEngine
 			pStream->write((byte)m_vAlignment);
 			pStream->write((byte)m_hAlignment);
 			pStream->write(m_nHaloSize);
+			return true;
 		}
-		void CFont::load(CommonLib::IReadStream *pStream)
+		bool CFont::load(CommonLib::IReadStream *pStream)
 		{
 			pStream->read(m_sFace);
 			pStream->read(m_nSize);
@@ -161,6 +162,7 @@ namespace GisEngine
 			m_vAlignment = (eTextVAlignment)pStream->readByte();
 			m_hAlignment = (eTextHAlignment)pStream->readByte();
 			pStream->read(m_nHaloSize);
+			return true;
 		}
 		bool CFont::saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName) const
 		{
