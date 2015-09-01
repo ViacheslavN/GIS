@@ -12,6 +12,14 @@ namespace GisEngine
 		class CLayerBase : public I
 		{
 		public: 
+
+			CLayerBase() : m_bVisible(false), m_dMinimumScale(0.), m_dMaximumScale(0.), m_nLayerSymbolID(UndefineLayerID)
+			{}
+
+			~CLayerBase()
+			{}
+
+			virtual	uint32					  GetLayerID() const;
 			 virtual void   Draw(eDrawPhase phase, Display::IDisplay* pDisplay, GisCommon::ITrackCancel* trackCancel)
 			 {
 				 if(!display)
@@ -70,6 +78,7 @@ namespace GisEngine
 
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const
 			{
+				pWriteStream->write(m_nLayerSymbolID);
 				pWriteStream->write(m_sName);
 				pWriteStream->write(m_bVisible);
 				pWriteStream->write(m_dMinimumScale);
@@ -78,6 +87,7 @@ namespace GisEngine
 			}
 			virtual bool load(CommonLib::IReadStream* pReadStream)
 			{
+				SAFE_READ(pReadStream, m_nLayerSymbolID)
 				SAFE_READ_RES_EX(pReadStream, m_sName, 1)
 				SAFE_READ_RES_EX(pReadStream, m_bVisible, 1)
 				SAFE_READ(pReadStream, m_dMinimumScale)
@@ -87,6 +97,7 @@ namespace GisEngine
 
 			virtual bool saveXML(IXMLNode* pXmlNode) const
 			{
+				pXmlNode->AddPropertyInt32U(L"LayerID", m_nLayerSymbolID);
 				pXmlNode->AddPropertyString(L"name", m_sName);
 				pXmlNode->AddPropertyBool(L"visible", m_bVisible);
 				pXmlNode->AddPropertyDouble(L"MinScale", m_dMinimumScale);
@@ -95,7 +106,7 @@ namespace GisEngine
 			}
 			virtual bool load(IXMLNode* pXmlNode)
 			{
-
+				m_nLayerSymbolID = pXmlNode->GetPropertyInt32U(L"LayerID", m_nLayerSymbolID);
 				m_sName = pXmlNode->GetPropertyString(L"name", m_sName);
 				m_bVisible = pXmlNode->GetPropertyBool(L"visible", m_bVisible);
 				m_dMinimumScale = pXmlNode->GetPropertyDouble(L"MinScale", m_dMinimumScale);
@@ -111,6 +122,7 @@ namespace GisEngine
 			bool                              m_bVisible;
 			double                            m_dMinimumScale;
 			double                            m_dMaximumScale;
+			uint32							  m_nLayerSymbolID;
 
 	}
 }

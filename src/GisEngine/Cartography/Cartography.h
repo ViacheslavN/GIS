@@ -6,6 +6,9 @@
 #include "GisGeometry/Geometry.h"
 #include "Common/GisEngineCommon.h"
 #include "GeoDatabase/GeoDatabase.h"
+#include "CommonLibrary/CSSection.h"
+
+#include "CommonLibrary/delegate.h"
 
 namespace GisEngine
 {
@@ -29,6 +32,14 @@ namespace GisEngine
 			LabelStrategyComplex = 2
 		};
 
+
+		enum eLayerTypeID
+		{
+			UndefineLayerID,
+			FeatureLayerID
+
+		};
+
 		struct ILayer;
 		struct IMap;
 		struct IFeatureLayer;
@@ -47,6 +58,9 @@ namespace GisEngine
 		struct ILabelingOptions;
 		struct ILabel;
 
+
+	
+
 		COMMON_LIB_REFPTR_TYPEDEF(ILayer);
 		COMMON_LIB_REFPTR_TYPEDEF(IMap);
 		COMMON_LIB_REFPTR_TYPEDEF(IFeatureRenderers);
@@ -62,6 +76,13 @@ namespace GisEngine
 		COMMON_LIB_REFPTR_TYPEDEF(ISymbolAssigner);
 		COMMON_LIB_REFPTR_TYPEDEF(ILabelCache);
 		COMMON_LIB_REFPTR_TYPEDEF(ILabelingOptions);
+
+
+		typedef GisCommon::IEnumT<ILayersPtr> IEnumLayers;
+
+
+
+		COMMON_LIB_REFPTR_TYPEDEF(IEnumLayers);
 
 		struct IMap : public  CommonLib::AutoRefCounter , 
 					  public GisCommon::IStreamSerialize, 
@@ -118,6 +139,7 @@ namespace GisEngine
 		{
 			ILayer(){}
 			virtual ~ILayer(){}
+			virtual	uint32					  GetLayerID() const = 0;
 			virtual GisGeometry::IEnvelopePtr GetExtent() const = 0;
 			virtual void                      Draw(eDrawPhase phase, Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel) = 0;
 			virtual double                    GetMaximumScale() const = 0;
@@ -133,6 +155,11 @@ namespace GisEngine
 			virtual bool                      IsActiveOnScale(double scale) const = 0; 
 		};
 
+
+		typedef CommonLib::delegate1_t<ILayers*> OnRemoveAllLayers;
+		typedef CommonLib::delegate2_t<ILayers*, ILayer*> OnLayerAdded;
+		typedef CommonLib::delegate2_t<ILayers*, ILayer*> OnLayerRemove;
+		typedef CommonLib::delegate3_t<ILayers*, ILayer*, int> OnLayerMoved;
 		struct  ILayers : public CommonLib::AutoRefCounter
 		{
 			ILayers(){}
@@ -144,6 +171,12 @@ namespace GisEngine
 			virtual void      RemoveLayer(ILayer* layer) = 0;
 			virtual void      RemoveAllLayers() = 0;
 			virtual void      MoveLayer(ILayer* layer, int index) = 0;
+
+
+			virtual void SetOnRemoveAllLayers(OnRemoveAllLayers* pFunck, bool bAdd) = 0;
+			virtual void SetOnLayerAdded(OnLayerAdded* pFunck, bool bAdd) = 0;
+			virtual void SetOnLayerRemove(OnLayerRemove* pFunck, bool bAdd) = 0;
+			virtual void SetOnLayerMoved(OnLayerMoved* pFunck, bool bAdd) = 0;
 		};
 
 
@@ -153,7 +186,7 @@ namespace GisEngine
 			IFeatureLayer();
 			virtual ~IFeatureLayer();
 			virtual const CommonLib::str_t&           GetDisplayField() const = 0;
-			virtual void                             SetDisplayField(const  const CommonLib::str_t& & field) = 0;
+			virtual void                             SetDisplayField(const  CommonLib::str_t& sField) = 0;
 			virtual GeoDatabase::IFeatureClassPtr    GetFeatureClass() const = 0;
 			virtual void                             SetFeatureClass(GeoDatabase::IFeatureClass* featureClass) = 0;
 			virtual bool                             GetSelectable() const = 0;
@@ -219,7 +252,20 @@ namespace GisEngine
 				Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel, Display::ISymbol* customSymbol = 0, bool drawAlways = false) = 0;
 		};
 
-
+		struct ISelection : public CommonLib::AutoRefCounter
+		{
+		 
+			virtual void                       AddFeature(ILayer* layer, int featureID) = 0;
+			virtual void                       Clear() = 0;
+			virtual void                       ClearForLayer(ILayer* layer) = 0;
+			virtual void                       RemoveFeature(ILayer* layer, int featureID) = 0;
+			virtual IEnumLayersPtr			   GetLayers() const = 0;
+			virtual GisCommon::IEnumIDsPtr     GetFeatures(ILayer* layer) const = 0;
+			virtual void                       Draw(Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel) = 0;
+			virtual Display::ISymbolPtr		   GetSymbol() const = 0;
+			virtual void                       SetSymbol(Display::ISymbol* symbol) = 0;
+			virtual bool                       IsEmpty() const = 0;
+		};
 
 		struct ILegendClass : public CommonLib::AutoRefCounter
 		{
@@ -382,7 +428,7 @@ namespace GisEngine
 			virtual Display::ISymbolPtr			GetDefaultSymbol() const = 0;
 			virtual void						SetDefaultSymbol(Display::ISymbol* symbol) = 0;
 			virtual  const CommonLib::str_t&	GetDefaultLabel() const = 0;
-			virtual void						SetDefaultLabel( const CommonLib::str_t&	g& val) = 0;
+			virtual void						SetDefaultLabel( const CommonLib::str_t& val) = 0;
 			virtual bool						GetUseDefaultSymbol() const = 0;
 			virtual void						SetUseDefaultSymbol(bool use) = 0;
 		};
@@ -437,7 +483,7 @@ namespace GisEngine
 			virtual Display::ISymbolPtr			GetDefaultSymbol() const = 0;
 			virtual void						SetDefaultSymbol(Display::ISymbol* symbol) = 0;
 			virtual const CommonLib::str_t&     GetDefaultLabel() const = 0;
-			virtual void					    SetDefaultLabel(const const CommonLib::str_t& val) = 0;
+			virtual void					    SetDefaultLabel(const CommonLib::str_t& val) = 0;
 			virtual bool						GetUseDefaultSymbol() const = 0;
 			virtual void						SetUseDefaultSymbol(bool use) = 0;
 			virtual void						SortRanges() = 0;

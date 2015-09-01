@@ -1,7 +1,7 @@
 #ifndef _LIB_COMMON_DELEGATE_H
 #define _LIB_COMMON_DELEGATE_H
 
-//MD
+
 #include <list>
 
 namespace CommonLib
@@ -114,7 +114,6 @@ namespace CommonLib
 		{
 			(obj_->*method_)(arg);
 		}
-		//bool is_equal(const delegate1_t& dg)//MD
 		bool is_equal(const delegate1_t<T1>& dg)
 		{
 			const delegateimpl1_t& d = static_cast<const delegateimpl1_t&>(dg);
@@ -139,7 +138,6 @@ namespace CommonLib
 		{
 			(obj_->*method_)(arg1, arg2);
 		}
-		//bool is_equal(const delegate2_t& dg)//MD
 		bool is_equal(const delegate2_t<T1, T2>& dg)
 		{
 			const delegateimpl2_t& d = static_cast<const delegateimpl2_t&>(dg);
@@ -165,8 +163,7 @@ namespace CommonLib
 			(obj_->*method_)(arg1, arg2, arg3);
 		}
 
-		//MD added <T1, T2, T3>
-		bool is_equal(const delegate3_t<T1, T2, T3>& dg)
+ 		bool is_equal(const delegate3_t<T1, T2, T3>& dg)
 		{
 			const delegateimpl3_t& d = static_cast<const delegateimpl3_t&>(dg);
 			return (obj_ == d.obj_ && method_ == d.method_);
@@ -190,7 +187,6 @@ namespace CommonLib
 		{
 			(obj_->*method_)(arg1, arg2, arg3, arg4);
 		}
-		//MD added <T1, T2, T3, T4> and change code (d was instead dg)
 		bool is_equal(const delegate4_t<T1, T2, T3, T4>& dg)
 		{
 			const delegateimpl4_t& d = static_cast<const delegateimpl4_t&>(dg);
@@ -270,7 +266,6 @@ namespace CommonLib
 		{
 			if(items_.size() == 0)
 				return;
-			//MD added typename (for compability with GCC)
 			for(typename itemlist_t::iterator it = items_.begin(), iend = items_.end(); it != iend; it++)
 				delete (*it);
 		}
@@ -287,7 +282,6 @@ namespace CommonLib
 				return *this;
 			}
 
-			//MD added typename (for compability with GCC)
 			for(typename itemlist_t::iterator it = items_.begin(), iend = items_.end(); it != iend; it++)
 			{
 				if((*it)->is_equal(*d))
@@ -309,9 +303,8 @@ namespace CommonLib
 			if(items_.size() == 0)
 				return;
 
-			//MD added typename (for compability with GCC)
 			for(typename itemlist_t::iterator it = items_.begin(), iend = items_.end(); it != iend; it++)
-				(*it)->invoke();//(*(*it))();
+				(*it)->invoke();
 		}
 		template<typename T1>
 		void fire(T1 arg)
@@ -319,9 +312,8 @@ namespace CommonLib
 			if(items_.size() == 0)
 				return;
 
-			//MD added typename (for compability with GCC)
 			for(typename itemlist_t::iterator it = items_.begin(), iend = items_.end(); it != iend; it++)
-				(*it)->invoke(arg);// (*(*it))();
+				(*it)->invoke(arg);
 		}
 		template<typename T1, typename T2>
 		void fire(T1 arg1, T2 arg2)
@@ -329,9 +321,8 @@ namespace CommonLib
 			if(items_.size() == 0)
 				return;
 
-			//MD added typename (for compability with GCC)
 			for(typename itemlist_t::iterator it = items_.begin(), iend = items_.end(); it != iend; it++)
-				(*it)->invoke(arg1, arg2);//(*(*it))(arg1, arg2);
+				(*it)->invoke(arg1, arg2);
 		}
 		template<typename T1, typename T2, typename T3>
 		void fire(T1 arg1, T2 arg2, T3 arg3)
@@ -339,19 +330,16 @@ namespace CommonLib
 			if(items_.size() == 0)
 				return;
 
-			//MD added typename (for compability with GCC)
 			for(typename itemlist_t::iterator it = items_.begin(), iend = items_.end(); it != iend; it++)
-				(*it)->invoke(arg1, arg2, arg3);//((*it))(arg1, arg2, arg3);
+				(*it)->invoke(arg1, arg2, arg3);
 		}
 		template<typename T1, typename T2, typename T3, typename T4>
 		void fire(T1 arg1, T2 arg2, T3 arg3, T4 arg4)
 		{
 			if(items_.size() == 0)
 				return;
-
-			//MD added typename (for compability with GCC)
 			for(typename itemlist_t::iterator it = items_.begin(), iend = items_.end(); it != iend; it++)
-				(*it)->invoke(arg1, arg2, arg3, arg4);//((*it))(arg1, arg2, arg3, arg4);
+				(*it)->invoke(arg1, arg2, arg3, arg4);
 		}
 		void operator()()
 		{
@@ -381,54 +369,31 @@ namespace CommonLib
 		itemlist_t items_;
 	};
 
-	//class Event : public EventBase<delegate_t>
-	//{
-	//};
-	//
-	//template <typename T>
-	//class Event1 : public EventBase<delegate1_t<T> >
-	//{
-	//};
-	//
-	//template <typename T1, typename T2>
-	//class Event2 : public EventBase<delegate2_t<T1, T2> >
-	//{
-	//};
-	//
-	//template <typename T1, typename T2, typename T3>
-	//class Event3 : public EventBase<delegate3_t<T1, T2, T3> >
-	//{
-	//};
-	//
-	//template <typename T1, typename T2, typename T3, typename T4>
-	//class Event4 : public EventBase<delegate4_t<T1, T2, T3, T4> >
-	//{
-	//};
-
-	template<typename T1 = void, typename T2 = void, typename T3 = void, typename T4 = void>
-	class Event : public EventBase<delegate4_t<T1, T2, T3, T4> >
+	class Event : public EventBase<delegate_t>
+	{
+	};
+	
+	template <typename T>
+	class Event1 : public EventBase<delegate1_t<T> >
+	{
+	};
+	
+	template <typename T1, typename T2>
+	class Event2 : public EventBase<delegate2_t<T1, T2> >
+	{
+	};
+	
+	template <typename T1, typename T2, typename T3>
+	class Event3 : public EventBase<delegate3_t<T1, T2, T3> >
+	{
+	};
+	
+	template <typename T1, typename T2, typename T3, typename T4>
+	class Event4 : public EventBase<delegate4_t<T1, T2, T3, T4> >
 	{
 	};
 
-	template<typename T1, typename T2, typename T3>
-	class Event<T1, T2, T3, void> : public EventBase<delegate3_t<T1, T2, T3> >
-	{
-	};
 
-	template<typename T1, typename T2>
-	class Event<T1, T2, void, void> : public EventBase<delegate2_t<T1, T2> >
-	{
-	};
-
-	template<typename T1>
-	class Event<T1, void, void, void> : public EventBase<delegate1_t<T1> >
-	{
-	};
-
-	template<>
-	class Event<void, void, void, void> : public EventBase<delegate_t >
-	{
-	};
 
 }
 

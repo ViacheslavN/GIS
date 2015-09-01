@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="layers">
+      <UniqueIdentifier>{2fc30a54-4476-4845-8819-e2f0a2ea7b8f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -27,19 +30,31 @@
     <ClInclude Include="Cartography.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Layer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>layers</Filter>
+    </ClInclude>
     <ClInclude Include="LayerBase.h">
-      <Filter>Header Files</Filter>
+      <Filter>layers</Filter>
+    </ClInclude>
+    <ClInclude Include="Layers.h">
+      <Filter>layers</Filter>
+    </ClInclude>
+    <ClInclude Include="LoaderLayers.h">
+      <Filter>layers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Layers.cpp">
+      <Filter>layers</Filter>
+    </ClCompile>
+    <ClCompile Include="LoaderLayers.cpp">
+      <Filter>layers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

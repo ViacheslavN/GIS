@@ -17,9 +17,11 @@ namespace GisEngine
 		struct IXMLWriter;
 		struct IXMLReader;
 		struct IXMLNode;
+ 
 
 		COMMON_LIB_REFPTR_TYPEDEF(IPropertySet);
 		COMMON_LIB_REFPTR_TYPEDEF(IXMLNode);
+
 
 		struct IStreamSerialize
 		{
@@ -140,6 +142,22 @@ namespace GisEngine
 			IXMLWriter(){}
 			virtual ~IXMLWriter(){}
 		};
+
+
+		template<class T>
+		struct IEnumT   : public CommonLib::AutoRefCounter
+		{
+			IEnumT(){}
+			virtual ~IEnumT(){}
+			virtual void Reset() = 0;
+			virtual bool Next(T* obj) = 0;
+			virtual void Add(const T& obj) = 0;
+			virtual void Clear() = 0;
+		};
+
+
+		typedef IEnumT<int64> IEnumIDs;
+		COMMON_LIB_REFPTR_TYPEDEF(IEnumIDs);
 	}
 }
 

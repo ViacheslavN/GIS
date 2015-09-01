@@ -31,9 +31,7 @@ namespace GisEngine
 			LineFillSymbolID,
 			TextFillSymbolID,
 			TextSymbolID,
-			MultiLayerSymbolID,
-			
-
+			MultiLayerSymbolID
 		};
 
 	
