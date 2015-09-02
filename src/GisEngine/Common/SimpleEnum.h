@@ -5,7 +5,7 @@
 
 namespace GisEngine
 {
-	namespace Common
+	namespace GisCommon
 	{
 			template <class TDataType, class TInterface>
 			class CSimpleEnum : public TInterface
@@ -18,20 +18,20 @@ namespace GisEngine
 					{
 						m_nIdx = 0;
 					}
-					virtual bool next(TDataType** pObj)
+					virtual bool next(TDataType* pObj)
 					{
 						if(!pObj)
 							return false;
 						if(m_nIdx == m_objects.size())
 						{
-							*pObj = NULL;
+							//*pObj = NULL;
 							return false;
 						}
 						*pObj = m_objects[m_nIdx];
 						m_nIdx++;
 						return true;
 					}
-					virtual void add(TDataType *pObj)
+					virtual void add(const TDataType& pObj)
 					{
 						m_objects.push_back(pObj);
 					}
@@ -41,7 +41,7 @@ namespace GisEngine
 						m_nIdx = 0;
 					}
 				private:
-					std::vector<TDataType*> m_objects;
+					std::vector<TDataType> m_objects;
 					uint32 m_nIdx;
 			};
 	}

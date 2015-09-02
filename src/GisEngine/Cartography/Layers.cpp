@@ -45,16 +45,16 @@ namespace GisEngine
 		// ILayers
 		int CLayers::GetLayerCount() const
 		{
-			CommonLib::CSSection::scoped_lock lock(mutex_);
+			CommonLib::CSSection::scoped_lock lock(m_mutex);
 
-			return (int)layers_.size();
+			return (int)m_vecLyers.size();
 		}
 
 		ILayerPtr CLayers::GetLayer(int index) const
 		{
-			CommonLib::CSSection::scoped_lock lock(mutex_);
+			CommonLib::CSSection::scoped_lock lock(m_mutex);
 
-			return layers_[index];
+			return m_vecLyers[index];
 		}
 
 		void CLayers::AddLayer(ILayer* layer)
@@ -64,8 +64,8 @@ namespace GisEngine
 
 			RemoveLayer(layer);  
 			{
-				CommonLib::CSSection::scoped_lock lock(mutex_);
-				layers_.push_back(ILayerPtr(layer));
+				CommonLib::CSSection::scoped_lock lock(m_mutex);
+				m_vecLyers.push_back(ILayerPtr(layer));
 			}
 			OnLayerAddedEvent.fire(this, layer);
 		}
@@ -77,16 +77,16 @@ namespace GisEngine
 
 		void CLayers::RemoveLayer(ILayer* layer)
 		{
-			CommonLib::CSSection::scoped_lock  lock(mutex_);
+			CommonLib::CSSection::scoped_lock  lock(m_mutex);
 
 			ILayerPtr layer2(layer);
 			std::vector<ILayerPtr>::iterator it;
 
-			for(it = layers_.begin(); it != layers_.end(); ++it)
+			for(it = m_vecLyers.begin(); it != m_vecLyers.end(); ++it)
 			{
 				if((*it) == layer2)
 				{
-					layers_.erase(it);
+					m_vecLyers.erase(it);
 					lock.unlock();
 					OnLayerDeletedEvent.fire(this,  layer2.get());
 					return;
@@ -99,8 +99,8 @@ namespace GisEngine
 		void CLayers::RemoveAllLayers()
 		{
 			{
-				CommonLib::CSSection::scoped_lock  lock(mutex_);
-				layers_.clear();
+				CommonLib::CSSection::scoped_lock  lock(m_mutex);
+				m_vecLyers.clear();
 			}
 
 			OnContentsClearedEvent.fire(this);
@@ -116,12 +116,12 @@ namespace GisEngine
 			RemoveLayer(layer);
 
 			{
-				CommonLib::CSSection::scoped_lock lock(mutex_);
+				CommonLib::CSSection::scoped_lock lock(m_mutex);
 	
-				if(index > (int)layers_.size() - 1)
-					layers_.push_back(ILayerPtr(layer));
+				if(index > (int)m_vecLyers.size() - 1)
+					m_vecLyers.push_back(ILayerPtr(layer));
 				else
-					layers_.insert(layers_.begin() + index, ILayerPtr(layer));
+					m_vecLyers.insert(m_vecLyers.begin() + index, ILayerPtr(layer));
 			}
 
 			OnLayerMovedEvent.fire(this, layer, index);

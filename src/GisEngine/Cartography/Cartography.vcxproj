@@ -426,17 +426,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cartography.h" />
+    <ClInclude Include="FeatureRenderer.h" />
+    <ClInclude Include="FeatureRendererBase.h" />
     <ClInclude Include="LayerBase.h" />
     <ClInclude Include="Layers.h" />
     <ClInclude Include="LoaderLayers.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Layer.h" />
+    <ClInclude Include="Selection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FeatureRenderer.cpp" />
     <ClCompile Include="Layers.cpp" />
     <ClCompile Include="LoaderLayers.cpp" />
+    <ClCompile Include="Selection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugShared|Win32'">Create</PrecompiledHeader>

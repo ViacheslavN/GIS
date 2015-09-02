@@ -33,9 +33,8 @@ namespace GisEngine
 			virtual void SetOnLayerMoved(OnLayerMoved* pFunck, bool bAdd);
 
 		private:
-			std::vector<ILayerPtr> layers_;
-
-			mutable CommonLib::CSSection mutex_;
+			std::vector<ILayerPtr> m_vecLyers;
+			mutable CommonLib::CSSection m_mutex;
 
 			CommonLib::Event1<ILayers*>					OnContentsClearedEvent;
 			CommonLib::Event2<ILayers*, ILayer*>        OnLayerAddedEvent;

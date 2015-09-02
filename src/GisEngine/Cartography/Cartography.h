@@ -40,6 +40,16 @@ namespace GisEngine
 
 		};
 
+		enum eSymbolAssignerID
+		{
+			UndefineSymbolAssignerID,
+			SymbolAssignerID,
+			ClassBreaksSymbolAssignerID,
+			UniqueValueSymbolAssignerID,
+			MaskSymbolAssignerID,
+			StoredSymbolAssignerID
+		};
+
 		struct ILayer;
 		struct IMap;
 		struct IFeatureLayer;
@@ -78,7 +88,7 @@ namespace GisEngine
 		COMMON_LIB_REFPTR_TYPEDEF(ILabelingOptions);
 
 
-		typedef GisCommon::IEnumT<ILayersPtr> IEnumLayers;
+		typedef GisCommon::IEnumT<ILayerPtr> IEnumLayers;
 
 
 
@@ -191,7 +201,13 @@ namespace GisEngine
 			virtual void                             SetFeatureClass(GeoDatabase::IFeatureClass* featureClass) = 0;
 			virtual bool                             GetSelectable() const = 0;
 			virtual void                             SetSelectable(bool flag) = 0;
-			virtual IFeatureRenderersPtr             GetRenderers() const = 0;	
+			virtual int								 GetRendererCount() const = 0;
+			virtual IFeatureRendererPtr				 GetRenderer(int index) const = 0;
+			virtual void							 AddRenderer(IFeatureRenderer* renderer) = 0;
+			virtual void							 RemoveRenderer(IFeatureRenderer* renderer) = 0;
+			virtual void							 Clear() = 0;
+
+			virtual void DrawFeatures(eDrawPhase phase, GisCommon::IEnumIDs* ids, Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel, Display::ISymbol* customSymbol) const = 0;
 		};
 
 		struct IGroupLayer : public ILayer
@@ -235,7 +251,9 @@ namespace GisEngine
 			virtual void                Clear() = 0;
 		};
 
-		struct  IFeatureRenderer : public CommonLib::AutoRefCounter
+		struct  IFeatureRenderer : public CommonLib::AutoRefCounter, 
+									public GisCommon::IStreamSerialize, 
+									public GisCommon::IXMLSerialize
 		{
 			IFeatureRenderer();
 			virtual ~IFeatureRenderer();
@@ -248,9 +266,15 @@ namespace GisEngine
 			virtual void                   SetMinimumScale(double scale) = 0;
 			virtual const CommonLib::str_t&  GetShapeField() const = 0;
 			virtual void                   SetShapeField(const CommonLib::str_t&  field) = 0;
-			virtual bool Draw(eDrawPhase phase, GeoDatabase::IFeatureClass* featureClass, GeoDatabase::IQueryFilter* filter, 
-				Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel, Display::ISymbol* customSymbol = 0, bool drawAlways = false) = 0;
+			virtual ISymbolAssignerPtr		GetSymbolAssigner() const = 0;
+			virtual  void					SetSymbolAssigner(ISymbolAssigner* assigner) = 0;
+			/*virtual bool Draw(eDrawPhase phase, GeoDatabase::IFeatureClass* featureClass, GeoDatabase::IQueryFilter* filter, 
+				Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel, Display::ISymbol* customSymbol = 0, bool drawAlways = false) = 0;*/
+			virtual void DrawFeature(Display::IDisplay* display, GeoDatabase::IFeature* feature, Display::ISymbol* customSymbol = 0) = 0;
 		};
+
+		typedef CommonLib::delegate_t OnSelectChange;
+ 
 
 		struct ISelection : public CommonLib::AutoRefCounter
 		{
@@ -265,6 +289,9 @@ namespace GisEngine
 			virtual Display::ISymbolPtr		   GetSymbol() const = 0;
 			virtual void                       SetSymbol(Display::ISymbol* symbol) = 0;
 			virtual bool                       IsEmpty() const = 0;
+
+
+			virtual void SetOnSelectChange(OnSelectChange* pFunck, bool bAdd) = 0;
 		};
 
 		struct ILegendClass : public CommonLib::AutoRefCounter
@@ -379,10 +406,13 @@ namespace GisEngine
 		};
 
 
-		struct  ISymbolAssigner  : public CommonLib::AutoRefCounter
+		struct  ISymbolAssigner  : public CommonLib::AutoRefCounter, 
+									public GisCommon::IStreamSerialize, 
+									public GisCommon::IXMLSerialize
 		{
 			ISymbolAssigner(){}
 			virtual ~ISymbolAssigner(){}
+			virtual uint32				   GetSymbolAssignerID() const = 0;
 			virtual bool                   CanAssign(GeoDatabase::IFeatureClass* cls) const = 0;
 			virtual void                   PrepareFilter(GeoDatabase::IFeatureClass* cls, GeoDatabase::IQueryFilter* filter) const = 0;
 			virtual Display::ISymbolPtr	   GetSymbolByFeature(GeoDatabase::IFeature* feature) const = 0;

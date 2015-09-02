@@ -19,7 +19,7 @@ namespace GisEngine
 			~CLayerBase()
 			{}
 
-			virtual	uint32					  GetLayerID() const;
+			virtual	uint32					  GetLayerID() const {return m_nLayerSymbolID;}
 			 virtual void   Draw(eDrawPhase phase, Display::IDisplay* pDisplay, GisCommon::ITrackCancel* trackCancel)
 			 {
 				 if(!display)
@@ -95,7 +95,7 @@ namespace GisEngine
 				return true;
 			}
 
-			virtual bool saveXML(IXMLNode* pXmlNode) const
+			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const
 			{
 				pXmlNode->AddPropertyInt32U(L"LayerID", m_nLayerSymbolID);
 				pXmlNode->AddPropertyString(L"name", m_sName);
@@ -104,7 +104,7 @@ namespace GisEngine
 				pXmlNode->AddPropertyDouble(L"MaxScale", m_dMaximumScale);
 				return true;
 			}
-			virtual bool load(IXMLNode* pXmlNode)
+			virtual bool load(GisCommon::IXMLNode* pXmlNode)
 			{
 				m_nLayerSymbolID = pXmlNode->GetPropertyInt32U(L"LayerID", m_nLayerSymbolID);
 				m_sName = pXmlNode->GetPropertyString(L"name", m_sName);

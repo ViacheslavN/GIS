@@ -149,10 +149,10 @@ namespace GisEngine
 		{
 			IEnumT(){}
 			virtual ~IEnumT(){}
-			virtual void Reset() = 0;
-			virtual bool Next(T* obj) = 0;
-			virtual void Add(const T& obj) = 0;
-			virtual void Clear() = 0;
+			virtual void reset() = 0;
+			virtual bool next(T* obj) = 0;
+			virtual void add(const T& obj) = 0;
+			virtual void clear() = 0;
 		};
 
 
