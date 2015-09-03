@@ -13,8 +13,15 @@ namespace GisEngine
 		{
 		public:
 			CFeatureRendererBase() : m_dMaximumScale(0),	 m_dMinimumScale(0),	m_nShapeFieldIndex(-1)	
-			{}
+			{
 
+				m_nFeatureRendererID = UndefineFeatureRendererID;
+			}
+
+			virtual	uint32	GetFeatureRendererID()  const
+			{
+				return m_nFeatureRendererID;
+			}
 			double   GetMaximumScale() const
 			{
 				return m_dMaximumScale;
@@ -35,13 +42,14 @@ namespace GisEngine
 			{
 				return m_sShapeField;
 			}
-			void                   SetShapeField(const CommonLib::str_t&  field)
+			void   SetShapeField(const CommonLib::str_t&  field)
 			{
 				m_sShapeField = field;
 			}
 
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const
 			{
+				pWriteStream->write(GetFeatureRendererID());
 				pWriteStream->write(m_dMaximumScale);
 				pWriteStream->write(m_dMinimumScale);
 				pWriteStream->write(m_sShapeField);
@@ -59,6 +67,7 @@ namespace GisEngine
 
 			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const
 			{
+				pXmlNode->AddPropertyInt32U(L"FeatureRendererID", GetFeatureRendererID());
 				pXmlNode->AddPropertyDouble(L"MinScale", m_dMinimumScale);
 				pXmlNode->AddPropertyDouble(L"MaxScale", m_dMaximumScale);
 				pXmlNode->AddPropertyString(L"ShapeField", m_sShapeField);
@@ -76,6 +85,7 @@ namespace GisEngine
 			double                            m_dMaximumScale;
 			mutable CommonLib::str_t		  m_sShapeField;
 			mutable int                       m_nShapeFieldIndex;
+			uint32 m_nFeatureRendererID;
 				
 		};
 

@@ -22,20 +22,20 @@ namespace GisEngine
 			virtual	uint32					  GetLayerID() const {return m_nLayerSymbolID;}
 			 virtual void   Draw(eDrawPhase phase, Display::IDisplay* pDisplay, GisCommon::ITrackCancel* trackCancel)
 			 {
-				 if(!display)
+				 if(!pDisplay)
 					 return;
 
 				 if(!IsValid() || !(GetSupportedDrawPhases() & phase) || !GetVisible())
 					 return;
 
-				 double scale = display->GetTransformation()->GetScale();
+				 double scale = pDisplay->GetTransformation()->GetScale();
 
 				 double maximumScale = GetMaximumScale();
 				 double minimumScale = GetMinimumScale();
 				 if((maximumScale != 0.0 && scale < maximumScale) || (minimumScale != 0.0 && scale > minimumScale))
 					 return;
 
-				 DrawEx(phase, display, trackCancel);
+				 DrawEx(phase, pDisplay, trackCancel);
 			 }
 			virtual double                    GetMaximumScale() const
 			{
@@ -53,7 +53,7 @@ namespace GisEngine
 			{
 				m_dMinimumScale = dScale;
 			}
-			virtual CommonLib::str_t		 GetName() const
+			virtual const CommonLib::str_t&		 GetName() const
 			{
 				return m_sName;
 			}
@@ -78,7 +78,7 @@ namespace GisEngine
 
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const
 			{
-				pWriteStream->write(m_nLayerSymbolID);
+				pWriteStream->write(GetLayerID());
 				pWriteStream->write(m_sName);
 				pWriteStream->write(m_bVisible);
 				pWriteStream->write(m_dMinimumScale);
@@ -87,7 +87,6 @@ namespace GisEngine
 			}
 			virtual bool load(CommonLib::IReadStream* pReadStream)
 			{
-				SAFE_READ(pReadStream, m_nLayerSymbolID)
 				SAFE_READ_RES_EX(pReadStream, m_sName, 1)
 				SAFE_READ_RES_EX(pReadStream, m_bVisible, 1)
 				SAFE_READ(pReadStream, m_dMinimumScale)
@@ -97,7 +96,7 @@ namespace GisEngine
 
 			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const
 			{
-				pXmlNode->AddPropertyInt32U(L"LayerID", m_nLayerSymbolID);
+				pXmlNode->AddPropertyInt32U(L"LayerID", GetLayerID());
 				pXmlNode->AddPropertyString(L"name", m_sName);
 				pXmlNode->AddPropertyBool(L"visible", m_bVisible);
 				pXmlNode->AddPropertyDouble(L"MinScale", m_dMinimumScale);
@@ -106,7 +105,6 @@ namespace GisEngine
 			}
 			virtual bool load(GisCommon::IXMLNode* pXmlNode)
 			{
-				m_nLayerSymbolID = pXmlNode->GetPropertyInt32U(L"LayerID", m_nLayerSymbolID);
 				m_sName = pXmlNode->GetPropertyString(L"name", m_sName);
 				m_bVisible = pXmlNode->GetPropertyBool(L"visible", m_bVisible);
 				m_dMinimumScale = pXmlNode->GetPropertyDouble(L"MinScale", m_dMinimumScale);
@@ -115,7 +113,7 @@ namespace GisEngine
 			}
 
 		protected:
-			virtual void                      DrawEx(eDrawPhase phase, Display::IDisplay* display, gisSystem::ITrackCancel* trackCancel) = 0;
+			virtual void                      DrawEx(eDrawPhase phase, Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel) = 0;
 		protected:
 			CommonLib::str_t              m_sName;
 			GisGeometry::ISpatialReferencePtr m_pSpatialRef;
@@ -123,9 +121,11 @@ namespace GisEngine
 			double                            m_dMinimumScale;
 			double                            m_dMaximumScale;
 			uint32							  m_nLayerSymbolID;
+		};
 
 	}
 }
 
-
 #endif
+
+ 

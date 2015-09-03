@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "FeatureRenderer.h"
+#include "LoadSymbolAssigners.h"
 
 namespace GisEngine
 {
@@ -7,7 +8,7 @@ namespace GisEngine
 	{
 		CFeatureRenderer::CFeatureRenderer()
 		{
-
+			m_nFeatureRendererID = SimpleFeatureRendererID;
 		}
 		CFeatureRenderer::~CFeatureRenderer()
 		{
@@ -65,11 +66,8 @@ namespace GisEngine
 		Display::ISymbolPtr CFeatureRenderer::GetSymbolByFeature(GeoDatabase::IFeature* feature) const
 		{
 			Display::ISymbolPtr pSymbol;
-
-				if(m_pSymbolAssigner.get())
+			if(m_pSymbolAssigner.get())
 				pSymbol = m_pSymbolAssigner->GetSymbolByFeature(feature);
-
-
 			return pSymbol;
 		}
 		ISymbolAssignerPtr	CFeatureRenderer::GetSymbolAssigner() const
@@ -120,13 +118,20 @@ namespace GisEngine
 			if(!TBase::save(pWriteStream))
 				return false;
 
+			pWriteStream->write(m_pSymbolAssigner.get() ? true : false);
+			if(m_pSymbolAssigner.get())
+				m_pSymbolAssigner->save(pWriteStream);
+
 			return true;
 		}
 		bool CFeatureRenderer::load(CommonLib::IReadStream* pReadStream)
 		{
 			if(!TBase::load(pReadStream))
 				return false;
-
+			bool bSymbol = false;
+			SAFE_READ_BOOL_RES(pReadStream, bSymbol);
+			if(bSymbol)
+				m_pSymbolAssigner = LoadSymbolAssigners(pReadStream);
 			return true;
 		}
 		bool CFeatureRenderer::saveXML(GisCommon::IXMLNode* pXmlNode) const
@@ -147,6 +152,9 @@ namespace GisEngine
 			if(!TBase::load(pXmlNode))
 				return false;
 
+			bool bSymbol = pXmlNode->GetPropertyBool("SymbolAssigner", false);
+			if(bSymbol)
+				m_pSymbolAssigner = LoadSymbolAssigners(pXmlNode);
 			return true;
 		}
 	}

@@ -19,6 +19,9 @@
     <Filter Include="renders">
       <UniqueIdentifier>{8822fbd7-9263-4694-bbc3-9325c81d12ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SymbolAssigners">
+      <UniqueIdentifier>{25e9ffa2-f822-42e5-a570-ba8d29871f58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -57,6 +60,15 @@
     <ClInclude Include="FeatureRenderer.h">
       <Filter>renders</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleSymbolAssigner.h">
+      <Filter>SymbolAssigners</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadSymbolAssigners.h">
+      <Filter>SymbolAssigners</Filter>
+    </ClInclude>
+    <ClInclude Include="FeatureLayer.h">
+      <Filter>layers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -73,6 +85,15 @@
     </ClCompile>
     <ClCompile Include="FeatureRenderer.cpp">
       <Filter>renders</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleSymbolAssigner.cpp">
+      <Filter>SymbolAssigners</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadSymbolAssigners.cpp">
+      <Filter>SymbolAssigners</Filter>
+    </ClCompile>
+    <ClCompile Include="FeatureLayer.cpp">
+      <Filter>layers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
-#ifndef GIS_ENGINE_LAYERS_H_
-#define GIS_ENGINE_LAYERS_H_
+#ifndef GIS_ENGINE_CARTOGRAPHY_LAYERS_H_
+#define GIS_ENGINE_CARTOGRAPHY_LAYERS_H_
 
 #include "Cartography.h"
 

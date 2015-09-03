@@ -124,6 +124,7 @@ namespace GisEngine
 			//IXMLSerialize
 			bool saveXML(GisCommon::IXMLNode* pXmlNode) const
 			{
+				pXmlNode->AddPropertyInt32U(L"SymbolID", GetSymbolID());
 				pXmlNode->AddPropertyBool(L"SD", m_bScaleDependent);
 				pXmlNode->AddPropertyBool(L"DB", m_bDrawToBuffers);
 				return true;

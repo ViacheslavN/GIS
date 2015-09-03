@@ -43,11 +43,17 @@ namespace GisEngine
 		enum eSymbolAssignerID
 		{
 			UndefineSymbolAssignerID,
-			SymbolAssignerID,
+			SimpleSymbolAssignerID,
 			ClassBreaksSymbolAssignerID,
 			UniqueValueSymbolAssignerID,
 			MaskSymbolAssignerID,
 			StoredSymbolAssignerID
+		};
+
+		enum eFeatureRendererID
+		{
+			UndefineFeatureRendererID,
+			SimpleFeatureRendererID
 		};
 
 		struct ILayer;
@@ -205,7 +211,7 @@ namespace GisEngine
 			virtual IFeatureRendererPtr				 GetRenderer(int index) const = 0;
 			virtual void							 AddRenderer(IFeatureRenderer* renderer) = 0;
 			virtual void							 RemoveRenderer(IFeatureRenderer* renderer) = 0;
-			virtual void							 Clear() = 0;
+			virtual void							 ClearRenders() = 0;
 
 			virtual void DrawFeatures(eDrawPhase phase, GisCommon::IEnumIDs* ids, Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel, Display::ISymbol* customSymbol) const = 0;
 		};
@@ -257,6 +263,7 @@ namespace GisEngine
 		{
 			IFeatureRenderer();
 			virtual ~IFeatureRenderer();
+			virtual	uint32					GetFeatureRendererID()  const = 0;
 			virtual bool                   CanRender(GeoDatabase::IFeatureClass* cls, Display::IDisplay* display) const = 0;
 			virtual void                   PrepareFilter(GeoDatabase::IFeatureClass* cls, GeoDatabase::IQueryFilter* filter) const = 0;
 			virtual Display::ISymbolPtr    GetSymbolByFeature(GeoDatabase::IFeature* feature) const = 0;
@@ -308,8 +315,12 @@ namespace GisEngine
 		struct  ILegendInfo : public CommonLib::AutoRefCounter
 		{
 
-			virtual ILegendGroupPtr GetLegendGroup( int index ) const = 0;    
-			virtual int             GetLegendGroupCount() const = 0;
+			//virtual ILegendGroupPtr GetLegendGroup( int index ) const = 0;    
+			//virtual int             GetLegendGroupCount() const = 0;
+
+			virtual int                    GetSymbolCount() const = 0;
+			virtual Display::ISymbolPtr	   GetSymbolByIndex(int index) const = 0;
+			virtual void                   SetSymbolByIndex(int index, Display::ISymbol *symbol ) = 0;
 		};
 
 		struct  ILegendGroup : public CommonLib::AutoRefCounter
@@ -430,6 +441,8 @@ namespace GisEngine
 			virtual void						SetLabel(const CommonLib::str_t& sLabel) = 0;
 			virtual Display::ISymbolPtr			GetSymbol() const = 0;
 			virtual void						SetSymbol(Display::ISymbol* symbol) = 0;
+
+
 		};
 
 
