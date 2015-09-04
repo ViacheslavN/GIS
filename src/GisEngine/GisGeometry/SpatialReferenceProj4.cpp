@@ -406,13 +406,13 @@ namespace GisEngine
 		}
 		bool CSpatialReferenceProj4::load(CommonLib::IReadStream *pStream)
 		{
-			SAFE_READ_RES(pStream, m_prj4Str, 1)
+			SAFE_READ_RES_EX(pStream, m_prj4Str, 1)
 			return true;
 		}
 
-		bool CSpatialReferenceProj4::save(GisCommon::IXMLNode* pXmlNode) const
+		bool CSpatialReferenceProj4::saveXML(GisCommon::IXMLNode* pXmlNode) const
 		{
-			pXmlNode->AddProperty(L"proj", )
+			pXmlNode->AddPropertyString(L"proj", m_prj4Str);
 			return true;
 		}
 		bool CSpatialReferenceProj4::load(GisCommon::IXMLNode* pXmlNode)

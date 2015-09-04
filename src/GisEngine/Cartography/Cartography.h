@@ -169,6 +169,8 @@ namespace GisEngine
 			virtual bool                      GetVisible() const = 0;
 			virtual void                      SetVisible(bool flag) = 0;
 			virtual bool                      IsActiveOnScale(double scale) const = 0; 
+			virtual uint32					  GetCheckCancelStep() const = 0;
+			virtual void					  SetCheckCancelStep(uint32 nCount) const = 0;
 		};
 
 
@@ -207,6 +209,8 @@ namespace GisEngine
 			virtual void                             SetFeatureClass(GeoDatabase::IFeatureClass* featureClass) = 0;
 			virtual bool                             GetSelectable() const = 0;
 			virtual void                             SetSelectable(bool flag) = 0;
+			virtual const CommonLib::str_t&			 GetDefinitionQuery() const= 0;
+			virtual void							 SetDefinitionQuery(const CommonLib::str_t& )= 0;
 			virtual int								 GetRendererCount() const = 0;
 			virtual IFeatureRendererPtr				 GetRenderer(int index) const = 0;
 			virtual void							 AddRenderer(IFeatureRenderer* renderer) = 0;
@@ -429,6 +433,7 @@ namespace GisEngine
 			virtual Display::ISymbolPtr	   GetSymbolByFeature(GeoDatabase::IFeature* feature) const = 0;
 			virtual void                   SetupSymbols(Display::IDisplay* display) = 0;
 			virtual void                   ResetSymbols() = 0;
+			virtual void				   FlushBuffers(Display::IDisplay* pDisplay, GisCommon::ITrackCancel* trackCancel) = 0;
 		};
 
 		struct ISimpleSymbolAssigner : public ISymbolAssigner

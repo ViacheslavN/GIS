@@ -10,6 +10,8 @@ namespace GisEngine
 		class  CFeatureLayer : public CLayerBase<IFeatureLayer> 
 		{
 			public:
+
+				typedef CLayerBase<IFeatureLayer> TBase;
 				CFeatureLayer();
 				~CFeatureLayer();
 
@@ -19,6 +21,9 @@ namespace GisEngine
 				virtual bool                      IsActiveOnScale(double scale) const;
 
 				// IFeatureLayer
+
+				virtual const CommonLib::str_t&			 GetDefinitionQuery() const;
+				virtual void							 SetDefinitionQuery(const CommonLib::str_t& );
 				virtual const CommonLib::str_t&          GetDisplayField() const;
 				virtual void                             SetDisplayField(const  CommonLib::str_t& sField);
 				virtual GeoDatabase::IFeatureClassPtr    GetFeatureClass() const;
@@ -47,6 +52,7 @@ namespace GisEngine
 			typedef std::vector<IFeatureRendererPtr> TFeatureRenderer;
 
 			CommonLib::str_t  m_sDisplayField;
+			CommonLib::str_t  m_sQuery;
 			TFeatureRenderer m_vecRenderers;
 			bool m_bSelectable;
 			bool m_hasReferenceScale;

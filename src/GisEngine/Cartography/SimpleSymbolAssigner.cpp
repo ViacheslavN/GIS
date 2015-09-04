@@ -67,7 +67,11 @@ namespace GisEngine
 		{
 			 m_pSymbol = symbol;
 		}
-
+		void  CSimpleSymbolAssigner::FlushBuffers(Display::IDisplay* pDisplay, GisCommon::ITrackCancel* trackCancel)
+		{
+			if(m_pSymbol.get())
+				m_pSymbol->FlushBuffers(pDisplay, trackCancel);
+		}
 		/*ILegendGroupPtr SimpleSymbolAssigner::GetLegendGroup( int index ) const
 		{
 			if ( index == 0 )

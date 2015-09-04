@@ -41,6 +41,15 @@ namespace GisEngine
 			void close();
 			ShapefileUtils::SHPGuard* GetSHP();
 			ShapefileUtils::DBFGuard* GetDBF();
+
+			CommonLib::str_t GetFullName();
+
+			virtual bool save(CommonLib::IWriteStream *pWriteStream) const;
+			virtual bool load(CommonLib::IReadStream* pReadStream);
+
+			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
+			virtual bool load(GisCommon::IXMLNode* pXmlNode);
+
 		private:
 			IWorkspace *m_pWorkSpace;
 			IShapeFieldPtr m_pShapeField;

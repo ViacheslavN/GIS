@@ -38,7 +38,8 @@ namespace GisEngine
 			virtual void                    SetSpatialRel(eSpatialRel rel);
 			virtual double                  GetPrecision() const;
 			virtual void                    SetPrecision(double precision);
-
+			virtual GisBoundingBox			GetBB() const;
+			virtual void                    SetBB(const  GisBoundingBox& bbox );
 		private:
 			CommonLib::str_t             m_sWhereClause;
 			mutable IFieldSetPtr              m_pFieldSet;
@@ -48,6 +49,7 @@ namespace GisEngine
 			CommonLib::IGeoShapePtr            m_pShape;
 			eSpatialRel                     m_SpatialRel;
 			double                            m_dPecision;
+			GisBoundingBox					m_bbox;
 
 		};
 	}

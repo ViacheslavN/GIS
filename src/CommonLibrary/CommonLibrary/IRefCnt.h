@@ -171,7 +171,15 @@ namespace CommonLib
 	{	 
 		return (_P1.get() < _P2.get());
 	}
-		typedef IRefCntPtr<IRefCnt> IRefObjectPtr;
+
+		template<class _Ty1, class _Ty2>
+		bool operator == (const IRefCntPtr<_Ty1>& _P1, const IRefCntPtr<_Ty2>& _P2)
+		{	 
+			return (_P1.get() == _P2.get());
+		}
+	
+		
+	typedef IRefCntPtr<IRefCnt> IRefObjectPtr;
 }
 
 

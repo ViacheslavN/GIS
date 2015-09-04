@@ -13,13 +13,14 @@ namespace GisEngine
 		{
 		public: 
 
-			CLayerBase() : m_bVisible(false), m_dMinimumScale(0.), m_dMaximumScale(0.), m_nLayerSymbolID(UndefineLayerID)
+			CLayerBase() : m_bVisible(false), m_dMinimumScale(0.), m_dMaximumScale(0.), m_nLayerSymbolID(UndefineLayerID),
+					m_nCheckCancelStep(100)
 			{}
 
 			~CLayerBase()
 			{}
 
-			virtual	uint32					  GetLayerID() const {return m_nLayerSymbolID;}
+			virtual	uint32	GetLayerID() const {return m_nLayerSymbolID;}
 			 virtual void   Draw(eDrawPhase phase, Display::IDisplay* pDisplay, GisCommon::ITrackCancel* trackCancel)
 			 {
 				 if(!pDisplay)
@@ -37,23 +38,23 @@ namespace GisEngine
 
 				 DrawEx(phase, pDisplay, trackCancel);
 			 }
-			virtual double                    GetMaximumScale() const
+			virtual double   GetMaximumScale() const
 			{
 				return m_dMaximumScale;
 			}
-			virtual void                      SetMaximumScale(double dScale)
+			virtual void  SetMaximumScale(double dScale)
 			{
 				m_dMaximumScale = dScale;
 			}
-			virtual double                    GetMinimumScale() const
+			virtual double   GetMinimumScale() const
 			{
 				return m_dMinimumScale;
 			}
-			virtual void                      SetMinimumScale(double dScale)
+			virtual void  SetMinimumScale(double dScale)
 			{
 				m_dMinimumScale = dScale;
 			}
-			virtual const CommonLib::str_t&		 GetName() const
+			virtual const CommonLib::str_t&		GetName() const
 			{
 				return m_sName;
 			}
@@ -61,21 +62,28 @@ namespace GisEngine
 			{
 				m_sName = sName;
 			}
-			virtual bool                      GetVisible() const
+			virtual bool  GetVisible() const
 			{
 				return m_bVisible;
 			}
-			virtual void                      SetVisible(bool flag)
+			virtual void  SetVisible(bool flag)
 			{
 				m_bVisible = flag;
 			}
-			virtual bool                      IsActiveOnScale(double scale) const
+			virtual bool  IsActiveOnScale(double scale) const
 			{
 				if((GetMinimumScale() != 0 && GetMinimumScale() < scale) || (GetMaximumScale() != 0 && GetMaximumScale() > scale))
 					return false;
 				return true;
 			}
+			virtual uint32	GetCheckCancelStep() const = 0
+			{
 
+			}
+			virtual void	SetCheckCancelStep(uint32 nCount) const
+			{
+
+			}
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const
 			{
 				pWriteStream->write(GetLayerID());
@@ -83,6 +91,7 @@ namespace GisEngine
 				pWriteStream->write(m_bVisible);
 				pWriteStream->write(m_dMinimumScale);
 				pWriteStream->write(m_dMaximumScale);
+				pWriteStream->write(m_nCheckCancelStep);
 				return true;
 			}
 			virtual bool load(CommonLib::IReadStream* pReadStream)
@@ -91,6 +100,7 @@ namespace GisEngine
 				SAFE_READ_RES_EX(pReadStream, m_bVisible, 1)
 				SAFE_READ(pReadStream, m_dMinimumScale)
 				SAFE_READ(pReadStream, m_dMaximumScale)
+				SAFE_READ(pReadStream, m_nCheckCancelStep)
 				return true;
 			}
 
@@ -101,6 +111,7 @@ namespace GisEngine
 				pXmlNode->AddPropertyBool(L"visible", m_bVisible);
 				pXmlNode->AddPropertyDouble(L"MinScale", m_dMinimumScale);
 				pXmlNode->AddPropertyDouble(L"MaxScale", m_dMaximumScale);
+				pXmlNode->AddPropertyInt32U(L"CheckCancelStep", m_nCheckCancelStep);
 				return true;
 			}
 			virtual bool load(GisCommon::IXMLNode* pXmlNode)
@@ -109,11 +120,12 @@ namespace GisEngine
 				m_bVisible = pXmlNode->GetPropertyBool(L"visible", m_bVisible);
 				m_dMinimumScale = pXmlNode->GetPropertyDouble(L"MinScale", m_dMinimumScale);
 				m_dMaximumScale = pXmlNode->GetPropertyDouble(L"MaxScale", m_dMaximumScale);
+				m_nCheckCancelStep = pXmlNode->GetPropertyInt32U(L"CheckCancelStep", m_nCheckCancelStep);
 				return true;
 			}
 
 		protected:
-			virtual void                      DrawEx(eDrawPhase phase, Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel) = 0;
+			virtual void   DrawEx(eDrawPhase phase, Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel) = 0;
 		protected:
 			CommonLib::str_t              m_sName;
 			GisGeometry::ISpatialReferencePtr m_pSpatialRef;
@@ -121,6 +133,7 @@ namespace GisEngine
 			double                            m_dMinimumScale;
 			double                            m_dMaximumScale;
 			uint32							  m_nLayerSymbolID;
+			uint32							  m_nCheckCancelStep;
 		};
 
 	}

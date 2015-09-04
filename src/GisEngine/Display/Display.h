@@ -77,6 +77,9 @@ namespace GisEngine
 
 			virtual IDisplayTransformationPtr GetTransformation() = 0;
 			virtual void SetTransformation( IDisplayTransformation* pDisplayTransformation )= 0;
+
+			virtual void Lock() = 0;
+			virtual void UnLock() = 0;
 		};
 
 

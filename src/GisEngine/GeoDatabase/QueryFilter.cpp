@@ -14,7 +14,12 @@ namespace GisEngine
 			, m_pOidSet(oidSet)
 			, m_SpatialRel(srlUndefined)
 			, m_dPecision(0.0)
-		{}
+			 
+		{
+			
+			m_bbox.type = CommonLib::bbox_type_invalid;
+		
+		}
 
 		CQueryFilter::~CQueryFilter()
 		{}
@@ -106,6 +111,15 @@ namespace GisEngine
 		void CQueryFilter::SetPrecision(double precision)
 		{
 			m_dPecision = precision;
+		}
+
+		GisBoundingBox	CQueryFilter::GetBB() const
+		{
+			return m_bbox;
+		}
+		void   CQueryFilter::SetBB(const  GisBoundingBox& bbox )
+		{
+			m_bbox = bbox;
 		}
 			
 	}

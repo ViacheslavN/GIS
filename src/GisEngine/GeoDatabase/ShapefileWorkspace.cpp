@@ -63,26 +63,35 @@ namespace GisEngine
 
 		uint32 CShapefileWorkspace::GetDatasetCount() const
 		{
+			CommonLib::CSSection::scoped_lock lock (m_mutex);
 			return m_vecDatasets.size();
 		}
 		IDatasetPtr CShapefileWorkspace::GetDataset(uint32 nIdx) const
 		{
+			CommonLib::CSSection::scoped_lock lock (m_mutex);
 			return m_vecDatasets[nIdx];
 		}
 		void CShapefileWorkspace::RemoveDataset(uint32 nIdx)
 		{
+			CommonLib::CSSection::scoped_lock lock (m_mutex);
 			assert(nIdx < m_vecDatasets.size());
+			m_DataSetMap.erase(m_vecDatasets[nIdx]->GetDatasetName());
 			m_vecDatasets.erase(m_vecDatasets.begin() + nIdx);
 		}
 		void CShapefileWorkspace::RemoveDataset(IDataset *pDataset)
 		{
+			CommonLib::CSSection::scoped_lock lock (m_mutex);
 			TVecDataset::iterator it = std::find(m_vecDatasets.begin(), m_vecDatasets.end(), pDataset);
 			if(it != m_vecDatasets.end())
+			{
+				m_DataSetMap.erase((*it)->GetDatasetName());
 				m_vecDatasets.erase(it);
+			}
 		}
 	 
 		void CShapefileWorkspace::load()
 		{
+			CommonLib::CSSection::scoped_lock lock (m_mutex);
 			std::vector<CommonLib::str_t> vecFiles;
 			CommonLib::FileSystem::getFiles(m_sPath + L"*.shp", vecFiles);
 
@@ -90,7 +99,10 @@ namespace GisEngine
 			{
 				IFeatureClassPtr pFClass = OpenFeatureClass(vecFiles[i]);
 				if(pFClass.get())
+				{
 					m_vecDatasets.push_back(IDatasetPtr((IDataset*)pFClass.get()));
+					m_DataSetMap.insert(std::make_pair(pFClass->GetDatasetName(), pFClass.get()));
+				}
 			}
 			
 
@@ -106,14 +118,17 @@ namespace GisEngine
 		}
 		IFeatureClassPtr CShapefileWorkspace::OpenFeatureClass(const CommonLib::str_t& sName)
 		{
+			CommonLib::CSSection::scoped_lock lock (m_mutex);
 			CommonLib::str_t sViewName = CommonLib::FileSystem::FindOnlyFileName(sName);
-			CShapefileFeatureClass * pFeatureClass =new CShapefileFeatureClass(this, m_sPath, sViewName + L".shp", sViewName);
+			CShapefileFeatureClass * pFeatureClass = new CShapefileFeatureClass(this, m_sPath, sViewName + L".shp", sViewName);
 			bool bLoad = pFeatureClass->reload(false);
 			if(!bLoad)
 			{
 				delete pFeatureClass;
 			}
 			IFeatureClassPtr pFeaturePtr((IFeatureClass*)pFeatureClass);
+	
+
 			return pFeaturePtr;
 		}
  
@@ -123,6 +138,12 @@ namespace GisEngine
 		}
 		IFeatureClassPtr CShapefileWorkspace::CreateFeatureClass(const CommonLib::str_t& sName, IFields* pFields, const CommonLib::str_t& sShapeFieldName)
 		{
+		
+			TDatasetMap::iterator it = m_DataSetMap.find(sName);
+			if(it != m_DataSetMap.end())
+				return IFeatureClassPtr((IFeatureClass*)it->second);
+
+
 			if(sName.isEmpty())
 				return IFeatureClassPtr(); //TO DO Error
 			  if(!pFields)
@@ -179,12 +200,14 @@ namespace GisEngine
 				   return IFeatureClassPtr(); //to do error
 
 
-			CommonLib::str_t filePathBase = m_sPath + sName;
-			if(sName.right(4).equals(L".shp", false))
-			  filePathBase += sName.left(filePathBase.length() - 4);
-			 CommonLib::str_t shpFilePath = filePathBase + L".shp";
-			 CommonLib::str_t dbfFilePath = filePathBase + L".dbf";
-			 CommonLib::str_t prjFileName = filePathBase + L".prj";
+			  CommonLib::CSSection::scoped_lock lock (m_mutex);
+			  CommonLib::str_t filePathBase = m_sPath + sName;
+			  if(sName.right(4).equals(L".shp", false))
+				  filePathBase += sName.left(filePathBase.length() - 4);
+			  CommonLib::str_t shpFilePath = filePathBase + L".shp";
+			  CommonLib::str_t dbfFilePath = filePathBase + L".dbf";
+			  CommonLib::str_t prjFileName = filePathBase + L".prj";
+
 
 
 			 ShapeLib::SHPHandle shp = ShapeLib::SHPCreate(shpFilePath.cstr(), shapeType);
@@ -242,8 +265,100 @@ namespace GisEngine
 			 }
 
 			 DBFClose(dbf);
-			 return OpenFeatureClass(sName);
 
+			 IFeatureClassPtr pFClass = OpenFeatureClass(sName);
+			 if(pFClass.get())
+			 {
+				 m_vecDatasets.push_back(IDatasetPtr((IDataset*)pFClass.get()));
+				 m_DataSetMap.insert(std::make_pair(pFClass->GetDatasetName(), pFClass.get()));
+			 }
+			 return pFClass;
+		}
+
+
+		ITablePtr CShapefileWorkspace::GetTable(const CommonLib::str_t& name)
+		{
+			return ITablePtr();
+		}
+		IFeatureClassPtr CShapefileWorkspace::GetFeatureClass(const CommonLib::str_t& sName)
+		{
+			TDatasetMap::iterator it = m_DataSetMap.find(sName);
+			if(it == m_DataSetMap.end())
+				return IFeatureClassPtr();
+			return IFeatureClassPtr((IFeatureClass*)it->second);
+		}
+
+
+		IWorkspacePtr CShapefileWorkspace::Open(const wchar_t *pszName, const wchar_t *pszPath)
+		{
+			CommonLib::CSSection::scoped_lock lock (m_SharedMutex);
+			TWksMap::iterator it = m_wksMap.find(pszPath);
+			if(it != m_wksMap.end())
+				return it->second;
+
+			IWorkspacePtr pWks((IWorkspace*)(new CShapefileWorkspace(pszName, pszPath)));
+			m_wksMap.insert(std::make_pair(CommonLib::str_t(pszPath), pWks));
+			return pWks;
+		}
+		IWorkspacePtr CShapefileWorkspace::Open(CommonLib::IReadStream* pSteram)
+		{
+			CommonLib::CSSection::scoped_lock lock (m_SharedMutex);
+		
+
+			CommonLib::str_t sName;
+			CommonLib::str_t sPath;
+
+			if(!pSteram->checkRead(4))
+				return IWorkspacePtr();
+
+			pSteram->read(sName);
+
+			if(!pSteram->checkRead(4))
+				return IWorkspacePtr();
+
+			pSteram->read(sPath);
+
+			return Open(sName.cwstr(), sPath.cwstr());
+		}
+		IWorkspacePtr CShapefileWorkspace::Open(GisCommon::IXMLNode *pNode)
+		{
+			CommonLib::CSSection::scoped_lock lock (m_SharedMutex);
+
+			CommonLib::str_t sName = pNode->GetPropertyString("name", sName);
+			CommonLib::str_t sPath = pNode->GetPropertyString("path", sPath);
+
+			return Open(sName.cwstr(), sPath.cwstr());
+		}
+
+
+		bool CShapefileWorkspace::save(CommonLib::IWriteStream *pWriteStream) const
+		{
+			pWriteStream->write(uint32(GetWorkspaceID()));
+			pWriteStream->write(m_sName);
+			pWriteStream->write(m_sPath);
+			return true;
+		}
+		bool CShapefileWorkspace::load(CommonLib::IReadStream* pReadStream)
+		{
+			SAFE_READ_RES_EX(pReadStream, m_sName, 1);
+			SAFE_READ_RES_EX(pReadStream, m_sPath, 1);
+			load();
+			return true;
+		}
+
+		bool CShapefileWorkspace::saveXML(GisCommon::IXMLNode* pXmlNode) const
+		{
+			pXmlNode->AddPropertyInt32U("ID", uint32(GetWorkspaceID()));
+			pXmlNode->AddPropertyString("name", m_sName);
+			pXmlNode->AddPropertyString("path", m_sPath);
+			return true;
+		}
+		bool CShapefileWorkspace::load(GisCommon::IXMLNode* pXmlNode)
+		{
+			m_sName = pXmlNode->GetPropertyString("name", m_sName);
+			m_sPath = pXmlNode->GetPropertyString("path", m_sPath);
+			load();
+			return true;
 		}
 
 	}

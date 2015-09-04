@@ -34,7 +34,7 @@ namespace GisEngine
 			virtual void                     SetLabel(const CommonLib::str_t& label);
 			virtual Display::ISymbolPtr		 GetSymbol() const;
 			virtual void                     SetSymbol(Display::ISymbol* symbol);
-
+			virtual void				     FlushBuffers(Display::IDisplay* pDisplay, GisCommon::ITrackCancel* trackCancel);
 			// ILegendInfo
 
 			virtual int                    GetSymbolCount() const;	

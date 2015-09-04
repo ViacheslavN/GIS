@@ -6,6 +6,7 @@
 #include "GisGeometry/Envelope.h"
 #include "GeometryDef.h"
 #include "Field.h"
+#include "ShapefileRowCursor.h"
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -53,7 +54,7 @@ namespace GisEngine
 		}
 		ICursorPtr  CShapefileFeatureClass::Search(IQueryFilter* filter, bool recycling)
 		{
-			return ICursorPtr();
+			return  ICursorPtr(new CShapefileRowCursor(filter, recycling, this));
 		}
 
 		//IFeatureClass
@@ -77,6 +78,12 @@ namespace GisEngine
 		{
 			m_shp.clear();
 			m_dbf.clear();
+		}
+
+		CommonLib::str_t CShapefileFeatureClass::GetFullName()
+		{
+			CommonLib::str_t sFullName = m_sPath + m_sViewName + L".shp";
+			return sFullName;
 		}
 
 		bool CShapefileFeatureClass::reload(bool write)
@@ -198,6 +205,25 @@ namespace GisEngine
 		ShapefileUtils::DBFGuard* CShapefileFeatureClass::GetDBF()
 		{
 			return& m_dbf;
+		}
+
+
+		bool CShapefileFeatureClass::save(CommonLib::IWriteStream *pWriteStream) const
+		{
+			return true;
+		}
+		bool CShapefileFeatureClass::load(CommonLib::IReadStream* pReadStream)
+		{
+			return false;
+		}
+
+		bool CShapefileFeatureClass::saveXML(GisCommon::IXMLNode* pXmlNode) const
+		{
+			return true;
+		}
+		bool CShapefileFeatureClass::load(GisCommon::IXMLNode* pXmlNode)
+		{
+			return false;
 		}
 	}
 

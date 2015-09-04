@@ -41,7 +41,7 @@ namespace GisEngine
 			virtual bool save(CommonLib::IWriteStream *pStream) const;
 			virtual bool load(CommonLib::IReadStream *pStream);
 
-			virtual bool save(GisCommon::IXMLNode* pXmlNode) const;
+			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
 			virtual bool load(GisCommon::IXMLNode* pXmlNode);
 		private:
 			void CreateProjection();

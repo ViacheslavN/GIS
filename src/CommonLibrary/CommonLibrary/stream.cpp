@@ -115,8 +115,9 @@ void IReadStreamBase::read(CommonLib::str_t& str)
 	uint32 nlen = readIntu32();
 	if(nlen)
 	{
-		str.reserve(nlen);
+		str.reserve(nlen + 1);
 		read((byte*)str.wstr(), 2 *nlen);
+		str[nlen] = L'\0';
 	}
 
 }

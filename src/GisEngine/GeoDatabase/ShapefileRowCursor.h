@@ -19,7 +19,9 @@ namespace GisEngine
 			// IRowCursor
 			virtual bool NextRow(IRowPtr* row);
 
-		
+			virtual IFieldSetPtr GetFieldSet() const {return IFieldSetPtr();}
+			virtual IFieldsPtr   GetSourceFields() const  {return IFieldsPtr();}
+			virtual bool         IsFieldSelected(int index) const  {return false;}
 
 		protected:
 

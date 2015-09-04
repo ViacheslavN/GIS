@@ -88,6 +88,7 @@ namespace GisEngine
 		struct IShapeField;
 		struct IFieldSet;
 		struct IOIDSet;
+		struct IWorkspace;
 
 		COMMON_LIB_REFPTR_TYPEDEF(IRow);
 		COMMON_LIB_REFPTR_TYPEDEF(IQueryFilter);
@@ -102,9 +103,11 @@ namespace GisEngine
 		COMMON_LIB_REFPTR_TYPEDEF(IShapeField);
 		COMMON_LIB_REFPTR_TYPEDEF(ICursor);
 		COMMON_LIB_REFPTR_TYPEDEF(IOIDSet);
-
+		COMMON_LIB_REFPTR_TYPEDEF(IWorkspace);
 		
-		struct IWorkspace  : public CommonLib::AutoRefCounter
+		struct IWorkspace  : public CommonLib::AutoRefCounter, 
+							 public GisCommon::IStreamSerialize,
+							 public GisCommon::IXMLSerialize
 		{
 				IWorkspace(){}
 				virtual ~IWorkspace(){}
@@ -123,6 +126,9 @@ namespace GisEngine
 				virtual ITablePtr OpenTable(const CommonLib::str_t& name) = 0;
 				virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::str_t& name) = 0;
 
+				virtual ITablePtr GetTable(const CommonLib::str_t& name) = 0;
+				virtual IFeatureClassPtr GetFeatureClass(const CommonLib::str_t& name) = 0;
+
 		};
 
 
@@ -134,7 +140,9 @@ namespace GisEngine
 			virtual bool next(IDataset** pObj) = 0;
 		};*/
 		
-		struct IDataset : public CommonLib::AutoRefCounter
+		struct IDataset : public CommonLib::AutoRefCounter, 
+						  public GisCommon::IStreamSerialize,
+						  public GisCommon::IXMLSerialize
 		{
 			IDataset(){}
 			virtual ~IDataset(){}
@@ -259,7 +267,7 @@ namespace GisEngine
 			virtual IFieldSetPtr GetFieldSet() const = 0;
 			virtual IFieldsPtr   GetSourceFields() const = 0;
 			virtual bool         IsFieldSelected(int index) const = 0;
-			virtual bool NextRow(IRow** row) = 0;
+			virtual bool NextRow(IRowPtr* row) = 0;
 		};
 
 
@@ -321,6 +329,8 @@ namespace GisEngine
 			virtual void                    SetShapeField(const CommonLib::str_t& name) = 0;
 			virtual CommonLib::IGeoShapePtr	GetShape() const = 0;
 			virtual void                    SetShape( CommonLib::CGeoShape* pShape) = 0;
+			virtual GisBoundingBox			GetBB() const = 0;
+			virtual void                    SetBB(const  GisBoundingBox& bbox ) = 0;
 			virtual double                  GetPrecision() const = 0; 
 			virtual void                    SetPrecision(double precision) = 0;
 			virtual eSpatialRel             GetSpatialRel() const = 0;
