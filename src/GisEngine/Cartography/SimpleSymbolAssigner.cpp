@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SimpleSymbolAssigner.h"
 #include "Display/LoaderSymbols.h"
+
 namespace GisEngine
 {
 	namespace Cartography
@@ -124,7 +125,7 @@ namespace GisEngine
 			SAFE_READ_EX(pReadStream, m_sLabel, 1);
 			SAFE_READ_EX(pReadStream, m_sDescription, 1);
 			if(bSymbol)
-				m_pSymbol = Display::LoadSymbol(pReadStream);
+				m_pSymbol = Display::LoaderSymbol::LoadSymbol(pReadStream);
 			return true;
 		}
 
@@ -154,7 +155,7 @@ namespace GisEngine
 			{
 				GisCommon::IXMLNodePtr pSymbolNode = pXmlNode->GetChild(L"Symbol");
 				if(pSymbolNode.get())
-					m_pSymbol = Display::LoadSymbol(pSymbolNode.get());
+					m_pSymbol = Display::LoaderSymbol::LoadSymbol(pSymbolNode.get());
 
 			}
 			return true;

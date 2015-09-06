@@ -159,7 +159,7 @@ namespace GisEngine
 					}
 				}
 	
-			
+				result.calcBB();
 			}
 		}
 	}

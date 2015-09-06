@@ -76,13 +76,13 @@ namespace GisEngine
 					return false;
 				return true;
 			}
-			virtual uint32	GetCheckCancelStep() const = 0
+			virtual uint32	GetCheckCancelStep() const
 			{
-
+				return m_nCheckCancelStep;
 			}
-			virtual void	SetCheckCancelStep(uint32 nCount) const
+			virtual void	SetCheckCancelStep(uint32 nCount)
 			{
-
+				m_nCheckCancelStep = nCount;
 			}
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const
 			{

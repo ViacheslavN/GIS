@@ -73,7 +73,8 @@ namespace GisEngine
 		struct ILabelCache;
 		struct ILabelingOptions;
 		struct ILabel;
-
+		struct IFeatureLayer;
+		struct IElement;
 
 	
 
@@ -92,13 +93,17 @@ namespace GisEngine
 		COMMON_LIB_REFPTR_TYPEDEF(ISymbolAssigner);
 		COMMON_LIB_REFPTR_TYPEDEF(ILabelCache);
 		COMMON_LIB_REFPTR_TYPEDEF(ILabelingOptions);
-
+		COMMON_LIB_REFPTR_TYPEDEF(IFeatureLayer);
+		COMMON_LIB_REFPTR_TYPEDEF(IElement);
 
 		typedef GisCommon::IEnumT<ILayerPtr> IEnumLayers;
 
 
 
 		COMMON_LIB_REFPTR_TYPEDEF(IEnumLayers);
+
+		typedef CommonLib::delegate2_t<Display::IDisplay*, eDrawPhase> OnBeforeDraw;
+		typedef CommonLib::delegate2_t<Display::IDisplay*, eDrawPhase> OnAfterDraw;
 
 		struct IMap : public  CommonLib::AutoRefCounter , 
 					  public GisCommon::IStreamSerialize, 
@@ -125,10 +130,10 @@ namespace GisEngine
 			virtual void                              SetDelayDrawing(bool delay) = 0;
 			virtual IBookmarksPtr                     GetBookmarks() const = 0;
 			virtual GisCommon::IPropertySetPtr        GetMapProperties() = 0;
-			virtual Display::ISymbolPtr				  GetBackgroundSymbol() const= 0;
-			virtual void							  SetBackgroundSymbol(Display::ISymbol* symbol) = 0;
-			virtual Display::ISymbolPtr				  GetForegroundSymbol() const= 0;
-			virtual void							  SetForegroundSymbol(Display::ISymbol* symbol) = 0;
+			virtual Display::IFillSymbolPtr			  GetBackgroundSymbol() const= 0;
+			virtual void							  SetBackgroundSymbol(Display::IFillSymbol* symbol) = 0;
+			virtual Display::IFillSymbolPtr			  GetForegroundSymbol() const= 0;
+			virtual void							  SetForegroundSymbol(Display::IFillSymbol* symbol) = 0;
 			virtual void							  SetViewPos(const Display::ViewPosition& pos) = 0;
 			virtual Display::ViewPosition			  GetViewPos(bool calc_if_absent, Display::IDisplayTransformation *pTrans) = 0;
 			virtual void							  SetExtent(GisGeometry::IEnvelope *extent) = 0;
@@ -170,7 +175,7 @@ namespace GisEngine
 			virtual void                      SetVisible(bool flag) = 0;
 			virtual bool                      IsActiveOnScale(double scale) const = 0; 
 			virtual uint32					  GetCheckCancelStep() const = 0;
-			virtual void					  SetCheckCancelStep(uint32 nCount) const = 0;
+			virtual void					  SetCheckCancelStep(uint32 nCount) = 0;
 		};
 
 
@@ -201,8 +206,8 @@ namespace GisEngine
 		struct IFeatureLayer : public ILayer
 		{
 		 
-			IFeatureLayer();
-			virtual ~IFeatureLayer();
+			IFeatureLayer(){};
+			virtual ~IFeatureLayer(){};
 			virtual const CommonLib::str_t&           GetDisplayField() const = 0;
 			virtual void                             SetDisplayField(const  CommonLib::str_t& sField) = 0;
 			virtual GeoDatabase::IFeatureClassPtr    GetFeatureClass() const = 0;
@@ -265,8 +270,8 @@ namespace GisEngine
 									public GisCommon::IStreamSerialize, 
 									public GisCommon::IXMLSerialize
 		{
-			IFeatureRenderer();
-			virtual ~IFeatureRenderer();
+			IFeatureRenderer(){};
+			virtual ~IFeatureRenderer(){};
 			virtual	uint32					GetFeatureRendererID()  const = 0;
 			virtual bool                   CanRender(GeoDatabase::IFeatureClass* cls, Display::IDisplay* display) const = 0;
 			virtual void                   PrepareFilter(GeoDatabase::IFeatureClass* cls, GeoDatabase::IQueryFilter* filter) const = 0;
@@ -559,6 +564,33 @@ namespace GisEngine
 			virtual bool					 GetUseDefaultSymbol() const = 0;
 			virtual void					 SetUseDefaultSymbol(bool use) = 0;
 		};
+
+
+		struct  IElement : public CommonLib::AutoRefCounter
+		{
+			IElement();
+			virtual ~IElement(){}
+			virtual void                      Draw(Display::IDisplay* pDisplay, GisCommon::ITrackCancel* trackCancel) = 0;
+			virtual void                      Activate(Display::IDisplay* pDisplay) = 0;
+			virtual void                      Deactivate() = 0;
+			virtual void                      GetBounds(Display::IDisplay* pDisplay, GisBoundingBox & box) const = 0;
+		};  
+
+		struct  IGraphicsContainer  : public CommonLib::AutoRefCounter
+		{
+			IGraphicsContainer();
+			virtual ~IGraphicsContainer(){}
+			virtual bool                   IsEmpty() const = 0;
+			virtual void                   AddElement( IElement* Element ) = 0;
+			virtual void                   RemoveAllElements() = 0;
+			virtual bool                   RemoveElement(IElement* Element) = 0;
+			virtual bool                   BringToFront(IElement* Element) = 0;
+			virtual bool                   SendToBack(IElement* Element) = 0;
+			virtual	uint32				   GetEnumCount() const = 0;
+			virtual IElementPtr			   GetElement(int nIdx) const = 0;
+			
+		};
+
 	}
 }
 

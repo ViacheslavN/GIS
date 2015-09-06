@@ -511,6 +511,15 @@ namespace GisEngine
 			return true;
 		}
 
+		ISpatialReference* CSpatialReferenceProj4::clone() const 
+		{
+			CSpatialReferenceProj4 *pSpRef = new CSpatialReferenceProj4(m_prj4Str, eSPRefTypePRJ4String, m_pAlloc != &m_alloc ? m_pAlloc : NULL);
+			return pSpRef;
+		}
+		void  CSpatialReferenceProj4::PreTransform(CommonLib::CGeoShape *shp) const
+		{
+
+		}
 		void CSpatialReferenceProj4::PrepareGeometries()
 		{
 			if(pj_is_latlong((PJ*)m_prjHandle))
@@ -652,7 +661,13 @@ namespace GisEngine
 			*pShp = geom;
 			m_fullExtent.expand(geom.getBB());
 		}
+		GisCommon::Units CSpatialReferenceProj4::GetUnits() const
+		{
 
+			if(!m_prjHandle)
+				return GisCommon::UnitsUnknown;
+			return (pj_is_latlong((PJ*)m_prjHandle) != 0) ? GisCommon::UnitsDecimalDegrees : GisCommon::UnitsMeters;
+		}
 		void CSpatialReferenceProj4::DensifyBoundBox(CommonLib::CGeoShape *pShp, const GisBoundingBox &bbox, int precision) const
 		{
 			const int pntCount = precision * 4;

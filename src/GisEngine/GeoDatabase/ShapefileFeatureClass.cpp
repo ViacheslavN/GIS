@@ -88,7 +88,7 @@ namespace GisEngine
 
 		bool CShapefileFeatureClass::reload(bool write)
 		{
-			if(!m_sPath.isEmpty() || !m_sViewName.isEmpty())
+			if(m_sPath.isEmpty() || m_sViewName.isEmpty())
 				return false; //TO DO Error log
 
 			m_FieldsPtr->Clear();
@@ -140,8 +140,8 @@ namespace GisEngine
 			 m_pExtent = new GisGeometry::CEnvelope(bounds, m_pSpatialReferencePtr.get());
 			 bool hasZ;
 			 bool hasM;
-			 CommonLib::eShapeType geomType = ShapefileUtils::SHPTypeToGeometryType(shapeType, &hasZ, &hasM);
-			 IGeometryDefPtr pGeometryDefPtr(new  CGeometryDef(geomType, hasZ, hasM));
+			 m_ShapeType = ShapefileUtils::SHPTypeToGeometryType(shapeType, &hasZ, &hasM);
+			 IGeometryDefPtr pGeometryDefPtr(new  CGeometryDef(m_ShapeType, hasZ, hasM));
 
 			 int fieldCount = ShapeLib::DBFGetFieldCount(m_dbf.file);
 			 for(int fieldNum = 0; fieldNum < fieldCount; ++fieldNum)
@@ -170,6 +170,7 @@ namespace GisEngine
 			 }
 			 m_pShapeField = new CField();
 			 m_pShapeField->SetGeometryDef(pGeometryDefPtr.get());
+			 m_pShapeField->SetType(dtGeometry);
 
 			 m_sShapeFieldName = L"Shape";
 			 int i = 0;

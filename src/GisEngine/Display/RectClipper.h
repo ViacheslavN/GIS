@@ -1,7 +1,7 @@
 #ifndef GIS_ENGINE_DISPLAY_RECT_CLIP_H_
 #define GIS_ENGINE_DISPLAY_RECT_CLIP_H_
 
-#include "Clip.h"
+#include "Display.h"
  
 namespace GisEngine
 {
@@ -14,10 +14,10 @@ namespace GisEngine
 		public:
 			 CRectClipper(CClipRectAlloc *pAlloc);
 			 ~CRectClipper();
-			 virtual int  clipLine(const GRect& clipper, GPoint* pBeg, GPoint* pEnd) = 0;
-			 virtual void clipLine(const GRect& clipper, GPoint** ppPoints, int** ppnPointCounts, int* pCount) = 0;
-			 virtual void clipRing(const GRect& clipper, GPoint** ppPoints, int* pPointCount) = 0;
-			 virtual void clipPolygon(const GRect& clipper, GPoint** ppPoints, int** ppPointCounts, int* pCount) = 0;
+			 virtual int  clipLine(const GRect& clipper, GPoint* pBeg, GPoint* pEnd);
+			 virtual void clipLine(const GRect& clipper, GPoint** ppPoints, int** ppnPointCounts, int* pCount);
+			 virtual void clipRing(const GRect& clipper, GPoint** ppPoints, int* pPointCount);
+			 virtual void clipPolygon(const GRect& clipper, GPoint** ppPoints, int** ppPointCounts, int* pCount);
 		private:
 			enum clip_bits
 			{

@@ -8,6 +8,29 @@
 #include "CommonLibrary/blob.h"
 #include "Common.h"
  
+
+
+#define CHECK_TRACK_CANCEL(trackCancel) \
+	if(trackCancel) \
+		{ \
+		if(!trackCancel->Continue()) \
+		return; \
+		}
+#define CHECK_TRACK_CANCEL_BREAK(trackCancel) \
+	if(trackCancel) \
+		{ \
+		if(!trackCancel->Continue()) \
+		break; \
+		}
+
+#define CHECK_TRACK_CANCEL_RETURN(trackCancel, ret) \
+	if(trackCancel) \
+		{ \
+		if(!trackCancel->Continue()) \
+		return ret; \
+		}
+
+
 namespace GisEngine
 {
 	namespace GisCommon
@@ -17,10 +40,15 @@ namespace GisEngine
 		struct IXMLWriter;
 		struct IXMLReader;
 		struct IXMLNode;
+		struct ITrackCancel;
+
  
 
 		COMMON_LIB_REFPTR_TYPEDEF(IPropertySet);
 		COMMON_LIB_REFPTR_TYPEDEF(IXMLNode);
+
+
+
 
 
 		struct IStreamSerialize

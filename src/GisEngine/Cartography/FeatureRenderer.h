@@ -23,7 +23,7 @@ namespace GisEngine
 			virtual Display::ISymbolPtr    GetSymbolByFeature(GeoDatabase::IFeature* feature) const;
 			virtual ISymbolAssignerPtr		GetSymbolAssigner() const;
 			virtual  void					SetSymbolAssigner(ISymbolAssigner* assigner);
-			virtual void DrawFeature(Display::IDisplay* display, GeoDatabase::IFeature* feature, Display::ISymbol* customSymbol = 0) = 0;
+			virtual void DrawFeature(Display::IDisplay* display, GeoDatabase::IFeature* feature, Display::ISymbol* customSymbol = 0);
 
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const;
 			virtual bool load(CommonLib::IReadStream* pReadStream);

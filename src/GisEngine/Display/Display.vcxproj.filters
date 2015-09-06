@@ -144,6 +144,12 @@
     <ClInclude Include="DisplayUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DisplayTransformation2D.h">
+      <Filter>Transformation</Filter>
+    </ClInclude>
+    <ClInclude Include="Screen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -207,6 +213,12 @@
       <Filter>symbols</Filter>
     </ClCompile>
     <ClCompile Include="DisplayUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DisplayTransformation2D.cpp">
+      <Filter>Transformation</Filter>
+    </ClCompile>
+    <ClCompile Include="Screen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

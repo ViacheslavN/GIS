@@ -165,7 +165,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">
     <OutDir>$(SolutionDir)Output\</OutDir>
     <IntDir>$(SolutionDir)Obj\$(Configuration)\_$(PlatformName)\$(ConfigurationName)\$(TargetName)\</IntDir>
-    <TargetName>Cartography_ds</TargetName>
+    <TargetName>LibCartography32_ds</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">
     <OutDir>$(SolutionDir)Output\</OutDir>
@@ -287,7 +287,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Cartography_ds.lib</OutputFile>
+      <OutputFile>$(OutDir)\$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
@@ -426,6 +426,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cartography.h" />
+    <ClInclude Include="CartographyLib.h" />
     <ClInclude Include="FeatureLayer.h" />
     <ClInclude Include="FeatureRenderer.h" />
     <ClInclude Include="FeatureRendererBase.h" />
@@ -446,6 +447,7 @@
     <ClCompile Include="Layers.cpp" />
     <ClCompile Include="LoaderLayers.cpp" />
     <ClCompile Include="LoadSymbolAssigners.cpp" />
+    <ClCompile Include="map.cpp" />
     <ClCompile Include="Selection.cpp" />
     <ClCompile Include="SimpleSymbolAssigner.cpp" />
     <ClCompile Include="stdafx.cpp">

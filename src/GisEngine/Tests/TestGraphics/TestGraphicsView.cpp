@@ -9,6 +9,12 @@
 #include "Model.h"
 #include "3DDrawFunc.h"
 
+class CTrackCancel : public GisEngine::GisCommon::ITrackCancel
+{
+public:
+	virtual void Cancel(){}
+	virtual bool Continue(){return true;}
+};
 BOOL CTestGraphicsView::PreTranslateMessage(MSG* pMsg)
 {
 	pMsg;

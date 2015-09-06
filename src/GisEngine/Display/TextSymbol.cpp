@@ -333,7 +333,7 @@ namespace GisEngine
 			if(bBgSymbol)
 			{
 
-				m_pTextBg =  (ITextBackground*)LoadSymbol(pReadStream).get();
+				m_pTextBg =  (ITextBackground*)LoaderSymbol::LoadSymbol(pReadStream).get();
 			}
 			SAFE_READ_RES(pReadStream, m_nTextDrawFlags);
 			
@@ -366,7 +366,7 @@ namespace GisEngine
 			m_sText = pXmlNode->GetPropertyString("text", m_sText);
 			bool bBgSymbol = pXmlNode->GetPropertyBool("TextBg", false);
 			if(bBgSymbol)
-				m_pTextBg =  (ITextBackground*)LoadSymbol(pXmlNode).get();
+				m_pTextBg =  (ITextBackground*)LoaderSymbol::LoadSymbol(pXmlNode).get();
 		
 			m_nTextDrawFlags = pXmlNode->GetPropertyInt32("DrawFlags", m_nTextDrawFlags);
 

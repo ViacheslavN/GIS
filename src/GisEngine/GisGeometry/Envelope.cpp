@@ -84,5 +84,14 @@ namespace GisEngine
 			m_pSpatialRef->Project(spatRef, m_box);
 			m_pSpatialRef = spatRef;
 		}
+
+
+		IEnvelope*	CEnvelope::clone() const
+		{
+			CEnvelope *pEnvelope = new CEnvelope();
+			pEnvelope->SetBoundingBox(m_box);
+			pEnvelope->SetSpatialReference(m_pSpatialRef.get() ? m_pSpatialRef->clone() : NULL);
+			return pEnvelope;
+		}
 	}
 }

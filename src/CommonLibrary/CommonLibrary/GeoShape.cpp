@@ -285,17 +285,17 @@ namespace CommonLib
 		m_general_type = generalType(shapeType);
 
 
-		m_vecPoints.reserve(npoints);
+		m_vecPoints.resize(npoints);
 		if(nparts)
 		{
-			m_vecParts.reserve(nparts);
-			m_vecPartTypes.reserve(mpatchSpecificSize);
+			m_vecParts.resize(nparts);
+			m_vecPartTypes.resize(mpatchSpecificSize);
 		}
 
 		if(has_z)
-			m_vecZs.reserve(npoints);
+			m_vecZs.resize(npoints);
 		if(has_m)
-			m_vecMs.reserve(npoints);
+			m_vecMs.resize(npoints);
 
 		return true;
 	}
@@ -317,8 +317,15 @@ namespace CommonLib
 	}
 	const uint32&  CGeoShape::getPart(uint32 idx) const
 	{
-		assert(idx < m_vecParts.size());
-		return m_vecParts[idx];
+		size_t nparts = getPartCount();
+		if(nparts == 0 || idx >= nparts)
+			return 0;
+		
+		const uint32* partStarts = getParts();
+		if(idx == nparts - 1)
+			return getPointCnt() - (size_t)partStarts[idx];
+		else
+			return (size_t)partStarts[idx + 1] - (size_t)partStarts[idx];
 
 	}
 	uint32&  CGeoShape::getPart(uint32 idx)

@@ -66,6 +66,9 @@
     <ClInclude Include="QueryFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GeoDatabaseLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

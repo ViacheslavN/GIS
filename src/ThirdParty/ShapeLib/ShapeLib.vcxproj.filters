@@ -41,5 +41,8 @@
     <ClCompile Include="shpopen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="safileio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

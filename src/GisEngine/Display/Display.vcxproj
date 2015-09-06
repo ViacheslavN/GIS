@@ -447,7 +447,9 @@
     <ClInclude Include="Clip.h" />
     <ClInclude Include="ClipRectAlloc.h" />
     <ClInclude Include="Display.h" />
+    <ClInclude Include="DisplayTransformation2D.h" />
     <ClInclude Include="DisplayUtils.h" />
+    <ClInclude Include="Screen.h" />
     <ClInclude Include="SymbolFillBase.h" />
     <ClInclude Include="LoaderSymbols.h" />
     <ClInclude Include="RectClipper.h" />
@@ -481,6 +483,7 @@
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Brush.cpp" />
     <ClCompile Include="ClipRectAlloc.cpp" />
+    <ClCompile Include="DisplayTransformation2D.cpp" />
     <ClCompile Include="DisplayUtils.cpp" />
     <ClCompile Include="LoaderSymbols.cpp" />
     <ClCompile Include="RectClipper.cpp" />
@@ -494,6 +497,7 @@
     <ClCompile Include="ReadJPG.cpp" />
     <ClCompile Include="ReadPng.cpp" />
     <ClCompile Include="Rect.cpp" />
+    <ClCompile Include="Screen.cpp" />
     <ClCompile Include="SimpleFillSymbol.cpp" />
     <ClCompile Include="SimpleLineSymbol.cpp" />
     <ClCompile Include="stdafx.cpp">

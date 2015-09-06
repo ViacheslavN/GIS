@@ -3,15 +3,16 @@
 
 #include "Graphics.h"
 #include "GraphTypes.h"
-#include "IDisplayTransformation.h"
 #include "Bitmap.h"
 #include "Brush.h"
 #include "Pen.h"
 #include "Rect.h"
-
+#include "DisplayTypes.h"
 #include "CommonLibrary/IRefCnt.h"
 #include "CommonLibrary/GeoShape.h"
 #include "Common/GisEngineCommon.h"
+#include "GisGeometry/Geometry.h"
+#include "CommonLibrary/delegate.h"
 
 namespace GisEngine
 {
@@ -44,6 +45,9 @@ namespace GisEngine
 		struct ITextBackground;
 		struct ITextSymbol;
 		struct IFillSymbol;
+		struct IDisplay;
+		struct IClip;
+		struct IDisplayTransformation;
 
 		COMMON_LIB_REFPTR_TYPEDEF(ISymbol);
 		COMMON_LIB_REFPTR_TYPEDEF(ILineSymbol);
@@ -51,11 +55,18 @@ namespace GisEngine
 		COMMON_LIB_REFPTR_TYPEDEF(ITextBackground);
 		COMMON_LIB_REFPTR_TYPEDEF(ITextSymbol);
 		COMMON_LIB_REFPTR_TYPEDEF(IFillSymbol);
-		
+		COMMON_LIB_REFPTR_TYPEDEF(IDisplay);
+		COMMON_LIB_REFPTR_TYPEDEF(IClip);
+		COMMON_LIB_REFPTR_TYPEDEF(IDisplayTransformation);
+
 
 		struct ViewPosition
 		{
-			ViewPosition(){}
+			ViewPosition() :  m_dScale(0), m_dRotation(0)
+			{
+				m_Center.x = 0.;
+				m_Center.y = 0.;
+			}
 			 ViewPosition(const GisXYPoint &center, double scale, double rotation ) :
 					m_Center(center), m_dScale(scale), m_dRotation(rotation){}
 			~ViewPosition(){}
@@ -63,7 +74,7 @@ namespace GisEngine
 			double m_dScale;
 			double m_dRotation;
 		};
-		struct  IDisplay 
+		struct  IDisplay : CommonLib::AutoRefCounter
 		{
 			IDisplay(){}
 			virtual ~IDisplay(){}
@@ -82,6 +93,104 @@ namespace GisEngine
 			virtual void UnLock() = 0;
 		};
 
+		typedef CommonLib::delegate1_t<IDisplayTransformation*>         OnDeviceFrameChanged;
+		typedef CommonLib::delegate1_t<IDisplayTransformation*>         OnResolutionChanged;
+		typedef CommonLib::delegate1_t<IDisplayTransformation*>         OnRotationChanged;
+		typedef CommonLib::delegate1_t<IDisplayTransformation*>         OnUnitsChanged;
+		typedef CommonLib::delegate1_t<IDisplayTransformation*>         OnVisibleBoundsChanged;
+
+
+		struct IDisplayTransformation : public CommonLib::AutoRefCounter
+		{
+		public:
+			IDisplayTransformation(){}
+			virtual ~IDisplayTransformation(){}
+
+			virtual void SetMapPos(const GisXYPoint &map_pos, double new_scale) = 0;
+			virtual GisXYPoint GetMapPos() const= 0;
+
+			virtual void SetMapVisibleRect(const GisBoundingBox& bound) = 0;
+			virtual const GisBoundingBox& GetFittedBounds() const = 0;
+
+			virtual void         SetDeviceRect(const GRect& bound, eDisplayTransformationPreserve preserve_type = DisplayTransformationPreserveCenterExtent) = 0;
+			virtual const GRect& GetDeviceRect() const = 0;
+
+			virtual void SetDeviceClipRect(const GRect& devRect) = 0;
+			virtual const GRect& GetDeviceClipRect() const  = 0;
+
+			virtual void SetReferenceScale(double dScale)= 0;
+			virtual double GetReferenceScale() const= 0;
+			virtual bool UseReferenceScale() const = 0;
+
+			virtual  double GetScale() const = 0;
+			virtual  void SetRotation(double degrees ) = 0;
+			virtual  double GetRotation() = 0;
+
+
+			virtual void SetResolution(double pDpi) = 0;
+			virtual double GetResolution()= 0;
+
+			virtual void SetUnits(GisCommon::Units units) = 0;
+			virtual GisCommon::Units GetUnits() const = 0;
+
+
+			virtual void   SetSpatialReference(GisGeometry::ISpatialReference *pSp) = 0;
+			virtual GisGeometry::ISpatialReferencePtr GetSpatialReference() const = 0;
+
+
+			virtual void MapToDevice(const GisXYPoint *pIn, GPoint *pOut, int nPoints) = 0;
+			virtual void MapToDevice(const CommonLib::CGeoShape& geom, GPoint **pOut, int** partCounts, int* count) = 0;
+			virtual void MapToDevice(const GisBoundingBox& mapBox, GRect& rect) = 0;
+
+			virtual int MapToDeviceOpt(const GisXYPoint *pIn, GPoint *pOut, int nPoints, CommonLib::eShapeType) = 0;
+
+
+
+			virtual void DeviceToMap(const GPoint *pIn,  GisXYPoint *pOut, int nPoints) = 0;
+			virtual void DeviceToMap(const GRect& rect, GisBoundingBox& mapBox) = 0;
+
+			virtual double DeviceToMapMeasure(double deviceLen) = 0;
+			virtual double MapToDeviceMeasure(double mapLen) = 0;
+
+
+			virtual void SetVerticalFlip(bool flag) = 0;
+			virtual bool GetVerticalFlip() const = 0;
+			virtual void SetHorizontalFlip(bool flag) = 0;
+			virtual bool GetHorizontalFlip() const = 0;
+
+
+			virtual bool GetEnable3D() const = 0;
+			virtual void SetEnable3D(bool enable) = 0;
+			virtual void SetAngle3D(double dAndle) = 0;
+			virtual double GetAngle3D() const = 0;
+
+			virtual const GRect& GetClipRect() const = 0;
+			virtual void  SetClipRect(const GRect& rect) = 0;
+			virtual bool  ClipExists() = 0;
+			virtual void  RemoveClip() = 0;
+
+			virtual void SetClipper(IClip *pClip) = 0;
+			virtual IClipPtr GetClipper() const = 0;
+
+			virtual void SetOnDeviceFrameChanged(OnDeviceFrameChanged* pFunck, bool bAdd) = 0;
+			virtual void SetOnResolutionChanged(OnResolutionChanged* pFunck, bool bAdd) = 0;
+			virtual void SetOnRotationChanged(OnRotationChanged* pFunck, bool bAdd) = 0;
+			virtual void SetOnUnitsChanged(OnUnitsChanged* pFunck, bool bAdd) = 0;
+			virtual void SetOnVisibleBoundsChanged(OnVisibleBoundsChanged* pFunck, bool bAdd) = 0;
+		};
+
+		struct IClip : CommonLib::AutoRefCounter
+		{
+			public:
+				IClip(){}
+				virtual ~IClip(){}
+				virtual int  clipLine(const GRect& clipper, GPoint* pBeg, GPoint* pEnd) = 0;
+				virtual void clipLine(const GRect& clipper, GPoint** ppPoints, int** ppnPointCounts, int* pCount) = 0;
+				virtual void clipRing(const GRect& clipper, GPoint** ppPoints, int* pPointCount) = 0;
+				virtual void clipPolygon(const GRect& clipper, GPoint** ppPoints, int** ppPointCounts, int* pCount) = 0;
+		/*		virtual void clipPolygonByPolygon(GPoint** ppClipPoints, int** ppClipPointCounts, int* pClipCount, 
+										GPoint** points, int** pointCounts, int* count) = 0;*/
+		};
 
 		struct  ISymbol : public CommonLib::AutoRefCounter , 
 						  public GisCommon::IStreamSerialize, 
@@ -95,7 +204,7 @@ namespace GisEngine
 			virtual void Reset() = 0;
 			virtual bool CanDraw(CommonLib::CGeoShape* pShape) const = 0;
 			virtual void Draw(IDisplay* display, CommonLib::CGeoShape* pShape) = 0;
-		    virtual void FlushBuffers(IDisplay* display, GisCommon::ITrackCancel* trackCancel);
+		    virtual void FlushBuffers(IDisplay* display, GisCommon::ITrackCancel* trackCancel) = 0;
 			virtual void GetBoundaryRect(CommonLib::CGeoShape* pShape, IDisplay* display,  GRect &rect) const = 0;
 			virtual bool GetScaleDependent() const = 0;
 			virtual void SetScaleDependent(bool flag) = 0;
@@ -210,6 +319,7 @@ namespace GisEngine
 			virtual ~IFillSymbol(){}
 			virtual ILineSymbolPtr GetOutlineSymbol() const = 0;
 			virtual void SetOutlineSymbol(ILineSymbol *pLine) = 0;
+			virtual void FillRect(IDisplay* pDisplay, const Display::GRect& rect) = 0;
 
 			virtual Color GetColor() const = 0;
 			virtual void  SetColor(const Color &color) = 0;

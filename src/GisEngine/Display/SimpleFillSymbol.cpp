@@ -100,6 +100,16 @@ namespace GisEngine
 
 			DrawOutline(pDisplay, points, polyCounts, polyCount);
 		}
+		void CSimpleFillSymbol::FillRect(IDisplay* pDisplay, const Display::GRect& rect)
+		{
+			IGraphicsPtr pGraphics = pDisplay->GetGraphics();
+
+			pGraphics->DrawRect(&m_Pen, &m_Brush, rect);
+		}
+		 void CSimpleFillSymbol::DrawDirectly(IDisplay* display, const GPoint* lpPoints, const int *lpPolyCounts, int nCount )
+		{
+			DrawGeometryEx(display, lpPoints, lpPolyCounts, nCount);
+		}
 		void  CSimpleFillSymbol::QueryBoundaryRectEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount,   GRect &rect) const
 		{
 			for(size_t part = 0, offset = 0; part < polyCount; part++)

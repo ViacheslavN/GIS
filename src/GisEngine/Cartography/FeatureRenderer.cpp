@@ -80,13 +80,13 @@ namespace GisEngine
 		}
 		void CFeatureRenderer::DrawFeature(Display::IDisplay* pDisplay, GeoDatabase::IFeature* feature, Display::ISymbol* pCustomSymbol)
 		{
-			if(!feature || !m_pSymbolAssigner.get() || !pCustomSymbol)
+			if(!feature || (!m_pSymbolAssigner.get() && !pCustomSymbol))
 				return;
 
 			CommonLib::CVariant *pVal = feature->GetValue(m_nShapeFieldIndex);
 			if(!pVal)
 				return;
-			if(pVal->isType<CommonLib::IRefObjectPtr>())
+			if(!pVal->isType<CommonLib::IRefObjectPtr>())
 				return;
 
 			CommonLib::IRefObjectPtr pRefObj = pVal->Get<CommonLib::IRefObjectPtr>();

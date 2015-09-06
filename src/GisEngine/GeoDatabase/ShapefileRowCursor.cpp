@@ -25,7 +25,7 @@ namespace GisEngine
 			}
 			sourceFields_ = parentFC_->GetFields();
 
-			invalidCursor_ = parentFC_->reload(false);
+			invalidCursor_ = !parentFC_->reload(false);
 			int fieldCount = sourceFields_->GetFieldCount();
 			fieldsExists_.resize(fieldCount, 0);
 			actualFieldsIndexes_.clear();
@@ -98,11 +98,22 @@ namespace GisEngine
 
 				if(spatialRel_ != srlUndefined)
 				{
-					CommonLib::IGeoShapePtr pShape(spatFilter->GetShape());
-					extentOutput_ = new GisGeometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
-					extentSource_ = new GisGeometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
-					extentOutput_->Project(spatRefOutput.get());
-					extentSource_->Project(spatRefSource.get());
+					if(spatFilter->GetBB().type == CommonLib::bbox_type_normal)
+					{
+						extentOutput_ = new GisGeometry::CEnvelope(spatFilter->GetBB(), spatRefOutput.get());
+						extentSource_ = new GisGeometry::CEnvelope(spatFilter->GetBB(), spatRefOutput.get());
+						extentOutput_->Project(spatRefOutput.get());
+						extentSource_->Project(spatRefSource.get());
+					}
+					else
+					{
+						CommonLib::IGeoShapePtr pShape(spatFilter->GetShape());
+						extentOutput_ = new GisGeometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
+						extentSource_ = new GisGeometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
+						extentOutput_->Project(spatRefOutput.get());
+						extentSource_->Project(spatRefSource.get());
+					}
+					
 				}
 				else
 				{
@@ -197,13 +208,13 @@ namespace GisEngine
 
 				CommonLib::CVariant* pValue = row->GetValue(fieldIndex);
 
-				if(fieldIndex == 0) // OID
+				if(actualFieldsTypes_[i] == dtOid) // OID
 				{				
 					*pValue = (int)currentRowID_;
 					continue;
 				}
 
-				if(fieldIndex == 1) // Shape
+				if(actualFieldsTypes_[i] == dtGeometry) // Shape
 				{
 					continue;
 				}
@@ -241,6 +252,8 @@ namespace GisEngine
 			{
 				CommonLib::CVariant* pShapeVar = row->GetValue(shapeFieldIndex_);
 				cacheObject_ = ShapeLib::SHPReadObject(shp_->file, currentRowID_);
+				if(!cacheShape_.get())
+					cacheShape_ = new CommonLib::CGeoShape();
 				ShapefileUtils::SHPObjectToGeometry(cacheObject_, *cacheShape_);
 				if ( cacheObject_ )
 				{

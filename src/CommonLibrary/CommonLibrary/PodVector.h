@@ -101,7 +101,7 @@ namespace CommonLib
 					if(m_pData)
 						m_pAlloc->free(m_pData);
 
-					m_pData = (TValue *)m_pAlloc->alloc(nSize);
+					m_pData = (TValue *)m_pAlloc->alloc(nSize * sizeof(TValue));
 					m_nCapacity = nSize;
 				}
 

@@ -21,13 +21,15 @@ namespace GisEngine
 			virtual const GisBoundingBox& GetBoundingBox() const;
 			virtual ISpatialReferencePtr  GetSpatialReference() const;
 
-			// IEnvelopeEdit
+	
 			virtual GisBoundingBox& GetBoundingBox();
 			virtual void SetBoundingBox(const GisBoundingBox& box);
 			virtual void SetSpatialReference(ISpatialReference* spatRef);
 			virtual void Expand(IEnvelope* envelope);
 			virtual bool Intersect(IEnvelope* envelope);
 			virtual void Project(ISpatialReference* spatRef);
+
+			virtual IEnvelope*	clone() const; 
 		private:
 			GisBoundingBox m_box;
 			ISpatialReferencePtr m_pSpatialRef;    

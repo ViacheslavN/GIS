@@ -30,6 +30,8 @@ namespace GisEngine
 			virtual void  QueryBoundaryRectEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount,   GRect &rect) const;
 			virtual void  Prepare(IDisplay* pDisplay);
 
+			virtual void FillRect(IDisplay* pDisplay, const Display::GRect& rect);
+			virtual void DrawDirectly(IDisplay* display, const GPoint* lpPoints, const int *lpPolyCounts, int nCount );
 
 			//IStreamSerialize
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const;
@@ -41,7 +43,6 @@ namespace GisEngine
 			virtual bool load(GisCommon::IXMLNode* pXmlNode);
 
 		public:
-			CBrush m_Brush;
 			CPen m_Pen;
 			eSimpleFillStyle m_FillStyle;
 			std::auto_ptr<CBitmap> m_pBitmap;

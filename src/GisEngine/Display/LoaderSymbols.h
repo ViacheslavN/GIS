@@ -10,9 +10,15 @@ namespace GisEngine
 {
 	namespace Display
 	{
+		class LoaderSymbol
+		{
+		public:
+			LoaderSymbol(){}
+			~LoaderSymbol(){}
+			static ISymbolPtr LoadSymbol(CommonLib::IReadStream *pSteam);
+			static ISymbolPtr LoadSymbol(GisCommon::IXMLNode *pNode);
+		};
 
-		ISymbolPtr LoadSymbol(CommonLib::IReadStream *pSteam);
-		ISymbolPtr LoadSymbol(GisCommon::IXMLNode *pNode);
 	}
 }
 

@@ -32,12 +32,12 @@ namespace GisEngine
 			return xMin != rc.xMin || xMax != rc.xMax || yMin != rc.yMin || yMax != rc.yMax;
 		}
 
-		void GRect::set(GUnits xMin, GUnits yMin, GUnits xMax, GUnits yMax)
+		void GRect::set(GUnits _xMin, GUnits _yMin, GUnits _xMax, GUnits _yMax)
 		{
-			xMin = xMin;
-			xMax = xMax;
-			yMin = yMin;
-			yMax = yMax;
+			xMin = _xMin;
+			yMin = _yMin;
+			xMax = _xMax;
+			yMax = _yMax;
 		}
 		void GRect::null()
 		{ 

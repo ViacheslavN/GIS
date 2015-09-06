@@ -17,7 +17,10 @@ namespace GisEngine
 
 		}
 
+		void CFeatureLayer::DrawFeatures(eDrawPhase phase, GisCommon::IEnumIDs* ids, Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel, Display::ISymbol* customSymbol) const
+		{
 
+		}
 
 		void CFeatureLayer::DrawEx(eDrawPhase phase, Display::IDisplay* pDisplay, GisCommon::ITrackCancel* pTrackCancel)
 		{
@@ -54,9 +57,10 @@ namespace GisEngine
 				bbox = env.GetBoundingBox();
 
 				GeoDatabase::CQueryFilter filter;
+				filter.AddRef();
 				filter.SetOutputSpatialReference(outSpatRef.get());
 				filter.SetSpatialRel(GeoDatabase::srlEnvelopeIntersects);
-				 
+				filter.SetBB(pDisplay->GetTransformation()->GetFittedBounds());
 				 double precision = pDisplay->GetTransformation()->DeviceToMapMeasure(0.25);
 
 				 if(spatRefFC.get() && outSpatRef.get())
@@ -105,9 +109,8 @@ namespace GisEngine
 				
 					if(!(nRow % GetCheckCancelStep()))
 					{
-						 if(pTrackCancel && !pTrackCancel->Continue())
-							 break;
-
+						CHECK_TRACK_CANCEL_BREAK(pTrackCancel)
+	
 						 pDisplay->UnLock();
 						 pDisplay->Lock();
 					}
@@ -129,7 +132,10 @@ namespace GisEngine
 				pDisplay->GetTransformation()->SetReferenceScale(oldRefScale);
 		}
 
-
+		bool CFeatureLayer::IsValid() const
+		{
+			return m_pFeatureClass.get() != 0 && m_vecRenderers.size() > 0;
+		}
 		void CFeatureLayer::CalcBB(Display::IDisplay* pDisplay, GisBoundingBox& bb)
 		{
 			Display::GRect wndRC = pDisplay->GetTransformation()->GetDeviceRect();
@@ -228,7 +234,14 @@ namespace GisEngine
 		{
 			m_vecRenderers.clear();
 		}
-
+		const CommonLib::str_t&	CFeatureLayer::GetDefinitionQuery() const
+		{
+			return m_sQuery;
+		}
+		 void	CFeatureLayer::SetDefinitionQuery(const CommonLib::str_t& sQuery)
+		{
+			m_sQuery = sQuery;
+		}
 
 		bool CFeatureLayer::save(CommonLib::IWriteStream *pWriteStream) const
 		{
@@ -246,7 +259,7 @@ namespace GisEngine
 			}
 
 			pWriteStream->write(m_pFeatureClass.get() ? true : false);
-			m_pFeatureClass->s
+			
 
 
 			return true;

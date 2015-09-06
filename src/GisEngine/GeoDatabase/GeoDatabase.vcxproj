@@ -174,7 +174,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">
     <IntDir>$(SolutionDir)Obj\$(Configuration)\_$(PlatformName)\$(ConfigurationName)\$(TargetName)\</IntDir>
-    <TargetName>GeoDatabase_ds</TargetName>
+    <TargetName>LibGeoDatabase32_ds</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)Output\</OutDir>
@@ -314,7 +314,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\GeoDatabase_ds.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibGeoDatabase32_ds.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
@@ -460,6 +460,7 @@
     <ClInclude Include="FieldSet.h" />
     <ClInclude Include="GeoDatabase.h" />
     <ClInclude Include="GeometryDef.h" />
+    <ClInclude Include="GeoDatabaseLib.h" />
     <ClInclude Include="OIDSet.h" />
     <ClInclude Include="QueryFilter.h" />
     <ClInclude Include="ShapefileFeatureClass.h" />

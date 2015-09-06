@@ -15,8 +15,8 @@ namespace GisEngine
 		public:
 			typedef CSymbolBase<I> TSymbolBase;
 
-			CSymbolFillBase();
-			~CSymbolFillBase();
+			CSymbolFillBase(){}
+			~CSymbolFillBase(){}
 
 			virtual ILineSymbolPtr GetOutlineSymbol() const
 			{
@@ -37,13 +37,14 @@ namespace GisEngine
 				m_Brush.setColor(color);
 				m_bDirty = true;
 			}
-
+			virtual void  Prepare(IDisplay* pDisplay){}
 
 			void DrawOutline(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount)
 			{
 				if (m_pBorderSymbol.get())
 					m_pBorderSymbol->DrawGeometryEx(pDisplay, points, polyCounts, polyCount);
 			}
+
 
 
 			bool save(CommonLib::IWriteStream *pWriteStream) const
@@ -66,7 +67,7 @@ namespace GisEngine
 				bool bSymbol = false;
 				SAFE_READ(pReadStream, bSymbol);
 				if(bSymbol)
-					m_pBorderSymbol = (ILineSymbol*)LoadSymbol(pReadStream).get();
+					m_pBorderSymbol = (ILineSymbol*)LoaderSymbol::LoadSymbol(pReadStream).get();
 
 				if(!m_Brush.load(pReadStream))
 					return false;
@@ -94,7 +95,7 @@ namespace GisEngine
 
 				GisCommon::IXMLNodePtr pBorderNode = pXmlNode->GetChild(L"BorderSymbol");
 				if(pBorderNode.get())
-					m_pBorderSymbol = (ILineSymbol*)LoadSymbol(pBorderNode.get()).get();
+					m_pBorderSymbol = (ILineSymbol*)LoaderSymbol::LoadSymbol(pBorderNode.get()).get();
 				return m_Brush.load(pXmlNode);
 			}
 

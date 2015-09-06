@@ -9,7 +9,7 @@ namespace GisEngine
 {
 	namespace Display
 	{
-		class IClip
+		/*class IClip
 		{
 			public:
 				IClip(){}
@@ -18,10 +18,10 @@ namespace GisEngine
 				virtual void clipLine(const GRect& clipper, GPoint** ppPoints, int** ppnPointCounts, int* pCount) = 0;
 				virtual void clipRing(const GRect& clipper, GPoint** ppPoints, int* pPointCount) = 0;
 				virtual void clipPolygon(const GRect& clipper, GPoint** ppPoints, int** ppPointCounts, int* pCount) = 0;
-		/*		virtual void clipPolygonByPolygon(GPoint** ppClipPoints, int** ppClipPointCounts, int* pClipCount, 
-										GPoint** points, int** pointCounts, int* count) = 0;*/
-		};
+				virtual void clipPolygonByPolygon(GPoint** ppClipPoints, int** ppClipPointCounts, int* pClipCount, 
+										GPoint** points, int** pointCounts, int* count) = 0;
+		};*/
 	}
-}
+
 
 #endif

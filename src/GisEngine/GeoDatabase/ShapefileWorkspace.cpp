@@ -13,6 +13,10 @@ namespace GisEngine
 		const wchar_t CShapefileWorkspace::c_PropertyName[] = L"NAME";
 		const wchar_t CShapefileWorkspace::c_PropertyPath[] = L"PATH";
 
+
+		CShapefileWorkspace::TWksMap CShapefileWorkspace::m_wksMap;
+		CommonLib::CSSection CShapefileWorkspace::m_SharedMutex;
+
 		CShapefileWorkspace::CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr) : m_bLoad(false)
 		{
 			m_ConnectProp = protSetPtr;
@@ -43,7 +47,10 @@ namespace GisEngine
 			load();
 		}
 		 
+		CShapefileWorkspace::~CShapefileWorkspace()
+		{
 
+		}
 		const CommonLib::str_t& CShapefileWorkspace::GetWorkspaceName() const
 		{
 			return m_sPath;
@@ -101,7 +108,7 @@ namespace GisEngine
 				if(pFClass.get())
 				{
 					m_vecDatasets.push_back(IDatasetPtr((IDataset*)pFClass.get()));
-					m_DataSetMap.insert(std::make_pair(pFClass->GetDatasetName(), pFClass.get()));
+					m_DataSetMap.insert(std::make_pair(pFClass->GetDatasetViewName(), pFClass.get()));
 				}
 			}
 			
@@ -125,6 +132,7 @@ namespace GisEngine
 			if(!bLoad)
 			{
 				delete pFeatureClass;
+				return IFeatureClassPtr();
 			}
 			IFeatureClassPtr pFeaturePtr((IFeatureClass*)pFeatureClass);
 	
@@ -270,7 +278,7 @@ namespace GisEngine
 			 if(pFClass.get())
 			 {
 				 m_vecDatasets.push_back(IDatasetPtr((IDataset*)pFClass.get()));
-				 m_DataSetMap.insert(std::make_pair(pFClass->GetDatasetName(), pFClass.get()));
+				 m_DataSetMap.insert(std::make_pair(pFClass->GetDatasetViewName(), pFClass.get()));
 			 }
 			 return pFClass;
 		}

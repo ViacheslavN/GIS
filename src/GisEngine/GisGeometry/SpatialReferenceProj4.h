@@ -32,11 +32,13 @@ namespace GisEngine
 			virtual bool Project(ISpatialReference* destSpatRef, CommonLib::CGeoShape* pShape);
 			virtual bool Project(ISpatialReference* destSpatRef, GisBoundingBox& bbox);
 			virtual bool Project(ISpatialReference *destSpatRef, GisXYPoint* pPoint);
+			virtual GisCommon::Units GetUnits() const;
 
 			virtual const CommonLib::str_t& GetProjectionString() const;
 			virtual int   GetProjectionCode() const;
 			virtual bool  IsProjection() const;
 			virtual bool IsEqual(ISpatialReference* pSpatRef) const;
+			virtual ISpatialReference* clone() const;
 
 			virtual bool save(CommonLib::IWriteStream *pStream) const;
 			virtual bool load(CommonLib::IReadStream *pStream);

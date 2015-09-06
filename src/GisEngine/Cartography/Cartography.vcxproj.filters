@@ -69,6 +69,9 @@
     <ClInclude Include="FeatureLayer.h">
       <Filter>layers</Filter>
     </ClInclude>
+    <ClInclude Include="CartographyLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -94,6 +97,9 @@
     </ClCompile>
     <ClCompile Include="FeatureLayer.cpp">
       <Filter>layers</Filter>
+    </ClCompile>
+    <ClCompile Include="map.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
