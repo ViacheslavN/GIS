@@ -88,6 +88,7 @@ namespace GisEngine
 			, m_pBufferX(0)
 			, m_pBufferY(0)
 			, m_pBufferZ(0)
+			, m_nBufferSize(0)
 		{
 
 			if(!m_pAlloc)
@@ -123,6 +124,7 @@ namespace GisEngine
 			, m_pBufferX(0)
 			, m_pBufferY(0)
 			, m_pBufferZ(0)
+			, m_nBufferSize(0)
 		{
 			if(!m_pAlloc)
 				m_pAlloc = &m_alloc;
@@ -135,6 +137,7 @@ namespace GisEngine
 			, m_pBufferX(0)
 			, m_pBufferY(0)
 			, m_pBufferZ(0)
+			, m_nBufferSize(0)
 		{
 			if(!m_pAlloc)
 				m_pAlloc = &m_alloc;
@@ -145,6 +148,7 @@ namespace GisEngine
 			, m_pBufferX(0)
 			, m_pBufferY(0)
 			, m_pBufferZ(0)
+			, m_nBufferSize(0)
 		{
 
 			if(!m_pAlloc)
@@ -209,18 +213,19 @@ namespace GisEngine
 			CommonLib::GisXYPoint* pPt = pShape->getPoints();
 			if (pointCount > m_nBufferSize)
 			{
-
-				m_pAlloc->free(m_pBufferX);
+				if(m_pBufferX)
+					m_pAlloc->free(m_pBufferX);
 				m_pBufferX = (double*)m_pAlloc->alloc(sizeof(double) * pointCount);
 
-	
-				m_pAlloc->free(m_pBufferY);
+				if(m_pBufferY)
+					m_pAlloc->free(m_pBufferY);
 				m_pBufferY = (double*)m_pAlloc->alloc(sizeof(double) * pointCount);
 
 				m_nBufferSize = pointCount;
 				if (pZs)
 				{
-					m_pAlloc->free(m_pBufferZ);
+					if(m_pBufferZ)
+						m_pAlloc->free(m_pBufferZ);
 					m_pBufferZ = (double*)m_pAlloc->alloc(sizeof(double) * pointCount);
 				}
 			}
@@ -314,6 +319,24 @@ namespace GisEngine
 								npartpointcount = npartsstarts[npart + 1] - npartsstarts[npart];
 
 							bool pointIsFirstInPart = true;
+							for(int npoint = 0; npoint < npartpointcount; ++npoint, ++npointall)
+							{
+								if(badPoints.find(npointall) != badPoints.end())
+									continue;
+
+								if(pointIsFirstInPart)
+								{
+									newPartsStarts.push_back((long)newPoints.size());
+									pointIsFirstInPart = false;
+								}
+
+								GisXYPoint p;
+								p.x = m_pBufferX[npointall] * koef;
+								p.y = m_pBufferX[npointall] * koef;
+								newPoints.push_back(p);
+								if(pZs && m_pBufferZ)
+									newZs.push_back(m_pBufferZ[npointall]);
+							}
 						
 						}
 					}

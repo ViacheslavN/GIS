@@ -29,6 +29,9 @@ CTestMapDrawView::CTestMapDrawView()
 
 	m_Clipper = new GisEngine::Display::CRectClipper(&m_ClipAlloc);
 	m_pMap = new GisEngine::Cartography::CMap();
+	m_pMap->SetVerticalFlip(true);
+
+	
 }
 
 
@@ -41,6 +44,21 @@ BOOL CTestMapDrawView::PreTranslateMessage(MSG* pMsg)
 	return FALSE;
 }
 
+LRESULT   CTestMapDrawView::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+	CRect rect;
+	GetClientRect(&rect);
+	GisEngine::Display::GRect gRect(rect.left, rect.top, rect.right, rect.bottom);
+	HDC dc = GetDC();
+	double dpi = ::GetDeviceCaps(dc, LOGPIXELSX);
+	ReleaseDC(dc);
+	m_pDisplayTransformation = (GisEngine::Display::IDisplayTransformation*)new GisEngine::Display::CDisplayTransformation2D(dpi, m_pMap->GetMapUnits(), gRect);
+	m_pDisplayTransformation->SetClipper(m_Clipper.get());
+	
+	m_pDisplayTransformation->SetVerticalFlip(true);
+	m_pDisplay = new GisEngine::Display::CDisplay(m_pDisplayTransformation.get());
+	return 0;
+}
 LRESULT CTestMapDrawView::OnPaint(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
 	CPaintDC dc(m_hWnd);
@@ -76,26 +94,103 @@ LRESULT  CTestMapDrawView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&
 		return 0;
 	m_pGraphics = new GisEngine::Display::CGraphicsAgg(nWidth, nHeight, true);
 	m_pGraphics->Erase(GisEngine::Display::Color(255, 255, 255, 255));
+
+	if(m_pDisplayTransformation.get())
+	{	
+		CRect rect;
+		GetClientRect(&rect);
+		GisEngine::Display::GRect gRect(rect.left, rect.top, rect.right, rect.bottom);
+		m_pDisplayTransformation->SetDeviceClipRect(gRect);
+		m_pDisplayTransformation->SetClipRect(gRect);
+		m_pDisplayTransformation->SetDeviceRect(gRect);
+	}
+	return 0;
+}
+LRESULT CTestMapDrawView::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+	if(!m_pDisplayTransformation.get())
+		return 0;
+	double zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+	double mouseWheel = 0.4;
+
+	GisEngine::Display::GRect devRect = m_pDisplayTransformation->GetDeviceRect();
+	CPoint pt;
+	GetCursorPos(&pt);
+	ScreenToClient(&pt);
+	GisEngine::Display::GPoint gpt((GisEngine::Display::GUnits)pt.x, (GisEngine::Display::GUnits)pt.y);
+	if(!devRect.pointInRect(gpt))
+		return 0;
+
+	CommonLib::GisXYPoint location;
+	m_pDisplayTransformation->DeviceToMap(&gpt, &location, 1);
+	double mult = 0;
+	if(zDelta < 0)
+		mult = 1 - mouseWheel / 2.;
+	else
+		mult = 1. + mouseWheel / 2.;
+	double newScale = m_pDisplayTransformation->GetScale() * mult;
+
+	double scale = m_pDisplayTransformation->GetScale();
+	GisEngine::GisBoundingBox curBox = m_pDisplayTransformation->GetFittedBounds();
+	GisEngine::GisBoundingBox bigBox = m_pMap->GetFullExtent()->GetBoundingBox();
+
+
+	double fullScaleX = scale / (curBox.xMax - curBox.xMin) * (bigBox.xMax - bigBox.xMin);
+	double fullScaleY = scale / (curBox.yMax - curBox.yMin) * (bigBox.yMax - bigBox.yMin);
+	double fullScale = fullScaleX > fullScaleY ? fullScaleX : fullScaleY;
+
+	if(m_pDisplayTransformation->GetUnits() == GisEngine::GisCommon::UnitsUnknown)
+	{
+		//if(newScale < 1.)
+		//  newScale = 1.;
+	}
+	else
+	{
+		if(newScale < 100.)
+			newScale = 100.;
+	}
+
+	if(newScale > 7 * fullScale)
+		newScale = 7 * fullScale;
+	if((scale == 100. && newScale == 100.) || (scale == fullScale && newScale == fullScale))
+		return 0;
+	mult = newScale / m_pDisplayTransformation->GetScale();
+
+	CommonLib::GisXYPoint mapPos = m_pDisplayTransformation->GetMapPos();
+	CommonLib::GisXYPoint newPos;
+	newPos.x = location.x + (mapPos.x - location.x) * mult;
+	newPos.y = location.y + (mapPos.y - location.y) * mult;
+
+	m_pDisplayTransformation->SetMapPos(newPos, newScale);
+	redraw();
 	return 0;
 }
 
-LRESULT CTestMapDrawView::OnRedrawMap(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+void CTestMapDrawView::redraw()
 {
 	if(!m_pMap.get() || !m_pDisplay.get() || !m_pDisplayTransformation.get())
-		return 0;
+		return;
 
 	m_pDisplay->StartDrawing(m_pGraphics.get());
 	CTrackCancel tc;
-
 	m_pDisplay->GetGraphics()->Erase(GisEngine::Display::Color(255, 255, 255, 255));
 	m_pMap->Draw(m_pDisplay.get(), &tc);
 	m_pDisplay->FinishDrawing();
 
 	::InvalidateRect(m_hWnd, 0, FALSE);
-
+}
+LRESULT CTestMapDrawView::OnRedrawMap(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	
+	redraw();
 	return 0;
 }
-
+LRESULT CTestMapDrawView::OnFullZoom(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	m_pDisplayTransformation->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
+	redraw();
+	return 0;
+}
 void CTestMapDrawView::open(const wchar_t *pszFile)
 {
 	CommonLib::str_t sPath = CommonLib::FileSystem::FindFilePath(pszFile);
@@ -119,7 +214,7 @@ void CTestMapDrawView::open(const wchar_t *pszFile)
 	switch(type)
 	{
 		case CommonLib::shape_type_polyline:
-			pSymbol = new GisEngine::Display::CSimpleLineSymbol(GisEngine::Display::Color(0, 255, 0, 255), 0.5);
+			pSymbol = new GisEngine::Display::CSimpleLineSymbol(GisEngine::Display::Color(0, 255, 255, 255), 0.5);
 			break;
 		case CommonLib::shape_type_polygon:
 		case CommonLib::shape_type_multipatch:
@@ -146,30 +241,22 @@ void CTestMapDrawView::open(const wchar_t *pszFile)
 
 	m_pMap->GetLayers()->AddLayer(pFeatureLayer.get());
 
-	HDC dc = GetDC();
-	double dpi = ::GetDeviceCaps(dc, LOGPIXELSX);
-	ReleaseDC(dc);
-	CRect rect;
-	GetClientRect(&rect);
-	 GisEngine::Display::GRect gRect(rect.left, rect.top, rect.right, rect.bottom);
-
-	m_pDisplayTransformation = (GisEngine::Display::IDisplayTransformation*)new GisEngine::Display::CDisplayTransformation2D(dpi, pSpRef->GetUnits(), gRect);
-	m_pDisplayTransformation->SetClipper(m_Clipper.get());
-	m_pDisplayTransformation->SetDeviceClipRect(gRect);
-	m_pDisplayTransformation->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
-	m_pDisplayTransformation->SetVerticalFlip(true);
-
-	m_pDisplay = new GisEngine::Display::CDisplay(m_pDisplayTransformation.get());
-	m_pDisplay->StartDrawing(m_pGraphics.get());
-	CTrackCancel tc;
-
-	m_pDisplay->GetGraphics()->Erase(GisEngine::Display::Color(255, 255, 255, 255));
-	m_pMap->Draw(m_pDisplay.get(), &tc);
-	//m_pFeatureLayer->Draw(GisEngine::Cartography::DrawPhaseGeography, m_pDisplay.get(), &tc);
-
+	
 	
 
-	m_pDisplay->FinishDrawing();
+
+	CTrackCancel tc;
+
+	
+	if(m_pMap->GetLayers()->GetLayerCount() == 1)
+	{
+		m_pMap->SetSpatialReference(pFC->GetSpatialReference().get());
+		m_pDisplayTransformation->SetSpatialReference(pFC->GetSpatialReference().get());
+		m_pDisplayTransformation->SetUnits(m_pMap->GetMapUnits());
+		
+	}
+	m_pDisplayTransformation->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
+	redraw();
 
 	 ::InvalidateRect(m_hWnd, 0, FALSE);
 
