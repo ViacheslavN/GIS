@@ -6,7 +6,7 @@
 #include "resource.h"
 
 #include "aboutdlg.h"
-#include "TestMapDrawView.h"
+#include "MapView.h"
 #include "MainFrm.h"
 
 BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)

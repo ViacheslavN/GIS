@@ -5,7 +5,7 @@
 
 #include "resource.h"
 
-#include "TestMapDrawView.h"
+#include "MapView.h"
 #include "aboutdlg.h"
 #include "MainFrm.h"
 

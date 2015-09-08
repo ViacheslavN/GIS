@@ -169,6 +169,12 @@
     <Filter Include="DB\Fields\Index\CompositeIndex\Unique">
       <UniqueIdentifier>{61a6c7f1-dc87-4aea-8cbd-b974d2a9c49c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\transactions\Cursors">
+      <UniqueIdentifier>{708db2ec-51a0-416b-a46d-bf850201e87d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\transactions\Cursors\InsertCursor">
+      <UniqueIdentifier>{13d6e32b-db1e-452a-a85a-6c06f340fed1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />

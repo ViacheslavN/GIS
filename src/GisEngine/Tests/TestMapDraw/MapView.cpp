@@ -5,7 +5,7 @@
 #include "stdafx.h"
 #include "resource.h"
 
-#include "TestMapDrawView.h"
+#include "MapView.h"
 #include "../../GeoDatabase/GeoDatabase.h"
 #include "../../GeoDatabase/ShapefileWorkspace.h"
 #include "../../../CommonLibrary/CommonLibrary/File.h"
@@ -24,7 +24,7 @@ public:
 	virtual void Cancel(){}
 	virtual bool Continue(){return true;}
 };
-CTestMapDrawView::CTestMapDrawView()
+CMapView::CMapView()
 {
 
 	m_Clipper = new GisEngine::Display::CRectClipper(&m_ClipAlloc);
@@ -35,16 +35,16 @@ CTestMapDrawView::CTestMapDrawView()
 }
 
 
-CTestMapDrawView::~CTestMapDrawView()
+CMapView::~CMapView()
 {}
 
-BOOL CTestMapDrawView::PreTranslateMessage(MSG* pMsg)
+BOOL CMapView::PreTranslateMessage(MSG* pMsg)
 {
 	pMsg;
 	return FALSE;
 }
 
-LRESULT   CTestMapDrawView::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+LRESULT   CMapView::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
 	CRect rect;
 	GetClientRect(&rect);
@@ -59,7 +59,7 @@ LRESULT   CTestMapDrawView::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*
 	m_pDisplay = new GisEngine::Display::CDisplay(m_pDisplayTransformation.get());
 	return 0;
 }
-LRESULT CTestMapDrawView::OnPaint(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+LRESULT CMapView::OnPaint(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
 	CPaintDC dc(m_hWnd);
 
@@ -85,7 +85,7 @@ LRESULT CTestMapDrawView::OnPaint(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lPa
 
 	return 0;
 }
-LRESULT  CTestMapDrawView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+LRESULT  CMapView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	DWORD fwSizeType = wParam;     
 	int nWidth = LOWORD(lParam);   
@@ -106,7 +106,7 @@ LRESULT  CTestMapDrawView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&
 	}
 	return 0;
 }
-LRESULT CTestMapDrawView::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+LRESULT CMapView::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
 	if(!m_pDisplayTransformation.get())
 		return 0;
@@ -166,7 +166,7 @@ LRESULT CTestMapDrawView::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lP
 	return 0;
 }
 
-void CTestMapDrawView::redraw()
+void CMapView::redraw()
 {
 	if(!m_pMap.get() || !m_pDisplay.get() || !m_pDisplayTransformation.get())
 		return;
@@ -179,19 +179,19 @@ void CTestMapDrawView::redraw()
 
 	::InvalidateRect(m_hWnd, 0, FALSE);
 }
-LRESULT CTestMapDrawView::OnRedrawMap(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+LRESULT CMapView::OnRedrawMap(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
 	
 	redraw();
 	return 0;
 }
-LRESULT CTestMapDrawView::OnFullZoom(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+LRESULT CMapView::OnFullZoom(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
 	m_pDisplayTransformation->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
 	redraw();
 	return 0;
 }
-void CTestMapDrawView::open(const wchar_t *pszFile)
+void CMapView::open(const wchar_t *pszFile)
 {
 	CommonLib::str_t sPath = CommonLib::FileSystem::FindFilePath(pszFile);
 	CommonLib::str_t sFileName = CommonLib::FileSystem::FindOnlyFileName(pszFile);

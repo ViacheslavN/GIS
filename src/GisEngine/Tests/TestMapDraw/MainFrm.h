@@ -12,7 +12,7 @@ class CMainFrame :
 public:
 	DECLARE_FRAME_WND_CLASS(NULL, IDR_MAINFRAME)
 
-	CTestMapDrawView m_view;
+	CMapView m_view;
 	CCommandBarCtrl m_CmdBar;
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);

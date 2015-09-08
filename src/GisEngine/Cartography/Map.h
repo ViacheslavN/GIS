@@ -89,6 +89,7 @@ namespace GisEngine
 
 				CommonLib::Event2<Display::IDisplay*, eDrawPhase> OnBeforeDrawEvent;
 				CommonLib::Event2<Display::IDisplay*, eDrawPhase> OnAfterDrawEvent;
+				bool m_bCalcBB;
  
 		};
 	}

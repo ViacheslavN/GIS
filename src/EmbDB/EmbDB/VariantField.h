@@ -92,6 +92,6 @@ namespace embDB
 	typedef BaseVariant<uint64, dtUInteger64> TFVarUINT64;
 	typedef BaseVariant<float, dtFloat> TVarFloat;
 	typedef BaseVariant<double, dtDouble> TVarDouble;
-		typedef BaseVariant<CommonLib::str_t, dtString> TVarString;
+	typedef BaseVariant<CommonLib::str_t, dtString> TVarString;
 }
 #endif

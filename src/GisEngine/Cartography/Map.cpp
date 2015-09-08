@@ -17,7 +17,8 @@ namespace GisEngine
 			m_bViewPos(false),
 			m_bHasReferenceScale(false),
 			m_bDelayDrawing(false),
-			m_dReferenceScale(0.)
+			m_dReferenceScale(0.),
+			m_bCalcBB(false)
 		{
 			m_pLayers = new CLayers();
 			m_pSelection = new CSelection();
@@ -66,7 +67,8 @@ namespace GisEngine
 			for(int i = 0; i < layerCount; ++i)
 				pEnvelope->Expand(m_pLayers->GetLayer(i)->GetExtent().get());
 
-			return pEnvelope;
+			m_pFullExtent = pEnvelope;
+			return m_pFullExtent;
 		}
 		void   CMap::SetFullExtent(GisGeometry::IEnvelope* pEnv)
 		{
