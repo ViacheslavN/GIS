@@ -448,6 +448,7 @@
     <ClInclude Include="str_t.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="thread.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="TimeUtils.h" />
     <ClInclude Include="Variant.h" />
     <ClInclude Include="VartTypeList.h" />
@@ -488,6 +489,7 @@
     <ClCompile Include="stream.cpp" />
     <ClCompile Include="str_t.cpp" />
     <ClCompile Include="thread.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimeUtils.cpp" />
     <ClCompile Include="Variant.cpp" />
     <ClCompile Include="WaitForGraph.cpp" />

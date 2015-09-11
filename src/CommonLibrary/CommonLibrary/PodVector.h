@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_POD_VECTOR_
-#define _EMBEDDED_DATABASE_POD_VECTOR_
+#ifndef _LIB_COMMON_POD_VECTOR_
+#define _LIB_COMMON_POD_VECTOR_
 
 #include "alloc_t.h"
 namespace CommonLib

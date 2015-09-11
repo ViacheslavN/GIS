@@ -36,12 +36,21 @@
     <ClInclude Include="MapDrawer.h">
       <Filter>MapDrawer</Filter>
     </ClInclude>
+    <ClInclude Include="DrawTask.h">
+      <Filter>MapDrawer</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawThread.h">
+      <Filter>MapDrawer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MapDrawer.cpp">
+      <Filter>MapDrawer</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawThread.cpp">
       <Filter>MapDrawer</Filter>
     </ClCompile>
   </ItemGroup>

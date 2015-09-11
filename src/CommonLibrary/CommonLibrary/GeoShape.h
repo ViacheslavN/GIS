@@ -39,8 +39,8 @@ namespace CommonLib
 		eShapeType type() const;
 		eShapeType GetGeneralType() const;
 		uint32  getPartCount() const;
-		const uint32&  getPart(uint32 idx) const;
-		uint32&  getPart(uint32 idx);
+		//const uint32&  getPart(uint32 idx) const;
+		uint32  getPart(uint32 idx) const;
 		const uint32*  getParts() const;
 		uint32*  getParts();
 		

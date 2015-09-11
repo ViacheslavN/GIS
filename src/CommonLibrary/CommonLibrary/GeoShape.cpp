@@ -315,11 +315,11 @@ namespace CommonLib
 	{
 		return m_vecParts.size();
 	}
-	const uint32&  CGeoShape::getPart(uint32 idx) const
+	uint32  CGeoShape::getPart(uint32 idx) const
 	{
 		size_t nparts = getPartCount();
-		if(nparts == 0 || idx >= nparts)
-			return 0;
+		assert(idx < nparts);
+ 
 		
 		const uint32* partStarts = getParts();
 		if(idx == nparts - 1)
@@ -328,12 +328,12 @@ namespace CommonLib
 			return (size_t)partStarts[idx + 1] - (size_t)partStarts[idx];
 
 	}
-	uint32&  CGeoShape::getPart(uint32 idx)
+/*	uint32&  CGeoShape::getPart(uint32 idx)
 	{
 		assert(idx < m_vecParts.size());
 		return m_vecParts[idx];
 
-	}
+	}*/
 	const uint32*  CGeoShape::getParts() const
 	{
 		return m_vecParts.begin();

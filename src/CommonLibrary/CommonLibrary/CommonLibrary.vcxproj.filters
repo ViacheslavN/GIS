@@ -180,6 +180,9 @@
     <ClInclude Include="blob.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -253,6 +256,9 @@
     </ClCompile>
     <ClCompile Include="blob.cpp">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>time</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

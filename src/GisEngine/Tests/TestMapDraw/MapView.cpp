@@ -16,6 +16,7 @@
 #include "../../Display/SimpleFillSymbol.h"
 #include "../../Display/Screen.h"
 #include "../../Cartography/Map.h"
+#include "../../GisFramework/MapDrawer.h"
 
 
 class CTrackCancel : public GisEngine::GisCommon::ITrackCancel
@@ -27,11 +28,13 @@ public:
 CMapView::CMapView()
 {
 
-	m_Clipper = new GisEngine::Display::CRectClipper(&m_ClipAlloc);
+	
 	m_pMap = new GisEngine::Cartography::CMap();
 	m_pMap->SetVerticalFlip(true);
 
 	
+	m_pMapDrawer = new GisEngine::GisFramework::CMapDrawer();
+	m_pMapDrawer->SetMap(m_pMap.get());
 }
 
 
@@ -92,7 +95,11 @@ LRESULT  CMapView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 	int nHeight = HIWORD(lParam);  
 	if(nWidth == 0 || nHeight == 0)
 		return 0;
-	m_pGraphics = new GisEngine::Display::CGraphicsAgg(nWidth, nHeight, true);
+
+
+	m_pMapDrawer->SetSize(nHeight, nWidth);
+
+/*	m_pGraphics = new GisEngine::Display::CGraphicsAgg(nWidth, nHeight, true);
 	m_pGraphics->Erase(GisEngine::Display::Color(255, 255, 255, 255));
 
 	if(m_pDisplayTransformation.get())
@@ -103,12 +110,12 @@ LRESULT  CMapView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 		m_pDisplayTransformation->SetDeviceClipRect(gRect);
 		m_pDisplayTransformation->SetClipRect(gRect);
 		m_pDisplayTransformation->SetDeviceRect(gRect);
-	}
+	}*/
 	return 0;
 }
 LRESULT CMapView::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
-	if(!m_pDisplayTransformation.get())
+	/*if(!m_pDisplayTransformation.get())
 		return 0;
 	double zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
 	double mouseWheel = 0.4;
@@ -162,13 +169,13 @@ LRESULT CMapView::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, 
 	newPos.y = location.y + (mapPos.y - location.y) * mult;
 
 	m_pDisplayTransformation->SetMapPos(newPos, newScale);
-	redraw();
+	redraw();*/
 	return 0;
 }
 
 void CMapView::redraw()
 {
-	if(!m_pMap.get() || !m_pDisplay.get() || !m_pDisplayTransformation.get())
+	/*if(!m_pMap.get() || !m_pDisplay.get() || !m_pDisplayTransformation.get())
 		return;
 
 	m_pDisplay->StartDrawing(m_pGraphics.get());
@@ -177,17 +184,21 @@ void CMapView::redraw()
 	m_pMap->Draw(m_pDisplay.get(), &tc);
 	m_pDisplay->FinishDrawing();
 
-	::InvalidateRect(m_hWnd, 0, FALSE);
+	::InvalidateRect(m_hWnd, 0, FALSE);*/
+
+	m_pMapDrawer->Redraw();
 }
 LRESULT CMapView::OnRedrawMap(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
 	
 	redraw();
+	//m_pMapDrawer->Redraw();
 	return 0;
 }
 LRESULT CMapView::OnFullZoom(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	m_pDisplayTransformation->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
+	//m_pDisplayTransformation->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
+	m_pMapDrawer->GetTransformation()->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
 	redraw();
 	return 0;
 }
@@ -251,13 +262,16 @@ void CMapView::open(const wchar_t *pszFile)
 	if(m_pMap->GetLayers()->GetLayerCount() == 1)
 	{
 		m_pMap->SetSpatialReference(pFC->GetSpatialReference().get());
-		m_pDisplayTransformation->SetSpatialReference(pFC->GetSpatialReference().get());
-		m_pDisplayTransformation->SetUnits(m_pMap->GetMapUnits());
+		//m_pDisplayTransformation->SetSpatialReference(pFC->GetSpatialReference().get());
+		//m_pDisplayTransformation->SetUnits(m_pMap->GetMapUnits());
+		m_pMapDrawer->SetMap(m_pMap.get());
 		
 	}
-	m_pDisplayTransformation->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
-	redraw();
+	//m_pDisplayTransformation->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
+	m_pMapDrawer->GetCalcTransformation()->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
+	m_pMapDrawer->Redraw();
+	/*redraw();
 
-	 ::InvalidateRect(m_hWnd, 0, FALSE);
+	 ::InvalidateRect(m_hWnd, 0, FALSE);*/
 
 }

@@ -9,6 +9,7 @@
 #include "../../Cartography/Cartography.h"
 #include "../../Display/RectClipper.h"
 #include "../../Display/ClipRectAlloc.h"
+#include "../../GisFramework/GisFramework.h"
 
 class CMapView : public CWindowImpl<CMapView>
 {
@@ -51,11 +52,13 @@ public:
 private:
 
 	GisEngine::Cartography::IMapPtr m_pMap;
-	GisEngine::Display::IGraphicsPtr m_pGraphics;
+	/*GisEngine::Display::IGraphicsPtr m_pGraphics;
 	GisEngine::Display::IDisplayTransformationPtr	m_pDisplayTransformation;
 	GisEngine::Display::IDisplayPtr m_pDisplay;
 	GisEngine::Display::IClipPtr m_Clipper;
-	GisEngine::Display::CClipRectAlloc m_ClipAlloc;
+	GisEngine::Display::CClipRectAlloc m_ClipAlloc;*/
+
+	GisEngine::GisFramework::IMapDrawerPtr m_pMapDrawer;
 
 
 };
