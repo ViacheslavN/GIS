@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_I_FIELD_H_
 #define _EMBEDDED_DATABASE_I_FIELD_H_
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "CommonLibrary/SpatialKey.h"
 #include "CommonLibrary/MemoryStream.h"
 #include "CommonLibrary/IRefCnt.h"
@@ -142,7 +142,7 @@ namespace embDB
 			IField(){}
 			virtual ~IField(){}
 			virtual eDataTypes getType() const = 0;
-			virtual const CommonLib::str_t& getName() const = 0;
+			virtual const CommonLib::CString& getName() const = 0;
 
 	};
 

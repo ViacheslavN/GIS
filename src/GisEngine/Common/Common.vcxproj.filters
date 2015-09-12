@@ -21,9 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -63,6 +60,9 @@
     <ClInclude Include="GisCommonLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TrackCancel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -95,5 +95,13 @@
     <ClCompile Include="XMLDoc.cpp">
       <Filter>XML</Filter>
     </ClCompile>
+    <ClCompile Include="TrackCancel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt">
+      <Filter>XML</Filter>
+    </None>
   </ItemGroup>
 </Project>

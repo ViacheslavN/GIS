@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_STORAGE_H_
 
 #include "CommonLibrary/File.h"
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "RBMap.h"
 #include "List.h"
 #include "CacheNodes.h"
@@ -59,7 +59,7 @@ namespace embDB
 		int64 getFileSzie();
 		virtual int64 getBeginFileSize() const;
 		virtual bool isDirty() const;
-		virtual const CommonLib::str_t & getTranFileName() const;
+		virtual const CommonLib::CString & getTranFileName() const;
 
 		void setStoragePageInfo(int64 nStorageInfo);
 		bool initStorage(int64 nStorageInfo);
@@ -68,7 +68,7 @@ namespace embDB
 
 
 
-		 void error(const CommonLib::str_t& sError){}
+		 void error(const CommonLib::CString& sError){}
 	private:
 		 CommonLib::CFile m_pFile;
 		 CommonLib::alloc_t *m_pAlloc;
@@ -86,7 +86,7 @@ namespace embDB
 		 //CStorageInfo m_StorageStateInfo;
 
 		 bool m_bDirty;
-		 CommonLib::str_t m_sTranName;
+		 CommonLib::CString m_sTranName;
 		 int64 m_nBeginSize;
 		 int64 m_nStorageInfo;
 

@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE__DB_FIELD_INFO_H_
 #define _EMBEDDED_DATABASE__DB_FIELD_INFO_H_
 
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "Key.h"
 #include "CommonLibrary/SpatialKey.h"
@@ -45,8 +45,8 @@ namespace embDB
 		{
 
 		}
-		CommonLib::str_t m_sFieldName;
-		CommonLib::str_t m_sFieldAlias;
+		CommonLib::CString m_sFieldName;
+		CommonLib::CString m_sFieldAlias;
 		uint32 m_nFieldType;
 		uint32 m_nFieldDataType;
 		uint32 m_nBaseFieldProp;
@@ -70,7 +70,7 @@ namespace embDB
 				return false;
 			std::vector<wchar_t> Namebuf(nlenStr + 1, L'\0');
 			pStream->read((byte*)&Namebuf[0], nlenStr * 2);
-			m_sFieldName = CommonLib::str_t(&Namebuf[0]);
+			m_sFieldName = CommonLib::CString(&Namebuf[0]);
 
 
 			nlenStr = pStream->readInt32();
@@ -80,7 +80,7 @@ namespace embDB
 			{
 				std::vector<wchar_t> Aliasbuf(nlenStr + 1, L'\0');
 				pStream->read((byte*)&Aliasbuf[0], nlenStr * 2);
-				m_sFieldAlias = CommonLib::str_t(&Aliasbuf[0]);
+				m_sFieldAlias = CommonLib::CString(&Aliasbuf[0]);
 			}
 				
 			m_nFieldType = pStream->readIntu32();
@@ -269,7 +269,7 @@ namespace embDB
 		{
 			return (eDataTypes)m_fi.m_nFieldDataType;
 		}
-		const CommonLib::str_t& getName() const
+		const CommonLib::CString& getName() const
 		{
 			return m_fi.m_sFieldName;
 		}

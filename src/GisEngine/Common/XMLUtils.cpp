@@ -5,7 +5,7 @@ namespace GisEngine
 {
 	namespace GisCommon
 	{
-		void utf8_to_utf16(const char* str8, CommonLib::str_t & str16)
+		void utf8_to_utf16(const char* str8, CommonLib::CString & str16)
 		{
 #ifdef WIN32
 			int len = (int)strlen(str8);
@@ -15,7 +15,7 @@ namespace GisEngine
 			str16[size] = 0;
 #endif
 		}
-		void  utf16_to_utf8(const CommonLib::str_t& str16, std::vector<char> &str8 )
+		void  utf16_to_utf8(const CommonLib::CString& str16, std::vector<char> &str8 )
 		{
 			 utf16_to_utf8(str16.cwstr(), str8);
 		}
@@ -33,7 +33,7 @@ namespace GisEngine
 	#endif
 		}
 
-		void  blob_to_string(const CommonLib::CBlob& blob, CommonLib::str_t& result)
+		void  blob_to_string(const CommonLib::CBlob& blob, CommonLib::CString& result)
 		{
 			const unsigned char* cbuffer = blob.buffer();
 			if(!cbuffer || blob.size() == 0)
@@ -50,7 +50,7 @@ namespace GisEngine
 			}
 			result[(int)blob.size() * 2] = 0;
 		}
-		void string_to_blob(const CommonLib::str_t& str, CommonLib::CBlob& blob)
+		void string_to_blob(const CommonLib::CString& str, CommonLib::CBlob& blob)
 		{
 			int len = (int)str.length() / 2;
 			if(len == 0)
@@ -69,14 +69,14 @@ namespace GisEngine
 				else if(left >= L'A' && left <= L'F')
 					leftVal = left - L'A' + 10;
 				else
-					CommonLib::str_t();
+					CommonLib::CString();
 
 				if(right >= L'0' && right <= L'9')
 					rightVal = right - L'0';
 				else if(right >= L'A' && right <= L'F')
 					rightVal = right - L'A' + 10;
 				else
-					CommonLib::str_t();
+					CommonLib::CString();
 
 				blob[i] = (unsigned char)((leftVal & 0xF) << 4 | (rightVal & 0xF));
 			}

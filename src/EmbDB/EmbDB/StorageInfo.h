@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_STORAGE_INFO_H_
 #define _EMBEDDED_DATABASE_STORAGE_INFO_H_
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 namespace embDB
 {
 	class CStorage;
@@ -11,17 +11,17 @@ namespace embDB
 		CStorageInfo(CStorage * pStorage);
 		~CStorageInfo();
 
-		void BeginWriteTransaction(const CommonLib::str_t& sTranFileName);
-		void EndWriteTransaction(const CommonLib::str_t& sTranFileName);
+		void BeginWriteTransaction(const CommonLib::CString& sTranFileName);
+		void EndWriteTransaction(const CommonLib::CString& sTranFileName);
 		bool load();
 		bool isDitry() const;
-		const CommonLib::str_t& getWriteTransaction() const;
+		const CommonLib::CString& getWriteTransaction() const;
 		int64 getBeginSize() const;
 		bool save();
 	private:
 		bool m_bDirty;
 		CStorage *m_pStorage;
-		CommonLib::str_t m_sTranName;
+		CommonLib::CString m_sTranName;
 		int64 m_nBeginSize;
 
 	};

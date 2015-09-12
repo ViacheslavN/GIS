@@ -39,7 +39,7 @@ namespace GisEngine
 		
 				~CShapefileWorkspace();
 			
-				virtual const CommonLib::str_t& GetWorkspaceName() const; 
+				virtual const CommonLib::CString& GetWorkspaceName() const; 
 				virtual GisCommon::IPropertySetPtr  GetConnectionProperties() const; 
 				virtual eWorkspaceID GetWorkspaceID() const;
 				//virtual IDatasetContainer* GetDatasetContainer();
@@ -49,14 +49,14 @@ namespace GisEngine
 				virtual void RemoveDataset(uint32 nIdx);
 				virtual void RemoveDataset(IDataset *pDataset);
 
-				virtual ITablePtr  CreateTable(const CommonLib::str_t& name, IFields* fields);
-				virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::str_t& name, IFields* fields, const CommonLib::str_t& shapeFieldName);
-				virtual ITablePtr  OpenTable(const CommonLib::str_t& name);
-				virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::str_t& name);
+				virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields);
+				virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& shapeFieldName);
+				virtual ITablePtr  OpenTable(const CommonLib::CString& name);
+				virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::CString& name);
 
 
-				virtual ITablePtr GetTable(const CommonLib::str_t& name);
-				virtual IFeatureClassPtr GetFeatureClass(const CommonLib::str_t& name);
+				virtual ITablePtr GetTable(const CommonLib::CString& name);
+				virtual IFeatureClassPtr GetFeatureClass(const CommonLib::CString& name);
 
 
 
@@ -66,7 +66,7 @@ namespace GisEngine
 				void clear();
 			private:
 
-				typedef std::map<CommonLib::str_t, IWorkspacePtr> TWksMap;
+				typedef std::map<CommonLib::CString, IWorkspacePtr> TWksMap;
 
 				static TWksMap m_wksMap;
 				static CommonLib::CSSection m_SharedMutex;
@@ -76,15 +76,15 @@ namespace GisEngine
 				IFieldsPtr m_FieldsPtr;
 
 				bool m_bLoad;
-				CommonLib::str_t m_sPath;
-				CommonLib::str_t m_sName;
+				CommonLib::CString m_sPath;
+				CommonLib::CString m_sName;
 				GisCommon::IPropertySetPtr  m_ConnectProp;
 
 
 				typedef std::vector<IDatasetPtr> TVecDataset;
 				TVecDataset m_vecDatasets;
 
-				typedef std::map<CommonLib::str_t, IDataset*> TDatasetMap;
+				typedef std::map<CommonLib::CString, IDataset*> TDatasetMap;
 				TDatasetMap	m_DataSetMap;
 
 

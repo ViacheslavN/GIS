@@ -1,0 +1,15 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {EC8D7051-06F0-46E1-8BC1-167B4A0FACB3} = s 'MapToolBar Class'
+		{
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{878FA1E3-92B8-42EF-A9CF-5010428EAF21}'
+			Version = s '1.0'
+		}
+	}
+}

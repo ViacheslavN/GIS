@@ -17,11 +17,12 @@ namespace GisEngine
 
 		enum eDrawPhase
 		{
-			DrawPhaseNone       = 0x0,
-			DrawPhaseGeography  = 0x1,
-			DrawPhaseAnnotation = 0x2,
-			DrawPhaseSelection  = 0x4,
-			DrawPhaseGraphics   = 0x8,
+			DrawPhaseNone       = 0,
+			DrawPhaseGeography  = 1,
+			DrawPhaseAnnotation = 2,
+			DrawPhaseDrawAnnoCache = 4,
+			DrawPhaseSelection  = 8,
+			DrawPhaseGraphics   = 16,
 			DrawPhaseAll        = 0xFFFF
 		};
 
@@ -111,8 +112,8 @@ namespace GisEngine
 		{
 			IMap(){}
 			~IMap(){}
-			virtual CommonLib::str_t	              GetName() const = 0;
-			virtual void                              SetName(const  CommonLib::str_t& name) = 0;
+			virtual CommonLib::CString	              GetName() const = 0;
+			virtual void                              SetName(const  CommonLib::CString& name) = 0;
 			virtual ILayersPtr                        GetLayers() const = 0;
 			virtual  void							  SelectFeatures(const GisBoundingBox& extent, bool resetSelection) = 0;
 			virtual ISelectionPtr                     GetSelection() const = 0;
@@ -167,8 +168,8 @@ namespace GisEngine
 			virtual void                      SetMaximumScale(double scale) = 0;
 			virtual double                    GetMinimumScale() const = 0;
 			virtual void                      SetMinimumScale(double scale) = 0;
-			virtual const CommonLib::str_t&   GetName() const = 0;
-			virtual void                      SetName(const CommonLib::str_t& name) = 0;
+			virtual const CommonLib::CString&   GetName() const = 0;
+			virtual void                      SetName(const CommonLib::CString& name) = 0;
 			virtual eDrawPhase                GetSupportedDrawPhases() const = 0;
 			virtual bool                      IsValid() const = 0;
 			virtual bool                      GetVisible() const = 0;
@@ -208,14 +209,14 @@ namespace GisEngine
 		 
 			IFeatureLayer(){};
 			virtual ~IFeatureLayer(){};
-			virtual const CommonLib::str_t&           GetDisplayField() const = 0;
-			virtual void                             SetDisplayField(const  CommonLib::str_t& sField) = 0;
+			virtual const CommonLib::CString&           GetDisplayField() const = 0;
+			virtual void                             SetDisplayField(const  CommonLib::CString& sField) = 0;
 			virtual GeoDatabase::IFeatureClassPtr    GetFeatureClass() const = 0;
 			virtual void                             SetFeatureClass(GeoDatabase::IFeatureClass* featureClass) = 0;
 			virtual bool                             GetSelectable() const = 0;
 			virtual void                             SetSelectable(bool flag) = 0;
-			virtual const CommonLib::str_t&			 GetDefinitionQuery() const= 0;
-			virtual void							 SetDefinitionQuery(const CommonLib::str_t& )= 0;
+			virtual const CommonLib::CString&			 GetDefinitionQuery() const= 0;
+			virtual void							 SetDefinitionQuery(const CommonLib::CString& )= 0;
 			virtual int								 GetRendererCount() const = 0;
 			virtual IFeatureRendererPtr				 GetRenderer(int index) const = 0;
 			virtual void							 AddRenderer(IFeatureRenderer* renderer) = 0;
@@ -280,8 +281,8 @@ namespace GisEngine
 			virtual void                   SetMaximumScale(double scale) = 0;
 			virtual double                 GetMinimumScale() const = 0;
 			virtual void                   SetMinimumScale(double scale) = 0;
-			virtual const CommonLib::str_t&  GetShapeField() const = 0;
-			virtual void                   SetShapeField(const CommonLib::str_t&  field) = 0;
+			virtual const CommonLib::CString&  GetShapeField() const = 0;
+			virtual void                   SetShapeField(const CommonLib::CString&  field) = 0;
 			virtual ISymbolAssignerPtr		GetSymbolAssigner() const = 0;
 			virtual  void					SetSymbolAssigner(ISymbolAssigner* assigner) = 0;
 			/*virtual bool Draw(eDrawPhase phase, GeoDatabase::IFeatureClass* featureClass, GeoDatabase::IQueryFilter* filter, 
@@ -314,8 +315,8 @@ namespace GisEngine
 		{
 			ILegendClass(){}
 			virtual ~ILegendClass(){}
-			virtual const CommonLib::str_t&	   GetLabel() const = 0;
-			virtual void					   SetLabel(const CommonLib::str_t &label) = 0;
+			virtual const CommonLib::CString&	   GetLabel() const = 0;
+			virtual void					   SetLabel(const CommonLib::CString &label) = 0;
 			virtual Display::ISymbolPtr		   GetSymbol() const = 0;
 			virtual void					   SetSymbol( Display::ISymbol *symbol ) = 0;        
 		};
@@ -340,8 +341,8 @@ namespace GisEngine
 			virtual ILegendClassPtr       GetClass( int index) const = 0;                     
 			virtual int                   GetClassCount() const = 0;                          
 			virtual void                  ClearClasses() = 0;                                 
-			virtual const CommonLib::str_t&	  GetCaption() const = 0;                         
-			virtual void                  SetCaption(const CommonLib::str_t&caption)  = 0;    
+			virtual const CommonLib::CString&	  GetCaption() const = 0;                         
+			virtual void                  SetCaption(const CommonLib::CString&caption)  = 0;    
 			virtual bool                  GetVisible() const = 0;                             
 			virtual void                  SetVisible( bool bVisible ) = 0;                     
 		};
@@ -352,8 +353,8 @@ namespace GisEngine
 			virtual ~ILabelRenderer(){}
 			virtual ILabelEnginePtr      GetLabelEngine() const = 0;
 			virtual void                 SetLabelEngine(ILabelEngine* engine) = 0;
-			virtual CommonLib::str_t	 GetLabelField() const = 0;
-			virtual void                 SetLabelField(const CommonLib::str_t& field) = 0;
+			virtual CommonLib::CString	 GetLabelField() const = 0;
+			virtual void                 SetLabelField(const CommonLib::CString& field) = 0;
 			virtual eLabelStrategy       GetStrategy() const = 0;
 			virtual void                 SetStrategy(const eLabelStrategy& strategy) = 0;
 			virtual int                  GetClassIndex() const = 0;
@@ -379,7 +380,7 @@ namespace GisEngine
 			virtual ~ILabelCache(){}
 			virtual void           Setup(Display::IDisplay* pDisplay) = 0;
 			virtual void           Clear() = 0;
-			virtual void           AddLabel(const CommonLib::str_t& text,
+			virtual void           AddLabel(const CommonLib::CString& text,
 				CommonLib::CGeoShape* shape,
 				double angle,
 				double width,
@@ -396,7 +397,7 @@ namespace GisEngine
 		{
 			ILabel(){}
 			virtual ~ILabel(){}
-			virtual CommonLib::str_t       GetText() const = 0;
+			virtual CommonLib::CString       GetText() const = 0;
 			virtual Display::ITextSymbolPtr GetSymbol() const = 0;
 
 		};
@@ -416,8 +417,8 @@ namespace GisEngine
 		{
 			IGeoBookmark(){}
 			virtual ~IGeoBookmark(){}
-			virtual const CommonLib::str_t&       GetName() const = 0;  
-			virtual void                          SetName(const CommonLib::str_t& csName ) = 0; 
+			virtual const CommonLib::CString&       GetName() const = 0;  
+			virtual void                          SetName(const CommonLib::CString& csName ) = 0; 
 			virtual Display::ViewPosition		  GetPosition() const = 0;
 			virtual void                          SetPosition(const Display::ViewPosition& pos) = 0;
 			virtual GisGeometry::IEnvelopePtr     GetExtent() const = 0;
@@ -445,10 +446,10 @@ namespace GisEngine
 		{
 			ISimpleSymbolAssigner(){}
 			virtual ~ISimpleSymbolAssigner(){}
-			virtual const CommonLib::str_t&		GetDescription() const = 0;
-			virtual void						SetDescription(const CommonLib::str_t& sDesc) = 0;
-			virtual  const CommonLib::str_t&    GetLabel() const = 0;
-			virtual void						SetLabel(const CommonLib::str_t& sLabel) = 0;
+			virtual const CommonLib::CString&		GetDescription() const = 0;
+			virtual void						SetDescription(const CommonLib::CString& sDesc) = 0;
+			virtual  const CommonLib::CString&    GetLabel() const = 0;
+			virtual void						SetLabel(const CommonLib::CString& sLabel) = 0;
 			virtual Display::ISymbolPtr			GetSymbol() const = 0;
 			virtual void						SetSymbol(Display::ISymbol* symbol) = 0;
 
@@ -460,18 +461,18 @@ namespace GisEngine
 		{
 			IClassBreaksSymbolAssigner(){}
 			virtual ~IClassBreaksSymbolAssigner();
-			virtual const CommonLib::str_t&	    GetField() const = 0;
-			virtual void						SetField(const CommonLib::str_t& field) = 0;
+			virtual const CommonLib::CString&	    GetField() const = 0;
+			virtual void						SetField(const CommonLib::CString& field) = 0;
 			virtual double						GetBreak(int index) const = 0;
 			virtual void						SetBreak(int index, double val) = 0;
 			virtual bool						GetBreakValueIncluded(int index) const = 0;
 			virtual void						SetBreakValueIncluded(int index, bool val) = 0;
 			virtual int							GetBreakCount() const = 0;
 			virtual void						SetBreakCount(int count) = 0;
-			virtual const CommonLib::str_t&		GetLabel(int index) const = 0;
-			virtual void						SetLabel(int index,  const CommonLib::str_t&	val) = 0;
-			virtual const CommonLib::str_t&		GetDescription(int index) const = 0;
-			virtual void						SetDescription(int index,  const CommonLib::str_t& val) = 0;
+			virtual const CommonLib::CString&		GetLabel(int index) const = 0;
+			virtual void						SetLabel(int index,  const CommonLib::CString&	val) = 0;
+			virtual const CommonLib::CString&		GetDescription(int index) const = 0;
+			virtual void						SetDescription(int index,  const CommonLib::CString& val) = 0;
 			virtual Display::ISymbolPtr			GetSymbol(int index) const = 0;
 			virtual void						SetSymbol(int index, Display::ISymbol* symbol) = 0;
 			virtual double						GetMinimumBreak() const = 0;
@@ -480,8 +481,8 @@ namespace GisEngine
 			virtual void						SetMinimumBreakIncluded(bool val) = 0;
 			virtual Display::ISymbolPtr			GetDefaultSymbol() const = 0;
 			virtual void						SetDefaultSymbol(Display::ISymbol* symbol) = 0;
-			virtual  const CommonLib::str_t&	GetDefaultLabel() const = 0;
-			virtual void						SetDefaultLabel( const CommonLib::str_t& val) = 0;
+			virtual  const CommonLib::CString&	GetDefaultLabel() const = 0;
+			virtual void						SetDefaultLabel( const CommonLib::CString& val) = 0;
 			virtual bool						GetUseDefaultSymbol() const = 0;
 			virtual void						SetUseDefaultSymbol(bool use) = 0;
 		};
@@ -492,28 +493,28 @@ namespace GisEngine
 			virtual ~IUniqueValueSymbolAssigner(){}
 			virtual int							GetFieldCount() const = 0;
 			virtual void						SetFieldCount(int fieldCount) = 0;
-			virtual const CommonLib::str_t&		GetField(int fieldIndex) const = 0;
-			virtual void						SetField(int fieldIndex, const CommonLib::str_t& fieldName) = 0;
+			virtual const CommonLib::CString&		GetField(int fieldIndex) const = 0;
+			virtual void						SetField(int fieldIndex, const CommonLib::CString& fieldName) = 0;
 			virtual CommonLib::CVariant*		GetValue(int index, int fieldIndex) const = 0;
 			virtual void						SetValue(int index, int fieldIndex, CommonLib::CVariant& val) = 0;
 			virtual int							GetValueCount() const = 0;
 			virtual void						SetValueCount(int count) = 0;
-			virtual const CommonLib::str_t&		GetLabel(int index) const = 0;
-			virtual void						SetLabel(int index, const CommonLib::str_t& val) = 0;
-			virtual const CommonLib::str_t&		GetDescription(int index) const = 0;
-			virtual void						SetDescription(int index, const CommonLib::str_t& val) = 0;
+			virtual const CommonLib::CString&		GetLabel(int index) const = 0;
+			virtual void						SetLabel(int index, const CommonLib::CString& val) = 0;
+			virtual const CommonLib::CString&		GetDescription(int index) const = 0;
+			virtual void						SetDescription(int index, const CommonLib::CString& val) = 0;
 			virtual Display::ISymbolPtr			GetSymbol(int index) const = 0;
 			virtual void						SetSymbol(int index, Display::ISymbol* symbol) = 0;
 			virtual int							GetGroup(int index) const = 0;
 			virtual void						SetGroup(int index, int group) = 0;
 			virtual Display::ISymbolPtr			GetDefaultSymbol() const = 0;
 			virtual void						SetDefaultSymbol(Display::ISymbol* symbol) = 0;
-			virtual const CommonLib::str_t&		GetDefaultLabel() const = 0;
-			virtual void						SetDefaultLabel(const CommonLib::str_t& val) = 0;
+			virtual const CommonLib::CString&		GetDefaultLabel() const = 0;
+			virtual void						SetDefaultLabel(const CommonLib::CString& val) = 0;
 			virtual bool						GetUseDefaultSymbol() const = 0;
 			virtual void						SetUseDefaultSymbol(bool use) = 0;
-			virtual const CommonLib::str_t&		GetHeadingLabel() const = 0;
-			virtual void						SetHeadingLabel( const CommonLib::str_t& val ) = 0;
+			virtual const CommonLib::CString&		GetHeadingLabel() const = 0;
+			virtual void						SetHeadingLabel( const CommonLib::CString& val ) = 0;
 		};
 
 
@@ -521,22 +522,22 @@ namespace GisEngine
 		{
 			IRangeSymbolAssigner(){}
 			virtual ~IRangeSymbolAssigner(){}
-			virtual const CommonLib::str_t&     GetField() const = 0;
-			virtual void						SetField(const CommonLib::str_t&  field) = 0;
+			virtual const CommonLib::CString&     GetField() const = 0;
+			virtual void						SetField(const CommonLib::CString&  field) = 0;
 			virtual void						GetRange(int index, CommonLib::CVariant& valFrom, CommonLib::CVariant& valTo) const = 0;
 			virtual void						SetRange(int index, CommonLib::CVariant& valFrom, CommonLib::CVariant& valTo) = 0;
 			virtual int							GetRangeCount() const = 0;
 			virtual void						SetRangeCount(int count) = 0;
-			virtual const CommonLib::str_t&     GetLabel(int index) const = 0;
-			virtual void						SetLabel(int index, const CommonLib::str_t&  val) = 0;
-			virtual const CommonLib::str_t&     GetDescription(int index) const = 0;
-			virtual void						SetDescription(int index, const CommonLib::str_t&  val) = 0;
+			virtual const CommonLib::CString&     GetLabel(int index) const = 0;
+			virtual void						SetLabel(int index, const CommonLib::CString&  val) = 0;
+			virtual const CommonLib::CString&     GetDescription(int index) const = 0;
+			virtual void						SetDescription(int index, const CommonLib::CString&  val) = 0;
 			virtual Display::ISymbolPtr			GetSymbol(int index) const = 0;
 			virtual void						SetSymbol(int index, Display::ISymbol* symbol) = 0;
 			virtual Display::ISymbolPtr			GetDefaultSymbol() const = 0;
 			virtual void						SetDefaultSymbol(Display::ISymbol* symbol) = 0;
-			virtual const CommonLib::str_t&     GetDefaultLabel() const = 0;
-			virtual void					    SetDefaultLabel(const CommonLib::str_t& val) = 0;
+			virtual const CommonLib::CString&     GetDefaultLabel() const = 0;
+			virtual void					    SetDefaultLabel(const CommonLib::CString& val) = 0;
 			virtual bool						GetUseDefaultSymbol() const = 0;
 			virtual void						SetUseDefaultSymbol(bool use) = 0;
 			virtual void						SortRanges() = 0;
@@ -547,20 +548,20 @@ namespace GisEngine
 		{
 			IExpressionSymbolAssigner(){}
 			virtual ~IExpressionSymbolAssigner(){}
-			virtual const CommonLib::str_t&  GetExpression(int index) const = 0;
-			virtual void                     SetExpression(int index, const CommonLib::str_t& expr) = 0;
+			virtual const CommonLib::CString&  GetExpression(int index) const = 0;
+			virtual void                     SetExpression(int index, const CommonLib::CString& expr) = 0;
 			virtual int						 GetExpressionCount() const = 0;
 			virtual void					 SetExpressionCount(int count) = 0;
-			virtual const CommonLib::str_t&  GetLabel(int index) const = 0;
-			virtual void					 SetLabel(int index, const  CommonLib::str_t& val) = 0;
-			virtual const CommonLib::str_t&  GetDescription(int index) const = 0;
-			virtual void                     SetDescription(int index, const CommonLib::str_t& val) = 0;
+			virtual const CommonLib::CString&  GetLabel(int index) const = 0;
+			virtual void					 SetLabel(int index, const  CommonLib::CString& val) = 0;
+			virtual const CommonLib::CString&  GetDescription(int index) const = 0;
+			virtual void                     SetDescription(int index, const CommonLib::CString& val) = 0;
 			virtual Display::ISymbolPtr		 GetSymbol(int index) const = 0;
 			virtual void					 SetSymbol(int index, Display::ISymbol* symbol) = 0;
 			virtual Display::ISymbolPtr		 GetDefaultSymbol() const = 0;
 			virtual void					 SetDefaultSymbol(Display::ISymbol* symbol) = 0;
-			virtual const CommonLib::str_t&  GetDefaultLabel() const = 0;
-			virtual void					 SetDefaultLabel(const CommonLib::str_t& val) = 0;
+			virtual const CommonLib::CString&  GetDefaultLabel() const = 0;
+			virtual void					 SetDefaultLabel(const CommonLib::CString& val) = 0;
 			virtual bool					 GetUseDefaultSymbol() const = 0;
 			virtual void					 SetUseDefaultSymbol(bool use) = 0;
 		};

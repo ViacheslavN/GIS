@@ -409,7 +409,7 @@ namespace embDB
 				return false;
 			std::vector<wchar_t> buf(nlenStr + 1, L'\0');
 			stream.read((byte*)&buf[0], nlenStr * 2);
-			m_sTranName = CommonLib::str_t(&buf[0]);
+			m_sTranName = CommonLib::CString(&buf[0]);
 		}
 		m_MemCache.init(m_nPageSize, m_nMaxPageBuf);
 #ifdef USE_FREE_PAGES
@@ -494,7 +494,7 @@ namespace embDB
 	{
 		return m_bDirty;
 	}
-	const CommonLib::str_t & CStorage::getTranFileName() const
+	const CommonLib::CString & CStorage::getTranFileName() const
 	{
 		return m_sTranName; //m_StorageStateInfo.getWriteTransaction();
 	}

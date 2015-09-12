@@ -108,7 +108,7 @@ namespace embDB
 			CFilePage * pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo);
 			if(!pPage)
 			{
-				CommonLib::str_t sMsg;
+				CommonLib::CString sMsg;
 				sMsg.format(_T("BTREE: Error load BTreeInfoPage: %I64d"), (int64)m_nPageBTreeInfo);
 				m_pTransaction->error(sMsg);
 				return false;
@@ -118,7 +118,7 @@ namespace embDB
 			stream.attach(pPage->getRowData(), pPage->getPageSize());
 			if(stream.readInt64() != (int64)DB_BTREE_INFO_PAGE)
 			{
-				CommonLib::str_t sMsg;
+				CommonLib::CString sMsg;
 				sMsg.format(_T("BTREE: Page %I64d is not BTreeInfoPage"), (int64)m_nPageBTreeInfo);
 				m_pTransaction->error(sMsg);
 				return false;
@@ -140,7 +140,7 @@ namespace embDB
 					m_nPageBTreeInfo = pPage->getAddr();
 				if(m_nPageBTreeInfo == -1)
 				{
-					CommonLib::str_t sMsg;
+					CommonLib::CString sMsg;
 					sMsg.format(_T("BTREE: Error save BTreeInfoPage: -1"), (int64)m_nPageBTreeInfo);
 					m_pTransaction->error(sMsg);
 					return false;
@@ -151,7 +151,7 @@ namespace embDB
 				pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo, false);
 				if(!pPage)
 				{
-					CommonLib::str_t sMsg;
+					CommonLib::CString sMsg;
 					sMsg.format(_T("BTREE: Error save BTreeInfoPage: %I64d is not load"), (int64)m_nPageBTreeInfo);
 					m_pTransaction->error(sMsg);
 					return false;
@@ -292,7 +292,7 @@ namespace embDB
 				CFilePage *pFilePage = m_pTransaction->getNewPage();
 				if(!pFilePage)
 				{
-					CommonLib::str_t sMsg;
+					CommonLib::CString sMsg;
 					sMsg.format(_T("BTREE: Error create new root page"));
 					m_pTransaction->error(sMsg);
 					return false;
@@ -310,7 +310,7 @@ namespace embDB
 			}
 			if(!m_pRoot)
 			{
-				CommonLib::str_t sMsg;
+				CommonLib::CString sMsg;
 				sMsg.format(_T("BTREE: Error load root page: %I64d"), (int64)m_nRootAddr);
 				m_pTransaction->error(sMsg);
 				return false;
@@ -353,7 +353,7 @@ namespace embDB
 			assert(pNode->isLeaf());
 			if(!pNode->insertInLeaf(key, val))
 			{
-				CommonLib::str_t sMsg;
+				CommonLib::CString sMsg;
 				sMsg.format(_T("BTREE: Error insert"));
 				m_pTransaction->error(sMsg);
 				return false;
@@ -372,7 +372,7 @@ namespace embDB
 					pParentNode  = newNode(true, false);
 					if(!pParentNode)
 					{
-						CommonLib::str_t sMsg;
+						CommonLib::CString sMsg;
 						sMsg.format(_T("BTREE: Error create new root node"));
 						m_pTransaction->error(sMsg);
 						return false;
@@ -470,7 +470,7 @@ namespace embDB
 				pNodeNewRight = newNode(false, false);
 				if(!pNodeNewRight)
 				{
-					CommonLib::str_t sMsg;
+					CommonLib::CString sMsg;
 					sMsg.format(_T("BTREE: Error create new right B Node"));
 					m_pTransaction->error(sMsg);
 					return false;
@@ -509,7 +509,7 @@ namespace embDB
 			TBTreeNode* pNodeNewRoot = newNode(true, false);
 			if(!pNodeNewRoot)
 			{
-				CommonLib::str_t sMsg;
+				CommonLib::CString sMsg;
 				sMsg.format(_T("BTREE: Error create new root node"));
 				m_pTransaction->error(sMsg);
 				return false;

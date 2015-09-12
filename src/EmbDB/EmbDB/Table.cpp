@@ -28,7 +28,7 @@ namespace embDB
 		m_nFieldsAddr.setPageSize(m_pMainDBStorage->getPageSize());
 		m_nIndexAddr.setPageSize(m_pMainDBStorage->getPageSize());
 	}
-	CTable::CTable(CDatabase* pDB, int64 nPageAddr, const CommonLib::str_t& sTableName, CStorage* pTableStorage) : 
+	CTable::CTable(CDatabase* pDB, int64 nPageAddr, const CommonLib::CString& sTableName, CStorage* pTableStorage) : 
 		m_pDB(pDB),
 		m_pMainDBStorage(pDB->getMainStorage()), 
 		m_nTablePage(nPageAddr), 
@@ -44,7 +44,7 @@ namespace embDB
 		m_nFieldsAddr.setPageSize(m_pMainDBStorage->getPageSize());
 		m_nIndexAddr.setPageSize(m_pMainDBStorage->getPageSize());
 	}
-	CTable::CTable(CDatabase* pDB, CFilePage* pFilePage, const CommonLib::str_t& sTableName, CStorage* pTableStorage/*, int64 nTableID*/) :
+	CTable::CTable(CDatabase* pDB, CFilePage* pFilePage, const CommonLib::CString& sTableName, CStorage* pTableStorage/*, int64 nTableID*/) :
 		m_pDB(pDB), 
 		m_pMainDBStorage(pDB->getMainStorage()), 
 		m_nTablePage(pFilePage->getAddr()), 
@@ -127,7 +127,7 @@ namespace embDB
 			return false;
 		std::vector<wchar_t> buf(nlenStr + 1, L'\0');
 		stream.read((byte*)&buf[0], nlenStr * 2);
-		m_sTableName = CommonLib::str_t(&buf[0]);
+		m_sTableName = CommonLib::CString(&buf[0]);
 		m_nStoragePageID = stream.readInt64();
 		m_nFieldsPage = 0;
 
@@ -318,7 +318,7 @@ namespace embDB
 		 return false;
 		std::vector<wchar_t> buf(nlenStr + 1, L'\0');
 		stream.read((byte*)&buf[0], nlenStr * 2);
-		m_sTableName = CommonLib::str_t(&buf[0]);
+		m_sTableName = CommonLib::CString(&buf[0]);
 		return true;
 
 	}
@@ -504,7 +504,7 @@ namespace embDB
 	}
 	
 
-	IDBFieldHandler* CTable::getFieldHandler(const CommonLib::str_t&  sName)
+	IDBFieldHandler* CTable::getFieldHandler(const CommonLib::CString&  sName)
 	{
 		TFieldByName::iterator it = m_FieldByName.find(sName);
 		if(it == m_FieldByName.end())
@@ -529,7 +529,7 @@ namespace embDB
 			return false;
 		std::vector<wchar_t> buf(nlenStr + 1, L'\0');
 		stream.read((byte*)&buf[0], nlenStr * 2);
-		CommonLib::str_t sStorageName = CommonLib::str_t(&buf[0]);
+		CommonLib::CString sStorageName = CommonLib::CString(&buf[0]);
 		m_pTableStorage = m_pDB->getTableStorage(sStorageName, false);
 		if(!m_pTableStorage)
 			return false;
@@ -580,7 +580,7 @@ namespace embDB
 	}
 
 
-	bool CTable::delField(const CommonLib::str_t& sFieldName, IDBTransactions *pTran )
+	bool CTable::delField(const CommonLib::CString& sFieldName, IDBTransactions *pTran )
 	{
 
 		TFieldByName::iterator it = m_FieldByName.find(sFieldName);
@@ -610,19 +610,19 @@ namespace embDB
 
 
 
-	bool CTable::getOIDFieldName(CommonLib::str_t& sOIDName)
+	bool CTable::getOIDFieldName(CommonLib::CString& sOIDName)
 	{
 		return true;
 	}
-	bool CTable::setOIDFieldName(const CommonLib::str_t& sOIDName)
+	bool CTable::setOIDFieldName(const CommonLib::CString& sOIDName)
 	{
 		return true;
 	}
-	const CommonLib::str_t& CTable::getName() const 
+	const CommonLib::CString& CTable::getName() const 
 	{
 		return m_sTableName;
 	}
-	IField* CTable::getField(const CommonLib::str_t& sName) const 
+	IField* CTable::getField(const CommonLib::CString& sName) const 
 	{
 		return NULL;
 	}
@@ -663,13 +663,13 @@ namespace embDB
 
  
 
-	bool CTable::createIndex(const CommonLib::str_t& sFieldName, SIndexProp& ip)
+	bool CTable::createIndex(const CommonLib::CString& sFieldName, SIndexProp& ip)
 	{
 	
 		return addIndex(sFieldName, ip, true);
 
 	}
-	bool  CTable::addIndex(const CommonLib::str_t& sFieldName, SIndexProp& ip, bool bNew)
+	bool  CTable::addIndex(const CommonLib::CString& sFieldName, SIndexProp& ip, bool bNew)
 	{
 		TFieldByName::iterator it = m_FieldByName.find(sFieldName);
 		if(it == m_FieldByName.end())
@@ -705,7 +705,7 @@ namespace embDB
 		pTran->commit();
 		return true;
 	}
-	bool CTable::createCompositeIndex(std::vector<CommonLib::str_t>& vecFields, SIndexProp& ip)
+	bool CTable::createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip)
 	{
 		return true;
 	}

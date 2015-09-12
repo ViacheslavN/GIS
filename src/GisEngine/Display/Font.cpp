@@ -6,7 +6,7 @@ namespace GisEngine
 	namespace Display
 	{
 
-		CommonLib::str_t      m_sFace;
+		CommonLib::CString      m_sFace;
 		GUnits         m_nSize;
 		short          m_nCharSet;
 		Color          m_color;
@@ -32,7 +32,7 @@ namespace GisEngine
 			m_nSize = 8;
 			m_nHaloSize = 0;
 		}
-		CFont::CFont(const CommonLib::str_t& sFace, GUnits nSize, short nCharSet, Color color, int  nStyle, double dOrientation,
+		CFont::CFont(const CommonLib::CString& sFace, GUnits nSize, short nCharSet, Color color, int  nStyle, double dOrientation,
 			Color    bgColor, bool  bIsTransparent, eTextVAlignment vAlignmen, eTextHAlignment hAlignment, GUnits nHaloSize) :
 			m_sFace(sFace), m_nSize(nSize), m_nCharSet(nCharSet), m_nStyle(nStyle), m_color(color), m_dOrientation(dOrientation),
 				m_bgColor(bgColor), m_vAlignment(vAlignmen), m_hAlignment(hAlignment), m_bIsTransparent(m_bIsTransparent),
@@ -42,7 +42,7 @@ namespace GisEngine
 		}
 
 
-		void CFont::setFace(const CommonLib::str_t& sFace)
+		void CFont::setFace(const CommonLib::CString& sFace)
 		{
 			m_sFace = sFace;
 		}
@@ -88,7 +88,7 @@ namespace GisEngine
 		}
 
 
-		const CommonLib::str_t&  CFont::getFace() const
+		const CommonLib::CString&  CFont::getFace() const
 		{
 			return m_sFace;
 		}

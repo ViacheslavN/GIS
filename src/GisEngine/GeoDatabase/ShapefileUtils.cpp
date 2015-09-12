@@ -6,12 +6,12 @@ namespace GisEngine
 	{
 		namespace ShapefileUtils
 		{
-			CommonLib::str_t  NormalizePath(const CommonLib::str_t& path)
+			CommonLib::CString  NormalizePath(const CommonLib::CString& path)
 			{
 				if(path.isEmpty())
 					return path;
 
-				CommonLib::str_t normalizedPath = path;
+				CommonLib::CString normalizedPath = path;
 #ifdef WIN32
 				normalizedPath.lower();
 #endif

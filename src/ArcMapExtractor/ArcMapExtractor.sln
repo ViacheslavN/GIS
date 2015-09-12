@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArcMapExtractor", "ArcMapExtractor.vcxproj", "{E855701B-C393-4E4A-8CCF-69A95C178D5A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArcMapExtractorPS", "ArcMapExtractorPS.vcxproj", "{0CCF030F-FCB1-4606-9A0C-EC31862F801F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E855701B-C393-4E4A-8CCF-69A95C178D5A} = {E855701B-C393-4E4A-8CCF-69A95C178D5A}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E855701B-C393-4E4A-8CCF-69A95C178D5A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E855701B-C393-4E4A-8CCF-69A95C178D5A}.Debug|Win32.Build.0 = Debug|Win32
+		{E855701B-C393-4E4A-8CCF-69A95C178D5A}.Release|Win32.ActiveCfg = Release|Win32
+		{E855701B-C393-4E4A-8CCF-69A95C178D5A}.Release|Win32.Build.0 = Release|Win32
+		{0CCF030F-FCB1-4606-9A0C-EC31862F801F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0CCF030F-FCB1-4606-9A0C-EC31862F801F}.Release|Win32.ActiveCfg = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

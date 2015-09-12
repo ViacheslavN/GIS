@@ -428,6 +428,7 @@
     <ClInclude Include="general.h" />
     <ClInclude Include="GeneralTypes.h" />
     <ClInclude Include="GeoPoint.h" />
+    <ClInclude Include="guid.h" />
     <ClInclude Include="IGeoShape.h" />
     <ClInclude Include="Interlocked.h" />
     <ClInclude Include="IRefCnt.h" />
@@ -444,8 +445,8 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stl_alloc.h" />
     <ClInclude Include="stream.h" />
-    <ClInclude Include="str_buffer.h" />
-    <ClInclude Include="str_t.h" />
+    <ClInclude Include="string_buffer.h" />
+    <ClInclude Include="String.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="thread.h" />
     <ClInclude Include="Timer.h" />
@@ -466,6 +467,7 @@
     <ClCompile Include="FixedBitStream.cpp" />
     <ClCompile Include="FixedMemoryStream.cpp" />
     <ClCompile Include="GeoShape.cpp" />
+    <ClCompile Include="guit.cpp" />
     <ClCompile Include="IGeoShape.cpp" />
     <ClCompile Include="Interlocked.cpp" />
     <ClCompile Include="log.cpp" />
@@ -487,7 +489,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="stream.cpp" />
-    <ClCompile Include="str_t.cpp" />
+    <ClCompile Include="String.cpp" />
     <ClCompile Include="thread.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimeUtils.cpp" />

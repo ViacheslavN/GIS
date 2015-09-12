@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_B_PLUS_TREE_FIXED_STRING_LEAF_NODE_H_
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "Key.h"
 #include "RBMap.h"
 #include "IDBTransactions.h"
@@ -12,11 +12,11 @@
 namespace embDB
 {
 	template<typename _TKey,  typename _TLink, typename _TComp, typename _TCompressor>
-	class BPTreeLeafFixedStringNode : public  BPTreeLeafNode<_TKey, CommonLib::str_t, _TLink, _TComp>
+	class BPTreeLeafFixedStringNode : public  BPTreeLeafNode<_TKey, CommonLib::CString, _TLink, _TComp>
 	{
 	public:
 
-		typedef  BPTreeLeafNode<_TKey, CommonLib::str_t, _TLink, _TComp> TBase;
+		typedef  BPTreeLeafNode<_TKey, CommonLib::CString, _TLink, _TComp> TBase;
 		typedef _TCompressor TCompressor;
 		typedef typename TBase::TKey TKey;
 		typedef typename TBase::TValue TValue;

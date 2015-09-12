@@ -438,6 +438,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TinyXML\tinystr.h" />
     <ClInclude Include="TinyXML\tinyxml.h" />
+    <ClInclude Include="TrackCancel.h" />
     <ClInclude Include="Units.h" />
     <ClInclude Include="XMLNode.h" />
     <ClInclude Include="XMLDoc.h" />
@@ -463,6 +464,7 @@
     <ClCompile Include="TinyXML\tinyxml.cpp" />
     <ClCompile Include="TinyXML\tinyxmlerror.cpp" />
     <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
+    <ClCompile Include="TrackCancel.cpp" />
     <ClCompile Include="Units.cpp" />
     <ClCompile Include="XMLNode.cpp" />
     <ClCompile Include="XMLDoc.cpp" />

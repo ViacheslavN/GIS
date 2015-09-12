@@ -83,7 +83,7 @@ namespace GisEngine
 			if(!feature || (!m_pSymbolAssigner.get() && !pCustomSymbol))
 				return;
 
-			CommonLib::CVariant *pVal = feature->GetValue(m_nShapeFieldIndex);
+			/*CommonLib::CVariant *pVal = feature->GetValue(m_nShapeFieldIndex);
 			if(!pVal)
 				return;
 			if(!pVal->isType<CommonLib::IRefObjectPtr>())
@@ -93,12 +93,14 @@ namespace GisEngine
 
 			CommonLib::CGeoShape* pShape =  (CommonLib::CGeoShape*)pRefObj.get();
 			if(!pShape)
-				return;
+				return;*/
 
+
+			CommonLib::IGeoShapePtr pShape = feature->GetShape();
 			if(pCustomSymbol)
 			{
 				pCustomSymbol->Prepare(pDisplay);
-				pCustomSymbol->Draw(pDisplay, pShape);
+				pCustomSymbol->Draw(pDisplay, pShape.get());
 				pCustomSymbol->Reset();
 				return;
 
@@ -108,7 +110,7 @@ namespace GisEngine
 			if(pSymbol.get())
 			{
 				pSymbol->Prepare(pDisplay);
-				pSymbol->Draw(pDisplay, pShape);
+				pSymbol->Draw(pDisplay, pShape.get());
 				pSymbol->Reset();
 			}
 		}

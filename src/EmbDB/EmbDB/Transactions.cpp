@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Transactions.h"
 #include "CommonLibrary/FixedMemoryStream.h"
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "TransactionCache.h"
 namespace embDB
 {
@@ -9,7 +9,7 @@ namespace embDB
 	
 
 	CTransactions::CTransactions(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionsType nTranType, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) :
+		eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) :
 		m_TranStorage(pAlloc, &m_TranPerfCounter)
 		, m_nRestoreType(nRestoreType)
 		, m_nTranType(nTranType)
@@ -28,7 +28,7 @@ namespace embDB
 	{
 		
 	}
-	CTransactions::CTransactions(CommonLib::alloc_t* pAlloc, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage, uint32 nTranCache) :
+	CTransactions::CTransactions(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache) :
 	m_TranStorage(pAlloc, &m_TranPerfCounter)
 		,m_nRestoreType(rtUndefined)
 		,m_nTranType(eTT_UNDEFINED)
@@ -362,7 +362,7 @@ namespace embDB
 		int64 nTranAddr = m_TranStorage.saveFilePage(pPage, -1);
 		if(nTranAddr == -1)
 		{
-			CommonLib::str_t sMsg;
+			CommonLib::CString sMsg;
 			error(_T("Transactions: Error save page: %I64d"), pPage->getAddr());
 			return false;
 		}

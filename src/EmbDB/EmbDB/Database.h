@@ -3,7 +3,7 @@
 
 
 #include "Schema.h"
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "DBConfig.h"
 #include "ITransactions.h"
 #include "IDatabase.h"
@@ -62,7 +62,7 @@ namespace embDB
 			virtual IShema* getShema() {return 0;}
 			CSchema* getSchema();
 			CStorage* getMainStorage();
-			CStorage* getTableStorage(const CommonLib::str_t& sFileName, bool bCreate);
+			CStorage* getTableStorage(const CommonLib::CString& sFileName, bool bCreate);
 
 			CommonLib::alloc_t* getBTreeAlloc();
 				
@@ -76,7 +76,7 @@ namespace embDB
 			sDBHeader m_dbHeader;
 			std::auto_ptr<CDBTranManager>  m_pTranManager;
 			bool m_bOpen;
-			typedef RBMap<CommonLib::str_t, CStorage*> TTableStorages;
+			typedef RBMap<CommonLib::CString, CStorage*> TTableStorages;
 			TTableStorages m_TableStorages;
 			 
 			

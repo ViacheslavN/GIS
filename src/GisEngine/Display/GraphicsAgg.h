@@ -149,7 +149,7 @@ namespace GisEngine
 			void draw_line(const CPen* pPen);
 			void draw_poly_polygon(const CBrush* pBrush, const GPoint& originMin = GPoint(), const GPoint& originMax = GPoint());
 			void create_font(const CFont* pFont, bool& customDecoration);
-		    CommonLib::str_t get_font_path(const CFont* pFont, bool& customDecoration);
+		    CommonLib::CString get_font_path(const CFont* pFont, bool& customDecoration);
 			void DrawUnderLine(const CFont* pFont, double xNew, double yNew, double x, double y);
 		private:
 				scanline_t m_scanline;

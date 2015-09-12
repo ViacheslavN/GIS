@@ -17,7 +17,7 @@
 
 
 template<class TPointType, class TRectVariant, class TSpatialField>
-void CreateSpatialRectField(const CommonLib::str_t& sFieldName, embDB::CDatabase& db, int nType, 
+void CreateSpatialRectField(const CommonLib::CString& sFieldName, embDB::CDatabase& db, int nType, 
 	embDB::CTable *pTable, TPointType xMin, TPointType yMin, TPointType xMax,  TPointType yMax, TPointType nStep)
 {
 	embDB::ITransactions *pFieldTran = db.startTransaction(embDB::eTT_DDL);

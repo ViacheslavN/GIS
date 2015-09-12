@@ -22,12 +22,12 @@ namespace embDB
 	{
 
 	}
-	bool CDBTranManager::open(const CommonLib::str_t &sFileName, const CommonLib::str_t& sWorkingPath)
+	bool CDBTranManager::open(const CommonLib::CString &sFileName, const CommonLib::CString& sWorkingPath)
 	{
 		close();
 		m_sWorkingPath = sWorkingPath;
 		m_nTranID = 1;
-		CommonLib::str_t sTranLogFileName = sFileName;
+		CommonLib::CString sTranLogFileName = sFileName;
 		sTranLogFileName += L".tran_log";
 		bool bOpen = m_Storage.open(sTranLogFileName.cwstr(), false, false, false, true, 8192);
 		if(!bOpen)
@@ -46,7 +46,7 @@ namespace embDB
 		/*	TBTreePlus::iterator it = m_pBPtree->begin();
 			while(it.isNull())
 			{
-				CommonLib::str_t sTranFileName((const char*)it.value().szTranName, 30);
+				CommonLib::CString sTranFileName((const char*)it.value().szTranName, 30);
 				CTransactions tran(m_pAlloc, sTranFileName, m_pDB->getMainStorage());
 				tran.restore();
 			}
@@ -110,7 +110,7 @@ namespace embDB
 
 	ITransactions* CDBTranManager::CreateTransaction(eTransactionsType trType)
 	{
-		CommonLib::str_t sFileName;
+		CommonLib::CString sFileName;
 		long nDate = 0;
 		long nTime = 0;
 		nDate = CommonLib::TimeUtils::GetCurrentDate(&nTime);

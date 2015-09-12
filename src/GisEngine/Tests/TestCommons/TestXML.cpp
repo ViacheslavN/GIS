@@ -48,7 +48,7 @@ void testWriteXML()
 		{
 			GisEngine::GisCommon::IXMLNodePtr pCell = pRow->CreateChildNode("cell");
 			
-			CommonLib::str_t stext;
+			CommonLib::CString stext;
 			pCell->AddPropertyInt32U(L"ID", j);
 			stext.format(L"Идентификатор=%d", j);
 			pCell->SetText(stext);
@@ -65,7 +65,7 @@ void testLoadXML()
 	char Ch;
 
 	fStream.read(Ch);*/
-	CommonLib::str_t sString;
+	CommonLib::CString sString;
 	uint16 nVal = 30;
 	sString.format(L"%u", nVal);
 	GisEngine::GisCommon::CXMLDoc xmlDoc;

@@ -28,10 +28,10 @@ namespace GisEngine
 			virtual void                   ResetSymbols();
 
 			// ISimpleSymbolAssigner
-			virtual const CommonLib::str_t&	  GetDescription() const;
-			virtual void					  SetDescription(const CommonLib::str_t& desc);
-			virtual const CommonLib::str_t&  GetLabel() const;
-			virtual void                     SetLabel(const CommonLib::str_t& label);
+			virtual const CommonLib::CString&	  GetDescription() const;
+			virtual void					  SetDescription(const CommonLib::CString& desc);
+			virtual const CommonLib::CString&  GetLabel() const;
+			virtual void                     SetLabel(const CommonLib::CString& label);
 			virtual Display::ISymbolPtr		 GetSymbol() const;
 			virtual void                     SetSymbol(Display::ISymbol* symbol);
 			virtual void				     FlushBuffers(Display::IDisplay* pDisplay, GisCommon::ITrackCancel* trackCancel);
@@ -53,8 +53,8 @@ namespace GisEngine
 
 		
 		private:
-			CommonLib::str_t	m_sLabel;
-			CommonLib::str_t	m_sDescription;
+			CommonLib::CString	m_sLabel;
+			CommonLib::CString	m_sDescription;
 			Display::ISymbolPtr m_pSymbol;
 
 		

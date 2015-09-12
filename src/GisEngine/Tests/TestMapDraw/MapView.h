@@ -50,6 +50,8 @@ public:
 	void redraw();
 
 private:
+	void Update(const GisEngine::Display::GPoint* ,const GisEngine::Display::GRect*, bool bforce);
+	void OnFinishMapDrawing(bool);
 
 	GisEngine::Cartography::IMapPtr m_pMap;
 	/*GisEngine::Display::IGraphicsPtr m_pGraphics;

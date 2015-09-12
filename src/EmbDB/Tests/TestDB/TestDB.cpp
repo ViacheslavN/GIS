@@ -37,7 +37,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			CreateTables(&db);
 		}
 		/*	embDB::CSchema* pSchema = db.getSchema();
-			CommonLib::str_t sTableName; 
+			CommonLib::CString sTableName; 
 			embDB::ITransactions *pTableTran = db.startTransaction(embDB::eTT_DDL);
 			pTableTran->begin();
 			for (int i = 0; i < 1000; ++i)
@@ -52,7 +52,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			embDB::ITransactions *pFieldTran = db.startTransaction(embDB::eTT_DDL);
 			pFieldTran->begin();
 
-			CommonLib::str_t sFieldName; 
+			CommonLib::CString sFieldName; 
 			for (int i = 0; i < 1000; ++i)
 			{				
 			
@@ -76,7 +76,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	/*
 	embDB::CSchema* pSchema = db.getSchema();
-	CommonLib::str_t sTableName; 
+	CommonLib::CString sTableName; 
 	for (int i = 0; i < 1000; ++i)
 	{
 		sTableName.format(_T("table_%d"), i);
@@ -86,7 +86,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	embDB::CTable *pTable = pSchema->getTable("table_1");
 
-	CommonLib::str_t sFieldName; 
+	CommonLib::CString sFieldName; 
 	for (int i = 0; i < 1000; ++i)
 	{				
 

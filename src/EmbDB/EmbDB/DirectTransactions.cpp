@@ -9,7 +9,7 @@ namespace embDB
 		assert(m_pDBStorage);
 	}
 	CDirectTransactions::CDirectTransactions(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionsType nTranType, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache): m_pDBStorage(pDBStorage)
+		eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache): m_pDBStorage(pDBStorage)
 		,m_bError(false)
 	{
 		assert(m_pDBStorage);

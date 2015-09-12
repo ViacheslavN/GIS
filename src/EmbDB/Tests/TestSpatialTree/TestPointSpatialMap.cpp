@@ -7,7 +7,7 @@
 #include "../../EmbDB/DirectTransactions.h"
 #include "../../EmbDB/PoinMapInnerCompressor64.h"
 #include "../../EmbDB/PoinMapLeafCompressor64.h"
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "CommonLibrary/DebugTime.h"
 #include <iostream>
 #include <set>
@@ -281,7 +281,7 @@ void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64
 }
 
 template <class TSparialTree, class TCoodType, class TTran, class TZorderType>
-void TestPointSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize, int nPageSize, 
+void TestPointSpatial(const CommonLib::CString& sFileName,  int nCacheStorageSize, int nPageSize, 
 			TCoodType nBegin, TCoodType nEnd, TCoodType nStep, 
 			TCoodType qXmin,  TCoodType qYmin,  TCoodType qXmax,  TCoodType qYmax, 
 			bool onlySearch = false)

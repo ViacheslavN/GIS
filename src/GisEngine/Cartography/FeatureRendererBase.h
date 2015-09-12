@@ -38,11 +38,11 @@ namespace GisEngine
 			{
 				m_dMinimumScale = scale;
 			}
-			const CommonLib::str_t&  GetShapeField() const
+			const CommonLib::CString&  GetShapeField() const
 			{
 				return m_sShapeField;
 			}
-			void   SetShapeField(const CommonLib::str_t&  field)
+			void   SetShapeField(const CommonLib::CString&  field)
 			{
 				m_sShapeField = field;
 			}
@@ -83,7 +83,7 @@ namespace GisEngine
 		protected:
 			double                            m_dMinimumScale;
 			double                            m_dMaximumScale;
-			mutable CommonLib::str_t		  m_sShapeField;
+			mutable CommonLib::CString		  m_sShapeField;
 			mutable int                       m_nShapeFieldIndex;
 			uint32 m_nFeatureRendererID;
 				

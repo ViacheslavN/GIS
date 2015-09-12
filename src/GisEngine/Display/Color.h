@@ -3,7 +3,7 @@
 #include "GraphTypes.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/GeneralTypes.h"
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "Common/GisEngineCommon.h"
 
 namespace GisEngine
@@ -27,7 +27,7 @@ namespace GisEngine
 				Opaque = 0xff
 			};
 
-			Color(const CommonLib::str_t& rgb, AlfaChannel a = Opaque);
+			Color(const CommonLib::CString& rgb, AlfaChannel a = Opaque);
 			Color(ColorType rgb = Black, AlfaChannel a = Opaque);
 			Color(ColorComponent r, ColorComponent g, ColorComponent b, AlfaChannel a = Opaque);
 

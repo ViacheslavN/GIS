@@ -24,11 +24,11 @@ namespace GisEngine
 				virtual const CFont& GetFont() const;
 				virtual     CFont& GetFont() ;
 				virtual void   SetFont(const  CFont& font );
-				virtual void GetTextSize(IDisplay* display, const CommonLib::str_t& szText, GUnits *pxSize , GUnits *pySize, GUnits* baseLine) const;
+				virtual void GetTextSize(IDisplay* display, const CommonLib::CString& szText, GUnits *pxSize , GUnits *pySize, GUnits* baseLine) const;
 				virtual GUnits GetSize() const;
 				virtual void SetSize(GUnits size);
-				virtual  const CommonLib::str_t& GetText() const;
-				virtual void SetText(const CommonLib::str_t& szText );
+				virtual  const CommonLib::CString& GetText() const;
+				virtual void SetText(const CommonLib::CString& szText );
 				virtual ITextBackgroundPtr GetTextBackground() const;
 				virtual void SetTextBackground( ITextBackground *bg );
 				virtual int   GetTextDrawFlags() const;
@@ -55,7 +55,7 @@ namespace GisEngine
 				void draw_background(IDisplay* pDisplay, const GPoint& pt);
 		private:
 				CFont m_Font;
-				CommonLib::str_t m_sText;
+				CommonLib::CString m_sText;
 				ITextBackgroundPtr m_pTextBg;
 				int   m_nTextDrawFlags;
 		};

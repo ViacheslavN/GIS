@@ -26,20 +26,20 @@ namespace GisEngine
 			virtual void      SetField(int index, IField* field);
 			virtual void      AddField(IField* field);
 			virtual void      RemoveField(int index);
-			virtual int       FindField(const CommonLib::str_t& name) const;
-			virtual bool      FieldExists(const CommonLib::str_t& name) const;
+			virtual int       FindField(const CommonLib::CString& name) const;
+			virtual bool      FieldExists(const CommonLib::CString& name) const;
 			virtual void	  Clear();
 
 		private:
 			void RebuildFieldIndexMap() const;
 			struct GisStringCILess
 			{
-				bool operator ()(const CommonLib::str_t& str1, const CommonLib::str_t& str2) const
+				bool operator ()(const CommonLib::CString& str1, const CommonLib::CString& str2) const
 				{
 					return str1.compare(str2, false) < 0;
 				}
 			};
-			typedef std::map<const CommonLib::str_t, int, GisStringCILess> TMapFieldIndex;
+			typedef std::map<const CommonLib::CString, int, GisStringCILess> TMapFieldIndex;
 			typedef std::vector<IFieldPtr> TFields;
 			TFields m_vecFields;
 			mutable TMapFieldIndex m_mapFieldIndex;

@@ -28,7 +28,7 @@ namespace embDB
 		virtual bool setFileSize(int64 nSize) = 0;
 		virtual int64 getBeginFileSize() const = 0;
 		virtual bool isDirty() const = 0;
-		virtual const CommonLib::str_t & getTranFileName() const = 0;
+		virtual const CommonLib::CString & getTranFileName() const = 0;
 		virtual void clearDirty() = 0;
 
 		//for write/save

@@ -54,11 +54,11 @@ namespace GisEngine
 			{
 				m_dMinimumScale = dScale;
 			}
-			virtual const CommonLib::str_t&		GetName() const
+			virtual const CommonLib::CString&		GetName() const
 			{
 				return m_sName;
 			}
-			virtual void   SetName(const CommonLib::str_t& sName)
+			virtual void   SetName(const CommonLib::CString& sName)
 			{
 				m_sName = sName;
 			}
@@ -127,7 +127,7 @@ namespace GisEngine
 		protected:
 			virtual void   DrawEx(eDrawPhase phase, Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel) = 0;
 		protected:
-			CommonLib::str_t              m_sName;
+			CommonLib::CString              m_sName;
 			GisGeometry::ISpatialReferencePtr m_pSpatialRef;
 			bool                              m_bVisible;
 			double                            m_dMinimumScale;

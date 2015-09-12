@@ -5,7 +5,7 @@
 #include "../../EmbDB/storage.h"
 #include "../../EmbDB/BPTreeNode.h"
 #include "../../EmbDB/BaseBPMap.h"
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "CommonLibrary/MemoryStream.h"
 #include "../../EmbDB/Key.h"
 #include "../../EmbDB/Transactions.h"

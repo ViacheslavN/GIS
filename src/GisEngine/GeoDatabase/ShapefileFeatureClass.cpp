@@ -11,8 +11,8 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
-		CShapefileFeatureClass::CShapefileFeatureClass(IWorkspace *pWorkSpace, const CommonLib::str_t& sPath, 
-			const CommonLib::str_t& sName, const CommonLib::str_t& sViewName) :
+		CShapefileFeatureClass::CShapefileFeatureClass(IWorkspace *pWorkSpace, const CommonLib::CString& sPath, 
+			const CommonLib::CString& sName, const CommonLib::CString& sViewName) :
 			m_pWorkSpace(pWorkSpace), m_sPath(sPath), m_sName(sName), m_sViewName(sViewName), m_ShapeType(CommonLib::shape_type_null)
 		{
 		/*	if(m_sName.isEmpty())
@@ -32,7 +32,7 @@ namespace GisEngine
 		{
 			
 		}
-		void  CShapefileFeatureClass::DeleteField(const CommonLib::str_t& fieldName)
+		void  CShapefileFeatureClass::DeleteField(const CommonLib::CString& fieldName)
 		{
 			
 		}
@@ -44,7 +44,7 @@ namespace GisEngine
 		{
 			return true;
 		}
-		const CommonLib::str_t& CShapefileFeatureClass::GetOIDFieldName() const
+		const CommonLib::CString& CShapefileFeatureClass::GetOIDFieldName() const
 		{
 			return m_sOIDName;
 		}
@@ -62,7 +62,7 @@ namespace GisEngine
 		{
 			return m_ShapeType;
 		}
-		const CommonLib::str_t&  CShapefileFeatureClass::GetShapeFieldName() const
+		const CommonLib::CString&  CShapefileFeatureClass::GetShapeFieldName() const
 		{
 			return m_sShapeFieldName;
 		}
@@ -80,9 +80,9 @@ namespace GisEngine
 			m_dbf.clear();
 		}
 
-		CommonLib::str_t CShapefileFeatureClass::GetFullName()
+		CommonLib::CString CShapefileFeatureClass::GetFullName()
 		{
-			CommonLib::str_t sFullName = m_sPath + m_sViewName + L".shp";
+			CommonLib::CString sFullName = m_sPath + m_sViewName + L".shp";
 			return sFullName;
 		}
 
@@ -96,10 +96,10 @@ namespace GisEngine
 			m_pSpatialReferencePtr.release();
 			
 
-			CommonLib::str_t filePathBase = m_sPath + m_sViewName;
-			CommonLib::str_t shpFilePath = filePathBase + L".shp";
-			CommonLib::str_t dbfFilePath = filePathBase + L".dbf";
-			CommonLib::str_t prjFileName = filePathBase + L".prj";
+			CommonLib::CString filePathBase = m_sPath + m_sViewName;
+			CommonLib::CString shpFilePath = filePathBase + L".shp";
+			CommonLib::CString dbfFilePath = filePathBase + L".dbf";
+			CommonLib::CString prjFileName = filePathBase + L".prj";
 
 			  const char* szAccess = write ? "r+b" : "rb";
 			 m_shp.file = ShapeLib::SHPOpen(shpFilePath.cstr(), szAccess);
@@ -158,7 +158,7 @@ namespace GisEngine
 				 fieldType = ShapefileUtils::SHPFieldInfoToFieldInfo(shpFieldType, width, dec, &length, &precision, &scale);
 
 				 IFieldPtr pFieldPtr(new CField());
-				 pFieldPtr->SetName(CommonLib::str_t(name));
+				 pFieldPtr->SetName(CommonLib::CString(name));
 				 pFieldPtr->SetIsEditable(true);
 				 pFieldPtr->SetIsNullable(false);
 				 pFieldPtr->SetIsRequired(false);

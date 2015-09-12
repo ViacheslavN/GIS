@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_TABLE_HEADER_H_
 #define _EMBEDDED_DATABASE_TABLE_HEADER_H_
 
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "Key.h"
 #include "BaseBTree.h"
 #include "VariantField.h"

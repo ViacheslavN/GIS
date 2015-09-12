@@ -3,7 +3,7 @@
 
 #include "GeneralTypes.h"
 #include "IRefCnt.h"
-#include "str_t.h"
+#include "String.h"
 #include "blob.h"
 namespace CommonLib
 {
@@ -60,7 +60,7 @@ namespace CommonLib
 		virtual void Visit(const uint64			 & val) = 0;
 		virtual void Visit(const float          & val) = 0;
 		virtual void Visit(const double         & val) = 0;
-		virtual void Visit(const str_t      & val) = 0;
+		virtual void Visit(const CString      & val) = 0;
 		virtual void Visit(const IRefObjectPtr     & val) = 0;
 		virtual void Visit(const CBlob     & val) = 0;
 	};
@@ -314,12 +314,12 @@ class ToStringVisitor : public IVisitor
 {
 public:
 	ToStringVisitor (){}
-	operator str_t()const{return val_;};
+	operator CString()const{return val_;};
 
 
-	virtual void Visit(const CNullVariant&){val_ = str_t();}
+	virtual void Visit(const CNullVariant&){val_ = CString();}
 	virtual void Visit(const bool           & val)
-	{ val_ = val ? str_t(L"true") : str_t(L"false"); }
+	{ val_ = val ? CString(L"true") : CString(L"false"); }
 	virtual void Visit(const byte     & val)
 	{ val_.format(L"%d", (int)val); }
 	virtual void Visit(const int8     & val)
@@ -340,14 +340,14 @@ public:
 	{ val_.format_c (L"%20.20f", val); }
 	virtual void Visit(const double     & val)
 	{ val_.format_c (L"%20.20lf", val); }
-	virtual void Visit(const str_t      & val)
+	virtual void Visit(const CString      & val)
 	{ val_ = val;}
 	virtual void Visit(const IRefObjectPtr     &)
-	{ val_ = str_t();}
+	{ val_ = CString();}
 	virtual void Visit(const CBlob     &)
-	{ val_ = str_t();}
+	{ val_ = CString();}
 private:
-	str_t val_;
+	CString val_;
 
 
 };

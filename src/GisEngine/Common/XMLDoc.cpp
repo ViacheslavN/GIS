@@ -19,11 +19,11 @@ namespace GisEngine
 		{
 
 		}
-		const CommonLib::str_t& CXMLDoc::GetError() const
+		const CommonLib::CString& CXMLDoc::GetError() const
 		{
 			return m_sError;
 		}
-		bool  CXMLDoc::Open(const CommonLib::str_t& xml)
+		bool  CXMLDoc::Open(const CommonLib::CString& xml)
 		{
 			CommonLib::CReadFileStream fStream;
 			if(!fStream.open(xml.cwstr(), CommonLib::ofmOpenExisting, CommonLib::arRead, CommonLib::smNoMode))
@@ -82,7 +82,7 @@ namespace GisEngine
 							{
 								if( get_char(pStream) && m_char == ']' )
 								{
-									pNode->SetCDATA(CommonLib::str_t(t.c_str()) );
+									pNode->SetCDATA(CommonLib::CString(t.c_str()) );
 									break;
 								}
 								//t+= ']';
@@ -134,7 +134,7 @@ namespace GisEngine
 						{
 							if(m_vecText.back() != 0)
 								m_vecText.push_back(0);
-							CommonLib::str_t sText;
+							CommonLib::CString sText;
 							utf8_to_utf16((const char *)&m_vecText[0], sText);
 							pNode->SetText( sText );
 						}
@@ -143,7 +143,7 @@ namespace GisEngine
 					}
 					else
 					{
-						CommonLib::str_t sAttrName = m_token.c_str();
+						CommonLib::CString sAttrName = m_token.c_str();
 						get_token(pStream);
 						if( m_token != "=")
 						{
@@ -156,14 +156,14 @@ namespace GisEngine
 						{
 							if(m_vecText.back() != 0)
 								m_vecText.push_back(0);
-							CommonLib::str_t sText;
+							CommonLib::CString sText;
 							utf8_to_utf16((const char *)&m_vecText[0], sText);
 							pNode->AddPropertyString(sAttrName, sText);
 						}
 					}
 					break;
 				case  xlsParseCloseName:
-					if( CommonLib::str_t(m_token.c_str()) != pNode->GetName() )
+					if( CommonLib::CString(m_token.c_str()) != pNode->GetName() )
 					{						
 						m_sError.format(L"Error not close tag: %s, row: %d, col %d", m_token.c_str(), m_nCurrRow, m_nCurrCol);
 						return false;
@@ -178,7 +178,7 @@ namespace GisEngine
 						{
 							if(m_vecText.back() != 0)
 								m_vecText.push_back(0);
-							CommonLib::str_t sText;
+							CommonLib::CString sText;
 							utf8_to_utf16((const char *)&m_vecText[0], sText);
 							pNode->SetText( sText );
 						}
@@ -269,7 +269,7 @@ namespace GisEngine
 			m_char = 0;
 			return pStream->IsEndOfStream();
 		}
-		bool  CXMLDoc::Save(const CommonLib::str_t& xml)
+		bool  CXMLDoc::Save(const CommonLib::CString& xml)
 		{
 
 			CommonLib::CWriteFileStream fStream;

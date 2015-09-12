@@ -10,11 +10,11 @@ namespace GisEngine
 		{
 		public:
 			CFont();
-			CFont(const CommonLib::str_t& sFace, GUnits nSize, short nCharSet, Color color, int  nStyle, double dOrientation,
+			CFont(const CommonLib::CString& sFace, GUnits nSize, short nCharSet, Color color, int  nStyle, double dOrientation,
 				Color    bgColor, bool  bIsTransparent, eTextVAlignment vAlignmen, eTextHAlignment hAlignment, GUnits nHaloSize);
 
 
-			void setFace(const CommonLib::str_t& sFace);
+			void setFace(const CommonLib::CString& sFace);
 			void setSize(GUnits nSize);
 			void setColor(const Color& color);
 			void setCharSet(short nCharSet);
@@ -27,7 +27,7 @@ namespace GisEngine
 			void setHaloSize(GUnits nHaloSize);
 
 
-			const CommonLib::str_t&  getFace() const;
+			const CommonLib::CString&  getFace() const;
 			GUnits getSize() const;
 			const Color&  getColor() const;
 			short getCharSet() const;
@@ -49,7 +49,7 @@ namespace GisEngine
 		private:
 
 
-			CommonLib::str_t      m_sFace;
+			CommonLib::CString      m_sFace;
 			GUnits         m_nSize;
 			short          m_nCharSet;
 			Color          m_color;

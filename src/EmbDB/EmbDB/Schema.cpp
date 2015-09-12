@@ -32,7 +32,7 @@ namespace embDB
 	{
 		return true;
 	}
-	bool CSchema::addTable(const CommonLib::str_t& sTableName, const CommonLib::str_t& sStorageName, IDBTransactions *pTran )
+	bool CSchema::addTable(const CommonLib::CString& sTableName, const CommonLib::CString& sStorageName, IDBTransactions *pTran )
 	{
 		TTablesByName::iterator it = m_TablesByName.find(sTableName);
 		if(!it.isNull())
@@ -94,7 +94,7 @@ namespace embDB
 		}
 		return true;
 	}
-	CTable* CSchema::getTable(const CommonLib::str_t& sTableName)
+	CTable* CSchema::getTable(const CommonLib::CString& sTableName)
 	{
 		TTablesByName::iterator it = m_TablesByName.find(sTableName);
 		if(!it.isNull())
@@ -258,7 +258,7 @@ namespace embDB
 		return true;
 	}
 
-	bool CSchema::dropTable(const CommonLib::str_t& sTableName, IDBTransactions *Tran)
+	bool CSchema::dropTable(const CommonLib::CString& sTableName, IDBTransactions *Tran)
 	{
 		TTablesByName::iterator it = m_TablesByName.find(sTableName);
 		if(it.isNull())

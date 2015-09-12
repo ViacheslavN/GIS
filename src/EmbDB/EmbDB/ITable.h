@@ -7,8 +7,8 @@ namespace embDB
 {
 	struct SFieldProp
 	{
-		CommonLib::str_t sFieldName;
-		CommonLib::str_t sFieldAlias;
+		CommonLib::CString sFieldName;
+		CommonLib::CString sFieldAlias;
 		eDataTypes dataType;
 		eDataTypesExt dateTypeExt;
 	};
@@ -22,10 +22,10 @@ namespace embDB
 	public:
 		ITable(){}
 		virtual ~ITable(){}
-		virtual bool getOIDFieldName(CommonLib::str_t& sOIDName) = 0;
-		virtual bool setOIDFieldName(const CommonLib::str_t& sOIDName) = 0;
-		virtual const CommonLib::str_t& getName() const  = 0;
-		virtual IField* getField(const CommonLib::str_t& sName) const = 0;
+		virtual bool getOIDFieldName(CommonLib::CString& sOIDName) = 0;
+		virtual bool setOIDFieldName(const CommonLib::CString& sOIDName) = 0;
+		virtual const CommonLib::CString& getName() const  = 0;
+		virtual IField* getField(const CommonLib::CString& sName) const = 0;
 		virtual size_t getFieldCnt() const = 0;
 		virtual IField* getField(size_t nIdx) const = 0;
 		

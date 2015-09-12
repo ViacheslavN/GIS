@@ -7,7 +7,7 @@
 #include "../../EmbDB/storage.h"
 #include "../../EmbDB/BTreeNode.h"
 #include "../../EmbDB/BaseBTree.h"
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "CommonLibrary/MemoryStream.h"
 #include "../../EmbDB/Key.h"
 #include <set>

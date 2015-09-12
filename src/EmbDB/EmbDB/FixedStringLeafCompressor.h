@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_BTREE_PLUS_LEAF_FIXED_STRING_COMPRESSOR_H_
 
 #include "CommonLibrary/FixedMemoryStream.h"
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "RBSet.h"
 #include "BTVector.h"
 #include "Key.h"
@@ -11,11 +11,11 @@ namespace embDB
 {
 
 	template<typename _TKey,  typename _TComp>
-	class BPLeafNodeFixedStringCompressor  : public BPLeafNodeCompressorBase<_TKey, CommonLib::str_t, _TComp>
+	class BPLeafNodeFixedStringCompressor  : public BPLeafNodeCompressorBase<_TKey, CommonLib::CString, _TComp>
 	{
 	public:
 
-		typedef  BPLeafNodeCompressorBase<_TKey, CommonLib::str_t, _TComp> TBase;
+		typedef  BPLeafNodeCompressorBase<_TKey, CommonLib::CString, _TComp> TBase;
 		typedef typename TBase::TKey TKey;
 		//typedef typename TBase::TValue TValue;
 		typedef typename TBase::TComp TComp;

@@ -17,7 +17,7 @@ namespace GisEngine
 			return (int)m_vecFields.size();
 		}
 
-		bool CFieldSet::Find(const CommonLib::str_t& field) const
+		bool CFieldSet::Find(const CommonLib::CString& field) const
 		{
 			return m_mapIndexes.find(field) != m_mapIndexes.end();
 		}
@@ -27,7 +27,7 @@ namespace GisEngine
 			m_it = m_vecFields.begin();
 		}
 
-		bool CFieldSet::Next(CommonLib::str_t* field)
+		bool CFieldSet::Next(CommonLib::CString* field)
 		{
 			if(m_it == m_vecFields.end())
 				return false;
@@ -37,7 +37,7 @@ namespace GisEngine
 
 		}
 
-		void CFieldSet::Add(const CommonLib::str_t& field)
+		void CFieldSet::Add(const CommonLib::CString& field)
 		{
 			TMapIndexes::iterator it = m_mapIndexes.find(field);
 			if(it == m_mapIndexes.end())
@@ -47,7 +47,7 @@ namespace GisEngine
 			}
 		}
 
-		void CFieldSet::Remove(const CommonLib::str_t& field)
+		void CFieldSet::Remove(const CommonLib::CString& field)
 		{
 			TMapIndexes::iterator it = m_mapIndexes.find(field);
 			if(it != m_mapIndexes.end())

@@ -426,12 +426,14 @@
     <ClInclude Include="GisFramework.h" />
     <ClInclude Include="GisFrameworkLib.h" />
     <ClInclude Include="MapDrawer.h" />
+    <ClInclude Include="MapTask.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DrawThread.cpp" />
     <ClCompile Include="MapDrawer.cpp" />
+    <ClCompile Include="MapTask.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugShared|Win32'">Create</PrecompiledHeader>

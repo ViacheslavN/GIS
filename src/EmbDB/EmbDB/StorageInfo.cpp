@@ -13,14 +13,14 @@ namespace embDB
 
 	}
 
-	void CStorageInfo::BeginWriteTransaction(const CommonLib::str_t& sTranFileName)
+	void CStorageInfo::BeginWriteTransaction(const CommonLib::CString& sTranFileName)
 	{
 		m_bDirty = true;
 		m_sTranName = sTranFileName;
 		//m_nBeginSize = m_pStorage->getFileSize();
 		//Save();
 	}
-	void CStorageInfo::EndWriteTransaction(const CommonLib::str_t& sTranFileName)
+	void CStorageInfo::EndWriteTransaction(const CommonLib::CString& sTranFileName)
 	{
 		assert(!m_bDirty);
 		assert(m_sTranName == sTranFileName);
@@ -31,7 +31,7 @@ namespace embDB
 	{
 		return m_bDirty;
 	}
-	const CommonLib::str_t& CStorageInfo::getWriteTransaction() const
+	const CommonLib::CString& CStorageInfo::getWriteTransaction() const
 	{
 		return m_sTranName;
 	}

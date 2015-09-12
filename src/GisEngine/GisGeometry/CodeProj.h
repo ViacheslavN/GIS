@@ -6,8 +6,8 @@ namespace GisEngine
 {
 	namespace GisGeometry
 	{
-		CommonLib::str_t CodeToProj4Str(int code);
-		int Proj4StrToCode(const CommonLib::str_t& sProj4Str);
+		CommonLib::CString CodeToProj4Str(int code);
+		int Proj4StrToCode(const CommonLib::CString& sProj4Str);
 	}
 }
 #endif

@@ -74,7 +74,7 @@ namespace GisEngine
 			virtual ~IXMLNode(){}
 
 			virtual void                   AddChildNode(IXMLNode* child) = 0;
-			virtual IXMLNodePtr			   CreateChildNode(const CommonLib::str_t& sName) = 0;
+			virtual IXMLNodePtr			   CreateChildNode(const CommonLib::CString& sName) = 0;
 			virtual uint32				   GetChildCnt() const = 0;
 			virtual IXMLNodePtr			   GetChild(uint32 nIndex) const = 0;
 			virtual IXMLNodePtr			   GetChild(const wchar_t *pszName) = 0;
@@ -83,45 +83,45 @@ namespace GisEngine
 
 
 
-			virtual const CommonLib::str_t&  GetName() const = 0;
-			//virtual void                   SetName( const CommonLib::str_t& name) = 0;
+			virtual const CommonLib::CString&  GetName() const = 0;
+			//virtual void                   SetName( const CommonLib::CString& name) = 0;
 
-			virtual const CommonLib::str_t&  GetText() const = 0;
-			virtual void                   SetText(const CommonLib::str_t&) = 0;
+			virtual const CommonLib::CString&  GetText() const = 0;
+			virtual void                   SetText(const CommonLib::CString&) = 0;
 
-			virtual const CommonLib::str_t&   GetCDATA() const = 0;
-			virtual void                   SetCDATA(const   CommonLib::str_t& cdata) = 0;
+			virtual const CommonLib::CString&   GetCDATA() const = 0;
+			virtual void                   SetCDATA(const   CommonLib::CString& cdata) = 0;
 
 			virtual	void				   GetBlobCDATA(CommonLib::CBlob& data) const = 0;
 			virtual void                   SetBlobCDATA(const CommonLib::CBlob &data) = 0;
 			
 	
-			virtual void                 AddProperty(const CommonLib::str_t& sName, const CommonLib::CVariant& val) = 0;
-			virtual void				 AddPropertyInt16(const CommonLib::str_t& sName, int16 value ) = 0;
-			virtual void				 AddPropertyInt16U(const CommonLib::str_t& sName, uint16 value)  = 0;
-			virtual void				 AddPropertyInt32(const CommonLib::str_t& sName, int32 value)  = 0;
-			virtual void				 AddPropertyInt32U(const CommonLib::str_t& sName, uint32 value)  = 0;
-			virtual void				 AddPropertyInt64(const CommonLib::str_t& sName, int64 value)  = 0;
-			virtual void				 AddPropertyIntU64(const CommonLib::str_t& sName, uint64 value)  = 0;
-			virtual void				 AddPropertyDouble(const CommonLib::str_t& sName, double value)  = 0;
-			virtual void                 AddPropertyBool(const CommonLib::str_t& sName, bool value)  = 0;
-			virtual void				 AddPropertyString(const CommonLib::str_t& sName, const CommonLib::str_t& value)  = 0;
+			virtual void                 AddProperty(const CommonLib::CString& sName, const CommonLib::CVariant& val) = 0;
+			virtual void				 AddPropertyInt16(const CommonLib::CString& sName, int16 value ) = 0;
+			virtual void				 AddPropertyInt16U(const CommonLib::CString& sName, uint16 value)  = 0;
+			virtual void				 AddPropertyInt32(const CommonLib::CString& sName, int32 value)  = 0;
+			virtual void				 AddPropertyInt32U(const CommonLib::CString& sName, uint32 value)  = 0;
+			virtual void				 AddPropertyInt64(const CommonLib::CString& sName, int64 value)  = 0;
+			virtual void				 AddPropertyIntU64(const CommonLib::CString& sName, uint64 value)  = 0;
+			virtual void				 AddPropertyDouble(const CommonLib::CString& sName, double value)  = 0;
+			virtual void                 AddPropertyBool(const CommonLib::CString& sName, bool value)  = 0;
+			virtual void				 AddPropertyString(const CommonLib::CString& sName, const CommonLib::CString& value)  = 0;
 
 		
-			virtual bool				   PropertyExists(const CommonLib::str_t& sName) const = 0;
-			virtual const CommonLib::str_t*   GetProperty(const CommonLib::str_t& sName) const= 0;
+			virtual bool				   PropertyExists(const CommonLib::CString& sName) const = 0;
+			virtual const CommonLib::CString*   GetProperty(const CommonLib::CString& sName) const= 0;
 			virtual uint32				   GetPropertyCnt() const = 0;
-			virtual const CommonLib::str_t*   GetProperty(uint32 nIndex) const= 0;
+			virtual const CommonLib::CString*   GetProperty(uint32 nIndex) const= 0;
 						
-			virtual int16				 GetPropertyInt16(const CommonLib::str_t& sName, int16 defValue) const = 0;
-			virtual uint16				 GetPropertyInt16U(const CommonLib::str_t& sName, uint16 defValue) const = 0;
-			virtual int32				 GetPropertyInt32(const CommonLib::str_t& sName, int32 defValue) const = 0;
-			virtual uint32				 GetPropertyInt32U(const CommonLib::str_t& sName, uint32 defValue) const = 0;
-			virtual int64				 GetPropertyInt64(const CommonLib::str_t& sName, int64 defValue) const = 0;
-			virtual uint64				 GetPropertyIntU64(const CommonLib::str_t& sName, uint64 defValue) const = 0;
-			virtual double               GetPropertyDouble(const CommonLib::str_t& sName, double defValue) const = 0;
-			virtual bool                 GetPropertyBool(const CommonLib::str_t& sName, bool defValue) const = 0;
-			virtual CommonLib::str_t	 GetPropertyString(const CommonLib::str_t& sName, const CommonLib::str_t& defValue) const = 0;
+			virtual int16				 GetPropertyInt16(const CommonLib::CString& sName, int16 defValue) const = 0;
+			virtual uint16				 GetPropertyInt16U(const CommonLib::CString& sName, uint16 defValue) const = 0;
+			virtual int32				 GetPropertyInt32(const CommonLib::CString& sName, int32 defValue) const = 0;
+			virtual uint32				 GetPropertyInt32U(const CommonLib::CString& sName, uint32 defValue) const = 0;
+			virtual int64				 GetPropertyInt64(const CommonLib::CString& sName, int64 defValue) const = 0;
+			virtual uint64				 GetPropertyIntU64(const CommonLib::CString& sName, uint64 defValue) const = 0;
+			virtual double               GetPropertyDouble(const CommonLib::CString& sName, double defValue) const = 0;
+			virtual bool                 GetPropertyBool(const CommonLib::CString& sName, bool defValue) const = 0;
+			virtual CommonLib::CString	 GetPropertyString(const CommonLib::CString& sName, const CommonLib::CString& defValue) const = 0;
 
 		};
 
@@ -130,15 +130,15 @@ namespace GisEngine
 			IXMLDoc(){}
 			virtual ~IXMLDoc(){}
 
-			virtual bool  Open(const CommonLib::str_t& xml) = 0;
+			virtual bool  Open(const CommonLib::CString& xml) = 0;
 			virtual bool  Open(CommonLib::IReadStream* pStream) = 0;
 
-			virtual bool  Save(const CommonLib::str_t& xml) = 0;
+			virtual bool  Save(const CommonLib::CString& xml) = 0;
 			virtual bool  Save(CommonLib::IWriteStream* pStream) = 0;
 
 			virtual IXMLNodePtr			   GetNodes() const = 0;
 			virtual void	Clear() = 0;
-			virtual const CommonLib::str_t& GetError() const = 0;
+			virtual const CommonLib::CString& GetError() const = 0;
 
 
 		};
@@ -162,6 +162,7 @@ namespace GisEngine
 			virtual ~ITrackCancel(){}
 			virtual void Cancel() = 0;
 			virtual bool Continue() = 0; 
+			virtual void Reset() = 0; 
 		};
 
 		struct IXMLWriter

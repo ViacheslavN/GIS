@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_I_DB_H_
 #define _EMBEDDED_DATABASE_I_DB_H_
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "ITransactions.h"
 #include "IShema.h"
 #include "ITable.h"

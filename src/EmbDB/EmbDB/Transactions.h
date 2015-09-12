@@ -47,9 +47,9 @@ namespace embDB
 	{
 	public:
 		CTransactions(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionsType nTranType, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
+			eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
 
-		CTransactions(CommonLib::alloc_t* pAlloc, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage, uint32 nTranCache = 10000);
+		CTransactions(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache = 10000);
 
 		~CTransactions();
 
@@ -103,7 +103,7 @@ namespace embDB
 		virtual void addDBBTree(IDBBtree *pTree);
 
 		virtual int64 getID() const {return m_nID;}
-		virtual const CommonLib::str_t& getFileTranName() const {return m_sFileName;}
+		virtual const CommonLib::CString& getFileTranName() const {return m_sFileName;}
 		virtual bool isCompleted() const {return m_bIsCompleted;}
 		virtual void setDBStorage(IDBStorage *pStorage)  {m_pDBStorage = pStorage;}
 		virtual void wait() {}
@@ -128,7 +128,7 @@ namespace embDB
 	private:
 		int m_nTranType;
 		int m_nRestoreType;
-		CommonLib::str_t m_sFileName;
+		CommonLib::CString m_sFileName;
 		typedef std::vector<IDBBtree*> TBTrees;
 		TBTrees m_btrees; 
 		typedef  std::vector<IDBTransactions*> TInnerTransactions;

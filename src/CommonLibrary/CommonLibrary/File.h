@@ -3,7 +3,7 @@
 
 #include "general.h"
 #include "stream.h"
-#include "str_t.h"
+#include "String.h"
 namespace CommonLib
 {
 	enum enAccesRights
@@ -60,11 +60,11 @@ typedef   HANDLE  FileHandle;
 	{
 		bool deleteFile(const wchar_t *pszFileName);
 		bool isFileExisit(const wchar_t *pszFileName);
-		void getFiles(const str_t& path, std::vector<str_t>& vecFiles);
-		str_t  FindFileName(const str_t& sFullFileName);
-		str_t  FindOnlyFileName(const str_t& sFullFileName);
-		str_t  FindFileExtension(const str_t& sFullFileName);
-		str_t  FindFilePath(const str_t& sFullFileName);
+		void getFiles(const CString& path, std::vector<CString>& vecFiles);
+		CString  FindFileName(const CString& sFullFileName);
+		CString  FindOnlyFileName(const CString& sFullFileName);
+		CString  FindFileExtension(const CString& sFullFileName);
+		CString  FindFilePath(const CString& sFullFileName);
 	}
 }
 

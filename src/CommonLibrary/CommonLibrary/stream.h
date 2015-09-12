@@ -1,6 +1,6 @@
 #ifndef _LIB_COMMON_STREAM_H
 #define _LIB_COMMON_STREAM_H
-#include "str_t.h"
+#include "String.h"
 
 namespace CommonLib
 {
@@ -83,7 +83,7 @@ public:
 	virtual void write(uint64 value) = 0;
 	virtual void write(float value) = 0;
 	virtual void write(double value) = 0;
-	virtual void write(const CommonLib::str_t& str) = 0;
+	virtual void write(const CommonLib::CString& str) = 0;
 
 	virtual void write(const char* pszStr) = 0;
 	virtual void write(const wchar_t* pszStr) = 0;
@@ -114,7 +114,7 @@ public:
 	virtual void read(uint64& value) = 0;
 	virtual void read(float& value) = 0;
 	virtual void read(double& value) = 0;
-	virtual void read(CommonLib::str_t& str) = 0;
+	virtual void read(CommonLib::CString& str) = 0;
 
 	virtual bool         readBool() = 0;
 	virtual byte         readByte() = 0;
@@ -180,7 +180,7 @@ public:
 	virtual void read(uint64& value);
 	virtual void read(float& value); 
 	virtual void read(double& value);
-	virtual void read(CommonLib::str_t& str);
+	virtual void read(CommonLib::CString& str);
 
 
 
@@ -234,7 +234,7 @@ public:
 	virtual void write(uint64 value);
 	virtual void write(float value);
 	virtual void write(double value);
-	virtual void write(const CommonLib::str_t& str);
+	virtual void write(const CommonLib::CString& str);
 	virtual void write(const char* pszStr);
 	virtual void write(const wchar_t* pszStr);
 };

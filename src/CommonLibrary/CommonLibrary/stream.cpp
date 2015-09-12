@@ -110,7 +110,7 @@ void IReadStreamBase::read(double& value)
 {
 	readT<double>(value);
 }
-void IReadStreamBase::read(CommonLib::str_t& str)
+void IReadStreamBase::read(CommonLib::CString& str)
 {
 	uint32 nlen = readIntu32();
 	if(nlen)
@@ -180,7 +180,7 @@ void IWriteStreamBase::write(double value)
 {
 	writeT<double>(value);
 }
-void IWriteStreamBase::write(const CommonLib::str_t& str)
+void IWriteStreamBase::write(const CommonLib::CString& str)
 {
 	writeT<uint32>(str.length());
 	if(str.length())

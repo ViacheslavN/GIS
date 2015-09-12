@@ -3,13 +3,15 @@
 #include "Display/RectClipper.h"
 #include "Display/DisplayTransformation2D.h"
 #include "Display/GraphicsAgg.h"
+#include "MapTask.h"
 namespace GisEngine
 {
 	namespace GisFramework
 	{
 		CMapDrawer::CMapDrawer():
 			m_Timer(1000), 
-				m_nWidht(0), m_nHeight(0), m_nFlags(0), m_DrawThread(this)
+				m_nWidht(0), m_nHeight(0), m_nFlags(0), m_DrawThread(this), m_bCancel(false),
+				m_mapTask(this)
 		{
 			m_Timer.OnTimer += CommonLib::Delegate(this , &CMapDrawer::OnTimer);
 
@@ -73,6 +75,7 @@ namespace GisEngine
 		void CMapDrawer::SetMap(Cartography::IMap *pMap)
 		{
 			m_pMap = pMap;
+			Init();
 			if(m_pDispTran.get())
 			{
 				m_pDispTran->SetSpatialReference(m_pMap->GetSpatialReference().get());
@@ -87,14 +90,28 @@ namespace GisEngine
 			m_nWidht = cx;
 			m_nHeight = cy;
 
+			Init();
+
+			if(bDraw && m_pMap.get())
+			{
+				Display::GPoint pt(-m_nWidht, -m_nHeight);
+				m_pDispTran->DeviceToMap(&pt, &m_OrgPoint, 1);
+				Redraw();
+			}
+		}
+		void CMapDrawer::Init()
+		{
+			if(!m_pMap.get() ||!m_nWidht ||!m_nHeight )
+				return;
+
 			 Display::GRect wnd_rect(0, 0, (Display::GUnits)m_nWidht , (Display::GUnits)m_nHeight);
 
-			if(!m_pDispTran.get() && m_pMap.get())
+			if(!m_pDispTran.get())
 			{
 				m_pDispTran = (Display::IDisplayTransformation*)new Display::CDisplayTransformation2D(m_dDpi, m_pMap->GetMapUnits(), wnd_rect);
 				m_pDispTran->SetSpatialReference(m_pMap->GetSpatialReference().get());
 				m_pDispTran->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
- 				m_pDispTran->SetDeviceClipRect(wnd_rect);
+				m_pDispTran->SetDeviceClipRect(wnd_rect);
 				m_pDispTran->SetDeviceRect(wnd_rect);
 
 				m_pDispTran->SetClipper(m_Clipper.get());
@@ -108,17 +125,20 @@ namespace GisEngine
 
 				m_pDispCalcTran->SetClipper(m_Clipper.get());
 			}
+			else
+			{
+				m_pDispTran->SetDeviceClipRect(wnd_rect);
+				m_pDispTran->SetDeviceRect(wnd_rect);
 
+				m_pDispCalcTran->SetDeviceClipRect(wnd_rect);
+				m_pDispCalcTran->SetDeviceRect(wnd_rect);
+
+			}
 			m_pMapGraphics = new Display::CGraphicsAgg(m_nWidht, m_nHeight, false);
 			m_pLabelGraphics = new Display::CGraphicsAgg(m_nWidht, m_nHeight, false);
 			m_pOutGraphics = new Display::CGraphicsAgg(m_nWidht, m_nHeight, false);
 
-			 
-
-			if(bDraw && m_pMap.get())
-			{
-
-			}
+			m_mapTask.Init(m_pMap.get(),  m_pDispTran.get(), (Cartography::eDrawPhase)((int)Cartography::DrawPhaseGeography|(int)Cartography::DrawPhaseSelection), m_pMapGraphics.get() );
 		}
 		void CMapDrawer::Update( Display::IGraphics* pGraphics, Display::GPoint *pPoint, Display::GRect* pRect)
 		{
@@ -181,6 +201,28 @@ namespace GisEngine
 
 			Display::GPoint pt(0, 0);
 			m_pDispTran->DeviceToMap(&pt, &m_OrgPoint, 1);
+
+			m_mapTask.SetDraw();
+
+			if(pGraphics)
+			{
+				m_pMapGraphics->Copy(pGraphics, Display::GPoint(0, 0),  Display::GRect(0, 0, (Display::GUnits)m_nWidht, (Display::GUnits)m_nHeight), false);
+				m_pOutGraphics->Copy(pGraphics, Display::GPoint(0, 0),  Display::GRect(0, 0, (Display::GUnits)m_nWidht, (Display::GUnits)m_nHeight), false);
+				//pLableGraphics_->Copy(pGraphics, Display::GPoint(0, 0),  Display::GRect(0, 0, width_, height_), false);
+			}
+			else
+			{
+				//pMapGraphics_->Erase(ERASECOLOR);
+				m_pOutGraphics->Erase(Display::Color(255,255,255,255));
+			}
+			m_mapTask.SetDrawPhase((Cartography::eDrawPhase)((int)Cartography::DrawPhaseGeography|(int)Cartography::DrawPhaseSelection));
+
+
+
+			m_DrawThread.SetTask(&m_mapTask);
+			SetFlag(DrawMap);
+			m_bCancel = false;
+			m_Timer.Start();
 			
 		}
 
@@ -212,8 +254,66 @@ namespace GisEngine
 		void CMapDrawer::StopDraw(bool bWait)
 		{
 			m_Timer.Stop();
-		}
+			m_mapTask.StopDraw(bWait);
+   		    m_DrawThread.StopDraw(true, bWait);
 
+			if(!IsFlag(FinsedDrawMap))
+			{
+			 SetFlag(0);
+			}
+			m_bCancel = true;
+		}
+		void CMapDrawer::OnFinishedDrawMapTask(CMapTask *pTask)
+		{
+			CommonLib::CSSection::scoped_lock lock(m_cs);
+			if(pTask->GetDrawPhase() & Cartography::DrawPhaseAnnotation)
+			{
+				//timer_.Stop();
+				//pOutGraphics_->Copy(pLableGraphics_.get(), Display::GPoint(0, 0),  Display::GRect(0, 0, (Display::GUnits)width_, (Display::GUnits)height_), false);
+				AddFlags(FinsedDrawLable, DrawLable);
+				OnInvalidateEvent.fire((const Display::GPoint*)0, (const Display::GRect*)0, false);
+				OnFinishMapDrawingEvent.fire(m_bCancel);
+				//    ShowResult();
+
+			}
+			else
+			{
+				m_Timer.Stop();
+				AddFlags(FinsedDrawMap, DrawMap);
+				/*if(IsFlag(PanAfterMap))
+				{
+					AddFlags(StoppingPan, PanAfterMap);
+					m_pOutGraphics->Copy(pMapGraphics_.get(), Display::GPoint(0, 0),  Display::GRect(0, 0, (Display::GUnits)width_, (Display::GUnits)height_), false);
+					pan_task_.SetTaskRect(pMapGraphics_.get());
+					pan_task_.SetTrackCancel(true);
+					DrawThread_.SetTask(&pan_task_);
+					return;
+				}
+				if(IsFlag(PAN_STATE))
+				{
+					Display::GPoint pt(0, 0);
+					int pan_x = pan_task_.GetPanOffsetX();
+					int pan_y = pan_task_.GetPanOffsetY();
+					pOutGraphics_->Erase(ERASECOLOR);
+					Display::GRect rect( (Display::GUnits)-pan_x, (Display::GUnits)-pan_y, Display::GUnits(width_ - pan_x), Display::GUnits(height_- pan_y));
+					pOutGraphics_->Copy(pMapGraphics_.get(), pt, rect, false);
+					OnInvalidate((const Display::GPoint*)0, (const Display::GRect*)0, false);
+					return;
+				}
+				if(IsFlag(STOPPING_PAN))
+				{
+					AddFlags(0, STOPPING_PAN);
+					OnFinishedPan();
+					return;
+				}*/
+				m_pOutGraphics->Copy(m_pMapGraphics.get(), Display::GPoint(0, 0),  Display::GRect(0, 0,(Display::GUnits) m_nWidht, (Display::GUnits)m_nHeight), false);
+				//pan_task_.Erase();
+				//    SaveGraphics(pMapGraphics_.get(), L"\\Storage Card\\MapFase.bmp");
+				//StartLableDraw(true);
+				OnInvalidateEvent.fire((const Display::GPoint*)0, (const Display::GRect*)0, false);
+			}
+
+		}
 		void CMapDrawer::CopyTrans()
 		{
 			m_pDispTran->SetMapPos(m_pDispCalcTran->GetMapPos() , m_pDispCalcTran->GetScale());

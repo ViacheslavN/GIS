@@ -22,23 +22,23 @@ namespace GisEngine
 		public:
 			// IFieldSet
 			virtual int  GetCount() const;
-			virtual bool Find(const CommonLib::str_t& field) const;
+			virtual bool Find(const CommonLib::CString& field) const;
 			virtual void Reset();
-			virtual bool Next(CommonLib::str_t* field);
-			virtual void Add(const CommonLib::str_t& field);
-			virtual void Remove(const CommonLib::str_t& field);
+			virtual bool Next(CommonLib::CString* field);
+			virtual void Add(const CommonLib::CString& field);
+			virtual void Remove(const CommonLib::CString& field);
 			virtual void Clear();
 
 		private:
 			struct GisStringCILess
 			{
-				bool operator ()(const CommonLib::str_t& str1, const CommonLib::str_t& str2) const
+				bool operator ()(const CommonLib::CString& str1, const CommonLib::CString& str2) const
 				{
 					return str1.compare(str2, false) < 0;
 				}
 			};
-			typedef std::map<CommonLib::str_t, int, GisStringCILess> TMapIndexes;
-			typedef std::vector<CommonLib::str_t> TVecFields;
+			typedef std::map<CommonLib::CString, int, GisStringCILess> TMapIndexes;
+			typedef std::vector<CommonLib::CString> TVecFields;
 			TMapIndexes m_mapIndexes;
 			TVecFields  m_vecFields;
 			TVecFields::iterator m_it;

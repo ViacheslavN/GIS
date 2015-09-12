@@ -168,7 +168,7 @@ namespace embDB
 		return tran.restore();
 		
 	}
-	CStorage* CDatabase::getTableStorage(const CommonLib::str_t& sFileName, bool bCreate)
+	CStorage* CDatabase::getTableStorage(const CommonLib::CString& sFileName, bool bCreate)
 	{
 		TTableStorages::iterator it = m_TableStorages.find(sFileName);
 		if(it.isNull())

@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_I_SHEMA_H_
 #define _EMBEDDED_DATABASE_I_SHEMA_H_
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "ITable.h"
 
 namespace embDB

@@ -66,12 +66,6 @@
     <ClInclude Include="alloc_t.h">
       <Filter>alloc</Filter>
     </ClInclude>
-    <ClInclude Include="str_buffer.h">
-      <Filter>string</Filter>
-    </ClInclude>
-    <ClInclude Include="str_t.h">
-      <Filter>string</Filter>
-    </ClInclude>
     <ClInclude Include="caseutils.h">
       <Filter>string</Filter>
     </ClInclude>
@@ -183,6 +177,15 @@
     <ClInclude Include="Timer.h">
       <Filter>time</Filter>
     </ClInclude>
+    <ClInclude Include="guid.h">
+      <Filter>string</Filter>
+    </ClInclude>
+    <ClInclude Include="string_buffer.h">
+      <Filter>string</Filter>
+    </ClInclude>
+    <ClInclude Include="String.h">
+      <Filter>string</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -190,9 +193,6 @@
     </ClCompile>
     <ClCompile Include="alloc_t.cpp">
       <Filter>alloc</Filter>
-    </ClCompile>
-    <ClCompile Include="str_t.cpp">
-      <Filter>string</Filter>
     </ClCompile>
     <ClCompile Include="caseutils.cpp">
       <Filter>string</Filter>
@@ -259,6 +259,12 @@
     </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>time</Filter>
+    </ClCompile>
+    <ClCompile Include="guit.cpp">
+      <Filter>string</Filter>
+    </ClCompile>
+    <ClCompile Include="String.cpp">
+      <Filter>string</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

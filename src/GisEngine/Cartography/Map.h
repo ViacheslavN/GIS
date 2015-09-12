@@ -13,8 +13,8 @@ namespace GisEngine
 				CMap();
 				~CMap();
 
-				virtual CommonLib::str_t	              GetName() const;
-				virtual void                              SetName(const  CommonLib::str_t& name);
+				virtual CommonLib::CString	              GetName() const;
+				virtual void                              SetName(const  CommonLib::CString& name);
 				virtual ILayersPtr                        GetLayers() const;
 				virtual  void							  SelectFeatures(const GisBoundingBox& extent, bool resetSelection);
 				virtual ISelectionPtr                     GetSelection() const;
@@ -63,7 +63,7 @@ namespace GisEngine
 
 			private:
 
-				CommonLib::str_t m_sName;
+				CommonLib::CString m_sName;
 				ILayersPtr m_pLayers;
 				ISelectionPtr m_pSelection;
 				GisGeometry::ISpatialReferencePtr	m_pSpatialRef;
@@ -73,7 +73,7 @@ namespace GisEngine
 				GisCommon::Units	m_MapUnits;
 				bool m_bFlipVertical;
 				bool m_bflipHorizontal;
-				GisGeometry::IEnvelopePtr m_pFullExtent;
+				mutable GisGeometry::IEnvelopePtr m_pFullExtent;
 				GisGeometry::IEnvelopePtr m_pExtent;
 				Display::ViewPosition  m_ViewPos;
 				bool m_bViewPos;

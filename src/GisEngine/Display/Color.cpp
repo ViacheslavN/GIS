@@ -5,7 +5,7 @@ namespace GisEngine
 {
 	namespace Display
 	{
-		Color::Color(const CommonLib::str_t& rgb, AlfaChannel a)
+		Color::Color(const CommonLib::CString& rgb, AlfaChannel a)
 		{
 			int r, g, b;
 			swscanf(rgb.cwstr(), L"%2X%2X%2X", &r, &g, &b);

@@ -15,7 +15,7 @@ namespace embDB
 		CDirectTransactions(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache = 10000);
 		//for compatible tests
 		CDirectTransactions(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionsType nTranType, const CommonLib::str_t& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
+			eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
 		~CDirectTransactions();
 
 		//ITransactions
@@ -74,7 +74,7 @@ namespace embDB
 		virtual void addDBBTree(IDBBtree *pTree){}
 
 		virtual int64 getID() const {return 0;}
-		virtual const CommonLib::str_t& getFileTranName() const {return m_sFileName;}
+		virtual const CommonLib::CString& getFileTranName() const {return m_sFileName;}
 		virtual bool isCompleted() const {return true;}
 		virtual void setDBStorage(IDBStorage *pStorage)  {m_pDBStorage = pStorage;}
 		virtual void wait() {}
@@ -97,7 +97,7 @@ namespace embDB
 	private:
 		IDBStorage* m_pDBStorage;
 		bool m_bError;
-		CommonLib::str_t m_sFileName;
+		CommonLib::CString m_sFileName;
 		std::set<int64> m_setRemovePages;
 		std::set<int64> m_setPagesFromFree;
 };

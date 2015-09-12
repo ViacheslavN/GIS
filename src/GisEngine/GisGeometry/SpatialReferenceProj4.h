@@ -20,7 +20,7 @@ namespace GisEngine
 		public:
 			 typedef void* Handle;
 
-			CSpatialReferenceProj4(const CommonLib::str_t& prj4Str, eSPRefParamType paramType= eSPRefTypePRJ4String, CommonLib::alloc_t *pAlloc = NULL);
+			CSpatialReferenceProj4(const CommonLib::CString& prj4Str, eSPRefParamType paramType= eSPRefTypePRJ4String, CommonLib::alloc_t *pAlloc = NULL);
 			CSpatialReferenceProj4(int prjCode, CommonLib::alloc_t *pAlloc = NULL);
 			CSpatialReferenceProj4(Handle hHandle, CommonLib::alloc_t *pAlloc = NULL);
 			CSpatialReferenceProj4(const GisBoundingBox& bbox, CommonLib::alloc_t *pAlloc = NULL);
@@ -34,7 +34,7 @@ namespace GisEngine
 			virtual bool Project(ISpatialReference *destSpatRef, GisXYPoint* pPoint);
 			virtual GisCommon::Units GetUnits() const;
 
-			virtual const CommonLib::str_t& GetProjectionString() const;
+			virtual const CommonLib::CString& GetProjectionString() const;
 			virtual int   GetProjectionCode() const;
 			virtual bool  IsProjection() const;
 			virtual bool IsEqual(ISpatialReference* pSpatRef) const;
@@ -58,7 +58,7 @@ namespace GisEngine
 		private:
 			Handle m_prjHandle;
 			int m_prjCode;
-			CommonLib::str_t m_prj4Str;
+			CommonLib::CString m_prj4Str;
 
 			CommonLib::CGeoShape m_LeftShp;
 			CommonLib::CGeoShape m_RightShp; 

@@ -17,7 +17,7 @@ namespace embDB
 		virtual IField* getField(uint32 nCount) = 0;
 		virtual uint32 getFieldCount() const = 0;
 		virtual IVariant* value(const wchar_t* pszName) = 0;
-		virtual bool set(const CommonLib::str_t& sName, IVariant*) = 0;
+		virtual bool set(const CommonLib::CString& sName, IVariant*) = 0;
 
 		virtual IRowPtr createRow() = 0;
 

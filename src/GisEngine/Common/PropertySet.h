@@ -21,7 +21,7 @@ namespace GisEngine
 		private:
 			void clear();
 		private:
-			typedef std::map<CommonLib::str_t, CommonLib::CVariant> TMapProp;
+			typedef std::map<CommonLib::CString, CommonLib::CVariant> TMapProp;
 			TMapProp m_mapProp;
 
 		};

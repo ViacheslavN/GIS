@@ -31,7 +31,7 @@ namespace GisEngine
 			actualFieldsIndexes_.clear();
 
 
-			CommonLib::str_t field;
+			CommonLib::CString field;
 			filter_->GetFieldSet()->Reset();
 
 			oidFieldIndex_ = -1;
@@ -220,7 +220,7 @@ namespace GisEngine
 				}
 
 				int shpFieldIndex = fieldIndex - 2;
-				CommonLib::str_t strVal;
+				CommonLib::CString strVal;
 				double dblVal;
 				int intVal;
 		
@@ -250,7 +250,6 @@ namespace GisEngine
 
 			if(shapeFieldIndex_ >= 0) // Shape
 			{
-				CommonLib::CVariant* pShapeVar = row->GetValue(shapeFieldIndex_);
 				cacheObject_ = ShapeLib::SHPReadObject(shp_->file, currentRowID_);
 				if(!cacheShape_.get())
 					cacheShape_ = new CommonLib::CGeoShape();
@@ -261,10 +260,21 @@ namespace GisEngine
 					cacheObject_ = 0;
 				}
 				// end bb changes
-							
+
 				if(!AlterShape(cacheShape_.get()))
 					return false;
-				*pShapeVar  = CommonLib::IRefObjectPtr(cacheShape_.get());
+
+				if(IFeature *pFeature = (IFeature *)row)
+				{
+					//CommonLib::IGeoShapePtr pShape = pFeature->GetShape();
+					pFeature->SetShape(cacheShape_.get());
+				}
+				else
+				{
+					CommonLib::CVariant* pShapeVar = row->GetValue(shapeFieldIndex_);
+					*pShapeVar  = CommonLib::IRefObjectPtr(cacheShape_.get());
+				}
+			
 			}
 
 			return true;

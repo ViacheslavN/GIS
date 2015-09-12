@@ -5,7 +5,7 @@ namespace GisEngine
 {
 	namespace GisCommon
 	{
-		CXMLNode::CXMLNode(IXMLNode *pParent, const CommonLib::str_t& sName)
+		CXMLNode::CXMLNode(IXMLNode *pParent, const CommonLib::CString& sName)
 		{
 			m_pParent = pParent;
 			m_sName = sName;
@@ -27,7 +27,7 @@ namespace GisEngine
 			m_NodeByName.insert(std::make_pair(child->GetName(), m_Nodes.size() - 1));
 
 		}
-		IXMLNodePtr	CXMLNode::CreateChildNode(const CommonLib::str_t& sName)
+		IXMLNodePtr	CXMLNode::CreateChildNode(const CommonLib::CString& sName)
 		{
 			if(sName.isEmpty())
 			 return IXMLNodePtr();
@@ -55,29 +55,29 @@ namespace GisEngine
 			 return GetChild(it->second);
 		}
 
-		const CommonLib::str_t&  CXMLNode::GetName() const
+		const CommonLib::CString&  CXMLNode::GetName() const
 		{
 			return m_sName;
 		}
-		void   CXMLNode::SetName( const CommonLib::str_t& name)
+		void   CXMLNode::SetName( const CommonLib::CString& name)
 		{
 			m_sName = name;
 		}
 
-		const CommonLib::str_t&  CXMLNode::GetText() const
+		const CommonLib::CString&  CXMLNode::GetText() const
 		{
 				return m_sText;
 		}
-		void   CXMLNode::SetText(const CommonLib::str_t& sText)
+		void   CXMLNode::SetText(const CommonLib::CString& sText)
 		{
 			m_sText = sText;
 		}
 
-		const CommonLib::str_t&   CXMLNode::GetCDATA() const
+		const CommonLib::CString&   CXMLNode::GetCDATA() const
 		{
 			return m_sCAData;
 		}
-		void   CXMLNode::SetCDATA(const   CommonLib::str_t& cdata)
+		void   CXMLNode::SetCDATA(const   CommonLib::CString& cdata)
 		{
 			m_sCAData = cdata;
 		}
@@ -92,62 +92,62 @@ namespace GisEngine
 		}
 
 
-		void	CXMLNode::AddProperty(const CommonLib::str_t& sName, const CommonLib::CVariant& val)
+		void	CXMLNode::AddProperty(const CommonLib::CString& sName, const CommonLib::CVariant& val)
 		{
 			CommonLib::ToStringVisitor vis;
 			CommonLib::apply_visitor<CommonLib::ToStringVisitor>(val, vis);
 			AddPropertyString(sName, vis); 
 
 		}
-		void	CXMLNode::AddPropertyInt16(const CommonLib::str_t& sName, int16 value)
+		void	CXMLNode::AddPropertyInt16(const CommonLib::CString& sName, int16 value)
 		{
 			CommonLib::ToStringVisitor vis;
 			vis.Visit(value);
 			AddPropertyString(sName, vis); 
 		}
-		void	CXMLNode::AddPropertyInt16U(const CommonLib::str_t& sName, uint16 value)
+		void	CXMLNode::AddPropertyInt16U(const CommonLib::CString& sName, uint16 value)
 		{
 			CommonLib::ToStringVisitor vis;
 			vis.Visit(value);
 			AddPropertyString(sName, vis); 
 		}
-		void	CXMLNode::AddPropertyInt32(const CommonLib::str_t& sName, int32 value)
+		void	CXMLNode::AddPropertyInt32(const CommonLib::CString& sName, int32 value)
 		{
 			CommonLib::ToStringVisitor vis;
 			vis.Visit(value);
 			AddPropertyString(sName, vis); 
 		}
-		void	CXMLNode::AddPropertyInt32U(const CommonLib::str_t& sName, uint32 value)
+		void	CXMLNode::AddPropertyInt32U(const CommonLib::CString& sName, uint32 value)
 		{
 			CommonLib::ToStringVisitor vis;
 			vis.Visit(value);
 			AddPropertyString(sName, vis); 
 		}
-		void	CXMLNode::AddPropertyInt64(const CommonLib::str_t& sName, int64 value)
+		void	CXMLNode::AddPropertyInt64(const CommonLib::CString& sName, int64 value)
 		{
 			CommonLib::ToStringVisitor vis;
 			vis.Visit(value);
 			AddPropertyString(sName, vis); 
 		}
-		void	CXMLNode::AddPropertyIntU64(const CommonLib::str_t& sName, uint64 value)
+		void	CXMLNode::AddPropertyIntU64(const CommonLib::CString& sName, uint64 value)
 		{
 			CommonLib::ToStringVisitor vis;
 			vis.Visit(value);
 			AddPropertyString(sName, vis); 
 		}
-		void	CXMLNode::AddPropertyDouble(const CommonLib::str_t& sName, double value)
+		void	CXMLNode::AddPropertyDouble(const CommonLib::CString& sName, double value)
 		{
 			CommonLib::ToStringVisitor vis;
 			vis.Visit(value);
 			AddPropertyString(sName, vis); 
 		}
-		void    CXMLNode::AddPropertyBool(const CommonLib::str_t& sName, bool value)
+		void    CXMLNode::AddPropertyBool(const CommonLib::CString& sName, bool value)
 		{
 			CommonLib::ToStringVisitor vis;
 			vis.Visit(value);
 			AddPropertyString(sName, vis); 
 		}
-		void	CXMLNode::AddPropertyString(const CommonLib::str_t&sName , const CommonLib::str_t& sValue)
+		void	CXMLNode::AddPropertyString(const CommonLib::CString&sName , const CommonLib::CString& sValue)
 		{
 			TPropByName::iterator it = m_PropsByName.find(sName);
 			if(it == m_PropsByName.end())
@@ -162,11 +162,11 @@ namespace GisEngine
 		}
 
 
-		bool CXMLNode::PropertyExists(const CommonLib::str_t& sName) const
+		bool CXMLNode::PropertyExists(const CommonLib::CString& sName) const
 		{
 			return m_PropsByName.find(sName) != m_PropsByName.end();
 		}
-		const CommonLib::str_t*  CXMLNode::GetProperty(const CommonLib::str_t& sName) const
+		const CommonLib::CString*  CXMLNode::GetProperty(const CommonLib::CString& sName) const
 		{
 			TPropByName::const_iterator c_it = m_PropsByName.find(sName);
 			if(c_it != m_PropsByName.end())
@@ -179,52 +179,52 @@ namespace GisEngine
 		{
 			return m_Props.size();
 		}
-		const CommonLib::str_t*   CXMLNode::GetProperty(uint32 nIndex) const
+		const CommonLib::CString*   CXMLNode::GetProperty(uint32 nIndex) const
 		{
 			if(m_Props.size() > nIndex)
 				return &m_Props[nIndex].second;
 			return NULL;
 		}
 
-		int16	CXMLNode::GetPropertyInt16(const CommonLib::str_t& sName, int16 defValue) const
+		int16	CXMLNode::GetPropertyInt16(const CommonLib::CString& sName, int16 defValue) const
 		{
-			const CommonLib::str_t* pStr =  GetProperty(sName);
+			const CommonLib::CString* pStr =  GetProperty(sName);
 			if(!pStr)
 				return defValue;
 
 			wchar_t *pEnd;
 			return (int16)wcstol(pStr->cwstr(), &pEnd, 10);
 		}
-		uint16	CXMLNode::GetPropertyInt16U(const CommonLib::str_t& sName, uint16 defValue) const
+		uint16	CXMLNode::GetPropertyInt16U(const CommonLib::CString& sName, uint16 defValue) const
 		{
-			const CommonLib::str_t* pStr =  GetProperty(sName);
+			const CommonLib::CString* pStr =  GetProperty(sName);
 			if(!pStr)
 				return defValue;
 
 			wchar_t *pEnd;
 			return (uint16)wcstol(pStr->cwstr(), &pEnd, 10);
 		}
-		int32	CXMLNode::GetPropertyInt32(const CommonLib::str_t& sName, int32 defValue) const
+		int32	CXMLNode::GetPropertyInt32(const CommonLib::CString& sName, int32 defValue) const
 		{
-			const CommonLib::str_t* pStr =  GetProperty(sName);
+			const CommonLib::CString* pStr =  GetProperty(sName);
 			if(!pStr)
 				return defValue;
 
 			wchar_t *pEnd;
 			return (int32)wcstol(pStr->cwstr(), &pEnd, 10);
 		}
-		uint32	CXMLNode::GetPropertyInt32U(const CommonLib::str_t& sName, uint32 defValue) const
+		uint32	CXMLNode::GetPropertyInt32U(const CommonLib::CString& sName, uint32 defValue) const
 		{
-			const CommonLib::str_t* pStr =  GetProperty(sName);
+			const CommonLib::CString* pStr =  GetProperty(sName);
 			if(!pStr)
 				return defValue;
 
 			wchar_t *pEnd;
 			return (uint32)wcstol(pStr->cwstr(), &pEnd, 10);
 		}
-		int64	CXMLNode::GetPropertyInt64(const CommonLib::str_t& sName, int64 defValue) const
+		int64	CXMLNode::GetPropertyInt64(const CommonLib::CString& sName, int64 defValue) const
 		{
-			const CommonLib::str_t* pStr =  GetProperty(sName);
+			const CommonLib::CString* pStr =  GetProperty(sName);
 			if(!pStr)
 				return defValue;
 			wchar_t *pEnd;
@@ -236,9 +236,9 @@ namespace GisEngine
 			
 			return defValue;
 		}
-		uint64	CXMLNode::GetPropertyIntU64(const CommonLib::str_t& sName, uint64 defValue) const
+		uint64	CXMLNode::GetPropertyIntU64(const CommonLib::CString& sName, uint64 defValue) const
 		{
-			const CommonLib::str_t* pStr =  GetProperty(sName);
+			const CommonLib::CString* pStr =  GetProperty(sName);
 			if(!pStr)
 				return defValue;
 
@@ -250,9 +250,9 @@ namespace GisEngine
 #endif
 
 		}
-		double  CXMLNode::GetPropertyDouble(const CommonLib::str_t& sName, double defValue) const
+		double  CXMLNode::GetPropertyDouble(const CommonLib::CString& sName, double defValue) const
 		{
-			const CommonLib::str_t* pStr =  GetProperty(sName);
+			const CommonLib::CString* pStr =  GetProperty(sName);
 			if(!pStr)
 				return defValue;
 
@@ -260,17 +260,17 @@ namespace GisEngine
 			wchar_t *pEnd;
 			return wcstod(pStr->cwstr(), &pEnd);
 		}
-		bool    CXMLNode::GetPropertyBool(const CommonLib::str_t& sName, bool defValue) const
+		bool    CXMLNode::GetPropertyBool(const CommonLib::CString& sName, bool defValue) const
 		{
-			const CommonLib::str_t* pStr =  GetProperty(sName);
+			const CommonLib::CString* pStr =  GetProperty(sName);
 			if(!pStr)
 				return defValue;
 
 			return  *pStr == L"true" ? true : false;
 		}
-		CommonLib::str_t CXMLNode::GetPropertyString(const CommonLib::str_t& sName, const CommonLib::str_t& defValue) const
+		CommonLib::CString CXMLNode::GetPropertyString(const CommonLib::CString& sName, const CommonLib::CString& defValue) const
 		{
-			const CommonLib::str_t* pStr =  GetProperty(sName);
+			const CommonLib::CString* pStr =  GetProperty(sName);
 			if(!pStr)
 				return defValue;
 
@@ -279,7 +279,7 @@ namespace GisEngine
 
 		void CXMLNode::save(CommonLib::IWriteStream *pSteam)
 		{
-			CommonLib::str_t sName;
+			CommonLib::CString sName;
 			 sName.format(L"<%ls", m_sName.wstr());
 			if(m_Props.empty() && m_sText.isEmpty() && m_sCAData.isEmpty() && m_Nodes.empty())
 			{
@@ -290,7 +290,7 @@ namespace GisEngine
 			pSteam->write(sName.cstr());
 			if(!m_Props.empty())
 			{				
-				CommonLib::str_t sProps;
+				CommonLib::CString sProps;
 				for (size_t i = 0, sz = m_Props.size(); i < sz; ++i)
 				{
 					 pSteam->write(" ");
@@ -346,7 +346,7 @@ namespace GisEngine
 		}
 
 
-		void CXMLNode::writeUtf16(CommonLib::IWriteStream *pSteam, const CommonLib::str_t& str)
+		void CXMLNode::writeUtf16(CommonLib::IWriteStream *pSteam, const CommonLib::CString& str)
 		{
 			std::vector<char> vecUtf8;
 			utf16_to_utf8(str, vecUtf8);

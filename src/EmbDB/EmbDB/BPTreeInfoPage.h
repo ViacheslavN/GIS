@@ -147,7 +147,7 @@ namespace embDB
 		int64 saveFilePage(FilePagePtr pPage, size_t pos = 0);
 		FilePagePtr getFilePage(int64 nAddr, bool bRead = true);
 		FilePagePtr getNewPage();
-		void error(const CommonLib::str_t& sError){}
+		void error(const CommonLib::CString& sError){}
 		size_t getPageSize(){return m_pTranStorage->getPageSize();}
 		bool dropFilePage(FilePagePtr pPage){return true;}
 		bool dropFilePage(int64 pAddrPage){return true;}

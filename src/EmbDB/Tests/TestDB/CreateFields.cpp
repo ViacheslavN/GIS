@@ -2,7 +2,7 @@
 #include "CreateFields.h"
 
 
-void CreateField(const CommonLib::str_t& sName, const CommonLib::str_t& sAlias,  uint32 nFieldType,
+void CreateField(const CommonLib::CString& sName, const CommonLib::CString& sAlias,  uint32 nFieldType,
 	embDB::CTable *pTable)
 {
 
@@ -22,7 +22,7 @@ void CreateField(const CommonLib::str_t& sName, const CommonLib::str_t& sAlias, 
 void CreateTables(embDB::CDatabase* pDb)
 {
 	embDB::CSchema* pSchema = pDb->getSchema();
-	CommonLib::str_t sTableName; 
+	CommonLib::CString sTableName; 
 	embDB::ITransactions *pTableTran = pDb->startTransaction(embDB::eTT_DDL);
 	pTableTran->begin();
 	pSchema->addTable("Table", "", 	(embDB::IDBTransactions*)pTableTran);
@@ -54,7 +54,7 @@ void CreateTables(embDB::CDatabase* pDb)
 	embDB::ITransactions *pFieldTran = pDb->startTransaction(embDB::eTT_DDL);
 	pFieldTran->begin();
 
-	CommonLib::str_t sFieldName; 
+	CommonLib::CString sFieldName; 
 	for (int i = 0; i < 1000; ++i)
 	{				
 

@@ -1,0 +1,16 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {2B08471D-E279-404B-B407-8AAE7696D6F1} = s 'ToolTollbar Class'
+		{
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{878FA1E3-92B8-42EF-A9CF-5010428EAF21}'
+			Version = s '1.0'
+		}
+	}
+}

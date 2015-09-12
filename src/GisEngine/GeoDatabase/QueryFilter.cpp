@@ -8,7 +8,7 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
-		CQueryFilter::CQueryFilter(const CommonLib::str_t& sWhere, IFieldSet* fieldSet, IOIDSet* oidSet)
+		CQueryFilter::CQueryFilter(const CommonLib::CString& sWhere, IFieldSet* fieldSet, IOIDSet* oidSet)
 			: m_sWhereClause(sWhere)
 			, m_pFieldSet(fieldSet)
 			, m_pOidSet(oidSet)
@@ -49,12 +49,12 @@ namespace GisEngine
 			m_pOutputSpatialRef = spatRef;
 		}
 
-		const CommonLib::str_t& CQueryFilter::GetWhereClause() const
+		const CommonLib::CString& CQueryFilter::GetWhereClause() const
 		{
 			return m_sWhereClause;
 		}
 
-		void CQueryFilter::SetWhereClause(const CommonLib::str_t& sWhere)
+		void CQueryFilter::SetWhereClause(const CommonLib::CString& sWhere)
 		{
 			m_sWhereClause = sWhere;
 		}
@@ -73,12 +73,12 @@ namespace GisEngine
 		}
 
 		// ISpatialFilter
-		const CommonLib::str_t& CQueryFilter::GetShapeField() const
+		const CommonLib::CString& CQueryFilter::GetShapeField() const
 		{
 			return m_sShapeField;
 		}
 
-		void CQueryFilter::SetShapeField(const CommonLib::str_t& name)
+		void CQueryFilter::SetShapeField(const CommonLib::CString& name)
 		{
 			m_sShapeField = name;
 		}

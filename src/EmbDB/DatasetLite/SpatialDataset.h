@@ -1,6 +1,6 @@
 #ifndef _DATASET_LITE_I_SPATIAL_DATASET_H_
 #define _DATASET_LITE_I_SPATIAL_DATASET_H_
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "CommonLibrary/IGeoShape.h"
 #include "CommonLibrary/IRefCnt.h"
 #include "CommonLibrary/Variant.h"
@@ -34,8 +34,8 @@ namespace DatasetLite
 
 
 
-		static ISpatialLiteDatasetPtr open(const CommonLib::str_t& sDbName);
-		static ISpatialLiteDatasetPtr create(const CommonLib::str_t& sDbName, size_t nPageSize, embDB::eSpatialCoordinatesType, CommonLib::bbox& extent,
+		static ISpatialLiteDatasetPtr open(const CommonLib::CString& sDbName);
+		static ISpatialLiteDatasetPtr create(const CommonLib::CString& sDbName, size_t nPageSize, embDB::eSpatialCoordinatesType, CommonLib::bbox& extent,
 			embDB::eDataTypes spatialType, embDB::eDataTypes valueType);
 
 	};
@@ -60,9 +60,9 @@ namespace DatasetLite
 		virtual const CommonLib::bbox& extent() const = 0;
 		virtual IShapeCursorPtr spatialQuery(const CommonLib::bbox& extent) = 0;
 
- 		static IShapeFileIndexPtr open(const CommonLib::str_t& sDbName);
-		static IShapeFileIndexPtr create(const CommonLib::str_t& sDbName, size_t nPageSize, embDB::eSpatialCoordinatesType type,
-			embDB::eShapeType spatialType,const CommonLib::str_t& sShapeFileName);
+ 		static IShapeFileIndexPtr open(const CommonLib::CString& sDbName);
+		static IShapeFileIndexPtr create(const CommonLib::CString& sDbName, size_t nPageSize, embDB::eSpatialCoordinatesType type,
+			embDB::eShapeType spatialType,const CommonLib::CString& sShapeFileName);
 
 	};
 

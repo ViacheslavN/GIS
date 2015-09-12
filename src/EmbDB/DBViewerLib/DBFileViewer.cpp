@@ -31,7 +31,7 @@ namespace DbFileViewerLib
 	{
 		return m_bOpen;
 	}
-	bool CDBFileViewer::open(const CommonLib::str_t& sDbName,const CommonLib::str_t& sWorkingPath, const CommonLib::str_t& sPassword)
+	bool CDBFileViewer::open(const CommonLib::CString& sDbName,const CommonLib::CString& sWorkingPath, const CommonLib::CString& sPassword)
 	{
 		if(!isOpen())
 			return false;

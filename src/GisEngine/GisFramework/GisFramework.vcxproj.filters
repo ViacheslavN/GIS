@@ -42,6 +42,9 @@
     <ClInclude Include="DrawThread.h">
       <Filter>MapDrawer</Filter>
     </ClInclude>
+    <ClInclude Include="MapTask.h">
+      <Filter>MapDrawer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -51,6 +54,9 @@
       <Filter>MapDrawer</Filter>
     </ClCompile>
     <ClCompile Include="DrawThread.cpp">
+      <Filter>MapDrawer</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTask.cpp">
       <Filter>MapDrawer</Filter>
     </ClCompile>
   </ItemGroup>

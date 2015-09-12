@@ -69,7 +69,7 @@ namespace embDB
 			header.read(stream, m_bCheckCRC32 && !pFilePage->isCheck());
 			if(m_bCheckCRC32 && !pFilePage->isCheck() && !header.isValid())
 			{
-				CommonLib::str_t sMsg;
+				CommonLib::CString sMsg;
 				sMsg.format(_T("BTREE: Page %I64d Error CRC for node page"), pFilePage->getAddr());
 				pTransactions->error(sMsg);
 				return false;

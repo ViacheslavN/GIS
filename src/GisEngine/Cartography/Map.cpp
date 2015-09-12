@@ -28,11 +28,11 @@ namespace GisEngine
 
 		}
 
-		CommonLib::str_t	CMap::GetName() const
+		CommonLib::CString	CMap::GetName() const
 		{
 			return m_sName;
 		}
-		void   CMap::SetName(const  CommonLib::str_t& sName)
+		void   CMap::SetName(const  CommonLib::CString& sName)
 		{
 			m_sName = sName;
 		}

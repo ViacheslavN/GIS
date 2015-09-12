@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_I_DB_TRANSACTIONS_H_
 #include "ITransactions.h"
 #include "FilePage.h"
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
  
 namespace embDB
 {
@@ -50,7 +50,7 @@ namespace embDB
 
 		virtual void addDBBTree(IDBBtree *pTree) = 0;
 		virtual int64 getID() const = 0;
-		virtual const CommonLib::str_t& getFileTranName() const = 0;
+		virtual const CommonLib::CString& getFileTranName() const = 0;
 		virtual bool isCompleted() const = 0;
 		virtual void setDBStorage(IDBStorage *pStorage)  = 0;
 		virtual void stop() = 0;

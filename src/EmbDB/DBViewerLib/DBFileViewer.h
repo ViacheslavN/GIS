@@ -20,7 +20,7 @@ namespace DbFileViewerLib
 	public:
 		CDBFileViewer();
 		~CDBFileViewer();
-		bool open(const CommonLib::str_t& sDbName,const CommonLib::str_t& sWorkingPath = "", const CommonLib::str_t& sPassword = "");
+		bool open(const CommonLib::CString& sDbName,const CommonLib::CString& sWorkingPath = "", const CommonLib::CString& sPassword = "");
 		bool open(embDB::CStorage* pStorage);
 		bool close();
 		bool isOpen() const;

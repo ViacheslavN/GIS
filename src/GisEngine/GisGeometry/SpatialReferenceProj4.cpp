@@ -22,7 +22,7 @@ namespace GisEngine
 			for(paralist *pl = pj->params; pl; pl = pl->next)
 			{
 
-				CommonLib::str_t param = pl->param;
+				CommonLib::CString param = pl->param;
 				if(param.find(L"lon_0") >= 0)
 				{
 					int n = param.find(L"=");
@@ -41,11 +41,11 @@ namespace GisEngine
 		void get_parallel_range(PJ* pj, double* bottom_parallel, double* top_parallel)
 		{
 			// search for "proj" param
-			CommonLib::str_t param;
+			CommonLib::CString param;
 			for(paralist *pl = pj->params; pl; pl = pl->next)
 			{
 
-				CommonLib::str_t val = pl->param;
+				CommonLib::CString val = pl->param;
 				if(val.find(L"proj") >= 0)
 				{
 					int n = val.find(L"=");
@@ -81,7 +81,7 @@ namespace GisEngine
 			}
 		}
 
-		CSpatialReferenceProj4::CSpatialReferenceProj4(const CommonLib::str_t& prj4Str, eSPRefParamType paramType, CommonLib::alloc_t *pAlloc) :
+		CSpatialReferenceProj4::CSpatialReferenceProj4(const CommonLib::CString& prj4Str, eSPRefParamType paramType, CommonLib::alloc_t *pAlloc) :
 			m_prjCode(0)
 			,m_prjHandle(0)
 			,m_pAlloc(pAlloc)
@@ -409,7 +409,7 @@ namespace GisEngine
 
 		}
 
-		const CommonLib::str_t& CSpatialReferenceProj4::GetProjectionString() const
+		const CommonLib::CString& CSpatialReferenceProj4::GetProjectionString() const
 		{
 			return m_prj4Str;
 		}
@@ -498,8 +498,8 @@ namespace GisEngine
 			if(!pSpRef)
 				return false;
 
-			std::vector<CommonLib::str_t> orgParams;
-			std::vector<CommonLib::str_t> clnParams;
+			std::vector<CommonLib::CString> orgParams;
+			std::vector<CommonLib::CString> clnParams;
 
 			PJ* orgPrj = (PJ*)m_prjHandle;
 			PJ* clnPrj = (PJ*)(pSpRef->GetHandle());
@@ -634,8 +634,8 @@ namespace GisEngine
 			if(!pSpRef)
 				return false;
 
-			std::vector<CommonLib::str_t> orgParams;
-			std::vector<CommonLib::str_t> clnParams;
+			std::vector<CommonLib::CString> orgParams;
+			std::vector<CommonLib::CString> clnParams;
 
 			PJ* orgPrj = (PJ*)m_prjHandle;
 			PJ* clnPrj = (PJ*)(pSpRef->GetHandle());

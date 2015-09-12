@@ -5,6 +5,10 @@ namespace GisEngine
 {
 	namespace Display
 	{
+		CDisplay::CDisplay()
+		{
+
+		}
 		CDisplay::CDisplay( IDisplayTransformation* pTD)
 		{
 			m_pDisplayTransformation = pTD;

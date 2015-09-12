@@ -314,6 +314,12 @@ BEGIN
     ATL_IDS_MRU_FILE        "Open this document"
 END
 
+STRINGTABLE
+BEGIN
+    ID_REDRAW_MAP           "Redraw"
+    ID_FULL_ZOOM            "Full Extent"
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 

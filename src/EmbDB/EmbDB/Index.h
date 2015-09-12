@@ -188,7 +188,7 @@ public:
 	{
 		return (eDataTypes)m_fi.m_nFieldDataType;
 	}
-	const CommonLib::str_t& getName() const
+	const CommonLib::CString& getName() const
 	{
 		return m_fi.m_sFieldName;
 	}

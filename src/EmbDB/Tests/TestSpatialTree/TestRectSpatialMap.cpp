@@ -4,7 +4,7 @@
 #include "../../EmbDB/Transactions.h"
 #include "../../EmbDB/DirectTransactions.h"
 #include "../../EmbDB/SpatialPointQuery.h"
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "CommonLibrary/DebugTime.h"
 #include <iostream>
 #include <set>
@@ -351,7 +351,7 @@ void TestRectSpatialSearchByFeature(int32 nCacheBPTreeSize, uint64 nStart, uint6
 }
 
 template <class TSparialTree, class TCoodType, class TTran, class TZorderType>
-void TestRectSpatial(const CommonLib::str_t& sFileName,  int nCacheStorageSize, int nPageSize, TCoodType nBegin, TCoodType nEnd, TCoodType nStep, TCoodType qXmin,  TCoodType qYmin,  TCoodType qXmax,  TCoodType qYmax,  int nType)
+void TestRectSpatial(const CommonLib::CString& sFileName,  int nCacheStorageSize, int nPageSize, TCoodType nBegin, TCoodType nEnd, TCoodType nStep, TCoodType qXmin,  TCoodType qYmin,  TCoodType qXmax,  TCoodType qYmax,  int nType)
 {
 	CommonLib::alloc_t *alloc = new CommonLib::simple_alloc_t();
 	CommonLib::TimeUtils::CDebugTime time;

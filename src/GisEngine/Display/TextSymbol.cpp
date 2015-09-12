@@ -48,7 +48,7 @@ namespace GisEngine
 			setDirty(true);
 			m_Font = font;
 		}
-		void CTextSymbol::GetTextSize(IDisplay* display, const CommonLib::str_t& szText, GUnits *pxSize , GUnits *pySize, GUnits* baseLine) const
+		void CTextSymbol::GetTextSize(IDisplay* display, const CommonLib::CString& szText, GUnits *pxSize , GUnits *pySize, GUnits* baseLine) const
 		{
 			display->GetGraphics()->QueryTextMetrics(&m_Font, szText.cwstr(), szText.length(), pxSize, pySize, baseLine);
 		}
@@ -61,11 +61,11 @@ namespace GisEngine
 			setDirty(true);
 			m_Font.setSize(size);
 		}
-		 const CommonLib::str_t& CTextSymbol::GetText() const
+		 const CommonLib::CString& CTextSymbol::GetText() const
 		 {
 			 return m_sText;
 		 }
-		void CTextSymbol::SetText(const CommonLib::str_t& szText )
+		void CTextSymbol::SetText(const CommonLib::CString& szText )
 		{
 			setDirty(true);
 			m_sText = szText;

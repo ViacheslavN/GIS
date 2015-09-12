@@ -5,7 +5,7 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
-		CField::CField(CommonLib::str_t& sName, CommonLib::str_t& sAliasName, bool bIsEditable,	bool bIsNullable, bool bIsRquired, eDataTypes type,
+		CField::CField(CommonLib::CString& sName, CommonLib::CString& sAliasName, bool bIsEditable,	bool bIsNullable, bool bIsRquired, eDataTypes type,
 			int nLength, int nPrecision, int nScale, IGeometryDef* pGeometry, IDomain* pDomain) : 
 			m_sName(sName), m_sAliasName(sAliasName), m_bIsEditable(bIsEditable), m_bIsNullable(bIsNullable), m_bIsRquired(bIsRquired), m_type(type),
 				m_nLength(nLength), m_nPrecision(nPrecision), m_nScale(nScale), m_pGeometryDefPtr(pGeometry), m_pDomainPtr(pDomain)
@@ -50,19 +50,19 @@ namespace GisEngine
 
 		}
 
-		const CommonLib::str_t& CField::GetName() const
+		const CommonLib::CString& CField::GetName() const
 		{
 			return m_sName;
 		}
-		void   CField::SetName( const CommonLib::str_t& sName)
+		void   CField::SetName( const CommonLib::CString& sName)
 		{
 			m_sName = sName;
 		}
-		const CommonLib::str_t&  CField::GetAliasName() const
+		const CommonLib::CString&  CField::GetAliasName() const
 		{
 			return m_sAliasName;
 		}
-		void  CField::SetAliasName(const   CommonLib::str_t&  sAliasName)
+		void  CField::SetAliasName(const   CommonLib::CString&  sAliasName)
 		{
 			m_sAliasName = sAliasName;
 		}

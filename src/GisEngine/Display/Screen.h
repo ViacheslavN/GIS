@@ -8,6 +8,7 @@ namespace GisEngine
 		class CDisplay : public IDisplay
 		{
 			public:
+				CDisplay();
 				CDisplay( IDisplayTransformation* pTD);
 				~CDisplay();
 				virtual void SetClipGeometry( const CommonLib::CGeoShape& clipGeom );

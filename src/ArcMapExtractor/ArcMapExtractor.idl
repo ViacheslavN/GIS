@@ -1,0 +1,46 @@
+// ArcMapExtractor.idl : IDL source for ArcMapExtractor
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (ArcMapExtractor.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(932CE063-F48F-4108-B19C-E2FE50430E40),
+	pointer_default(unique)
+]
+interface IMapToolBar : IUnknown{
+};
+[
+	object,
+	uuid(44F5D25D-9773-490C-B0B6-2F61570A0867),
+	pointer_default(unique)
+]
+interface IExtractCommand : IUnknown{
+};
+[
+	uuid(878FA1E3-92B8-42EF-A9CF-5010428EAF21),
+	version(1.0),
+]
+library ArcMapExtractorLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(EC8D7051-06F0-46E1-8BC1-167B4A0FACB3)		
+	]
+	coclass MapToolBar
+	{
+		[default] interface IMapToolBar;
+	};
+	[
+		uuid(444FF0D6-E29E-4402-80C6-7252FEC7FA03)		
+	]
+	coclass ExtractCommand
+	{
+		[default] interface IExtractCommand;
+	};
+};
+

@@ -44,19 +44,19 @@ namespace GisEngine
 				m_pSymbol->Reset();
 		}
 
-		const CommonLib::str_t&	  CSimpleSymbolAssigner::GetDescription() const
+		const CommonLib::CString&	  CSimpleSymbolAssigner::GetDescription() const
 		{
 			 return m_sDescription;
 		}
-		void  CSimpleSymbolAssigner::SetDescription(const CommonLib::str_t& desc)
+		void  CSimpleSymbolAssigner::SetDescription(const CommonLib::CString& desc)
 		{
 			m_sDescription = desc;
 		}
-		const CommonLib::str_t&  CSimpleSymbolAssigner::GetLabel() const
+		const CommonLib::CString&  CSimpleSymbolAssigner::GetLabel() const
 		{
 			return m_sLabel;
 		}
-		void  CSimpleSymbolAssigner::SetLabel(const CommonLib::str_t& label)
+		void  CSimpleSymbolAssigner::SetLabel(const CommonLib::CString& label)
 		{
 			m_sLabel = label;
 		}

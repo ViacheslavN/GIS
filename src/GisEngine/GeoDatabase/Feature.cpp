@@ -24,7 +24,7 @@ namespace GisEngine
 					m_pFieldSet->Add(fields->GetField(i)->GetName());
 			}
 
-			CommonLib::str_t fieldName;
+			CommonLib::CString fieldName;
 			m_pFieldSet->Reset();
 			while(m_pFieldSet->Next(&fieldName))
 			{
@@ -137,6 +137,8 @@ namespace GisEngine
 			if(m_nShapeFieldIndex < 0 && m_nAnnoFieldIndex < 0)
 				CommonLib::IGeoShapePtr();
 
+			return m_pShape;
+
 			CommonLib::IRefObjectPtr ptr;
 			if(m_nShapeFieldIndex < 0)
 			{
@@ -155,6 +157,9 @@ namespace GisEngine
 		{
 			if(m_nShapeFieldIndex < 0)
 				return;
+
+			m_pShape = pShape;
+			return;
 
 			CommonLib::IRefObjectPtr ptr((IRefCnt*)pShape);
 

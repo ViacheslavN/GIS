@@ -171,7 +171,7 @@ namespace GisEngine
 				 ::memset(&bmi, 0, sizeof(bmi));
 				 bmi.bmiHeader.biBitCount = 32;
 				 bmi.bmiHeader.biCompression = BI_RGB;
-				 bmi.bmiHeader.biHeight = -(int)pSrc->GetSurface().height();
+				 bmi.bmiHeader.biHeight = (int)pSrc->GetSurface().height();
 				 bmi.bmiHeader.biPlanes = 1;
 				 bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 				 bmi.bmiHeader.biWidth = pSrc->GetSurface().width();

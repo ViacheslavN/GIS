@@ -700,9 +700,9 @@ namespace GisEngine
 		 }
 
 
-		 CommonLib::str_t CGraphicsAgg::get_font_path(const CFont* pFont, bool& customDecoration)
+		 CommonLib::CString CGraphicsAgg::get_font_path(const CFont* pFont, bool& customDecoration)
 		 {
-			  CommonLib::str_t fullFontName;
+			  CommonLib::CString fullFontName;
 			 customDecoration = true;
 #ifdef WIN32
 			 TCHAR spzBuf[MAX_PATH];
@@ -716,7 +716,7 @@ namespace GisEngine
 				 TCHAR str[256];
 				 ::memset(str, 0, sizeof(str));
 				 DWORD len = 255 * sizeof(TCHAR);
-				 CommonLib::str_t  sFace = pFont->getFace();
+				 CommonLib::CString  sFace = pFont->getFace();
 
 				 customDecoration = false;
 
@@ -758,7 +758,7 @@ namespace GisEngine
 
 		 void CGraphicsAgg::create_font(const CFont* pFont, bool& customDecoration)
 		 {
-			 CommonLib::str_t  fullFontName = get_font_path(pFont, customDecoration);
+			 CommonLib::CString  fullFontName = get_font_path(pFont, customDecoration);
 			 m_font_engine.load_font(fullFontName.cstr(), 0, agg::glyph_ren_outline);
 			 agg::trans_affine mtx;
 			 mtx *= agg::trans_affine_rotation(-DEG2RAD(pFont->getOrientation())); // Угол уже выражен в радианах

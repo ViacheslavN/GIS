@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_SCHEMA_H_
 #include "stdafx.h"
 #include "RBMap.h"
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "CommonLibrary/stream.h"
 #include "PageVector.h"
 namespace embDB
@@ -18,11 +18,11 @@ namespace embDB
 			~CSchema();
 			bool open(CStorage* pStorage, __int64 nFileAddr, bool bNew = false);
 			bool close();
-			bool addTable(const CommonLib::str_t& sTableName, const CommonLib::str_t& sStorageName, IDBTransactions *Tran = NULL);
-			CTable* getTable(const CommonLib::str_t& sTableName);
+			bool addTable(const CommonLib::CString& sTableName, const CommonLib::CString& sStorageName, IDBTransactions *Tran = NULL);
+			CTable* getTable(const CommonLib::CString& sTableName);
 			CTable* getTable(int64 nID);
 
-			bool dropTable(const CommonLib::str_t& sTableName, IDBTransactions *Tran = NULL);
+			bool dropTable(const CommonLib::CString& sTableName, IDBTransactions *Tran = NULL);
 			bool dropTable(int64 nID, IDBTransactions *Tran = NULL);
 			bool dropTable(CTable *pTable, IDBTransactions *Tran = NULL);
 
@@ -36,7 +36,7 @@ namespace embDB
 		
 		private:
 			CStorage* m_pStorage;
-			typedef RBMap<CommonLib::str_t, CTable*> TTablesByName;
+			typedef RBMap<CommonLib::CString, CTable*> TTablesByName;
 			typedef RBMap<int64, CTable*> TTablesByID;
 			typedef std::vector<CTable*> TTables;
 			typedef TPageVector<int64> TTablePages;

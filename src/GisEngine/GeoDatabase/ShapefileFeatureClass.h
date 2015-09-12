@@ -12,27 +12,27 @@ namespace GisEngine
 		class CShapefileFeatureClass : IFeatureClass
 		{
 		public:
-			CShapefileFeatureClass(IWorkspace *pWorkSpace, const CommonLib::str_t& sPath, const CommonLib::str_t& sName, const CommonLib::str_t& sViewName);
+			CShapefileFeatureClass(IWorkspace *pWorkSpace, const CommonLib::CString& sPath, const CommonLib::CString& sName, const CommonLib::CString& sViewName);
 			~CShapefileFeatureClass();
 
 			//IDataset
 			virtual eDatasetType  GetDatasetType() const {return dtFeatureClass;}
 			virtual IWorkspace*    GetWorkspace() const {return m_pWorkSpace;}
-			virtual const CommonLib::str_t&   GetDatasetName() const {return m_sName;}
-			virtual const CommonLib::str_t&   GetDatasetViewName() const {return m_sViewName;}
+			virtual const CommonLib::CString&   GetDatasetName() const {return m_sName;}
+			virtual const CommonLib::CString&   GetDatasetViewName() const {return m_sViewName;}
 
 			//ITable
 			virtual void                 AddField(IField* field);
-			virtual void                 DeleteField(const CommonLib::str_t& fieldName);
+			virtual void                 DeleteField(const CommonLib::CString& fieldName);
 			virtual IFieldsPtr             GetFields() const;
 			virtual bool                 HasOIDField() const;
-			virtual const CommonLib::str_t& GetOIDFieldName() const;
+			virtual const CommonLib::CString& GetOIDFieldName() const;
 			virtual IRowPtr				  GetRow(int64 id);
 			virtual ICursorPtr			  Search(IQueryFilter* filter, bool recycling);
 
 			//IFeatureClass
 			virtual CommonLib::eShapeType GetGeometryType() const;
-			virtual const CommonLib::str_t&         GetShapeFieldName() const;
+			virtual const CommonLib::CString&         GetShapeFieldName() const;
 			virtual GisGeometry::IEnvelopePtr			 GetExtent() const ;
 			virtual GisGeometry::ISpatialReferencePtr GetSpatialReference() const;
 
@@ -42,7 +42,7 @@ namespace GisEngine
 			ShapefileUtils::SHPGuard* GetSHP();
 			ShapefileUtils::DBFGuard* GetDBF();
 
-			CommonLib::str_t GetFullName();
+			CommonLib::CString GetFullName();
 
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const;
 			virtual bool load(CommonLib::IReadStream* pReadStream);
@@ -56,11 +56,11 @@ namespace GisEngine
 			IFieldPtr m_pOIDField;
 			IFieldsPtr m_FieldsPtr;
 
-			CommonLib::str_t m_sPath;
-			CommonLib::str_t m_sName;
-			CommonLib::str_t m_sViewName;
-			CommonLib::str_t m_sShapeFieldName;
-			CommonLib::str_t m_sOIDName;
+			CommonLib::CString m_sPath;
+			CommonLib::CString m_sName;
+			CommonLib::CString m_sViewName;
+			CommonLib::CString m_sShapeFieldName;
+			CommonLib::CString m_sOIDName;
 
 
 			ShapefileUtils::SHPGuard m_shp;

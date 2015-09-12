@@ -51,7 +51,7 @@ namespace GisEngine
 		{
 
 		}
-		const CommonLib::str_t& CShapefileWorkspace::GetWorkspaceName() const
+		const CommonLib::CString& CShapefileWorkspace::GetWorkspaceName() const
 		{
 			return m_sPath;
 		}
@@ -99,7 +99,7 @@ namespace GisEngine
 		void CShapefileWorkspace::load()
 		{
 			CommonLib::CSSection::scoped_lock lock (m_mutex);
-			std::vector<CommonLib::str_t> vecFiles;
+			std::vector<CommonLib::CString> vecFiles;
 			CommonLib::FileSystem::getFiles(m_sPath + L"*.shp", vecFiles);
 
 			for (size_t i = 0, sz = vecFiles.size(); i < sz; ++i)
@@ -119,14 +119,14 @@ namespace GisEngine
 		{
 
 		}
-		ITablePtr  CShapefileWorkspace::OpenTable(const CommonLib::str_t& sName)
+		ITablePtr  CShapefileWorkspace::OpenTable(const CommonLib::CString& sName)
 		{
 			return ITablePtr();
 		}
-		IFeatureClassPtr CShapefileWorkspace::OpenFeatureClass(const CommonLib::str_t& sName)
+		IFeatureClassPtr CShapefileWorkspace::OpenFeatureClass(const CommonLib::CString& sName)
 		{
 			CommonLib::CSSection::scoped_lock lock (m_mutex);
-			CommonLib::str_t sViewName = CommonLib::FileSystem::FindOnlyFileName(sName);
+			CommonLib::CString sViewName = CommonLib::FileSystem::FindOnlyFileName(sName);
 			CShapefileFeatureClass * pFeatureClass = new CShapefileFeatureClass(this, m_sPath, sViewName + L".shp", sViewName);
 			bool bLoad = pFeatureClass->reload(false);
 			if(!bLoad)
@@ -140,11 +140,11 @@ namespace GisEngine
 			return pFeaturePtr;
 		}
  
-		ITablePtr  CShapefileWorkspace::CreateTable(const CommonLib::str_t& name, IFields* fields)
+		ITablePtr  CShapefileWorkspace::CreateTable(const CommonLib::CString& name, IFields* fields)
 		{
 			return ITablePtr();
 		}
-		IFeatureClassPtr CShapefileWorkspace::CreateFeatureClass(const CommonLib::str_t& sName, IFields* pFields, const CommonLib::str_t& sShapeFieldName)
+		IFeatureClassPtr CShapefileWorkspace::CreateFeatureClass(const CommonLib::CString& sName, IFields* pFields, const CommonLib::CString& sShapeFieldName)
 		{
 		
 			TDatasetMap::iterator it = m_DataSetMap.find(sName);
@@ -209,12 +209,12 @@ namespace GisEngine
 
 
 			  CommonLib::CSSection::scoped_lock lock (m_mutex);
-			  CommonLib::str_t filePathBase = m_sPath + sName;
+			  CommonLib::CString filePathBase = m_sPath + sName;
 			  if(sName.right(4).equals(L".shp", false))
 				  filePathBase += sName.left(filePathBase.length() - 4);
-			  CommonLib::str_t shpFilePath = filePathBase + L".shp";
-			  CommonLib::str_t dbfFilePath = filePathBase + L".dbf";
-			  CommonLib::str_t prjFileName = filePathBase + L".prj";
+			  CommonLib::CString shpFilePath = filePathBase + L".shp";
+			  CommonLib::CString dbfFilePath = filePathBase + L".dbf";
+			  CommonLib::CString prjFileName = filePathBase + L".prj";
 
 
 
@@ -284,11 +284,11 @@ namespace GisEngine
 		}
 
 
-		ITablePtr CShapefileWorkspace::GetTable(const CommonLib::str_t& name)
+		ITablePtr CShapefileWorkspace::GetTable(const CommonLib::CString& name)
 		{
 			return ITablePtr();
 		}
-		IFeatureClassPtr CShapefileWorkspace::GetFeatureClass(const CommonLib::str_t& sName)
+		IFeatureClassPtr CShapefileWorkspace::GetFeatureClass(const CommonLib::CString& sName)
 		{
 			TDatasetMap::iterator it = m_DataSetMap.find(sName);
 			if(it == m_DataSetMap.end())
@@ -305,7 +305,7 @@ namespace GisEngine
 				return it->second;
 
 			IWorkspacePtr pWks((IWorkspace*)(new CShapefileWorkspace(pszName, pszPath)));
-			m_wksMap.insert(std::make_pair(CommonLib::str_t(pszPath), pWks));
+			m_wksMap.insert(std::make_pair(CommonLib::CString(pszPath), pWks));
 			return pWks;
 		}
 		IWorkspacePtr CShapefileWorkspace::Open(CommonLib::IReadStream* pSteram)
@@ -313,8 +313,8 @@ namespace GisEngine
 			CommonLib::CSSection::scoped_lock lock (m_SharedMutex);
 		
 
-			CommonLib::str_t sName;
-			CommonLib::str_t sPath;
+			CommonLib::CString sName;
+			CommonLib::CString sPath;
 
 			if(!pSteram->checkRead(4))
 				return IWorkspacePtr();
@@ -332,8 +332,8 @@ namespace GisEngine
 		{
 			CommonLib::CSSection::scoped_lock lock (m_SharedMutex);
 
-			CommonLib::str_t sName = pNode->GetPropertyString("name", sName);
-			CommonLib::str_t sPath = pNode->GetPropertyString("path", sPath);
+			CommonLib::CString sName = pNode->GetPropertyString("name", sName);
+			CommonLib::CString sPath = pNode->GetPropertyString("path", sPath);
 
 			return Open(sName.cwstr(), sPath.cwstr());
 		}

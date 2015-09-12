@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "CommonLibrary/str_t.h"
+#include "CommonLibrary/String.h"
 #include "CommonLibrary/MemoryStream.h"
 #include "CommonLibrary/FixedBitStream.h"
 #include "CommonLibrary/FixedMemoryStream.h"
@@ -50,42 +50,42 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	
 
-	std::vector<CommonLib::str_t> vecFiles;
-	CommonLib::FileSystem::getFiles(CommonLib::str_t(L"D:\\2\\") + L"*.shp", vecFiles);
+	std::vector<CommonLib::CString> vecFiles;
+	CommonLib::FileSystem::getFiles(CommonLib::CString(L"D:\\2\\") + L"*.shp", vecFiles);
 
 
-	CommonLib::str_t path(L"C:\\test\\ddf\\1.shp");
-	CommonLib::str_t path1(L"C:\\test\\ddf\\");
-	CommonLib::str_t path2(L"C:\\test\\ddf\\1");
-	CommonLib::str_t path3(L"C:\\test\\ddf\\1.");
-	CommonLib::str_t path4(L"2.shp");
-	CommonLib::str_t path5(L"2.");
-	CommonLib::str_t path6(L"vdfvdfvfd");
+	CommonLib::CString path(L"C:\\test\\ddf\\1.shp");
+	CommonLib::CString path1(L"C:\\test\\ddf\\");
+	CommonLib::CString path2(L"C:\\test\\ddf\\1");
+	CommonLib::CString path3(L"C:\\test\\ddf\\1.");
+	CommonLib::CString path4(L"2.shp");
+	CommonLib::CString path5(L"2.");
+	CommonLib::CString path6(L"vdfvdfvfd");
 
-	CommonLib::str_t sFile = CommonLib::FileSystem::FindFileName(path);
-	CommonLib::str_t sFile1 = CommonLib::FileSystem::FindFileName(path1);
-	CommonLib::str_t sFile2 = CommonLib::FileSystem::FindFileName(path2);
-	CommonLib::str_t sFile3 = CommonLib::FileSystem::FindFileName(path3);
-
-
-	CommonLib::str_t sOnlyFile = CommonLib::FileSystem::FindOnlyFileName(path);
-	CommonLib::str_t sOnlyFile1 = CommonLib::FileSystem::FindOnlyFileName(path1);
-	CommonLib::str_t sOnlyFile2 = CommonLib::FileSystem::FindOnlyFileName(path2);
-	CommonLib::str_t sOnlyFile3 = CommonLib::FileSystem::FindOnlyFileName(path3);
-	CommonLib::str_t sOnlyFile4 = CommonLib::FileSystem::FindOnlyFileName(path4);
-	CommonLib::str_t sOnlyFile5 = CommonLib::FileSystem::FindOnlyFileName(path5);
-	CommonLib::str_t sOnlyFile6 = CommonLib::FileSystem::FindOnlyFileName(path6);
-
-	CommonLib::str_t sExt = CommonLib::FileSystem::FindFileExtension(path);
-	CommonLib::str_t sExt1 = CommonLib::FileSystem::FindFileExtension(path1);
-	CommonLib::str_t sExt2 = CommonLib::FileSystem::FindFileExtension(path2);
-	CommonLib::str_t sExt3 = CommonLib::FileSystem::FindFileExtension(path3);
+	CommonLib::CString sFile = CommonLib::FileSystem::FindFileName(path);
+	CommonLib::CString sFile1 = CommonLib::FileSystem::FindFileName(path1);
+	CommonLib::CString sFile2 = CommonLib::FileSystem::FindFileName(path2);
+	CommonLib::CString sFile3 = CommonLib::FileSystem::FindFileName(path3);
 
 
-	CommonLib::str_t sph = CommonLib::FileSystem::FindFilePath(path);
-	CommonLib::str_t sph1 = CommonLib::FileSystem::FindFilePath(path1);
-	CommonLib::str_t sph2 = CommonLib::FileSystem::FindFilePath(path2);
-	CommonLib::str_t sph3 = CommonLib::FileSystem::FindFilePath(path3);
+	CommonLib::CString sOnlyFile = CommonLib::FileSystem::FindOnlyFileName(path);
+	CommonLib::CString sOnlyFile1 = CommonLib::FileSystem::FindOnlyFileName(path1);
+	CommonLib::CString sOnlyFile2 = CommonLib::FileSystem::FindOnlyFileName(path2);
+	CommonLib::CString sOnlyFile3 = CommonLib::FileSystem::FindOnlyFileName(path3);
+	CommonLib::CString sOnlyFile4 = CommonLib::FileSystem::FindOnlyFileName(path4);
+	CommonLib::CString sOnlyFile5 = CommonLib::FileSystem::FindOnlyFileName(path5);
+	CommonLib::CString sOnlyFile6 = CommonLib::FileSystem::FindOnlyFileName(path6);
+
+	CommonLib::CString sExt = CommonLib::FileSystem::FindFileExtension(path);
+	CommonLib::CString sExt1 = CommonLib::FileSystem::FindFileExtension(path1);
+	CommonLib::CString sExt2 = CommonLib::FileSystem::FindFileExtension(path2);
+	CommonLib::CString sExt3 = CommonLib::FileSystem::FindFileExtension(path3);
+
+
+	CommonLib::CString sph = CommonLib::FileSystem::FindFilePath(path);
+	CommonLib::CString sph1 = CommonLib::FileSystem::FindFilePath(path1);
+	CommonLib::CString sph2 = CommonLib::FileSystem::FindFilePath(path2);
+	CommonLib::CString sph3 = CommonLib::FileSystem::FindFilePath(path3);
 	testAlloc();
 	return 0;
 
@@ -162,7 +162,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	readBitStream.readBits(nBit64_60_r, 60);
 	readBitStream.readBits(nBit64_r, 64);
 
-	/*CommonLib::str_t str;
+	/*CommonLib::CString str;
  
 	CommonLib::MemoryStream stream(alloc);
 	str.format("dgf %s", "dd");

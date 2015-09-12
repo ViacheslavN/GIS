@@ -4,10 +4,12 @@
 #include "CommonLibrary/Timer.h"
 #include "Display/ClipRectAlloc.h"
 #include "DrawThread.h"
+#include "MapTask.h"
 namespace GisEngine
 {
 	namespace GisFramework
 	{
+		class CMapTask;
 		class CMapDrawer : public IMapDrawer
 		{
 			public:
@@ -37,12 +39,13 @@ namespace GisEngine
 
 				virtual void SetOnInvalidate(OnInvalidate* pFunck, bool bAdd);
 				virtual void SetOnFinishMapDrawing(OnFinishMapDrawing* pFunck, bool bAdd);
-
+				virtual void OnFinishedDrawMapTask(CMapTask *pTask);
 
 				CommonLib::Event3<const Display::GPoint*, const Display::GRect*, bool> OnInvalidateEvent;
 				CommonLib::Event1<bool> OnFinishMapDrawingEvent;
 
 			private:
+				 void Init();
 				 void OnTimer(CommonLib::CTimer *pTimer);
 				 void CopyTrans();
 
@@ -71,6 +74,9 @@ namespace GisEngine
 				CommonLib::CSSection m_cs;
 
 				CDrawThread m_DrawThread;
+				bool m_bCancel;
+
+				CMapTask m_mapTask;
 		};
 	}
 }

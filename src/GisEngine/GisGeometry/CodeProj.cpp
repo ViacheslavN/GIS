@@ -5,7 +5,7 @@ namespace GisEngine
 {
 	namespace GisGeometry
 	{
-		int Proj4StrToCode(const CommonLib::str_t& sProj4Str)
+		int Proj4StrToCode(const CommonLib::CString& sProj4Str)
 		{
 			  int count = sizeof (ESRI)/sizeof (ESRI[0]);
 			  for (int i = 0; i < count; ++i)
@@ -18,7 +18,7 @@ namespace GisEngine
 
 			  return 0;
 		}
-		CommonLib::str_t CodeToProj4Str(int prjCode) 
+		CommonLib::CString CodeToProj4Str(int prjCode) 
 		{ 
 			int count = sizeof (ESRI)/sizeof (ESRI[0]);
 			for (int i = 0; i < count; ++i)

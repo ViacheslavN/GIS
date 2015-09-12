@@ -185,12 +185,12 @@ namespace GisEngine
 			return false;
 		}
 
-		const CommonLib::str_t& CFeatureLayer::GetDisplayField() const
+		const CommonLib::CString& CFeatureLayer::GetDisplayField() const
 		{	 
 			return m_sDisplayField;
 		}
 
-		void CFeatureLayer::SetDisplayField(const CommonLib::str_t& field)
+		void CFeatureLayer::SetDisplayField(const CommonLib::CString& field)
 		{		 
 			m_sDisplayField = field;
 		}
@@ -234,11 +234,11 @@ namespace GisEngine
 		{
 			m_vecRenderers.clear();
 		}
-		const CommonLib::str_t&	CFeatureLayer::GetDefinitionQuery() const
+		const CommonLib::CString&	CFeatureLayer::GetDefinitionQuery() const
 		{
 			return m_sQuery;
 		}
-		 void	CFeatureLayer::SetDefinitionQuery(const CommonLib::str_t& sQuery)
+		 void	CFeatureLayer::SetDefinitionQuery(const CommonLib::CString& sQuery)
 		{
 			m_sQuery = sQuery;
 		}

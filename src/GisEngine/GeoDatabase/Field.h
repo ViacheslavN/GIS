@@ -9,7 +9,7 @@ namespace GisEngine
 		class CField : public IShapeField
 		{
 			public:
-				CField(CommonLib::str_t& sName, CommonLib::str_t& sAliasName, bool bIsEditable,	bool bIsNullable, bool bIsRquired, eDataTypes type,
+				CField(CommonLib::CString& sName, CommonLib::CString& sAliasName, bool bIsEditable,	bool bIsNullable, bool bIsRquired, eDataTypes type,
 					int nLength, int nPrecision, int nScale, IGeometryDef* pGeometry, IDomain* pDomain);
 				CField();
 				virtual ~CField();
@@ -18,10 +18,10 @@ namespace GisEngine
 
 	
 				// IField
-				virtual const CommonLib::str_t& GetName() const;
-				virtual void                 SetName( const CommonLib::str_t& sName);
-				virtual  const CommonLib::str_t&  GetAliasName() const;
-				virtual void                 SetAliasName(const   CommonLib::str_t&  sAliasName);
+				virtual const CommonLib::CString& GetName() const;
+				virtual void                 SetName( const CommonLib::CString& sName);
+				virtual  const CommonLib::CString&  GetAliasName() const;
+				virtual void                 SetAliasName(const   CommonLib::CString&  sAliasName);
 				virtual bool                 GetIsEditable() const;
 				virtual void                 SetIsEditable(bool bIsEditable);
 				virtual bool                 GetIsNullable() const;
@@ -45,8 +45,8 @@ namespace GisEngine
 			private:
 				void copy(const CField *pField);
 			private:
-				CommonLib::str_t		m_sName;
-				CommonLib::str_t		m_sAliasName;
+				CommonLib::CString		m_sName;
+				CommonLib::CString		m_sAliasName;
 				bool					m_bIsEditable;
 				bool					m_bIsNullable;
 				bool					m_bIsRquired;

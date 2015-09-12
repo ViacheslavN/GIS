@@ -5,7 +5,7 @@ namespace CommonLib
 {
 	namespace FileSystem
 	{
-		str_t  FindFileName(const str_t& sFullFileName)
+		CString  FindFileName(const CString& sFullFileName)
 		{
 			if(!sFullFileName.isEmpty())
 			{
@@ -19,9 +19,9 @@ namespace CommonLib
 
 			return sFullFileName;
 		}
-		str_t  FindOnlyFileName(const str_t& sFullFileName)
+		CString  FindOnlyFileName(const CString& sFullFileName)
 		{
-			str_t sFileName = FindFileName(sFullFileName);
+			CString sFileName = FindFileName(sFullFileName);
 			if(!sFileName.isEmpty())
 			{
 				const int nLen = sFileName.length();
@@ -34,15 +34,15 @@ namespace CommonLib
 			return sFileName;
 
 		}
-		str_t  FindFileExtension(const str_t& sFullFileName)
+		CString  FindFileExtension(const CString& sFullFileName)
 		{
-			str_t sFileName = FindFileName(sFullFileName);
+			CString sFileName = FindFileName(sFullFileName);
 			int i =  sFileName.reverseFind(L'.');
 			if(i < 0)
-				return str_t();
+				return CString();
 			return sFileName.right(sFileName.length() - (i + 1));
 		}
-		str_t  FindFilePath(const str_t& sFullFileName)
+		CString  FindFilePath(const CString& sFullFileName)
 		{
 			if(!sFullFileName.isEmpty())
 			{

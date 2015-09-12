@@ -390,11 +390,11 @@ namespace GisEngine
 			virtual const CFont& GetFont() const = 0;
 			virtual     CFont& GetFont()  = 0;
 			virtual void   SetFont(const  CFont& font ) = 0;
-			virtual void GetTextSize(IDisplay* display, const CommonLib::str_t& szText, GUnits *pxSize , GUnits *pySize, GUnits* baseLine) const = 0;
+			virtual void GetTextSize(IDisplay* display, const CommonLib::CString& szText, GUnits *pxSize , GUnits *pySize, GUnits* baseLine) const = 0;
 			virtual GUnits GetSize() const = 0;
 			virtual void SetSize(GUnits size) = 0;
-			virtual  const CommonLib::str_t& GetText() const = 0;
-			virtual void SetText(const CommonLib::str_t& szText ) = 0;
+			virtual  const CommonLib::CString& GetText() const = 0;
+			virtual void SetText(const CommonLib::CString& szText ) = 0;
 			virtual ITextBackgroundPtr GetTextBackground() const = 0;
 			virtual void SetTextBackground( ITextBackground *bg ) = 0;
 			virtual int   GetTextDrawFlags() const = 0;

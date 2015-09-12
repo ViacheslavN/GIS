@@ -39,6 +39,7 @@ namespace GisEngine
 			int                                 m_nAnnoFieldIndex;
 			std::vector<int>                    m_vecFieldMap;
 			std::vector<CommonLib::CVariant>	m_vecValues;
+			CommonLib::IGeoShapePtr m_pShape;
 		};
 	}
 }

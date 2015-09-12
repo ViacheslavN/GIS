@@ -22,10 +22,10 @@ namespace GisEngine
 
 				// IFeatureLayer
 
-				virtual const CommonLib::str_t&			 GetDefinitionQuery() const;
-				virtual void							 SetDefinitionQuery(const CommonLib::str_t& );
-				virtual const CommonLib::str_t&          GetDisplayField() const;
-				virtual void                             SetDisplayField(const  CommonLib::str_t& sField);
+				virtual const CommonLib::CString&			 GetDefinitionQuery() const;
+				virtual void							 SetDefinitionQuery(const CommonLib::CString& );
+				virtual const CommonLib::CString&          GetDisplayField() const;
+				virtual void                             SetDisplayField(const  CommonLib::CString& sField);
 				virtual GeoDatabase::IFeatureClassPtr    GetFeatureClass() const;
 				virtual void                             SetFeatureClass(GeoDatabase::IFeatureClass* featureClass);
 				virtual bool                             GetSelectable() const;
@@ -51,8 +51,8 @@ namespace GisEngine
 		private:
 			typedef std::vector<IFeatureRendererPtr> TFeatureRenderer;
 
-			CommonLib::str_t  m_sDisplayField;
-			CommonLib::str_t  m_sQuery;
+			CommonLib::CString  m_sDisplayField;
+			CommonLib::CString  m_sQuery;
 			TFeatureRenderer m_vecRenderers;
 			bool m_bSelectable;
 			bool m_hasReferenceScale;

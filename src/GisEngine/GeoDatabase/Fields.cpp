@@ -48,7 +48,7 @@ namespace GisEngine
 			m_mapFieldIndex.clear();
 		}
 
-		int CFields::FindField(const CommonLib::str_t& sName) const
+		int CFields::FindField(const CommonLib::CString& sName) const
 		{
 			if(!m_mapFieldIndex.size())
 				RebuildFieldIndexMap();
@@ -65,7 +65,7 @@ namespace GisEngine
 			return (*it).second;
 		}
 
-		bool CFields::FieldExists(const CommonLib::str_t& sName) const
+		bool CFields::FieldExists(const CommonLib::CString& sName) const
 		{
 			if(!m_mapFieldIndex.size())
 				RebuildFieldIndexMap();

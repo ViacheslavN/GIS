@@ -50,7 +50,7 @@ namespace GisEngine
 			virtual bool Project(ISpatialReference* destSpatRef, GisBoundingBox& bbox) = 0;
 			virtual bool Project(ISpatialReference *destSpatRef, GisXYPoint* pPoint) = 0;
 
-			virtual const CommonLib::str_t& GetProjectionString() const = 0;
+			virtual const CommonLib::CString& GetProjectionString() const = 0;
 			virtual int   GetProjectionCode() const = 0;
 			virtual bool  IsProjection() const = 0;
 

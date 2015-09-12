@@ -24,7 +24,7 @@ namespace embDB
 		virtual ~INameIRow(){};
 
 		virtual IVariant* value(const wchar_t* pszName) = 0;
-		virtual bool set(const CommonLib::str_t& sName, IVariant*) = 0;
+		virtual bool set(const CommonLib::CString& sName, IVariant*) = 0;
 	};
 
 	typedef CommonLib::IRefCntPtr<IRow> IRowPtr;

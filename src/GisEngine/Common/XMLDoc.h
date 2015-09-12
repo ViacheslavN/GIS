@@ -26,16 +26,16 @@ namespace GisEngine
 				CXMLDoc();
 				~CXMLDoc();
 
-				virtual bool  Open(const CommonLib::str_t& xml);
+				virtual bool  Open(const CommonLib::CString& xml);
 				virtual bool  Open(CommonLib::IReadStream* pStream);
 
-				virtual bool  Save(const CommonLib::str_t& xml);
+				virtual bool  Save(const CommonLib::CString& xml);
 				virtual bool  Save(CommonLib::IWriteStream* pStream);
 
 				virtual IXMLNodePtr			   GetNodes() const;
 				virtual void Clear();
 
-				const CommonLib::str_t& GetError() const;
+				const CommonLib::CString& GetError() const;
 		private:
 				//praser
 			bool get_char(CommonLib::IReadStream* pStream);
@@ -57,7 +57,7 @@ namespace GisEngine
 			uint32 m_nCurrCol;
 			uint32 m_nCurrRow;
 			IXMLNodePtr m_pRoot;
-			CommonLib::str_t m_sError;
+			CommonLib::CString m_sError;
 		};
 	}
 }
