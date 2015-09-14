@@ -43,6 +43,7 @@ namespace GisEngine
 		{
 			wiShapeFile = 1,
 			wiEmbDB,
+			wiSqlLite,
 			wiSpatialLite,
 			wiOracle,
 			wiMSSQL,
@@ -90,6 +91,10 @@ namespace GisEngine
 		struct IOIDSet;
 		struct IWorkspace;
 		struct IFeature;
+		struct IInsertCursor;
+		struct IUpdateCursor;
+		struct IDeleteCursor;
+		struct ITransaction;
 
 		COMMON_LIB_REFPTR_TYPEDEF(IRow);
 		COMMON_LIB_REFPTR_TYPEDEF(IQueryFilter);
@@ -106,7 +111,10 @@ namespace GisEngine
 		COMMON_LIB_REFPTR_TYPEDEF(IOIDSet);
 		COMMON_LIB_REFPTR_TYPEDEF(IWorkspace);
 		COMMON_LIB_REFPTR_TYPEDEF(IFeature);
-		
+		COMMON_LIB_REFPTR_TYPEDEF(IInsertCursor);
+		COMMON_LIB_REFPTR_TYPEDEF(IUpdateCursor);
+		COMMON_LIB_REFPTR_TYPEDEF(IDeleteCursor);
+		COMMON_LIB_REFPTR_TYPEDEF(ITransaction);
 		
 		struct IWorkspace  : public CommonLib::AutoRefCounter, 
 							 public GisCommon::IStreamSerialize,
@@ -132,8 +140,30 @@ namespace GisEngine
 				virtual ITablePtr GetTable(const CommonLib::CString& name) = 0;
 				virtual IFeatureClassPtr GetFeatureClass(const CommonLib::CString& name) = 0;
 
+				virtual bool IsError() const = 0;
+				virtual uint32 GetErrorCode() const = 0;
+				virtual void GetErrorText( CommonLib::CString& sStr, uint32 nCode) = 0;
+
+				virtual ITransactionPtr startTransaction() = 0;
+
 		};
 
+
+
+		struct  ITransaction : public CommonLib::AutoRefCounter
+		{
+			public:
+				 ITransaction(){}
+				virtual ~ ITransaction(){}
+				virtual bool begin() = 0;
+				virtual bool commit() = 0;
+				virtual bool rolback() = 0;
+				virtual void GetError(CommonLib::CString& sText) = 0;
+
+				virtual IInsertCursorPtr CreateInsertCusor(ITable *pTable, IFieldSet *pFileds = 0) = 0;
+				virtual IUpdateCursorPtr CreateUpdateCusor(ITable *pTable, IFieldSet *pFileds = 0) = 0;
+				virtual IDeleteCursorPtr CreateDeleteCusor(ITable *pTable, IFieldSet *pFileds = 0) = 0;
+		};
 
 		/*struct IDatasetContainer 
 		{
@@ -161,13 +191,13 @@ namespace GisEngine
 		{
 			ITable(){}
 			virtual ~ITable(){}
-			virtual void                 AddField(IField* field) = 0;
-			virtual void                 DeleteField(const CommonLib::CString& fieldName) = 0;
-			virtual IFieldsPtr             GetFields() const  = 0;
-			virtual bool                 HasOIDField() const = 0;
-			virtual const CommonLib::CString& GetOIDFieldName() const = 0;
-			virtual IRowPtr				  GetRow(int64 id) = 0;
-			virtual ICursorPtr			  Search(IQueryFilter* filter, bool recycling) = 0;
+			virtual void						 AddField(IField* field) = 0;
+			virtual void						 DeleteField(const CommonLib::CString& fieldName) = 0;
+			virtual IFieldsPtr					 GetFields() const  = 0;
+			virtual bool						 HasOIDField() const = 0;
+			virtual const CommonLib::CString&	 GetOIDFieldName() const = 0;
+			virtual IRowPtr						 GetRow(int64 id) = 0;
+			virtual ICursorPtr					 Search(IQueryFilter* filter, bool recycling) = 0;
 		};
 
 
@@ -323,28 +353,28 @@ namespace GisEngine
 			IQueryFilter(){}
 			virtual ~IQueryFilter(){}
 			virtual IFieldSetPtr                        GetFieldSet() const = 0;
-			virtual void                              SetFieldSet(IFieldSet* fieldSet) = 0;
-			virtual GisGeometry::ISpatialReferencePtr      GetOutputSpatialReference() const = 0;
-			virtual void                              SetOutputSpatialReference(GisGeometry::ISpatialReference* spatRef) = 0;
+			virtual void                                SetFieldSet(IFieldSet* fieldSet) = 0;
+			virtual GisGeometry::ISpatialReferencePtr   GetOutputSpatialReference() const = 0;
+			virtual void								SetOutputSpatialReference(GisGeometry::ISpatialReference* spatRef) = 0;
 			virtual const CommonLib::CString&           GetWhereClause() const = 0;
-			virtual void                              SetWhereClause(const CommonLib::CString& where) = 0;
+			virtual void								SetWhereClause(const CommonLib::CString& where) = 0;
 			virtual IOIDSetPtr                          GetOIDSet() const = 0;
-			virtual void                              SetOIDSet(IOIDSet* oidSet) = 0;
+			virtual void								SetOIDSet(IOIDSet* oidSet) = 0;
 		};
 
 		struct ISpatialFilter : public IQueryFilter
 		{
 	
 			virtual const CommonLib::CString&    GetShapeField() const = 0;
-			virtual void                    SetShapeField(const CommonLib::CString& name) = 0;
-			virtual CommonLib::IGeoShapePtr	GetShape() const = 0;
-			virtual void                    SetShape( CommonLib::CGeoShape* pShape) = 0;
-			virtual GisBoundingBox			GetBB() const = 0;
-			virtual void                    SetBB(const  GisBoundingBox& bbox ) = 0;
-			virtual double                  GetPrecision() const = 0; 
-			virtual void                    SetPrecision(double precision) = 0;
-			virtual eSpatialRel             GetSpatialRel() const = 0;
-			virtual void                    SetSpatialRel(eSpatialRel rel) = 0;
+			virtual void						 SetShapeField(const CommonLib::CString& name) = 0;
+			virtual CommonLib::IGeoShapePtr		 GetShape() const = 0;
+			virtual void						 SetShape( CommonLib::CGeoShape* pShape) = 0;
+			virtual GisBoundingBox				 GetBB() const = 0;
+			virtual void						 SetBB(const  GisBoundingBox& bbox ) = 0;
+			virtual double						 GetPrecision() const = 0; 
+			virtual void						 SetPrecision(double precision) = 0;
+			virtual eSpatialRel					 GetSpatialRel() const = 0;
+			virtual void						 SetSpatialRel(eSpatialRel rel) = 0;
 		};
 
 
@@ -378,12 +408,12 @@ namespace GisEngine
 		{
 			IDomain(){}
 			virtual ~IDomain(){}
-			virtual const CommonLib::CString& GetName() const = 0;
-			virtual void                 SetName(const CommonLib::CString& name) = 0;
-			virtual const CommonLib::CString& GetDescription() const = 0;
-			virtual void                 SetDescription(const CommonLib::CString& description) = 0;
-			virtual CommonLib::eDataTypes  GetFieldType() const = 0;
-			virtual void                 SetFieldType(CommonLib::eDataTypes ) = 0;
+			virtual const CommonLib::CString&		GetName() const = 0;
+			virtual void							SetName(const CommonLib::CString& name) = 0;
+			virtual const CommonLib::CString&		GetDescription() const = 0;
+			virtual void							SetDescription(const CommonLib::CString& description) = 0;
+			virtual CommonLib::eDataTypes			GetFieldType() const = 0;
+			virtual void							SetFieldType(CommonLib::eDataTypes ) = 0;
 		};
 	}
 }

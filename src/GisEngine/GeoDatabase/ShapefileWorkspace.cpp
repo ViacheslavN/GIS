@@ -369,5 +369,10 @@ namespace GisEngine
 			return true;
 		}
 
+		ITransactionPtr CShapefileWorkspace::startTransaction()
+		{
+			return ITransactionPtr();
+		}
+
 	}
 }

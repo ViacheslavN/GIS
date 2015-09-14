@@ -11,6 +11,7 @@
 #include <tchar.h>
 #include "../../Common/GisEngineCommon.h"
 #include "../../Common/GisCommonLib.h"
+#include "../../GeoDatabase/GeoDatabase.h"
 #include "../../../CommonLibrary/CommonLibrary/CommonLib_lib.h"
-
+#include "../../GeoDatabase/GeoDatabaseLib.h"
 // TODO: reference additional headers your program requires here

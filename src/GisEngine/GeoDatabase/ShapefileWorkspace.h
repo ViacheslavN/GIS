@@ -59,7 +59,10 @@ namespace GisEngine
 				virtual IFeatureClassPtr GetFeatureClass(const CommonLib::CString& name);
 
 
-
+				virtual bool IsError() const {return false;}
+				virtual uint32 GetErrorCode() const {return 0;}
+				virtual void GetErrorText( CommonLib::CString& sStr, uint32 nCode) {}
+				virtual ITransactionPtr startTransaction();
 
  			private:
 				void load();

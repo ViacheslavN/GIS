@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include "TestSQLiteWks.h"
 void testLoadXML();
 void TestXML();
 #include <memory>
@@ -18,8 +19,9 @@ typedef std::shared_ptr<ITest> TIShared;
 typedef std::map<ITestPtr, int> TtestMap;
 int _tmain(int argc, _TCHAR* argv[])
 {
+	TestSQLiteWks();
  
-	TestXML();
+	//TestXML();
 	return 0;
 }
 
