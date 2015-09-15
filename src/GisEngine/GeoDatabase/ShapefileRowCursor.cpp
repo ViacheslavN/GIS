@@ -8,144 +8,148 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
-		CShapefileRowCursor::CShapefileRowCursor(IQueryFilter* filter, bool recycling, CShapefileFeatureClass* pFClass) :
-			shp_(pFClass->GetSHP())
-			, dbf_(pFClass->GetDBF())
-			, cacheObject_(NULL)
-			, parentFC_(pFClass)
-			, invalidCursor_(false)
-			, recycling_(recycling)
+		CShapefileRowCursor::CShapefileRowCursor(IQueryFilter* pFilter, bool recycling, CShapefileFeatureClass* pFClass) :
+			TBase(pFilter, recycling, (ITable*)pFClass),
+				m_pShp(pFClass->GetSHP())
+			, m_pDbf(pFClass->GetDBF())
+			, m_pCacheObject(NULL)
+			, m_pParentFC(pFClass)
+			, m_bInvalidCursor(false)
+			, m_nCurrentRowID(-1)
+			//, m_bRecycling(recycling)
 		{
 		
-			filter_ = filter;
+			m_bInvalidCursor = !m_pParentFC->reload(false);
 
-			if(!filter_->GetWhereClause().isEmpty())
+			/*m_pFilter = filter;
+
+			if(!m_pFilter->GetWhereClause().isEmpty())
 			{
 				 //TO DO set fields
 			}
-			sourceFields_ = parentFC_->GetFields();
+			m_pSourceFields = m_pParentFC->GetFields();
 
-			invalidCursor_ = !parentFC_->reload(false);
-			int fieldCount = sourceFields_->GetFieldCount();
-			fieldsExists_.resize(fieldCount, 0);
-			actualFieldsIndexes_.clear();
+			m_bInvalidCursor = !m_pParentFC->reload(false);
+			int fieldCount = m_pSourceFields->GetFieldCount();
+			m_vecFieldsExists.resize(fieldCount, 0);
+			m_vecActualFieldsIndexes.clear();
 
 
 			CommonLib::CString field;
-			filter_->GetFieldSet()->Reset();
+			m_pFilter->GetFieldSet()->Reset();
 
-			oidFieldIndex_ = -1;
-			shapeFieldIndex_ = -1;
-			annoFieldIndex_ = -1;
+			m_nOidFieldIndex = -1;
+			m_nShapeFieldIndex = -1;
+			m_nAnnoFieldIndex = -1;
 
-			while(filter_->GetFieldSet()->Next(&field))
+			while(m_pFilter->GetFieldSet()->Next(&field))
 			{
 				if(field == L"*")
 				{
-					filter_->GetFieldSet()->Clear();
+					m_pFilter->GetFieldSet()->Clear();
 					for(int i = 0; i < fieldCount; ++i)
 					{
-						IFieldPtr field = sourceFields_->GetField(i);
-						filter_->GetFieldSet()->Add(field->GetName());
+						IFieldPtr field = m_pSourceFields->GetField(i);
+						m_pFilter->GetFieldSet()->Add(field->GetName());
 					}
 
-					filter_->GetFieldSet()->Reset();
-					actualFieldsIndexes_.clear();
-					actualFieldsTypes_.clear();
+					m_pFilter->GetFieldSet()->Reset();
+					m_vecActualFieldsIndexes.clear();
+					m_vecActualFieldsTypes.clear();
 					continue;
 				}
-				int fieldIndex = sourceFields_->FindField(field);
-				fieldsExists_[fieldIndex] = 1;
-				actualFieldsIndexes_.push_back(fieldIndex);
-				actualFieldsTypes_.push_back(sourceFields_->GetField(fieldIndex)->GetType());
+				int fieldIndex = m_pSourceFields->FindField(field);
+				m_vecFieldsExists[fieldIndex] = 1;
+				m_vecActualFieldsIndexes.push_back(fieldIndex);
+				m_vecActualFieldsTypes.push_back(m_pSourceFields->GetField(fieldIndex)->GetType());
 
-				if(actualFieldsTypes_.back() == dtOid && oidFieldIndex_ < 0)
-					oidFieldIndex_ = fieldIndex;
-				if(actualFieldsTypes_.back() == dtGeometry && (shapeFieldIndex_ < 0 || shapeFieldIndex_ > fieldIndex))
-					shapeFieldIndex_ = fieldIndex;
-				if(actualFieldsTypes_.back() == dtAnnotation && (annoFieldIndex_ < 0 || annoFieldIndex_ > fieldIndex))
-					annoFieldIndex_ = fieldIndex;
+				if(m_vecActualFieldsTypes.back() == dtOid && m_nOidFieldIndex < 0)
+					m_nOidFieldIndex = fieldIndex;
+				if(m_vecActualFieldsTypes.back() == dtGeometry && (m_nShapeFieldIndex < 0 || m_nShapeFieldIndex > fieldIndex))
+					m_nShapeFieldIndex = fieldIndex;
+				if(m_vecActualFieldsTypes.back() == dtAnnotation && (m_nAnnoFieldIndex < 0 || m_nAnnoFieldIndex > fieldIndex))
+					m_nAnnoFieldIndex = fieldIndex;
 			}
 
 			// Change fieldset to right names (from DB)
-			int actualfieldCount = (int)actualFieldsIndexes_.size();
+			int actualfieldCount = (int)m_vecActualFieldsIndexes.size();
 			IFieldSetPtr fieldSet(new CFieldSet());
 			for(int i = 0; i < actualfieldCount; ++i)
-				fieldSet->Add(sourceFields_->GetField(actualFieldsIndexes_[i])->GetName());
+				fieldSet->Add(m_pSourceFields->GetField(m_vecActualFieldsIndexes[i])->GetName());
 			fieldSet->Reset();
-			filter_->SetFieldSet(fieldSet.get());
+			m_pFilter->SetFieldSet(fieldSet.get());
 
-			IOIDSetPtr oidSet = filter_->GetOIDSet();
+			IOIDSetPtr oidSet = m_pFilter->GetOIDSet();
 			oidSet->Reset();
 
 			int oid;
 			while(oidSet->Next(&oid))
-				oids_.push_back(oid);
+				m_vecOids.push_back(oid);
 
-			std::sort(oids_.begin(), oids_.end());
+			std::sort(m_vecOids.begin(), m_vecOids.end());
 
-			rowIDIt_ = oids_.begin();
+			m_RowIDIt = m_vecOids.begin();
 
 			// Spatial queries
 		
-				GisGeometry::ISpatialReferencePtr spatRefOutput(filter_->GetOutputSpatialReference());
+				GisGeometry::ISpatialReferencePtr spatRefOutput(m_pFilter->GetOutputSpatialReference());
 				GisGeometry::ISpatialReferencePtr spatRefSource(pFClass->GetSpatialReference());
 
-				ISpatialFilter* spatFilter = (ISpatialFilter*)filter_.get();
-				spatialRel_ =  srlUndefined;
+				ISpatialFilter* spatFilter = (ISpatialFilter*)m_pFilter.get();
+				m_spatialRel =  srlUndefined;
 				if(spatFilter)
-					spatialRel_ = spatFilter->GetSpatialRel();
+					m_spatialRel = spatFilter->GetSpatialRel();
 
-				if(spatialRel_ != srlUndefined)
+				if(m_spatialRel != srlUndefined)
 				{
 					if(spatFilter->GetBB().type == CommonLib::bbox_type_normal)
 					{
-						extentOutput_ = new GisGeometry::CEnvelope(spatFilter->GetBB(), spatRefOutput.get());
-						extentSource_ = new GisGeometry::CEnvelope(spatFilter->GetBB(), spatRefOutput.get());
-						extentOutput_->Project(spatRefOutput.get());
-						extentSource_->Project(spatRefSource.get());
+						m_pExtentOutput = new GisGeometry::CEnvelope(spatFilter->GetBB(), spatRefOutput.get());
+						m_pExtentSource = new GisGeometry::CEnvelope(spatFilter->GetBB(), spatRefOutput.get());
+						m_pExtentOutput->Project(spatRefOutput.get());
+						m_pExtentSource->Project(spatRefSource.get());
 					}
 					else
 					{
 						CommonLib::IGeoShapePtr pShape(spatFilter->GetShape());
-						extentOutput_ = new GisGeometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
-						extentSource_ = new GisGeometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
-						extentOutput_->Project(spatRefOutput.get());
-						extentSource_->Project(spatRefSource.get());
+						m_pExtentOutput = new GisGeometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
+						m_pExtentSource = new GisGeometry::CEnvelope(pShape->getBB(), spatRefOutput.get());
+						m_pExtentOutput->Project(spatRefOutput.get());
+						m_pExtentSource->Project(spatRefSource.get());
 					}
 					
 				}
 				else
 				{
-					extentOutput_ = new GisGeometry::CEnvelope(GisBoundingBox(), spatRefOutput.get());
-					extentSource_ = new GisGeometry::CEnvelope(GisBoundingBox(), spatRefSource.get());
+					m_pExtentOutput = new GisGeometry::CEnvelope(GisBoundingBox(), spatRefOutput.get());
+					m_pExtentSource = new GisGeometry::CEnvelope(GisBoundingBox(), spatRefSource.get());
 				}
 
-				needTransform_ = spatRefOutput != NULL 
+				m_bNeedTransform = spatRefOutput != NULL 
 					&& spatRefSource != NULL 
 					&& !spatRefOutput->IsEqual(spatRefSource.get());
-				
+				*/
 
-			if(!invalidCursor_)
+			if(!m_bInvalidCursor)
 			{
-				currentRowID_ = oids_.size() ? *rowIDIt_ : 0;
-				ShapeLib::SHPGetInfo(shp_->file, &recordCount_, NULL, NULL, NULL);
+				m_nCurrentRowID = m_vecOids.size() ? *m_RowIDIt : 0;
+				ShapeLib::SHPGetInfo(m_pShp->file, &m_nRecordCount, NULL, NULL, NULL);
 			
 			}
 		}
 
 		CShapefileRowCursor::~CShapefileRowCursor()
 		{
-			if(cacheObject_)
-				ShapeLib::SHPDestroyObject(cacheObject_);
+			if(m_pCacheObject)
+				ShapeLib::SHPDestroyObject(m_pCacheObject);
 
-			if(!invalidCursor_)
-				parentFC_->close();
+			if(!m_bInvalidCursor)
+				m_pParentFC->close();
 		}
 
 		bool CShapefileRowCursor::NextRowEx(IRowPtr* row, IRow* rowCache)
 		{
-			if(invalidCursor_)
+			if(m_bInvalidCursor)
 				return false;
 
 			bool recordGood = false;
@@ -154,40 +158,40 @@ namespace GisEngine
 			{
 				if(EOC())
 				{
-					currentRow_.reset();
+					m_pCurrentRow.reset();
 					row->reset();
 					return false;
 				}
 
-				if(rowCache || !currentRow_ || !recycling_)
+				if(rowCache || !m_pCurrentRow || !m_bRecycling)
 				{
 					if(rowCache)
-						currentRow_ = rowCache;
+						m_pCurrentRow = rowCache;
 					else
-						currentRow_ = new  CFeature(filter_->GetFieldSet().get(), sourceFields_.get());
-					if(shapeFieldIndex_ >= 0 && IsFieldSelected(shapeFieldIndex_))
+						m_pCurrentRow = new  CFeature(m_pFilter->GetFieldSet().get(), m_pSourceFields.get());
+					if(m_nShapeFieldIndex >= 0 && IsFieldSelected(m_nShapeFieldIndex))
 					{
-						IFeature* feature = (IFeature*)(currentRow_.get());
+						IFeature* feature = (IFeature*)(m_pCurrentRow.get());
 						if(feature)
 						{
-							cacheShape_ = new CommonLib::CGeoShape();
-							feature->SetShape(cacheShape_.get());
+							m_pCacheShape = new CommonLib::CGeoShape();
+							feature->SetShape(m_pCacheShape.get());
 						}
 					}
 				}
 
-				recordGood = FillRow(currentRow_.get());
+				recordGood = FillRow(m_pCurrentRow.get());
 
 				SimpleNext();
 				
 			}
 
-			*row = currentRow_.get();
+			*row = m_pCurrentRow.get();
 
 			if(rowCache)
 			{
-				cacheShape_.reset();
-				currentRow_.reset();
+				m_pCacheShape.reset();
+				m_pCurrentRow.reset();
 			}
 
 			return true;
@@ -202,19 +206,19 @@ namespace GisEngine
 
 		bool CShapefileRowCursor::FillRow(IRow* row)
 		{
-			for(int i = 0; i < (int)actualFieldsIndexes_.size(); ++i)
+			for(int i = 0; i < (int)m_vecActualFieldsIndexes.size(); ++i)
 			{
-				int fieldIndex = actualFieldsIndexes_[i];
+				int fieldIndex = m_vecActualFieldsIndexes[i];
 
 				CommonLib::CVariant* pValue = row->GetValue(fieldIndex);
 
-				if(actualFieldsTypes_[i] == dtOid) // OID
+				if(m_vecActualFieldsTypes[i] == dtOid) // OID
 				{				
-					*pValue = (int)currentRowID_;
+					*pValue = (int)m_nCurrentRowID;
 					continue;
 				}
 
-				if(actualFieldsTypes_[i] == dtGeometry) // Shape
+				if(m_vecActualFieldsTypes[i] == dtGeometry) // Shape
 				{
 					continue;
 				}
@@ -224,10 +228,10 @@ namespace GisEngine
 				double dblVal;
 				int intVal;
 		
-				switch(actualFieldsTypes_[i])
+				switch(m_vecActualFieldsTypes[i])
 				{
 					case dtString:
-						strVal = ShapeLib::DBFReadStringAttribute(dbf_->file, currentRowID_, shpFieldIndex);
+						strVal = ShapeLib::DBFReadStringAttribute(m_pDbf->file, m_nCurrentRowID, shpFieldIndex);
 						*pValue  = strVal;
 						break;
 					case dtInteger8:
@@ -236,11 +240,11 @@ namespace GisEngine
 					case dtUInteger8:
 					case dtUInteger16:
 					case dtUInteger32:
-						intVal = ShapeLib::DBFReadIntegerAttribute(dbf_->file, currentRowID_, shpFieldIndex);
+						intVal = ShapeLib::DBFReadIntegerAttribute(m_pDbf->file, m_nCurrentRowID, shpFieldIndex);
 						*pValue  = intVal;
 						break;
 					case dtDouble:
-						dblVal = ShapeLib::DBFReadDoubleAttribute(dbf_->file, currentRowID_, shpFieldIndex);
+						dblVal = ShapeLib::DBFReadDoubleAttribute(m_pDbf->file, m_nCurrentRowID, shpFieldIndex);
 						*pValue  = dblVal;
 						break;
 					default:
@@ -248,31 +252,31 @@ namespace GisEngine
 				}
 			}
 
-			if(shapeFieldIndex_ >= 0) // Shape
+			if(m_nShapeFieldIndex >= 0) // Shape
 			{
-				cacheObject_ = ShapeLib::SHPReadObject(shp_->file, currentRowID_);
-				if(!cacheShape_.get())
-					cacheShape_ = new CommonLib::CGeoShape();
-				ShapefileUtils::SHPObjectToGeometry(cacheObject_, *cacheShape_);
-				if ( cacheObject_ )
+				m_pCacheObject = ShapeLib::SHPReadObject(m_pShp->file, m_nCurrentRowID);
+				if(!m_pCacheShape.get())
+					m_pCacheShape = new CommonLib::CGeoShape();
+				ShapefileUtils::SHPObjectToGeometry(m_pCacheObject, *m_pCacheShape);
+				if ( m_pCacheObject )
 				{
-					ShapeLib::SHPDestroyObject(cacheObject_);
-					cacheObject_ = 0;
+					ShapeLib::SHPDestroyObject(m_pCacheObject);
+					m_pCacheObject = 0;
 				}
 				// end bb changes
 
-				if(!AlterShape(cacheShape_.get()))
+				if(!AlterShape(m_pCacheShape.get()))
 					return false;
 
 				if(IFeature *pFeature = (IFeature *)row)
 				{
 					//CommonLib::IGeoShapePtr pShape = pFeature->GetShape();
-					pFeature->SetShape(cacheShape_.get());
+					pFeature->SetShape(m_pCacheShape.get());
 				}
 				else
 				{
-					CommonLib::CVariant* pShapeVar = row->GetValue(shapeFieldIndex_);
-					*pShapeVar  = CommonLib::IRefObjectPtr(cacheShape_.get());
+					CommonLib::CVariant* pShapeVar = row->GetValue(m_nShapeFieldIndex);
+					*pShapeVar  = CommonLib::IRefObjectPtr(m_pCacheShape.get());
 				}
 			
 			}
@@ -284,14 +288,14 @@ namespace GisEngine
 		bool CShapefileRowCursor::AlterShape(CommonLib::CGeoShape* pShape) const
 		{
 			if(!pShape)
-				return !(extentOutput_->GetBoundingBox().type & CommonLib::bbox_type_normal);
+				return !(m_pExtentOutput->GetBoundingBox().type & CommonLib::bbox_type_normal);
 
-			if (needTransform_&& pShape)
-				extentSource_->GetSpatialReference()->Project(extentOutput_->GetSpatialReference().get(), pShape);
+			if (m_bNeedTransform&& pShape)
+				m_pExtentSource->GetSpatialReference()->Project(m_pExtentOutput->GetSpatialReference().get(), pShape);
 		
 
 			GisBoundingBox boxShape = pShape->getBB();
-			GisBoundingBox boxOutput = extentOutput_->GetBoundingBox();
+			GisBoundingBox boxOutput = m_pExtentOutput->GetBoundingBox();
 			if((boxShape.type & CommonLib::bbox_type_normal) && (boxOutput.type & CommonLib::bbox_type_normal))
 			{
 				if (boxShape.xMin > boxOutput.xMax || boxShape.xMax < boxOutput.xMin || 
@@ -307,10 +311,10 @@ namespace GisEngine
 
 		bool CShapefileRowCursor::EOC()
 		{
-			if(invalidCursor_)
+			if(m_bInvalidCursor)
 				return true;
 
-			if(currentRowID_ >= recordCount_ || (oids_.size() > 0 && rowIDIt_ == oids_.end()))
+			if(m_nCurrentRowID >= m_nRecordCount || (m_vecOids.size() > 0 && m_RowIDIt == m_vecOids.end()))
 				return true;
 
 			return false;
@@ -318,14 +322,14 @@ namespace GisEngine
 
 		void CShapefileRowCursor::SimpleNext()
 		{
-			if(oids_.size())
+			if(m_vecOids.size())
 			{
-				++rowIDIt_;
-				if(rowIDIt_ != oids_.end())
-					currentRowID_ = *rowIDIt_;
+				++m_RowIDIt;
+				if(m_RowIDIt != m_vecOids.end())
+					m_nCurrentRowID = *m_RowIDIt;
 			}
 			else
-				++currentRowID_;
+				++m_nCurrentRowID;
 		}
 
 	}

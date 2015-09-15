@@ -14,11 +14,12 @@ namespace GisEngine
 		const wchar_t CShapefileWorkspace::c_PropertyPath[] = L"PATH";
 
 
-		CShapefileWorkspace::TWksMap CShapefileWorkspace::m_wksMap;
-		CommonLib::CSSection CShapefileWorkspace::m_SharedMutex;
 
-		CShapefileWorkspace::CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr) : m_bLoad(false)
+
+		CShapefileWorkspace::CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr) : TBase(wiShapeFile),
+			m_bLoad(false)
 		{
+			m_WorkspaceType = wiShapeFile;
 			m_ConnectProp = protSetPtr;
 			const CommonLib::CVariant *pVarName = m_ConnectProp->GetProperty(c_PropertyName);
 			const CommonLib::CVariant *pVarPath = m_ConnectProp->GetProperty(c_PropertyPath);
@@ -33,9 +34,10 @@ namespace GisEngine
 			}
 			load();
 		}
-		CShapefileWorkspace::CShapefileWorkspace(const wchar_t *pszName, const wchar_t *pszPath) : m_bLoad(false),  m_sName(pszName)
+		CShapefileWorkspace::CShapefileWorkspace(const wchar_t *pszName, const wchar_t *pszPath) : TBase(wiShapeFile), 
+			m_bLoad(false)
 		{
-
+			m_sName = pszName;
 			m_sPath = ShapefileUtils::NormalizePath(pszPath);
 
 			m_ConnectProp = new GisCommon::CPropertySet();
@@ -51,50 +53,7 @@ namespace GisEngine
 		{
 
 		}
-		const CommonLib::CString& CShapefileWorkspace::GetWorkspaceName() const
-		{
-			return m_sPath;
-		}
-		GisCommon::IPropertySetPtr  CShapefileWorkspace::GetConnectionProperties() const
-		{
-			return m_ConnectProp;
-		}
-		eWorkspaceID CShapefileWorkspace::GetWorkspaceID() const
-		{
-			return wiShapeFile;
-		}
-		/*IDatasetContainer* CShapefileWorkspace::GetDatasetContainer()
-		{
-			return &m_DatasetContainer;
-		}*/
-
-		uint32 CShapefileWorkspace::GetDatasetCount() const
-		{
-			CommonLib::CSSection::scoped_lock lock (m_mutex);
-			return m_vecDatasets.size();
-		}
-		IDatasetPtr CShapefileWorkspace::GetDataset(uint32 nIdx) const
-		{
-			CommonLib::CSSection::scoped_lock lock (m_mutex);
-			return m_vecDatasets[nIdx];
-		}
-		void CShapefileWorkspace::RemoveDataset(uint32 nIdx)
-		{
-			CommonLib::CSSection::scoped_lock lock (m_mutex);
-			assert(nIdx < m_vecDatasets.size());
-			m_DataSetMap.erase(m_vecDatasets[nIdx]->GetDatasetName());
-			m_vecDatasets.erase(m_vecDatasets.begin() + nIdx);
-		}
-		void CShapefileWorkspace::RemoveDataset(IDataset *pDataset)
-		{
-			CommonLib::CSSection::scoped_lock lock (m_mutex);
-			TVecDataset::iterator it = std::find(m_vecDatasets.begin(), m_vecDatasets.end(), pDataset);
-			if(it != m_vecDatasets.end())
-			{
-				m_DataSetMap.erase((*it)->GetDatasetName());
-				m_vecDatasets.erase(it);
-			}
-		}
+	
 	 
 		void CShapefileWorkspace::load()
 		{
@@ -149,7 +108,7 @@ namespace GisEngine
 		
 			TDatasetMap::iterator it = m_DataSetMap.find(sName);
 			if(it != m_DataSetMap.end())
-				return IFeatureClassPtr((IFeatureClass*)it->second);
+				return IFeatureClassPtr((IFeatureClass*)it->second.get());
 
 
 			if(sName.isEmpty())
@@ -288,30 +247,22 @@ namespace GisEngine
 		{
 			return ITablePtr();
 		}
-		IFeatureClassPtr CShapefileWorkspace::GetFeatureClass(const CommonLib::CString& sName)
-		{
-			TDatasetMap::iterator it = m_DataSetMap.find(sName);
-			if(it == m_DataSetMap.end())
-				return IFeatureClassPtr();
-			return IFeatureClassPtr((IFeatureClass*)it->second);
-		}
+	 
 
 
 		IWorkspacePtr CShapefileWorkspace::Open(const wchar_t *pszName, const wchar_t *pszPath)
 		{
-			CommonLib::CSSection::scoped_lock lock (m_SharedMutex);
-			TWksMap::iterator it = m_wksMap.find(pszPath);
-			if(it != m_wksMap.end())
-				return it->second;
+		
+			IWorkspacePtr pWks = CWorkspaceHolder::GetWorkspace(wiShapeFile, pszPath);
+			if(pWks.get())
+				return pWks;
 
-			IWorkspacePtr pWks((IWorkspace*)(new CShapefileWorkspace(pszName, pszPath)));
-			m_wksMap.insert(std::make_pair(CommonLib::CString(pszPath), pWks));
-			return pWks;
+			CShapefileWorkspace* pShapeWks = new CShapefileWorkspace(pszName, pszPath);
+			CWorkspaceHolder::AddWorkspace((IWorkspace*)pShapeWks, pszPath);
+			return IWorkspacePtr((IWorkspace*)pShapeWks);
 		}
 		IWorkspacePtr CShapefileWorkspace::Open(CommonLib::IReadStream* pSteram)
 		{
-			CommonLib::CSSection::scoped_lock lock (m_SharedMutex);
-		
 
 			CommonLib::CString sName;
 			CommonLib::CString sPath;
@@ -330,7 +281,6 @@ namespace GisEngine
 		}
 		IWorkspacePtr CShapefileWorkspace::Open(GisCommon::IXMLNode *pNode)
 		{
-			CommonLib::CSSection::scoped_lock lock (m_SharedMutex);
 
 			CommonLib::CString sName = pNode->GetPropertyString("name", sName);
 			CommonLib::CString sPath = pNode->GetPropertyString("path", sPath);
@@ -341,7 +291,7 @@ namespace GisEngine
 
 		bool CShapefileWorkspace::save(CommonLib::IWriteStream *pWriteStream) const
 		{
-			pWriteStream->write(uint32(GetWorkspaceID()));
+			pWriteStream->write(uint32(GetWorkspaceType()));
 			pWriteStream->write(m_sName);
 			pWriteStream->write(m_sPath);
 			return true;
@@ -356,7 +306,7 @@ namespace GisEngine
 
 		bool CShapefileWorkspace::saveXML(GisCommon::IXMLNode* pXmlNode) const
 		{
-			pXmlNode->AddPropertyInt32U("ID", uint32(GetWorkspaceID()));
+			pXmlNode->AddPropertyInt32U("ID", uint32(GetWorkspaceType()));
 			pXmlNode->AddPropertyString("name", m_sName);
 			pXmlNode->AddPropertyString("path", m_sPath);
 			return true;

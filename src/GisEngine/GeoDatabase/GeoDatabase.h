@@ -39,9 +39,10 @@ namespace GisEngine
 			dtAnnotation 
 		};
 
-		enum eWorkspaceID
+		enum eWorkspaceType
 		{
-			wiShapeFile = 1,
+			wiUndefined = 0,
+			wiShapeFile,
 			wiEmbDB,
 			wiSqlLite,
 			wiSpatialLite,
@@ -124,7 +125,7 @@ namespace GisEngine
 				virtual ~IWorkspace(){}
 				virtual const CommonLib::CString& GetWorkspaceName() const = 0; 
 				virtual GisCommon::IPropertySetPtr GetConnectionProperties() const = 0; 
-				virtual eWorkspaceID GetWorkspaceID() const = 0;
+				virtual eWorkspaceType GetWorkspaceType() const = 0;
 				//virtual IDatasetContainer* GetDatasetContainer() = 0;
 				virtual uint32 GetDatasetCount() const = 0;
 				virtual IDatasetPtr GetDataset(uint32 nIdx) const = 0;
@@ -155,7 +156,6 @@ namespace GisEngine
 			public:
 				 ITransaction(){}
 				virtual ~ ITransaction(){}
-				virtual bool begin() = 0;
 				virtual bool commit() = 0;
 				virtual bool rolback() = 0;
 				virtual void GetError(CommonLib::CString& sText) = 0;
@@ -180,7 +180,7 @@ namespace GisEngine
 			IDataset(){}
 			virtual ~IDataset(){}
 			virtual eDatasetType  GetDatasetType() const = 0;
-			virtual IWorkspace*    GetWorkspace() const = 0;
+			virtual IWorkspacePtr    GetWorkspace() const = 0;
 			virtual const CommonLib::CString&   GetDatasetName() const = 0;
 			virtual const CommonLib::CString&   GetDatasetViewName() const = 0;
 		};

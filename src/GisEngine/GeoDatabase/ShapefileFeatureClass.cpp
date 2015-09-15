@@ -12,23 +12,26 @@ namespace GisEngine
 	namespace GeoDatabase
 	{
 		CShapefileFeatureClass::CShapefileFeatureClass(IWorkspace *pWorkSpace, const CommonLib::CString& sPath, 
-			const CommonLib::CString& sName, const CommonLib::CString& sViewName) :
-			m_pWorkSpace(pWorkSpace), m_sPath(sPath), m_sName(sName), m_sViewName(sViewName), m_ShapeType(CommonLib::shape_type_null)
+			const CommonLib::CString& sName, const CommonLib::CString& sViewName) : TBase(pWorkSpace),
+			m_sPath(sPath)/*, m_ShapeType(CommonLib::shape_type_null)*/
 		{
+
+			m_sDatasetName = sName;
+			m_sDatasetViewName = sViewName;
 		/*	if(m_sName.isEmpty())
 			{
 				m_sPath = CommonLib::FileSystem::FindFilePath(m_sPath);
 				m_sName = CommonLib::FileSystem::FindFileName(m_sName);
 			}*/
 
-			m_FieldsPtr = new CFields();
+			//m_FieldsPtr = new CFields();
 		}
 		CShapefileFeatureClass::~CShapefileFeatureClass()
 		{
 
 		}
 
-		void CShapefileFeatureClass::AddField(IField* pField)
+	/*	void CShapefileFeatureClass::AddField(IField* pField)
 		{
 			
 		}
@@ -47,7 +50,7 @@ namespace GisEngine
 		const CommonLib::CString& CShapefileFeatureClass::GetOIDFieldName() const
 		{
 			return m_sOIDName;
-		}
+		}*/
 		IRowPtr	CShapefileFeatureClass::GetRow(int64 id)
 		{
 			return IRowPtr();
@@ -58,7 +61,7 @@ namespace GisEngine
 		}
 
 		//IFeatureClass
-		CommonLib::eShapeType CShapefileFeatureClass::GetGeometryType() const
+		/*CommonLib::eShapeType CShapefileFeatureClass::GetGeometryType() const
 		{
 			return m_ShapeType;
 		}
@@ -73,7 +76,7 @@ namespace GisEngine
 		GisGeometry::ISpatialReferencePtr CShapefileFeatureClass::GetSpatialReference() const
 		{
 			return m_pSpatialReferencePtr;
-		}
+		}*/
 		void CShapefileFeatureClass::close()
 		{
 			m_shp.clear();
@@ -82,21 +85,21 @@ namespace GisEngine
 
 		CommonLib::CString CShapefileFeatureClass::GetFullName()
 		{
-			CommonLib::CString sFullName = m_sPath + m_sViewName + L".shp";
+			CommonLib::CString sFullName = m_sPath + m_sDatasetViewName + L".shp";
 			return sFullName;
 		}
 
 		bool CShapefileFeatureClass::reload(bool write)
 		{
-			if(m_sPath.isEmpty() || m_sViewName.isEmpty())
+			if(m_sPath.isEmpty() || m_sDatasetViewName.isEmpty())
 				return false; //TO DO Error log
 
-			m_FieldsPtr->Clear();
+			m_pFields->Clear();
 			m_pExtent.release();
 			m_pSpatialReferencePtr.release();
-			
+			m_bHashOID = false;
 
-			CommonLib::CString filePathBase = m_sPath + m_sViewName;
+			CommonLib::CString filePathBase = m_sPath + m_sDatasetViewName;
 			CommonLib::CString shpFilePath = filePathBase + L".shp";
 			CommonLib::CString dbfFilePath = filePathBase + L".dbf";
 			CommonLib::CString prjFileName = filePathBase + L".prj";
@@ -166,7 +169,7 @@ namespace GisEngine
 				 pFieldPtr->SetLength(length);
 				 pFieldPtr->SetPrecision(precision);
 				 pFieldPtr->SetScale(scale);
-				 m_FieldsPtr->AddField(pFieldPtr.get());
+				 m_pFields->AddField(pFieldPtr.get());
 			 }
 			 m_pShapeField = new CField();
 			 m_pShapeField->SetGeometryDef(pGeometryDefPtr.get());
@@ -174,11 +177,11 @@ namespace GisEngine
 
 			 m_sShapeFieldName = L"Shape";
 			 int i = 0;
-			 while(m_FieldsPtr->FieldExists(m_sShapeFieldName))
+			 while(m_pFields->FieldExists(m_sShapeFieldName))
 				 m_sShapeFieldName.format(L"Shape%d", i++);
 			
 			 m_pShapeField->SetName(m_sShapeFieldName);
-			 m_FieldsPtr->AddField(m_pShapeField.get());
+			 m_pFields->AddField(m_pShapeField.get());
 			 m_sShapeFieldName = m_pShapeField->GetName();
 
 
@@ -188,12 +191,13 @@ namespace GisEngine
 			 pOidField->SetIsNullable(false);
 			 pOidField->SetIsRequired(true);;
 			 pOidField->SetType(dtOid);
-			 m_sOIDName = L"ObjectID";
+			 m_sOIDFieldName = L"ObjectID";
+			 m_bHashOID = true;
 			 i = 0;
-			 while(m_FieldsPtr->FieldExists(m_sOIDName))
-				 m_sOIDName.format(L"ObjectID%d", i++);
-			 pOidField->SetName(m_sOIDName);
-			 m_FieldsPtr->AddField(pOidField.get());
+			 while(m_pFields->FieldExists(m_sOIDFieldName))
+				 m_sOIDFieldName.format(L"ObjectID%d", i++);
+			 pOidField->SetName(m_sOIDFieldName);
+			 m_pFields->AddField(pOidField.get());
 
 
 			 return true;

@@ -6,23 +6,22 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
+ 
 
-		CSQLiteWorkspace::TWksMap CSQLiteWorkspace::m_wksMap;
-		CommonLib::CSSection CSQLiteWorkspace::m_SharedMutex;
-
-		CSQLiteWorkspace::CSQLiteWorkspace() : m_pConn(0), m_precordSet(0)
+		CSQLiteWorkspace::CSQLiteWorkspace() : TBase (wiSqlLite), m_pConn(0), m_precordSet(0)
 		{
-			sqlite3_initialize();
+			m_WorkspaceType = wiSqlLite;
+		//	sqlite3_initialize();
 		}
 		CSQLiteWorkspace::~CSQLiteWorkspace()
 		{
 			close();
-			sqlite3_shutdown();
+		//	sqlite3_shutdown();
 		}
-		CSQLiteWorkspace::CSQLiteWorkspace(const wchar_t *pszName, const wchar_t *pszPath) :
-			m_sName(pszName), m_sPath(pszPath)
+		CSQLiteWorkspace::CSQLiteWorkspace(const wchar_t *pszName, const wchar_t *pszPath) : TBase (wiSqlLite),
+			m_sPath(pszPath)
 		{
-
+			m_sName = pszName;
 		}
 		IWorkspacePtr CSQLiteWorkspace::Create(const wchar_t *pszName, const wchar_t *pszPath)
 		{
@@ -42,8 +41,8 @@ namespace GisEngine
 				//TO DO Error
 				return IWorkspacePtr();
 			}
-
-			if(m_wksMap.find(sFullName) != m_wksMap.end())
+			IWorkspacePtr pWks = CWorkspaceHolder::GetWorkspace(wiSqlLite, sFullName);
+			if(pWks.get())
 			{
 				//TO DO Error
 				return IWorkspacePtr();
@@ -62,9 +61,8 @@ namespace GisEngine
 				delete pSQLiteWks;
 				return IWorkspacePtr();
 			}
-
-			m_wksMap.insert(std::make_pair(sFullName, IWorkspacePtr(pSQLiteWks)));
-			return IWorkspacePtr(pSQLiteWks);
+			CWorkspaceHolder::AddWorkspace((IWorkspace*)pSQLiteWks, pszPath);
+			return IWorkspacePtr((IWorkspace*)pSQLiteWks);
 		}
 
 		IWorkspacePtr CSQLiteWorkspace::Open(const wchar_t *pszName, const wchar_t *pszPath, bool bWrite)
@@ -86,11 +84,11 @@ namespace GisEngine
 				//TO DO Error
 				return IWorkspacePtr();
 			}
-			TWksMap::iterator it = m_wksMap.find(sFullName);
-			if(it != m_wksMap.end())
+			IWorkspacePtr pWks = CWorkspaceHolder::GetWorkspace(wiSqlLite, sFullName);
+			if(pWks.get())
 			{
 				//TO DO Error
-				return it->second;
+				return pWks;
 			}
 
 			CSQLiteWorkspace *pSQLiteWks = new  CSQLiteWorkspace(pszName, pszPath);
@@ -101,8 +99,8 @@ namespace GisEngine
 				return IWorkspacePtr();
 			}
 
-			m_wksMap.insert(std::make_pair(sFullName, IWorkspacePtr(pSQLiteWks)));
-			return IWorkspacePtr(pSQLiteWks);
+			CWorkspaceHolder::AddWorkspace((IWorkspace*)pSQLiteWks, pszPath);
+			return IWorkspacePtr((IWorkspace*)pSQLiteWks);
 		}
 		IWorkspacePtr CSQLiteWorkspace::Open(CommonLib::IReadStream* pSteram)
 		{
@@ -113,38 +111,15 @@ namespace GisEngine
 			return IWorkspacePtr();
 		}
 
-		const CommonLib::CString& CSQLiteWorkspace::GetWorkspaceName() const
+		
+		ITablePtr  CSQLiteWorkspace::CreateTable(const CommonLib::CString& sName, IFields* fields)
 		{
-			return m_sName;
-		}
-		GisCommon::IPropertySetPtr CSQLiteWorkspace::GetConnectionProperties() const
-		{
-			return GisCommon::IPropertySetPtr();
-		}
-		eWorkspaceID CSQLiteWorkspace::GetWorkspaceID() const
-		{
-			return wiSqlLite;
-		}
+			ITablePtr pTable = GetTable(sName);
+			if(pTable.get())
+				return  ITablePtr();
 
-		uint32 CSQLiteWorkspace::GetDatasetCount() const
-		{
-			return m_vecDatasets.size();
-		}
-		IDatasetPtr CSQLiteWorkspace::GetDataset(uint32 nIdx) const
-		{
-			return m_vecDatasets[nIdx];
-		}
-		void CSQLiteWorkspace::RemoveDataset(uint32 nIdx)
-		{
 
-		}
-		void CSQLiteWorkspace::RemoveDataset(IDataset *pDataset)
-		{
 
-		}
-
-		ITablePtr  CSQLiteWorkspace::CreateTable(const CommonLib::CString& name, IFields* fields)
-		{
 			return ITablePtr();
 		}
 		IFeatureClassPtr CSQLiteWorkspace::CreateFeatureClass(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& shapeFieldName)
@@ -161,15 +136,7 @@ namespace GisEngine
 			return IFeatureClassPtr();
 		}
 
-		ITablePtr CSQLiteWorkspace::GetTable(const CommonLib::CString& name)
-		{
-			return ITablePtr();
-		}
-		IFeatureClassPtr CSQLiteWorkspace::GetFeatureClass(const CommonLib::CString& name)
-		{
-			return IFeatureClassPtr();
-		}
-
+		
 		bool CSQLiteWorkspace::save(CommonLib::IWriteStream *pWriteStream) const
 		{
 			return false;
@@ -211,7 +178,7 @@ namespace GisEngine
 			 }
 
 
-			 std::string sSQL = "SELECT * FROM dbname.sqlite_master WHERE type='table'";
+			 std::string sSQL = "SELECT * FROM dbname.sqlite_master WHERE type='table' ORDER BY name";
 			 int retValue = sqlite3_prepare_v2(m_pConn, sSQL.c_str(), -1, &m_precordSet, 0);
 			 if(retValue != SQLITE_OK)
 			 {
