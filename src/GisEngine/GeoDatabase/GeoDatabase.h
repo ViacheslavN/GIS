@@ -236,6 +236,10 @@ namespace GisEngine
 			virtual void                 SetScale(int scale) = 0;
 			virtual IDomainPtr           GetDomain() const = 0;
 			virtual void                 SetDomain(IDomain* domain) = 0;
+			virtual const CommonLib::CVariant& 	 GetDefaultValue() const = 0;
+			virtual void					 SetIsDefault(const CommonLib::CVariant& value) = 0;
+			virtual bool                 GetIsPrimaryKey() const = 0;
+			virtual void                 SetIsPrimaryKey(bool flag) = 0;
 		};
 
 

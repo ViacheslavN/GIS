@@ -473,6 +473,7 @@
     <ClInclude Include="sqlite3\sqlite3.h" />
     <ClInclude Include="sqlite3\sqlite3ext.h" />
     <ClInclude Include="SQLiteTable.h" />
+    <ClInclude Include="SQLiteUtils.h" />
     <ClInclude Include="SQLiteWorkspace.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TableBase.h" />
@@ -498,6 +499,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SQLiteTable.cpp" />
+    <ClCompile Include="SQLiteUtils.cpp" />
     <ClCompile Include="SQLiteWorkspace.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

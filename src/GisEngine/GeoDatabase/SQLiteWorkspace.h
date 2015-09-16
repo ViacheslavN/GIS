@@ -35,9 +35,12 @@ namespace GisEngine
 			virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::CString& name);
 
 			
-			virtual bool IsError() const {return false;}
+			virtual bool IsError() const {return m_bError;}
 			virtual uint32 GetErrorCode() const {return 0;}
-			virtual void GetErrorText( CommonLib::CString& sStr, uint32 nCode) {}
+			virtual void GetErrorText( CommonLib::CString& sStr, uint32 nCode) 
+			{
+				sStr = m_sErrorMessage;
+			}
 
 
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const;
@@ -52,12 +55,15 @@ namespace GisEngine
 			bool create(const CommonLib::CString& sFullName);
 			bool load(const CommonLib::CString& sFullName, bool bWrite);
 			void close();
+			bool IsConnect() const;
 		private:
   
 			CommonLib::CString m_sPath;
 
 			sqlite3*		m_pConn;
 			sqlite3_stmt*	m_precordSet;
+			CommonLib::CString m_sErrorMessage;
+			bool m_bError;
 		};
 	}
 }

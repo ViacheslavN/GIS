@@ -102,6 +102,9 @@
     <ClInclude Include="WorkspaceBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SQLiteUtils.h">
+      <Filter>GeoDatabaseSQlite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -154,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="WorkspaceBase.cpp">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLiteUtils.cpp">
+      <Filter>GeoDatabaseSQlite</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@ namespace GisEngine
 		{
 			public:
 				CField(CommonLib::CString& sName, CommonLib::CString& sAliasName, bool bIsEditable,	bool bIsNullable, bool bIsRquired, eDataTypes type,
-					int nLength, int nPrecision, int nScale, IGeometryDef* pGeometry, IDomain* pDomain);
+					int nLength, int nPrecision, int nScale, IGeometryDef* pGeometry, IDomain* pDomain, bool bIsPrimaryKey);
 				CField();
 				virtual ~CField();
 				CField(const CField&);
@@ -38,6 +38,10 @@ namespace GisEngine
 				virtual void                 SetScale(int scale);
 				virtual IDomainPtr           GetDomain() const ;
 				virtual void                 SetDomain(IDomain* pDomain);
+				virtual const CommonLib::CVariant& 	 GetDefaultValue() const;
+				virtual void					 SetIsDefault(const CommonLib::CVariant& value);
+				virtual bool                 GetIsPrimaryKey() const;
+				virtual void                 SetIsPrimaryKey(bool flag);
 
 				// IShapeField
 				virtual IGeometryDefPtr  GetGeometryDef() const;
@@ -56,6 +60,9 @@ namespace GisEngine
 				int						m_nScale;
 				IGeometryDefPtr			m_pGeometryDefPtr;
 				IDomainPtr				m_pDomainPtr;
+				CommonLib::CVariant		m_DefValue;
+				bool					m_bIsPrimaryKey;
+
 
 
 

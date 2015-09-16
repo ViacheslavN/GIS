@@ -6,13 +6,13 @@ namespace GisEngine
 	namespace GeoDatabase
 	{
 		CField::CField(CommonLib::CString& sName, CommonLib::CString& sAliasName, bool bIsEditable,	bool bIsNullable, bool bIsRquired, eDataTypes type,
-			int nLength, int nPrecision, int nScale, IGeometryDef* pGeometry, IDomain* pDomain) : 
+			int nLength, int nPrecision, int nScale, IGeometryDef* pGeometry, IDomain* pDomain, bool bIsPrimaryKey) : 
 			m_sName(sName), m_sAliasName(sAliasName), m_bIsEditable(bIsEditable), m_bIsNullable(bIsNullable), m_bIsRquired(bIsRquired), m_type(type),
-				m_nLength(nLength), m_nPrecision(nPrecision), m_nScale(nScale), m_pGeometryDefPtr(pGeometry), m_pDomainPtr(pDomain)
+				m_nLength(nLength), m_nPrecision(nPrecision), m_nScale(nScale), m_pGeometryDefPtr(pGeometry), m_pDomainPtr(pDomain), m_bIsPrimaryKey(bIsPrimaryKey)
 		{
 
 		}
-		CField::CField() : m_bIsEditable(true), m_bIsNullable(true), m_bIsRquired(false), m_type(dtUnknown), m_nLength(0), m_nPrecision(0), m_nScale(0)
+		CField::CField() : m_bIsEditable(true), m_bIsNullable(true), m_bIsRquired(false), m_type(dtUnknown), m_nLength(0), m_nPrecision(0), m_nScale(0), m_bIsPrimaryKey(false)
 			
 		{
 
@@ -140,6 +140,23 @@ namespace GisEngine
 		void  CField::SetGeometryDef(IGeometryDef* pGeometryDef)
 		{
 			m_pGeometryDefPtr = pGeometryDef;
+		}
+		const CommonLib::CVariant& CField::GetDefaultValue() const
+		{
+			return m_DefValue;
+		}
+		void  CField::SetIsDefault(const CommonLib::CVariant& value)
+		{
+			m_DefValue = value;
+		}
+
+		bool  CField::GetIsPrimaryKey() const
+		{
+			return m_bIsPrimaryKey;
+		}
+		void   CField::SetIsPrimaryKey(bool bFlag)
+		{
+			m_bIsPrimaryKey = bFlag;
 		}
 	}
 }
