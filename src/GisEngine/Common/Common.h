@@ -37,7 +37,6 @@ namespace GisEngine
 
 
 #ifdef __IPHONE_3_1
-	using decore::byte;
 #include <cstddef>
 	typedef unsigned char BYTE;
 	typedef std::size_t SIZE;
@@ -49,14 +48,11 @@ namespace GisEngine
 #ifndef _T
 #define _T(a) L##a
 #endif//_T
-#include "decore/blob_t.h" // for agg
-#include "decore/shp_t.h" // for agg
 #endif//__IPHONE_3_1
 
 #ifdef ANDROID
 #include <android/log.h>
 #include <cstddef>
-	using decore::byte;
 
 	typedef unsigned char BYTE;
 	//typedef std::size_t SIZE;

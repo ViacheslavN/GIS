@@ -170,6 +170,11 @@ namespace CommonLib
 			var_constructors_[m_id](getBuffer(), v.getBuffer());
 
 		}
+		template <typename T>
+		void SetType()
+		{
+			m_id = eDataTypes(type2int<T>::typeId);
+		}
 
 		template <typename T>
 		CVariant(const T& v)

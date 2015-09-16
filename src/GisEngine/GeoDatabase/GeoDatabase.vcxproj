@@ -305,7 +305,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;SQLITE_ENABLE_RTREE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty;../../ThirdParty/ShapeLib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -462,6 +462,7 @@
     <ClInclude Include="Fields.h" />
     <ClInclude Include="FieldSet.h" />
     <ClInclude Include="GeoDatabase.h" />
+    <ClInclude Include="GeoDatabaseUtils.h" />
     <ClInclude Include="GeometryDef.h" />
     <ClInclude Include="GeoDatabaseLib.h" />
     <ClInclude Include="OIDSet.h" />
@@ -472,6 +473,7 @@
     <ClInclude Include="ShapefileWorkspace.h" />
     <ClInclude Include="sqlite3\sqlite3.h" />
     <ClInclude Include="sqlite3\sqlite3ext.h" />
+    <ClInclude Include="SQLiteFeatureClass.h" />
     <ClInclude Include="SQLiteTable.h" />
     <ClInclude Include="SQLiteUtils.h" />
     <ClInclude Include="SQLiteWorkspace.h" />
@@ -485,6 +487,7 @@
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Fields.cpp" />
     <ClCompile Include="FieldSet.cpp" />
+    <ClCompile Include="GeoDatabaseUtils.cpp" />
     <ClCompile Include="GeometryDef.cpp" />
     <ClCompile Include="OIDSet.cpp" />
     <ClCompile Include="QueryFilter.cpp" />
@@ -498,6 +501,7 @@
     <ClCompile Include="sqlite3\sqlite3.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SQLiteFeatureClass.cpp" />
     <ClCompile Include="SQLiteTable.cpp" />
     <ClCompile Include="SQLiteUtils.cpp" />
     <ClCompile Include="SQLiteWorkspace.cpp" />

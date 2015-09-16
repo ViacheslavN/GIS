@@ -8,9 +8,14 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
-		namespace SQLitefUtils
+		namespace SQLiteUtils
 		{
 			void FieldType2SQLiteType(eDataTypes type, CommonLib::CString& sSQLiteType);
+			eDataTypes SQLiteType2FieldType(CommonLib::CString& sSQLiteType);
+			eDataTypes SQLiteType2FieldType(int nSQLiteFieldType);
+			void CreateSQLCreateTable(IFields *pFields, const CommonLib::CString& sTableName, 
+				CommonLib::CString& sSQL, CommonLib::CString* pOIDField = NULL, CommonLib::CString* pShapeField = NULL, 
+				CommonLib::CString* pAnno = NULL, CommonLib::eShapeType *pSPType = NULL);
 		}
 	}
 }

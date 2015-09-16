@@ -41,8 +41,12 @@ namespace GisEngine
 				~CShapefileWorkspace();
 			
 				
-				virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields);
-				virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& shapeFieldName);
+				virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& sOIDName);
+				virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name,
+					IFields* fields, const CommonLib::CString& sOIDName = L"",  
+					const CommonLib::CString& shapeFieldName = L"",
+					const CommonLib::CString& sAnnotationName = L"",
+					CommonLib::eShapeType geomtype = CommonLib::shape_type_null );
 				virtual ITablePtr  OpenTable(const CommonLib::CString& name);
 				virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::CString& name);
 

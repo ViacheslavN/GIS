@@ -132,8 +132,12 @@ namespace GisEngine
 				virtual void RemoveDataset(uint32 nIdx) = 0;
 				virtual void RemoveDataset(IDataset *pDataset) = 0;
 
-				virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields) = 0;
-				virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& shapeFieldName) = 0;
+				virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& sOIDName = L"") = 0;
+				virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name,
+							IFields* fields, const CommonLib::CString& sOIDName = L"",  
+							const CommonLib::CString& shapeFieldName = L"",
+							const CommonLib::CString& sAnnotationName = L"",
+							CommonLib::eShapeType geomtype = CommonLib::shape_type_null ) = 0;					
 
 				virtual ITablePtr OpenTable(const CommonLib::CString& name) = 0;
 				virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::CString& name) = 0;
@@ -194,8 +198,11 @@ namespace GisEngine
 			virtual void						 AddField(IField* field) = 0;
 			virtual void						 DeleteField(const CommonLib::CString& fieldName) = 0;
 			virtual IFieldsPtr					 GetFields() const  = 0;
+			virtual void						 SetFields(IFields *pFields)  = 0;
 			virtual bool						 HasOIDField() const = 0;
+			virtual void						 SetHasOIDField(bool bFlag) = 0;
 			virtual const CommonLib::CString&	 GetOIDFieldName() const = 0;
+			virtual void						 SetOIDFieldName(const CommonLib::CString& sOIDFieldName) = 0;
 			virtual IRowPtr						 GetRow(int64 id) = 0;
 			virtual ICursorPtr					 Search(IQueryFilter* filter, bool recycling) = 0;
 		};
@@ -205,10 +212,18 @@ namespace GisEngine
 		{
 			IFeatureClass(){}
 			virtual ~IFeatureClass(){}
-			virtual CommonLib::eShapeType GetGeometryType() const = 0;
-			virtual const CommonLib::CString&         GetShapeFieldName() const = 0;
+			virtual CommonLib::eShapeType				 GetGeometryType() const = 0;
+			virtual	void								 SetGeometryType(CommonLib::eShapeType shapeType)	= 0;
+			virtual const CommonLib::CString&			 GetShapeFieldName() const = 0;
+			virtual void						         SetShapeFieldName(const CommonLib::CString& sName)  = 0;
+			virtual bool								 GetIsAnnoClass() const = 0;
+			virtual const CommonLib::CString&			 GetAnnoFieldName() const = 0;
+			virtual void								 SetIsAnnoClass(bool bAnno) = 0;
+			virtual void								 SetAnnoFieldName(const CommonLib::CString& sAnnoName) = 0;
 			virtual GisGeometry::IEnvelopePtr			 GetExtent() const = 0;
-			virtual GisGeometry::ISpatialReferencePtr GetSpatialReference() const = 0;
+			virtual GisGeometry::ISpatialReferencePtr	 GetSpatialReference() const = 0;
+			virtual void								 SetExtent(GisGeometry::IEnvelope* pEnvelope)  = 0;
+			virtual void								 SetSpatialReference(GisGeometry::ISpatialReference* pSpatRef)  = 0;
 		};
 
 

@@ -14,4 +14,6 @@
 #include "../../GeoDatabase/GeoDatabase.h"
 #include "../../../CommonLibrary/CommonLibrary/CommonLib_lib.h"
 #include "../../GeoDatabase/GeoDatabaseLib.h"
+#include "../../ThirdParty/ShapeLib/shape_lib.h"
+#include "../../GisGeometry/GisGeometryLib.h"
 // TODO: reference additional headers your program requires here

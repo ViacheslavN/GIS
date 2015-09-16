@@ -11,7 +11,7 @@ namespace GisEngine
 			public:
 				typedef ITableBase<I> TBase;
 				IFeatureClassBase(IWorkspace *pWks) : TBase(pWks),
-					m_ShapeType(CommonLib::shape_type_null)
+					m_ShapeType(CommonLib::shape_type_null), m_bAnnotation(false)
 				{
 					m_DatasetType = dtFeatureClass;
 					
@@ -19,6 +19,10 @@ namespace GisEngine
 				virtual ~IFeatureClassBase()
 				{
 
+				}
+				virtual	void SetGeometryType(CommonLib::eShapeType shapeType)
+				{
+					m_ShapeType = shapeType;
 				}
 				virtual CommonLib::eShapeType GetGeometryType() const
 				{
@@ -28,20 +32,49 @@ namespace GisEngine
 				{
 					return m_sShapeFieldName;
 				}
+				virtual void	SetShapeFieldName(const CommonLib::CString& sName)
+				{
+					m_sShapeFieldName = sName;
+				}
+				virtual bool	GetIsAnnoClass() const
+				{
+					return m_bAnnotation;
+				}
+				virtual const CommonLib::CString&	GetAnnoFieldName() const
+				{
+					return m_sAnnotationName;
+				}
+				virtual void	SetIsAnnoClass(bool bAnno)
+				{
+					m_bAnnotation = bAnno;
+				}
+				virtual void	SetAnnoFieldName(const CommonLib::CString& sAnnoName)
+				{
+					m_sAnnotationName = sAnnoName;
+				}
 				virtual GisGeometry::IEnvelopePtr			 GetExtent() const
 				{
 					return m_pExtent;
 				}
 				virtual GisGeometry::ISpatialReferencePtr GetSpatialReference() const
 				{
-					return m_pSpatialReferencePtr;
+					return m_pSpatialReference;
+				}
+				virtual void	SetExtent(GisGeometry::IEnvelope* pEnvelope)
+				{
+					m_pExtent = pEnvelope;
+				}
+				virtual void	SetSpatialReference(GisGeometry::ISpatialReference* pSpatRef)
+				{
+					m_pSpatialReference = pSpatRef;
 				}
 			protected:
-
+				bool m_bAnnotation;
+				CommonLib::CString m_sAnnotationName;
 				mutable GisGeometry::IEnvelopePtr  m_pExtent;
 				mutable CommonLib::CString m_sShapeFieldName;
 				mutable CommonLib::eShapeType m_ShapeType;
-				mutable GisGeometry::ISpatialReferencePtr m_pSpatialReferencePtr;
+				mutable GisGeometry::ISpatialReferencePtr m_pSpatialReference;
 
 		};
 	}

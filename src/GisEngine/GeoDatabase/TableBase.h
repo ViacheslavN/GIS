@@ -37,9 +37,21 @@ namespace GisEngine
 			{
 				return m_pFields;
 			}
+			virtual void	SetFields(IFields *pFields) 
+			{
+				m_pFields = pFields;
+			}
+			void SetOIDFieldName(const CommonLib::CString& sOIDFieldName)
+			{
+				m_sOIDFieldName = sOIDFieldName;
+			}
 			virtual bool   HasOIDField() const
 			{
 				return m_bHashOID;
+			}
+			virtual void   SetHasOIDField(bool bFlag)
+			{
+				 m_bHashOID = bFlag;
 			}
 			virtual const CommonLib::CString&	 GetOIDFieldName() const
 			{

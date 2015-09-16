@@ -96,7 +96,7 @@ namespace GisEngine
 
 			m_pFields->Clear();
 			m_pExtent.release();
-			m_pSpatialReferencePtr.release();
+			m_pSpatialReference.release();
 			m_bHashOID = false;
 
 			CommonLib::CString filePathBase = m_sPath + m_sDatasetViewName;
@@ -134,13 +134,13 @@ namespace GisEngine
 			 }
 
 			
-			 m_pSpatialReferencePtr = new GisGeometry::CSpatialReferenceProj4(prjFileName, GisGeometry::eSPRefTypePRJFilePath);
-			 if(!m_pSpatialReferencePtr->IsValid())
+			 m_pSpatialReference = new GisGeometry::CSpatialReferenceProj4(prjFileName, GisGeometry::eSPRefTypePRJFilePath);
+			 if(!m_pSpatialReference->IsValid())
 			 {
-				 m_pSpatialReferencePtr = new GisGeometry::CSpatialReferenceProj4(bounds);
+				 m_pSpatialReference = new GisGeometry::CSpatialReferenceProj4(bounds);
 			 }
 
-			 m_pExtent = new GisGeometry::CEnvelope(bounds, m_pSpatialReferencePtr.get());
+			 m_pExtent = new GisGeometry::CEnvelope(bounds, m_pSpatialReference.get());
 			 bool hasZ;
 			 bool hasM;
 			 m_ShapeType = ShapefileUtils::SHPTypeToGeometryType(shapeType, &hasZ, &hasM);

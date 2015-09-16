@@ -19,6 +19,7 @@ typedef std::shared_ptr<ITest> TIShared;
 typedef std::map<ITestPtr, int> TtestMap;
 int _tmain(int argc, _TCHAR* argv[])
 {
+
 	TestSQLiteWks();
  
 	//TestXML();

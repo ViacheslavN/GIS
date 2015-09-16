@@ -36,5 +36,24 @@ namespace GisEngine
 
 			return false;
 		}
+		bool CSQLiteTable::save(CommonLib::IWriteStream *pWriteStream) const
+		{
+			return false;
+		}
+		bool CSQLiteTable::load(CommonLib::IReadStream* pReadStream)
+		{
+			return false;
+		}
+
+		bool CSQLiteTable::saveXML(GisCommon::IXMLNode* pXmlNode) const
+		{
+			return false;
+		}
+		bool CSQLiteTable::load(GisCommon::IXMLNode* pXmlNode)
+		{
+			return false;
+		}
+
+
 	}
 }

@@ -23,13 +23,17 @@ namespace GisEngine
 			~CSQLiteWorkspace();
 
 			static IWorkspacePtr Create(const wchar_t *pszName, const wchar_t *pszPath);
-			static IWorkspacePtr Open(const wchar_t *pszName, const wchar_t *pszPath, bool bWrite);
-			static IWorkspacePtr Open(CommonLib::IReadStream* pSteram);
-			static IWorkspacePtr Open(GisCommon::IXMLNode *pNode);
+			static IWorkspacePtr Open(const wchar_t *pszName, const wchar_t *pszPath, bool bWrite, bool bOpenAll = true);
+			static IWorkspacePtr Open(CommonLib::IReadStream* pSteram, bool bOpenAll = true);
+			static IWorkspacePtr Open(GisCommon::IXMLNode *pNode, bool bOpenAll = true);
  
 
-			virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields);
-			virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& shapeFieldName);
+			virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& sOIDName = L"");
+			virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name,
+				IFields* fields, const CommonLib::CString& sOIDName = L"",  
+				const CommonLib::CString& shapeFieldName = L"",
+				const CommonLib::CString& sAnnotationName = L"",
+				CommonLib::eShapeType geomtype = CommonLib::shape_type_null );
 
 			virtual ITablePtr OpenTable(const CommonLib::CString& name);
 			virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::CString& name);
@@ -53,9 +57,11 @@ namespace GisEngine
 			sqlite3 *GetConnections(){return m_pConn;}
 		private:
 			bool create(const CommonLib::CString& sFullName);
-			bool load(const CommonLib::CString& sFullName, bool bWrite);
+			bool load(const CommonLib::CString& sFullName, bool bWrite, bool bOpenAll = true);
 			void close();
 			bool IsConnect() const;
+			IFieldsPtr ReadFields(const CommonLib::CString& sName);
+			static const CommonLib::CString m_sRTreePrefix;
 		private:
   
 			CommonLib::CString m_sPath;

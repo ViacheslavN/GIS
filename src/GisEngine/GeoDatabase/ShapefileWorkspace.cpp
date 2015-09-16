@@ -67,8 +67,7 @@ namespace GisEngine
 				IFeatureClassPtr pFClass = OpenFeatureClass(vecFiles[i]);
 				if(pFClass.get())
 				{
-					m_vecDatasets.push_back(IDatasetPtr((IDataset*)pFClass.get()));
-					m_DataSetMap.insert(std::make_pair(pFClass->GetDatasetViewName(), pFClass.get()));
+					AddDataset(pFClass.get());
 				}
 			}
 			
@@ -100,16 +99,20 @@ namespace GisEngine
 			return pFeaturePtr;
 		}
  
-		ITablePtr  CShapefileWorkspace::CreateTable(const CommonLib::CString& name, IFields* fields)
+		ITablePtr  CShapefileWorkspace::CreateTable(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& sOIDName)
 		{
 			return ITablePtr();
 		}
-		IFeatureClassPtr CShapefileWorkspace::CreateFeatureClass(const CommonLib::CString& sName, IFields* pFields, const CommonLib::CString& sShapeFieldName)
+		IFeatureClassPtr CShapefileWorkspace::CreateFeatureClass(const CommonLib::CString& sName,
+			IFields* pFields, const CommonLib::CString& sOIDName,  	const CommonLib::CString& shapeFieldName,
+			const CommonLib::CString& sAnnotationName, 	CommonLib::eShapeType geomtype)
 		{
 		
-			TDatasetMap::iterator it = m_DataSetMap.find(sName);
-			if(it != m_DataSetMap.end())
-				return IFeatureClassPtr((IFeatureClass*)it->second.get());
+
+			IDatasetPtr pDataSet = GetDataset(sName);
+		 
+			if(pDataSet.get())
+				return IFeatureClassPtr((IFeatureClass*)pDataSet.get());
 
 
 			if(sName.isEmpty())
@@ -237,8 +240,7 @@ namespace GisEngine
 			 IFeatureClassPtr pFClass = OpenFeatureClass(sName);
 			 if(pFClass.get())
 			 {
-				 m_vecDatasets.push_back(IDatasetPtr((IDataset*)pFClass.get()));
-				 m_DataSetMap.insert(std::make_pair(pFClass->GetDatasetViewName(), pFClass.get()));
+				 AddDataset(pFClass.get());
 			 }
 			 return pFClass;
 		}

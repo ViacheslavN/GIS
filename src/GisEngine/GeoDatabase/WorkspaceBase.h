@@ -49,19 +49,22 @@ namespace GisEngine
 			virtual void RemoveDataset(uint32 nIdx)
 			{
 				CommonLib::CSSection::scoped_lock lock (m_mutex);
-				assert(nIdx < m_vecDatasets.size());
+				assert(nIdx < (int)m_vecDatasets.size());
 				m_DataSetMap.erase(m_vecDatasets[nIdx]->GetDatasetName());
 				m_vecDatasets.erase(m_vecDatasets.begin() + nIdx);
+				RebuildMap();
 			}
 			virtual void RemoveDataset(IDataset *pDataset)
 			{
 				CommonLib::CSSection::scoped_lock lock (m_mutex);
-				TVecDataset::iterator it = std::find(m_vecDatasets.begin(), m_vecDatasets.end(), pDataset);
-				if(it != m_vecDatasets.end())
-				{
-					m_DataSetMap.erase((*it)->GetDatasetName());
-					m_vecDatasets.erase(it);
-				}
+
+				TDatasetMap::const_iterator it = m_DataSetMap.find(pDataset->GetDatasetName());
+				if(it == m_DataSetMap.end())
+					return;
+				assert(it->second < (int)m_vecDatasets.size());
+				m_vecDatasets.erase(m_vecDatasets.begin() + it->second);
+				m_DataSetMap.erase(it);
+				RebuildMap();
 			}
 
 
@@ -70,8 +73,18 @@ namespace GisEngine
 
 				TDatasetMap::const_iterator it = m_DataSetMap.find(sName);
 				if(it != m_DataSetMap.end())
-					return it->second;
+				{
+					assert(it->second < (int)m_vecDatasets.size());
+					return m_vecDatasets[it->second];
+				}
 				return IDatasetPtr();
+			}
+
+			virtual void AddDataset(IDataset *pDataset)
+			{
+		 		m_vecDatasets.push_back(IDatasetPtr(pDataset));
+				m_DataSetMap[pDataset->GetDatasetName()] = m_vecDatasets.size() - 1;
+				
 			}
 
 			virtual ITablePtr GetTable(const CommonLib::CString& sName)
@@ -87,11 +100,20 @@ namespace GisEngine
 				return IFeatureClassPtr(pFeatureClass);
 			}
 		protected:
-			
+			void RebuildMap()
+			{
+				m_DataSetMap.clear();
+				for (size_t i = 0, sz = m_vecDatasets.size(); i < sz; ++i)
+				{
+					m_DataSetMap[m_vecDatasets[i]->GetDatasetName()] = i;
+				}
+			}
+
+
 			typedef std::vector<IDatasetPtr> TVecDataset;
 			TVecDataset m_vecDatasets;
 
-			typedef std::map<CommonLib::CString, IDatasetPtr> TDatasetMap;
+			typedef std::map<CommonLib::CString, int> TDatasetMap;
 			TDatasetMap	m_DataSetMap;
 
 			eWorkspaceType m_WorkspaceType;
