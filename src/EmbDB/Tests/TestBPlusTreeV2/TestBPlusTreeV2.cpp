@@ -15,12 +15,12 @@ void testCompKey();
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	testCompKey();
+	//testCompKey();
 	//TestPODTypeVector();
 	//TestSearch();
 	// TestInsert();
 	//TestBPVector();
-//	TestBRteeSet();
+	TestBRteeSet();
 	//TestBRteeMap();
 	//testUndo();
 	//testRedo();

@@ -473,8 +473,10 @@
     <ClInclude Include="ShapefileWorkspace.h" />
     <ClInclude Include="sqlite3\sqlite3.h" />
     <ClInclude Include="sqlite3\sqlite3ext.h" />
+    <ClInclude Include="SQLiteRowCursor.h" />
     <ClInclude Include="SQLiteFeatureClass.h" />
     <ClInclude Include="SQLiteTable.h" />
+    <ClInclude Include="SQLiteTransaction.h" />
     <ClInclude Include="SQLiteUtils.h" />
     <ClInclude Include="SQLiteWorkspace.h" />
     <ClInclude Include="stdafx.h" />
@@ -501,8 +503,10 @@
     <ClCompile Include="sqlite3\sqlite3.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SQLiteRowCursor.cpp" />
     <ClCompile Include="SQLiteFeatureClass.cpp" />
     <ClCompile Include="SQLiteTable.cpp" />
+    <ClCompile Include="SQLiteTransaction.cpp" />
     <ClCompile Include="SQLiteUtils.cpp" />
     <ClCompile Include="SQLiteWorkspace.cpp" />
     <ClCompile Include="stdafx.cpp">

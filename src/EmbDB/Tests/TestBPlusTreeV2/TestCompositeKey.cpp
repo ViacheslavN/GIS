@@ -424,7 +424,7 @@ void testCompIndex (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 
 void testCompKey()
 {
-	int64 nCount = 1000000;
-	size_t nPageSize = 8192;
-	testCompIndex<embDB::CDirectTransactions>(nCount, nPageSize, 10000, 10, 10000, eCREATE|eINSERT|eFIND|eDELETE);
+	int64 nCount = 100000;
+	size_t nPageSize = 65536;
+	testCompIndex<embDB::CDirectTransactions>(nCount, nPageSize, 10, 10, 10, eCREATE|eINSERT|eFIND|eDELETE);
 }

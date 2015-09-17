@@ -33,6 +33,8 @@ namespace CommonLib
 			{
 				m_pRemFunk->operator()(this);
 			}
+		//	else
+		//		delete this;
 			return 0;
 		}
 		bool isRemovable() const { return 0 == m_nCounter; }

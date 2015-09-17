@@ -111,6 +111,12 @@
     <ClInclude Include="SQLiteFeatureClass.h">
       <Filter>GeoDatabaseSQlite</Filter>
     </ClInclude>
+    <ClInclude Include="SQLiteTransaction.h">
+      <Filter>GeoDatabaseSQlite</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLiteRowCursor.h">
+      <Filter>GeoDatabaseSQlite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -171,6 +177,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SQLiteFeatureClass.cpp">
+      <Filter>GeoDatabaseSQlite</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLiteTransaction.cpp">
+      <Filter>GeoDatabaseSQlite</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLiteRowCursor.cpp">
       <Filter>GeoDatabaseSQlite</Filter>
     </ClCompile>
   </ItemGroup>
