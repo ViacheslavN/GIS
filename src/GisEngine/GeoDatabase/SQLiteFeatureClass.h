@@ -13,11 +13,19 @@ namespace GisEngine
 		{
 		public:
 			typedef  IFeatureClassBase<IFeatureClass> TBase;
-			CSQLiteFeatureClass(CSQLiteWorkspace *pWorkspace, const CommonLib::CString& sName,  const CommonLib::CString& sViewName);
+			CSQLiteFeatureClass(CSQLiteWorkspace *pWorkspace, 
+				const CommonLib::CString& sName, 
+				const CommonLib::CString& sViewName,
+				const CommonLib::CString& SpatialIndexName);
 			~CSQLiteFeatureClass();
 
 			virtual IRowPtr		GetRow(int64 id);
 			virtual ICursorPtr	Search(IQueryFilter* filter, bool recycling);
+
+			const CommonLib::CString& GetRTReeIndexName() const { return m_sSpatialIndexName;}
+ 
+
+
 		 
 
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const;
@@ -28,6 +36,8 @@ namespace GisEngine
 
 		private:
 			CSQLiteWorkspace *m_pSQLiteWorkspace;
+			CommonLib::CString m_sSpatialIndexName;
+	 
 		};
 	}
 }

@@ -5,11 +5,13 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
-		CSQLiteFeatureClass::CSQLiteFeatureClass(CSQLiteWorkspace *pWorkspace, const CommonLib::CString& sName,  const CommonLib::CString& sViewName) :
+		CSQLiteFeatureClass::CSQLiteFeatureClass(CSQLiteWorkspace *pWorkspace, const CommonLib::CString& sName,  const CommonLib::CString& sViewName,
+			const CommonLib::CString& SpatialIndexName) :
 			TBase((IWorkspace*)pWorkspace), m_pSQLiteWorkspace(pWorkspace)
 		{
 				m_sDatasetName = sName;
 				m_sDatasetViewName = sViewName;
+				m_sSpatialIndexName = SpatialIndexName;
 		}
  
 		CSQLiteFeatureClass::~CSQLiteFeatureClass()

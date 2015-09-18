@@ -361,7 +361,7 @@ namespace GisEngine
 				return pFC;
 
 
-			pFC = (IFeatureClass*)new  CSQLiteFeatureClass(this, sName, sName);
+			pFC = (IFeatureClass*)new  CSQLiteFeatureClass(this, sName, sName, sName+ L"_" + m_sRTreePrefix);
 			pFC->SetFields(pFields.get());
 			AddDataset(pFC.get());
 

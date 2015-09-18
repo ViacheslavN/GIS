@@ -33,6 +33,7 @@ namespace GisEngine
 					TFieldsInfo m_mapFieldInfo;
 					sqlite3* m_pConn;
 					sqlite3_stmt*	m_pStmt;
+					sqlite3_stmt*	m_pStmtSpatial;
 					bool m_bValidCursor;
 					bool m_bInit;
 					CommonLib::CString m_sErrorMessage;
