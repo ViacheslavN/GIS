@@ -234,10 +234,28 @@ namespace GisEngine
 				pFC->SetHasOIDField(true);
 				pFC->SetOIDFieldName(sOidField);
 				pFC->SetShapeFieldName(shapeFieldName.isEmpty() ? sShapeField : shapeFieldName);
+				if(!shapeFieldName.isEmpty())
+				{
+					int nIDx = pFC->GetFields()->FindField(shapeFieldName);
+					if(nIDx != -1)
+					{
+						IFieldPtr pShapeField = pFC->GetFields()->GetField(nIDx);
+						if(pShapeField.get())
+							pShapeField->SetType(dtGeometry);
+					}
+
+				}
 				if(!sAnno.isEmpty())
 				{
 					pFC->SetIsAnnoClass(true);
 					pFC->SetAnnoFieldName(sAnno);
+					int nIDx = pFC->GetFields()->FindField(sAnno);
+					if(nIDx != -1)
+					{
+						IFieldPtr pAnnoField = pFC->GetFields()->GetField(nIDx);
+						if(pAnnoField.get())
+							pAnnoField->SetType(dtAnnotation);
+					}
 				}
 				pFC->SetGeometryType(gtype);
 			

@@ -166,7 +166,10 @@ namespace CommonLib
 		if(m_bAttach)
 			deattach();
 		if(m_nCapacity >= nSize)
+		{
+			nSize = 0;
 			return;
+		}
 
 		byte* pBuffer = (byte*)m_pAlloc->alloc(nSize);
 		if(m_pBuffer != NULL)

@@ -4,6 +4,8 @@
 #include "PodVector.h"
 namespace CommonLib
 {
+	class IWriteStream;
+	class IReadStream;
 	class CGeoShape  : public AutoRefCounter
 	{
 
@@ -30,8 +32,10 @@ namespace CommonLib
 		bool create(eShapeType shapeType);
 		bool create(eShapeType shapeType, size_t npoints, size_t nparts = 1, size_t ncurves = 0, size_t mpatchSpecificSize = 0);
 		
+		bool write(IWriteStream *pStream) const;
+		bool read(IReadStream *pStream);
 		
-		
+		void clear();
 		void calcBB();
 		const bbox& getBB() const;
 		bbox& getBB();

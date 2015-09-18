@@ -1,7 +1,11 @@
 #include "stdafx.h"
+#include "FieldSet.h"
 #include "SQLiteRowCursor.h"
 #include "sqlite3/sqlite3.h"
 #include "Feature.h"
+#include "CommonLibrary/MemoryStream.h"
+#include "CommonLibrary/FixedMemoryStream.h"
+#include "GisGeometry/Envelope.h"
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -44,11 +48,62 @@ namespace GisEngine
 				CommonLib::CVariant* pValue = m_pCurrentRow->GetValue(fieldIndex);
 				 switch(m_vecActualFieldsTypes[i])
 				 {
-					case dtGeometry:
+				
 					case dtBlob:
 						{
-							int nByte = sqlite3_column_bytes(m_pStmt, fieldIndex);
+							int nSize = sqlite3_column_bytes(m_pStmt, fieldIndex);
+							if(!m_pCacheBlob.get())
+							{
+								m_pCacheBlob = new CommonLib::CBlob();
+							}
+							if(nSize == 0)
+								m_pCacheBlob->resize(nSize);
+							else 
+							{
+								m_pCacheBlob->copy((byte*)sqlite3_column_blob(m_pStmt, fieldIndex), nSize);
+							}
+
+							*pValue = CommonLib::IRefObjectPtr((IRefCnt*)m_pCacheBlob.get());
 						}
+						break;
+					case dtGeometry:
+					case dtAnnotation:
+						{
+							int nSize = sqlite3_column_bytes(m_pStmt, fieldIndex);
+							if(!nSize)
+							{
+								m_pCacheShape->clear();
+							}
+							else
+							{
+								CommonLib::FxMemoryReadStream stream;
+								stream.attach((byte*)sqlite3_column_blob(m_pStmt, fieldIndex), nSize);
+								m_pCacheShape->read(&stream);
+							}
+						}
+					case dtUInteger8:
+						*pValue = (byte)sqlite3_column_int(m_pStmt, fieldIndex);//TO DO fix
+						break;
+					case dtInteger8:
+						*pValue = (int8)sqlite3_column_int(m_pStmt, fieldIndex);
+						break;
+					case dtUInteger16:
+						*pValue = (uint16)sqlite3_column_int(m_pStmt, fieldIndex);//TO DO fix
+						break;
+					case dtInteger32:
+						*pValue = (int32)sqlite3_column_int(m_pStmt, fieldIndex);
+						break;
+					case dtUInteger32:
+						*pValue = (uint32)sqlite3_column_int(m_pStmt, fieldIndex);//TO DO fix
+						break;
+					case dtInteger16:
+						*pValue = (int16)sqlite3_column_int(m_pStmt, fieldIndex);
+						break;
+					case dtUInteger64:
+						*pValue = (uint64)sqlite3_column_int64(m_pStmt, fieldIndex); //TO DO fix
+						break;
+					case dtInteger64:
+						*pValue = sqlite3_column_int64(m_pStmt, fieldIndex); 
 						break;
 				 }
 

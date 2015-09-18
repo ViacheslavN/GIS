@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GeoShape.h"
-
+#include "stream.h"
 namespace CommonLib
 {
 
@@ -503,5 +503,91 @@ namespace CommonLib
 		 {
 			 m_vecZs[i] = pZs[i];
 		 }
+	 }
+
+	 //TO DO compress
+	 bool CGeoShape::write(IWriteStream *pStream) const
+	 {
+		 pStream->write((byte)m_type);
+		 pStream->write(m_vecParts.size());
+		 for (size_t i = 0, sz = m_vecParts.size(); i < sz; ++i)
+		 {
+			 pStream->write(m_vecParts[i]);
+		 }
+		 pStream->write(m_vecPartTypes.size());
+		 for (size_t i = 0, sz = m_vecPartTypes.size(); i < sz; ++i)
+		 {
+			 pStream->write((byte)m_vecPartTypes[i]);
+		 }
+		 pStream->write(m_vecPoints.size());
+		 for (size_t i = 0, sz = m_vecPoints.size(); i < sz; ++i)
+		 {
+			 pStream->write(m_vecPoints[i].x);
+			 pStream->write(m_vecPoints[i].y);
+		 }
+		 pStream->write(m_vecZs.size());
+		 for (size_t i = 0, sz = m_vecZs.size(); i < sz; ++i)
+		 {
+			 pStream->write(m_vecZs[i]);
+		 }
+		 pStream->write(m_vecMs.size());
+		 for (size_t i = 0, sz = m_vecZs.size(); i < sz; ++i)
+		 {
+			 pStream->write(m_vecMs[i]);
+		 }
+		 return true;
+	 }
+	 bool CGeoShape::read(IReadStream *pStream)
+	 {
+		 m_type = (eShapeType)pStream->readByte();
+		 m_general_type = generalType(m_type);
+		 uint32 nSize = pStream->readIntu32();
+		 m_vecParts.reserve(nSize);
+		 for (size_t i = 0; i < nSize; ++i)
+		 {
+			 m_vecParts.push_back(pStream->readIntu32());
+		 }
+
+		 nSize = pStream->readIntu32();
+		 m_vecPartTypes.reserve(nSize);
+		 for (size_t i = 0; i < nSize; ++i)
+		 {
+			 m_vecPartTypes.push_back(pStream->readByte());
+		 }
+
+		 nSize = pStream->readIntu32();
+		 m_vecPoints.reserve(nSize);
+		 GisXYPoint pt;
+		 for (size_t i = 0; i < nSize; ++i)
+		 {
+			 pt.x = pStream->readDouble();
+			 pt.y = pStream->readDouble();
+			 m_vecPoints.push_back(pt);
+		 }
+
+		nSize = pStream->readIntu32();
+		m_vecZs.reserve(nSize);
+		for (size_t i = 0; i < nSize; ++i)
+		{
+			m_vecZs.push_back(pStream->readDouble());
+		}
+		nSize = pStream->readIntu32();
+		m_vecMs.reserve(nSize);
+		for (size_t i = 0; i < nSize; ++i)
+		{
+			m_vecMs.push_back(pStream->readDouble());
+		}
+		return true;
+	 }
+
+	 void CGeoShape::clear()
+	 {
+		 m_type == shape_type_null;
+		 m_general_type = shape_type_null;
+		 m_vecParts.clear();
+		 m_vecPartTypes.clear();
+		 m_vecPoints.clear();
+		 m_vecZs.clear();
+		 m_vecMs.clear();
 	 }
 }

@@ -25,7 +25,7 @@ namespace GisEngine
 
 		protected:
 			CommonLib::IGeoShapePtr   m_pCacheShape;
-			CommonLib::CBlob		  m_pBlobC
+			CommonLib::IBlobPtr		  m_pCacheBlob;
 			int m_nRecordCount;
 			bool m_bInvalidCursor;
 			sqlite3 *m_pConn;

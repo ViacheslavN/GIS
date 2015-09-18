@@ -84,7 +84,7 @@ namespace GisEngine
 				sSQL = L"CREATE TABLE "; 
 				sSQL += sTableName;
 
-				int nCnt = pFields->GetFieldCount();
+				size_t nCnt = pFields->GetFieldCount();
 				if(nCnt > 0)
 					sSQL += L" ( ";
 

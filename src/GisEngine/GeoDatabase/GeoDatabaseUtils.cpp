@@ -83,6 +83,8 @@ namespace GisEngine
 						}
 						break;
 				}
+
+				return CommonLib::CVariant();
 			}
 		}
 	}

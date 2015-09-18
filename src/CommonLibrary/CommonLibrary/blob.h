@@ -7,7 +7,7 @@
 namespace CommonLib
 {
 
-	class CBlob : AutoRefCounter
+	class CBlob : public AutoRefCounter
 	{
 	public:
 		CBlob(alloc_t *pAlloc = NULL);
@@ -56,6 +56,8 @@ namespace CommonLib
 		uint32 m_nCapacity;
 		bool m_bAttach;
 	};
+
+	typedef CommonLib::IRefCntPtr<CBlob> IBlobPtr;
 }
 
 #endif
