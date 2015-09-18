@@ -29,7 +29,13 @@ namespace GisEngine
 		{
 			return m_vecFields[index];
 		}
-
+		IFieldPtr  CFields::GetField(const CommonLib::CString& name) const
+		{
+			int nIndex = FindField(name);
+			if(nIndex == -1)
+				return IFieldPtr();
+			return GetField(nIndex);
+		}
 		void CFields::SetField(int index, IField* field)
 		{
 			m_vecFields[index] = field;

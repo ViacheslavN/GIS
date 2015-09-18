@@ -308,6 +308,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;SQLITE_ENABLE_RTREE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty;../../ThirdParty/ShapeLib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ForcedIncludeFiles>stdafx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -465,6 +466,7 @@
     <ClInclude Include="GeoDatabaseUtils.h" />
     <ClInclude Include="GeometryDef.h" />
     <ClInclude Include="GeoDatabaseLib.h" />
+    <ClInclude Include="InsertCursorBase.h" />
     <ClInclude Include="OIDSet.h" />
     <ClInclude Include="QueryFilter.h" />
     <ClInclude Include="ShapefileFeatureClass.h" />
@@ -473,6 +475,7 @@
     <ClInclude Include="ShapefileWorkspace.h" />
     <ClInclude Include="sqlite3\sqlite3.h" />
     <ClInclude Include="sqlite3\sqlite3ext.h" />
+    <ClInclude Include="SQLiteInsertCursor.h" />
     <ClInclude Include="SQLiteRowCursor.h" />
     <ClInclude Include="SQLiteFeatureClass.h" />
     <ClInclude Include="SQLiteTable.h" />
@@ -503,6 +506,7 @@
     <ClCompile Include="sqlite3\sqlite3.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SQLiteInsertCursor.cpp" />
     <ClCompile Include="SQLiteRowCursor.cpp" />
     <ClCompile Include="SQLiteFeatureClass.cpp" />
     <ClCompile Include="SQLiteTable.cpp" />

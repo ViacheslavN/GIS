@@ -23,6 +23,7 @@ namespace GisEngine
 			virtual int       GetFieldCount() const;
 			virtual void      SetFieldCount(int count);
 			virtual IFieldPtr GetField(int index) const;
+			virtual IFieldPtr  GetField(const CommonLib::CString& name) const;
 			virtual void      SetField(int index, IField* field);
 			virtual void      AddField(IField* field);
 			virtual void      RemoveField(int index);

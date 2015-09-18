@@ -117,6 +117,12 @@
     <ClInclude Include="SQLiteRowCursor.h">
       <Filter>GeoDatabaseSQlite</Filter>
     </ClInclude>
+    <ClInclude Include="InsertCursorBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLiteInsertCursor.h">
+      <Filter>GeoDatabaseSQlite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -161,9 +167,6 @@
     <ClCompile Include="sqlite3\shell.c">
       <Filter>GeoDatabaseSQlite\sqlite3</Filter>
     </ClCompile>
-    <ClCompile Include="sqlite3\sqlite3.c">
-      <Filter>GeoDatabaseSQlite\sqlite3</Filter>
-    </ClCompile>
     <ClCompile Include="SQLiteTable.cpp">
       <Filter>GeoDatabaseSQlite</Filter>
     </ClCompile>
@@ -184,6 +187,12 @@
     </ClCompile>
     <ClCompile Include="SQLiteRowCursor.cpp">
       <Filter>GeoDatabaseSQlite</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLiteInsertCursor.cpp">
+      <Filter>GeoDatabaseSQlite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite3\sqlite3.c">
+      <Filter>GeoDatabaseSQlite\sqlite3</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

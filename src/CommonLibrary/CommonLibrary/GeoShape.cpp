@@ -582,7 +582,7 @@ namespace CommonLib
 
 	 void CGeoShape::clear()
 	 {
-		 m_type == shape_type_null;
+		 m_type = shape_type_null;
 		 m_general_type = shape_type_null;
 		 m_vecParts.clear();
 		 m_vecPartTypes.clear();

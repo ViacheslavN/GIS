@@ -67,7 +67,7 @@ namespace GisEngine
 						m_vecActualFieldsIndexes.push_back(fieldIndex);
 						m_vecActualFieldsTypes.push_back(m_pSourceFields->GetField(fieldIndex)->GetType());
 
-						if(m_vecActualFieldsTypes.back() == dtOid && m_nOidFieldIndex < 0)
+						if((m_vecActualFieldsTypes.back() == dtOid32 || m_vecActualFieldsTypes.back() == dtOid64)  && m_nOidFieldIndex < 0)
 							m_nOidFieldIndex = fieldIndex;
 						if(m_vecActualFieldsTypes.back() == dtGeometry && (m_nShapeFieldIndex < 0 || m_nShapeFieldIndex > fieldIndex))
 							m_nShapeFieldIndex = fieldIndex;

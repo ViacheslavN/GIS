@@ -22,11 +22,12 @@ namespace GisEngine
 		public:
 			// IFieldSet
 			virtual int  GetCount() const;
-			virtual bool Find(const CommonLib::CString& field) const;
+			virtual int Find(const CommonLib::CString& field) const;
 			virtual void Reset();
 			virtual bool Next(CommonLib::CString* field);
 			virtual void Add(const CommonLib::CString& field);
 			virtual void Remove(const CommonLib::CString& field);
+			virtual	const CommonLib::CString& Get(int nIndex) const;
 			virtual void Clear();
 
 		private:

@@ -139,7 +139,7 @@ namespace GisEngine
 				  case dtUInteger64:
 				  case dtString:
 				  case dtDate:
-				  case dtOid:
+				  case dtOid32:
 					  break;
 				  case dtGeometry:
 					  {
@@ -225,7 +225,9 @@ namespace GisEngine
 					case dtDate:
 						ShapeLib::DBFAddField(dbf, pField->GetName().cstr(), ShapeLib::FTDate, pField->GetLength(), 0);
 						break;
-					case dtOid:
+					case dtOid32:
+						break;
+					case dtOid64:
 						break;
 					case dtGeometry:
 						break;

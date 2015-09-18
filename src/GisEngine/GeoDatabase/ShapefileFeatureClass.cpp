@@ -190,7 +190,7 @@ namespace GisEngine
 			 pOidField->SetIsEditable(false);
 			 pOidField->SetIsNullable(false);
 			 pOidField->SetIsRequired(true);;
-			 pOidField->SetType(dtOid);
+			 pOidField->SetType(dtOid32);
 			 m_sOIDFieldName = L"ObjectID";
 			 m_bHashOID = true;
 			 i = 0;

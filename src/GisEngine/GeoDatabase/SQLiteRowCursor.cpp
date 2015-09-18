@@ -105,6 +105,12 @@ namespace GisEngine
 					case dtInteger64:
 						*pValue = sqlite3_column_int64(m_pStmt, fieldIndex); 
 						break;
+					case dtString:
+						{
+							CommonLib::CString str = (const char*)sqlite3_column_text(m_pStmt, fieldIndex);
+							*pValue = str;
+						}
+						break;
 				 }
 
 			}

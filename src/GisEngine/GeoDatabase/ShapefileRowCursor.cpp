@@ -168,7 +168,9 @@ namespace GisEngine
 					if(rowCache)
 						m_pCurrentRow = rowCache;
 					else
+					{
 						m_pCurrentRow = new  CFeature(m_pFilter->GetFieldSet().get(), m_pSourceFields.get());
+					}
 					if(m_nShapeFieldIndex >= 0 && IsFieldSelected(m_nShapeFieldIndex))
 					{
 						IFeature* feature = (IFeature*)(m_pCurrentRow.get());
@@ -212,7 +214,7 @@ namespace GisEngine
 
 				CommonLib::CVariant* pValue = row->GetValue(fieldIndex);
 
-				if(m_vecActualFieldsTypes[i] == dtOid) // OID
+				if(m_vecActualFieldsTypes[i] == dtOid32) // OID
 				{				
 					*pValue = (int)m_nCurrentRowID;
 					continue;
@@ -223,7 +225,7 @@ namespace GisEngine
 					continue;
 				}
 
-				int shpFieldIndex = fieldIndex - 2;
+				int shpFieldIndex = fieldIndex/* - 2*/;
 				CommonLib::CString strVal;
 				double dblVal;
 				int intVal;

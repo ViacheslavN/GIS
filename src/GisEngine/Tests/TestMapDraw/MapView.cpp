@@ -261,7 +261,8 @@ void CMapView::OnFinishMapDrawing(bool)
 void CMapView::open(const wchar_t *pszFile)
 {
 	CommonLib::CString sPath = CommonLib::FileSystem::FindFilePath(pszFile);
-	CommonLib::CString sFileName = CommonLib::FileSystem::FindOnlyFileName(pszFile);
+//	CommonLib::CString sFileName = CommonLib::FileSystem::FindOnlyFileName(pszFile);
+	CommonLib::CString sFileName = CommonLib::FileSystem::FindFileName(pszFile);
 
 	GisEngine::GeoDatabase::IWorkspacePtr pWks = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"", sPath.cwstr());
 	if(!pWks.get())

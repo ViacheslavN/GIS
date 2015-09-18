@@ -40,7 +40,7 @@ namespace GisEngine
 				int fieldIndex = m_pFields->FindField(fieldName);
 				eDataTypes fieldType = m_pFields->GetField(fieldIndex)->GetType();
 
-				if(fieldType == dtOid && m_nOidFieldIndex < 0)
+				if((fieldType == dtOid32 || fieldType == dtOid64) && m_nOidFieldIndex < 0)
 					m_nOidFieldIndex = fieldIndex;
 				else if(fieldType == dtGeometry && (m_nShapeFieldIndex < 0 || m_nShapeFieldIndex > fieldIndex))
 					m_nShapeFieldIndex = fieldIndex;

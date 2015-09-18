@@ -21,7 +21,8 @@ namespace GisEngine
 					case dtUInteger16:
 					case dtUInteger32:
 					case dtUInteger64:
-					case dtOid:
+					case dtOid32:
+					case dtOid64:
 						sSQLiteType = L"INTEGER";
 						break;
 					case dtFloat:
@@ -96,7 +97,7 @@ namespace GisEngine
 					const CommonLib::CVariant& defVal = pField->GetDefaultValue();
 
 					SQLiteUtils::FieldType2SQLiteType(pField->GetType(), sType);
-					if(pField->GetType() == dtOid && pOIDField)
+					if((pField->GetType() == dtOid32 ||pField->GetType() == dtOid64) && pOIDField)
 						*pOIDField = pField->GetName();
 					else if(pField->GetType() == dtGeometry )
 					{
@@ -165,6 +166,77 @@ namespace GisEngine
 				sSQL += L");";
 
 			}
+
+
+			int BindToField(sqlite3_stmt* pStmt, int nCol, eDataTypes type, CommonLib::CVariant* pVal)
+			{
+				if(!pVal)
+					return 0;
+				int retVal = 0;
+				switch(type)
+				{
+				case dtInteger8:
+					retVal = sqlite3_bind_int(pStmt, nCol, pVal->Get<int8>());
+					break;
+				case dtInteger16:
+					retVal = sqlite3_bind_int(pStmt, nCol, pVal->Get<int16>());
+					break;
+				case dtInteger32:
+					retVal = sqlite3_bind_int(pStmt, nCol, pVal->Get<int32>());
+					break;
+				case dtOid32:
+					retVal = sqlite3_bind_int64(pStmt, nCol, pVal->Get<int32>());
+					break;
+				case dtOid64:
+					retVal = sqlite3_bind_int64(pStmt, nCol, pVal->Get<int64>());
+					break;
+				case dtInteger64:
+					retVal = sqlite3_bind_int64(pStmt, nCol, pVal->Get<int64>());
+					break;
+				case dtUInteger8:
+					retVal = sqlite3_bind_int(pStmt, nCol, pVal->Get<byte>());
+					break;
+				case dtUInteger16:
+					retVal = sqlite3_bind_int(pStmt, nCol, pVal->Get<uint16>());
+					break;
+				case dtUInteger32:
+					retVal = sqlite3_bind_int(pStmt, nCol, pVal->Get<uint32>());
+					break;
+				case dtUInteger64:
+					retVal = sqlite3_bind_int64(pStmt, nCol, pVal->Get<uint64>());
+					break;
+				case dtFloat:
+					retVal = sqlite3_bind_double(pStmt, nCol, pVal->Get<float>());
+					break;
+				case dtDouble:
+					retVal = sqlite3_bind_double(pStmt, nCol, pVal->Get<double>());
+					break;
+				case  dtBlob:
+					{
+						CommonLib::IRefObjectPtr pObj = pVal->Get<CommonLib::IRefObjectPtr>();
+						if(pObj.get())
+						{
+							CommonLib::CBlob *pBlob = (CommonLib::CBlob*)pObj.get();
+							if(pBlob)
+							{
+								retVal = sqlite3_bind_blob(pStmt, nCol, pBlob->buffer(), pBlob->size(), SQLITE_TRANSIENT);
+							}
+						}
+
+					}
+					 break;
+				case  dtString:
+					{
+						CommonLib::CString sText = pVal->Get<CommonLib::CString>();
+						if(!sText.isEmpty())
+							retVal = sqlite3_bind_text(pStmt, nCol, sText.cstr(), sText.length(), SQLITE_TRANSIENT);
+					}
+					break;
+				}
+
+				return retVal;
+			}
 		}
+
 	}
 }

@@ -27,7 +27,8 @@ namespace GisEngine
 			dtUInteger16,
 			dtUInteger32,
 			dtUInteger64,
-			dtOid,
+			dtOid32,
+			dtOid64,
 			dtFloat,
 			dtDouble,
 			dtString,
@@ -167,6 +168,8 @@ namespace GisEngine
 				virtual IInsertCursorPtr CreateInsertCusor(ITable *pTable, IFieldSet *pFileds = 0) = 0;
 				virtual IUpdateCursorPtr CreateUpdateCusor(ITable *pTable, IFieldSet *pFileds = 0) = 0;
 				virtual IDeleteCursorPtr CreateDeleteCusor(ITable *pTable, IFieldSet *pFileds = 0) = 0;
+
+
 		};
 
 		/*struct IDatasetContainer 
@@ -266,6 +269,7 @@ namespace GisEngine
 			virtual int       GetFieldCount() const = 0;
 			virtual void      SetFieldCount(int count) = 0;
 			virtual IFieldPtr GetField(int index) const = 0;
+			virtual IFieldPtr  GetField(const CommonLib::CString& name) const = 0;
 			virtual void      SetField(int index, IField* field) = 0;
 			virtual void      AddField(IField* field) = 0;
 			virtual void      RemoveField(int index) = 0;
@@ -280,11 +284,12 @@ namespace GisEngine
 			IFieldSet(){}
 			virtual ~IFieldSet(){}
 			virtual int  GetCount() const = 0;
-			virtual bool Find(const CommonLib::CString& field) const = 0;
+			virtual int  Find(const CommonLib::CString& field) const = 0;
 			virtual void Reset() = 0;
 			virtual bool Next(CommonLib::CString* field) = 0;
 			virtual void Add(const CommonLib::CString& field) = 0;
 			virtual void Remove(const CommonLib::CString& field) = 0;
+			virtual	const CommonLib::CString& Get(int nIndex) const = 0;
 			virtual void Clear() = 0;
 		};
 
@@ -330,11 +335,13 @@ namespace GisEngine
 		};
 
 
-		struct  IInsertCursor : public ICursor
+		struct  IInsertCursor : public CommonLib::AutoRefCounter
 		{
 			IInsertCursor(){}
 			virtual ~IInsertCursor(){}
-			virtual int InsertRow(IRow* pRow) = 0;
+			virtual IFieldSetPtr GetFieldSet() const = 0;
+			virtual IFieldsPtr   GetSourceFields() const = 0;
+			virtual int64 InsertRow(IRow* pRow) = 0;
 		};
 
 		struct  IUpdateCursor : public ICursor
@@ -344,7 +351,7 @@ namespace GisEngine
 			virtual void UpdateRow(IRow* pRow) = 0;
 		};
 
-		struct IDeleteCursor : public ICursor
+		struct IDeleteCursor  : public CommonLib::AutoRefCounter
 		{
 			IDeleteCursor(){}
 			virtual ~IDeleteCursor(){}
