@@ -58,7 +58,7 @@ namespace GisEngine
 				int						m_nLength;
 				int						m_nPrecision;
 				int						m_nScale;
-				IGeometryDefPtr			m_pGeometryDefPtr;
+				IGeometryDefPtr			m_pGeometryDef;
 				IDomainPtr				m_pDomainPtr;
 				CommonLib::CVariant		m_DefValue;
 				bool					m_bIsPrimaryKey;

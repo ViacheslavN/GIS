@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "FieldSet.h"
 #include "SQLiteRowCursor.h"
+
+extern "C" {
 #include "sqlite3/sqlite3.h"
+}
 #include "Feature.h"
 #include "CommonLibrary/MemoryStream.h"
 #include "CommonLibrary/FixedMemoryStream.h"
@@ -10,9 +13,20 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
-		CSQLiteRowCursor::CSQLiteRowCursor(IQueryFilter* pFilter, bool bRecycling, ITable *pTable, sqlite3 *pConn, sqlite3_stmt *pStmt) :
-			TBase(pFilter, bRecycling, pTable), m_pConn(pConn), m_pStmt(pStmt)
+		CSQLiteRowCursor::CSQLiteRowCursor(IQueryFilter* pFilter, bool bRecycling, ITable *pTable, SQLiteUtils::CSQLiteDB* pDB) :
+			TBase(pFilter, bRecycling, pTable), m_pDB(pDB)
 		{
+			CommonLib::CString sSQL = "SELECT ";
+
+			for (size_t i = 0, sz = m_vecActualFieldsIndexes.size(); i < sz; ++i)
+			{
+				IFieldPtr pField =  m_pSourceFields->GetField(m_vecActualFieldsIndexes[i]);
+				assert(pField.get());
+				if(i != 0)
+					sSQL += L", ";
+				sSQL + pField->GetName();
+			}
+
 
 		}
 		CSQLiteRowCursor::~CSQLiteRowCursor()

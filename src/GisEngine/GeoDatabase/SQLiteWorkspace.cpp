@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "SQLiteWorkspace.h"
+extern "C" {
 #include "sqlite3/sqlite3.h"
+}
 #include "CommonLibrary/File.h"
 #include "SQLiteUtils.h"
 #include "Fields.h"
@@ -8,13 +10,16 @@
 #include "GeoDatabaseUtils.h"
 #include "SQLiteTable.h"
 #include "SQLiteFeatureClass.h"
+#include "SQLiteDB.h"
+
 namespace GisEngine
 {
 	namespace GeoDatabase
 	{
  
 		const CommonLib::CString CSQLiteWorkspace::m_sRTreePrefix = L"SPatialRTree";
-		CSQLiteWorkspace::CSQLiteWorkspace() : TBase (wiSqlLite), m_pConn(0), m_precordSet(0), m_bError(false)
+		const CommonLib::CString CSQLiteWorkspace::m_sProjPrefix = L"PROJ";
+		CSQLiteWorkspace::CSQLiteWorkspace() : TBase (wiSqlLite)
 		{
 			m_WorkspaceType = wiSqlLite;
 		//	sqlite3_initialize();
@@ -25,13 +30,23 @@ namespace GisEngine
 		//	sqlite3_shutdown();
 		}
 		CSQLiteWorkspace::CSQLiteWorkspace(const wchar_t *pszName, const wchar_t *pszPath) : TBase (wiSqlLite),
-			m_sPath(pszPath), m_pConn(0), m_precordSet(0), m_bError(false)
+			m_sPath(pszPath)
 		{
 			m_sName = pszName;
 		}
 		bool CSQLiteWorkspace::IsConnect() const
 		{
-			return m_pConn != NULL;
+			return m_pDB.get() ? m_pDB->IsConnect() : false;
+		}
+		bool CSQLiteWorkspace::IsError() const
+		{
+			return m_pDB.get() ? m_pDB->IsError() : false;
+		}
+		uint32 CSQLiteWorkspace::GetErrorCode() const {return 0;}
+		void CSQLiteWorkspace::GetErrorText( CommonLib::CString& sStr, uint32 nCode) 
+		{
+			if(m_pDB.get())
+				sStr = m_pDB->GetError();
 		}
 		IWorkspacePtr CSQLiteWorkspace::Create(const wchar_t *pszName, const wchar_t *pszPath)
 		{
@@ -124,22 +139,21 @@ namespace GisEngine
 		
 		ITablePtr  CSQLiteWorkspace::CreateTable(const CommonLib::CString& sName, IFields* pFields, const CommonLib::CString& sOIDName )
 		{
-			m_bError = false;
+
 			if(!IsConnect())
 				return ITablePtr();
 
+			m_pDB->ClearError();
 			if(sName.isEmpty())
 			{
-				m_bError = true;
-				m_sErrorMessage = L"empty table name";
+				m_pDB->SetErrorText(L"empty table name");
 				return ITablePtr();
 			}
 
 			ITablePtr pTable = GetTable(sName);
 			if(pTable.get())
 			{
-				m_bError = true;
-				m_sErrorMessage = L"table " + sName + L" is exist";
+				m_pDB->SetErrorText(L"table " + sName + L" is exist");
 				return  ITablePtr();
 			}
 
@@ -148,15 +162,9 @@ namespace GisEngine
 			SQLiteUtils::CreateSQLCreateTable(pFields, sName, sSQL, sOidField.isEmpty() ? &sOidField : NULL);
 			
 
-
-			 int retVal = sqlite3_exec(m_pConn, sSQL.cstr(), 0, 0, 0);
-
-			 if(retVal != SQLITE_OK)
-			 {
-				 m_bError = true;
-				 m_sErrorMessage = CommonLib::CString(sqlite3_errmsg(m_pConn));
+			 if(!m_pDB->execute(sSQL))
 				 return ITablePtr();
-			 }
+			
 
 			pTable = OpenTable(sName);
 			if(pTable.get())
@@ -169,25 +177,24 @@ namespace GisEngine
 		IFeatureClassPtr CSQLiteWorkspace::CreateFeatureClass(const CommonLib::CString& sName,
 			IFields* pFields, const CommonLib::CString& sOIDName,  
 			const CommonLib::CString& shapeFieldName,
-			const CommonLib::CString& sAnnotationName,
-			CommonLib::eShapeType geomtype)
+			const CommonLib::CString& sAnnotationName)
 		{
-			m_bError = false;
+	
 			if(!IsConnect())
 				return IFeatureClassPtr();
+			
+			m_pDB->ClearError();
 
 			if(sName.isEmpty())
 			{
-				m_bError = true;
-				m_sErrorMessage = L"empty FeatureClass name";
+				m_pDB->SetErrorText(L"empty FeatureClass name");
 				return IFeatureClassPtr();
 			}
 
 			IFeatureClassPtr pFC = GetFeatureClass(sName);
 			if(pFC.get())
 			{
-				m_bError = true;
-				m_sErrorMessage = L"FeatureClass " + sName + L" is exist";
+				m_pDB->SetErrorText("FeatureClass " + sName + L" is exist");
 				return  IFeatureClassPtr();
 			}
 
@@ -195,36 +202,37 @@ namespace GisEngine
 			CommonLib::CString sOidField = sOIDName;
 			CommonLib::CString sShapeField = shapeFieldName;
 			CommonLib::CString sAnno = sAnnotationName;
-			CommonLib::eShapeType gtype = geomtype;
+			CommonLib::eShapeType gtype = CommonLib::shape_type_null;
+			GisGeometry::ISpatialReferencePtr pSPref;
 			SQLiteUtils::CreateSQLCreateTable(pFields, sName, sSQL,
 				sOidField.isEmpty() ? &sOidField : NULL,
 				sShapeField.isEmpty() ? &sShapeField : NULL,
 				sAnno.isEmpty() ? &sAnno : NULL, 
-				gtype == CommonLib::shape_type_null ? &gtype : NULL);
+				 &gtype, &pSPref);
 		 
 
-
-			int retVal = sqlite3_exec(m_pConn, sSQL.cstr(), 0, 0, 0);
-
-			if(retVal != SQLITE_OK)
-			{
-				m_bError = true;
-				m_sErrorMessage = CommonLib::CString(sqlite3_errmsg(m_pConn));
-				return IFeatureClassPtr();
-			}
+			if(!m_pDB->execute(sSQL))
+				return  IFeatureClassPtr();
+			
 
 			CommonLib::CString sRTreeSQL;
 			
-			sRTreeSQL.format(L"CREATE VIRTUAL TABLE %s_%s USING rtree(%s, minX, maxX, minY, maxY)", 
-				sName.cwstr(), m_sRTreePrefix.cwstr(), sOidField.cwstr());
+			sRTreeSQL.format(L"CREATE VIRTUAL TABLE %s_%s USING rtree(feature_id, minX, maxX, minY, maxY)", 
+				sName.cwstr(), m_sRTreePrefix.cwstr());
 		 
-	
-			retVal = sqlite3_exec(m_pConn, sRTreeSQL.cstr(), NULL, 0, NULL);
-			if(retVal != SQLITE_OK)
+			if(!m_pDB->execute(sRTreeSQL))
+				return  IFeatureClassPtr();
+			
+			if(pSPref.get())
 			{
-				m_bError = true;
-				m_sErrorMessage = CommonLib::CString(sqlite3_errmsg(m_pConn));
-				return IFeatureClassPtr();
+				CommonLib::CString sSPRefSQL;
+				sSPRefSQL.format(L"CREATE TABLE %s_PROJ (PROJ TEXT)", sName.cwstr());
+				if(!m_pDB->execute(sSPRefSQL))
+					return  IFeatureClassPtr();
+				 
+				sSPRefSQL.format(L"INSERT INTO %s_PROJ (PROJ) VALUES('%s')", sName.cwstr(), pSPref->GetProjectionString().cwstr());
+				if(!m_pDB->execute(sSPRefSQL))
+					return  IFeatureClassPtr();
 			}
 
 			pFC =  OpenFeatureClass(sName);
@@ -269,18 +277,18 @@ namespace GisEngine
 			IFieldsPtr pFields;
 			CommonLib::CString sQuery;
 			sQuery.format(L"pragma table_info ('%s')", sName.cwstr());
-			int rc = sqlite3_prepare_v2(m_pConn, sQuery.cstr(), -1, &m_precordSet, NULL);
- 
-			if (rc == SQLITE_OK)
+
+			SQLiteUtils::TSQLiteResultSetPtr pRS = m_pDB->prepare_query(sQuery);
+			if (pRS.get())
 			{
 				pFields = new CFields();
-				while(sqlite3_step(m_precordSet) == SQLITE_ROW)
+				while(pRS->StepNext())
 				{
-					CommonLib::CString sName = (char*)sqlite3_column_text(m_precordSet, 1);
-					CommonLib::CString sType = (char*)sqlite3_column_text(m_precordSet, 2);
-					CommonLib::CString sNotnull = (char*)sqlite3_column_text(m_precordSet, 3);
-					CommonLib::CString sDefValue = (char*)sqlite3_column_text(m_precordSet, 4);
-					CommonLib::CString sPK = (char*)sqlite3_column_text(m_precordSet, 5);
+					CommonLib::CString sName = pRS->ColumnText(1);
+					CommonLib::CString sType = pRS->ColumnText(2);
+					CommonLib::CString sNotnull = pRS->ColumnText(3);
+					CommonLib::CString sDefValue = pRS->ColumnText(4);
+					CommonLib::CString sPK = pRS->ColumnText(5);
 
 					eDataTypes type = SQLiteUtils::SQLiteType2FieldType(sType);
 					IFieldPtr pField(new CField());
@@ -295,7 +303,6 @@ namespace GisEngine
 					pField->SetIsPrimaryKey(sPK == L"1");
 					pFields->AddField(pField.get());
 				}
-				sqlite3_finalize(m_precordSet);
 			}
 
 			return pFields;
@@ -303,18 +310,16 @@ namespace GisEngine
 
 		ITablePtr CSQLiteWorkspace::OpenTable(const CommonLib::CString& sName)
 		{
-			m_bError = false;
+			
 			if(!IsConnect())
 			{
-				m_bError = true;
-				m_sErrorMessage = L"Not connections";
 				return ITablePtr();
 			}
+			m_pDB->ClearError();
 
 			if(sName.isEmpty())
 			{
-				m_bError = true;
-				m_sErrorMessage = L"Empty table Name";
+				m_pDB->SetErrorText(L"Empty table Name");
 				return ITablePtr();
 			}
 
@@ -336,18 +341,15 @@ namespace GisEngine
 		}
 		IFeatureClassPtr CSQLiteWorkspace::OpenFeatureClass(const CommonLib::CString& sName)
 		{
-			m_bError = false;
+	
 			if(!IsConnect())
 			{
-				m_bError = true;
-				m_sErrorMessage = L"Not connections";
 				return IFeatureClassPtr();
 			}
-
+			m_pDB->ClearError();
 			if(sName.isEmpty())
 			{
-				m_bError = true;
-				m_sErrorMessage = L"Empty table Name";
+				m_pDB->SetErrorText(L"Empty table Name");
 				return IFeatureClassPtr();
 			}
 
@@ -360,9 +362,17 @@ namespace GisEngine
 			if(!pFields.get())
 				return pFC;
 
+			if(pFields->GetFieldCount() == 0)
+				return pFC;
 
-			pFC = (IFeatureClass*)new  CSQLiteFeatureClass(this, sName, sName, sName+ L"_" + m_sRTreePrefix);
+
+
+			CSQLiteFeatureClass *pSQLiteFC = new CSQLiteFeatureClass(this, sName, sName, sName+ L"_" + m_sRTreePrefix);
+			pSQLiteFC->open();
+
+			pFC = (IFeatureClass*)pSQLiteFC;
 			pFC->SetFields(pFields.get());
+	 
 			AddDataset(pFC.get());
 
 			return pFC;
@@ -387,27 +397,15 @@ namespace GisEngine
 		}
 		bool  CSQLiteWorkspace::create(const CommonLib::CString& sFullName)
 		{
-			int retVal = sqlite3_open_v2(sFullName.cstr(), &m_pConn, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, 0);
-			if(retVal != SQLITE_OK)
-			{
-				m_bError = true;
-				m_sErrorMessage = L"Error create DB file " + sFullName;
-				close();
-				return false;
-			}
-
-			return true;
+			m_pDB.reset(new SQLiteUtils::CSQLiteDB(sFullName, true));
+			return !m_pDB->IsError();
 		}
 		bool CSQLiteWorkspace::load(const CommonLib::CString& sFullName, bool bWrite, bool bOpenAll)
 		{
-			 int flags = bWrite ? SQLITE_OPEN_READWRITE:  SQLITE_OPEN_READONLY;
 
-			 int retVal = sqlite3_open_v2(sFullName.cstr(), &m_pConn, flags, 0);
-			 if(retVal != SQLITE_OK)
+			 m_pDB.reset(new SQLiteUtils::CSQLiteDB(sFullName, false));
+			 if(m_pDB->IsError())
 			 {
-				 m_bError = true;
-				 m_sErrorMessage = L"Error open DB file " + sFullName;
-				 close();
 				 return false;
 			 }
 
@@ -415,34 +413,25 @@ namespace GisEngine
 				 return true;
 
 
-			 std::string sSQL = "SELECT * FROM sqlite_master WHERE type='table' ORDER BY name";
-			 int retValue = sqlite3_prepare_v2(m_pConn, sSQL.c_str(), -1, &m_precordSet, 0);
-			 if(retValue != SQLITE_OK)
+			 CommonLib::CString sSQL = L"SELECT * FROM sqlite_master WHERE type='table' ORDER BY name";
+
+			 SQLiteUtils::TSQLiteResultSetPtr pRS = m_pDB->prepare_query(sSQL);
+			 if(!pRS.get())
 			 {
-			
-				m_bError = true;
-				 m_sErrorMessage = CommonLib::CString(sqlite3_errmsg(m_pConn));
-				close();
 				return false;
 			 }
 
-			 retValue = sqlite3_step(m_precordSet);
+			 
 			 std::vector<CommonLib::CString> tableNames;
-			 while(retValue == SQLITE_ROW)
+			 while(pRS->StepNext())
 			 {
-
-		
-				CommonLib::CString tableName = (char*)sqlite3_column_text(m_precordSet, 1);
-				CommonLib::CString sCreateSQL = (char*)sqlite3_column_text(m_precordSet, 4);
+				CommonLib::CString tableName = pRS->ColumnText(1);
+				CommonLib::CString sCreateSQL = pRS->ColumnText(4);
 
 				if(sCreateSQL.find(m_sRTreePrefix) == -1)
 					 tableNames.push_back(tableName);
-
-
-				 retValue = sqlite3_step(m_precordSet);
 			 }
 		 
-			 sqlite3_finalize(m_precordSet);
 
 
 			 for (size_t i = 0, sz = tableNames.size(); i < sz; ++i)
@@ -457,14 +446,9 @@ namespace GisEngine
 		}
 		void CSQLiteWorkspace::close()
 		{
-			if(m_pConn != 0)
+			if(m_pDB.get())
 			{
-				int result = sqlite3_close(m_pConn);
-				if(result != SQLITE_OK)
-				{
-					//TO DO Error
-				}
-				m_pConn = 0;
+				m_pDB.reset();
 			}
 		}
 		ITransactionPtr CSQLiteWorkspace::startTransaction()

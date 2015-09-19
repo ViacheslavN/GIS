@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "SQLiteInsertCursor.h"
-#include "sqlite3/sqlite3.h"
 
+extern "C" {
+#include "sqlite3/sqlite3.h"
+}
 #include "FieldSet.h"
 #include "SQLiteUtils.h"
 #include "SQLiteFeatureClass.h"
@@ -9,10 +11,10 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
-		SQLiteInsertCursor::SQLiteInsertCursor(ITable* pTable, IFieldSet *pFileds, sqlite3* pConn) :
-			TBase(pTable, pFileds), m_pConn(pConn), m_bValidCursor(true), m_bInit(false), m_pStmt(NULL), m_pStmtSpatial(NULL)
+		SQLiteInsertCursor::SQLiteInsertCursor(ITable* pTable, IFieldSet *pFileds, SQLiteUtils::CSQLiteDB *pDB) :
+			TBase(pTable, pFileds), m_pDB(pDB), m_bValidCursor(true), m_bInit(false)
 		{
-			assert(m_pConn);
+			assert(m_pDB);
 
 
 		}
@@ -32,7 +34,6 @@ namespace GisEngine
 			if(!m_bValidCursor)
 				return -1;
 			IFeature *pFeature = NULL;
-			int nRetVal = 0;
 			IFieldSetPtr pFieldSet = pRow->GetFieldSet();
 			if(!pFieldSet.get() || pFieldSet->GetCount() == 0)
 				pFieldSet = m_pFieldSet;
@@ -60,56 +61,51 @@ namespace GisEngine
 						CommonLib::IGeoShapePtr pShape = pFeature->GetShape();
 						if(pShape.get())
 						{
-							CommonLib::MemoryStream stream;
-							pShape->write(&stream);
-							nRetVal = sqlite3_bind_blob(m_pStmt, i + 1, stream.buffer(), stream.size(), SQLITE_TRANSIENT);
+						 
+							pShape->write(&m_WriteShapeStream);
+							m_pStmt->ColumnBindBlob(i + 1, m_WriteShapeStream.buffer(), m_WriteShapeStream.pos());
+							m_WriteShapeStream.seek(0, CommonLib::soFromBegin);
 						}
 						
 
 					}
 					else
 					{
-						nRetVal = SQLiteUtils::BindToField(m_pStmt, c_it->second.m_nCol + 1, c_it->second.m_type, pRow->GetValue(i));
+						m_pStmt->ColumnBind(i + 1, c_it->second.m_type, pRow->GetValue(i));
+						 
 					}
-					if(nRetVal != SQLITE_OK)
+					if(m_pStmt->IsError())
 					{
 						//TO DO error
-						 m_sErrorMessage = CommonLib::CString(sqlite3_errmsg(m_pConn));
 						m_bValidCursor = false;
 						return -1;
 
 					}
 				}
 
-				nRetVal = sqlite3_step(m_pStmt);
-
-				//if(m_pStmt)
-				//	sqlite3_finalize(m_pStmt);
-				if(nRetVal != SQLITE_DONE)
+				m_pStmt->StepNext();
+				if(m_pStmt->IsError())
 				{
 					//TO DO error
-					m_sErrorMessage = CommonLib::CString(sqlite3_errmsg(m_pConn));
 					m_bValidCursor = false;
 					return -1;
 				}
 
-				sqlite3_reset(m_pStmt);
+				m_pStmt->reset();
 			}
 			
 
-			int64 nLastRowID = sqlite3_last_insert_rowid(m_pConn);
+			int64 nLastRowID =m_pDB->GetLastInsertRowID();
 			if(pFeature)
 			{
 				IFieldPtr pOIDField = pRow->GetSourceFields()->GetField(m_pTable->GetOIDFieldName());
 				if(pOIDField->GetType() == dtOid32)
-					nRetVal = sqlite3_bind_int(m_pStmtSpatial, 1,  (int32)nLastRowID);
+					m_pStmtSpatial->ColumnBindInt(1,  (int32)nLastRowID);
 				else
-					nRetVal = sqlite3_bind_int64(m_pStmtSpatial, 1,  nLastRowID);
-
-				if(nRetVal != SQLITE_OK)
+					m_pStmtSpatial->ColumnBindInt64(1,  nLastRowID);
+				if(m_pStmtSpatial->IsError())
 				{
 					//TO DO error
-					m_sErrorMessage = CommonLib::CString(sqlite3_errmsg(m_pConn));
 					m_bValidCursor = false;
 					return -1;
 
@@ -117,44 +113,39 @@ namespace GisEngine
 
 				CommonLib::IGeoShapePtr pShape = pFeature->GetShape();
 				const CommonLib::bbox& bb = pShape->getBB();
-				nRetVal = sqlite3_bind_double(m_pStmtSpatial, 2, bb.xMin);
-				nRetVal = sqlite3_bind_double(m_pStmtSpatial, 3, bb.xMax);
-				nRetVal = sqlite3_bind_double(m_pStmtSpatial, 4, bb.yMin);
-				nRetVal = sqlite3_bind_double(m_pStmtSpatial, 5, bb.yMax);
 
-				if(nRetVal != SQLITE_OK)
+				m_pStmtSpatial->ColumnBindDouble(2, bb.xMin);
+				m_pStmtSpatial->ColumnBindDouble(3, bb.xMax);
+				m_pStmtSpatial->ColumnBindDouble(4, bb.yMin);
+				m_pStmtSpatial->ColumnBindDouble(5, bb.yMax);
+
+				if(m_pStmtSpatial->IsError())
 				{
 					//TO DO error
-					m_sErrorMessage = CommonLib::CString(sqlite3_errmsg(m_pConn));
 					m_bValidCursor = false;
 					return -1;
 
 				}
 
-				nRetVal = sqlite3_step(m_pStmtSpatial);
+				m_pStmtSpatial->StepNext();
 
 				//if(m_pStmt)
 				//	sqlite3_finalize(m_pStmt);
-				if(nRetVal != SQLITE_DONE)
+				if(m_pStmtSpatial->IsError())
 				{
 					//TO DO error
-					m_sErrorMessage = CommonLib::CString(sqlite3_errmsg(m_pConn));
 					m_bValidCursor = false;
 					return -1;
 				}
 
-				sqlite3_reset(m_pStmtSpatial);
-
+				m_pStmtSpatial->reset();
 
 			}
 			return nLastRowID;
 		}
 		void SQLiteInsertCursor::close()
 		{
-			if(m_pStmt)
-				sqlite3_finalize(m_pStmt);
-			if(m_pStmtSpatial)
-				sqlite3_finalize(m_pStmtSpatial);
+		 
 		}
 		void SQLiteInsertCursor::init()
 		{
@@ -202,29 +193,27 @@ namespace GisEngine
 
 			sSQL += sValues;
 
-			int retValue = sqlite3_prepare(m_pConn, sSQL.cstr(), -1, &m_pStmt, 0);
-			if(retValue != SQLITE_OK)
+			m_pStmt = m_pDB->prepare_query(sSQL);
+			if(!m_pStmt.get())
 			{
 				 //TO DO error
 				m_bValidCursor = false;
+				return;
 			 
 			}
 
 			
 			if(m_pTable->GetDatasetType() == dtFeatureClass)
 			{
-				CSQLiteFeatureClass *pFC = (CSQLiteFeatureClass *)m_pTable.get();
+				CSQLiteFeatureClass *pFC = dynamic_cast<CSQLiteFeatureClass*>(m_pTable.get());
+				assert(pFC);
 				const CommonLib::CString& sRTreeIndex = pFC->GetRTReeIndexName();
-				CommonLib::CString sSQL = L"INSERT INTO  " + sRTreeIndex + L" ( " + pFC->GetOIDFieldName() + ", minX, maxX, minY, maxY)" + 
+				CommonLib::CString sSQL = L"INSERT INTO  " + sRTreeIndex + L"(feature_id, minX, maxX, minY, maxY)" + 
 					" VALUES (?, ?, ?, ?, ?)";
-				int retValue = sqlite3_prepare(m_pConn, sSQL.cstr(), -1, &m_pStmtSpatial, 0);
-				if(retValue != SQLITE_OK)
+				m_pStmtSpatial = m_pDB->prepare_query(sSQL);
+				if(!m_pStmtSpatial.get())
 				{
-					//TO DO error
-					m_sErrorMessage = CommonLib::CString(sqlite3_errmsg(m_pConn));
 					m_bValidCursor = false;
-		 
-
 				}
 			}
 			

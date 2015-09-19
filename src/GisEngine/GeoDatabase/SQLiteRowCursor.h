@@ -3,10 +3,8 @@
 
 #include "GeoDatabase.h"
 #include "CursorBase.h"
-
-
-struct sqlite3;
-struct sqlite3_stmt;
+#include "SQLiteDB.h"
+ 
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -16,7 +14,7 @@ namespace GisEngine
 		public:
 
 			typedef ICursorBase<ICursor> TBase;
-			CSQLiteRowCursor(IQueryFilter* filter, bool recycling, ITable *pTable, sqlite3 *pConn, sqlite3_stmt *pStmt);
+			CSQLiteRowCursor(IQueryFilter* filter, bool recycling, ITable *pTable, SQLiteUtils::CSQLiteDB* pDB);
 			virtual ~CSQLiteRowCursor();
 
 		public:
@@ -26,10 +24,10 @@ namespace GisEngine
 		protected:
 			CommonLib::IGeoShapePtr   m_pCacheShape;
 			CommonLib::IBlobPtr		  m_pCacheBlob;
+			SQLiteUtils::CSQLiteDB*				  m_pDB;
 			int m_nRecordCount;
 			bool m_bInvalidCursor;
-			sqlite3 *m_pConn;
-			sqlite3_stmt *m_pStmt;
+		 
 		};
 	}
 }

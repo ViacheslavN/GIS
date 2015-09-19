@@ -144,7 +144,8 @@ namespace GisEngine
 			 bool hasZ;
 			 bool hasM;
 			 m_ShapeType = ShapefileUtils::SHPTypeToGeometryType(shapeType, &hasZ, &hasM);
-			 IGeometryDefPtr pGeometryDefPtr(new  CGeometryDef(m_ShapeType, hasZ, hasM));
+			 IGeometryDefPtr pGeometryDef(new  CGeometryDef(m_ShapeType, hasZ, hasM));
+			 pGeometryDef->SetSpatialReference(m_pSpatialReference.get());
 
 			 int fieldCount = ShapeLib::DBFGetFieldCount(m_dbf.file);
 			 for(int fieldNum = 0; fieldNum < fieldCount; ++fieldNum)
@@ -172,7 +173,7 @@ namespace GisEngine
 				 m_pFields->AddField(pFieldPtr.get());
 			 }
 			 m_pShapeField = new CField();
-			 m_pShapeField->SetGeometryDef(pGeometryDefPtr.get());
+			 m_pShapeField->SetGeometryDef(pGeometryDef.get());
 			 m_pShapeField->SetType(dtGeometry);
 
 			 m_sShapeFieldName = L"Shape";

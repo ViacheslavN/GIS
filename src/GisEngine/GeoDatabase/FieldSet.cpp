@@ -42,7 +42,7 @@ namespace GisEngine
 
 		const CommonLib::CString& CFieldSet::Get(int nIndex) const
 		{
-			assert(nIndex < m_vecFields.size());
+			assert(nIndex < (int)m_vecFields.size());
 			return m_vecFields[nIndex];
 		}
 

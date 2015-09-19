@@ -10,6 +10,7 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
+		
 		class CShapefileWorkspace : public IWorkspaceBase<IWorkspace>
 		{
 
@@ -45,8 +46,7 @@ namespace GisEngine
 				virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name,
 					IFields* fields, const CommonLib::CString& sOIDName = L"",  
 					const CommonLib::CString& shapeFieldName = L"",
-					const CommonLib::CString& sAnnotationName = L"",
-					CommonLib::eShapeType geomtype = CommonLib::shape_type_null );
+					const CommonLib::CString& sAnnotationName = L"");
 				virtual ITablePtr  OpenTable(const CommonLib::CString& name);
 				virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::CString& name);
 

@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "SQLiteUtils.h"
+extern "C" {
 #include "sqlite3/sqlite3.h"
-
+}
 
 namespace GisEngine
 {
@@ -76,7 +77,7 @@ namespace GisEngine
 
 			void CreateSQLCreateTable(IFields *pFields, const CommonLib::CString& sTableName, 
 				CommonLib::CString& sSQL, CommonLib::CString* pOIDField, CommonLib::CString* pShapeField, 
-				CommonLib::CString* pAnno, CommonLib::eShapeType *pSPType)
+				CommonLib::CString* pAnno, CommonLib::eShapeType *pSPType, GisGeometry::ISpatialReferencePtr* pSPref)
 			{
 
 				if(pOIDField)
@@ -105,10 +106,13 @@ namespace GisEngine
 							*pShapeField = pField->GetName();
 						if(pSPType)
 						{
-							IShapeField *pShapeField = (IShapeField*)pField.get();
+							IShapeField *pShapeField = dynamic_cast<IShapeField*>(pField.get());
+							assert(pShapeField);
 							if(pShapeField)
 							{
 								*pSPType = pShapeField->GetGeometryDef()->GetGeometryType();
+								if(pSPref)
+									*pSPref = pShapeField->GetGeometryDef()->GetSpatialReference();
 							}
 						}
 					}
@@ -121,6 +125,8 @@ namespace GisEngine
 							if(pShapeField)
 							{
 								*pSPType = pShapeField->GetGeometryDef()->GetGeometryType();
+								if(pSPref)
+									*pSPref = pShapeField->GetGeometryDef()->GetSpatialReference();
 							}
 						}
 					}

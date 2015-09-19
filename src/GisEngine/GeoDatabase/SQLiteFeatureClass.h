@@ -34,6 +34,7 @@ namespace GisEngine
 			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
 			virtual bool load(GisCommon::IXMLNode* pXmlNode);
 
+			bool open();
 		private:
 			CSQLiteWorkspace *m_pSQLiteWorkspace;
 			CommonLib::CString m_sSpatialIndexName;

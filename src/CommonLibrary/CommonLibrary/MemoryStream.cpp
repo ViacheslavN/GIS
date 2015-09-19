@@ -6,7 +6,6 @@ namespace CommonLib
 	m_pAlloc(pAlloc)
 	,m_pBuffer(0)
 	,m_nPos(0)
-	,m_nUsedSize(0)
 	,m_nSize(0)
 	,m_bAttach(false)
 	{
@@ -33,7 +32,6 @@ namespace CommonLib
 		}
 		m_pBuffer = (byte*)m_pAlloc->alloc(sizeof(byte) * nSize);
 		m_nPos = 0;
-		m_nUsedSize = nSize;
 		m_nSize = nSize;
 		m_bAttach = false;
 	}
@@ -41,7 +39,6 @@ namespace CommonLib
 	{
 		m_pBuffer = pBuffer;
 		m_nPos = 0;
-		m_nUsedSize = 0;
 		m_nSize = nSize;
 		m_bAttach = true;
 	}
@@ -49,7 +46,6 @@ namespace CommonLib
 	{
 		byte* tmp = m_pBuffer;
 		m_nPos = 0;
-		m_nUsedSize = 0;
 		m_nSize = 0;
 		m_pBuffer = 0;
 		m_bAttach = false;
@@ -61,7 +57,7 @@ namespace CommonLib
 	}
 	size_t MemoryStream::size() const
 	{
-		return m_nUsedSize;
+		return m_nSize;
 	}
 
 	bool MemoryStream::seek(size_t pos, enSeekOffset offset  )
@@ -73,19 +69,19 @@ namespace CommonLib
 		switch(offset)
 		{
 		case soFromBegin:
-			newpos = m_nPos;
+			newpos = pos;
 			break;
 		case soFromCurrent:
 			newpos = m_nPos + pos;
 			break;
 		case soFromEnd:
-			newpos = m_nUsedSize + pos;
+			newpos = m_nSize + pos;
 			break;
 		}
-		if(newpos > m_nUsedSize && m_bAttach)
+		if(newpos > m_nSize && m_bAttach)
 			return false;
-		if(newpos > m_nUsedSize && !m_bAttach)
-			resize(newpos - m_nUsedSize);
+		if(newpos > m_nSize && !m_bAttach)
+			resize(newpos - m_nSize);
 		m_nPos = newpos;
 		return true;
 
@@ -101,7 +97,6 @@ namespace CommonLib
 	void MemoryStream::close()
 	{
 		m_nPos = 0;
-		m_nUsedSize = 0;
 		m_nSize = 0;
 		m_pBuffer = 0;
 	}
@@ -109,17 +104,16 @@ namespace CommonLib
 	{
 		size_t newSize = m_nSize;
 
-		while(m_nUsedSize + nSize > newSize)
+		while(m_nPos + nSize > newSize)
 			newSize = size_t(newSize * 1.5) + 1;
 		if(newSize > m_nSize)
 		{
 			m_nSize = newSize;
 			byte* buffer =  (byte*)m_pAlloc->alloc(sizeof(byte) * newSize);
 			if(m_pBuffer)
-				memcpy(buffer, m_pBuffer, m_nUsedSize);
+				memcpy(buffer, m_pBuffer, m_nPos);
 			m_pBuffer = buffer;
 		}
-		m_nUsedSize += nSize;
 	}
 
 

@@ -137,8 +137,7 @@ namespace GisEngine
 				virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name,
 							IFields* fields, const CommonLib::CString& sOIDName = L"",  
 							const CommonLib::CString& shapeFieldName = L"",
-							const CommonLib::CString& sAnnotationName = L"",
-							CommonLib::eShapeType geomtype = CommonLib::shape_type_null ) = 0;					
+							const CommonLib::CString& sAnnotationName = L"") = 0;					
 
 				virtual ITablePtr OpenTable(const CommonLib::CString& name) = 0;
 				virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::CString& name) = 0;

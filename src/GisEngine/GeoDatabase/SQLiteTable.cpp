@@ -30,10 +30,7 @@ namespace GisEngine
 
 		bool CSQLiteTable::load()
 		{
-			sqlite3 *pConn = m_pSQLiteWorkspace->GetConnections();
-			if(!pConn)
-				return false;
-
+			
 			return false;
 		}
 		bool CSQLiteTable::save(CommonLib::IWriteStream *pWriteStream) const

@@ -6,14 +6,14 @@
 #include "Common/GisEngineCommon.h"
 #include "CommonLibrary/CSSection.h"
 
-
-struct sqlite3;
-struct sqlite3_stmt;
-
 namespace GisEngine
 {
 	namespace GeoDatabase
 	{
+		namespace SQLiteUtils
+		{
+			class CSQLiteDB;
+		}
 		class CSQLiteWorkspace : public IWorkspaceBase<IWorkspace>
 		{
 		public:
@@ -29,23 +29,20 @@ namespace GisEngine
  
 
 			virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& sOIDName = L"");
+
 			virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name,
 				IFields* fields, const CommonLib::CString& sOIDName = L"",  
 				const CommonLib::CString& shapeFieldName = L"",
-				const CommonLib::CString& sAnnotationName = L"",
-				CommonLib::eShapeType geomtype = CommonLib::shape_type_null );
+				const CommonLib::CString& sAnnotationName = L"");
 
 			virtual ITablePtr OpenTable(const CommonLib::CString& name);
 			virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::CString& name);
 
 			
-			virtual bool IsError() const {return m_bError;}
-			virtual uint32 GetErrorCode() const {return 0;}
-			virtual void GetErrorText( CommonLib::CString& sStr, uint32 nCode) 
-			{
-				sStr = m_sErrorMessage;
-			}
-
+			virtual bool IsError() const;
+			virtual uint32 GetErrorCode() const;
+			virtual void GetErrorText( CommonLib::CString& sStr, uint32 nCode); 
+			
 
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const;
 			virtual bool load(CommonLib::IReadStream* pReadStream);
@@ -54,7 +51,11 @@ namespace GisEngine
 			virtual bool load(GisCommon::IXMLNode* pXmlNode);
 
 			virtual	ITransactionPtr startTransaction();
-			sqlite3 *GetConnections(){return m_pConn;}
+
+			const CommonLib::CString& GetRTreePrefix() const {return m_sRTreePrefix;}
+			const CommonLib::CString& GetProjPrefix() const {return m_sProjPrefix;}
+
+			SQLiteUtils::CSQLiteDB *GetDB(){return m_pDB.get();}
 		private:
 			bool create(const CommonLib::CString& sFullName);
 			bool load(const CommonLib::CString& sFullName, bool bWrite, bool bOpenAll = true);
@@ -62,14 +63,12 @@ namespace GisEngine
 			bool IsConnect() const;
 			IFieldsPtr ReadFields(const CommonLib::CString& sName);
 			static const CommonLib::CString m_sRTreePrefix;
+			static const CommonLib::CString m_sProjPrefix;
+			static const CommonLib::CString m_sProjFieldName;
 		private:
   
 			CommonLib::CString m_sPath;
-
-			sqlite3*		m_pConn;
-			sqlite3_stmt*	m_precordSet;
-			CommonLib::CString m_sErrorMessage;
-			bool m_bError;
+			std::auto_ptr<SQLiteUtils::CSQLiteDB> m_pDB;
 		};
 	}
 }

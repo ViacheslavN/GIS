@@ -116,9 +116,8 @@ namespace CommonLib
 		void resize(size_t nSize);
 
 		byte* m_pBuffer;
-		size_t  m_nPos;
-		size_t  m_nUsedSize;
-		size_t  m_nSize;
+		uint32  m_nPos;
+		uint32  m_nSize;
 		bool m_bIsBigEndian;
 		alloc_t *m_pAlloc;
 		bool m_bAttach;

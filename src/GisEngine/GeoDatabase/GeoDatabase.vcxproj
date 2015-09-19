@@ -475,7 +475,9 @@
     <ClInclude Include="ShapefileWorkspace.h" />
     <ClInclude Include="sqlite3\sqlite3.h" />
     <ClInclude Include="sqlite3\sqlite3ext.h" />
+    <ClInclude Include="SQLIteDB.h" />
     <ClInclude Include="SQLiteInsertCursor.h" />
+    <ClInclude Include="SQLiteResultSet.h" />
     <ClInclude Include="SQLiteRowCursor.h" />
     <ClInclude Include="SQLiteFeatureClass.h" />
     <ClInclude Include="SQLiteTable.h" />

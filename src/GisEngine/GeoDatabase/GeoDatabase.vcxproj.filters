@@ -25,6 +25,9 @@
     <Filter Include="GeoDatabaseSQlite\sqlite3">
       <UniqueIdentifier>{cf07cc22-bfa8-4548-9e19-443c7fdca784}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GeoDatabaseSQlite\SQLiteUtils">
+      <UniqueIdentifier>{4437550b-5099-4e0e-82c3-f41fe13e9caf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -102,9 +105,6 @@
     <ClInclude Include="WorkspaceBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SQLiteUtils.h">
-      <Filter>GeoDatabaseSQlite</Filter>
-    </ClInclude>
     <ClInclude Include="GeoDatabaseUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -122,6 +122,15 @@
     </ClInclude>
     <ClInclude Include="SQLiteInsertCursor.h">
       <Filter>GeoDatabaseSQlite</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLiteUtils.h">
+      <Filter>GeoDatabaseSQlite\SQLiteUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLIteDB.h">
+      <Filter>GeoDatabaseSQlite\SQLiteUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLiteResultSet.h">
+      <Filter>GeoDatabaseSQlite\SQLiteUtils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -173,9 +182,6 @@
     <ClCompile Include="WorkspaceBase.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="SQLiteUtils.cpp">
-      <Filter>GeoDatabaseSQlite</Filter>
-    </ClCompile>
     <ClCompile Include="GeoDatabaseUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -193,6 +199,9 @@
     </ClCompile>
     <ClCompile Include="sqlite3\sqlite3.c">
       <Filter>GeoDatabaseSQlite\sqlite3</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLiteUtils.cpp">
+      <Filter>GeoDatabaseSQlite\SQLiteUtils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -8,7 +8,7 @@ namespace GisEngine
 		CField::CField(CommonLib::CString& sName, CommonLib::CString& sAliasName, bool bIsEditable,	bool bIsNullable, bool bIsRquired, eDataTypes type,
 			int nLength, int nPrecision, int nScale, IGeometryDef* pGeometry, IDomain* pDomain, bool bIsPrimaryKey) : 
 			m_sName(sName), m_sAliasName(sAliasName), m_bIsEditable(bIsEditable), m_bIsNullable(bIsNullable), m_bIsRquired(bIsRquired), m_type(type),
-				m_nLength(nLength), m_nPrecision(nPrecision), m_nScale(nScale), m_pGeometryDefPtr(pGeometry), m_pDomainPtr(pDomain), m_bIsPrimaryKey(bIsPrimaryKey)
+				m_nLength(nLength), m_nPrecision(nPrecision), m_nScale(nScale), m_pGeometryDef(pGeometry), m_pDomainPtr(pDomain), m_bIsPrimaryKey(bIsPrimaryKey)
 		{
 
 		}
@@ -135,11 +135,11 @@ namespace GisEngine
 		// IShapeField
 		IGeometryDefPtr  CField::GetGeometryDef() const
 		{
-			return m_pGeometryDefPtr;
+			return m_pGeometryDef;
 		}
 		void  CField::SetGeometryDef(IGeometryDef* pGeometryDef)
 		{
-			m_pGeometryDefPtr = pGeometryDef;
+			m_pGeometryDef = pGeometryDef;
 		}
 		const CommonLib::CVariant& CField::GetDefaultValue() const
 		{

@@ -105,7 +105,7 @@ namespace GisEngine
 		}
 		IFeatureClassPtr CShapefileWorkspace::CreateFeatureClass(const CommonLib::CString& sName,
 			IFields* pFields, const CommonLib::CString& sOIDName,  	const CommonLib::CString& shapeFieldName,
-			const CommonLib::CString& sAnnotationName, 	CommonLib::eShapeType geomtype)
+			const CommonLib::CString& sAnnotationName)
 		{
 		
 
