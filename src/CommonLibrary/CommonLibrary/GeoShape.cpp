@@ -52,7 +52,7 @@ namespace CommonLib
 
 		return (eShapeType)(shapeType & shape_basic_type_mask);
 	}
-	void getTypeParams(eShapeType shapeType, eShapeType* pGenType, bool* has_z, bool* has_m, bool* has_curve, bool* has_id)
+	void CGeoShape::getTypeParams(eShapeType shapeType, eShapeType* pGenType, bool* has_z, bool* has_m, bool* has_curve, bool* has_id)
 	{
 		if(isTypeSimple(shapeType))
 		{

@@ -68,5 +68,17 @@ namespace GisEngine
 		{
 			m_baseExtent = box;
 		}
+		IGeometryDefPtr CGeometryDef::clone() const
+		{
+			IGeometryDefPtr pGeomDef(new CGeometryDef());
+			pGeomDef->SetBaseExtent(GetBaseExtent());
+			pGeomDef->SetHasM(GetHasM());
+			pGeomDef->SetHasZ(GetHasZ());
+			pGeomDef->SetGeometryType(GetGeometryType());
+			if(GetSpatialReference().get())
+				pGeomDef->SetSpatialReference(GetSpatialReference()->clone().get());
+
+			return pGeomDef;
+		}
 	}
 }

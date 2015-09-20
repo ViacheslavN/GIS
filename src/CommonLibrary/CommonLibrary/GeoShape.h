@@ -34,6 +34,8 @@ namespace CommonLib
 		
 		bool write(IWriteStream *pStream) const;
 		bool read(IReadStream *pStream);
+
+		static void getTypeParams(eShapeType shapeType, eShapeType* pGenType, bool* has_z, bool* has_m, bool* has_curve, bool* has_id);
 		
 		void clear();
 		void calcBB();

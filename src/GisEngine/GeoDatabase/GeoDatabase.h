@@ -257,6 +257,7 @@ namespace GisEngine
 			virtual void					 SetIsDefault(const CommonLib::CVariant& value) = 0;
 			virtual bool                 GetIsPrimaryKey() const = 0;
 			virtual void                 SetIsPrimaryKey(bool flag) = 0;
+			virtual IFieldPtr			 clone() const = 0;
 		};
 
 
@@ -275,6 +276,7 @@ namespace GisEngine
 			virtual int       FindField(const CommonLib::CString& name) const = 0;
 			virtual bool      FieldExists(const CommonLib::CString& name) const = 0;
 			virtual void	  Clear() = 0;
+			virtual IFieldsPtr		clone() const = 0;
 		};
 
 
@@ -417,6 +419,7 @@ namespace GisEngine
 			virtual void                              SetSpatialReference(GisGeometry::ISpatialReference* ref) = 0;
 			virtual GisBoundingBox					  GetBaseExtent() const = 0;
 			virtual void                              SetBaseExtent(const GisBoundingBox& box) = 0;
+			virtual IGeometryDefPtr					 clone() const = 0;
 		};
 	
 
@@ -439,6 +442,7 @@ namespace GisEngine
 			virtual void							SetDescription(const CommonLib::CString& description) = 0;
 			virtual CommonLib::eDataTypes			GetFieldType() const = 0;
 			virtual void							SetFieldType(CommonLib::eDataTypes ) = 0;
+			virtual IDomainPtr						clone() const = 0;
 		};
 	}
 }

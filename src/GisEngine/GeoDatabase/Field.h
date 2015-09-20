@@ -46,6 +46,7 @@ namespace GisEngine
 				// IShapeField
 				virtual IGeometryDefPtr  GetGeometryDef() const;
 				virtual void            SetGeometryDef(IGeometryDef* pGeometryDef);
+				virtual IFieldPtr		 clone() const;
 			private:
 				void copy(const CField *pField);
 			private:

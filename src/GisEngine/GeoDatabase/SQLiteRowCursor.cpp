@@ -37,9 +37,10 @@ namespace GisEngine
 		// IRowCursor
 		bool CSQLiteRowCursor::NextRow(IRowPtr* pRow)
 		{
-			if(sqlite3_step(m_pStmt) != SQLITE_ROW)
+			if(!m_pStmt.get())
 				return false;
-
+			if(!m_pStmt->StepNext())
+				return false;
 
 			if(!m_pCurrentRow.get())
 			{
@@ -65,63 +66,53 @@ namespace GisEngine
 				
 					case dtBlob:
 						{
-							int nSize = sqlite3_column_bytes(m_pStmt, fieldIndex);
-							if(!m_pCacheBlob.get())
+							CommonLib::IBlobPtr pBlob;
+							auto it = m_mapCacheBlob.find(fieldIndex);
+							if(it == m_mapCacheBlob.end())
 							{
-								m_pCacheBlob = new CommonLib::CBlob();
+								pBlob = new CommonLib::CBlob();
+								m_mapCacheBlob.insert(std::make_pair(fieldIndex, pBlob));
 							}
-							if(nSize == 0)
-								m_pCacheBlob->resize(nSize);
-							else 
-							{
-								m_pCacheBlob->copy((byte*)sqlite3_column_blob(m_pStmt, fieldIndex), nSize);
-							}
+							else
+								pBlob = it->second;
 
-							*pValue = CommonLib::IRefObjectPtr((IRefCnt*)m_pCacheBlob.get());
+							m_pStmt->ColumnBlob(fieldIndex, pBlob.get());
+							*pValue = CommonLib::IRefObjectPtr((IRefCnt*)pBlob.get());
 						}
 						break;
 					case dtGeometry:
 					case dtAnnotation:
 						{
-							int nSize = sqlite3_column_bytes(m_pStmt, fieldIndex);
-							if(!nSize)
-							{
-								m_pCacheShape->clear();
-							}
-							else
-							{
-								CommonLib::FxMemoryReadStream stream;
-								stream.attach((byte*)sqlite3_column_blob(m_pStmt, fieldIndex), nSize);
-								m_pCacheShape->read(&stream);
-							}
+							m_pStmt->ColumnShape(fieldIndex, m_pCacheShape.get());
+							
 						}
 					case dtUInteger8:
-						*pValue = (byte)sqlite3_column_int(m_pStmt, fieldIndex);//TO DO fix
+						*pValue = (byte)m_pStmt->ColumnInt(fieldIndex);//TO DO fix
 						break;
 					case dtInteger8:
-						*pValue = (int8)sqlite3_column_int(m_pStmt, fieldIndex);
+						*pValue = (int8)m_pStmt->ColumnInt(fieldIndex);
 						break;
 					case dtUInteger16:
-						*pValue = (uint16)sqlite3_column_int(m_pStmt, fieldIndex);//TO DO fix
+						*pValue = (uint16)m_pStmt->ColumnInt(fieldIndex);//TO DO fix
 						break;
 					case dtInteger32:
-						*pValue = (int32)sqlite3_column_int(m_pStmt, fieldIndex);
+						*pValue = (int32)m_pStmt->ColumnInt(fieldIndex);
 						break;
 					case dtUInteger32:
-						*pValue = (uint32)sqlite3_column_int(m_pStmt, fieldIndex);//TO DO fix
+						*pValue = (uint32)m_pStmt->ColumnInt(fieldIndex);
 						break;
 					case dtInteger16:
-						*pValue = (int16)sqlite3_column_int(m_pStmt, fieldIndex);
+						*pValue = (int16)m_pStmt->ColumnInt(fieldIndex);
 						break;
 					case dtUInteger64:
-						*pValue = (uint64)sqlite3_column_int64(m_pStmt, fieldIndex); //TO DO fix
+						*pValue = (uint64)m_pStmt->ColumnInt64(fieldIndex);
 						break;
 					case dtInteger64:
-						*pValue = sqlite3_column_int64(m_pStmt, fieldIndex); 
+						*pValue = m_pStmt->ColumnInt64(fieldIndex); 
 						break;
 					case dtString:
 						{
-							CommonLib::CString str = (const char*)sqlite3_column_text(m_pStmt, fieldIndex);
+							CommonLib::CString str = m_pStmt->ColumnText(fieldIndex); //TO DO set cache
 							*pValue = str;
 						}
 						break;

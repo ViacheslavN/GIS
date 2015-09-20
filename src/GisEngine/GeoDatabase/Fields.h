@@ -30,6 +30,7 @@ namespace GisEngine
 			virtual int       FindField(const CommonLib::CString& name) const;
 			virtual bool      FieldExists(const CommonLib::CString& name) const;
 			virtual void	  Clear();
+			virtual IFieldsPtr	clone() const;
 
 		private:
 			void RebuildFieldIndexMap() const;

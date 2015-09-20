@@ -27,11 +27,11 @@ void TestSQLiteWks()
 	GisEngine::GeoDatabase::IFeatureClassPtr pSQLFC = pWks->OpenFeatureClass(L"TestFeatureClass");
 	if(!pSQLFC.get())
 	{
-		pSQLFC = pWks->CreateFeatureClass(L"TestFeatureClass", pShapeFC->GetFields().get(), pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName());
+		pSQLFC = pWks->CreateFeatureClass(L"TestFeatureClass", pShapeFC->GetFields().get()/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
 
 
 
-		GisEngine::GeoDatabase::IShapeField *pShapeField = (GisEngine::GeoDatabase::IShapeField*)pShapeFC->GetFields()->GetField(pShapeFC->GetShapeFieldName()).get();
+		/*GisEngine::GeoDatabase::IShapeField *pShapeField = (GisEngine::GeoDatabase::IShapeField*)pShapeFC->GetFields()->GetField(pShapeFC->GetShapeFieldName()).get();
 		GisEngine::GeoDatabase::IShapeField *pSQLLiteShapeField = (GisEngine::GeoDatabase::IShapeField*)pSQLFC->GetFields()->GetField(pShapeFC->GetShapeFieldName()).get();
 
 		GisEngine::GeoDatabase::IField *pOIDField = pShapeFC->GetFields()->GetField(pShapeFC->GetOIDFieldName()).get();
@@ -42,7 +42,7 @@ void TestSQLiteWks()
 
 
 		pSQLLiteShapeField->SetType(pShapeField->GetType());
-		pSQLLiteShapeField->SetGeometryDef(pShapeField->GetGeometryDef().get());
+		pSQLLiteShapeField->SetGeometryDef(pShapeField->GetGeometryDef().get());*/
  
 		GisEngine::GeoDatabase::CQueryFilter filter;
 		filter.AddRef();

@@ -86,12 +86,12 @@ namespace GisEngine
 		}
 
 
-		IEnvelope*	CEnvelope::clone() const
+		IEnvelopePtr	CEnvelope::clone() const
 		{
 			CEnvelope *pEnvelope = new CEnvelope();
 			pEnvelope->SetBoundingBox(m_box);
-			pEnvelope->SetSpatialReference(m_pSpatialRef.get() ? m_pSpatialRef->clone() : NULL);
-			return pEnvelope;
+			pEnvelope->SetSpatialReference(m_pSpatialRef.get() ? m_pSpatialRef->clone().get() : NULL);
+			return IEnvelopePtr(pEnvelope);
 		}
 	}
 }

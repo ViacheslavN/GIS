@@ -4,22 +4,106 @@
 #include "SQLiteWorkspace.h"
 #include "GisGeometry/SpatialReferenceProj4.h"
 #include "SQLiteRowCursor.h"
+#include "GisGeometry/Envelope.h"
+#include "SQLiteUtils.h"
+#include "GeometryDef.h"
 namespace GisEngine
 {
 	namespace GeoDatabase
 	{
-		CSQLiteFeatureClass::CSQLiteFeatureClass(CSQLiteWorkspace *pWorkspace, const CommonLib::CString& sName,  const CommonLib::CString& sViewName,
-			const CommonLib::CString& SpatialIndexName) :
+
+
+		CSQLiteFeatureClass::CSQLiteFeatureClass(CSQLiteWorkspace *pWorkspace, const CommonLib::CString& sName,  const CommonLib::CString& sViewName) :
 			TBase((IWorkspace*)pWorkspace), m_pSQLiteWorkspace(pWorkspace)
 		{
 				m_sDatasetName = sName;
 				m_sDatasetViewName = sViewName;
-				m_sSpatialIndexName = SpatialIndexName;
+				m_sSpatialIndexName = sViewName + "_SpatialIndex";
+				m_sPropTableName = sViewName + L"_PROPERTIES";
 		}
  
 		CSQLiteFeatureClass::~CSQLiteFeatureClass()
 		{
 
+		}
+
+		bool CSQLiteFeatureClass::CreateFeatureClass(SQLiteUtils::CSQLiteDB* pDB,
+			IFields* pFields)
+		{
+			if(!pDB)
+				return false;
+
+
+			CommonLib::CString sSQL;
+			CommonLib::CString sOidField;
+			CommonLib::CString sShapeField;
+			CommonLib::CString sAnno;
+			m_ShapeType = CommonLib::shape_type_null;
+			GisGeometry::ISpatialReferencePtr pSPRef;
+		 
+
+			SQLiteUtils::CreateSQLCreateTable(pFields, m_sDatasetName, sSQL,
+				 &sOidField, &sShapeField, &sAnno, 	&m_ShapeType, &pSPRef);
+
+			if(sShapeField.isEmpty())
+			{
+				pDB->SetErrorText(L"empty shape field name");
+				return false;
+			}
+
+
+			if(m_ShapeType == CommonLib::shape_type_null)
+			{
+				pDB->SetErrorText(L"null shape type");
+				return false;
+			}
+
+			if(pSPRef.get())
+				m_pSpatialReference = pSPRef->clone();
+
+			m_pFields = pFields->clone();
+			m_sShapeFieldName = sShapeField;
+			m_sAnnotationName = sAnno;
+			m_sOIDFieldName = sOidField;
+
+			int nOIDType = 0;
+			if(!m_sOIDFieldName.isEmpty())
+			{
+				m_bHashOID = true;
+				IFieldPtr pOIDField =  m_pFields->GetField(m_sOIDFieldName);
+				assert(pOIDField.get());
+				nOIDType = pOIDField->GetType();
+			}
+		 
+
+
+			IShapeField* pShapeField = (IShapeField*)m_pFields->GetField(m_sShapeFieldName).get();
+			assert(pShapeField);
+			m_pExtent = new GisGeometry::CEnvelope(pShapeField->GetGeometryDef()->GetBaseExtent(), m_pSpatialReference.get());
+
+
+			if(!pDB->execute(sSQL))
+				return  false;
+
+
+			CommonLib::CString sRTreeSQL;
+			sRTreeSQL.format(L"CREATE VIRTUAL TABLE %s USING rtree(feature_id, minX, maxX, minY, maxY)", m_sSpatialIndexName.cwstr());
+
+			if(!pDB->execute(sRTreeSQL))
+				return  false;
+
+		
+			CommonLib::CString sSPRefSQL;
+			sSPRefSQL.format(L"CREATE TABLE %s (PROJ TEXT, SHAPEFIELD TEXT NOT NULL, GEOMTYPE INTEGER NOT NULL, ANNO TEXT, OIDFIELD TEXT, OIDTYPE INTEGER)", m_sPropTableName.cwstr());
+			if(!pDB->execute(sSPRefSQL))
+				return  false;
+
+			sSPRefSQL.format(L"INSERT INTO %s (PROJ, SHAPEFIELD, GEOMTYPE, ANNO, OIDFIELD, OIDTYPE) VALUES('%s', '%s', %d, '%s', '%s', %d)", m_sPropTableName.cwstr(),
+				m_pSpatialReference.get() ? m_pSpatialReference->GetProjectionString().cwstr() : L"",	sShapeField.cwstr(), (int)m_ShapeType, sAnno.cwstr(), m_sOIDFieldName.cwstr(), nOIDType);
+			if(!pDB->execute(sSPRefSQL))
+				return  false;
+			
+			return true;
 		}
 		bool CSQLiteFeatureClass::open()
 		{
@@ -28,6 +112,13 @@ namespace GisEngine
 				return false;
 
 	
+
+			m_pFields = pDB->ReadFields(m_sDatasetName);
+			if(!m_pFields.get())
+				return false;
+
+			if(!m_pFields->GetFieldCount())
+				return false;
 		
 			CommonLib::CString sBBSql;
 			sBBSql.format(L"SELECT MIN(minX), MIN(minY), MAX(maxX), MAX(maxY) FROM %s", m_sSpatialIndexName.cwstr());
@@ -38,32 +129,80 @@ namespace GisEngine
 			{
 				if(pRS_BB->StepNext())
 				{
-					bounds.xMin = pRS_BB->ColumnDouble(1);
-					bounds.yMin = pRS_BB->ColumnDouble(2);
-					bounds.xMax = pRS_BB->ColumnDouble(3);
-					bounds.yMax = pRS_BB->ColumnDouble(4);
+					bounds.xMin = pRS_BB->ColumnDouble(0);
+					bounds.yMin = pRS_BB->ColumnDouble(1);
+					bounds.xMax = pRS_BB->ColumnDouble(2);
+					bounds.yMax = pRS_BB->ColumnDouble(3);
 				}
 			}
 			 
 
-			CommonLib::CString sSPSQL;
-			sSPSQL.format(L"SELECT PROJ from %s_PROJ limit 1", m_sDatasetName.cwstr());
-			SQLiteUtils::TSQLiteResultSetPtr pRS_SPRef =  pDB->prepare_query(sSPSQL);
-			if(pRS_SPRef.get())
+			CommonLib::CString sSPropSQL;
+			sSPropSQL.format(L"SELECT PROJ, SHAPEFIELD, GEOMTYPE, ANNO, OIDFIELD, OIDTYPE from %s  limit 1", m_sPropTableName.cwstr());
+			SQLiteUtils::TSQLiteResultSetPtr pRS_Prop =  pDB->prepare_query(sSPropSQL);
+
+			int nOIDType = 0;
+			if(pRS_Prop.get())
 			{	
 			 
-				if (pRS_SPRef->StepNext()) 
-				{
-			
-			 
-					CommonLib::CString sProjStr = (char*)pRS_SPRef->ColumnText(0);
+				if (pRS_Prop->StepNext()) 
+				{			 
+					CommonLib::CString sProjStr = (char*)pRS_Prop->ColumnText(0);
+					m_sShapeFieldName = (char*)pRS_Prop->ColumnText(1);
+					m_ShapeType = (CommonLib::eShapeType)pRS_Prop->ColumnInt(2);
+					m_sAnnotationName = (char*)pRS_Prop->ColumnText(3);
+					m_sOIDFieldName  = (char*)pRS_Prop->ColumnText(4); 
+					nOIDType   = pRS_Prop->ColumnInt(5);
 					m_pSpatialReference = new GisGeometry::CSpatialReferenceProj4(sProjStr);
+					if(!m_pSpatialReference->IsValid())
+						m_pSpatialReference = NULL;
 
 				}
 				
 			}
-				
 
+			if(!m_pSpatialReference.get())
+			{
+				m_pSpatialReference = new GisGeometry::CSpatialReferenceProj4(m_sDatasetName + L".prj", GisGeometry::eSPRefTypePRJFilePath);
+				if(!m_pSpatialReference->IsValid())
+					m_pSpatialReference = NULL;
+			}
+			if(!m_pSpatialReference.get())
+			{
+				m_pSpatialReference = new GisGeometry::CSpatialReferenceProj4(bounds);
+				if(!m_pSpatialReference->IsValid())
+					m_pSpatialReference = NULL;
+			}
+		 
+			m_pExtent = new GisGeometry::CEnvelope(bounds, m_pSpatialReference.get());
+			IShapeField* pShapeField = (IShapeField*)m_pFields->GetField(m_sShapeFieldName).get();
+			assert(pShapeField);
+
+			bool bHasZ = false, bHasM = false;
+			CommonLib::CGeoShape::getTypeParams(m_ShapeType, NULL, &bHasZ, &bHasM, NULL, NULL);
+
+			IGeometryDefPtr pGeomDef(new CGeometryDef());
+			pGeomDef->SetSpatialReference(m_pSpatialReference.get());
+			pGeomDef->SetBaseExtent(bounds);
+			pGeomDef->SetGeometryType(m_ShapeType);
+			pGeomDef->SetHasM(bHasM);
+			pGeomDef->SetHasZ(bHasZ);
+			pShapeField->SetGeometryDef(pGeomDef.get());
+
+			if(!m_sAnnotationName.isEmpty())
+			{
+				IFieldPtr pField = m_pFields->GetField(m_sShapeFieldName);
+				assert(pField.get());
+				pField->SetType(dtAnnotation);
+			}
+			if(!m_sOIDFieldName.isEmpty())
+			{
+				IFieldPtr pField = m_pFields->GetField(m_sOIDFieldName);
+				assert(pField.get());
+				assert(nOIDType == dtOid32 || nOIDType == dtOid64);
+				pField->SetType((eDataTypes)nOIDType);
+			}
+		
 			return true;
 		}
 		IRowPtr	CSQLiteFeatureClass::GetRow(int64 id)
@@ -72,7 +211,7 @@ namespace GisEngine
 		}
 		ICursorPtr	CSQLiteFeatureClass::Search(IQueryFilter* filter, bool recycling)
 		{
-			return  ICursorPtr(new CSQLiteRowCursor(filter, recycling, this));
+			return  ICursorPtr(new CSQLiteRowCursor(filter, recycling, this, m_pSQLiteWorkspace->GetDB()));
 		}
 
 

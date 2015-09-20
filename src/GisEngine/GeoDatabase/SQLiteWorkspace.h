@@ -52,8 +52,7 @@ namespace GisEngine
 
 			virtual	ITransactionPtr startTransaction();
 
-			const CommonLib::CString& GetRTreePrefix() const {return m_sRTreePrefix;}
-			const CommonLib::CString& GetProjPrefix() const {return m_sProjPrefix;}
+	
 
 			SQLiteUtils::CSQLiteDB *GetDB(){return m_pDB.get();}
 		private:
@@ -61,10 +60,7 @@ namespace GisEngine
 			bool load(const CommonLib::CString& sFullName, bool bWrite, bool bOpenAll = true);
 			void close();
 			bool IsConnect() const;
-			IFieldsPtr ReadFields(const CommonLib::CString& sName);
-			static const CommonLib::CString m_sRTreePrefix;
-			static const CommonLib::CString m_sProjPrefix;
-			static const CommonLib::CString m_sProjFieldName;
+			
 		private:
   
 			CommonLib::CString m_sPath;

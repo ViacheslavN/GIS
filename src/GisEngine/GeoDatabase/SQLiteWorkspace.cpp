@@ -17,8 +17,7 @@ namespace GisEngine
 	namespace GeoDatabase
 	{
  
-		const CommonLib::CString CSQLiteWorkspace::m_sRTreePrefix = L"SPatialRTree";
-		const CommonLib::CString CSQLiteWorkspace::m_sProjPrefix = L"PROJ";
+		
 		CSQLiteWorkspace::CSQLiteWorkspace() : TBase (wiSqlLite)
 		{
 			m_WorkspaceType = wiSqlLite;
@@ -197,115 +196,18 @@ namespace GisEngine
 				m_pDB->SetErrorText("FeatureClass " + sName + L" is exist");
 				return  IFeatureClassPtr();
 			}
-
-			CommonLib::CString sSQL;
-			CommonLib::CString sOidField = sOIDName;
-			CommonLib::CString sShapeField = shapeFieldName;
-			CommonLib::CString sAnno = sAnnotationName;
-			CommonLib::eShapeType gtype = CommonLib::shape_type_null;
-			GisGeometry::ISpatialReferencePtr pSPref;
-			SQLiteUtils::CreateSQLCreateTable(pFields, sName, sSQL,
-				sOidField.isEmpty() ? &sOidField : NULL,
-				sShapeField.isEmpty() ? &sShapeField : NULL,
-				sAnno.isEmpty() ? &sAnno : NULL, 
-				 &gtype, &pSPref);
-		 
-
-			if(!m_pDB->execute(sSQL))
+			CSQLiteFeatureClass* pSQLiteFC = new CSQLiteFeatureClass(this, sName, sName);
+			if(!pSQLiteFC->CreateFeatureClass(m_pDB.get(), pFields))
+			{
+				delete pSQLiteFC;
 				return  IFeatureClassPtr();
-			
+			}
+			AddDataset(pSQLiteFC);
+			return  IFeatureClassPtr(pSQLiteFC);
 
-			CommonLib::CString sRTreeSQL;
-			
-			sRTreeSQL.format(L"CREATE VIRTUAL TABLE %s_%s USING rtree(feature_id, minX, maxX, minY, maxY)", 
-				sName.cwstr(), m_sRTreePrefix.cwstr());
+			//pFC =  OpenFeatureClass(sName);
 		 
-			if(!m_pDB->execute(sRTreeSQL))
-				return  IFeatureClassPtr();
-			
-			if(pSPref.get())
-			{
-				CommonLib::CString sSPRefSQL;
-				sSPRefSQL.format(L"CREATE TABLE %s_PROJ (PROJ TEXT)", sName.cwstr());
-				if(!m_pDB->execute(sSPRefSQL))
-					return  IFeatureClassPtr();
-				 
-				sSPRefSQL.format(L"INSERT INTO %s_PROJ (PROJ) VALUES('%s')", sName.cwstr(), pSPref->GetProjectionString().cwstr());
-				if(!m_pDB->execute(sSPRefSQL))
-					return  IFeatureClassPtr();
-			}
-
-			pFC =  OpenFeatureClass(sName);
-		 
-			if(pFC.get())
-			{
-				pFC->SetHasOIDField(true);
-				pFC->SetOIDFieldName(sOidField);
-				pFC->SetShapeFieldName(shapeFieldName.isEmpty() ? sShapeField : shapeFieldName);
-				if(!shapeFieldName.isEmpty())
-				{
-					int nIDx = pFC->GetFields()->FindField(shapeFieldName);
-					if(nIDx != -1)
-					{
-						IFieldPtr pShapeField = pFC->GetFields()->GetField(nIDx);
-						if(pShapeField.get())
-							pShapeField->SetType(dtGeometry);
-					}
-
-				}
-				if(!sAnno.isEmpty())
-				{
-					pFC->SetIsAnnoClass(true);
-					pFC->SetAnnoFieldName(sAnno);
-					int nIDx = pFC->GetFields()->FindField(sAnno);
-					if(nIDx != -1)
-					{
-						IFieldPtr pAnnoField = pFC->GetFields()->GetField(nIDx);
-						if(pAnnoField.get())
-							pAnnoField->SetType(dtAnnotation);
-					}
-				}
-				pFC->SetGeometryType(gtype);
-			
-			}
-			return pFC;
-		}
-
-		IFieldsPtr CSQLiteWorkspace::ReadFields(const CommonLib::CString& sName)
-		{
-
-			IFieldsPtr pFields;
-			CommonLib::CString sQuery;
-			sQuery.format(L"pragma table_info ('%s')", sName.cwstr());
-
-			SQLiteUtils::TSQLiteResultSetPtr pRS = m_pDB->prepare_query(sQuery);
-			if (pRS.get())
-			{
-				pFields = new CFields();
-				while(pRS->StepNext())
-				{
-					CommonLib::CString sName = pRS->ColumnText(1);
-					CommonLib::CString sType = pRS->ColumnText(2);
-					CommonLib::CString sNotnull = pRS->ColumnText(3);
-					CommonLib::CString sDefValue = pRS->ColumnText(4);
-					CommonLib::CString sPK = pRS->ColumnText(5);
-
-					eDataTypes type = SQLiteUtils::SQLiteType2FieldType(sType);
-					IFieldPtr pField(new CField());
-					pField->SetType(type);
-					pField->SetName(sName);
-					pField->SetIsNullable(sType != L"1");
-					if(!sDefValue.isEmpty())
-					{
-						CommonLib::CVariant var = GeoDatabaseUtils::GetVariantFromString(type, sDefValue);
-						pField->SetIsDefault(var);
-					}
-					pField->SetIsPrimaryKey(sPK == L"1");
-					pFields->AddField(pField.get());
-				}
-			}
-
-			return pFields;
+			//return pFC;
 		}
 
 		ITablePtr CSQLiteWorkspace::OpenTable(const CommonLib::CString& sName)
@@ -328,7 +230,7 @@ namespace GisEngine
 				return pTable;
 		
 		 
-			IFieldsPtr pFields = ReadFields(sName);
+			IFieldsPtr pFields = m_pDB->ReadFields(sName);
 			if(!pFields.get())
 				return pTable;
 
@@ -358,24 +260,15 @@ namespace GisEngine
 				return pFC;
 
 
-			IFieldsPtr pFields = ReadFields(sName);
-			if(!pFields.get())
-				return pFC;
-
-			if(pFields->GetFieldCount() == 0)
-				return pFC;
-
-
-
-			CSQLiteFeatureClass *pSQLiteFC = new CSQLiteFeatureClass(this, sName, sName, sName+ L"_" + m_sRTreePrefix);
-			pSQLiteFC->open();
-
-			pFC = (IFeatureClass*)pSQLiteFC;
-			pFC->SetFields(pFields.get());
+			CSQLiteFeatureClass *pSQLiteFC = new CSQLiteFeatureClass(this, sName, sName);
+			if(!pSQLiteFC->open())
+			{
+				delete pSQLiteFC;
+				return IFeatureClassPtr();
+			}			
 	 
-			AddDataset(pFC.get());
-
-			return pFC;
+			AddDataset(pSQLiteFC);
+			return IFeatureClassPtr(pSQLiteFC);
 		}
 
 		
@@ -428,7 +321,7 @@ namespace GisEngine
 				CommonLib::CString tableName = pRS->ColumnText(1);
 				CommonLib::CString sCreateSQL = pRS->ColumnText(4);
 
-				if(sCreateSQL.find(m_sRTreePrefix) == -1)
+				//if(sCreateSQL.find(m_sRTreePrefix) == -1)
 					 tableNames.push_back(tableName);
 			 }
 		 

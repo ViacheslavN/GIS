@@ -6,8 +6,10 @@ extern "C"
 {
 #include "sqlite3/sqlite3.h"
 }
-
-
+#include "Fields.h"
+#include "Field.h"
+#include "SQLiteUtils.h"
+#include "GeoDatabaseUtils.h"
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -125,6 +127,42 @@ namespace GisEngine
 			int64 GetLastInsertRowID()
 			{
 				return sqlite3_last_insert_rowid(m_pDB);
+			}
+
+			IFieldsPtr ReadFields(const CommonLib::CString& sTableName)
+			{
+				IFieldsPtr pFields;
+				CommonLib::CString sQuery;
+				sQuery.format(L"pragma table_info ('%s')", sTableName.cwstr());
+
+				SQLiteUtils::TSQLiteResultSetPtr pRS = prepare_query(sQuery);
+				if (pRS.get())
+				{
+					pFields = new CFields();
+					while(pRS->StepNext())
+					{
+						CommonLib::CString sName = pRS->ColumnText(1);
+						CommonLib::CString sType = pRS->ColumnText(2);
+						CommonLib::CString sNotnull = pRS->ColumnText(3);
+						CommonLib::CString sDefValue = pRS->ColumnText(4);
+						CommonLib::CString sPK = pRS->ColumnText(5);
+
+						eDataTypes type = SQLiteUtils::SQLiteType2FieldType(sType);
+						IFieldPtr pField(new CField());
+						pField->SetType(type);
+						pField->SetName(sName);
+						pField->SetIsNullable(sType != L"1");
+						if(!sDefValue.isEmpty())
+						{
+							CommonLib::CVariant var = GeoDatabaseUtils::GetVariantFromString(type, sDefValue);
+							pField->SetIsDefault(var);
+						}
+						pField->SetIsPrimaryKey(sPK == L"1");
+						pFields->AddField(pField.get());
+					}
+				}
+
+				return pFields;
 			}
 		private:
 

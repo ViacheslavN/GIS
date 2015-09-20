@@ -147,6 +147,11 @@ namespace GisEngine
 				void ColumnShape (int col,CommonLib::CGeoShape *pShape)
 				{
 					int bytes = sqlite3_column_bytes (m_pStmt, col);
+					if(bytes == 0)
+					{
+						pShape->clear();
+						return;
+					}
 					CommonLib::FxMemoryReadStream stream;
 					stream.attach((byte*)sqlite3_column_blob(m_pStmt, col), bytes);
 					pShape->read(&stream);
@@ -276,6 +281,7 @@ namespace GisEngine
 						}
 						break;
 					case  dtString:
+					case  dtAnnotation:
 						{
 							CommonLib::CString sText = pVal->Get<CommonLib::CString>();
 							if(!sText.isEmpty())

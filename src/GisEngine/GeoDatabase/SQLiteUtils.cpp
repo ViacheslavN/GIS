@@ -35,6 +35,7 @@ namespace GisEngine
 						sSQLiteType = L"BLOB";
 						break;
 					case  dtString:
+					case  dtAnnotation:
 						sSQLiteType = L"TEXT";
 						break;
 				}
@@ -112,14 +113,16 @@ namespace GisEngine
 							{
 								*pSPType = pShapeField->GetGeometryDef()->GetGeometryType();
 								if(pSPref)
+								{
 									*pSPref = pShapeField->GetGeometryDef()->GetSpatialReference();
+								}
 							}
 						}
 					}
 					else if(pField->GetType() == dtAnnotation && pAnno)
 					{
 						*pAnno = pField->GetName();
-						if(pSPType)
+						/*if(pSPType)
 						{
 							IShapeField *pShapeField = (IShapeField*)pField.get();
 							if(pShapeField)
@@ -128,7 +131,7 @@ namespace GisEngine
 								if(pSPref)
 									*pSPref = pShapeField->GetGeometryDef()->GetSpatialReference();
 							}
-						}
+						}*/
 					}
 
 					if(pField->GetIsPrimaryKey())
@@ -232,6 +235,7 @@ namespace GisEngine
 					}
 					 break;
 				case  dtString:
+				case  dtAnnotation:
 					{
 						CommonLib::CString sText = pVal->Get<CommonLib::CString>();
 						if(!sText.isEmpty())
@@ -242,6 +246,7 @@ namespace GisEngine
 
 				return retVal;
 			}
+				
 		}
 
 	}

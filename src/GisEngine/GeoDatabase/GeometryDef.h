@@ -27,6 +27,7 @@ namespace GisEngine
 			virtual void SetSpatialReference(GisGeometry::ISpatialReference* pSpRef);
 			virtual GisBoundingBox	GetBaseExtent() const;
 			virtual void SetBaseExtent(const GisBoundingBox& box);
+			virtual IGeometryDefPtr clone() const;
 		private:
 			CommonLib::eShapeType m_geometryType;
 			bool m_bIsHasZ;

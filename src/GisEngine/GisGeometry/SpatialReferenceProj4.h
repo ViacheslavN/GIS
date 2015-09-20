@@ -38,7 +38,7 @@ namespace GisEngine
 			virtual int   GetProjectionCode() const;
 			virtual bool  IsProjection() const;
 			virtual bool IsEqual(ISpatialReference* pSpatRef) const;
-			virtual ISpatialReference* clone() const;
+			virtual ISpatialReferencePtr clone() const;
 
 			virtual bool save(CommonLib::IWriteStream *pStream) const;
 			virtual bool load(CommonLib::IReadStream *pStream);

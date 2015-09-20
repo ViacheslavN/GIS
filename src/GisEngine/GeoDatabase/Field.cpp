@@ -45,8 +45,13 @@ namespace GisEngine
 			SetLength(pField->GetLength());
 			SetPrecision(pField->GetPrecision());
 			SetScale(pField->GetScale());
-			SetDomain(pField->GetDomain().get());
-			SetGeometryDef(pField->GetGeometryDef().get());
+			if(pField->GetDomain().get())
+				SetDomain(pField->GetDomain()->clone().get());
+			if(pField->GetGeometryDef().get())
+				SetGeometryDef(pField->GetGeometryDef()->clone().get());
+
+			SetIsDefault(pField->GetDefaultValue());
+			SetIsPrimaryKey(pField->GetIsPrimaryKey());
 
 		}
 
@@ -157,6 +162,29 @@ namespace GisEngine
 		void   CField::SetIsPrimaryKey(bool bFlag)
 		{
 			m_bIsPrimaryKey = bFlag;
+		}
+
+		IFieldPtr	CField::clone() const
+		{
+			CField *pField = new CField();
+			pField->SetName(GetName());
+			pField->SetAliasName(GetAliasName());
+			pField->SetIsEditable(GetIsEditable());
+			pField->SetIsNullable(GetIsNullable());
+			pField->SetIsRequired(GetIsRequired());
+			pField->SetType(GetType());
+			pField->SetLength(GetLength());
+			pField->SetPrecision(GetPrecision());
+			pField->SetScale(GetScale());
+			if(GetDomain().get() != NULL)
+				pField->SetDomain(GetDomain()->clone().get());
+			pField->SetIsDefault(GetDefaultValue());
+			pField->SetIsPrimaryKey(GetIsPrimaryKey());
+			if(GetGeometryDef().get() != NULL)
+				pField->SetGeometryDef(GetGeometryDef()->clone().get());
+
+			return IFieldPtr(pField);
+
 		}
 	}
 }

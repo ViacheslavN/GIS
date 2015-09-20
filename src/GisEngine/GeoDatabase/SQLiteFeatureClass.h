@@ -8,6 +8,10 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
+		namespace SQLiteUtils
+		{
+			class CSQLiteDB;
+		}
 		class CSQLiteWorkspace;
 		class CSQLiteFeatureClass : public IFeatureClassBase<IFeatureClass>
 		{
@@ -15,8 +19,7 @@ namespace GisEngine
 			typedef  IFeatureClassBase<IFeatureClass> TBase;
 			CSQLiteFeatureClass(CSQLiteWorkspace *pWorkspace, 
 				const CommonLib::CString& sName, 
-				const CommonLib::CString& sViewName,
-				const CommonLib::CString& SpatialIndexName);
+				const CommonLib::CString& sViewName);
 			~CSQLiteFeatureClass();
 
 			virtual IRowPtr		GetRow(int64 id);
@@ -35,10 +38,14 @@ namespace GisEngine
 			virtual bool load(GisCommon::IXMLNode* pXmlNode);
 
 			bool open();
+			bool CreateFeatureClass(SQLiteUtils::CSQLiteDB* pDB,
+				IFields* pFields);
+
+			
 		private:
 			CSQLiteWorkspace *m_pSQLiteWorkspace;
 			CommonLib::CString m_sSpatialIndexName;
-	 
+			CommonLib::CString m_sPropTableName;
 		};
 	}
 }

@@ -29,7 +29,7 @@ namespace GisEngine
 			virtual bool Intersect(IEnvelope* envelope);
 			virtual void Project(ISpatialReference* spatRef);
 
-			virtual IEnvelope*	clone() const; 
+			virtual IEnvelopePtr	clone() const; 
 		private:
 			GisBoundingBox m_box;
 			ISpatialReferencePtr m_pSpatialRef;    

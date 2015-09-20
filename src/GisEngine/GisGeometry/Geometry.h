@@ -55,7 +55,7 @@ namespace GisEngine
 			virtual bool  IsProjection() const = 0;
 
 			virtual bool IsEqual(ISpatialReference* pSpatRef) const= 0;
-			virtual ISpatialReference* clone() const = 0;
+			virtual ISpatialReferencePtr clone() const = 0;
 
 			virtual GisCommon::Units GetUnits() const = 0;
 		};
@@ -124,7 +124,7 @@ namespace GisEngine
 			virtual bool                       Intersect(IEnvelope* envelope) = 0;
 			virtual void                       Project(ISpatialReference* spatRef) = 0;
 
-			virtual IEnvelope*				  clone() const = 0; 
+			virtual IEnvelopePtr				  clone() const = 0; 
 		};
 
  

@@ -97,5 +97,15 @@ namespace GisEngine
 			m_vecFields.clear();
 			m_mapFieldIndex.clear();
 		}
+		IFieldsPtr	CFields::clone() const
+		{
+			IFieldsPtr pFields(new CFields());
+			for(size_t i = 0; i < m_vecFields.size(); ++i)
+			{
+				IFieldPtr pField = m_vecFields[i];
+				pFields->AddField(pField->clone().get());
+			}
+			return pFields;
+		}
 	}
 }
