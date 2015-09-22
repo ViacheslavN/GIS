@@ -175,6 +175,9 @@
     <Filter Include="DB\transactions\Cursors\InsertCursor">
       <UniqueIdentifier>{13d6e32b-db1e-452a-a85a-6c06f340fed1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="utils\CacheLRU_2k">
+      <UniqueIdentifier>{0e4e5829-f959-47f2-8d6f-1c853bb5768b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -189,13 +192,7 @@
     <ClInclude Include="BaseRBTree.h">
       <Filter>DB\BPTrees\memorytree\RBTree</Filter>
     </ClInclude>
-    <ClInclude Include="simple_list_iterator.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="simple_stack.h">
-      <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="simple_list.h">
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="RBSet.h">
@@ -205,12 +202,6 @@
       <Filter>DB\BPTrees\memorytree\set</Filter>
     </ClInclude>
     <ClInclude Include="RBMap.h">
-      <Filter>DB\BPTrees\memorytree\map</Filter>
-    </ClInclude>
-    <ClInclude Include="RBSimpleMultiMap.h">
-      <Filter>DB\BPTrees\memorytree\map</Filter>
-    </ClInclude>
-    <ClInclude Include="RBMultiMap.h">
       <Filter>DB\BPTrees\memorytree\map</Filter>
     </ClInclude>
     <ClInclude Include="RBSimpleMuitiSetIterator.h">
@@ -228,26 +219,14 @@
     <ClInclude Include="BaseRBMultiTree.h">
       <Filter>DB\BPTrees\memorytree\RBTree</Filter>
     </ClInclude>
-    <ClInclude Include="RBMuitiMapIteratorImp.h">
-      <Filter>DB\BPTrees\memorytree\map</Filter>
-    </ClInclude>
     <ClInclude Include="storage.h">
       <Filter>storage</Filter>
     </ClInclude>
     <ClInclude Include="FilePage.h">
       <Filter>storage</Filter>
     </ClInclude>
-    <ClInclude Include="List.h">
-      <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreeNode.h">
-      <Filter>DB\BPTrees\BTreeNotUse</Filter>
-    </ClInclude>
     <ClInclude Include="Key.h">
       <Filter>DB\BPTrees\key</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseBTree.h">
-      <Filter>DB\BPTrees\BTreeNotUse</Filter>
     </ClInclude>
     <ClInclude Include="NodeLoader.h">
       <Filter>DB\BPTrees\BTreeNotUse\BTreeNodeLoader</Filter>
@@ -266,9 +245,6 @@
     </ClInclude>
     <ClInclude Include="Schema.h">
       <Filter>DB</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreeIteratorImpl.h">
-      <Filter>DB\BPTrees\BTreeNotUse</Filter>
     </ClInclude>
     <ClInclude Include="CacheNodes.h">
       <Filter>utils</Filter>
@@ -627,9 +603,6 @@
     <ClInclude Include="TranRedoPageManager.h">
       <Filter>DB\transactions</Filter>
     </ClInclude>
-    <ClInclude Include="CacheMRU.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="MemPageCache.h">
       <Filter>utils\alloc</Filter>
     </ClInclude>
@@ -732,16 +705,22 @@
     <ClInclude Include="IRow.h">
       <Filter>SDK</Filter>
     </ClInclude>
+    <ClInclude Include="CacheLRU.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CacheLRU_k.h">
+      <Filter>utils\CacheLRU_2k</Filter>
+    </ClInclude>
+    <ClInclude Include="List.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="list_iterator.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="simple_list.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
-    <ClCompile Include="simple_list_iterator.cpp">
-      <Filter>utils</Filter>
     </ClCompile>
     <ClCompile Include="BaseRBTree.cpp">
       <Filter>DB\BPTrees\memorytree\RBTree</Filter>
@@ -754,9 +733,6 @@
     </ClCompile>
     <ClCompile Include="storage.cpp">
       <Filter>storage</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseBTree.cpp">
-      <Filter>DB\BPTrees\BTreeNotUse</Filter>
     </ClCompile>
     <ClCompile Include="Database.cpp">
       <Filter>DB</Filter>
@@ -799,9 +775,6 @@
     </ClCompile>
     <ClCompile Include="SpatialPointQuery.cpp">
       <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClCompile>
-    <ClCompile Include="BTreeNode.cpp">
-      <Filter>DB\BPTrees\BTreeNotUse</Filter>
     </ClCompile>
     <ClCompile Include="SpatialRectQuery.cpp">
       <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>

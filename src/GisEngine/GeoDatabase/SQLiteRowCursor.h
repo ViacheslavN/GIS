@@ -15,6 +15,8 @@ namespace GisEngine
 
 			typedef ICursorBase<ICursor> TBase;
 			CSQLiteRowCursor(IQueryFilter* filter, bool recycling, ITable *pTable, SQLiteUtils::CSQLiteDB* pDB);
+			CSQLiteRowCursor(int64 nOId, IFieldSet *pFieldSet, ITable* pTable, SQLiteUtils::CSQLiteDB* pDB);
+		 
 			virtual ~CSQLiteRowCursor();
 
 		public:

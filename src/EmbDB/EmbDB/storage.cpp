@@ -76,27 +76,42 @@ namespace embDB
 	bool CStorage::close()
 	{
 
-		TNodesCache::TCacheSet::iterator it =	m_Chache.m_set.begin();
+		/*TNodesCache::TCacheSet::iterator it =	m_Chache.m_set.begin();
 		while(!it.isNull())
 		{
 			CFilePage* pPage  = it.value().pListEl->obj_;
 			delete pPage;
 			it.next();
 		}
-		m_Chache.m_set.clear();
+		m_Chache.m_set.clear();*/
+		TNodesCache::iterator it = m_Chache.begin();
+		while(!it.isNull())
+		{
+			CFilePage* pPage  =  it.object();
+			delete pPage;
+			it.next();
+		}
+		m_Chache.clear();
 		m_nLastAddr = 0;
 	 	return m_pFile.closeFile();
 	}
 	CStorage::~CStorage()
 	{
-		TNodesCache::TCacheSet::iterator it =	m_Chache.m_set.begin();
+		/*TNodesCache::TCacheSet::iterator it =	m_Chache.m_set.begin();
 		while(!it.isNull())
 		{
 			CFilePage* pPage  = it.value().pListEl->obj_;
 			delete pPage;
 			it.next();
 		}
-		m_Chache.m_set.clear();
+		m_Chache.m_set.clear();*/
+		TNodesCache::iterator it = m_Chache.begin();
+		while(!it.isNull())
+		{
+			CFilePage* pPage  =  it.object();
+			delete pPage;
+			it.next();
+		}
 		m_MemCache.clear();
 	}
 	int64 CStorage::getFileSzie()

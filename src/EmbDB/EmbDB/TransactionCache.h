@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_TRANSACTIONS_CACHE_H_
 
 
-#include "CacheMRU.h"
+#include "CacheLRU.h"
 #include "TranStorage.h" 
 //#include "RBSet.h"
 #include "FilePage.h"
@@ -47,7 +47,7 @@ namespace embDB
 	public:
 		typedef std::map<int64, sFileTranPageInfo> TPages; 
 		TPages m_pages;
-		typedef TCacheMRU<int64, CFilePage> TNodesCache;
+		typedef TCacheLRU<int64, CFilePage> TNodesCache;
 		TNodesCache m_Chache; //страницы в памяти
 		CTranStorage * m_pFileStorage;
 		size_t m_nPageInMemory;

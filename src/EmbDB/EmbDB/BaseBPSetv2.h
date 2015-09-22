@@ -15,7 +15,7 @@
 #include "CompressorParams.h"
 #include "BPIteratorSetV2.h"
 #include "CommonLibrary/delegate.h"
-#include "CacheMRU.h"
+#include "CacheLRU.h"
 namespace embDB
 {
 
@@ -1888,7 +1888,7 @@ namespace embDB
 		//TChangeNode m_ChangeNode;
 		size_t m_nChacheSize;
 		//typedef TSimpleCache<TLink, TBTreeNode> TNodesCache;
-		typedef TCacheMRU<TLink, TBTreeNode> TNodesCache;
+		typedef TCacheLRU<TLink, TBTreeNode> TNodesCache;
 		TNodesCache m_Cache;
 		bool m_bChangeRoot;
 		bool m_bMulti;

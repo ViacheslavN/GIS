@@ -88,10 +88,10 @@ namespace GisEngine
 
 		IEnvelopePtr	CEnvelope::clone() const
 		{
-			CEnvelope *pEnvelope = new CEnvelope();
+			IEnvelopePtr pEnvelope(new CEnvelope());
 			pEnvelope->SetBoundingBox(m_box);
 			pEnvelope->SetSpatialReference(m_pSpatialRef.get() ? m_pSpatialRef->clone().get() : NULL);
-			return IEnvelopePtr(pEnvelope);
+			return pEnvelope;
 		}
 	}
 }

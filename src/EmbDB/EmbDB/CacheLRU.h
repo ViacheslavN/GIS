@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_CACHE_MRU_H_
-#define _EMBEDDED_DATABASE_CACHE_MRU_H_
+#ifndef _EMBEDDED_DATABASE_CACHE_LRU_H_
+#define _EMBEDDED_DATABASE_CACHE_LRU_H_
 
 #include "Commonlibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
@@ -10,7 +10,7 @@ namespace embDB
 
 
 	template<class _TKey, class _TObj>
-	class TCacheMRU
+	class TCacheLRU
 	{
 		typedef _TKey TKey;
 		typedef _TObj TObj;
@@ -59,7 +59,7 @@ namespace embDB
 				TListNode* m_pNode;
 		};
 
-		TCacheMRU(CommonLib::alloc_t* pAlloc) : 
+		TCacheLRU(CommonLib::alloc_t* pAlloc) : 
 		  m_pAlloc(pAlloc)
 			  ,m_pFirst(0)
 			  ,m_pBack(0)
@@ -67,7 +67,7 @@ namespace embDB
 			  if(!m_pAlloc)
 				  m_pAlloc = &m_simple_alloc;
 		  }
-		  ~TCacheMRU()
+		  ~TCacheLRU()
 		  {
 			  clear();
 		  }

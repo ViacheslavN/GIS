@@ -13,7 +13,7 @@
 #include "StorageInfo.h"
 #include "MemPageCache.h"
 #include "PageCrypto.h"
-
+#include "CacheLRU.h"
 //#define USE_FREE_PAGES
 namespace embDB
 {
@@ -72,10 +72,11 @@ namespace embDB
 	private:
 		 CommonLib::CFile m_pFile;
 		 CommonLib::alloc_t *m_pAlloc;
-		 typedef RBMap<int64, CFilePage*> TPageCache;
+		// typedef RBMap<int64, CFilePage*> TPageCache;
 		 //typedef TList<int64> TPageList;
 		 int32 m_nMaxPageBuf;
-		 typedef TSimpleCache<int64, CFilePage> TNodesCache;
+		 typedef TCacheLRU<int64, CFilePage> TNodesCache;
+		// typedef TSimpleCache<int64, CFilePage> TNodesCache;
 		 TNodesCache m_Chache;
 		 //TPageList   m_FreePageDisk;
 		 size_t m_nPageSize;

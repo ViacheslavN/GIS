@@ -11,29 +11,29 @@ class TListNode
 {
 public:
 
-	TListNode(const Type& _val) : val_(_val), pNext_(0), pPrev_(0)
+	TListNode(const Type& val) : m_val(val), m_pNext(0), m_pPrev(0)
 	{
 	}
-	TListNode *pNext_;
-	TListNode *pPrev_;
-	Type val_;
+	TListNode *m_pNext;
+	TListNode *m_pPrev;
+	Type m_val;
 };
 
 template <class TypeVal>
-class TSimpleList;
+class TList;
 
 
 template <class TypeKey>
-class TSimpleListIterator
+class TListIterator
 {
 public:
 	bool next();
 	bool back();
 	bool IsEnd();
 protected:
-	friend class  TSimpleList;
+	friend class  TList;
 
-	TSimpleList* pList_;
+	TList* pList_;
 	TListNode*   pNode_;
 
 };

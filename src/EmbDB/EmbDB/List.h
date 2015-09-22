@@ -1,122 +1,77 @@
-#ifndef _EMBEDDED_DATABASE_NODE_LIST_
-#define _EMBEDDED_DATABASE_NODE_LIST_
-#include "CommonLibrary/general.h"
-#include "Commonlibrary/alloc_t.h"
+#ifndef _EMBEDDED_DATABASE_LIST_
+#define _EMBEDDED_DATABASE_LIST_
 
-template<class TVal>
-class TLNode
+#include "GisCommonlibrary/general.h"
+#include "GisCommonlibrary/alloc_t.h"
+ 
+namespace embDB
 {
-public:
-	TLNode(const TVal& _val) : val_(_val), m_pNext(0), m_pPrev(0)
-	{
-	}
-	TLNode *m_pNext;
-	TLNode *m_pPrev;
-	TVal val_;
-};
 
-
-template<class TValue>
+template <class TypeVal>
 class TList
 {
 public:
-	typedef TLNode<TValue> TListElem;
 
-	TList(CommonLib::alloc_t *pAlloc) :
-		m_pFirst(0)
-		,m_pLast(0)
-		,m_nSize(0)
-		,m_pAlloc(pAlloc)
+	template<class Type>
+	class TListNode
+	{
+	public:
+
+		TListNode(const Type& val) : m_val(val), m_pNext(0), m_pPrev(0)
+		{
+		}
+		TListNode *m_pNext;
+		TListNode *m_pPrev;
+		Type m_val;
+	};
+
+	typedef TListNode<TypeVal> TNode;
+
+	class iterator
+	{
+	public:
+		iterator(TNode*  pNode) : m_pNode(pNode)
+		{}
+		bool next()
+		{
+			m_pNode = m_pNode->m_pNext;
+			return m_pNode != NULL;
+		}
+		bool back()
+		{
+			m_pNode = m_pNode->m_pPrev;
+			return m_pNode != NULL;
+		}
+		bool IsEnd()
+		{
+			return m_pNode == NULL;
+		}
+
+		TypeVal & value(){return m_pNode->m_val;}
+		const TypeVal & value() const{return m_pNode->m_val;}
+		TNode*  node() {return m_pNode};
+		const TNode* node() const {return m_pNode};
+	protected: 
+		TNode*   m_pNode;
+	};
+	TList(alloc_t* pAlloc) : m_pAlloc(pAlloc)
 	{}
+	~TList();
 
-   ~TList()
-   {
-	   if(!m_pFirst)
-		   return;
-
-	   TListElem *pNode = m_pFirst;
-
-
-	   TListElem *pNextNode = pNode->m_pNext;
-	   if(!pNextNode)
-	   {
-		   m_pAlloc->free(pNode);
-		   return;
-	   }
-	   while(pNextNode)
-	   {
-		   m_pAlloc->free(pNode);
-		   pNode = pNextNode;
-		   pNextNode = pNextNode->m_pNext;
-	   }
-	   m_pAlloc->free(pNode);
-
-	   m_nSize = 0;
-	   m_pFirst = 0;
-	   m_pLast = 0;
-
-   }
-	void push_top(const TValue& val){
-		TListElem* pElem =  new (m_pAlloc->alloc(sizeof(TListElem))) TListElem(val);
-		if(!m_pFirst){
-			m_pFirst = pElem;
-			m_pLast= pElem;
-		}
-		else{
-			pElem->m_pNext = m_pFirst;
-			m_pFirst->m_pPrev = pElem;
-			m_pFirst = pElem;
-		}
-	}
-	void push_back(const TValue& val){
-		TListElem* pElem =  new (m_pAlloc->alloc(sizeof(TListElem))) TListElem(val);
-		if(!m_pLast){
-			m_pLast = pElem;
-			m_pFirst= pElem;
-		}
-		else{
-			pElem->m_pPrev = m_pLast;
-			m_pLast->m_pNext = pElem;
-			m_pLast = pElem;
-		}
-	}
-	void remove(TListElem* pElement){
-		if(pElement->m_pNext)
-			pElement->m_pNext->m_pPrev = pElement->m_pPrev;
-		else{
-			//удаляем последний элемент
-			m_pLast = pElement->m_pPrev;
-		} 
-		if(pElement->m_pPrev)
-			pElement->m_pPrev->m_pNext = pElement->m_pNext;
-		else{
-			m_pFirst = pElement->m_pNext;
-		}
-		m_pAlloc->free(pElement);
-	}
-
-	void remove_back(){
-		TListElem* pElement = m_pLast;
-		m_pLast = pElement->m_pPrev;
-		m_pLast->m_pNext = NULL;
-		m_pAlloc->free(pElement);
-		m_nSize--;
-	}
-	TValue& getTop(){
-		return m_pFirst->val_;
-	}
-	TValue& getBack(){
-		return m_pLast->val_;
-	}
-	size_t size() const{
-		return m_nSize;
-	}
-	TListElem *m_pFirst;
-	TListElem *m_pLast;
-	size_t m_nSize;
-	CommonLib::alloc_t *m_pAlloc;
+	TNode* push_back(const TypeVal& val);
+	TNode* puch_top(const TypeVal& val);
+	size_t size() const;
+	void clear();
+	iterator begin() {return iterator(m_pFirst);}
+	iterator last(){return iterator(m_pLast)}
+	iterator insert(const iterator& it);
+	iterator remove(const iterator& it);
+protected:
+	void DestroyList();
+protected:
+	TNode m_pFirst;
+	TNode m_pLast;
+	 alloc_t* m_pAlloc;
 };
-
-
 
 #endif

@@ -536,8 +536,8 @@ namespace GisEngine
 
 		ISpatialReferencePtr CSpatialReferenceProj4::clone() const 
 		{
-			CSpatialReferenceProj4 *pSpRef = new CSpatialReferenceProj4(m_prj4Str, eSPRefTypePRJ4String, m_pAlloc != &m_alloc ? m_pAlloc : NULL);
-			return ISpatialReferencePtr(pSpRef);
+			ISpatialReferencePtr pSpRef(new CSpatialReferenceProj4(m_prj4Str, eSPRefTypePRJ4String, m_pAlloc != &m_alloc ? m_pAlloc : NULL));
+			return pSpRef;
 		}
 		void  CSpatialReferenceProj4::PreTransform(CommonLib::CGeoShape *shp) const
 		{

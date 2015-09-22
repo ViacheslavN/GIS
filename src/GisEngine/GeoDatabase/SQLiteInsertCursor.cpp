@@ -94,15 +94,21 @@ namespace GisEngine
 				m_pStmt->reset();
 			}
 			
-
-			int64 nLastRowID =m_pDB->GetLastInsertRowID();
+			int64 nLastRowID = m_pDB->GetLastInsertRowID();
 			if(pFeature)
 			{
 				IFieldPtr pOIDField = pRow->GetSourceFields()->GetField(m_pTable->GetOIDFieldName());
+
+				int64 nOID = -1;
+				if(m_pTable->HasOIDField())
+					nOID = pRow->GetOID();
+				if(nOID == -1)
+					nOID = nLastRowID;
+
 				if(pOIDField->GetType() == dtOid32)
-					m_pStmtSpatial->ColumnBindInt(1,  (int32)nLastRowID);
+					m_pStmtSpatial->ColumnBindInt(1,  (int32)nOID);
 				else
-					m_pStmtSpatial->ColumnBindInt64(1,  nLastRowID);
+					m_pStmtSpatial->ColumnBindInt64(1,  nOID);
 				if(m_pStmtSpatial->IsError())
 				{
 					//TO DO error

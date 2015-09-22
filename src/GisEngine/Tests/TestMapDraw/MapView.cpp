@@ -8,6 +8,7 @@
 #include "MapView.h"
 #include "../../GeoDatabase/GeoDatabase.h"
 #include "../../GeoDatabase/ShapefileWorkspace.h"
+#include "../../GeoDatabase/SQLiteWorkspace.h"
 #include "../../../CommonLibrary/CommonLibrary/File.h"
 #include "../../Cartography/FeatureLayer.h"
 #include "../../Cartography/SimpleSymbolAssigner.h"
@@ -264,11 +265,14 @@ void CMapView::open(const wchar_t *pszFile)
 //	CommonLib::CString sFileName = CommonLib::FileSystem::FindOnlyFileName(pszFile);
 	CommonLib::CString sFileName = CommonLib::FileSystem::FindFileName(pszFile);
 
-	GisEngine::GeoDatabase::IWorkspacePtr pWks = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"", sPath.cwstr());
+	//GisEngine::GeoDatabase::IWorkspacePtr pWks = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"", sPath.cwstr());
+	GisEngine::GeoDatabase::IWorkspacePtr pWks = GisEngine::GeoDatabase::CSQLiteWorkspace::Open(sFileName.cwstr(), sPath.cwstr(), true, false);
+	
 	if(!pWks.get())
 		return;
 
-	GisEngine::GeoDatabase::IFeatureClassPtr pFC = pWks->GetFeatureClass(sFileName);
+	//GisEngine::GeoDatabase::IFeatureClassPtr pFC = pWks->GetFeatureClass(sFileName);
+	GisEngine::GeoDatabase::IFeatureClassPtr pFC = pWks->OpenFeatureClass(L"TestFeatureClass");
 	if(!pFC.get())
 		return;
 	GisEngine::Cartography::IFeatureLayerPtr pFeatureLayer (new GisEngine::Cartography::CFeatureLayer());

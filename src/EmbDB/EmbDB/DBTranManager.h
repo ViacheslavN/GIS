@@ -5,11 +5,7 @@
 #include "storage.h"
 #include "IDBTransactions.h"
 #include "FilePage.h"
-#include "BTreeNode.h"
-#include "BPTreeNode.h"
-#include "BaseBPMap.h"
-#include "BPInnerNodeSimpleCompressor.h"
-#include "BPLeafNodeSimpleCompressor.h"
+
 #include "IDBTransactions.h"
 #include "RBSet.h"
 #include "Database.h"
@@ -22,7 +18,7 @@ namespace embDB
 	};
 
 
-	class BPTranManagerLeafNodeCompressor 
+	/*class BPTranManagerLeafNodeCompressor 
 	{
 	public:
 		typedef RBMap<int64, sTranInfo, embDB::comp<int64> >   TLeafMemSet;
@@ -127,7 +123,7 @@ namespace embDB
 	private:
 		size_t m_nSize;
 	};
-
+	*/
 
  
 	class CDBTranManager

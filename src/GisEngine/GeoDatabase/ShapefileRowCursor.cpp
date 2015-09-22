@@ -132,7 +132,7 @@ namespace GisEngine
 
 			if(!m_bInvalidCursor)
 			{
-				m_nCurrentRowID = m_vecOids.size() ? *m_RowIDIt : 0;
+				m_nCurrentRowID = m_vecOids.size() ? (int32)*m_RowIDIt : 0;
 				ShapeLib::SHPGetInfo(m_pShp->file, &m_nRecordCount, NULL, NULL, NULL);
 			
 			}
@@ -169,7 +169,7 @@ namespace GisEngine
 						m_pCurrentRow = rowCache;
 					else
 					{
-						m_pCurrentRow = new  CFeature(m_pFilter->GetFieldSet().get(), m_pSourceFields.get());
+						m_pCurrentRow = new  CFeature(m_pFieldSet.get(), m_pSourceFields.get());
 					}
 					if(m_nShapeFieldIndex >= 0 && IsFieldSelected(m_nShapeFieldIndex))
 					{
@@ -328,7 +328,7 @@ namespace GisEngine
 			{
 				++m_RowIDIt;
 				if(m_RowIDIt != m_vecOids.end())
-					m_nCurrentRowID = *m_RowIDIt;
+					m_nCurrentRowID = (int32)*m_RowIDIt;
 			}
 			else
 				++m_nCurrentRowID;

@@ -197,7 +197,7 @@ namespace GisEngine
 				return  IFeatureClassPtr();
 			}
 			CSQLiteFeatureClass* pSQLiteFC = new CSQLiteFeatureClass(this, sName, sName);
-			if(!pSQLiteFC->CreateFeatureClass(m_pDB.get(), pFields))
+			if(!pSQLiteFC->CreateFeatureClass(pFields))
 			{
 				delete pSQLiteFC;
 				return  IFeatureClassPtr();

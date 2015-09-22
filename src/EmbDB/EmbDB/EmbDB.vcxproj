@@ -431,7 +431,6 @@
     <ClInclude Include="BaseBPMap.h" />
     <ClInclude Include="BaseBPTree.h" />
     <ClInclude Include="BaseBPTreeRO.h" />
-    <ClInclude Include="BaseBTree.h" />
     <ClInclude Include="BaseBTreeRO.h" />
     <ClInclude Include="BaseRBMultiTree.h" />
     <ClInclude Include="BaseRBTree.h" />
@@ -469,7 +468,8 @@
     <ClInclude Include="BPTreeSPLeafNodeMap.h" />
     <ClInclude Include="BPVector.h" />
     <ClInclude Include="BPVectorNoPod.h" />
-    <ClInclude Include="CacheMRU.h" />
+    <ClInclude Include="CacheLRU.h" />
+    <ClInclude Include="CacheLRU_k.h" />
     <ClInclude Include="CompIndexInnerCompressor.h" />
     <ClInclude Include="CompIndexLeafCompressor.h" />
     <ClInclude Include="CompositeIndexKey.h" />
@@ -520,8 +520,6 @@
     <ClInclude Include="BPTreeNodeSet.h" />
     <ClInclude Include="BPTreeStatistics.h" />
     <ClInclude Include="BTBaseNode.h" />
-    <ClInclude Include="BTreeIteratorImpl.h" />
-    <ClInclude Include="BTreeNode.h" />
     <ClInclude Include="BTreeNodeRO.h" />
     <ClInclude Include="BTVector.h" />
     <ClInclude Include="Compressors.h" />
@@ -555,20 +553,16 @@
     <ClInclude Include="FilePageType.h" />
     <ClInclude Include="Key.h" />
     <ClInclude Include="MapIteratorImp.h" />
-    <ClInclude Include="List.h" />
     <ClInclude Include="NodeLoader.h" />
     <ClInclude Include="PageID.h" />
     <ClInclude Include="PointSpatialBPMapTree.h" />
     <ClInclude Include="BPMapPointSpatialIteratorOld.h" />
     <ClInclude Include="SpatialOIDField.h" />
     <ClInclude Include="RBMap.h" />
-    <ClInclude Include="RBMuitiMapIteratorImp.h" />
     <ClInclude Include="RBMuitiSet.h" />
     <ClInclude Include="RBMuitiSetIteratorImp.h" />
-    <ClInclude Include="RBMultiMap.h" />
     <ClInclude Include="RBSet.h" />
     <ClInclude Include="RBSetIteratorImp.h" />
-    <ClInclude Include="RBSimpleMultiMap.h" />
     <ClInclude Include="RBSimpleMuitiSetIterator.h" />
     <ClInclude Include="RectMapInnerCompressor.h" />
     <ClInclude Include="RectMapLeafCompressor.h" />
@@ -578,8 +572,8 @@
     <ClInclude Include="CacheNodes.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="SimpleCompessor.h" />
-    <ClInclude Include="simple_list.h" />
-    <ClInclude Include="simple_list_iterator.h" />
+    <ClInclude Include="List.h" />
+    <ClInclude Include="list_iterator.h" />
     <ClInclude Include="simple_stack.h" />
     <ClInclude Include="simple_vector.h" />
     <ClInclude Include="SpatialKey.h" />
@@ -609,13 +603,6 @@
     <ClInclude Include="PageVector.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseBTree.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="BaseRBMultiTree.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
@@ -631,13 +618,6 @@
     </ClCompile>
     <ClCompile Include="BitMap.cpp" />
     <ClCompile Include="BPTreeInfoPage.cpp" />
-    <ClCompile Include="BTreeNode.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="CompositeIndexKey.cpp" />
     <ClCompile Include="CompressCompIndexParams.cpp" />
     <ClCompile Include="CRC.cpp" />
@@ -651,20 +631,6 @@
     <ClCompile Include="MemPageCache.cpp" />
     <ClCompile Include="Schema.cpp" />
     <ClCompile Include="Shape.cpp" />
-    <ClCompile Include="simple_list.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="simple_list_iterator.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="SpatialPointQuery.cpp" />
     <ClCompile Include="SpatialRectQuery.cpp" />
     <ClCompile Include="stdafx.cpp">

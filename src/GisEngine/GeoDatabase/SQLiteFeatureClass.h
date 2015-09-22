@@ -38,14 +38,15 @@ namespace GisEngine
 			virtual bool load(GisCommon::IXMLNode* pXmlNode);
 
 			bool open();
-			bool CreateFeatureClass(SQLiteUtils::CSQLiteDB* pDB,
-				IFields* pFields);
+			bool saveFeatureInfo();
+			bool CreateFeatureClass(IFields* pFields);
 
 			
 		private:
 			CSQLiteWorkspace *m_pSQLiteWorkspace;
 			CommonLib::CString m_sSpatialIndexName;
 			CommonLib::CString m_sPropTableName;
+			eDataTypes m_nOIDType;
 		};
 	}
 }

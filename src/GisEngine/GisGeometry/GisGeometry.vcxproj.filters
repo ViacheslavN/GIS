@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="SpatialReferenceProj4">
-      <UniqueIdentifier>{1db963c4-9912-4c56-b7e3-1efe945ce6bc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="TopologicalOperator">
       <UniqueIdentifier>{9d95a0b4-5f8e-4fe0-b1a0-32c1e8ea248b}</UniqueIdentifier>
     </Filter>
@@ -24,6 +21,9 @@
     </Filter>
     <Filter Include="org">
       <UniqueIdentifier>{a139495c-5fd7-45eb-af75-19acfb039919}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SpatialReferenceProj4">
+      <UniqueIdentifier>{1db963c4-9912-4c56-b7e3-1efe945ce6bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

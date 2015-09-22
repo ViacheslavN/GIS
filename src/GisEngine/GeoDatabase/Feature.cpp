@@ -119,8 +119,13 @@ namespace GisEngine
 				return -1;
 
 			int64 nOID = 0;
-			return m_vecValues[m_vecFieldMap[m_nOidFieldIndex]].Get<int64>();
-			 
+			//return m_vecValues[m_vecFieldMap[m_nOidFieldIndex]].Get<int64>();
+			const CommonLib::CVariant& var = m_vecValues[m_vecFieldMap[m_nOidFieldIndex]]; 
+			if(var.isType<int64>())
+				nOID = var.Get<int64>();
+			else
+				nOID = var.Get<int32>();
+			return nOID;
 		}
 
 		void CFeature::SetOID(int64 nOID)
@@ -128,7 +133,12 @@ namespace GisEngine
 			if(m_nOidFieldIndex < 0)
 				return;
 
-			m_vecValues[m_vecFieldMap[m_nOidFieldIndex]] = nOID;
+			CommonLib::CVariant& var = m_vecValues[m_vecFieldMap[m_nOidFieldIndex]];
+			if(var.isType<int64>())
+				var = nOID;
+			else
+				var = (uint32)nOID;
+			//m_vecValues[m_vecFieldMap[m_nOidFieldIndex]] = nOID;
 		}
 
 		// IFeature
