@@ -22,7 +22,7 @@ namespace GisEngine
 					void close();
 				private:
 
-					struct SFieldInfo
+					/*struct SFieldInfo
 					{
 						SFieldInfo(int nCol, eDataTypes type) : m_nCol(nCol), m_type(type)
 						{}
@@ -30,7 +30,10 @@ namespace GisEngine
 						eDataTypes m_type;
 					};
 					typedef std::map<CommonLib::CString, SFieldInfo> TFieldsInfo;
-					TFieldsInfo m_mapFieldInfo;
+
+					TFieldsInfo m_mapFieldInfo;*/
+
+					std::vector<eDataTypes> m_vecTypes;
 					SQLiteUtils::CSQLiteDB *m_pDB;
 					SQLiteUtils::TSQLiteResultSetPtr	m_pStmt;
 					SQLiteUtils::TSQLiteResultSetPtr	m_pStmtSpatial;

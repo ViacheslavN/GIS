@@ -11,14 +11,13 @@ namespace GisEngine
 		{
 			public:
 
-				ICursorBase(IQueryFilter* pFilter, bool recycling, ITable* pTable, bool bFieldSourceOrder) :
+				ICursorBase(IQueryFilter* pFilter, bool recycling, ITable* pTable) :
 					  m_bRecycling(recycling)
 					, m_spatialRel(srlUndefined)
 					, m_nOidFieldIndex(-1)
 					, m_nShapeFieldIndex(-1)
 					, m_nAnnoFieldIndex(-1)
 					, m_bNeedTransform(false)
-					, m_bFieldSourceOrder(bFieldSourceOrder)
 
 				{
 					assert(pTable);
@@ -102,14 +101,13 @@ namespace GisEngine
 
 				}
 
-				ICursorBase(int64 nOId, IFieldSet *pFieldSet, ITable* pTable, bool bFieldSourceOrder) :
+				ICursorBase(int64 nOId, IFieldSet *pFieldSet, ITable* pTable) :
 					m_bRecycling(false)
 					, m_spatialRel(srlUndefined)
 					, m_nOidFieldIndex(-1)
 					, m_nShapeFieldIndex(-1)
 					, m_nAnnoFieldIndex(-1)
 					, m_bNeedTransform(false)
-					, m_bFieldSourceOrder(bFieldSourceOrder)
 				{
 					m_pTable = pTable;
 					m_pSourceFields = m_pTable->GetFields();
@@ -242,7 +240,6 @@ namespace GisEngine
 				ITablePtr m_pTable;
 				IRowPtr   m_pCurrentRow;
 				bool m_bRecycling;
-				bool m_bFieldSourceOrder;
 				std::vector<int64>           m_vecOids;
 				std::vector<int64>::iterator m_RowIDIt;
 				int m_nOidFieldIndex;

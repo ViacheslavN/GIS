@@ -40,18 +40,26 @@ public:
 	LRESULT OnRedrawMap(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnFullZoom(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
+
 	LRESULT OnPaint(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnSize(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 
+
+
 	void open(const wchar_t *pszFile);
 
 	void redraw();
 
+	void AddSQLite(const wchar_t *pszFile);
+	void AddShapeFile(const wchar_t *pszFile);
+	
 private:
 	void Update(const GisEngine::Display::GPoint* ,const GisEngine::Display::GRect*, bool bforce);
 	void OnFinishMapDrawing(bool);
+
+	void AddFeatureClass(GisEngine::GeoDatabase::IFeatureClass *pFC);
 
 	GisEngine::Cartography::IMapPtr m_pMap;
 	/*GisEngine::Display::IGraphicsPtr m_pGraphics;

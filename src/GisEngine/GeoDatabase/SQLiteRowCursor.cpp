@@ -14,7 +14,7 @@ namespace GisEngine
 	namespace GeoDatabase
 	{
 		CSQLiteRowCursor::CSQLiteRowCursor(IQueryFilter* pFilter, bool bRecycling, ITable *pTable, SQLiteUtils::CSQLiteDB* pDB) :
-			TBase(pFilter, bRecycling, pTable, false), m_pDB(pDB)
+			TBase(pFilter, bRecycling, pTable), m_pDB(pDB)
 		{
 			CommonLib::CString sSQL = "SELECT ";
 
@@ -40,11 +40,25 @@ namespace GisEngine
 				CSQLiteFeatureClass *pFeatureClass = (CSQLiteFeatureClass *)pTable;
 
 				assert(pFeatureClass);
-				CommonLib::CString sSpQuery;
+				CommonLib::CString sSpatialOp;
 				GisBoundingBox bbox = m_pExtentSource->GetBoundingBox();
-				sSpatialWhere.format(L" %s IN (SELECT feature_id from %s where  minX>=%f AND maxX<=%f AND minY>=%f AND maxY<=%f)",
-						pTable->HasOIDField() ? pTable->GetOIDFieldName().cwstr() : L"rowid", pFeatureClass->GetRTReeIndexName().cwstr(), bbox.xMin, bbox.xMax, bbox.yMin, bbox.yMax);
+		 		sSpatialWhere.format(L" %s IN (SELECT feature_id from %s where  ",
+						pTable->HasOIDField() ? pTable->GetOIDFieldName().cwstr() : L"rowid", pFeatureClass->GetRTReeIndexName().cwstr());
 		
+				if(m_spatialRel == srlUndefined || m_spatialRel == srlEnvelopeIntersects)
+				{
+					sSpatialOp.format(L" maxX>=%f AND minX<=%f AND maxY>=%f AND minY<=%f)",
+						bbox.xMin, bbox.xMax, bbox.yMin, bbox.yMax);
+				}
+				else
+				{
+					sSpatialOp.format(L" minX>=%f AND maxX<=%f AND minY>=%f AND maxY<=%f)",
+						bbox.xMin, bbox.xMax, bbox.yMin, bbox.yMax);
+				}
+			
+				sSpatialWhere += sSpatialOp;
+
+
 			//	sSpatialWhere.format(L" %s IN (SELECT feature_id from %s)",
 			//		pTable->HasOIDField() ? pTable->GetOIDFieldName().cwstr() : L"rowid", pFeatureClass->GetRTReeIndexName().cwstr());
 
@@ -90,7 +104,7 @@ namespace GisEngine
 		}
 
 		CSQLiteRowCursor::CSQLiteRowCursor(int64 nOId, IFieldSet *pFieldSet, ITable* pTable, SQLiteUtils::CSQLiteDB* pDB) :
-			TBase(nOId, pFieldSet, pTable, false), m_pDB(pDB)
+			TBase(nOId, pFieldSet, pTable), m_pDB(pDB)
 		{
 			CommonLib::CString sSQL = "SELECT ";
 
@@ -126,7 +140,7 @@ namespace GisEngine
 			if(!m_pCurrentRow.get())
 			{
 				m_pCurrentRow = new  CFeature(m_pFieldSet.get(), m_pSourceFields.get());
-				if(m_nShapeFieldIndex >= 0 && IsFieldSelected(m_nShapeFieldIndex))
+				if(m_nShapeFieldIndex >= 0 /*&& IsFieldSelected(m_nShapeFieldIndex)*/)
 				{
 					IFeature* feature = (IFeature*)(m_pCurrentRow.get());
 					if(feature)

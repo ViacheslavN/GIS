@@ -110,6 +110,11 @@ BEGIN
     BEGIN
         MENUITEM "&About TestMapDraw",          ID_APP_ABOUT
     END
+    POPUP "Add"
+    BEGIN
+        MENUITEM "Add Shape File",              32777
+        MENUITEM "Add SQLite DB",               32778
+    END
 END
 
 

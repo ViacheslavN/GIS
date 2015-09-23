@@ -9,7 +9,7 @@ namespace GisEngine
 	namespace GeoDatabase
 	{
 		CShapefileRowCursor::CShapefileRowCursor(IQueryFilter* pFilter, bool recycling, CShapefileFeatureClass* pFClass) :
-			TBase(pFilter, recycling, (ITable*)pFClass, true),
+			TBase(pFilter, recycling, (ITable*)pFClass),
 				m_pShp(pFClass->GetSHP())
 			, m_pDbf(pFClass->GetDBF())
 			, m_pCacheObject(NULL)
@@ -171,7 +171,7 @@ namespace GisEngine
 					{
 						m_pCurrentRow = new  CFeature(m_pFieldSet.get(), m_pSourceFields.get());
 					}
-					if(m_nShapeFieldIndex >= 0 && IsFieldSelected(m_nShapeFieldIndex))
+					if(m_nShapeFieldIndex >= 0/* && IsFieldSelected(m_nShapeFieldIndex)*/)
 					{
 						IFeature* feature = (IFeature*)(m_pCurrentRow.get());
 						if(feature)
@@ -208,32 +208,33 @@ namespace GisEngine
 
 		bool CShapefileRowCursor::FillRow(IRow* row)
 		{
-			for(int i = 0; i < (int)m_vecActualFieldsIndexes.size(); ++i)
+			//for(int i = 0; i < (int)m_vecActualFieldsIndexes.size(); ++i)
+			for(size_t i = 0, sz = m_vecFieldInfo.size(); i < sz ;++i)
 			{
-				int fieldIndex = m_vecActualFieldsIndexes[i];
+				const sFieldInfo& fi = m_vecFieldInfo[i];
 
-				CommonLib::CVariant* pValue = row->GetValue(fieldIndex);
+				CommonLib::CVariant* pValue = row->GetValue(fi.m_nRowIndex);
 
-				if(m_vecActualFieldsTypes[i] == dtOid32) // OID
+				if(fi.m_nType == dtOid32) // OID
 				{				
 					*pValue = (int)m_nCurrentRowID;
 					continue;
 				}
 
-				if(m_vecActualFieldsTypes[i] == dtGeometry) // Shape
+				if(fi.m_nType == dtGeometry) // Shape
 				{
 					continue;
 				}
 
-				int shpFieldIndex = fieldIndex/* - 2*/;
+				//int shpFieldIndex = fieldIndex/* - 2*/;
 				CommonLib::CString strVal;
 				double dblVal;
 				int intVal;
 		
-				switch(m_vecActualFieldsTypes[i])
+				switch(fi.m_nType)
 				{
 					case dtString:
-						strVal = ShapeLib::DBFReadStringAttribute(m_pDbf->file, m_nCurrentRowID, shpFieldIndex);
+						strVal = ShapeLib::DBFReadStringAttribute(m_pDbf->file, m_nCurrentRowID, fi.m_nDataSetIndex);
 						*pValue  = strVal;
 						break;
 					case dtInteger8:
@@ -242,11 +243,11 @@ namespace GisEngine
 					case dtUInteger8:
 					case dtUInteger16:
 					case dtUInteger32:
-						intVal = ShapeLib::DBFReadIntegerAttribute(m_pDbf->file, m_nCurrentRowID, shpFieldIndex);
+						intVal = ShapeLib::DBFReadIntegerAttribute(m_pDbf->file, m_nCurrentRowID, fi.m_nDataSetIndex);
 						*pValue  = intVal;
 						break;
 					case dtDouble:
-						dblVal = ShapeLib::DBFReadDoubleAttribute(m_pDbf->file, m_nCurrentRowID, shpFieldIndex);
+						dblVal = ShapeLib::DBFReadDoubleAttribute(m_pDbf->file, m_nCurrentRowID, fi.m_nDataSetIndex);
 						*pValue  = dblVal;
 						break;
 					default:

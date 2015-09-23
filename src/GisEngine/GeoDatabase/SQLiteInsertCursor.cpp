@@ -34,22 +34,24 @@ namespace GisEngine
 			if(!m_bValidCursor)
 				return -1;
 			IFeature *pFeature = NULL;
-			IFieldSetPtr pFieldSet = pRow->GetFieldSet();
-			if(!pFieldSet.get() || pFieldSet->GetCount() == 0)
-				pFieldSet = m_pFieldSet;
+			//IFieldSetPtr pFieldSet = pRow->GetFieldSet();
+			//if(!pFieldSet.get() || pFieldSet->GetCount() == 0)
+			//	pFieldSet = m_pFieldSet;
 			{
-				for (int i = 0; i < pFieldSet->GetCount(); ++i)
+				//for (int i = 0; i < pFieldSet->GetCount(); ++i)
+				for (size_t i = 0, sz = m_vecTypes.size(); i < sz; ++i)
+				
 				{
 					
-					const CommonLib::CString& sName = pFieldSet->Get(i);
+					/*const CommonLib::CString& sName = pFieldSet->Get(i);
 					TFieldsInfo::const_iterator c_it = m_mapFieldInfo.find(sName);
 					if(c_it == m_mapFieldInfo.end())
 					{
 						//TO DO Error
 						return -1;
-					}
+					}*/
 
-					if(c_it->second.m_type == dtAnnotation || c_it->second.m_type == dtGeometry)
+					if(m_vecTypes[i] == dtGeometry)
 					{
 						pFeature = (IFeature *)pRow;
 						if(!pFeature)
@@ -71,7 +73,7 @@ namespace GisEngine
 					}
 					else
 					{
-						m_pStmt->ColumnBind(i + 1, c_it->second.m_type, pRow->GetValue(i));
+						m_pStmt->ColumnBind(i + 1, m_vecTypes[i], pRow->GetValue(i));
 						 
 					}
 					if(m_pStmt->IsError())
@@ -181,8 +183,9 @@ namespace GisEngine
 					//TO DO error
 					m_bValidCursor = false;
 				}
-				m_mapFieldInfo.insert(std::make_pair(sFieldName, SFieldInfo(i, pField->GetType())));
+				//m_mapFieldInfo.insert(std::make_pair(sFieldName, SFieldInfo(i, pField->GetType())));
 
+				m_vecTypes.push_back(pField->GetType());
 				if(i != 0)
 				{
 					sSQL += L", ";
