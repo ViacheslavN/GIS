@@ -40,6 +40,7 @@ namespace GisEngine
 			bool open();
 			bool saveFeatureInfo();
 			bool CreateFeatureClass(IFields* pFields);
+			static bool IsFeatureClass(CommonLib::CString& sName, SQLiteUtils::CSQLiteDB *pDB);
 
 			
 		private:

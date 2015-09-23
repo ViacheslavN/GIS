@@ -9,7 +9,7 @@ namespace GisEngine
 	namespace GeoDatabase
 	{
 		CShapefileRowCursor::CShapefileRowCursor(IQueryFilter* pFilter, bool recycling, CShapefileFeatureClass* pFClass) :
-			TBase(pFilter, recycling, (ITable*)pFClass),
+			TBase(pFilter, recycling, (ITable*)pFClass, true),
 				m_pShp(pFClass->GetSHP())
 			, m_pDbf(pFClass->GetDBF())
 			, m_pCacheObject(NULL)

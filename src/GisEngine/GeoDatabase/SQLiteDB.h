@@ -164,6 +164,18 @@ namespace GisEngine
 
 				return pFields;
 			}
+
+			bool IsTableExist(const CommonLib::CString& sName)
+			{
+				CommonLib::CString sSQL;
+				sSQL.format(L"SELECT name FROM sqlite_master WHERE type='table' AND name='%s'", sName.cwstr());
+				SQLiteUtils::TSQLiteResultSetPtr pRS = prepare_query(sSQL);
+				if(!pRS->IsError() && pRS->StepNext())
+				{
+					return true;
+				}
+				return false;
+			}
 		private:
 
 			sqlite3* m_pDB;

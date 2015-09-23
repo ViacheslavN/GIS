@@ -253,6 +253,13 @@ namespace GisEngine
 		
 			return true;
 		}
+		bool CSQLiteFeatureClass::IsFeatureClass(CommonLib::CString& sName, SQLiteUtils::CSQLiteDB *pDB)
+		{
+			if(!pDB)
+				return false;
+		
+			return pDB->IsTableExist(sName + "_SpatialIndex");
+		}
 		IRowPtr	CSQLiteFeatureClass::GetRow(int64 id)
 		{
 

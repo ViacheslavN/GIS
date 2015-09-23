@@ -110,6 +110,11 @@ namespace GisEngine
 			if(pSymbol.get())
 			{
 				pSymbol->Prepare(pDisplay);
+				if(feature->GetOID() == 2)
+				{
+					int i = 0;
+					i++;
+				}
 				pSymbol->Draw(pDisplay, pShape.get());
 				pSymbol->Reset();
 			}

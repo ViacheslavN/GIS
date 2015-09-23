@@ -306,7 +306,7 @@ namespace GisEngine
 				 return true;
 
 
-			 CommonLib::CString sSQL = L"SELECT * FROM sqlite_master WHERE type='table' ORDER BY name";
+			 CommonLib::CString sSQL = L"SELECT * FROM sqlite_master WHERE type='table' AND name NOT LIKE '%_SpatialIndex%' AND name NOT LIKE '%_PROPERTIES' ORDER BY name ";
 
 			 SQLiteUtils::TSQLiteResultSetPtr pRS = m_pDB->prepare_query(sSQL);
 			 if(!pRS.get())
@@ -329,10 +329,22 @@ namespace GisEngine
 
 			 for (size_t i = 0, sz = tableNames.size(); i < sz; ++i)
 			 {
-				 if(!OpenTable(tableNames[i]))
+				 if(CSQLiteFeatureClass::IsFeatureClass(tableNames[i], m_pDB.get()))
 				 {
-					 return false;
+					 if(!OpenFeatureClass(tableNames[i]))
+					 {
+						 return false;
+					 }
 				 }
+				 else
+				 {
+
+					 if(!OpenTable(tableNames[i]))
+					 {
+						 return false;
+					 }
+				 }
+
 			 }
 
 			 return true;

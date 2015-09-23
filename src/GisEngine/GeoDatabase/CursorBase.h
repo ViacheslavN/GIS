@@ -11,13 +11,14 @@ namespace GisEngine
 		{
 			public:
 
-				ICursorBase(IQueryFilter* pFilter, bool recycling, ITable* pTable) :
+				ICursorBase(IQueryFilter* pFilter, bool recycling, ITable* pTable, bool bFieldSourceOrder) :
 					  m_bRecycling(recycling)
 					, m_spatialRel(srlUndefined)
 					, m_nOidFieldIndex(-1)
 					, m_nShapeFieldIndex(-1)
 					, m_nAnnoFieldIndex(-1)
 					, m_bNeedTransform(false)
+					, m_bFieldSourceOrder(bFieldSourceOrder)
 
 				{
 					assert(pTable);
@@ -101,13 +102,14 @@ namespace GisEngine
 
 				}
 
-				ICursorBase(int64 nOId, IFieldSet *pFieldSet, ITable* pTable) :
+				ICursorBase(int64 nOId, IFieldSet *pFieldSet, ITable* pTable, bool bFieldSourceOrder) :
 					m_bRecycling(false)
 					, m_spatialRel(srlUndefined)
 					, m_nOidFieldIndex(-1)
 					, m_nShapeFieldIndex(-1)
 					, m_nAnnoFieldIndex(-1)
 					, m_bNeedTransform(false)
+					, m_bFieldSourceOrder(bFieldSourceOrder)
 				{
 					m_pTable = pTable;
 					m_pSourceFields = m_pTable->GetFields();
@@ -135,10 +137,12 @@ namespace GisEngine
 
 				void UpdateFields()
 				{
+
+
 				
 					int fieldCount = m_pSourceFields->GetFieldCount();
 					m_vecFieldsExists.resize(fieldCount, 0);
-					m_vecActualFieldsIndexes.clear();
+				//	m_vecActualFieldsIndexes.clear();
  
 
 					m_nOidFieldIndex = -1;
@@ -155,8 +159,11 @@ namespace GisEngine
 						}
 					}
 
+					m_vecFieldInfo.reserve(m_pFieldSet->GetCount());
+
 					m_pFieldSet->Reset();
 					CommonLib::CString field;
+					int nNum = 0;
 					while(m_pFieldSet->Next(&field))
 					{
 						if(field == L"*")
@@ -171,32 +178,41 @@ namespace GisEngine
 								}
 
 								m_pFieldSet->Reset();
-								m_vecActualFieldsIndexes.clear();
-								m_vecActualFieldsTypes.clear();
+								//m_vecActualFieldsIndexes.clear();
+								//m_vecActualFieldsTypes.clear();
 								continue;
 							}
 						
 						}
-						int fieldIndex = m_pSourceFields->FindField(field);
-						m_vecFieldsExists[fieldIndex] = 1;
-						m_vecActualFieldsIndexes.push_back(fieldIndex);
-						m_vecActualFieldsTypes.push_back(m_pSourceFields->GetField(fieldIndex)->GetType());
 
-						if((m_vecActualFieldsTypes.back() == dtOid32 || m_vecActualFieldsTypes.back() == dtOid64)  && m_nOidFieldIndex < 0)
+
+						int fieldIndex = m_pSourceFields->FindField(field);
+						IFieldPtr pField = m_pSourceFields->GetField(fieldIndex);
+						assert(pField.get());
+						m_vecFieldInfo.push_back(sFieldInfo(nNum,  fieldIndex, pField->GetType()));
+
+						m_vecFieldsExists[fieldIndex] = 1;
+					//	m_vecActualFieldsIndexes.push_back(fieldIndex);
+					//	m_vecActualFieldsTypes.push_back(m_pSourceFields->GetField(fieldIndex)->GetType());
+
+						if((pField->GetType() == dtOid32 || pField->GetType() == dtOid64)  && m_nOidFieldIndex < 0)
 							m_nOidFieldIndex = fieldIndex;
-						if(m_vecActualFieldsTypes.back() == dtGeometry && (m_nShapeFieldIndex < 0 || m_nShapeFieldIndex > fieldIndex))
+						else if(pField->GetType()== dtGeometry && (m_nShapeFieldIndex < 0 || m_nShapeFieldIndex > fieldIndex))
 							m_nShapeFieldIndex = fieldIndex;
-						if(m_vecActualFieldsTypes.back() == dtAnnotation && (m_nAnnoFieldIndex < 0 || m_nAnnoFieldIndex > fieldIndex))
+						else if(pField->GetType() == dtAnnotation && (m_nAnnoFieldIndex < 0 || m_nAnnoFieldIndex > fieldIndex))
 							m_nAnnoFieldIndex = fieldIndex;
+
+							++nNum;
 					}
 					
 					// Change fieldset to right names (from DB)
-					int actualfieldCount = (int)m_vecActualFieldsIndexes.size();
+					/*int actualfieldCount = (int)m_vecActualFieldsIndexes.size();
 					IFieldSetPtr fieldSet(new CFieldSet());
 					for(int i = 0; i < actualfieldCount; ++i)
 						fieldSet->Add(m_pSourceFields->GetField(m_vecActualFieldsIndexes[i])->GetName());
 					fieldSet->Reset();
-					m_pFieldSet = fieldSet;
+					m_pFieldSet = fieldSet;*/
+				
 					//m_pFilter->SetFieldSet(m_pFieldSet.get());
 				}
 
@@ -204,12 +220,29 @@ namespace GisEngine
 				IQueryFilterPtr m_pFilter;
 				IFieldsPtr      m_pSourceFields;
 				IFieldSetPtr	m_pFieldSet;
+
+
+				struct  sFieldInfo
+				{
+					sFieldInfo(){}
+					sFieldInfo(int nRowNum, int nDataSetNum, eDataTypes nType) : m_nRowIndex(nRowNum), m_nDataSetIndex(nDataSetNum), m_nType(nType)
+					{}
+					int m_nRowIndex;
+					int m_nDataSetIndex;
+					eDataTypes m_nType;
+				};
+
+				typedef std::vector<sFieldInfo> TFieldInfo;
+				TFieldInfo m_vecFieldInfo;
+
+
 				std::vector<int>           m_vecFieldsExists;
 				std::vector<int>           m_vecActualFieldsIndexes;
 				std::vector<eDataTypes>  m_vecActualFieldsTypes;
 				ITablePtr m_pTable;
 				IRowPtr   m_pCurrentRow;
 				bool m_bRecycling;
+				bool m_bFieldSourceOrder;
 				std::vector<int64>           m_vecOids;
 				std::vector<int64>::iterator m_RowIDIt;
 				int m_nOidFieldIndex;

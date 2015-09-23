@@ -9,8 +9,8 @@
 void TestSQLiteWks()
 {
 
-	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData");
-	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
+	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData");
+	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
 	
 	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->GetFeatureClass(L"world_adm0.shp");
 	if(!pShapeFC.get())
@@ -19,7 +19,7 @@ void TestSQLiteWks()
 	
 	//GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CSQLiteWorkspace::Open( L"TestSpatialDB.sqlite", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData", true, false);
 		
-	GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CSQLiteWorkspace::Open( L"TestSpatialDB.sqlite", L"d:\\db", true, false);
+	GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CSQLiteWorkspace::Open( L"TestSpatialDB.sqlite", L"d:\\db", true, true);
 
 	if(!pWks.get())
 	{
@@ -68,7 +68,7 @@ void TestSQLiteWks()
 		uint32 nRow = 0;
 		int64 nRowID = 0;
 		int nError = 0;
-		std::set<int> nOID;
+		std::set<int64> nOID;
 
 		while(pCursor->NextRow(&pRow))
 		{
@@ -83,7 +83,7 @@ void TestSQLiteWks()
 	}
 	else
 	{
-		std::set<int> setSQLLiteRow, setShapeRow;
+		std::set<int64> setSQLLiteRow, setShapeRow;
 		CommonLib::bbox ShapeBB, SQLiteBB; 
 		{
 

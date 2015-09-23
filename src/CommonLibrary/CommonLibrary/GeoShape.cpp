@@ -543,6 +543,7 @@ namespace CommonLib
 		 m_general_type = generalType(m_type);
 		 uint32 nSize = pStream->readIntu32();
 		 m_vecParts.reserve(nSize);
+		 m_vecParts.resize(0);
 		 for (size_t i = 0; i < nSize; ++i)
 		 {
 			 m_vecParts.push_back(pStream->readIntu32());
@@ -557,6 +558,7 @@ namespace CommonLib
 
 		 nSize = pStream->readIntu32();
 		 m_vecPoints.reserve(nSize);
+		 m_vecPoints.resize(0);
 		 GisXYPoint pt;
 		 for (size_t i = 0; i < nSize; ++i)
 		 {

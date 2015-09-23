@@ -23,7 +23,7 @@ namespace GisEngine
 			~CSQLiteWorkspace();
 
 			static IWorkspacePtr Create(const wchar_t *pszName, const wchar_t *pszPath);
-			static IWorkspacePtr Open(const wchar_t *pszName, const wchar_t *pszPath, bool bWrite, bool bOpenAll = true);
+			static IWorkspacePtr Open(const wchar_t *pszName, const wchar_t *pszPath, bool bWrite, bool bOpenAll = false);
 			static IWorkspacePtr Open(CommonLib::IReadStream* pSteram, bool bOpenAll = true);
 			static IWorkspacePtr Open(GisCommon::IXMLNode *pNode, bool bOpenAll = true);
  

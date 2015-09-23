@@ -14,13 +14,13 @@ namespace GisEngine
 	namespace GeoDatabase
 	{
 		CSQLiteRowCursor::CSQLiteRowCursor(IQueryFilter* pFilter, bool bRecycling, ITable *pTable, SQLiteUtils::CSQLiteDB* pDB) :
-			TBase(pFilter, bRecycling, pTable), m_pDB(pDB)
+			TBase(pFilter, bRecycling, pTable, false), m_pDB(pDB)
 		{
 			CommonLib::CString sSQL = "SELECT ";
 
-			for (size_t i = 0, sz = m_vecActualFieldsIndexes.size(); i < sz; ++i)
+			for (size_t i = 0, sz = m_vecFieldInfo.size(); i < sz; ++i)
 			{
-				IFieldPtr pField =  m_pSourceFields->GetField(m_vecActualFieldsIndexes[i]);
+				IFieldPtr pField =  m_pSourceFields->GetField(m_vecFieldInfo[i].m_nDataSetIndex);
 				assert(pField.get());
 				if(i != 0)
 					sSQL += L", ";
@@ -90,7 +90,7 @@ namespace GisEngine
 		}
 
 		CSQLiteRowCursor::CSQLiteRowCursor(int64 nOId, IFieldSet *pFieldSet, ITable* pTable, SQLiteUtils::CSQLiteDB* pDB) :
-			TBase(nOId, pFieldSet, pTable), m_pDB(pDB)
+			TBase(nOId, pFieldSet, pTable, false), m_pDB(pDB)
 		{
 			CommonLib::CString sSQL = "SELECT ";
 
@@ -138,72 +138,74 @@ namespace GisEngine
 			}
 
 
-			for(int i = 0; i < (int)m_vecActualFieldsIndexes.size(); ++i)
+			for(size_t i = 0, sz = m_vecFieldInfo.size(); i < sz ;++i)
 			{
-				int fieldIndex = m_vecActualFieldsIndexes[i];
-				CommonLib::CVariant* pValue = m_pCurrentRow->GetValue(fieldIndex);
-				 switch(m_vecActualFieldsTypes[i])
+				const sFieldInfo& fi = m_vecFieldInfo[i];
+			 
+			 
+				CommonLib::CVariant* pValue = m_pCurrentRow->GetValue(fi.m_nRowIndex);
+				 switch(fi.m_nType)
 				 {
 				
 					case dtBlob:
 						{
 							CommonLib::IBlobPtr pBlob;
-							auto it = m_mapCacheBlob.find(fieldIndex);
+							auto it = m_mapCacheBlob.find(fi.m_nRowIndex);
 							if(it == m_mapCacheBlob.end())
 							{
 								pBlob = new CommonLib::CBlob();
-								m_mapCacheBlob.insert(std::make_pair(fieldIndex, pBlob));
+								m_mapCacheBlob.insert(std::make_pair(fi.m_nRowIndex, pBlob));
 							}
 							else
 								pBlob = it->second;
 
-							m_pStmt->ColumnBlob(fieldIndex, pBlob.get());
+							m_pStmt->ColumnBlob(fi.m_nRowIndex, pBlob.get());
 							*pValue = CommonLib::IRefObjectPtr((IRefCnt*)pBlob.get());
 						}
 						break;
 					case dtGeometry:
 						{
-							m_pStmt->ColumnShape(fieldIndex, m_pCacheShape.get());
+							m_pStmt->ColumnShape(fi.m_nRowIndex, m_pCacheShape.get());
 							m_pCacheShape->calcBB();
 							
 						}
 						break;
 					case dtUInteger8:
-						*pValue = (byte)m_pStmt->ColumnInt(fieldIndex);//TO DO fix
+						*pValue = (byte)m_pStmt->ColumnInt(fi.m_nRowIndex);//TO DO fix
 						break;
 					case dtInteger8:
-						*pValue = (int8)m_pStmt->ColumnInt(fieldIndex);
+						*pValue = (int8)m_pStmt->ColumnInt(fi.m_nRowIndex);
 						break;
 					case dtUInteger16:
-						*pValue = (uint16)m_pStmt->ColumnInt(fieldIndex);//TO DO fix
+						*pValue = (uint16)m_pStmt->ColumnInt(fi.m_nRowIndex);//TO DO fix
 						break;
 					case dtInteger32:
-						*pValue = (int32)m_pStmt->ColumnInt(fieldIndex);
+						*pValue = (int32)m_pStmt->ColumnInt(fi.m_nRowIndex);
 						break;
 					case dtUInteger32:
-						*pValue = (uint32)m_pStmt->ColumnInt(fieldIndex);
+						*pValue = (uint32)m_pStmt->ColumnInt(fi.m_nRowIndex);
 						break;
 					case dtInteger16:
-						*pValue = (int16)m_pStmt->ColumnInt(fieldIndex);
+						*pValue = (int16)m_pStmt->ColumnInt(fi.m_nRowIndex);
 						break;
 					case dtUInteger64:
-						*pValue = (uint64)m_pStmt->ColumnInt64(fieldIndex);
+						*pValue = (uint64)m_pStmt->ColumnInt64(fi.m_nRowIndex);
 						break;
 					case dtInteger64:
-						*pValue = m_pStmt->ColumnInt64(fieldIndex); 
+						*pValue = m_pStmt->ColumnInt64(fi.m_nRowIndex); 
 						break;
 					case dtString:
 					case dtAnnotation:
 						{
-							CommonLib::CString str = m_pStmt->ColumnText(fieldIndex); //TO DO set cache
+							CommonLib::CString str = m_pStmt->ColumnText(fi.m_nRowIndex); //TO DO set cache
 							*pValue = str;
 						}
 						break;
 					case dtOid32:
-						*pValue =  m_pStmt->ColumnInt(fieldIndex);//TO DO fix
+						*pValue =  m_pStmt->ColumnInt(fi.m_nRowIndex);//TO DO fix
 						break;
 					case dtOid64:
-						*pValue =  m_pStmt->ColumnInt64(fieldIndex);
+						*pValue =  m_pStmt->ColumnInt64(fi.m_nRowIndex);
 						break;
 				 }
 
