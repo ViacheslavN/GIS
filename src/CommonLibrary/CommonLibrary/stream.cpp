@@ -12,9 +12,7 @@ void IReadStreamBase::read( byte* pBuffer, size_t bufLen)
 	else
 		read_bytes(pBuffer, bufLen);
 }
-
-
-
+ 
 bool  IReadStreamBase::readBool()
 {
 	return (readTR<byte>() == 1) ? true : false;
@@ -189,7 +187,14 @@ void IWriteStreamBase::write(const CommonLib::CString& str)
 	
 	}
 }
-
+void IWriteStreamBase::write(const IStream *pStream)
+{
+	writeT<uint32>(pStream->pos());
+	if(pStream->pos())
+	{
+		write(pStream->buffer(), pStream->pos());
+	}
+}
 void IWriteStreamBase::write(const char* pszStr)
 {
 	write((byte*)pszStr, strlen(pszStr));

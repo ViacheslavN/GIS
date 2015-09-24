@@ -113,67 +113,79 @@ namespace GisEngine
 
 		bool CPen::save(CommonLib::IWriteStream *pStream) const
 		{
-			pStream->write(byte(m_type));
-			m_color.save(pStream);
-			pStream->write(byte(m_joinType));
-			pStream->write(m_nWidth);
-			pStream->write(byte(m_capType));
+
+			CommonLib::MemoryStream stream;
+
+			stream.write(byte(m_type));
+			m_color.save(&stream);
+			stream.write(byte(m_joinType));
+			stream.write(m_nWidth);
+			stream.write(byte(m_capType));
 			if(m_pTexture && m_bRelease) 
 			{
-				pStream->write(true);
-				m_pTexture->save(pStream);
+				stream.write(true);
+				m_pTexture->save(&stream);
 			}
 			else
-				pStream->write(false);
-			pStream->write((uint32)m_vecTemplates.size());
+				stream.write(false);
+			stream.write((uint32)m_vecTemplates.size());
 			for (size_t i = 0; i < m_vecTemplates.size(); ++i)
 			{
-				pStream->write(m_vecTemplates[i].first);
-				pStream->write(m_vecTemplates[i].second);
+				stream.write(m_vecTemplates[i].first);
+				stream.write(m_vecTemplates[i].second);
 			}
+			pStream->write(&stream);
 			return true;
 		}
 		bool CPen::load(CommonLib::IReadStream *pStream)
 		{
-			m_type = (ePenType)pStream->readByte();
-			m_color.load(pStream);
-			m_joinType = (eJoinType)pStream->readByte();
+			CommonLib::FxMemoryReadStream stream;
+			uint32 nSize = 0;
+			SAFE_READ_RES(pStream, nSize);
+			if(pStream->AttachStream(&stream, nSize))
+				return false;
+
+			m_type = (ePenType)stream.readByte();
+			m_color.load(&stream);
+			m_joinType = (eJoinType)stream.readByte();
 			pStream->read(m_nWidth);
-			m_capType = (eCapType)pStream->readByte();
-			m_bRelease = pStream->readBool();
+			m_capType = (eCapType)stream.readByte();
+			m_bRelease = stream.readBool();
 			if(m_bRelease)
 			{
 				m_pTexture = new CBitmap();
-				m_pTexture->load(pStream);
+				m_pTexture->load(&stream);
 			}
-			uint32 nSize = pStream->readIntu32();
-			for (uint32 i = 0; i < nSize; ++i)
+			uint32 nCount = stream.readIntu32();
+			for (uint32 i = 0; i < nCount; ++i)
 			{
 				GUnits val1, val2;
-				pStream->read(val1);
-				pStream->read(val2);
+				stream.read(val1);
+				stream.read(val2);
 				m_vecTemplates.push_back(std::make_pair(val1, val2));
 			}
 			return true;
 		}
 
 
-		bool CPen::saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName) const
+		bool CPen::saveXML(GisCommon::IXMLNode* pNode, const wchar_t *pszName) const
 		{
-			pXmlNode->AddPropertyInt16U(L"PenType", uint16(m_type));
-			pXmlNode->AddPropertyInt16U(L"JoinType", uint16(m_joinType));
-			pXmlNode->AddPropertyDouble("Width", m_nWidth);
-			pXmlNode->AddPropertyInt16U(L"CapType", uint16(m_capType));
 
-			m_color.saveXML(pXmlNode);
+			GisCommon::IXMLNodePtr pPenNode = pNode->CreateChildNode(pszName);
+			pPenNode->AddPropertyInt16U(L"PenType", uint16(m_type));
+			pPenNode->AddPropertyInt16U(L"JoinType", uint16(m_joinType));
+			pPenNode->AddPropertyDouble("Width", m_nWidth);
+			pPenNode->AddPropertyInt16U(L"CapType", uint16(m_capType));
+
+			m_color.saveXML(pPenNode.get());
 
 			if(m_pTexture && m_bRelease) 
 			{
-				pXmlNode->AddPropertyBool(L"Release", m_bRelease);
-				m_pTexture->saveXML(pXmlNode);
+				pPenNode->AddPropertyBool(L"Release", m_bRelease);
+				m_pTexture->saveXML(pPenNode.get());
 			}
 			else
-				pXmlNode->AddPropertyBool(L"Release", false);
+				pPenNode->AddPropertyBool(L"Release", false);
 
 			if(m_vecTemplates.size())
 			{
@@ -187,7 +199,7 @@ namespace GisEngine
 
 				CommonLib::CBlob blob(stream.buffer(), stream.size(), true, NULL);
 
-				GisCommon::IXMLNodePtr pBlobNode = pXmlNode->CreateChildNode(L"Templates");
+				GisCommon::IXMLNodePtr pBlobNode = pPenNode->CreateChildNode(L"Templates");
 				pBlobNode->SetBlobCDATA(blob);
 
 			}

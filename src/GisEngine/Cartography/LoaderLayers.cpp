@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "LoaderLayers.h"
+#include "FeatureLayer.h"
 
 namespace GisEngine
 {
@@ -7,32 +8,42 @@ namespace GisEngine
 	{
 
 		template<class TSerealizer>
-		ILayerPtr LoadLayer(TSerealizer *pSerealizer, uint32 nLayerID);
+		ILayerPtr LoadLayerT(TSerealizer *pSerealizer, uint32 nLayerID);
 
-		ILayerPtr LoadLayer(CommonLib::IReadStream *pStream)
+		ILayerPtr LoaderLayers::LoadLayer(CommonLib::IReadStream *pStream)
 		{
-			uint32 nLayerID = UndefineLayerID;
-			SAFE_READ(pStream, nLayerID);
+			uint32 nLayerID = pStream->readIntu32();
 			if(nLayerID == UndefineLayerID)
 				return ILayerPtr();
 
-			return LoadLayer<CommonLib::IReadStream>(pStream, nLayerID);
+			return LoadLayerT<CommonLib::IReadStream>(pStream, nLayerID);
 		}
 
-		ILayerPtr LoadLayer(GisCommon::IXMLNode *pNode)
+		ILayerPtr LoaderLayers::LoadLayer(GisCommon::IXMLNode *pNode)
 		{
 
 			uint32 nLayerID = pNode->GetPropertyInt32U(L"LayerID", UndefineLayerID);
 			if(nLayerID == UndefineLayerID)
 				return ILayerPtr();
 
-			return LoadLayer<GisCommon::IXMLNode>(pNode, nLayerID);
+			return LoadLayerT<GisCommon::IXMLNode>(pNode, nLayerID);
 		}
 
 		template<class TSerealizer>
-		ILayerPtr LoadLayer(TSerealizer *pSerealizer, uint32 nLayerID)
+		ILayerPtr LoadLayerT(TSerealizer *pSerealizer, uint32 nLayerID)
 		{
 			ILayerPtr pLayer;
+
+			switch(nLayerID)
+			{
+				case FeatureLayerID:
+					{
+						CFeatureLayer *pFeatureLayer = new CFeatureLayer();
+						pFeatureLayer->load(pSerealizer);
+						pLayer = pFeatureLayer;
+					}
+					break;
+			}
 		
 			return pLayer;
 		}

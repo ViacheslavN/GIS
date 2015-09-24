@@ -49,20 +49,22 @@ namespace GisEngine
 
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const
 			{
-				pWriteStream->write(GetFeatureRendererID());
-				pWriteStream->write(m_dMaximumScale);
-				pWriteStream->write(m_dMinimumScale);
-				pWriteStream->write(m_sShapeField);
+				//pWriteStream->write(GetFeatureRendererID());
+				
+				CommonLib::MemoryStream stream;
+				stream.write(m_dMaximumScale);
+				stream.write(m_dMinimumScale);
+				stream.write(m_sShapeField);
 				return true;
 			}
 			virtual bool load(CommonLib::IReadStream* pReadStream)
 			{
-				SAFE_READ(pReadStream, m_dMaximumScale)
-				SAFE_READ(pReadStream, m_dMinimumScale)
-				SAFE_READ_RES_EX(pReadStream, m_sShapeField, 1)
-			
-		 
-				return true;
+				CommonLib::FxMemoryReadStream stream;
+				pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+				stream.read(m_dMaximumScale);
+				stream.read(m_dMinimumScale);
+				stream.read(m_sShapeField);
+		 		return true;
 			}
 
 			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const

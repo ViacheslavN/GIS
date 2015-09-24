@@ -71,33 +71,36 @@ namespace GisEngine
 
 		bool CBrush::save(CommonLib::IWriteStream *pStream) const
 		{
-			pStream->write((byte)m_type);
-			m_color.save(pStream);
-			m_bgColor.save(pStream);
+
+			CommonLib::MemoryStream stream;
+			stream.write((byte)m_type);
+			m_color.save(&stream);
+			m_bgColor.save(&stream);
 			if(m_pTexture && m_bRelease) 
 			{
-				pStream->write(true);
-				m_pTexture->save(pStream);
+				stream.write(true);
+				m_pTexture->save(&stream);
 			}
 			else
-				pStream->write(false);
+				stream.write(false);
+
+			pStream->write(&stream);
 			return true;
 		}
 		bool CBrush::load(CommonLib::IReadStream *pStream)
 		{
 			byte nType = 0;
-			SAFE_READ_RES(pStream, nType);
-
-			m_type = (eBrushType)nType;
-			if(!m_color.load(pStream))
-				return false;
-			if(!m_bgColor.load(pStream))
-				return false;
-			SAFE_READ_RES(pStream, m_bRelease);
+			CommonLib::FxMemoryReadStream stream;
+			pStream->AttachStream(&stream, pStream->readIntu32());
+			m_type = (eBrushType)stream.readByte();
+			m_color.load(&stream);
+			m_bgColor.load(&stream);
+			m_bRelease = stream.readByte();
+		 
 			if(m_bRelease)
 			{
 				m_pTexture = new CBitmap();
-				return m_pTexture->load(pStream);
+				return m_pTexture->load(&stream);
 			}
 			return true;
 		}

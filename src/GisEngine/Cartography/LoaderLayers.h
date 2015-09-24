@@ -7,9 +7,12 @@ namespace GisEngine
 {
 	namespace Cartography
 	{
-
-		ILayerPtr LoadLayer(CommonLib::IReadStream *pSteam);
-		ILayerPtr LoadLayer(GisCommon::IXMLNode *pNode);
+		class LoaderLayers
+		{
+		public:
+			static	ILayerPtr LoadLayer(CommonLib::IReadStream *pSteam);
+			static	ILayerPtr LoadLayer(GisCommon::IXMLNode *pNode);
+		};
 	}
 }
 

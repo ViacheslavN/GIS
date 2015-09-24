@@ -542,23 +542,23 @@ namespace CommonLib
 		 m_type = (eShapeType)pStream->readByte();
 		 m_general_type = generalType(m_type);
 		 uint32 nSize = pStream->readIntu32();
-		 m_vecParts.reserve(nSize);
-		 m_vecParts.resize(0);
+		 m_vecParts.reserve(nSize, true);
+	 
 		 for (size_t i = 0; i < nSize; ++i)
 		 {
 			 m_vecParts.push_back(pStream->readIntu32());
 		 }
 
 		 nSize = pStream->readIntu32();
-		 m_vecPartTypes.reserve(nSize);
+		 m_vecPartTypes.reserve(nSize, true);
 		 for (size_t i = 0; i < nSize; ++i)
 		 {
 			 m_vecPartTypes.push_back(pStream->readByte());
 		 }
 
 		 nSize = pStream->readIntu32();
-		 m_vecPoints.reserve(nSize);
-		 m_vecPoints.resize(0);
+		 m_vecPoints.reserve(nSize, true);
+ 
 		 GisXYPoint pt;
 		 for (size_t i = 0; i < nSize; ++i)
 		 {
@@ -568,13 +568,13 @@ namespace CommonLib
 		 }
 
 		nSize = pStream->readIntu32();
-		m_vecZs.reserve(nSize);
+		m_vecZs.reserve(nSize, true);
 		for (size_t i = 0; i < nSize; ++i)
 		{
 			m_vecZs.push_back(pStream->readDouble());
 		}
 		nSize = pStream->readIntu32();
-		m_vecMs.reserve(nSize);
+		m_vecMs.reserve(nSize, true);
 		for (size_t i = 0; i < nSize; ++i)
 		{
 			m_vecMs.push_back(pStream->readDouble());

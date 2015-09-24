@@ -424,12 +424,17 @@ namespace GisEngine
 
 		bool CSpatialReferenceProj4::save(CommonLib::IWriteStream *pStream) const
 		{
-			pStream->write(m_prj4Str);
+			CommonLib::MemoryStream stream;
+			stream.write(m_prj4Str);
+
+			pStream->write(&stream);
 			return true;
 		}
 		bool CSpatialReferenceProj4::load(CommonLib::IReadStream *pStream)
 		{
-			SAFE_READ_RES_EX(pStream, m_prj4Str, 1)
+			CommonLib::FxMemoryReadStream stream;
+			pStream->AttachStream(&stream, pStream->readIntu32());
+			stream.read(m_prj4Str);
 			return true;
 		}
 
@@ -440,7 +445,10 @@ namespace GisEngine
 		}
 		bool CSpatialReferenceProj4::load(GisCommon::IXMLNode* pXmlNode)
 		{
-			return true;
+			m_prj4Str = pXmlNode->GetPropertyString(L"proj", L"");
+			CreateProjection();
+
+			return IsValid();
 		}
 
 		void CSpatialReferenceProj4::CreateProjection()

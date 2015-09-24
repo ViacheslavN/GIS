@@ -132,18 +132,22 @@ namespace GisEngine
 
 		bool CSimpleFillSymbol::save(CommonLib::IWriteStream *pWriteStream) const
 		{
-			TSymbolBase::save(pWriteStream);
-			pWriteStream->write((uint16)m_FillStyle);
+			CommonLib::MemoryStream stream;
+			TSymbolBase::save(&stream);
+			stream.write((uint16)m_FillStyle);
+			pWriteStream->write(&stream);
 			return true;
 		}
 		bool CSimpleFillSymbol::load(CommonLib::IReadStream* pReadStream)
 		{
-			if(!TSymbolBase::load(pReadStream))
+			CommonLib::FxMemoryReadStream stream;
+			pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+
+			if(!TSymbolBase::load(&stream))
 				return false;
 			 
 			uint16 nStyle = SimpleFillStyleNull;
-			SAFE_READ(pReadStream, nStyle)
-			m_FillStyle = (eSimpleFillStyle)nStyle;
+			m_FillStyle = (eSimpleFillStyle)stream.readintu16();
 			return true;
 		}
 

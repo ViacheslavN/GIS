@@ -121,21 +121,3 @@ LRESULT CMainFrame::OnFileOpen(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
 	return 0;
 }
 
-LRESULT CMainFrame::OnOpenShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
-{
-	CFileDialog fileDlg(TRUE,NULL,NULL,OFN_ALLOWMULTISELECT,_T(""));
-	if ( fileDlg.DoModal() != IDOK )
-		return 0;
-	m_view.AddShapeFile(fileDlg.m_szFileName);
-
-	return 1;
-}
-LRESULT CMainFrame::OnSQLiteShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
-{
-	CFileDialog fileDlg(TRUE,NULL,NULL,OFN_ALLOWMULTISELECT,_T(""));
-	if ( fileDlg.DoModal() != IDOK )
-		return 0;
-	m_view.AddSQLite(fileDlg.m_szFileName);
-
-	return 1;
-}

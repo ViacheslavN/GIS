@@ -36,19 +36,35 @@ namespace CommonLib
 		m_nCurrBit = 0;
 		m_pBuffer[m_nPos] = 0;
 	}
-	void FxBitStreamBase::attach(byte* pBuffer, size_t nSize)
+	void FxBitStreamBase::attach(byte* pBuffer, size_t nSize, bool bCopy)
 	{
-		m_pBuffer = pBuffer;
+		
+		if(bCopy)
+		{
+			create(nSize);
+			memcpy(m_pBuffer, pBuffer, nSize);
+			m_bAttach = false;
+		}
+		else
+		{
+			m_pBuffer = pBuffer;
+			m_bAttach = true;
+	
+		}
+		m_nCurrBit = 0;
 		m_nPos = 0;
 		m_nSize = nSize;
-		m_bAttach = true;
-		m_nCurrBit = 0;
+		
 	}
 	byte* FxBitStreamBase::deattach()
 	{
 		return m_pBuffer;
 	}
 	byte* FxBitStreamBase::buffer()
+	{
+		return m_pBuffer;
+	}
+	const byte* FxBitStreamBase::buffer() const
 	{
 		return m_pBuffer;
 	}

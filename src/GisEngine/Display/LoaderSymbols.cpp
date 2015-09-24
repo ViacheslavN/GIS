@@ -2,6 +2,7 @@
 #include "LoaderSymbols.h"
 #include "SimpleLineSymbol.h"
 #include "SimpleFillSymbol.h"
+#include "TextSymbol.h"
 #include "CommonLibrary/stream.h"
 
 namespace GisEngine
@@ -14,8 +15,9 @@ namespace GisEngine
 		
 		ISymbolPtr LoaderSymbol::LoadSymbol(CommonLib::IReadStream *pSteam)
 		{
-			uint32 nSymbolID = UndefineSymbolID;
-			SAFE_READ(pSteam, nSymbolID);
+		//	CommonLib::FxMemoryReadStream stream;
+		//	pSteam->AttachStream(&stream, pSteam->readIntu32());
+			uint32 nSymbolID = pSteam->readIntu32();
 			if(nSymbolID == UndefineSymbolID)
 				return ISymbolPtr();
 
@@ -50,6 +52,13 @@ namespace GisEngine
 					CSimpleFillSymbol *pSimpleFillSymbol = new CSimpleFillSymbol();
 					pSimpleFillSymbol->load(pSerealizer);
 					pSymbol = pSimpleFillSymbol;
+				}
+				break;
+			case TextSymbolID:
+				{
+					CTextSymbol *pTextSymbol = new CTextSymbol();
+					pTextSymbol->load(pSerealizer);
+					pSymbol = pTextSymbol;
 				}
 				break;
 			}

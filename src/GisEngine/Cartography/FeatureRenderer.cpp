@@ -110,11 +110,6 @@ namespace GisEngine
 			if(pSymbol.get())
 			{
 				pSymbol->Prepare(pDisplay);
-				if(feature->GetOID() == 2)
-				{
-					int i = 0;
-					i++;
-				}
 				pSymbol->Draw(pDisplay, pShape.get());
 				pSymbol->Reset();
 			}
@@ -122,23 +117,29 @@ namespace GisEngine
 
 		bool CFeatureRenderer::save(CommonLib::IWriteStream *pWriteStream) const
 		{
-			if(!TBase::save(pWriteStream))
+			CommonLib::MemoryStream stream;
+			if(!TBase::save(&stream))
 				return false;
 
-			pWriteStream->write(m_pSymbolAssigner.get() ? true : false);
+			stream.write(m_pSymbolAssigner.get() ? true : false);
 			if(m_pSymbolAssigner.get())
-				m_pSymbolAssigner->save(pWriteStream);
+			{
+				stream.write((uint32)m_pSymbolAssigner->GetSymbolAssignerID());
+				m_pSymbolAssigner->save(&stream);
+			}
 
+			pWriteStream->write(&stream);
 			return true;
 		}
 		bool CFeatureRenderer::load(CommonLib::IReadStream* pReadStream)
 		{
-			if(!TBase::load(pReadStream))
+			CommonLib::FxMemoryReadStream stream;
+			pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+			if(!TBase::load(&stream))
 				return false;
-			bool bSymbol = false;
-			SAFE_READ_BOOL_RES(pReadStream, bSymbol);
+			bool bSymbol = stream.readBool();
 			if(bSymbol)
-				m_pSymbolAssigner = LoadSymbolAssigners(pReadStream);
+				m_pSymbolAssigner = LoaderSymbolAssigners::LoadSymbolAssigners(&stream);
 			return true;
 		}
 		bool CFeatureRenderer::saveXML(GisCommon::IXMLNode* pXmlNode) const
@@ -161,7 +162,7 @@ namespace GisEngine
 
 			bool bSymbol = pXmlNode->GetPropertyBool("SymbolAssigner", false);
 			if(bSymbol)
-				m_pSymbolAssigner = LoadSymbolAssigners(pXmlNode);
+				m_pSymbolAssigner = LoaderSymbolAssigners::LoadSymbolAssigners(pXmlNode);
 			return true;
 		}
 	}

@@ -35,13 +35,24 @@ namespace CommonLib
 		m_nSize = nSize;
 		m_bAttach = false;
 	}
-	void MemoryStream::attach(byte* pBuffer, size_t nSize)
+	void MemoryStream::attach(byte* pBuffer, size_t nSize, bool bCopy)
 	{
-		m_pBuffer = pBuffer;
+
+		if(bCopy)
+		{
+			create(nSize);
+			memcpy(m_pBuffer, pBuffer, nSize);
+			m_bAttach = false;
+		}
+		else
+		{
+			m_pBuffer = pBuffer;
+			m_bAttach = true;
+
+		}
 		m_nPos = 0;
 		m_nSize = nSize;
-		m_bAttach = true;
-	}
+ 	}
 	byte* MemoryStream::deattach()
 	{
 		byte* tmp = m_pBuffer;
@@ -52,6 +63,10 @@ namespace CommonLib
 		return tmp;
 	}
 	byte* MemoryStream:: buffer()
+	{
+		return m_pBuffer;
+	}
+	const byte*  MemoryStream:: buffer() const
 	{
 		return m_pBuffer;
 	}
@@ -156,173 +171,18 @@ namespace CommonLib
 	{
 		return m_nSize == m_nPos;
 	}
-	/*
-	void MemoryStream::read( byte* pBuffer, size_t bufLen)
+	void MemoryStream::read(IStream *pStream, bool bAttach)
 	{
-		if(m_bIsBigEndian)
-			read_inverse(pBuffer, bufLen);
-		else
-			read_bytes(pBuffer, bufLen);
-	}
-
-
-
-	bool  MemoryStream::readBool()
-	{
-		  return (readTR<byte>() == 1) ? true : false;
-	}
-	byte  MemoryStream::readByte()
-	{
-		return readTR<byte>();
-	}
-	char MemoryStream::readChar()
-	{
-		return readTR<char>();
-	}
-	int16  MemoryStream::readint16()
-	{
-		return readTR<int16>();
-	}
-	uint16 MemoryStream::readintu16()
-	{
-		 return readTR<uint16>();
-	}
-	uint32 MemoryStream::readDword()
-	{
-		return readTR<uint32>();
-	}
-	int32 MemoryStream::readInt32()
-	{
-		return readTR<int32>();
-	}
-	uint32 MemoryStream::readIntu32()
-	{
-		return readTR<uint32>();
-	}
-	int64 MemoryStream::readInt64()
-	{
-		return readTR<int64>();
-	}
-	uint64 MemoryStream::readIntu64()
-	{
-		return readTR<uint64>();
-	}
-	float MemoryStream::readFloat()
-	{
-		return readTR<float>();
-	}
-	double MemoryStream::readDouble()
-	{
-		return readTR<double>();
-	}
-	void MemoryStream::read(bool& value)
-	{
-		//readT<bool>(value);
-		byte ret;
-		readT<byte>(ret);
-		value = ( ret == 1) ? true : false;
-	}
-	void MemoryStream::read(byte& value)
-	{
-		readT<byte>(value);
-	}
-	void MemoryStream::read(char& value)
-	{
-		readT<char>(value);
-	}
-	void MemoryStream::read(uint16& value)
-	{
-		readT<uint16>(value);
-	}
-	void MemoryStream::read(uint32& value)
-	{
-		readT<uint32>(value);
-	}
-	void MemoryStream::read(int32& value)
-	{
-		readT<int32>(value);
-	}
-	void MemoryStream::read(int64& value)
-	{
-		readT<int64>(value);
-	}
-	void MemoryStream::read(uint64& value)
-	{
-		readT<uint64>(value);
-	}
-	void MemoryStream::read(float& value)
-	{
-		readT<float>(value);
-	}
-	void MemoryStream::read(double& value)
-	{
-		readT<double>(value);
-	}
-	void MemoryStream::read(CommonLib::str_t& str)
-	{
-		uint32 nlen = readIntu32();
-		if(nlen)
-		{
-			str.reserve(nlen);
-			read((byte*)str.wstr(), 2 *nlen);
-		}
 
 	}
-
-	void  MemoryStream::write(const byte* pBuffer, size_t bufLen )
+	bool MemoryStream::AttachStream(IStream *pStream, uint32 nSize, bool bSeek)
 	{
-		if(m_bIsBigEndian)
-			write_inverse(pBuffer, bufLen);
-		else
-			write_bytes(pBuffer, bufLen);
+		if(!checkRead(nSize))
+			return false;
+		pStream->attach(buffer() + pos(), nSize);
+		if(bSeek)
+			seek(nSize, soFromCurrent);
+		return true;
 	}
-	void MemoryStream::write(bool value)
-	{
-		writeT<byte>(value ? (byte)1 : (byte)0);
-	}
-
-	void MemoryStream::write(byte value)
-	{
-		writeT<byte>(value);
-	}
-
-	void MemoryStream::write(uint16 value)
-	{
-		writeT<uint16>(value);
-	}
-
-	void MemoryStream::write(uint32 value)
-	{
-		writeT<uint32>(value);
-	}
-
-	void MemoryStream::write(int32 value)
-	{
-		writeT<int32>(value);
-	}
-
-	void MemoryStream::write(int64 value)
-	{
-		writeT<int64>(value);
-	}
-	void MemoryStream::write(uint64 value)
-	{
-		writeT<uint64>(value);
-	}
-
-	void MemoryStream::write(float value)
-	{
-		writeT<float>(value);
-	}
-
-	void MemoryStream::write(double value)
-	{
-		writeT<double>(value);
-	}
-	void MemoryStream::write(const CommonLib::str_t& str)
-	{
-		writeT<uint32>(str.length());
-		if(str.length())
-			write((byte*)str.cwstr(), str.length() *2);
-	}*/
+	
 }

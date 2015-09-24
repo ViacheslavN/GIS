@@ -38,6 +38,7 @@ namespace GisEngine
 				virtual void  DrawGeometryEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount);
 				virtual void  QueryBoundaryRectEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount,   GRect &rect) const;
 				virtual void  Prepare(IDisplay* pDisplay);
+				virtual void DrawDirectly(IDisplay* display, const GPoint* lpPoints, const int *lpPolyCounts, int nCount );
 
 
 				//IStreamSerialize

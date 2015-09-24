@@ -17,9 +17,10 @@ namespace CommonLib
 
 
 		virtual void create(size_t nSize);
-		virtual void attach(byte* pBuffer, size_t nSize);
+		virtual void attach(byte* pBuffer, size_t nSize, bool bCopy = false);
 		virtual byte* deattach();
 		virtual byte* buffer();
+		virtual const byte* buffer() const;
 		virtual size_t size() const;
 		virtual bool seek(size_t position, enSeekOffset offset );
 		virtual size_t pos() const;

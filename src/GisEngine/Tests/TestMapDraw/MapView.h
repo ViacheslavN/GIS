@@ -26,6 +26,8 @@ public:
 	ALT_MSG_MAP( 1 )	//	Forwarded by frame
 		COMMAND_ID_HANDLER(ID_REDRAW_MAP, OnRedrawMap)
 		COMMAND_ID_HANDLER(ID_FULL_ZOOM, OnFullZoom)
+		COMMAND_ID_HANDLER(ID_ADD_SHAPE_FILE, OnOpenShapeFile)
+		COMMAND_ID_HANDLER(ID_ADD_SQLITE_DB, OnSQLiteShapeFile)
 	END_MSG_MAP()
 
 	
@@ -46,7 +48,8 @@ public:
 	LRESULT OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 
-
+	LRESULT OnOpenShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	LRESULT OnSQLiteShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
 	void open(const wchar_t *pszFile);
 

@@ -72,6 +72,12 @@
     <ClInclude Include="CartographyLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RenderersLoader.h">
+      <Filter>renders</Filter>
+    </ClInclude>
+    <ClInclude Include="FeatureClassLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -99,6 +105,12 @@
       <Filter>layers</Filter>
     </ClCompile>
     <ClCompile Include="map.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderersLoader.cpp">
+      <Filter>renders</Filter>
+    </ClCompile>
+    <ClCompile Include="FeatureClassLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

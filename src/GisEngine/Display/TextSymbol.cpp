@@ -97,6 +97,10 @@ namespace GisEngine
 				return false;
 			return true;
 		}
+		void CTextSymbol::DrawDirectly(IDisplay* display, const GPoint* lpPoints, const int *lpPolyCounts, int nCount )
+		{
+			DrawGeometryEx(display, lpPoints, lpPolyCounts, nCount);
+		}
 		void  CTextSymbol::DrawGeometryEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount)
 		{
 			if(m_pGeom && m_pGeom->GetGeneralType() == CommonLib::shape_type_general_polyline)
@@ -308,36 +312,40 @@ namespace GisEngine
 		//IStreamSerialize
 		bool CTextSymbol::save(CommonLib::IWriteStream *pWriteStream) const
 		{
-			if(!TBase::save(pWriteStream))
+			CommonLib::MemoryStream stream;
+			if(!TBase::save(&stream))
 				return false;
 
-			pWriteStream->write(m_sText);
+			stream.write(m_sText);
 			if(m_pTextBg.get())
 			{
-				pWriteStream->write(true);
-				m_pTextBg->save(pWriteStream);
+				stream.write(true);
+				m_pTextBg->save(&stream);
 			}
 			else
-				pWriteStream->write(false);
-			pWriteStream->write(m_nTextDrawFlags);
+				stream.write(false);
+			stream.write(m_nTextDrawFlags);
 			
-			return m_Font.save(pWriteStream);
+			m_Font.save(&stream);
+			pWriteStream->write(&stream);
+			return true;
 		}
 		bool CTextSymbol::load(CommonLib::IReadStream* pReadStream)
 		{
-			if(!TBase::load(pReadStream))
+			CommonLib::FxMemoryReadStream stream;
+			pReadStream->AttachStream(&stream, pReadStream->readInt32());
+			if(!TBase::load(&stream))
 				return false;
-			SAFE_READ_RES_EX(pReadStream, m_sText, 1);
-			bool bBgSymbol = false;
-			SAFE_READ_BOOL_RES(pReadStream, bBgSymbol);
+			stream.read(m_sText);
+			bool bBgSymbol = stream.readBool();
 			if(bBgSymbol)
 			{
 
-				m_pTextBg =  (ITextBackground*)LoaderSymbol::LoadSymbol(pReadStream).get();
+				m_pTextBg =  (ITextBackground*)LoaderSymbol::LoadSymbol(&stream).get();
 			}
-			SAFE_READ_RES(pReadStream, m_nTextDrawFlags);
-			
-			return m_Font.load(pReadStream);
+			m_nTextDrawFlags = stream.readInt32();
+		 
+			return m_Font.load(&stream);
 		}
 
 
@@ -372,5 +380,7 @@ namespace GisEngine
 
 			return m_Font.load(pXmlNode);
 		}
+
+		
 	}
 }

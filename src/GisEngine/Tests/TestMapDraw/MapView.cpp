@@ -359,93 +359,28 @@ void CMapView::AddFeatureClass(GisEngine::GeoDatabase::IFeatureClass *pFC)
 }
 
 
+LRESULT CMapView::OnOpenShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	CFileDialog fileDlg(TRUE,NULL,NULL,OFN_ALLOWMULTISELECT,_T(""));
+	if ( fileDlg.DoModal() != IDOK )
+		return 0;
+	AddShapeFile(fileDlg.m_szFileName);
+
+	return 1;
+}
+LRESULT CMapView::OnSQLiteShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	CFileDialog fileDlg(TRUE,NULL,NULL,OFN_ALLOWMULTISELECT,_T(""));
+	if ( fileDlg.DoModal() != IDOK )
+		return 0;
+	AddSQLite(fileDlg.m_szFileName);
+
+	return 1;
+}
+
 
 void CMapView::open(const wchar_t *pszFile)
 {
-	CommonLib::CString sPath = CommonLib::FileSystem::FindFilePath(pszFile);
-//	CommonLib::CString sFileName = CommonLib::FileSystem::FindOnlyFileName(pszFile);
-	CommonLib::CString sFileName = CommonLib::FileSystem::FindFileName(pszFile);
-
-	//GisEngine::GeoDatabase::IWorkspacePtr pWks = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"", sPath.cwstr());
-	GisEngine::GeoDatabase::IWorkspacePtr pWks = GisEngine::GeoDatabase::CSQLiteWorkspace::Open(sFileName.cwstr(), sPath.cwstr(), true, false);
-	
-	if(!pWks.get())
-		return;
-
-	//GisEngine::GeoDatabase::IFeatureClassPtr pFC = pWks->GetFeatureClass(sFileName);
-	GisEngine::GeoDatabase::IFeatureClassPtr pFC = pWks->OpenFeatureClass(L"TestFeatureClass");
-	if(!pFC.get())
-		return;
-	GisEngine::Cartography::IFeatureLayerPtr pFeatureLayer (new GisEngine::Cartography::CFeatureLayer());
-	CommonLib::eShapeType type = pFC->GetGeometryType();
-
-
-	GisEngine::Cartography::CSimpleSymbolAssigner* pSimpleSymbolAssigner = new GisEngine::Cartography::CSimpleSymbolAssigner();
-	GisEngine::Display::ISymbolPtr pSymbol;
-	GisEngine::GisGeometry::ISpatialReferencePtr pSpRef = pFC->GetSpatialReference();
-
-	switch(type)
-	{
-		case CommonLib::shape_type_polyline:
-			pSymbol = new GisEngine::Display::CSimpleLineSymbol(GisEngine::Display::Color(0, 255, 255, 255), 0.5);
-			break;
-		case CommonLib::shape_type_polygon:
-		case CommonLib::shape_type_multipatch:
-			{
-				GisEngine::Display::CSimpleFillSymbol* pFillSymbol = new GisEngine::Display::CSimpleFillSymbol();
-				GisEngine::Display::CSimpleLineSymbol* pLineSymbol =new GisEngine::Display::CSimpleLineSymbol(GisEngine::Display::Color(0, 255, 0, 255), 0.5);
-				pLineSymbol->SetScaleDependent(true);
-
-				pFillSymbol->SetColor(GisEngine::Display::Color(255, 0, 0, 255));
-				pFillSymbol->SetBackgroundColor(GisEngine::Display::Color(255, 0, 0, 255));
-				pFillSymbol->SetOutlineSymbol(pLineSymbol);
-				pSymbol = pFillSymbol;
-			}
-			break;
-	}
-
-	pSimpleSymbolAssigner->SetSymbol(pSymbol.get());
-	GisEngine::Cartography::IFeatureRendererPtr pRenderer( (GisEngine::Cartography::IFeatureRenderer*)(new GisEngine::Cartography::CFeatureRenderer()));
-
-	pRenderer->SetSymbolAssigner(pSimpleSymbolAssigner);
-	pFeatureLayer->AddRenderer(pRenderer.get());
-	pFeatureLayer->SetFeatureClass(pFC.get());
-	pFeatureLayer->SetVisible(true);
-
-
-	m_pMapDrawer->StopDraw();
-	m_pMap->GetLayers()->AddLayer(pFeatureLayer.get());
-
-	if(m_pMap->GetLayers()->GetLayerCount() == 1)
-	{
-		m_pMap->SetSpatialReference(pFC->GetSpatialReference().get());
-		//m_pDisplayTransformation->SetSpatialReference(pFC->GetSpatialReference().get());
-		//m_pDisplayTransformation->SetUnits(m_pMap->GetMapUnits());
-		m_pMapDrawer->SetMap(m_pMap.get());
-
-	}
-	//m_pDisplayTransformation->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
-	m_pMapDrawer->GetCalcTransformation()->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
-	m_pMapDrawer->Redraw();
-	//redraw();
-
-	/*
-	CTrackCancel tc;
-
-	
-	if(m_pMap->GetLayers()->GetLayerCount() == 1)
-	{
-		m_pMap->SetSpatialReference(pFC->GetSpatialReference().get());
-		//m_pDisplayTransformation->SetSpatialReference(pFC->GetSpatialReference().get());
-		//m_pDisplayTransformation->SetUnits(m_pMap->GetMapUnits());
-		m_pMapDrawer->SetMap(m_pMap.get());
-		
-	}
-	//m_pDisplayTransformation->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
-	m_pMapDrawer->GetCalcTransformation()->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
-	m_pMapDrawer->Redraw();
-	/*redraw();
-
-	 ::InvalidateRect(m_hWnd, 0, FALSE);*/
+ 
 
 }

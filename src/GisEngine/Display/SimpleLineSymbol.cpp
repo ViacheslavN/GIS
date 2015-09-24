@@ -96,17 +96,22 @@ namespace GisEngine
 		//IStreamSerialize
 		bool CSimpleLineSymbol::save(CommonLib::IWriteStream *pWriteStream) const
 		{
-			if(!TBase::save(pWriteStream))
+			CommonLib::MemoryStream stream;
+			if(!TBase::save(&stream))
 				return false;
 
-			return m_Pen.save(pWriteStream);
+			m_Pen.save(&stream);
+			pWriteStream->write(&stream);
+			return true;
 		}
 		bool CSimpleLineSymbol::load(CommonLib::IReadStream* pReadStream)
 		{
-			if(!TBase::load(pReadStream))
+			CommonLib::FxMemoryReadStream stream;
+			pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+			if(!TBase::load(&stream))
 				return false;
 
-			return m_Pen.load(pReadStream);
+			return m_Pen.load(&stream);
 		}
 
 

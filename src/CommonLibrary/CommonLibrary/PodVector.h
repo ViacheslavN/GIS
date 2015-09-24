@@ -79,7 +79,7 @@ namespace CommonLib
 				return m_pData;
 			}
 
-			void reserve(uint32 nSize)
+			void reserve(uint32 nSize, bool bClear = false)
 			{
 				if(nSize > m_nCapacity)
 				{
@@ -88,11 +88,14 @@ namespace CommonLib
 
 					if(m_pData)
 					{
-						memcpy(pTmp, m_pData, m_nSize* sizeof(TValue));
+						if(!bClear)
+							memcpy(pTmp, m_pData, m_nSize* sizeof(TValue));
 						m_pAlloc->free(m_pData);
 					}
 					m_pData = pTmp;
 				}
+				if(bClear)
+					m_nSize = 0;
 			}
 			void resize(uint32 nSize)
 			{

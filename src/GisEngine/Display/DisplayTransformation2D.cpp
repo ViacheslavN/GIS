@@ -61,39 +61,39 @@ namespace GisEngine
 			{
 			public:
 				local(const matrix4 &mat, double centerx, double centery) : 
-				  mat_(mat),  centerx_(centerx), centery_(centery)
+				  m_mat(mat),  m_dCenterX(centerx), m_dCenterY(centery)
 				  {
-					  box_.type = CommonLib::bbox_type_null;
+					  m_box.type = CommonLib::bbox_type_null;
 				  }
 				  void operator()(double x, double y)
 				  {
-					  double xm = x - centerx_;
-					  double ym = y - centery_;
-					  double xn = xm * mat_(0, 0) + ym * mat_(1, 0);
-					  double yn = xm * mat_(0, 1) + ym * mat_(1, 1);
-					  if (!(box_.type & CommonLib::bbox_type_normal))
+					  double xm = x - m_dCenterX;
+					  double ym = y - m_dCenterY;
+					  double xn = xm * m_mat(0, 0) + ym * m_mat(1, 0);
+					  double yn = xm * m_mat(0, 1) + ym * m_mat(1, 1);
+					  if (!(m_box.type & CommonLib::bbox_type_normal))
 					  {
-						  box_.xMin = box_.xMax = xn;
-						  box_.yMin = box_.yMax = yn;
-						  box_.type = CommonLib::bbox_type_normal;
+						  m_box.xMin = m_box.xMax = xn;
+						  m_box.yMin = m_box.yMax = yn;
+						  m_box.type = CommonLib::bbox_type_normal;
 					  }
 					  else
 					  {
-						  if (box_.xMin > xn) 
-							  box_.xMin = xn;
-						  if (box_.xMax < xn)
-							  box_.xMax = xn;
-						  if (box_.yMin > yn)
-							  box_.yMin = yn;
-						  if (box_.yMax < yn)
-							  box_.yMax = yn;
+						  if (m_box.xMin > xn) 
+							  m_box.xMin = xn;
+						  if (m_box.xMax < xn)
+							  m_box.xMax = xn;
+						  if (m_box.yMin > yn)
+							  m_box.yMin = yn;
+						  if (m_box.yMax < yn)
+							  m_box.yMax = yn;
 					  }
 				  }
-				  const GisBoundingBox &result() const {return box_;}
+				  const GisBoundingBox &result() const {return m_box;}
 			private:
-				matrix4 mat_;
-				double centerx_, centery_;
-				GisBoundingBox box_;
+				matrix4 m_mat;
+				double m_dCenterX, m_dCenterY;
+				GisBoundingBox m_box;
 			};
 			matrix4 mat;
 			mat.setRotationDegrees(vector3df(0, 0, m_dAngle));

@@ -326,33 +326,36 @@ namespace GisEngine
 
 		bool CBitmap::save(CommonLib::IWriteStream *pStream) const
 		{
-
-			pStream->write((uint32)m_nWidth);
-			pStream->write((uint32)m_nHeight);
-			pStream->write((byte)m_type);
-			pStream->write(m_pBuf, size());
+			CommonLib::MemoryStream stream;
+			stream.write((uint32)m_nWidth);
+			stream.write((uint32)m_nHeight);
+			stream.write((byte)m_type);
+			stream.write(m_pBuf, size());
 			if(m_pPalette)
 				for(int i = 0; i < 1 << bpp(); i++)
-					m_pPalette[i].save(pStream);
+					m_pPalette[i].save(&stream);
+
+			pStream->write(&stream);
 			return true;
 		}
 		bool  CBitmap::load(CommonLib::IReadStream *pStream)
 		{
+			CommonLib::FxMemoryReadStream stream;
+			if(!pStream->AttachStream(&stream, pStream->readIntu32()))
+				return false;
 
-			SAFE_READ_RES(pStream, m_nWidth)
-			SAFE_READ_RES(pStream, m_nHeight);
-			byte type = 0;
-			SAFE_READ_RES(pStream, type);
-			m_type = (eBitmapFormatType)type;
+			m_nWidth = stream.readIntu32();
+			m_nHeight = stream.readIntu32();
+ 			m_type = (eBitmapFormatType)stream.readByte();;
 			init(m_nWidth, m_nHeight, m_type);
 			size_t nSize = size();
 			if(nSize)
-				pStream->read(m_pBuf, nSize);
+				stream.read(m_pBuf, nSize);
 			if(m_pPalette)
 			{
 				for(int i = 0; i < 1 << bpp(); i++)
 				{
-					if(!m_pPalette[i].load(pStream))
+					if(!m_pPalette[i].load(&stream))
 						return false;
 				}
 			}
@@ -372,21 +375,15 @@ namespace GisEngine
 		}
 		bool CBitmap::load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszNodeName)
 		{
-			 uint32 nCnt = pXmlNode->GetChildCnt();
-			 for(uint32 i = 0; i < nCnt; ++i)
-			 {
-				 GisCommon::IXMLNodePtr pBlobNode = pXmlNode->GetChild(i);
-				 if(!pBlobNode.get())
-					continue;
-				 if(pBlobNode->GetName() != pszNodeName)
-					 continue;
-				 CommonLib::CBlob blob;
-				 pBlobNode->GetBlobCDATA(blob);
-				 CommonLib::FxMemoryReadStream stream;
-				 stream.attach(blob.buffer(), blob.size());
-				 return load(&stream);
-			 }
-			 return false;
+			 GisCommon::IXMLNodePtr pBlobNode = pXmlNode->GetChild(pszNodeName);
+			 if(!pBlobNode.get())
+				 return false;
+	
+			 CommonLib::CBlob blob;
+			 pBlobNode->GetBlobCDATA(blob);
+			 CommonLib::FxMemoryReadStream stream;
+			 stream.attach(blob.buffer(), blob.size());
+			 return load(&stream);
 		}
 
 

@@ -16,9 +16,10 @@ class IStream
 {
 public:
 	virtual void create(size_t nSize) = 0;
-	virtual void attach(byte* pBuffer, size_t nSize)  = 0;
+	virtual void attach(byte* pBuffer, size_t nSize, bool bCopy = true)  = 0;
 	virtual byte* deattach()  = 0;
 	virtual byte* buffer()  = 0;
+	virtual const byte* buffer() const = 0;
 	virtual size_t size() const = 0;
 	virtual bool seek(size_t position, enSeekOffset offset ) = 0;
 	virtual size_t pos() const = 0;
@@ -87,7 +88,7 @@ public:
 
 	virtual void write(const char* pszStr) = 0;
 	virtual void write(const wchar_t* pszStr) = 0;
-
+	virtual void write(const IStream *pSteram) = 0;
 	virtual ~IWriteStream()  {}
 };
 
@@ -115,6 +116,7 @@ public:
 	virtual void read(float& value) = 0;
 	virtual void read(double& value) = 0;
 	virtual void read(CommonLib::CString& str) = 0;
+ 
 
 	virtual bool         readBool() = 0;
 	virtual byte         readByte() = 0;
@@ -131,7 +133,8 @@ public:
 
 	virtual bool checkRead(uint32 nSize) const = 0;
 	virtual bool IsEndOfStream() const = 0;
-
+	virtual bool AttachStream(IStream *pStream, uint32 nSize, bool bSeek = true) = 0;
+	
 };
 
 
@@ -237,6 +240,7 @@ public:
 	virtual void write(const CommonLib::CString& str);
 	virtual void write(const char* pszStr);
 	virtual void write(const wchar_t* pszStr);
+	virtual void write(const IStream *pStream);
 };
 
 
@@ -269,5 +273,6 @@ public:
 	else							\
 		bVal = pStream->readBool(); 
 
+ 
 
 #endif

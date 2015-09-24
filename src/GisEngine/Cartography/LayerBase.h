@@ -86,21 +86,28 @@ namespace GisEngine
 			}
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const
 			{
-				pWriteStream->write(GetLayerID());
-				pWriteStream->write(m_sName);
-				pWriteStream->write(m_bVisible);
-				pWriteStream->write(m_dMinimumScale);
-				pWriteStream->write(m_dMaximumScale);
-				pWriteStream->write(m_nCheckCancelStep);
+
+				CommonLib::MemoryStream stream;
+				stream.write(GetLayerID());
+				stream.write(m_sName);
+				stream.write(m_bVisible);
+				stream.write(m_dMinimumScale);
+				stream.write(m_dMaximumScale);
+				stream.write(m_nCheckCancelStep);
+
+				pWriteStream->write(&stream);
 				return true;
 			}
 			virtual bool load(CommonLib::IReadStream* pReadStream)
 			{
-				SAFE_READ_RES_EX(pReadStream, m_sName, 1)
-				SAFE_READ_RES_EX(pReadStream, m_bVisible, 1)
-				SAFE_READ(pReadStream, m_dMinimumScale)
-				SAFE_READ(pReadStream, m_dMaximumScale)
-				SAFE_READ(pReadStream, m_nCheckCancelStep)
+				CommonLib::FxMemoryReadStream stream;
+				pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+
+				stream.read(m_sName);
+				stream.read(m_bVisible);
+				stream.read(m_dMinimumScale);
+				stream.read(m_dMaximumScale);
+				stream.read(m_nCheckCancelStep);
 				return true;
 			}
 

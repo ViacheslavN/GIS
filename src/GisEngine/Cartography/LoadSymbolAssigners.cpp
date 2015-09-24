@@ -7,30 +7,29 @@ namespace GisEngine
 	{
 
 		template<class TSerealizer>
-		ISymbolAssignerPtr LoadSymbolAssigners(TSerealizer *pSerealizer, uint32 nLayerID);
+		ISymbolAssignerPtr LoadSymbolAssignersT(TSerealizer *pSerealizer, uint32 nLayerID);
 
-		ISymbolAssignerPtr LoadSymbolAssigners(CommonLib::IReadStream *pStream)
+		ISymbolAssignerPtr LoaderSymbolAssigners::LoadSymbolAssigners(CommonLib::IReadStream *pStream)
 		{
-			uint32 nSymbolID = UndefineSymbolAssignerID;
-			SAFE_READ(pStream, nSymbolID);
+			uint32 nSymbolID = pStream->readIntu32();
 			if(nSymbolID == UndefineSymbolAssignerID)
 				return ISymbolAssignerPtr();
 
-			return LoadSymbolAssigners<CommonLib::IReadStream>(pStream, nSymbolID);
+			return LoadSymbolAssignersT<CommonLib::IReadStream>(pStream, nSymbolID);
 		}
 
-		ISymbolAssignerPtr LoadSymbolAssigners(GisCommon::IXMLNode *pNode)
+		ISymbolAssignerPtr LoaderSymbolAssigners::LoadSymbolAssigners(GisCommon::IXMLNode *pNode)
 		{
 
 			uint32 nSymbolID = pNode->GetPropertyInt32U(L"SymbolID", UndefineSymbolAssignerID);
 			if(nSymbolID == UndefineSymbolAssignerID)
 				return ISymbolAssignerPtr();
 
-			return LoadSymbolAssigners<GisCommon::IXMLNode>(pNode, nSymbolID);
+			return LoadSymbolAssignersT<GisCommon::IXMLNode>(pNode, nSymbolID);
 		}
 
 		template<class TSerealizer>
-		ISymbolAssignerPtr LoadSymbolAssigners(TSerealizer *pSerealizer, uint32 nSymbolID)
+		ISymbolAssignerPtr LoadSymbolAssignersT(TSerealizer *pSerealizer, uint32 nSymbolID)
 		{
 			ISymbolAssignerPtr pSymbol;
 

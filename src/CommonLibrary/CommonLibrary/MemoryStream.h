@@ -19,7 +19,7 @@ namespace CommonLib
 
 		//IStream
 		
-		virtual void attach(byte* pBuffer, size_t nSize);
+		virtual void attach(byte* pBuffer, size_t nSize, bool bCopy = false);
 		virtual byte* deattach() ;
 		virtual size_t size() const;
 		virtual bool seek(size_t position, enSeekOffset offset );
@@ -28,90 +28,22 @@ namespace CommonLib
 		virtual void close();
 		virtual void create(size_t nSize);
 		virtual byte* buffer();
-
+		virtual const byte* buffer() const;
 
 		//IReadStream
 		virtual bool checkRead(uint32 nSize) const;
 		virtual bool IsEndOfStream() const;
-/*		virtual void read( byte* pBuffer, size_t bufLen );
-		virtual void read(bool& value);
-		virtual void read(char& value);
-		virtual void read(byte& value);
-		virtual void read(int16& value);
-		virtual void read(uint16& value);
-		virtual void read(uint32& value);
-		virtual void read(int32& value);
-		virtual void read(uint64& value);
-		virtual void read(int64& value);
-		virtual void read(float& value);
-		virtual void read(double& value);
-		virtual void read(CommonLib::str_t& str);
+		virtual void read(IStream *pStream, bool bAttach = true);
+		virtual bool AttachStream(IStream *pStream, uint32 nSize, bool bSeek = true);
+		
 
-
-		virtual bool         readBool();
-		virtual byte		 readByte();
-		virtual char		 readChar();
-		virtual int16        readint16();
-		virtual uint16       readintu16();
-		virtual uint32       readDword();
-		virtual int32        readInt32();
-		virtual uint32       readIntu32();
-		virtual int64        readInt64();
-		virtual uint64       readIntu64();
-		virtual float        readFloat();
-		virtual double       readDouble();
-
-
-		//IWriteStream
-		virtual void write(const byte* pBuffer, size_t bufLen );
-		virtual void write(bool value);
-		virtual void write(byte value);
-		virtual void write(uint16 value);
-		virtual void write(uint32 value);
-		virtual void write(int32 value);
-		virtual void write(int64 value);
-		virtual void write(uint64 value);
-		virtual void write(float value);
-		virtual void write(double value);
-		virtual void write(const CommonLib::str_t& str);*/
-
- 
 		
 		virtual void read_bytes(byte* dst, size_t size);
 		virtual void read_inverse(byte* buffer, size_t size);
 		virtual void write_bytes(const byte* buffer, size_t size);
 		virtual void write_inverse(const byte* buffer, size_t size);
-
-	/*	template <typename T>
-		void readT(T& val)
-		{
-
-			if(m_bIsBigEndian)
-				read_inverse((byte*)&val, sizeof(T));
-			else
-				read_bytes((byte*)&val, sizeof(T));
-		}
-
-		template <typename T>
-		void writeT(T value)
-		{
-			if(m_bIsBigEndian)
-				write_inverse((byte*)&value, sizeof(T));
-			else
-				write_bytes((byte*)&value, sizeof(T));
-		}
-
-		template <typename T>
-		T readTR()
-		{
-			T ret;
-			if(m_bIsBigEndian)
-				read_inverse((byte*)&ret, sizeof(T));
-			else
-				read_bytes((byte*)&ret, sizeof(T));
-			return ret;
-		}*/
-		
+	
+	
 
 		void resize(size_t nSize);
 

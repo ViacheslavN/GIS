@@ -33,12 +33,22 @@ namespace CommonLib
 		m_nSize = nSize;
 		m_bAttach = false;
 	}
-	void FxStreamBase::attach(byte* pBuffer, size_t nSize)
+	void FxStreamBase::attach(byte* pBuffer, size_t nSize, bool bCopy)
 	{
-		m_pBuffer = pBuffer;
+		if(bCopy)
+		{
+			create(nSize);
+			memcpy(m_pBuffer, pBuffer, nSize);
+			m_bAttach = false;
+		}
+		else
+		{
+			m_pBuffer = pBuffer;
+			m_bAttach = true;
+
+		}
 		m_nPos = 0;
 		m_nSize = nSize;
-		m_bAttach = true;
 	}
 	byte* FxStreamBase::deattach()
 	{
@@ -50,6 +60,10 @@ namespace CommonLib
 		return tmp;
 	}
 	byte* FxStreamBase::buffer()
+	{
+		return m_pBuffer;
+	}
+	const byte*  FxStreamBase::buffer() const
 	{
 		return m_pBuffer;
 	}
@@ -122,6 +136,15 @@ namespace CommonLib
 	{
 		return (m_nSize - m_nPos) >= nSize;
 	}
+	bool FxMemoryReadStream::AttachStream(IStream *pStream, uint32 nSize, bool bSeek)
+	{
+		if(!checkRead(nSize))
+			return false;
+		pStream->attach(buffer() + pos(), nSize);
+		if(bSeek)
+			seek(nSize, soFromCurrent);
+		return true;
+	}
 	bool FxMemoryReadStream::IsEndOfStream() const
 	{
 		return m_nSize == m_nPos;
@@ -130,127 +153,30 @@ namespace CommonLib
 	{
 
 	}
+
+	FxMemoryReadStream::FxMemoryReadStream(byte* pBuffer, uint32 nSize, bool bAttach, alloc_t *pAlloc) : FxStreamBase(pAlloc)
+	{
+		if(bAttach)
+		{
+			m_pBuffer = pBuffer;
+			m_bAttach = true;
+		}
+		else
+		{
+			m_pBuffer = (byte*)m_pAlloc->alloc(sizeof(byte) * nSize);
+			memcpy(m_pBuffer, pBuffer, nSize);
+		}
+		
+		m_nPos = 0;
+		m_nSize = nSize;
+	}
+
 	FxMemoryReadStream::~FxMemoryReadStream()
 	{
 
 	}
 	
-	/*
-	bool  FxMemoryReadStream::readBool()
-	{
-		return (readTR<byte>() == 1) ? true : false;
-	}
-	byte  FxMemoryReadStream::readByte()
-	{
-		return readTR<byte>();
-	}
-	char  FxMemoryReadStream::readChar()
-	{
-		return readTR<char>();
-	}
-	 int16	FxMemoryReadStream::readint16()
-	 {
-		 return readTR<int16>();
-	 }
-
-	uint16 FxMemoryReadStream::readintu16()
-	{
-		return readTR<uint16>();
-	}
-	uint32 FxMemoryReadStream::readDword()
-	{
-		return readTR<uint32>();
-	}
-	int32 FxMemoryReadStream::readInt32()
-	{
-		return readTR<int32>();
-	}
-	uint32 FxMemoryReadStream::readIntu32()
-	{
-		return readTR<uint32>();
-	}
-	int64 FxMemoryReadStream::readInt64()
-	{
-		return readTR<int64>();
-	}
-	uint64 FxMemoryReadStream::readIntu64()
-	{
-		return readTR<uint64>();
-	}
-	float FxMemoryReadStream::readFloat()
-	{
-		return readTR<float>();
-	}
-	double FxMemoryReadStream::readDouble()
-	{
-		return readTR<double>();
-	}
-	void FxMemoryReadStream::read( byte* pBuffer, size_t bufLen)
-	{
-		if(m_bIsBigEndian)
-			read_inverse(pBuffer, bufLen);
-		else
-			read_bytes(pBuffer, bufLen);
-	}
-	void FxMemoryReadStream::read(bool& value)
-	{
-		//readT<bool>(value);
-		byte ret;
-		readT<byte>(ret);
-		value = ( ret == 1) ? true : false;
-	}
-	void FxMemoryReadStream::read(byte& value)
-	{
-		readT<byte>(value);
-	}
- 	void FxMemoryReadStream::read(char& value)
-	{
-		readT<char>(value);
-	}
-	void FxMemoryReadStream::read(int16& value)
-	{
-		readT<int16>(value);
-	}
-	void FxMemoryReadStream::read(uint16& value)
-	{
-		readT<uint16>(value);
-	}
-	void FxMemoryReadStream::read(uint32& value)
-	{
-		readT<uint32>(value);
-	}
-	void FxMemoryReadStream::read(int32& value)
-	{
-		readT<int32>(value);
-	}
-	void FxMemoryReadStream::read(int64& value)
-	{
-		readT<int64>(value);
-	}
-	void FxMemoryReadStream::read(uint64& value)
-	{
-		readT<uint64>(value);
-	}
-	void FxMemoryReadStream::read(float& value)
-	{
-		readT<float>(value);
-	}
-	void FxMemoryReadStream::read(double& value)
-	{
-		readT<double>(value);
-	}
-	void FxMemoryReadStream::read(CommonLib::str_t& str)
-	{
-		uint32 nlen = readIntu32();
-		if(nlen)
-		{
-			str.reserve(nlen);
-			read((byte*)str.wstr(), 2 *nlen);
-		}
-		
-	}
-	*/
-
+	
 	FxMemoryWriteStream::FxMemoryWriteStream(alloc_t *pAlloc) : FxStreamBase(pAlloc)
 	{
 

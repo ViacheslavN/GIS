@@ -3,6 +3,7 @@
 #include "GeoDatabase/QueryFilter.h"
 #include "Display/DisplayUtils.h"
 #include "GisGeometry/Envelope.h"
+#include "RenderersLoader.h"
 
 namespace GisEngine
 {
@@ -245,29 +246,51 @@ namespace GisEngine
 
 		bool CFeatureLayer::save(CommonLib::IWriteStream *pWriteStream) const
 		{
-			if(!TBase::save(pWriteStream))
+
+			CommonLib::MemoryStream stream;
+			if(!TBase::save(&stream))
 				return false;
 
-			pWriteStream->write(m_sDisplayField);
-			pWriteStream->write(m_sQuery);
-			pWriteStream->write(m_bSelectable);
-			pWriteStream->write(m_hasReferenceScale);
-			pWriteStream->write((uint32)m_vecRenderers.size());
+			stream.write(m_sDisplayField);
+			stream.write(m_sQuery);
+			stream.write(m_bSelectable);
+			stream.write(m_hasReferenceScale);
+			stream.write((uint32)m_vecRenderers.size());
 			for (size_t i = 0, sz = m_vecRenderers.size(); i < sz; ++i)
 			{
-				m_vecRenderers[i]->save(pWriteStream);
+				m_vecRenderers[i]->save(&stream);
 			}
 
-			pWriteStream->write(m_pFeatureClass.get() ? true : false);
-			
+			stream.write(m_pFeatureClass.get() ? true : false);
+			if(m_pFeatureClass.get())
+			{
+				stream.write((uint32) m_pFeatureClass->GetDatasetType());
+				m_pFeatureClass->save(&stream);
+			}
 
-
+			pWriteStream->write(&stream);
 			return true;
 		}
 		bool CFeatureLayer::load(CommonLib::IReadStream* pReadStream)
 		{
-			if(!TBase::load(pReadStream))
+			CommonLib::FxMemoryReadStream stream;
+			pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+			if(!TBase::load(&stream))
 				return false;
+
+			stream.read(m_sDisplayField);
+			stream.read(m_sQuery);
+			stream.read(m_bSelectable);
+			stream.read(m_hasReferenceScale);
+			uint32 nRenders = stream.readIntu32();
+
+			for (size_t i = 0; i < nRenders; ++i)
+			{
+				IFeatureRendererPtr pRenderer = LoaderRenderers::LoadRenderer(&stream);
+				if(pRenderer.get())
+					m_vecRenderers.push_back(pRenderer);
+			}
+
 
 			return true;
 		}

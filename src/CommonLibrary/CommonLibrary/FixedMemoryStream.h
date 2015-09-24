@@ -17,9 +17,10 @@ namespace CommonLib
 
 
 			virtual void create(size_t nSize);
-			virtual void attach(byte* pBuffer, size_t nSize);
+			virtual void attach(byte* pBuffer, size_t nSize, bool bCopy = false);
 			virtual byte* deattach();
 			virtual byte* buffer();
+			virtual const byte* buffer() const;
 			virtual size_t size() const;
 			virtual bool seek(size_t position, enSeekOffset offset );
 			virtual size_t pos() const;
@@ -76,6 +77,7 @@ namespace CommonLib
 	public:
 
 		FxMemoryReadStream(alloc_t *pAlloc = NULL);
+		FxMemoryReadStream(byte* pBuffer, uint32 nSize, bool bAttach = true, alloc_t *pAlloc = NULL);
 		~FxMemoryReadStream();
 
 
@@ -83,6 +85,8 @@ namespace CommonLib
 		virtual void read_inverse(byte* buffer, size_t size);
 		virtual bool checkRead(uint32 nSize) const;
 		virtual bool IsEndOfStream() const;
+		virtual bool AttachStream(IStream *pStream, uint32 nSize, bool bSeek = true);
+
 		/*virtual void read( byte* pBuffer, size_t bufLen );
 		virtual void read(bool& value);
 		virtual void read(char& value) ;

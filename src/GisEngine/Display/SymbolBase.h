@@ -3,6 +3,7 @@
 
 #include "Display.h"
 #include "Common/GisEngineCommon.h"
+#include "CommonLibrary/MemoryStream.h"
 
 namespace GisEngine
 {
@@ -108,15 +109,24 @@ namespace GisEngine
 			//IStreamSerialize
 			bool save(CommonLib::IWriteStream *pWriteStream) const
 			{
-				pWriteStream->write(GetSymbolID());
-				pWriteStream->write(m_bScaleDependent);
-				pWriteStream->write(m_bDrawToBuffers);
+
+				CommonLib::MemoryStream stream;
+
+				//pWriteStream->write(GetSymbolID());
+				stream.write(m_bScaleDependent);
+				stream.write(m_bDrawToBuffers);
+
+			
+				pWriteStream->write(&stream);
 				return true;
 			}
 			bool load(CommonLib::IReadStream* pReadStream)
 			{
-				SAFE_READ_BOOL_RES(pReadStream, m_bScaleDependent);
-				SAFE_READ_BOOL_RES(pReadStream, m_bDrawToBuffers);
+				CommonLib::FxMemoryReadStream stream;
+				pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+				
+				stream.read(m_bScaleDependent);
+				stream.read(m_bDrawToBuffers);
 				return true;
 			}
 
