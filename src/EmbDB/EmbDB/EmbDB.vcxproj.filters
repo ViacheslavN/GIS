@@ -175,9 +175,6 @@
     <Filter Include="DB\transactions\Cursors\InsertCursor">
       <UniqueIdentifier>{13d6e32b-db1e-452a-a85a-6c06f340fed1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="utils\CacheLRU_2k">
-      <UniqueIdentifier>{0e4e5829-f959-47f2-8d6f-1c853bb5768b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -245,9 +242,6 @@
     </ClInclude>
     <ClInclude Include="Schema.h">
       <Filter>DB</Filter>
-    </ClInclude>
-    <ClInclude Include="CacheNodes.h">
-      <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="Row.h">
       <Filter>DB</Filter>
@@ -708,13 +702,10 @@
     <ClInclude Include="CacheLRU.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="CacheLRU_k.h">
-      <Filter>utils\CacheLRU_2k</Filter>
-    </ClInclude>
     <ClInclude Include="List.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="list_iterator.h">
+    <ClInclude Include="CacheLRU_2Q.h">
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>

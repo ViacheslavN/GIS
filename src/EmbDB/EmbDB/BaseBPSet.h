@@ -6,7 +6,7 @@
 #include "BPSetTraits.h"
 #include "IDBTransactions.h"
 #include "simple_stack.h"
-#include "CacheNodes.h"
+#include "CacheLRU.h"
 #include "DBMagicSymbol.h"
 #include "BPTreeStatistics.h"
 #include "BPIteratorSet.h"
@@ -1792,7 +1792,7 @@ namespace embDB
 		typedef RBSet<TBTreeNode*> TChangeNode;
 		TChangeNode m_ChangeNode;
 		size_t m_nChacheSize;
-		typedef TSimpleCache<TLink, TBTreeNode> TNodesCache;
+		typedef TCacheLRU<TLink, TBTreeNode> TNodesCache;
 		TNodesCache m_Chache;
 		bool m_bChangeRoot;
 		bool m_bMulti;

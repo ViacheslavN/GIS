@@ -469,7 +469,7 @@
     <ClInclude Include="BPVector.h" />
     <ClInclude Include="BPVectorNoPod.h" />
     <ClInclude Include="CacheLRU.h" />
-    <ClInclude Include="CacheLRU_k.h" />
+    <ClInclude Include="CacheLRU_2Q.h" />
     <ClInclude Include="CompIndexInnerCompressor.h" />
     <ClInclude Include="CompIndexLeafCompressor.h" />
     <ClInclude Include="CompositeIndexKey.h" />
@@ -569,11 +569,9 @@
     <ClInclude Include="RectSpatialBPMapTree.h" />
     <ClInclude Include="Row.h" />
     <ClInclude Include="Schema.h" />
-    <ClInclude Include="CacheNodes.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="SimpleCompessor.h" />
     <ClInclude Include="List.h" />
-    <ClInclude Include="list_iterator.h" />
     <ClInclude Include="simple_stack.h" />
     <ClInclude Include="simple_vector.h" />
     <ClInclude Include="SpatialKey.h" />

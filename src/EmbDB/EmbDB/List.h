@@ -1,8 +1,8 @@
-#ifndef _EMBEDDED_DATABASE_LIST_
-#define _EMBEDDED_DATABASE_LIST_
+#ifndef _EMBEDDED_DATABASE_LIST_H_
+#define _EMBEDDED_DATABASE_LIST_H_
 
-#include "GisCommonlibrary/general.h"
-#include "GisCommonlibrary/alloc_t.h"
+#include "Commonlibrary/general.h"
+#include "Commonlibrary/alloc_t.h"
  
 namespace embDB
 {
@@ -30,7 +30,7 @@ public:
 	class iterator
 	{
 	public:
-		iterator(TNode*  pNode) : m_pNode(pNode)
+		iterator(TNode*  pNode = NULL) : m_pNode(pNode)
 		{}
 		bool next()
 		{
@@ -51,27 +51,161 @@ public:
 		const TypeVal & value() const{return m_pNode->m_val;}
 		TNode*  node() {return m_pNode};
 		const TNode* node() const {return m_pNode};
+
+		friend class TList;
 	protected: 
 		TNode*   m_pNode;
 	};
-	TList(alloc_t* pAlloc) : m_pAlloc(pAlloc)
-	{}
-	~TList();
+	TList(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc), m_nSize(0)
+	{
+		if(!m_pAlloc)
+		{
+			m_pAlloc = &m_simple_alloc;
+		}
 
-	TNode* push_back(const TypeVal& val);
-	TNode* puch_top(const TypeVal& val);
-	size_t size() const;
-	void clear();
-	iterator begin() {return iterator(m_pFirst);}
-	iterator last(){return iterator(m_pLast)}
-	iterator insert(const iterator& it);
-	iterator remove(const iterator& it);
+	}
+	~TList()
+	{
+		clear();
+	}
+
+	iterator push_back(const TypeVal& val)
+	{
+		 TNode* pElem =  new (m_pAlloc->alloc(sizeof(TNode))) TNode(val);
+		 return push_back(pElem);
+	}
+	iterator push_top(const TypeVal& val)
+	{
+		TNode* pElem =  new (m_pAlloc->alloc(sizeof(TNode))) TNode(val);
+		push_top(pElem);
+	}
+
+
+	iterator push_back(TNode* pElem)
+	{
+		if(m_pBack == pElem)
+			return iterator(pElem);
+
+		if(m_pBack == NULL)
+			m_pBack = m_pBegin = pElem;
+		else
+		{
+			pElem->m_pNext = m_pBack;
+			m_pBack->m_pPrev = pElem;
+			m_pBack = pElem;
+		}
+
+		m_nSize++;
+		return iterator(pElem);
+	}
+	iterator push_top(TNode* pElem)
+	{
+
+		if(m_pBegin == pElem)
+			return iterator(pElem);
+
+		if(m_pBegin == NULL)
+			m_pBack = m_pBegin = pElem;
+		else
+		{
+			m_pBegin->m_pNext = pElem;
+			pElem->m_pPrev = m_pBegin;
+			m_pBegin = pElem;
+		}
+
+		m_nSize++;
+		return iterator(pElem);
+	}
+
+	size_t size() const{return m_nSize;}
+	void clear()
+	{
+		TNode *pNode = m_pBack;
+		TNode *pNextNode = pNode->m_pNext;
+		if(!pNextNode)
+		{
+			m_pAlloc->free(pNode);
+			m_pBegin = 0;
+			m_pBack = 0;
+			return;
+		}
+		while(pNextNode)
+		{
+			m_pAlloc->free(pNode);
+			pNode = pNextNode;
+			pNextNode = pNextNode->m_pNext;
+		}
+		m_pAlloc->free(pNode);
+
+		m_pBegin = 0;
+		m_pBack = 0;
+		m_nSize = 0;
+	}
+	iterator begin() {return iterator(m_pBegin);}
+	iterator back(){return iterator(m_pBack)}
+	iterator insert(const iterator& it, const TypeVal& val)
+	{
+		TNode* pNode = it.m_pNode;
+		if(!pNode)
+			return iterator(NULL):
+
+		TNode* pElem =  new (m_pAlloc->alloc(sizeof(TNode))) TNode(val);
+
+		pElem->m_pNext = pNode->m_pNext;
+		pElem->m_pPrev = pNode;
+		if(pNode->m_pNext)
+		{
+			pNode->m_pNext->m_pPrev = pElem;
+		}
+		else
+		{
+			m_pBegin = pElem;
+			Node->m_pNext = pElem;
+		}
+		m_nSize++;
+		return iterator(pElem);
+	}
+	iterator remove(TNode* pNode, bool bDel = true)
+	{		
+		if(!pNode)
+			return iterator(NULL):
+
+		TNode *pPrev = pNode->m_pPrev;
+		TNode *pNext = pNode->m_pNext;
+
+		if(pNext)
+			pNext->m_pPrev = pPrev;
+		if(pPrev)
+			pPrev->m_pNext = pNext;
+
+		if(!pNext)
+			m_pBegin = pPrev;
+		if(!pPrev)
+			m_pBack = pNext;
+
+		if(bDel)
+			m_pAlloc->free(pNode);
+		m_nSize--;
+		return iterator(pNext):
+	}
+	iterator remove(const iterator& it, bool bDel = true)
+	{
+		TNode* pNode = it.m_pNode;
+		return remove(pNode, bDel);
+	}
+	 bool isTop(const TNode *pNode) const
+	 {
+		 return m_pBegin == pNode;
+	 }
 protected:
-	void DestroyList();
-protected:
-	TNode m_pFirst;
-	TNode m_pLast;
-	 alloc_t* m_pAlloc;
+	TNode m_pBegin;
+	TNode m_pBack;
+	CommonLib::alloc_t* m_pAlloc;
+	CommonLib::simple_alloc_t m_simple_alloc;
+	uint32 m_nSize;
+
+
 };
 
+}
 #endif
