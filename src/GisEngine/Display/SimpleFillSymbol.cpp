@@ -157,13 +157,16 @@ namespace GisEngine
 		{
 			TSymbolBase::saveXML(pXmlNode);
 			 pXmlNode->AddPropertyInt16(L"Style", m_FillStyle);
+			 m_Pen.saveXML(pXmlNode);
+	 
 			return true;
 		}
-		bool CSimpleFillSymbol::load(GisCommon::IXMLNode* pXmlNode)
+		bool CSimpleFillSymbol::load(const GisCommon::IXMLNode* pXmlNode)
 		{
 			if(!TSymbolBase::load(pXmlNode))
 				return false;
 			m_FillStyle = (eSimpleFillStyle)pXmlNode->GetPropertyInt16(L"Style", SimpleFillStyleNull);
+			 m_Pen.load(pXmlNode);
 			return true;
 		}
 

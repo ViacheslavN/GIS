@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_BLOB_
-#define _EMBEDDED_DATABASE_BLOB_
+#ifndef __COMMON_LIB_BLOB_
+#define __COMMON_LIB_BLOB_
 
 
 #include "alloc_t.h"

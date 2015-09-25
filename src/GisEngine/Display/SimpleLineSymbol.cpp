@@ -123,7 +123,7 @@ namespace GisEngine
 
 			return m_Pen.saveXML(pXmlNode);
 		}
-		bool CSimpleLineSymbol::load(GisCommon::IXMLNode* pXmlNode)
+		bool CSimpleLineSymbol::load(const GisCommon::IXMLNode* pXmlNode)
 		{
 			if(!TBase::load(pXmlNode))
 				return false;

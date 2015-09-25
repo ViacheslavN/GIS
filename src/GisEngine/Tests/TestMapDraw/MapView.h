@@ -52,7 +52,7 @@ public:
 	LRESULT OnSQLiteShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
 	void open(const wchar_t *pszFile);
-
+	void save(const wchar_t *pszFile);
 	void redraw();
 
 	void AddSQLite(const wchar_t *pszFile);

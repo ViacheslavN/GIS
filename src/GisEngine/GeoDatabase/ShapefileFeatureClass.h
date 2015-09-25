@@ -49,7 +49,7 @@ namespace GisEngine
 			virtual bool load(CommonLib::IReadStream* pReadStream);
 
 			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
-			virtual bool load(GisCommon::IXMLNode* pXmlNode);
+			virtual bool load(const GisCommon::IXMLNode* pXmlNode);
 
 		private:
 			//IWorkspace *m_pWorkSpace;

@@ -24,14 +24,14 @@ namespace GisEngine
 			return LoadSymbolT<CommonLib::IReadStream>(pSteam, nSymbolID);
 		}
 
-		ISymbolPtr LoaderSymbol::LoadSymbol(GisCommon::IXMLNode *pNode)
+		ISymbolPtr LoaderSymbol::LoadSymbol(const GisCommon::IXMLNode *pNode)
 		{
 
 			uint32 nSymbolID = pNode->GetPropertyInt32U(L"SymbolID", UndefineSymbolID);
 			if(nSymbolID == UndefineSymbolID)
 				return ISymbolPtr();
 
-			return LoadSymbolT<GisCommon::IXMLNode>(pNode, nSymbolID);
+			return LoadSymbolT<const GisCommon::IXMLNode>(pNode, nSymbolID);
 		}
 
 		template<class TSerealizer>

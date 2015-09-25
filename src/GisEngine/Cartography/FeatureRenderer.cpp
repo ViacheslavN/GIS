@@ -149,20 +149,20 @@ namespace GisEngine
 
 			if(m_pSymbolAssigner.get())
 			{
-				pXmlNode->AddPropertyBool("SymbolAssigner", true);
-				m_pSymbolAssigner->saveXML(pXmlNode);
+				GisCommon::IXMLNodePtr pSymbolNode = pXmlNode->CreateChildNode(L"SymbolAssigner");
+				m_pSymbolAssigner->saveXML(pSymbolNode.get());
 			}
 
 			return true;
 		}
-		bool CFeatureRenderer::load(GisCommon::IXMLNode* pXmlNode)
+		bool CFeatureRenderer::load(const GisCommon::IXMLNode* pXmlNode)
 		{
 			if(!TBase::load(pXmlNode))
 				return false;
 
-			bool bSymbol = pXmlNode->GetPropertyBool("SymbolAssigner", false);
-			if(bSymbol)
-				m_pSymbolAssigner = LoaderSymbolAssigners::LoadSymbolAssigners(pXmlNode);
+			GisCommon::IXMLNodePtr pSymbolNode = pXmlNode->GetChild(L"SymbolAssigner");
+			if(pSymbolNode.get())
+				m_pSymbolAssigner = LoaderSymbolAssigners::LoadSymbolAssigners(pSymbolNode.get());
 			return true;
 		}
 	}

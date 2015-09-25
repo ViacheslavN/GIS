@@ -123,7 +123,7 @@ namespace GisEngine
 				pBrushNode->AddPropertyBool(L"Release", false);
 			return true;
 		}
-		bool  CBrush::load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName)
+		bool  CBrush::load(const GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName)
 		{
 			GisCommon::IXMLNodePtr pBrushNode = pXmlNode->GetChild(pszName);
 			if(!pBrushNode.get())

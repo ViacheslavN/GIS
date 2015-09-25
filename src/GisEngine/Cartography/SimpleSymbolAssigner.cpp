@@ -146,7 +146,6 @@ namespace GisEngine
 			pXmlNode->AddPropertyInt32U(L"SymbolID",  GetSymbolAssignerID());
 			pXmlNode->AddPropertyString(L"Label",  m_sLabel);
 			pXmlNode->AddPropertyString(L"Description",  m_sDescription);
-			pXmlNode->AddPropertyBool(L"symbol", m_pSymbol.get() ? true : false);
 			if(m_pSymbol.get())
 			{
 				GisCommon::IXMLNodePtr pSymbolNode = pXmlNode->CreateChildNode(L"Symbol");
@@ -154,20 +153,15 @@ namespace GisEngine
 			}
 			return true;
 		}
-		bool CSimpleSymbolAssigner::load(GisCommon::IXMLNode* pXmlNode)
+		bool CSimpleSymbolAssigner::load(const GisCommon::IXMLNode* pXmlNode)
 		{
 	 
 			m_sLabel = pXmlNode->GetPropertyString(L"Label",  m_sLabel);
 			m_sDescription = pXmlNode->GetPropertyString(L"Description",  m_sDescription);
 
-			bool bSymbol = pXmlNode->GetPropertyBool(L"symbol", false);
-			if(bSymbol)
-			{
-				GisCommon::IXMLNodePtr pSymbolNode = pXmlNode->GetChild(L"Symbol");
-				if(pSymbolNode.get())
-					m_pSymbol = Display::LoaderSymbol::LoadSymbol(pSymbolNode.get());
-
-			}
+			GisCommon::IXMLNodePtr pSymbolNode = pXmlNode->GetChild(L"Symbol");
+			if(pSymbolNode.get())
+				m_pSymbol = Display::LoaderSymbol::LoadSymbol(pSymbolNode.get());
 			return true;
 		}
 	}

@@ -18,14 +18,14 @@ namespace GisEngine
 		{
 	
 			typedef IWorkspaceBase<IWorkspace> TBase;
-			CSQLiteWorkspace(uint32 nID);
-			CSQLiteWorkspace(const wchar_t *pszName, const wchar_t *pszPath, uint32 nID);
+			CSQLiteWorkspace(int32 ID);
+			CSQLiteWorkspace(const wchar_t *pszName, const wchar_t *pszPath, int32 ID);
 			~CSQLiteWorkspace();
 	public:
 			static IWorkspacePtr Create(const wchar_t *pszName, const wchar_t *pszPath);
 			static IWorkspacePtr Open(const wchar_t *pszName, const wchar_t *pszPath, bool bWrite, bool bOpenAll = false);
-			static IWorkspacePtr Open(CommonLib::IReadStream* pSteram, bool bOpenAll = true);
-			static IWorkspacePtr Open(GisCommon::IXMLNode *pNode, bool bOpenAll = true);
+			static IWorkspacePtr Open(CommonLib::IReadStream* pSteram, bool bOpenAll = false);
+			static IWorkspacePtr Open(GisCommon::IXMLNode *pNode, bool bOpenAll = false);
  
 
 			virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& sOIDName = L"");
@@ -48,7 +48,7 @@ namespace GisEngine
 			virtual bool load(CommonLib::IReadStream* pReadStream);
 
 			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
-			virtual bool load(GisCommon::IXMLNode* pXmlNode);
+			virtual bool load(const GisCommon::IXMLNode* pXmlNode);
 
 			virtual	ITransactionPtr startTransaction();
 

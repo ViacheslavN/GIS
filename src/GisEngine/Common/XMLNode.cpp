@@ -47,9 +47,9 @@ namespace GisEngine
 
 			return IXMLNodePtr();
 		}
-		IXMLNodePtr	CXMLNode::GetChild(const wchar_t *pszName)
+		IXMLNodePtr	CXMLNode::GetChild(const wchar_t *pszName) const
 		{
-			TNodesByName::iterator it = m_NodeByName.find(pszName);
+			TNodesByName::const_iterator it = m_NodeByName.find(pszName);
 			if(it == m_NodeByName.end())
 				return IXMLNodePtr();
 			 return GetChild(it->second);
@@ -220,7 +220,7 @@ namespace GisEngine
 				return defValue;
 
 			wchar_t *pEnd;
-			return (uint32)wcstol(pStr->cwstr(), &pEnd, 10);
+			return (uint32)wcstoul(pStr->cwstr(), &pEnd, 10);
 		}
 		int64	CXMLNode::GetPropertyInt64(const CommonLib::CString& sName, int64 defValue) const
 		{
@@ -244,7 +244,7 @@ namespace GisEngine
 
 			wchar_t *pEnd;
 #ifdef _WIN32
-			return (uint64)_wcstoi64(pStr->cwstr(), &pEnd, 10);
+			return _wcstoui64(pStr->cwstr(), &pEnd, 10);
 #else
 			return (uint64)wcstoll(pStr->cwstr(), &pEnd, 10);
 #endif

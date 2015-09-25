@@ -186,7 +186,7 @@ namespace GisEngine
 			pNode->AddPropertyDouble("HaloSize", m_nHaloSize);
 			return true;
 		}
-		bool CFont::load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName)
+		bool CFont::load(const GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName)
 		{
 			GisCommon::IXMLNodePtr pNode = pXmlNode->GetChild(pszName);
 			if(pNode.get())

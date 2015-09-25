@@ -53,7 +53,7 @@ namespace GisEngine
 
 
 			bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
-			bool load(GisCommon::IXMLNode* pXmlNode);
+			bool load(const GisCommon::IXMLNode* pXmlNode);
 			
 
 		private:

@@ -65,14 +65,12 @@ namespace GisEngine
 		{
 			srlUndefined          = 0,
 			srlIntersects         = 1,
-			srlEnvelopeIntersects = 2,
-			srlIndexIntersects    = 3,
-			srlTouches            = 4,
-			srlOverlaps           = 5,
-			srlCrosses            = 6,
-			srlWithin             = 7,
-			srlContains           = 8,
-			srlRelation           = 9
+			srlTouches            = 2,
+			srlOverlaps           = 3,
+			srlCrosses            = 4,
+			srlWithin             = 5,
+			srlContains           = 6,
+			srlRelation           = 7
 		};
 
 
@@ -124,7 +122,7 @@ namespace GisEngine
 				IWorkspace(){}
 				virtual ~IWorkspace(){}
 
-				virtual uint32 GetID() const = 0;
+				virtual int32 GetID() const = 0;
 				virtual const CommonLib::CString& GetHash() const = 0;
 				virtual const CommonLib::CString& GetWorkspaceName() const = 0; 
 				virtual GisCommon::IPropertySetPtr GetConnectionProperties() const = 0; 
@@ -160,7 +158,7 @@ namespace GisEngine
 				static bool LoadWks(CommonLib::IReadStream *pStream);
 
 				static bool SaveWks(GisCommon::IXMLNode *pXML);
-				static bool LoadWks(GisCommon::IXMLNode *pXML);
+				static bool LoadWks(const  GisCommon::IXMLNode *pXML);
 		};
 
 

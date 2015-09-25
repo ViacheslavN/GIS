@@ -18,7 +18,7 @@ namespace GisEngine
 	{
  
 		
-		CSQLiteWorkspace::CSQLiteWorkspace(uint32 nID) : TBase (wtSqlLite, nID)
+		CSQLiteWorkspace::CSQLiteWorkspace(int32 nID) : TBase (wtSqlLite, nID)
 		{
 			m_WorkspaceType = wtSqlLite;
 		//	sqlite3_initialize();
@@ -28,7 +28,7 @@ namespace GisEngine
 			close();
 		//	sqlite3_shutdown();
 		}
-		CSQLiteWorkspace::CSQLiteWorkspace(const wchar_t *pszName, const wchar_t *pszPath, uint32 nID) : TBase (wtSqlLite, nID),
+		CSQLiteWorkspace::CSQLiteWorkspace(const wchar_t *pszName, const wchar_t *pszPath, int32 nID) : TBase (wtSqlLite, nID),
 			m_sPath(pszPath)
 		{
 			m_sName = pszName;
@@ -133,7 +133,20 @@ namespace GisEngine
 		}
 		IWorkspacePtr CSQLiteWorkspace::Open(GisCommon::IXMLNode *pNode, bool bOpenAll)
 		{
-			return IWorkspacePtr();
+			int nWksID = pNode->GetPropertyInt32(L"ID", -1);
+			if(nWksID == -1)
+				return  IWorkspacePtr();
+			CommonLib::CString sName = pNode->GetPropertyString(L"Name", "");
+			CommonLib::CString sPath = pNode->GetPropertyString(L"Path", "");
+			CSQLiteWorkspace *pSQLiteWks = new  CSQLiteWorkspace(sName.cwstr(), sPath.cwstr(), nWksID);
+			if(!pSQLiteWks->load(sPath + sName, true, bOpenAll)) // TO FIX use name, path
+			{
+				//TO DO Error
+				delete pSQLiteWks;
+				return IWorkspacePtr();
+			}
+ 
+			return IWorkspacePtr((IWorkspace*)pSQLiteWks);
 		}
 
 		
@@ -275,19 +288,35 @@ namespace GisEngine
 		
 		bool CSQLiteWorkspace::save(CommonLib::IWriteStream *pWriteStream) const
 		{
-			return false;
+			TBase::save(pWriteStream);
+			CommonLib::MemoryStream steram;
+			steram.write(m_sPath);
+
+			pWriteStream->write(&steram);
+			return true;
 		}
 		bool CSQLiteWorkspace::load(CommonLib::IReadStream* pReadStream)
 		{
-			return false;
+			TBase::load(pReadStream);
+			CommonLib::FxMemoryReadStream stream;
+			pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+			stream.read(m_sPath);
+
+			const CommonLib::CString sFullName = m_sPath + m_sName;
+			return load(sFullName, true, false);
 		}
 		bool CSQLiteWorkspace::saveXML(GisCommon::IXMLNode* pXmlNode) const
 		{
-			return false;
+			TBase::saveXML(pXmlNode);
+			pXmlNode->AddPropertyString(L"Path", m_sPath);
+			return true;
 		}
-		bool CSQLiteWorkspace::load(GisCommon::IXMLNode* pXmlNode)
+		bool CSQLiteWorkspace::load(const GisCommon::IXMLNode* pXmlNode)
 		{
-			return false;
+			if(!TBase::load(pXmlNode))
+				return false;
+			m_sPath = pXmlNode->GetPropertyString(L"Path", m_sPath);
+			return true;
 		}
 		bool  CSQLiteWorkspace::create(const CommonLib::CString& sFullName)
 		{

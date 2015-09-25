@@ -50,7 +50,7 @@ void TestSQLiteWks()
 		GisEngine::GeoDatabase::CQueryFilter filter;
 		filter.AddRef();
 		filter.SetOutputSpatialReference(pShapeFC->GetSpatialReference().get());
-		filter.SetSpatialRel(GisEngine::GeoDatabase::srlEnvelopeIntersects);
+		filter.SetSpatialRel(GisEngine::GeoDatabase::srlIntersects);
 		filter.SetBB(pShapeFC->GetExtent()->GetBoundingBox());
 		filter.SetShapeField(pShapeFC->GetShapeFieldName());
 
@@ -91,7 +91,7 @@ void TestSQLiteWks()
 			GisEngine::GeoDatabase::CQueryFilter filter;
 			filter.AddRef();
 			filter.SetOutputSpatialReference(pSQLFC->GetSpatialReference().get());
-			filter.SetSpatialRel(GisEngine::GeoDatabase::srlEnvelopeIntersects);
+			filter.SetSpatialRel(GisEngine::GeoDatabase::srlIntersects);
 		
 			filter.SetShapeField(pSQLFC->GetShapeFieldName());
 
@@ -122,7 +122,7 @@ void TestSQLiteWks()
 			GisEngine::GeoDatabase::CQueryFilter filter;
 			filter.AddRef();
 			filter.SetOutputSpatialReference(pShapeFC->GetSpatialReference().get());
-			filter.SetSpatialRel(GisEngine::GeoDatabase::srlEnvelopeIntersects);
+			filter.SetSpatialRel(GisEngine::GeoDatabase::srlIntersects);
 			filter.SetBB(pShapeFC->GetExtent()->GetBoundingBox());
 			filter.SetShapeField(pShapeFC->GetShapeFieldName());
 			ShapeBB = pShapeFC->GetExtent()->GetBoundingBox();

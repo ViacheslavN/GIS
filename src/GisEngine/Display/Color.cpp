@@ -120,7 +120,7 @@ namespace GisEngine
 			pXmlNode->AddPropertyInt32U(L"color", m_rgba);
 			return true;
 		}
-		bool Color::load(GisCommon::IXMLNode* pXmlNode)
+		bool Color::load(const GisCommon::IXMLNode* pXmlNode)
 		{
 			m_rgba = pXmlNode->GetPropertyInt32U(L"color", m_rgba);
 			return true;

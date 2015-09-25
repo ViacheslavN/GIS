@@ -19,7 +19,7 @@ namespace GisEngine
 		{
 		public:
 			 typedef void* Handle;
-
+			CSpatialReferenceProj4(CommonLib::alloc_t *pAlloc = NULL);
 			CSpatialReferenceProj4(const CommonLib::CString& prj4Str, eSPRefParamType paramType= eSPRefTypePRJ4String, CommonLib::alloc_t *pAlloc = NULL);
 			CSpatialReferenceProj4(int prjCode, CommonLib::alloc_t *pAlloc = NULL);
 			CSpatialReferenceProj4(Handle hHandle, CommonLib::alloc_t *pAlloc = NULL);
@@ -44,7 +44,7 @@ namespace GisEngine
 			virtual bool load(CommonLib::IReadStream *pStream);
 
 			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
-			virtual bool load(GisCommon::IXMLNode* pXmlNode);
+			virtual bool load(const GisCommon::IXMLNode* pXmlNode);
 		private:
 			void CreateProjection();
 			void PrepareGeometries();

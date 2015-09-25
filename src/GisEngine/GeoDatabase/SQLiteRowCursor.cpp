@@ -45,7 +45,7 @@ namespace GisEngine
 		 		sSpatialWhere.format(L" %s IN (SELECT feature_id from %s where  ",
 						pTable->HasOIDField() ? pTable->GetOIDFieldName().cwstr() : L"rowid", pFeatureClass->GetRTReeIndexName().cwstr());
 		
-				if(m_spatialRel == srlUndefined || m_spatialRel == srlEnvelopeIntersects)
+				if(m_spatialRel == srlUndefined || m_spatialRel == srlIntersects)
 				{
 					sSpatialOp.format(L" maxX>=%f AND minX<=%f AND maxY>=%f AND minY<=%f)",
 						bbox.xMin, bbox.xMax, bbox.yMin, bbox.yMax);

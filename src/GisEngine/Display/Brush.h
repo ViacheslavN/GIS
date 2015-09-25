@@ -30,7 +30,7 @@ namespace GisEngine
 
 
 			bool saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Brush") const;
-			bool load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Brush");
+			bool load(const  GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Brush");
 
 
 		private:

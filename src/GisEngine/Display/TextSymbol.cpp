@@ -364,7 +364,7 @@ namespace GisEngine
 		
 			return m_Font.saveXML(pXmlNode);
 		}
-		bool CTextSymbol::load(GisCommon::IXMLNode* pXmlNode)
+		bool CTextSymbol::load(const GisCommon::IXMLNode* pXmlNode)
 		{
 			if(!TBase::load(pXmlNode))
 				return false;

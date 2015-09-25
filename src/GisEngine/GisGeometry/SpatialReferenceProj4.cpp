@@ -80,7 +80,18 @@ namespace GisEngine
 				*top_parallel = 89.9;
 			}
 		}
-
+		CSpatialReferenceProj4::CSpatialReferenceProj4(CommonLib::alloc_t *pAlloc) : 
+			m_prjCode(0)
+			,m_prjHandle(0)
+			,m_pAlloc(pAlloc)
+			, m_pBufferX(0)
+			, m_pBufferY(0)
+			, m_pBufferZ(0)
+			, m_nBufferSize(0)
+		{
+			if(!m_pAlloc)
+				m_pAlloc = &m_alloc;
+		}
 		CSpatialReferenceProj4::CSpatialReferenceProj4(const CommonLib::CString& prj4Str, eSPRefParamType paramType, CommonLib::alloc_t *pAlloc) :
 			m_prjCode(0)
 			,m_prjHandle(0)
@@ -443,7 +454,7 @@ namespace GisEngine
 			pXmlNode->AddPropertyString(L"proj", m_prj4Str);
 			return true;
 		}
-		bool CSpatialReferenceProj4::load(GisCommon::IXMLNode* pXmlNode)
+		bool CSpatialReferenceProj4::load(const GisCommon::IXMLNode* pXmlNode)
 		{
 			m_prj4Str = pXmlNode->GetPropertyString(L"proj", L"");
 			CreateProjection();

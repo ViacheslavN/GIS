@@ -46,7 +46,7 @@ namespace GisEngine
 		{
 			return false;
 		}
-		bool CSQLiteTable::load(GisCommon::IXMLNode* pXmlNode)
+		bool CSQLiteTable::load(const GisCommon::IXMLNode* pXmlNode)
 		{
 			return false;
 		}

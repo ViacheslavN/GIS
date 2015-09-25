@@ -11,7 +11,7 @@ namespace GisEngine
 		{
 		public:
 			static	ILayerPtr LoadLayer(CommonLib::IReadStream *pSteam);
-			static	ILayerPtr LoadLayer(GisCommon::IXMLNode *pNode);
+			static	ILayerPtr LoadLayer(const GisCommon::IXMLNode *pNode);
 		};
 	}
 }

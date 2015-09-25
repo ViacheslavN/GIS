@@ -19,7 +19,9 @@
 #include "../../Cartography/Map.h"
 #include "../../GisFramework/MapDrawer.h"
 #include "../../Display/GraphicsWinGDI.h"
-
+#include "../../Common/GisEngineCommon.h"
+#include "../../Common/XMLDoc.h"
+#include "CommonLibrary/FileStream.h"
 
 class CTrackCancel : public GisEngine::GisCommon::ITrackCancel
 {
@@ -381,6 +383,70 @@ LRESULT CMapView::OnSQLiteShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*h
 
 void CMapView::open(const wchar_t *pszFile)
 {
- 
+	m_pMapDrawer->StopDraw();
 
+
+	CommonLib::CString sExt = CommonLib::FileSystem::FindFileExtension(pszFile);
+	if(sExt == L"xml")
+	{
+		GisEngine::GisCommon::CXMLDoc xmlDoc;
+		if(xmlDoc.Open(pszFile))
+		{
+			GisEngine::GisCommon::IXMLNodePtr pNodes = xmlDoc.GetNodes();
+			GisEngine::GisCommon::IXMLNodePtr pMapNode = pNodes->GetChild(L"Map");
+			if(pMapNode.get())
+			{
+
+				GisEngine::Cartography::IMapPtr pMap(new GisEngine::Cartography::CMap());
+				pMap->SetVerticalFlip(true);
+				if(((GisEngine::GisCommon::IXMLSerialize*)pMap.get())->load(pMapNode.get()))
+				{
+					m_pMap = pMap;
+					m_pMapDrawer->SetMap(pMap.get());
+				}
+			}
+		}
+	}
+	else
+	{
+		CommonLib::CReadFileStream fStream;
+		if(fStream.open(pszFile, CommonLib::ofmOpenExisting, CommonLib::arRead, CommonLib::smNoMode))
+		{
+			GisEngine::Cartography::IMapPtr pMap(new GisEngine::Cartography::CMap());
+			pMap->SetVerticalFlip(true);
+			if(((GisEngine::GisCommon::IStreamSerialize*)pMap.get())->load(&fStream))
+			{
+				m_pMap = pMap;
+				m_pMapDrawer->SetMap(pMap.get());
+			}
+		}
+	}
+
+	redraw();
+
+}
+
+void CMapView::save(const wchar_t *pszFile)
+{
+	if(!m_pMap.get())
+		return;
+
+	CommonLib::CString sExt = CommonLib::FileSystem::FindFileExtension(pszFile);
+	if(sExt == L"xml")
+	{
+		GisEngine::GisCommon::CXMLDoc xmlDoc;
+		GisEngine::GisCommon::IXMLNodePtr pNodes = xmlDoc.GetNodes();
+		if(m_pMap->saveXML(pNodes.get()))
+		{
+			xmlDoc.Save(pszFile);
+		}
+	}
+	else
+	{
+		CommonLib::CWriteFileStream fStream;
+		if(fStream.open(pszFile, CommonLib::ofmCreateAlways, CommonLib::arWrite, CommonLib::smNoMode))
+		{
+			m_pMap->save(&fStream);
+		}
+	}
 }

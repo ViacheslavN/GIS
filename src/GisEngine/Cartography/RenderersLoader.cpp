@@ -20,14 +20,14 @@ namespace GisEngine
 			return LoadRendererT<CommonLib::IReadStream>(pStream, nRendererID);
 		}
 
-		IFeatureRendererPtr LoaderRenderers::LoadRenderer(GisCommon::IXMLNode *pNode)
+		IFeatureRendererPtr LoaderRenderers::LoadRenderer(const GisCommon::IXMLNode *pNode)
 		{
 
-			uint32 nRendererID = pNode->GetPropertyInt32U(L"RenderID", UndefineFeatureRendererID);
+			uint32 nRendererID = pNode->GetPropertyInt32U(L"FeatureRendererID", UndefineFeatureRendererID);
 			if(nRendererID == UndefineFeatureRendererID)
 				return IFeatureRendererPtr();
 
-			return LoadRendererT<GisCommon::IXMLNode>(pNode, nRendererID);
+			return LoadRendererT<const GisCommon::IXMLNode>(pNode, nRendererID);
 		}
 
 		template<class TSerealizer>

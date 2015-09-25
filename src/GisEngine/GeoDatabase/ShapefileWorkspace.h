@@ -16,8 +16,8 @@ namespace GisEngine
 
 			//typedef Common::CSimpleEnum<IDataset, IDatasetContainer> TDatasetContainer;
 			typedef IWorkspaceBase<IWorkspace> TBase;
-			CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr, uint32 nID);
-			CShapefileWorkspace(const wchar_t *pszName, const wchar_t *pszPath, uint32 nID);
+			CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr, int32 nID);
+			CShapefileWorkspace(const wchar_t *pszName, const wchar_t *pszPath, int32 nID);
 
 			public:
 
@@ -36,7 +36,7 @@ namespace GisEngine
 				virtual bool load(CommonLib::IReadStream* pReadStream);
 
 				virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
-				virtual bool load(GisCommon::IXMLNode* pXmlNode);
+				virtual bool load(const GisCommon::IXMLNode* pXmlNode);
 
 		
 				~CShapefileWorkspace();

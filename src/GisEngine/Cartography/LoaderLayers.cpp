@@ -19,14 +19,14 @@ namespace GisEngine
 			return LoadLayerT<CommonLib::IReadStream>(pStream, nLayerID);
 		}
 
-		ILayerPtr LoaderLayers::LoadLayer(GisCommon::IXMLNode *pNode)
+		ILayerPtr LoaderLayers::LoadLayer(const  GisCommon::IXMLNode *pNode)
 		{
 
 			uint32 nLayerID = pNode->GetPropertyInt32U(L"LayerID", UndefineLayerID);
 			if(nLayerID == UndefineLayerID)
 				return ILayerPtr();
 
-			return LoadLayerT<GisCommon::IXMLNode>(pNode, nLayerID);
+			return LoadLayerT<const GisCommon::IXMLNode>(pNode, nLayerID);
 		}
 
 		template<class TSerealizer>

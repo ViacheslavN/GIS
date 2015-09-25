@@ -25,7 +25,7 @@ namespace GisEngine
 			bool load(CommonLib::IReadStream *pStream);
 
 			bool saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszNodeName = L"bitmap") const;
-			bool load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszNodeName = L"bitmap");
+			bool load(const  GisCommon::IXMLNode* pXmlNode, const wchar_t *pszNodeName = L"bitmap");
 
 		public:
 			size_t                 height() const;

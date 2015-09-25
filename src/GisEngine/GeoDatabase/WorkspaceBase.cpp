@@ -9,7 +9,7 @@ namespace GisEngine
 		
 		CWorkspaceHolder::TWksMap CWorkspaceHolder::m_wksMap;
 		CWorkspaceHolder::TWksMapByID CWorkspaceHolder::m_wksMapByID;
-		uint32 CWorkspaceHolder::m_nWksID = 1;
+		int32 CWorkspaceHolder::m_nWksID = 1;
 
 		CommonLib::CSSection CWorkspaceHolder::m_SharedMutex;
 
@@ -71,7 +71,7 @@ namespace GisEngine
 				m_wksMap.erase(wksInfo);
 			}
 		}
-		uint32 CWorkspaceHolder::GetIDWorkspace()
+		int32 CWorkspaceHolder::GetIDWorkspace()
 		{
 			CommonLib::CSSection::scoped_lock lock (m_SharedMutex); 
 			return m_nWksID++;
@@ -119,27 +119,31 @@ namespace GisEngine
 		bool CWorkspaceHolder::SaveWks(GisCommon::IXMLNode *pNode)
 		{
 			CommonLib::CSSection::scoped_lock lock (m_SharedMutex);
-
-			pNode->AddPropertyInt32U(L"WksID", m_nWksID);
+			GisCommon::IXMLNodePtr pWksNode = pNode->CreateChildNode("Wks");
+			pWksNode->AddPropertyInt32U(L"WksID", m_nWksID);
 			TWksMapByID::iterator it = m_wksMapByID.begin();
 			TWksMapByID::iterator end = m_wksMapByID.end();
 			for (; it != end; ++it)
 			{
 				IWorkspacePtr pWks = it->second;
-				GisCommon::IXMLNodePtr pNodeWks =  pNode->CreateChildNode(L"Workspace");
+				GisCommon::IXMLNodePtr pNodeWks =  pWksNode->CreateChildNode(L"Workspace");
 				pWks->saveXML(pNodeWks.get());
 			 
 			}
 			return true;
 		}
-		bool CWorkspaceHolder::LoadWks(GisCommon::IXMLNode *pNode)
+		bool CWorkspaceHolder::LoadWks(const GisCommon::IXMLNode *pNode)
 		{
 			CommonLib::CSSection::scoped_lock lock (m_SharedMutex);
-			m_nWksID = pNode->GetPropertyInt32U(L"WksID", 1);
-			int nCnt = pNode->GetChildCnt();
+			GisCommon::IXMLNodePtr pWksNode = pNode->GetChild(L"Wks");
+			if(!pWksNode.get())
+				return false;
+
+			m_nWksID = pWksNode->GetPropertyInt32U(L"WksID", 1);
+			int nCnt = pWksNode->GetChildCnt();
 			for(int i = 0; i < nCnt; ++i)
 			{
-				GisCommon::IXMLNodePtr pChildNode = pNode->GetChild(i);
+				GisCommon::IXMLNodePtr pChildNode = pWksNode->GetChild(i);
 				if(pChildNode->GetName() != L"Workspace")
 					continue;
 				IWorkspacePtr pWks = LoaderWorkspace::LoadWorkspace(pChildNode.get());

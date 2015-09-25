@@ -60,7 +60,7 @@ namespace GisEngine
 				GeoDatabase::CQueryFilter filter;
 				filter.AddRef();
 				filter.SetOutputSpatialReference(outSpatRef.get());
-				filter.SetSpatialRel(GeoDatabase::srlEnvelopeIntersects);
+				filter.SetSpatialRel(GeoDatabase::srlIntersects);
 				filter.SetBB(pDisplay->GetTransformation()->GetFittedBounds());
 				 double precision = pDisplay->GetTransformation()->DeviceToMapMeasure(0.25);
 
@@ -264,7 +264,8 @@ namespace GisEngine
 			stream.write(m_pFeatureClass.get() ? true : false);
 			if(m_pFeatureClass.get())
 			{
-				stream.write((uint32) m_pFeatureClass->GetDatasetType());
+				stream.write(m_pFeatureClass->GetWorkspace()->GetID());
+				stream.write(m_pFeatureClass->GetDatasetName());
 				m_pFeatureClass->save(&stream);
 			}
 
@@ -290,7 +291,18 @@ namespace GisEngine
 				if(pRenderer.get())
 					m_vecRenderers.push_back(pRenderer);
 			}
-
+			bool bFC = stream.readBool();
+			if(bFC)
+			{
+				int32 nWksID = stream.readInt32();
+				CommonLib::CString sFCName;
+				stream.read(sFCName);
+				GeoDatabase::IWorkspacePtr pWks = GeoDatabase::IWorkspace::GetWorkspaceByID(nWksID);
+				if(pWks.get())
+				{
+					m_pFeatureClass = pWks->OpenFeatureClass(sFCName);
+				}
+			}
 
 			return true;
 		}
@@ -299,12 +311,61 @@ namespace GisEngine
 			if(!TBase::saveXML(pXmlNode))
 				return false;
 
+			pXmlNode->AddPropertyString(L"DisplayField", m_sDisplayField);
+			pXmlNode->AddPropertyString(L"Query", m_sQuery);
+			pXmlNode->AddPropertyBool(L"Selectable", m_bSelectable);
+			pXmlNode->AddPropertyBool(L"HasReferenceScale", m_hasReferenceScale);
+			 
+			GisCommon::IXMLNodePtr pRenderens = pXmlNode->CreateChildNode(L"Renderers");
+	 
+			for (size_t i = 0, sz = m_vecRenderers.size(); i < sz; ++i)
+			{
+				GisCommon::IXMLNodePtr pRender = pRenderens->CreateChildNode(L"Render");
+				m_vecRenderers[i]->saveXML(pRender.get());
+			}
+			if(m_pFeatureClass.get())
+			{
+				GisCommon::IXMLNodePtr pFcNode = pXmlNode->CreateChildNode(L"FeatureClass");
+				pFcNode->AddPropertyInt32(L"WksID", m_pFeatureClass->GetWorkspace()->GetID());
+				pFcNode->AddPropertyString(L"Name", m_pFeatureClass->GetDatasetName());
+			}
+
 			return true;
 		}
-		bool CFeatureLayer::load(GisCommon::IXMLNode* pXmlNode)
+		bool CFeatureLayer::load(const GisCommon::IXMLNode* pXmlNode)
 		{
 			if(!TBase::load(pXmlNode))
 				return false;
+
+
+			m_sDisplayField = pXmlNode->GetPropertyString(L"DisplayField", m_sDisplayField);
+			m_sQuery = pXmlNode->GetPropertyString(L"Query", m_sQuery);
+			m_bSelectable = pXmlNode->GetPropertyBool(L"Selectable", m_bSelectable);
+			m_hasReferenceScale = pXmlNode->GetPropertyBool(L"HasReferenceScale", m_hasReferenceScale);
+
+			GisCommon::IXMLNodePtr pRenderens = pXmlNode->GetChild(L"Renderers");
+			if(pRenderens.get())
+			{
+				for (size_t i = 0, sz = pRenderens->GetChildCnt(); i < sz; ++i)
+				{
+					GisCommon::IXMLNodePtr pRenderNode = pRenderens->GetChild(i);
+					IFeatureRendererPtr pRender =  LoaderRenderers::LoadRenderer(pRenderNode.get());
+					if(pRender.get())
+						m_vecRenderers.push_back(pRender);
+				}
+			}
+			
+			GisCommon::IXMLNodePtr pFcNode = pXmlNode->GetChild(L"FeatureClass");
+			if(pFcNode.get())
+			{
+				int32 nWksID = pFcNode->GetPropertyInt32(L"WksID", -1);
+				CommonLib::CString sFCName = pFcNode->GetPropertyString(L"Name", L"");
+				GeoDatabase::IWorkspacePtr pWks = GeoDatabase::IWorkspace::GetWorkspaceByID(nWksID);
+				if(pWks.get())
+				{
+					m_pFeatureClass = pWks->OpenFeatureClass(sFCName);
+				}
+			}
 
 			return true;
 		}

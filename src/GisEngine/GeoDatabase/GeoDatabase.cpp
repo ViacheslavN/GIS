@@ -18,16 +18,16 @@ namespace GisEngine
 			 
 			return CWorkspaceHolder::SaveWks(pStream);
 		}
-		bool LoadWks(CommonLib::IReadStream *pStream)
+		bool IWorkspace::LoadWks(CommonLib::IReadStream *pStream)
 		{
 			return CWorkspaceHolder::LoadWks(pStream);
 		}
 
-		bool SaveWks(GisCommon::IXMLNode *pXML)
+		bool IWorkspace::SaveWks(GisCommon::IXMLNode *pXML)
 		{
 			return CWorkspaceHolder::SaveWks(pXML);
 		}
-		bool LoadWks(GisCommon::IXMLNode *pXML)
+		bool IWorkspace::LoadWks(const GisCommon::IXMLNode *pXML)
 		{
 			return CWorkspaceHolder::LoadWks(pXML);
 		}

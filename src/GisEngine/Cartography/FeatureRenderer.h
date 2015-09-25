@@ -28,7 +28,7 @@ namespace GisEngine
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const;
 			virtual bool load(CommonLib::IReadStream* pReadStream);
 			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
-			virtual bool load(GisCommon::IXMLNode* pXmlNode);
+			virtual bool load(const GisCommon::IXMLNode* pXmlNode);
 			
 		private:
 			ISymbolAssignerPtr m_pSymbolAssigner;

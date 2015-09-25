@@ -121,7 +121,7 @@ namespace GisEngine
 				pXmlNode->AddPropertyInt32U(L"CheckCancelStep", m_nCheckCancelStep);
 				return true;
 			}
-			virtual bool load(GisCommon::IXMLNode* pXmlNode)
+			virtual bool load(const GisCommon::IXMLNode* pXmlNode)
 			{
 				m_sName = pXmlNode->GetPropertyString(L"name", m_sName);
 				m_bVisible = pXmlNode->GetPropertyBool(L"visible", m_bVisible);

@@ -287,7 +287,7 @@ namespace GisEngine
 		{
 			return false;
 		}
-		bool CSQLiteFeatureClass::load(GisCommon::IXMLNode* pXmlNode)
+		bool CSQLiteFeatureClass::load(const GisCommon::IXMLNode* pXmlNode)
 		{
 			return false;
 		}

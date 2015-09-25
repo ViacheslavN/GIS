@@ -207,7 +207,7 @@ namespace GisEngine
 			return true;
 
 		}
-		bool CPen::load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName)
+		bool CPen::load(const GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName)
 		{
 			GisCommon::IXMLNodePtr pPenNode = pXmlNode->GetChild(pszName);
 			if(!pPenNode.get())
@@ -218,6 +218,7 @@ namespace GisEngine
 			m_capType = (eCapType)pPenNode->GetPropertyInt16U(L"CapType", CapTypeButt);
 			m_nWidth = (GUnits)pPenNode->GetPropertyDouble(L"Width", 1);
 			m_bRelease = pPenNode->GetPropertyBool(L"Release", false);
+			m_color.load(pPenNode.get());
 			if(m_bRelease) 
 			{
 				m_pTexture = new CBitmap();

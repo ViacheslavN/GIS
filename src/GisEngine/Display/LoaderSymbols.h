@@ -16,7 +16,7 @@ namespace GisEngine
 			LoaderSymbol(){}
 			~LoaderSymbol(){}
 			static ISymbolPtr LoadSymbol(CommonLib::IReadStream *pSteam);
-			static ISymbolPtr LoadSymbol(GisCommon::IXMLNode *pNode);
+			static ISymbolPtr LoadSymbol(const GisCommon::IXMLNode *pNode);
 		};
 
 	}

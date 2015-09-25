@@ -4,6 +4,10 @@
 #include "Selection.h"
 #include "GisGeometry/Envelope.h"
 #include "Display/DisplayTransformation2D.h"
+#include "CommonLibrary/crc.h"
+#include "GisGeometry/SpatialReferenceProj4.h"
+#include "Display/LoaderSymbols.h"
+#include "LoaderLayers.h"
 namespace GisEngine
 {
 	namespace Cartography
@@ -362,19 +366,173 @@ namespace GisEngine
 
 		bool CMap::save(CommonLib::IWriteStream *pWriteStream) const
 		{
+			CommonLib::MemoryStream mapStream;
+			uint32 nCrc = 0;
+			
+			mapStream.write(m_sName);
+			mapStream.write((uint16)m_MapUnits);
+			mapStream.write(m_dMinScale);
+			mapStream.write(m_dMaxScale);
+			mapStream.write(m_bHasReferenceScale);
+			mapStream.write(m_dReferenceScale);
+			mapStream.write(m_bFlipVertical);
+			mapStream.write(m_bflipHorizontal);
+			mapStream.write(m_pSpatialRef.get() ? true : false);
+			if(m_pSpatialRef.get())
+				m_pSpatialRef->save(&mapStream);
+
+			GeoDatabase::IWorkspace::SaveWks(&mapStream);
+			mapStream.write(m_pBackgroundSymbol.get() ? true : false);
+			if(m_pBackgroundSymbol.get())
+				m_pBackgroundSymbol->save(&mapStream);
+			mapStream.write(m_pForegroundSymbol.get() ? true : false);
+			if(m_pForegroundSymbol.get())
+				m_pForegroundSymbol->save(&mapStream);
+			mapStream.write(m_pLayers->GetLayerCount());
+			for (int i = 0, sz = m_pLayers->GetLayerCount(); i < sz; ++i)
+			{
+				ILayerPtr pLayer = m_pLayers->GetLayer(i);
+				pLayer->save(&mapStream);
+			}
+			uint32 crc = CommonLib::Crc32(mapStream.buffer(), mapStream.pos());
+			pWriteStream->write(crc);
+			pWriteStream->write(&mapStream);
 			return true;
 		}
 		bool CMap::load(CommonLib::IReadStream* pReadStream)
 		{
+			uint32 nCRC = pReadStream->readIntu32();
+			CommonLib::FxMemoryReadStream mapStream;
+			pReadStream->AttachStream(&mapStream, pReadStream->readInt32());
+			uint32 nCalcCRC = CommonLib::Crc32(mapStream.buffer(), mapStream.size()); 
+			if(nCalcCRC != nCRC)
+				return false;
+
+			mapStream.read(m_sName);
+			m_MapUnits = (GisCommon::Units)mapStream.readintu16();
+			mapStream.read(m_dMinScale);
+			mapStream.read(m_dMaxScale);
+			mapStream.read(m_bHasReferenceScale);
+			mapStream.read(m_dReferenceScale);
+			mapStream.read(m_bFlipVertical);
+			mapStream.read(m_bflipHorizontal);
+			bool bSpRef = mapStream.readBool();
+			if(bSpRef)
+			{
+				m_pSpatialRef = new GisGeometry::CSpatialReferenceProj4();
+				((GisCommon::IStreamSerialize*)m_pSpatialRef.get())->load(&mapStream);
+
+			}
+			GeoDatabase::IWorkspace::LoadWks(&mapStream);
+			bool bBgSymbol = mapStream.readBool();
+			if(bBgSymbol)
+			{
+				m_pBackgroundSymbol = (Display::IFillSymbol*)Display::LoaderSymbol::LoadSymbol(&mapStream).get();
+			}
+
+			bool bFgSymbol = mapStream.readBool();
+			if(bFgSymbol)
+			{
+				m_pForegroundSymbol = (Display::IFillSymbol*)Display::LoaderSymbol::LoadSymbol(&mapStream).get();
+			}
+			 
+			int nLayerCnt = mapStream.readInt32();
+			for (int i = 0; i < nLayerCnt; ++i)
+			{
+				ILayerPtr pLayer =  LoaderLayers::LoadLayer(&mapStream);
+				m_pLayers->AddLayer(pLayer.get());
+			}
+
+
 			return true;
 		}
 
 		bool CMap::saveXML(GisCommon::IXMLNode* pXmlNode) const
 		{
+			GisCommon::IXMLNodePtr pMapNode = pXmlNode->CreateChildNode(L"Map");
+
+			pMapNode->AddPropertyString(L"Name", m_sName);
+			pMapNode->AddPropertyInt16U(L"MapUnits", m_MapUnits);
+			pMapNode->AddPropertyDouble(L"MinScale", m_dMinScale);
+	 		pMapNode->AddPropertyDouble(L"MaxScale", m_dMaxScale);
+			pMapNode->AddPropertyBool(L"HasReferenceScale", m_bHasReferenceScale);
+			pMapNode->AddPropertyDouble(L"ReferenceScale", m_dReferenceScale);
+			pMapNode->AddPropertyBool(L"FlipVertical", m_bFlipVertical);
+			pMapNode->AddPropertyBool(L"FlipHorizonta", m_bflipHorizontal);
+			if(m_pSpatialRef.get())
+			{
+				GisCommon::IXMLNodePtr pSpRefNode = pMapNode->CreateChildNode(L"SPRef");
+				m_pSpatialRef->saveXML(pSpRefNode.get());
+			}
+			GeoDatabase::IWorkspace::SaveWks(pMapNode.get());
+			if(m_pBackgroundSymbol.get())
+			{
+				GisCommon::IXMLNodePtr pBgSymbolNode = pMapNode->CreateChildNode(L"BackgroundSymbol");
+				m_pBackgroundSymbol->saveXML(pBgSymbolNode.get());
+			}
+
+			if(m_pForegroundSymbol.get())
+			{
+				GisCommon::IXMLNodePtr pFgSymbolNode = pMapNode->CreateChildNode(L"ForegroundSymbol");
+				m_pForegroundSymbol->saveXML(pFgSymbolNode.get());
+			}
+ 
+			GisCommon::IXMLNodePtr pLayersNode = pMapNode->CreateChildNode(L"Layers");
+			for (int i = 0, sz = m_pLayers->GetLayerCount(); i < sz; ++i)
+			{
+				GisCommon::IXMLNodePtr pLayerNode = pLayersNode->CreateChildNode(L"Layer");
+				ILayerPtr pLayer = m_pLayers->GetLayer(i);
+				pLayer->saveXML(pLayerNode.get());
+			}
+
+
 			return true;
 		}
-		bool CMap::load(GisCommon::IXMLNode* pXmlNode)
+		bool CMap::load(const GisCommon::IXMLNode* pMapNode)
 		{
+
+		/*	GisCommon::IXMLNodePtr pMapNode = pXmlNode->GetChild(L"Map");
+			if(pMapNode.get())
+				return false;*/
+
+			m_sName = pMapNode->GetPropertyString(L"Name", m_sName);
+			m_MapUnits = (GisCommon::Units)pMapNode->GetPropertyInt16U(L"MapUnits", m_MapUnits);
+			m_dMinScale = pMapNode->GetPropertyDouble(L"MinScale", m_dMinScale);
+			m_dMaxScale = pMapNode->GetPropertyDouble(L"MaxScale", m_dMaxScale);
+			m_bHasReferenceScale = pMapNode->GetPropertyBool(L"HasReferenceScale", m_bHasReferenceScale);
+			m_dReferenceScale = pMapNode->GetPropertyDouble(L"ReferenceScale", m_dReferenceScale);
+			m_bFlipVertical = pMapNode->GetPropertyBool(L"FlipVertical", m_bFlipVertical);
+			m_bflipHorizontal = pMapNode->GetPropertyBool(L"FlipHorizonta", m_bflipHorizontal);
+
+			GisCommon::IXMLNodePtr pSpRefNode = pMapNode->GetChild(L"SPRef");
+			if(pSpRefNode.get())
+			{
+				 m_pSpatialRef = new GisGeometry::CSpatialReferenceProj4();
+				((GisCommon::IXMLSerialize*)m_pSpatialRef.get())->load(pSpRefNode.get());
+			}
+			GeoDatabase::IWorkspace::LoadWks(pMapNode);
+			GisCommon::IXMLNodePtr pBgSymbolNode = pMapNode->GetChild(L"BackgroundSymbol");
+			if(pBgSymbolNode.get())
+			{
+				m_pBackgroundSymbol = (Display::IFillSymbol*)Display::LoaderSymbol::LoadSymbol(pBgSymbolNode.get()).get();
+			}
+			GisCommon::IXMLNodePtr pFgSymbolNode = pMapNode->GetChild(L"ForegroundSymbol");
+			if(pFgSymbolNode.get())
+			{
+				m_pForegroundSymbol = (Display::IFillSymbol*)Display::LoaderSymbol::LoadSymbol(pFgSymbolNode.get()).get();
+			}
+
+			GisCommon::IXMLNodePtr pLayersNode = pMapNode->GetChild(L"Layers");
+			if(pLayersNode.get())
+			{	
+				for (int i = 0, nCount = pLayersNode->GetChildCnt();  i< nCount; ++i)
+				{
+					GisCommon::IXMLNodePtr pLayerNode = pLayersNode->GetChild(L"Layer");
+					ILayerPtr pLayer  =  LoaderLayers::LoadLayer(pLayerNode.get());
+					m_pLayers->AddLayer(pLayer.get());
+				}
+			}
+			
 			return true;
 		}
 	}

@@ -40,7 +40,7 @@ namespace GisEngine
 
 			//IXMLSerialize
 			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
-			virtual bool load(GisCommon::IXMLNode* pXmlNode);
+			virtual bool load(const GisCommon::IXMLNode* pXmlNode);
 
 		public:
 			CPen m_Pen;

@@ -91,7 +91,7 @@ namespace GisEngine
 				m_Brush.saveXML(pXmlNode);
 				return true;
 			}
-			bool load(GisCommon::IXMLNode* pXmlNode)
+			bool load(const GisCommon::IXMLNode* pXmlNode)
 			{
 				if(!TSymbolBase::load(pXmlNode))
 					return false;

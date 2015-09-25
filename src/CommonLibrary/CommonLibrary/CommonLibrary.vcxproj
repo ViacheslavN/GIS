@@ -417,6 +417,7 @@
     <ClInclude Include="BoundaryBox.h" />
     <ClInclude Include="caseutils.h" />
     <ClInclude Include="CommonLib_lib.h" />
+    <ClInclude Include="crc.h" />
     <ClInclude Include="CSSection.h" />
     <ClInclude Include="DebugTime.h" />
     <ClInclude Include="delegate.h" />
@@ -460,6 +461,7 @@
     <ClCompile Include="blob.cpp" />
     <ClCompile Include="BoundaryBox.cpp" />
     <ClCompile Include="caseutils.cpp" />
+    <ClCompile Include="crc.cpp" />
     <ClCompile Include="DebugTime.cpp" />
     <ClCompile Include="File.cpp" />
     <ClCompile Include="FileStream.cpp" />

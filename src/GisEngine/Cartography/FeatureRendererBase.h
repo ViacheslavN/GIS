@@ -75,7 +75,7 @@ namespace GisEngine
 				pXmlNode->AddPropertyString(L"ShapeField", m_sShapeField);
 				return true;
 			}
-			virtual bool load(GisCommon::IXMLNode* pXmlNode)
+			virtual bool load(const GisCommon::IXMLNode* pXmlNode)
 			{
 				m_dMinimumScale = pXmlNode->GetPropertyDouble(L"MinScale", m_dMinimumScale);
 				m_dMaximumScale = pXmlNode->GetPropertyDouble(L"MaxScale", m_dMaximumScale);

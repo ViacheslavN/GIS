@@ -22,7 +22,7 @@ namespace GisEngine
 			virtual IXMLNodePtr			   CreateChildNode(const CommonLib::CString& sName);
 			virtual uint32				   GetChildCnt() const;
 			virtual IXMLNodePtr			   GetChild(uint32 nIndex) const;
-			virtual IXMLNodePtr			   GetChild(const wchar_t *pszName);
+			virtual IXMLNodePtr			   GetChild(const wchar_t *pszName) const;
 
 
 			virtual IXMLNodePtr			  GetParent() const;

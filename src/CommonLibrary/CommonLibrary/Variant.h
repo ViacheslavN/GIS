@@ -326,17 +326,17 @@ public:
 	virtual void Visit(const bool           & val)
 	{ val_ = val ? CString(L"true") : CString(L"false"); }
 	virtual void Visit(const byte     & val)
-	{ val_.format(L"%d", (int)val); }
+	{ val_.format(L"%u", (uint32)val); }
 	virtual void Visit(const int8     & val)
 	{ val_.format(L"%d", (int)val); }
 	virtual void Visit(const int16    & val)
-	{ val_.format(L"%d", (int)val); }
+	{ val_.format(L"%u", (uint32)val); }
 	virtual void Visit(const uint16    & val)
 	{ val_.format(L"%d", (int)val); }
 	virtual void Visit(const int32    & val)
 	{ val_.format(L"%d", (int)val); }
 	virtual void Visit(const uint32   & val)
-	{ val_.format(L"%d", (int)val); }
+	{ val_.format(L"%u", val); }
 	virtual void Visit(const uint64   & val)
 	{ val_.format(L"%I64u", val); }
 	virtual void Visit(const int64    & val)

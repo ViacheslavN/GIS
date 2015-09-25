@@ -18,14 +18,14 @@ namespace GisEngine
 			return LoadSymbolAssignersT<CommonLib::IReadStream>(pStream, nSymbolID);
 		}
 
-		ISymbolAssignerPtr LoaderSymbolAssigners::LoadSymbolAssigners(GisCommon::IXMLNode *pNode)
+		ISymbolAssignerPtr LoaderSymbolAssigners::LoadSymbolAssigners(const GisCommon::IXMLNode *pNode)
 		{
 
 			uint32 nSymbolID = pNode->GetPropertyInt32U(L"SymbolID", UndefineSymbolAssignerID);
 			if(nSymbolID == UndefineSymbolAssignerID)
 				return ISymbolAssignerPtr();
 
-			return LoadSymbolAssignersT<GisCommon::IXMLNode>(pNode, nSymbolID);
+			return LoadSymbolAssignersT<const GisCommon::IXMLNode>(pNode, nSymbolID);
 		}
 
 		template<class TSerealizer>

@@ -64,7 +64,7 @@ namespace GisEngine
 			IXMLSerialize(){}
 			virtual ~IXMLSerialize(){}
 			virtual bool saveXML(IXMLNode* pXmlNode) const = 0;
-			virtual bool load(IXMLNode* pXmlNode) = 0;
+			virtual bool load(const IXMLNode* pXmlNode) = 0;
 		};
 
 
@@ -77,7 +77,7 @@ namespace GisEngine
 			virtual IXMLNodePtr			   CreateChildNode(const CommonLib::CString& sName) = 0;
 			virtual uint32				   GetChildCnt() const = 0;
 			virtual IXMLNodePtr			   GetChild(uint32 nIndex) const = 0;
-			virtual IXMLNodePtr			   GetChild(const wchar_t *pszName) = 0;
+			virtual IXMLNodePtr			   GetChild(const wchar_t *pszName) const= 0;
 
 			virtual IXMLNodePtr			  GetParent() const= 0;
 

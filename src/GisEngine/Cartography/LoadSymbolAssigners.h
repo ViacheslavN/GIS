@@ -11,7 +11,7 @@ namespace GisEngine
 		{
 		public:
 			static ISymbolAssignerPtr LoadSymbolAssigners(CommonLib::IReadStream *pSteam);
-			static ISymbolAssignerPtr LoadSymbolAssigners(GisCommon::IXMLNode *pNode);
+			static ISymbolAssignerPtr LoadSymbolAssigners(const GisCommon::IXMLNode *pNode);
 		};
 
 	}

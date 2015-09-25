@@ -73,6 +73,13 @@ namespace CommonLib
 	{
 		return (size() - pos()) >= nSize;
 	}
+	bool  CReadFileStream::AttachStream(IStream *pStream, uint32 nSize, bool bSeek)
+	{
+		pStream->create(nSize);
+		uint32 nRead = m_File.readFile(pStream->buffer(), nSize);
+		assert(nRead == nSize);
+		return nRead == nSize;
+	}
 	bool CReadFileStream::IsEndOfStream() const
 	{
 		return size() == pos();

@@ -42,7 +42,7 @@ namespace GisEngine
 			bool load(CommonLib::IReadStream *pStream);
 
 			bool saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Pen") const;
-			bool load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Pen");
+			bool load(const GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"Pen");
 
 
 		private:

@@ -373,7 +373,7 @@ namespace GisEngine
 			return true;
 
 		}
-		bool CBitmap::load(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszNodeName)
+		bool CBitmap::load(const GisCommon::IXMLNode* pXmlNode, const wchar_t *pszNodeName)
 		{
 			 GisCommon::IXMLNodePtr pBlobNode = pXmlNode->GetChild(pszNodeName);
 			 if(!pBlobNode.get())

@@ -11,7 +11,7 @@ namespace GisEngine
 		{
 		public:
 
-			IWorkspaceBase(eWorkspaceType type, uint32 nID) : m_WorkspaceType(type), m_nID(nID)
+			IWorkspaceBase(eWorkspaceType type, int32 nID) : m_WorkspaceType(type), m_nID(nID)
 			{
 
 			}
@@ -100,10 +100,43 @@ namespace GisEngine
 				return IFeatureClassPtr(pFeatureClass);
 			}
 
-			virtual uint32 GetID() const
+			virtual int32 GetID() const
 			{
 				return m_nID;
 			}
+
+			virtual bool save(CommonLib::IWriteStream *pWriteStream) const
+			{
+				pWriteStream->write((uint32)GetWorkspaceType());
+				CommonLib::MemoryStream stream;
+				stream.write(m_sName);
+				stream.write(m_nID);
+				pWriteStream->write(&stream);
+				return true;
+			}
+			virtual bool load(CommonLib::IReadStream* pReadStream)
+			{
+				CommonLib::FxMemoryReadStream stream;
+				pReadStream->AttachStream(&stream, pReadStream->readInt32());
+				stream.read(m_sName);
+				stream.read(m_nID);
+				return true;
+			}
+		
+			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const
+			{
+				pXmlNode->AddPropertyInt32U(L"WksType", (uint32)GetWorkspaceType());
+				pXmlNode->AddPropertyString(L"Name", m_sName);
+				pXmlNode->AddPropertyInt32U(L"ID", m_nID);
+				return true;
+			}
+			virtual bool load(const GisCommon::IXMLNode* pXmlNode)
+			{
+				m_sName = pXmlNode->GetPropertyString(L"Name", m_sName);
+				m_nID = pXmlNode->GetPropertyInt32U(L"ID", m_nID);
+				return true;
+			}
+
 		protected:
 			void RebuildMap()
 			{
@@ -125,7 +158,7 @@ namespace GisEngine
 			CommonLib::CString m_sName;
 			GisCommon::IPropertySetPtr  m_ConnectProp;
 			mutable CommonLib::CSSection m_mutex;
-			uint32 m_nID;
+			int32 m_nID;
 		};
 
 
@@ -161,7 +194,7 @@ namespace GisEngine
 			static void AddWorkspace(IWorkspace* pWks);
 			static void RemoveWorkspace(eWorkspaceType WorkspaceType, const CommonLib::CString& sHash);
 			static void RemoveWorkspace(uint32 nID);
-			static uint32 GetIDWorkspace();
+			static int32 GetIDWorkspace();
 			static void SetLastID(uint32 nID);
 
 
@@ -169,7 +202,7 @@ namespace GisEngine
 			static bool LoadWks(CommonLib::IReadStream *pStream);
 
 			static bool SaveWks(GisCommon::IXMLNode *pXML);
-			static bool LoadWks(GisCommon::IXMLNode *pXML);
+			static bool LoadWks(const  GisCommon::IXMLNode *pXML);
 
 		private:
 		
@@ -177,7 +210,7 @@ namespace GisEngine
 			static TWksMap m_wksMap;
 			static TWksMapByID m_wksMapByID;
 			static CommonLib::CSSection m_SharedMutex;
-			static uint32 m_nWksID;
+			static int32 m_nWksID;
 		};
 
 	}

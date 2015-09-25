@@ -139,7 +139,7 @@ namespace GisEngine
 				pXmlNode->AddPropertyBool(L"DB", m_bDrawToBuffers);
 				return true;
 			}
-			bool load(GisCommon::IXMLNode* pXmlNode)
+			bool load(const GisCommon::IXMLNode* pXmlNode)
 			{
 				m_bScaleDependent = pXmlNode->GetPropertyBool(L"SD", m_bScaleDependent);
 				m_bDrawToBuffers = pXmlNode->GetPropertyBool(L"DB", m_bDrawToBuffers);

@@ -113,7 +113,7 @@ LRESULT CMainFrame::OnFileOpen(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
 {
 
 
-	CFileDialog fileDlg(TRUE,NULL,NULL,OFN_ALLOWMULTISELECT,_T(""));
+	CFileDialog fileDlg(TRUE, _T("Map"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("Map project (*.mapproj)\0*.mapproj\0Xml map project (*.xml)\0*.xml\0All Files (*.*)\0*.*\0"), m_hWnd);
 	if ( fileDlg.DoModal() != IDOK )
 		return 0;
 	
@@ -121,3 +121,13 @@ LRESULT CMainFrame::OnFileOpen(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
 	return 0;
 }
 
+LRESULT CMainFrame::OnFileSave(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	CFileDialog fileDlg(FALSE, _T("Map"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("Map project (*.mapproj)\0*.mapproj\0Xml map project (*.xml)\0*.xml\0All Files (*.*)\0*.*\0"), m_hWnd);
+	if ( fileDlg.DoModal() != IDOK )
+		return 0;
+
+
+	m_view.save(fileDlg.m_szFileName);
+	return 0;
+}

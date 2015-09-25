@@ -11,7 +11,7 @@ namespace GisEngine
 		{
 		public:
 			static IFeatureRendererPtr LoadRenderer(CommonLib::IReadStream *pSteam);
-			static IFeatureRendererPtr LoadRenderer(GisCommon::IXMLNode *pNode);
+			static IFeatureRendererPtr LoadRenderer(const  GisCommon::IXMLNode *pNode);
 		};
 	
 	}

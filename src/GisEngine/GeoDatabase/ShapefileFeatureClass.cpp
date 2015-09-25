@@ -227,7 +227,7 @@ namespace GisEngine
 		{
 			return true;
 		}
-		bool CShapefileFeatureClass::load(GisCommon::IXMLNode* pXmlNode)
+		bool CShapefileFeatureClass::load(const GisCommon::IXMLNode* pXmlNode)
 		{
 			return false;
 		}

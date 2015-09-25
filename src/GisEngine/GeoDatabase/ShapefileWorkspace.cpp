@@ -17,7 +17,7 @@ namespace GisEngine
 
 
 
-		CShapefileWorkspace::CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr, uint32 nID) : TBase(wtShapeFile, nID),
+		CShapefileWorkspace::CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr, int32 nID) : TBase(wtShapeFile, nID),
 			m_bLoad(false)
 		{
 			m_WorkspaceType = wtShapeFile;
@@ -35,7 +35,7 @@ namespace GisEngine
 			}
 			load();
 		}
-		CShapefileWorkspace::CShapefileWorkspace(const wchar_t *pszName, const wchar_t *pszPath, uint32 nID) : TBase(wtShapeFile, nID), 
+		CShapefileWorkspace::CShapefileWorkspace(const wchar_t *pszName, const wchar_t *pszPath, int32 nID) : TBase(wtShapeFile, nID), 
 			m_bLoad(false)
 		{
 			m_sName = pszName;
@@ -316,7 +316,7 @@ namespace GisEngine
 			pXmlNode->AddPropertyString("path", m_sPath);
 			return true;
 		}
-		bool CShapefileWorkspace::load(GisCommon::IXMLNode* pXmlNode)
+		bool CShapefileWorkspace::load(const GisCommon::IXMLNode* pXmlNode)
 		{
 			m_sName = pXmlNode->GetPropertyString("name", m_sName);
 			m_sPath = pXmlNode->GetPropertyString("path", m_sPath);
