@@ -123,13 +123,13 @@ LRESULT  CMapView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 }
 LRESULT CMapView::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
-	GisEngine::Display::IDisplayTransformationPtr m_pDisplayTransformation = m_pMapDrawer->GetCalcTransformation();
-	if(!m_pDisplayTransformation.get())
+	GisEngine::Display::IDisplayTransformationPtr pDisplayTransformation = m_pMapDrawer->GetCalcTransformation();
+	if(!pDisplayTransformation.get())
 		return 0;
 	double zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
 	double mouseWheel = 0.4;
 
-	GisEngine::Display::GRect devRect = m_pDisplayTransformation->GetDeviceRect();
+	GisEngine::Display::GRect devRect = pDisplayTransformation->GetDeviceRect();
 	CPoint pt;
 	GetCursorPos(&pt);
 	ScreenToClient(&pt);
@@ -138,16 +138,16 @@ LRESULT CMapView::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, 
 		return 0;
 
 	CommonLib::GisXYPoint location;
-	m_pDisplayTransformation->DeviceToMap(&gpt, &location, 1);
+	pDisplayTransformation->DeviceToMap(&gpt, &location, 1);
 	double mult = 0;
 	if(zDelta < 0)
 		mult = 1 - mouseWheel / 2.;
 	else
 		mult = 1. + mouseWheel / 2.;
-	double newScale = m_pDisplayTransformation->GetScale() * mult;
+	double newScale = pDisplayTransformation->GetScale() * mult;
 
-	double scale = m_pDisplayTransformation->GetScale();
-	GisEngine::GisBoundingBox curBox = m_pDisplayTransformation->GetFittedBounds();
+	double scale = pDisplayTransformation->GetScale();
+	GisEngine::GisBoundingBox curBox = pDisplayTransformation->GetFittedBounds();
 	GisEngine::GisBoundingBox bigBox = m_pMap->GetFullExtent()->GetBoundingBox();
 
 
@@ -155,7 +155,7 @@ LRESULT CMapView::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, 
 	double fullScaleY = scale / (curBox.yMax - curBox.yMin) * (bigBox.yMax - bigBox.yMin);
 	double fullScale = fullScaleX > fullScaleY ? fullScaleX : fullScaleY;
 
-	if(m_pDisplayTransformation->GetUnits() == GisEngine::GisCommon::UnitsUnknown)
+	if(pDisplayTransformation->GetUnits() == GisEngine::GisCommon::UnitsUnknown)
 	{
 		//if(newScale < 1.)
 		//  newScale = 1.;
@@ -170,14 +170,14 @@ LRESULT CMapView::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, 
 		newScale = 7 * fullScale;
 	if((scale == 100. && newScale == 100.) || (scale == fullScale && newScale == fullScale))
 		return 0;
-	mult = newScale / m_pDisplayTransformation->GetScale();
+	mult = newScale / pDisplayTransformation->GetScale();
 
-	CommonLib::GisXYPoint mapPos = m_pDisplayTransformation->GetMapPos();
+	CommonLib::GisXYPoint mapPos = pDisplayTransformation->GetMapPos();
 	CommonLib::GisXYPoint newPos;
 	newPos.x = location.x + (mapPos.x - location.x) * mult;
 	newPos.y = location.y + (mapPos.y - location.y) * mult;
 
-	m_pDisplayTransformation->SetMapPos(newPos, newScale);
+	pDisplayTransformation->SetMapPos(newPos, newScale);
 	redraw();
 	return 0;
 }
@@ -207,7 +207,7 @@ LRESULT CMapView::OnRedrawMap(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl
 LRESULT CMapView::OnFullZoom(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
 	//m_pDisplayTransformation->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
-	m_pMapDrawer->GetTransformation()->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
+	m_pMapDrawer->GetCalcTransformation()->SetMapVisibleRect(m_pMap->GetFullExtent()->GetBoundingBox());
 	redraw();
 	return 0;
 }
@@ -361,7 +361,7 @@ void CMapView::AddFeatureClass(GisEngine::GeoDatabase::IFeatureClass *pFC)
 
 LRESULT CMapView::OnOpenShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	CFileDialog fileDlg(TRUE,NULL,NULL,OFN_ALLOWMULTISELECT,_T(""));
+	CFileDialog fileDlg(TRUE, _T("shp"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("ESRI shape Files (*.shp)\0*.shp\0All Files (*.*)\0*.*\0"), m_hWnd);
 	if ( fileDlg.DoModal() != IDOK )
 		return 0;
 	AddShapeFile(fileDlg.m_szFileName);
@@ -370,7 +370,7 @@ LRESULT CMapView::OnOpenShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWn
 }
 LRESULT CMapView::OnSQLiteShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	CFileDialog fileDlg(TRUE,NULL,NULL,OFN_ALLOWMULTISELECT,_T(""));
+	CFileDialog fileDlg(TRUE, _T("sqlite"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("Sqlite DB (*.sqlite)\0*.sqlite\0All Files (*.*)\0*.*\0"), m_hWnd);
 	if ( fileDlg.DoModal() != IDOK )
 		return 0;
 	AddSQLite(fileDlg.m_szFileName);

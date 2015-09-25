@@ -488,12 +488,14 @@
     <ClInclude Include="TableBase.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="WorkspaceBase.h" />
+    <ClInclude Include="LoaderWorkspase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Feature.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Fields.cpp" />
     <ClCompile Include="FieldSet.cpp" />
+    <ClCompile Include="GeoDatabase.cpp" />
     <ClCompile Include="GeoDatabaseUtils.cpp" />
     <ClCompile Include="GeometryDef.cpp" />
     <ClCompile Include="OIDSet.cpp" />
@@ -530,6 +532,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="WorkspaceBase.cpp" />
+    <ClCompile Include="LoaderWorkspase.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

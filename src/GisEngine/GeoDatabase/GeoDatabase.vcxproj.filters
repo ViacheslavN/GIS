@@ -132,6 +132,9 @@
     <ClInclude Include="SQLiteResultSet.h">
       <Filter>GeoDatabaseSQlite\SQLiteUtils</Filter>
     </ClInclude>
+    <ClInclude Include="LoaderWorkspase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -202,6 +205,12 @@
     </ClCompile>
     <ClCompile Include="SQLiteUtils.cpp">
       <Filter>GeoDatabaseSQlite\SQLiteUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="GeoDatabase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoaderWorkspase.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

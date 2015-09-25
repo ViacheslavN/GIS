@@ -16,8 +16,8 @@ namespace GisEngine
 
 			//typedef Common::CSimpleEnum<IDataset, IDatasetContainer> TDatasetContainer;
 			typedef IWorkspaceBase<IWorkspace> TBase;
-			CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr);
-			CShapefileWorkspace(const wchar_t *pszName, const wchar_t *pszPath);
+			CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr, uint32 nID);
+			CShapefileWorkspace(const wchar_t *pszName, const wchar_t *pszPath, uint32 nID);
 
 			public:
 
@@ -56,7 +56,7 @@ namespace GisEngine
 				virtual uint32 GetErrorCode() const {return 0;}
 				virtual void GetErrorText( CommonLib::CString& sStr, uint32 nCode) {}
 				virtual ITransactionPtr startTransaction();
-
+				virtual const CommonLib::CString& GetHash() const {return m_sPath;};
  			private:
 				void load();
 				void clear();

@@ -17,10 +17,10 @@ namespace GisEngine
 
 
 
-		CShapefileWorkspace::CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr) : TBase(wiShapeFile),
+		CShapefileWorkspace::CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr, uint32 nID) : TBase(wtShapeFile, nID),
 			m_bLoad(false)
 		{
-			m_WorkspaceType = wiShapeFile;
+			m_WorkspaceType = wtShapeFile;
 			m_ConnectProp = protSetPtr;
 			const CommonLib::CVariant *pVarName = m_ConnectProp->GetProperty(c_PropertyName);
 			const CommonLib::CVariant *pVarPath = m_ConnectProp->GetProperty(c_PropertyPath);
@@ -35,7 +35,7 @@ namespace GisEngine
 			}
 			load();
 		}
-		CShapefileWorkspace::CShapefileWorkspace(const wchar_t *pszName, const wchar_t *pszPath) : TBase(wiShapeFile), 
+		CShapefileWorkspace::CShapefileWorkspace(const wchar_t *pszName, const wchar_t *pszPath, uint32 nID) : TBase(wtShapeFile, nID), 
 			m_bLoad(false)
 		{
 			m_sName = pszName;
@@ -258,12 +258,12 @@ namespace GisEngine
 		IWorkspacePtr CShapefileWorkspace::Open(const wchar_t *pszName, const wchar_t *pszPath)
 		{
 		
-			IWorkspacePtr pWks = CWorkspaceHolder::GetWorkspace(wiShapeFile, pszPath);
+			IWorkspacePtr pWks = CWorkspaceHolder::GetWorkspace(wtShapeFile, pszPath);
 			if(pWks.get())
 				return pWks;
 
-			CShapefileWorkspace* pShapeWks = new CShapefileWorkspace(pszName, pszPath);
-			CWorkspaceHolder::AddWorkspace((IWorkspace*)pShapeWks, pszPath);
+			CShapefileWorkspace* pShapeWks = new CShapefileWorkspace(pszName, pszPath, CWorkspaceHolder::GetIDWorkspace());
+			CWorkspaceHolder::AddWorkspace((IWorkspace*)pShapeWks);
 			return IWorkspacePtr((IWorkspace*)pShapeWks);
 		}
 		IWorkspacePtr CShapefileWorkspace::Open(CommonLib::IReadStream* pSteram)

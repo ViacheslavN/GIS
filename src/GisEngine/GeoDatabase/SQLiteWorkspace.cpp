@@ -18,9 +18,9 @@ namespace GisEngine
 	{
  
 		
-		CSQLiteWorkspace::CSQLiteWorkspace() : TBase (wiSqlLite)
+		CSQLiteWorkspace::CSQLiteWorkspace(uint32 nID) : TBase (wtSqlLite, nID)
 		{
-			m_WorkspaceType = wiSqlLite;
+			m_WorkspaceType = wtSqlLite;
 		//	sqlite3_initialize();
 		}
 		CSQLiteWorkspace::~CSQLiteWorkspace()
@@ -28,10 +28,11 @@ namespace GisEngine
 			close();
 		//	sqlite3_shutdown();
 		}
-		CSQLiteWorkspace::CSQLiteWorkspace(const wchar_t *pszName, const wchar_t *pszPath) : TBase (wiSqlLite),
+		CSQLiteWorkspace::CSQLiteWorkspace(const wchar_t *pszName, const wchar_t *pszPath, uint32 nID) : TBase (wtSqlLite, nID),
 			m_sPath(pszPath)
 		{
 			m_sName = pszName;
+			m_sHash = m_sPath + m_sName;
 		}
 		bool CSQLiteWorkspace::IsConnect() const
 		{
@@ -65,7 +66,7 @@ namespace GisEngine
 				//TO DO Error
 				return IWorkspacePtr();
 			}
-			IWorkspacePtr pWks = CWorkspaceHolder::GetWorkspace(wiSqlLite, sFullName);
+			IWorkspacePtr pWks = CWorkspaceHolder::GetWorkspace(wtSqlLite, sFullName);
 			if(pWks.get())
 			{
 				//TO DO Error
@@ -78,14 +79,14 @@ namespace GisEngine
 				return IWorkspacePtr();
 			}
 
-			CSQLiteWorkspace *pSQLiteWks = new  CSQLiteWorkspace(pszName, pszPath);
+			CSQLiteWorkspace *pSQLiteWks = new  CSQLiteWorkspace(pszName, pszPath, CWorkspaceHolder::GetIDWorkspace());
 			if(!pSQLiteWks->create(sFullName))
 			{
 				//TO DO Error
 				delete pSQLiteWks;
 				return IWorkspacePtr();
 			}
-			CWorkspaceHolder::AddWorkspace((IWorkspace*)pSQLiteWks, pszPath);
+			CWorkspaceHolder::AddWorkspace((IWorkspace*)pSQLiteWks);
 			return IWorkspacePtr((IWorkspace*)pSQLiteWks);
 		}
 
@@ -108,14 +109,14 @@ namespace GisEngine
 				//TO DO Error
 				return IWorkspacePtr();
 			}
-			IWorkspacePtr pWks = CWorkspaceHolder::GetWorkspace(wiSqlLite, sFullName);
+			IWorkspacePtr pWks = CWorkspaceHolder::GetWorkspace(wtSqlLite, sFullName);
 			if(pWks.get())
 			{
 				//TO DO Error
 				return pWks;
 			}
 
-			CSQLiteWorkspace *pSQLiteWks = new  CSQLiteWorkspace(pszName, pszPath);
+			CSQLiteWorkspace *pSQLiteWks = new  CSQLiteWorkspace(pszName, pszPath, CWorkspaceHolder::GetIDWorkspace());
 			if(!pSQLiteWks->load(sFullName, bWrite, bOpenAll))
 			{
 				//TO DO Error
@@ -123,7 +124,7 @@ namespace GisEngine
 				return IWorkspacePtr();
 			}
 
-			CWorkspaceHolder::AddWorkspace((IWorkspace*)pSQLiteWks, pszPath);
+			CWorkspaceHolder::AddWorkspace((IWorkspace*)pSQLiteWks);
 			return IWorkspacePtr((IWorkspace*)pSQLiteWks);
 		}
 		IWorkspacePtr CSQLiteWorkspace::Open(CommonLib::IReadStream* pSteram, bool bOpenAll)

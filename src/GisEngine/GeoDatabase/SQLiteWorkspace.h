@@ -16,12 +16,12 @@ namespace GisEngine
 		}
 		class CSQLiteWorkspace : public IWorkspaceBase<IWorkspace>
 		{
-		public:
+	
 			typedef IWorkspaceBase<IWorkspace> TBase;
-			CSQLiteWorkspace();
-			CSQLiteWorkspace(const wchar_t *pszName, const wchar_t *pszPath);
+			CSQLiteWorkspace(uint32 nID);
+			CSQLiteWorkspace(const wchar_t *pszName, const wchar_t *pszPath, uint32 nID);
 			~CSQLiteWorkspace();
-
+	public:
 			static IWorkspacePtr Create(const wchar_t *pszName, const wchar_t *pszPath);
 			static IWorkspacePtr Open(const wchar_t *pszName, const wchar_t *pszPath, bool bWrite, bool bOpenAll = false);
 			static IWorkspacePtr Open(CommonLib::IReadStream* pSteram, bool bOpenAll = true);
@@ -60,10 +60,11 @@ namespace GisEngine
 			bool load(const CommonLib::CString& sFullName, bool bWrite, bool bOpenAll = true);
 			void close();
 			bool IsConnect() const;
-			
+			virtual const CommonLib::CString& GetHash() const{return m_sHash;};
 		private:
   
 			CommonLib::CString m_sPath;
+			CommonLib::CString m_sHash;
 			std::auto_ptr<SQLiteUtils::CSQLiteDB> m_pDB;
 		};
 	}

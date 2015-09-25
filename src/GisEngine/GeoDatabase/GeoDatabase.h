@@ -42,14 +42,13 @@ namespace GisEngine
 
 		enum eWorkspaceType
 		{
-			wiUndefined = 0,
-			wiShapeFile,
-			wiEmbDB,
-			wiSqlLite,
-			wiSpatialLite,
-			wiOracle,
-			wiMSSQL,
-			wiPostGIS
+			wtUndefined = 0,
+			wtShapeFile,
+			wtEmbDB,
+			wtSqlLite,
+			wtOracle,
+			wtMSSQL,
+			wtPostGIS
 
 		};
 		enum eDatasetType
@@ -124,6 +123,9 @@ namespace GisEngine
 		{
 				IWorkspace(){}
 				virtual ~IWorkspace(){}
+
+				virtual uint32 GetID() const = 0;
+				virtual const CommonLib::CString& GetHash() const = 0;
 				virtual const CommonLib::CString& GetWorkspaceName() const = 0; 
 				virtual GisCommon::IPropertySetPtr GetConnectionProperties() const = 0; 
 				virtual eWorkspaceType GetWorkspaceType() const = 0;
@@ -150,7 +152,15 @@ namespace GisEngine
 				virtual void GetErrorText( CommonLib::CString& sStr, uint32 nCode) = 0;
 
 				virtual ITransactionPtr startTransaction() = 0;
+			
 
+				static IWorkspacePtr GetWorkspaceByID(uint32 nID);
+
+				static bool SaveWks(CommonLib::IWriteStream *pStream);
+				static bool LoadWks(CommonLib::IReadStream *pStream);
+
+				static bool SaveWks(GisCommon::IXMLNode *pXML);
+				static bool LoadWks(GisCommon::IXMLNode *pXML);
 		};
 
 

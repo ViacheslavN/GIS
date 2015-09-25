@@ -11,7 +11,7 @@ namespace GisEngine
 		{
 		public:
 
-			IWorkspaceBase(eWorkspaceType type) : m_WorkspaceType(type)
+			IWorkspaceBase(eWorkspaceType type, uint32 nID) : m_WorkspaceType(type), m_nID(nID)
 			{
 
 			}
@@ -99,6 +99,11 @@ namespace GisEngine
 				IFeatureClass *pFeatureClass  = (IFeatureClass*)pDataset.get();
 				return IFeatureClassPtr(pFeatureClass);
 			}
+
+			virtual uint32 GetID() const
+			{
+				return m_nID;
+			}
 		protected:
 			void RebuildMap()
 			{
@@ -120,6 +125,7 @@ namespace GisEngine
 			CommonLib::CString m_sName;
 			GisCommon::IPropertySetPtr  m_ConnectProp;
 			mutable CommonLib::CSSection m_mutex;
+			uint32 m_nID;
 		};
 
 
@@ -146,13 +152,32 @@ namespace GisEngine
 				CommonLib::CString	m_sUID;
 			};
 			typedef std::map<SWksInfo, IWorkspacePtr> TWksMap;
+			typedef std::map<uint32, IWorkspacePtr> TWksMapByID;
+	 
+
+
+			static IWorkspacePtr GetWorkspace(eWorkspaceType WorkspaceType, const CommonLib::CString& sHash);
+			static IWorkspacePtr GetWorkspace(uint32 nID);
+			static void AddWorkspace(IWorkspace* pWks);
+			static void RemoveWorkspace(eWorkspaceType WorkspaceType, const CommonLib::CString& sHash);
+			static void RemoveWorkspace(uint32 nID);
+			static uint32 GetIDWorkspace();
+			static void SetLastID(uint32 nID);
+
+
+			static bool SaveWks(CommonLib::IWriteStream *pStream);
+			static bool LoadWks(CommonLib::IReadStream *pStream);
+
+			static bool SaveWks(GisCommon::IXMLNode *pXML);
+			static bool LoadWks(GisCommon::IXMLNode *pXML);
+
+		private:
+		
 
 			static TWksMap m_wksMap;
+			static TWksMapByID m_wksMapByID;
 			static CommonLib::CSSection m_SharedMutex;
-
-			static IWorkspacePtr GetWorkspace(eWorkspaceType WorkspaceType, const CommonLib::CString& sID);
-			static void AddWorkspace(IWorkspace* pWks, const CommonLib::CString& sID);
-			static void RemoveWorkspace(eWorkspaceType WorkspaceType, const CommonLib::CString& sID);
+			static uint32 m_nWksID;
 		};
 
 	}

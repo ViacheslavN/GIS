@@ -9,7 +9,7 @@
       <UniqueIdentifier>{929a4df9-e4c9-4b5c-89fb-98a59bd862ec}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="Source Files\Resource Files">
       <UniqueIdentifier>{a21ff334-3c58-41dc-9a40-e86694f4af30}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;jpg;jpeg;jpe;manifest</Extensions>
     </Filter>
@@ -50,15 +50,15 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TestMapDraw.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>Source Files\Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\toolbar.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Source Files\Resource Files</Filter>
     </None>
     <None Include="res\TestMapDraw.ico">
-      <Filter>Resource Files</Filter>
+      <Filter>Source Files\Resource Files</Filter>
     </None>
   </ItemGroup>
 </Project>

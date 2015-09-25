@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "LoaderLayers.h"
+#include "RenderersLoader.h"
 #include "FeatureRenderer.h"
 
 namespace GisEngine
@@ -10,7 +10,7 @@ namespace GisEngine
 		template<class TSerealizer>
 		IFeatureRendererPtr LoadRendererT(TSerealizer *pSerealizer, uint32 nLayerID);
 
-		IFeatureRendererPtr LoadLayer(CommonLib::IReadStream *pStream)
+		IFeatureRendererPtr LoaderRenderers::LoadRenderer(CommonLib::IReadStream *pStream)
 		{
 			//uint32 nRendererID = UndefineFeatureRendererID;
 			uint32 nRendererID = pStream->readIntu32();
@@ -20,7 +20,7 @@ namespace GisEngine
 			return LoadRendererT<CommonLib::IReadStream>(pStream, nRendererID);
 		}
 
-		IFeatureRendererPtr LoadLayer(GisCommon::IXMLNode *pNode)
+		IFeatureRendererPtr LoaderRenderers::LoadRenderer(GisCommon::IXMLNode *pNode)
 		{
 
 			uint32 nRendererID = pNode->GetPropertyInt32U(L"RenderID", UndefineFeatureRendererID);
