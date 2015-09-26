@@ -93,7 +93,7 @@ namespace GisEngine
 			for (; it != end; ++it)
 			{
 				IWorkspacePtr pWks = it->second;
-				pWks->save(pStream);
+				pWks->save(&stream);
 			}
 			pStream->write(&stream);
 			return true;
@@ -103,7 +103,7 @@ namespace GisEngine
 			CommonLib::CSSection::scoped_lock lock (m_SharedMutex); 
 			CommonLib::FxMemoryReadStream stream;
 			pStream->AttachStream(&stream, pStream->readIntu32());
-			m_nWksID = stream.readIntu32();
+			m_nWksID = stream.readInt32();
 			uint32 nSize = stream.readIntu32();
 			for(uint32 i = 0; i < nSize; ++i)
 			{

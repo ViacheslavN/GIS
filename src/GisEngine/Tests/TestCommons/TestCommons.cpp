@@ -24,9 +24,14 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 
 	
-	TestSQLiteWks();
+	//TestSQLiteWks();
  
-	//TestXML();
+	TestXML();
+	/*for(int i =0; i < 100000000; ++i)
+	{
+		CommonLib::CString s1 = L"vfdgggf";
+		CommonLib::CString s2 = s1;
+	}*/
 	return 0;
 }
 

@@ -1,5 +1,5 @@
-#ifndef _LIB_COMMON_LIBRARY_PORTABLE_STR_BUFFER_H_
-#define _LIB_COMMON_LIBRARY_PORTABLE_STR_BUFFER_H_
+#ifndef _LIB_COMMON_LIBRARY_STR_BUFFER_H_
+#define _LIB_COMMON_LIBRARY_STR_BUFFER_H_
 
 
 #ifdef _WIN32
@@ -21,60 +21,25 @@
 namespace CommonLib
 {
 
-//typedef wchar_t* (*newWCharBufferFunction)(alloc_t* customAlloc, size_t _size);
-//typedef void (*deleteWCharBufferFunction)(alloc_t* customAlloc, wchar_t* _buffer);
-//typedef char* (*newCharBufferFunction)(alloc_t* customAlloc, size_t _size);
-//typedef void (*deleteCharBufferFunction)(alloc_t* customAlloc, char* _buffer);
-//typedef void (*deleteStrBufferFunction)(alloc_t* customAlloc, str_buffer* _buffer);
-//
-//wchar_t* newWCharBuffer(alloc_t* , size_t _size);
-//void deleteWCharBuffer(alloc_t* , wchar_t* _buffer);
-//char* newCharBuffer(alloc_t* , size_t _size);
-//void deleteCharBuffer(alloc_t* , char* _buffer);
-//void deleteStrBuffer(alloc_t* , str_buffer* _buffer);
-//
-//#if _MSC_VER >= 1300
-//
-//wchar_t* newCustomWCharBuffer(alloc_t* customAlloc, size_t _size);
-//void deleteCustomWCharBuffer(alloc_t* customAlloc, wchar_t* _buffer);
-//char* newCustomCharBuffer(alloc_t* customAlloc, size_t _size);
-//void deleteCustomCharBuffer(alloc_t* customAlloc, char* _buffer);
-//void deleteCustomStrBuffer(alloc_t* customAlloc, str_buffer* _buffer);
-//
-//#endif
-//
-//typedef struct
-//{
-//  newWCharBufferFunction pNewWCharBuffer_;
-//  deleteWCharBufferFunction pDeleteWCharBuffer_;
-//  newCharBufferFunction pNewCharBuffer_;
-//  deleteCharBufferFunction pDeleteCharBuffer_;
-//  deleteStrBufferFunction pDeleteStrBuffer_;
-//}str_vtab;
 
-#pragma init_seg(lib)
-//str_vtab defaultStrVTab = {newWCharBuffer, deleteWCharBuffer, newCharBuffer, deleteCharBuffer, deleteStrBuffer};
-//#if _MSC_VER >= 1300
-//str_vtab customStrVTab = {newCustomWCharBuffer, deleteCustomWCharBuffer, newCustomCharBuffer, deleteCustomCharBuffer, deleteCustomStrBuffer};
-alloc_t* g_customAlloc = NULL;
-//#endif
+
 
 class string_buffer
 {
   public:
-    static string_buffer* make(alloc_t* customAlloc);
-    static string_buffer* make(alloc_t* customAlloc, int count);
-    static string_buffer* make(alloc_t* customAlloc, const char* _str, int count = -1);
-    static string_buffer* make(alloc_t* customAlloc, const wchar_t* _str, int count = -1);
-    static string_buffer* make(alloc_t* customAlloc, const string_buffer& _str);
+    static string_buffer* make(alloc_t* pAlloc);
+    static string_buffer* make(alloc_t* pAlloc, int count);
+    static string_buffer* make(alloc_t* pAlloc, const char* _str, int count = -1);
+    static string_buffer* make(alloc_t* pAlloc, const wchar_t* _str, int count = -1);
+    static string_buffer* make(alloc_t* pAlloc, const string_buffer& _str);
 
   private:
     // Constructors
-    string_buffer(alloc_t* customAlloc);//, str_vtab* _vtab);
-    string_buffer(alloc_t* customAlloc, int count);//, str_vtab* _vtab);
-    string_buffer(alloc_t* customAlloc, const char* _str, int count);//, str_vtab* _vtab);
-    string_buffer(alloc_t* customAlloc, const wchar_t* _str, int count);//, str_vtab* _vtab);
-    string_buffer(alloc_t* customAlloc, const string_buffer& _str);//, str_vtab* _vtab);
+    string_buffer(alloc_t* pAlloc);
+    string_buffer(alloc_t* pAlloc, int count);
+    string_buffer(alloc_t* pAlloc, const char* _str, int count);
+    string_buffer(alloc_t* pAlloc, const wchar_t* _str, int count);
+    string_buffer(alloc_t* pAlloc, const string_buffer& _str);
 
   public:
     void safeAddRef();
@@ -101,10 +66,8 @@ class string_buffer
     bool     isBSTRActual();
 #endif
   private:
-    // Destructors
     ~string_buffer();
-//    friend void deleteStrBuffer(alloc_t* customAlloc, str_buffer* _buffer);
-//    friend void deleteCustomStrBuffer(alloc_t* customAlloc, str_buffer* _buffer);
+
     wchar_t* NewWCharBuffer(size_t _size);
     void     DeleteWCharBuffer(wchar_t* _buffer);
     char*    NewCharBuffer(size_t _size);
@@ -126,80 +89,85 @@ class string_buffer
 
     //mutable str_vtab* vtab_;
 #ifdef _WIN32_WCE
-    mutable long refCount_;
+    mutable long m_nRefCount;
 #elif defined(__IPHONE_3_1)
-		mutable volatile int32_t refCount_;
+		mutable volatile int32_t m_nRefCount;
 #else
-    mutable long volatile refCount_;
+    mutable long volatile m_nRefCount;
 #endif
-    alloc_t* customAlloc_;
+    alloc_t* m_pAlloc;
+	simple_alloc_t m_alloc;
 };
 
-string_buffer* string_buffer::make(alloc_t* customAlloc)
+string_buffer* string_buffer::make(alloc_t* pAlloc)
 {
-  if(customAlloc)
-    return new(customAlloc->alloc(sizeof(string_buffer))) string_buffer(customAlloc);//&customStrVTab);
-  return new string_buffer(customAlloc);//&defaultStrVTab);
+	if(pAlloc)
+	  return new(pAlloc->alloc(sizeof(string_buffer))) string_buffer(pAlloc);
+	return new string_buffer(pAlloc);
 }
 
-string_buffer* string_buffer::make(alloc_t* customAlloc, int count)
+string_buffer* string_buffer::make(alloc_t* pAlloc, int count)
 {
-  if(customAlloc)
-    return new(customAlloc->alloc(sizeof(string_buffer))) string_buffer(customAlloc, count);//, &customStrVTab);
-  return new string_buffer(customAlloc, count);//, &defaultStrVTab);
+	if(pAlloc)
+		return new(pAlloc->alloc(sizeof(string_buffer))) string_buffer(pAlloc, count);
+	return new string_buffer(pAlloc, count);
 }
 
-string_buffer* string_buffer::make(alloc_t* customAlloc, const char* _str, int count)
+string_buffer* string_buffer::make(alloc_t* pAlloc, const char* _str, int count)
 {
-  if(customAlloc)
-    return new(customAlloc->alloc(sizeof(string_buffer))) string_buffer(customAlloc, _str, count);//, &customStrVTab);
-  return new string_buffer(customAlloc, _str, count);//, &defaultStrVTab);
+	if(pAlloc)
+		return new(pAlloc->alloc(sizeof(string_buffer))) string_buffer(pAlloc, _str, count);
+	return new string_buffer(pAlloc, _str, count);
 }
 
-string_buffer* string_buffer::make(alloc_t* customAlloc, const wchar_t* _str, int count)
+string_buffer* string_buffer::make(alloc_t* pAlloc, const wchar_t* _str, int count)
 {
-  if(customAlloc)
-    return new(customAlloc->alloc(sizeof(string_buffer))) string_buffer(customAlloc, _str, count);//, &customStrVTab);
-  return new string_buffer(customAlloc, _str, count);//, &defaultStrVTab);
+	if(pAlloc)
+		 return new(pAlloc->alloc(sizeof(string_buffer))) string_buffer(pAlloc, _str, count);
+	return new string_buffer(pAlloc, _str, count);
 }
 
-string_buffer* string_buffer::make(alloc_t* customAlloc, const string_buffer& _str)
+string_buffer* string_buffer::make(alloc_t* pAlloc, const string_buffer& _str)
 {
-  if(customAlloc)
-    return new(customAlloc->alloc(sizeof(string_buffer))) string_buffer(customAlloc, _str);//, &customStrVTab);
-  return new string_buffer(customAlloc, _str);//, &defaultStrVTab);
+	if(pAlloc)
+		return new(pAlloc->alloc(sizeof(string_buffer))) string_buffer(pAlloc, _str);
+	return new string_buffer(pAlloc, _str);
 }
 
-inline string_buffer::string_buffer(alloc_t* customAlloc)//, str_vtab* _vtab)
+inline string_buffer::string_buffer(alloc_t* pAlloc)
   : m_pBuffer(NULL),
     m_nCapacity(0),
     m_pCharBuffer(NULL),
     m_bIsCharBufferActual(false),
-    refCount_(1),
+    m_nRefCount(1),
     m_bIsShareable(true),
 #ifdef _WIN32
     m_bstr(NULL),
     m_bIsBSTRActual(false),
 #endif
     //vtab_(_vtab),
-    customAlloc_(customAlloc)
+    m_pAlloc(pAlloc)
 {
+	 if(!m_pAlloc)
+		 m_pAlloc = &m_alloc;
 }
 
-inline string_buffer::string_buffer(alloc_t* customAlloc, int count)//, str_vtab* _vtab)
+inline string_buffer::string_buffer(alloc_t* pAlloc, int count)//, str_vtab* _vtab)
   : m_pBuffer(NULL),
     m_nCapacity(0),
     m_pCharBuffer(NULL),
     m_bIsCharBufferActual(false),
-    refCount_(1),
+    m_nRefCount(1),
     m_bIsShareable(true),
 #ifdef _WIN32
     m_bstr(NULL),
     m_bIsBSTRActual(false),
 #endif
     //vtab_(_vtab),
-    customAlloc_(customAlloc)
+    m_pAlloc(pAlloc)
 {
+	if(!m_pAlloc)
+		m_pAlloc = &m_alloc;
   if(count > 0)
   {
     reserve(count);
@@ -207,20 +175,22 @@ inline string_buffer::string_buffer(alloc_t* customAlloc, int count)//, str_vtab
   }
 }
 
-inline string_buffer::string_buffer(alloc_t* customAlloc, const char* _str, int count)//, str_vtab* _vtab)
+inline string_buffer::string_buffer(alloc_t* pAlloc, const char* _str, int count)//, str_vtab* _vtab)
   : m_pBuffer(NULL),
     m_nCapacity(0),
     m_pCharBuffer(NULL),
     m_bIsCharBufferActual(false),
-    refCount_(1),
+    m_nRefCount(1),
     m_bIsShareable(true),
 #ifdef _WIN32
     m_bstr(NULL),
     m_bIsBSTRActual(false),
 #endif
 //    vtab_(_vtab),
-    customAlloc_(customAlloc)
+    m_pAlloc(pAlloc)
 {
+	if(!m_pAlloc)
+		m_pAlloc = &m_alloc;
 #if defined(__IPHONE_3_1) || defined(ANDROID)
   if(_str != NULL && count != 0)
   {
@@ -259,56 +229,54 @@ inline string_buffer::string_buffer(alloc_t* customAlloc, const char* _str, int 
 #endif //_WIN32
 }
 
-inline string_buffer::string_buffer(alloc_t* customAlloc, const wchar_t* _str, int count)//, str_vtab* _vtab)
+inline string_buffer::string_buffer(alloc_t* pAlloc, const wchar_t* _str, int count)//, str_vtab* _vtab)
   : m_pBuffer(NULL),
     m_nCapacity(0),
     m_pCharBuffer(NULL),
     m_bIsCharBufferActual(false),
-    refCount_(1),
+    m_nRefCount(1),
     m_bIsShareable(true),
 #ifdef _WIN32
     m_bstr(NULL),
     m_bIsBSTRActual(false),
 #endif
 //    vtab_(_vtab),
-    customAlloc_(customAlloc)
+    m_pAlloc(pAlloc)
 {
+	if(!m_pAlloc)
+		m_pAlloc = &m_alloc;
   if(_str != NULL && count != 0)
   {
     size_t len = wcslen(_str);
     if(count > 0 && count < (int)len)
       len = (size_t)count;
-    //buffer_ = (*vtab_->pNewWCharBuffer_)(len + 1);
     reserve(len);
     memcpy(m_pBuffer, _str, len * sizeof(wchar_t));
     m_pBuffer[len] = 0;
-    //capacity_ = len;
   }
 }
 
-inline string_buffer::string_buffer(alloc_t* customAlloc, const string_buffer& _str)//, str_vtab* _vtab)
+inline string_buffer::string_buffer(alloc_t* pAlloc, const string_buffer& _str)
   : m_pBuffer(NULL),
     m_nCapacity(0),
     m_pCharBuffer(NULL),
     m_bIsCharBufferActual(false),
-    refCount_(1),
+    m_nRefCount(1),
     m_bIsShareable(true),
 #ifdef _WIN32
     m_bstr(NULL),
     m_bIsBSTRActual(false),
 #endif
-//    vtab_(_vtab),
-    customAlloc_(customAlloc)
+    m_pAlloc(pAlloc)
 {
+	if(!m_pAlloc)
+		m_pAlloc = &m_alloc;
   if(_str.m_pBuffer != NULL)
   {
     size_t len = wcslen(_str.m_pBuffer);
-    //buffer_ = (*vtab_->pNewWCharBuffer_)(len + 1);
     reserve(len);
-    //wcscpy(buffer_, _str.buffer_);
     memcpy(m_pBuffer, _str.m_pBuffer, len * sizeof(wchar_t));
     m_pBuffer[len] = 0;
-    //capacity_ = len;
   }
 }
 
@@ -318,12 +286,12 @@ inline void string_buffer::safeAddRef()
     return;
 
 #ifdef _WIN32
-  ::InterlockedIncrement(&refCount_);
+  ::InterlockedIncrement(&m_nRefCount);
 #elif defined(__IPHONE_3_1)
-	OSAtomicIncrement32(&refCount_);
+	OSAtomicIncrement32(&m_nRefCount);
 #else
 	/*assert(!"Implement it!"); */
-  refCount_++;
+  m_nRefCount++;
 #endif
 }
 
@@ -333,14 +301,14 @@ inline void string_buffer::safeRelease()
     return;
 
 #ifdef _WIN32
-  if(::InterlockedDecrement(&refCount_) == 0)
+  if(::InterlockedDecrement(&m_nRefCount) == 0)
 #elif defined(__IPHONE_3_1)
-	OSAtomicDecrement32(&refCount_); // return incorrect value
-	if (0 == refCount_) // this is more safety
+	OSAtomicDecrement32(&m_nRefCount); // return incorrect value
+	if (0 == m_nRefCount) // this is more safety
 #else
- /* assert(!"Implement it!");*/ if (0 == (--refCount_))
+ /* assert(!"Implement it!");*/ if (0 == (--m_nRefCount))
 #endif
-	  destroy();//(*vtab_->pDeleteStrBuffer_)(this);
+	  destroy();
 }
 
 inline bool string_buffer::isEmpty() const
@@ -366,7 +334,7 @@ inline size_t string_buffer::capacity() const
 
 inline bool string_buffer::isExclusive() const
 {
-  return refCount_ == 1;
+  return m_nRefCount == 1;
 }
 
 inline bool string_buffer::isShareable() const
@@ -383,7 +351,7 @@ inline const char* string_buffer::charBegin()
   size_t len = wcslen(m_pBuffer);
   
   if(m_pCharBuffer != NULL)
-    DeleteCharBuffer(m_pCharBuffer);//(*vtab_->pDeleteCharBuffer_)(charBuffer_);
+    DeleteCharBuffer(m_pCharBuffer);
 		
 #ifdef _WIN32
 #ifdef _WIN32_WCE
@@ -419,19 +387,14 @@ inline wchar_t* string_buffer::begin()
 {
   if(m_pBuffer == NULL)
   {
-    //buffer_ = (*vtab_->pNewWCharBuffer_)(1);
+ 
     reserve(1);
     m_pBuffer[0] = 0;
-    //capacity_ = 1;
-
-    //if(charBuffer_ != NULL)
-    //  charBuffer_[0] = 0;
-
-    m_bIsCharBufferActual = false;
+     m_bIsCharBufferActual = false;
 #ifdef _WIN32
     m_bIsBSTRActual = false;
 #endif
-    //isShareable_ = true;
+   // m_bIsShareable = true;
   }
 
   return m_pBuffer;
@@ -468,7 +431,7 @@ inline void string_buffer::clear()
 inline void string_buffer::flush()
 {
   if(m_pCharBuffer != NULL)
-    DeleteCharBuffer(m_pCharBuffer);//(*vtab_->pDeleteCharBuffer_)(charBuffer_);
+    DeleteCharBuffer(m_pCharBuffer);
   m_pCharBuffer = NULL;
 #ifdef WIN32
   if(m_bstr != NULL)
@@ -486,18 +449,16 @@ inline void string_buffer::reserve(size_t _len)
   if(m_nCapacity >= _len && (m_nCapacity != 0 || m_pBuffer != NULL))
     return;
 
-  wchar_t* buffer = NewWCharBuffer(_len + 1);//(*vtab_->pNewWCharBuffer_)(_len + 1);
-//  wchar_t* buffer = (*vtab_->pNewWCharBuffer_)((2 * _len) + 1);
+  wchar_t* buffer = NewWCharBuffer(_len + 1);
   if(m_pBuffer != NULL)
     wcscpy(buffer, m_pBuffer);
 
   buffer[length()] = 0;
 
-  DeleteWCharBuffer(m_pBuffer);//(*vtab_->pDeleteWCharBuffer_)(buffer_);
+  DeleteWCharBuffer(m_pBuffer);
 
   m_pBuffer = buffer;
   m_nCapacity = _len;
-//  capacity_ = 2 * _len;
   m_bIsShareable = true;
 
   m_bIsCharBufferActual = false;
@@ -526,88 +487,14 @@ inline bool string_buffer::isBSTRActual()
 inline string_buffer::~string_buffer()
 {
   if(m_pBuffer != NULL)
-    DeleteWCharBuffer(m_pBuffer);//(*vtab_->pDeleteWCharBuffer_)(customAlloc_, buffer_);
+    DeleteWCharBuffer(m_pBuffer);
   if(m_pCharBuffer != NULL)
-    DeleteCharBuffer(m_pCharBuffer);//(*vtab_->pDeleteCharBuffer_)(customAlloc_, charBuffer_);
+    DeleteCharBuffer(m_pCharBuffer);
 #ifdef _WIN32
   if(m_bstr != NULL)
     ::SysFreeString(m_bstr);
 #endif
 }
-
-///////////////////////////////////////////////////////////////////////////////
-
-//wchar_t* newWCharBuffer(alloc_t* customAlloc, size_t _size)
-//{
-//  return new wchar_t[_size];
-//}
-//
-//void deleteWCharBuffer(alloc_t* customAlloc, wchar_t* _buffer)
-//{
-//  if(_buffer == NULL)
-//    return;
-//  delete[] _buffer;
-//}
-//
-//char* newCharBuffer(alloc_t* customAlloc, size_t _size)
-//{
-//  return new char[_size];
-//}
-//
-//void deleteCharBuffer(alloc_t* customAlloc, char* _buffer)
-//{
-//  if(_buffer == NULL)
-//    return;
-//  delete[] _buffer;
-//}
-//
-//void deleteStrBuffer(alloc_t* customAlloc, str_buffer* _buffer)
-//{
-//  if(_buffer == NULL)
-//    return;
-//  delete _buffer;
-////  _buffer->~str_buffer();
-//}
-//
-//#if _MSC_VER >= 1300
-///////////////////
-//// Custom VTBL //
-///////////////////
-//wchar_t* newCustomWCharBuffer(alloc_t* customAlloc, size_t _size)
-//{
-//  return reinterpret_cast<wchar_t*>(newCustomCharBuffer(customAlloc, _size * sizeof(wchar_t)));
-//}
-//
-//void deleteCustomWCharBuffer(alloc_t* customAlloc, wchar_t* _buffer)
-//{
-//  if(_buffer == NULL)
-//    return;
-//  deleteCustomCharBuffer(customAlloc, reinterpret_cast<char*>(_buffer));
-//}
-//
-//char* newCustomCharBuffer(alloc_t* customAlloc, size_t _size)
-//{
-////  return new char[_size];
-//  return reinterpret_cast<char*>(customAlloc->alloc(_size));
-//}
-//
-//void deleteCustomCharBuffer(alloc_t* customAlloc, char* _buffer)
-//{
-//  if(_buffer == NULL)
-//    return;
-////  delete[] _buffer;
-//  customAlloc->free(reinterpret_cast<void*>(_buffer));
-//}
-//
-//void deleteCustomStrBuffer(alloc_t* customAlloc, str_buffer* _buffer)
-//{
-//  if(_buffer == NULL)
-//    return;
-////  delete _buffer;
-//  _buffer->~str_buffer();
-//  customAlloc->free(customAlloc, reinterpret_cast<void*>(_buffer));
-//}
-//#endif
 
 wchar_t* string_buffer::NewWCharBuffer(size_t _size)
 {
@@ -621,40 +508,36 @@ void string_buffer::DeleteWCharBuffer(wchar_t* _buffer)
 
 char* string_buffer::NewCharBuffer(size_t _size)
 {
-  if(customAlloc_)
-    return reinterpret_cast<char*>(customAlloc_->alloc(_size));
-  else
-    return new char[_size];
+ // if(m_pAlloc)
+    return reinterpret_cast<char*>(m_pAlloc->alloc(_size));
+ // else
+  //  return new char[_size];
 }
 
 void string_buffer::DeleteCharBuffer(char* _buffer)
 {
   if(_buffer == NULL)
     return;
-
-  if(customAlloc_)
-    customAlloc_->free(reinterpret_cast<void*>(_buffer));
-  else
-    delete[] _buffer;
+   m_pAlloc->free(reinterpret_cast<void*>(_buffer));
+ 
 }
 
 void string_buffer::destroy()
 {
   string_buffer* buffer = this;
-  alloc_t* customAlloc = customAlloc_;
-
   if(buffer == NULL)
     return;
 
-  if(customAlloc)
-  {
-    buffer->~string_buffer();
-    customAlloc->free(reinterpret_cast<void*>(buffer));
-  }
-  else
-    delete buffer;
-}
+  bool bExtAlloc = m_pAlloc != &m_alloc;
+
+   buffer->~string_buffer();
+   if(bExtAlloc)
+	 m_pAlloc->free(reinterpret_cast<void*>(buffer));
+   else
+	   ::free(buffer);
 
 }
 
-#endif //_GIS_COMMON_LIBRARY_PORTABLE_STR_BUFFER_H_
+}
+
+#endif 

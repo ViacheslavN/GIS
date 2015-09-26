@@ -19,72 +19,71 @@
 
 namespace CommonLib
 {
+ 
 
-//#if _MSC_VER>=1300
-void CString::setDefaultAllocator(alloc_t* alloc)
-{
-  g_customAlloc = alloc;
-}
-
-void CString::changeAllocator(alloc_t* alloc)
-{
-  m_pCustomAlloc = alloc;
-
-  if(!m_pBuffer)
-    return;
-
-  string_buffer* buffer = m_pBuffer;
-  m_pBuffer = string_buffer::make(alloc, *buffer);
-  buffer->safeRelease();
-}
-//#endif
-
-CString::CString(alloc_t* customAlloc)
+CString::CString(alloc_t* pAlloc)
   : m_pBuffer(NULL)
-  , m_pCustomAlloc(customAlloc ? customAlloc : g_customAlloc)
+  , m_pAlloc(pAlloc)
 {
+	if(!m_pAlloc)
+		m_pAlloc = &m_alloc;
 }
 
-CString::CString(const char *_str, int count, alloc_t* customAlloc)
+CString::CString(const char *_str, int count, alloc_t* pAlloc)
   : m_pBuffer(NULL)
-  , m_pCustomAlloc(customAlloc ? customAlloc : g_customAlloc)
+  , m_pAlloc(pAlloc)
 {
+	if(!m_pAlloc)
+		m_pAlloc = &m_alloc;
+
   if(_str == NULL || count == 0)
     return;
 
   if(*_str == 0)
     return;
 
-  m_pBuffer = string_buffer::make(m_pCustomAlloc, _str, count);
+ 
+   m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, _str, count); 
 }
 
-CString::CString(const wchar_t *_str, int count, alloc_t* customAlloc)
+CString::CString(const wchar_t *_str, int count, alloc_t* pAlloc)
   : m_pBuffer(NULL)
-  , m_pCustomAlloc(customAlloc ? customAlloc : g_customAlloc)
+  , m_pAlloc(pAlloc)
 {
+	if(!m_pAlloc)
+		m_pAlloc = &m_alloc;
+
   if(_str == NULL || count == 0)
     return;
 
   if(*_str == 0)
     return;
 
-  m_pBuffer = string_buffer::make(m_pCustomAlloc, _str, count);
+  m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, _str, count);
 }
 
 #ifdef _WIN32
-CString::CString(const BSTR _str, alloc_t* customAlloc)
+CString::CString(const BSTR _str, alloc_t* pAlloc)
   : m_pBuffer(NULL)
-  , m_pCustomAlloc(customAlloc ? customAlloc : g_customAlloc)
+  , m_pAlloc(pAlloc)
 {
+	if(!m_pAlloc)
+		m_pAlloc = &m_alloc;
+
   if(_str != NULL && wcslen(static_cast<const wchar_t*>(_str)) != 0)
-    m_pBuffer = string_buffer::make(m_pCustomAlloc, static_cast<const wchar_t*>(_str));
+    m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, static_cast<const wchar_t*>(_str));
 }
 #endif
 
 CString::CString(const CString& _str)
-  : m_pBuffer(NULL)
-  , m_pCustomAlloc(_str.m_pCustomAlloc)
+  : m_pBuffer(NULL), m_pAlloc(NULL)
 {
+	if(_str.m_pAlloc != &_str.m_alloc)
+		m_pAlloc = _str.m_pAlloc;
+
+	if(!m_pAlloc)
+		m_pAlloc = &m_alloc;
+
   if(_str.m_pBuffer == NULL)
     return;
 
@@ -94,7 +93,7 @@ CString::CString(const CString& _str)
     m_pBuffer->safeAddRef();
   }
   else
-    m_pBuffer = string_buffer::make(m_pCustomAlloc, *_str.m_pBuffer);
+    m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, *_str.m_pBuffer);
 }
 
 CString::~CString()
@@ -114,7 +113,7 @@ CString& CString::operator =(const char *_str)
   //}
 
   m_pBuffer->safeRelease();
-  m_pBuffer = string_buffer::make(m_pCustomAlloc, _str);
+  m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, _str);
 
   return *this;
 }
@@ -125,7 +124,7 @@ CString& CString::operator =(const wchar_t *_str)
     return *this;
 
   m_pBuffer->safeRelease();
-  m_pBuffer = string_buffer::make(m_pCustomAlloc, _str);
+  m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, _str);
 
   return *this;
 }
@@ -140,6 +139,8 @@ CString& CString::operator =(const CString& _str)
   if(m_pBuffer == _str.m_pBuffer)
     return *this;
 
+ 
+
   if(m_pBuffer == NULL && _str.isEmpty())
     return *this;
 
@@ -148,7 +149,11 @@ CString& CString::operator =(const CString& _str)
 
   if(_str.m_pBuffer == NULL)
     return *this;
-  m_pCustomAlloc = _str.m_pCustomAlloc;
+  if(_str.m_pAlloc != &_str.m_alloc)
+	  m_pAlloc = _str.m_pAlloc;
+
+  if(!m_pAlloc)
+	  m_pAlloc = &m_alloc;
   if(_str.m_pBuffer->isShareable())
   {
     m_pBuffer = _str.m_pBuffer;
@@ -156,7 +161,7 @@ CString& CString::operator =(const CString& _str)
   }
   else
   {
-    m_pBuffer = string_buffer::make(m_pCustomAlloc, _str.cwstr());
+    m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, _str.cwstr());
   }
   return *this;
 }
@@ -178,7 +183,7 @@ size_t CString::length() const
 const twchar* CString::cwstr() const
 {
   if(m_pBuffer == NULL)
-    m_pBuffer = string_buffer::make(m_pCustomAlloc);
+    m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL);
 
   return m_pBuffer->begin();
 }
@@ -192,7 +197,7 @@ size_t CString::capacity() const
 const char* CString::cstr() const
 {
   if(m_pBuffer == NULL)
-    m_pBuffer = string_buffer::make(m_pCustomAlloc);
+    m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL);
 
   return m_pBuffer->charBegin();
 }
@@ -215,7 +220,7 @@ BSTR CString::bstr() const
 {
   //return static_cast<BSTR>(const_cast<wchar_t*>(cwstr()));
   if(m_pBuffer == NULL)
-    m_pBuffer = string_buffer::make(m_pCustomAlloc);
+    m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL);
 
   return m_pBuffer->bstr();
 }
@@ -634,7 +639,7 @@ void CString::reserve(size_t _len)
     return;
 
   if(m_pBuffer == NULL)
-    m_pBuffer = string_buffer::make(m_pCustomAlloc);
+    m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL);
   else
     exclusive();
 
@@ -649,7 +654,7 @@ void CString::exclusive()
   if(m_pBuffer->isExclusive())
     return;
 
-  string_buffer* buffer = string_buffer::make(m_pCustomAlloc, *m_pBuffer);
+  string_buffer* buffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, *m_pBuffer);
   m_pBuffer->safeRelease();
   m_pBuffer = buffer;
 }
@@ -1253,7 +1258,7 @@ int CString::importFromUTF8 (const char *utf)
   
   if (m_pBuffer)
     m_pBuffer->safeRelease();
-  m_pBuffer = string_buffer::make(m_pCustomAlloc, dstCharCount);
+  m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, dstCharCount);
   
   int dstByteCount = dstCharCount * sizeof (wchar_t); 
 

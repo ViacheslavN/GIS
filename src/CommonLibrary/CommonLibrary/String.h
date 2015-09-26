@@ -32,23 +32,13 @@ class string_buffer;
 
 class CString
 {
-
-
-
-
+ 
   public:
-
-//#if _MSC_VER>=1300 || defined(__IPHONE_3_1)
-    static void setDefaultAllocator(alloc_t* alloc);
-    void changeAllocator(alloc_t* alloc);
-//#endif
-
-  public:
-    CString(alloc_t* customAlloc = 0);
-    CString(const char *_str, int count = -1, alloc_t* customAlloc = 0);
-    CString(const wchar_t *_str, int count = -1, alloc_t* customAlloc = 0);
+    CString(alloc_t* pAlloc = 0);
+    CString(const char *_str, int count = -1, alloc_t* pAlloc = 0);
+    CString(const wchar_t *_str, int count = -1, alloc_t* pAlloc = 0);
 #ifdef _WIN32
-    CString(const BSTR _str, alloc_t* customAlloc = 0);
+    CString(const BSTR _str, alloc_t* pAlloc = 0);
 #endif
     CString(const CString& _str);
 
@@ -217,7 +207,8 @@ class CString
 
   private:
     mutable string_buffer* m_pBuffer;
-    alloc_t* m_pCustomAlloc;
+    alloc_t* m_pAlloc;
+	simple_alloc_t m_alloc;
 };
 
 }

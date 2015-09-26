@@ -446,6 +446,7 @@ namespace GisEngine
 			CommonLib::FxMemoryReadStream stream;
 			pStream->AttachStream(&stream, pStream->readIntu32());
 			stream.read(m_prj4Str);
+			CreateProjection();
 			return true;
 		}
 

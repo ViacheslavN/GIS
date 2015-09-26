@@ -71,6 +71,7 @@ namespace CommonLib
 			bool m_bIsBigEndian;
 			alloc_t *m_pAlloc;
 			bool m_bAttach;
+			simple_alloc_t m_alloc;
 	};
 	class FxMemoryReadStream : public IReadStreamBase, public FxStreamBase
 	{

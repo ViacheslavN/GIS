@@ -109,8 +109,8 @@ namespace GisEngine
 			{
 				pWriteStream->write((uint32)GetWorkspaceType());
 				CommonLib::MemoryStream stream;
-				stream.write(m_sName);
 				stream.write(m_nID);
+				stream.write(m_sName);
 				pWriteStream->write(&stream);
 				return true;
 			}
@@ -118,8 +118,8 @@ namespace GisEngine
 			{
 				CommonLib::FxMemoryReadStream stream;
 				pReadStream->AttachStream(&stream, pReadStream->readInt32());
-				stream.read(m_sName);
 				stream.read(m_nID);
+				stream.read(m_sName);
 				return true;
 			}
 		

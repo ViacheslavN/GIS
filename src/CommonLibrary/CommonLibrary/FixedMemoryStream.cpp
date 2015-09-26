@@ -10,6 +10,8 @@ namespace CommonLib
 		,m_bAttach(false)
 	{
 		m_bIsBigEndian = IStream::isBigEndian();
+		if(!m_pAlloc)
+			m_pAlloc = &m_alloc;
 	}
 	FxStreamBase::~FxStreamBase()
 	{

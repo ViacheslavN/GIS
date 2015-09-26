@@ -349,10 +349,17 @@ namespace GisEngine
 		void CXMLNode::writeUtf16(CommonLib::IWriteStream *pSteam, const CommonLib::CString& str)
 		{
 			std::vector<char> vecUtf8;
-			utf16_to_utf8(str, vecUtf8);
+			int nLen = str.calcUTF8Length();
+			if(nLen != 0) // TO DO Use alloc
+			{	
+				nLen += 1;
+				vecUtf8.resize(nLen);
+				str.exportToUTF8(&vecUtf8[0], nLen);
+			}
+			///utf16_to_utf8(str, vecUtf8);
 			if(!vecUtf8.empty())
 			{
-				pSteam->write((byte*)&vecUtf8[0], vecUtf8.back() == 0 ? vecUtf8.size() - 1 : vecUtf8.size());
+				pSteam->write((byte*)&vecUtf8[0], /*vecUtf8.back() == 0 ? vecUtf8.size() - 1 : */vecUtf8.size());
 			}
 		}
 
