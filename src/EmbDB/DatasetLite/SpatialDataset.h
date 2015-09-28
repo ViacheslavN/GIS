@@ -61,8 +61,7 @@ namespace DatasetLite
 		virtual IShapeCursorPtr spatialQuery(const CommonLib::bbox& extent) = 0;
 
  		static IShapeFileIndexPtr open(const CommonLib::CString& sDbName);
-		static IShapeFileIndexPtr create(const CommonLib::CString& sDbName, size_t nPageSize, embDB::eSpatialCoordinatesType type,
-			embDB::eShapeType spatialType,const CommonLib::CString& sShapeFileName);
+		static IShapeFileIndexPtr create(const CommonLib::CString& sDbName, size_t nPageSize, const CommonLib::CString& sShapeFileName);
 
 	};
 

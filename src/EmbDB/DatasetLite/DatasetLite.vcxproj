@@ -73,7 +73,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../CommonLibrary;../../ThirdParty</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CommonLibrary;../../ThirdParty;../../GisEngine</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -126,6 +126,7 @@
     <ClInclude Include="ShapeCursor.h" />
     <ClInclude Include="ShapeFileIndex.h" />
     <ClInclude Include="SpatialDataset.h" />
+    <ClInclude Include="SpatialTree.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

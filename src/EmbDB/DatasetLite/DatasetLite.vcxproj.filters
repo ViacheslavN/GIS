@@ -39,6 +39,9 @@
     <ClInclude Include="PointIndex.h">
       <Filter>ShapeFileIndex</Filter>
     </ClInclude>
+    <ClInclude Include="SpatialTree.h">
+      <Filter>ShapeFileIndex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
