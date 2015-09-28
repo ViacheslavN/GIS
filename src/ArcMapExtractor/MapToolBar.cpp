@@ -2,11 +2,11 @@
 
 #include "stdafx.h"
 #include "MapToolBar.h"
-#include "ExtractCommand.h"
+
 
 HRESULT CMapToolBar::FinalConstruct()
 {
-	m_vecItems.push_back(std::make_pair(CommonLib::CGuid(CLSID_ExtractCommand), false));
+	m_vecItems.push_back(std::make_pair(CommonLib::CGuid(CLSID_ExtractMenu), false));
 	return S_OK;
 }
 

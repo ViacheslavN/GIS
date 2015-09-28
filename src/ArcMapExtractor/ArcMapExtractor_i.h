@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Sat Sep 12 17:30:18 2015
+/* at Mon Sep 28 09:33:00 2015
  */
 /* Compiler settings for ArcMapExtractor.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -57,6 +57,12 @@ typedef interface IExtractCommand IExtractCommand;
 #endif 	/* __IExtractCommand_FWD_DEFINED__ */
 
 
+#ifndef __IExtractMenu_FWD_DEFINED__
+#define __IExtractMenu_FWD_DEFINED__
+typedef interface IExtractMenu IExtractMenu;
+#endif 	/* __IExtractMenu_FWD_DEFINED__ */
+
+
 #ifndef __MapToolBar_FWD_DEFINED__
 #define __MapToolBar_FWD_DEFINED__
 
@@ -79,6 +85,18 @@ typedef struct ExtractCommand ExtractCommand;
 #endif /* __cplusplus */
 
 #endif 	/* __ExtractCommand_FWD_DEFINED__ */
+
+
+#ifndef __ExtractMenu_FWD_DEFINED__
+#define __ExtractMenu_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class ExtractMenu ExtractMenu;
+#else
+typedef struct ExtractMenu ExtractMenu;
+#endif /* __cplusplus */
+
+#endif 	/* __ExtractMenu_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -228,6 +246,75 @@ EXTERN_C const IID IID_IExtractCommand;
 #endif 	/* __IExtractCommand_INTERFACE_DEFINED__ */
 
 
+#ifndef __IExtractMenu_INTERFACE_DEFINED__
+#define __IExtractMenu_INTERFACE_DEFINED__
+
+/* interface IExtractMenu */
+/* [unique][uuid][object] */ 
+
+
+EXTERN_C const IID IID_IExtractMenu;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("4D0D3953-C534-40E2-BE52-15080965FBBE")
+    IExtractMenu : public IUnknown
+    {
+    public:
+    };
+    
+#else 	/* C style interface */
+
+    typedef struct IExtractMenuVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IExtractMenu * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            __RPC__deref_out  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IExtractMenu * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IExtractMenu * This);
+        
+        END_INTERFACE
+    } IExtractMenuVtbl;
+
+    interface IExtractMenu
+    {
+        CONST_VTBL struct IExtractMenuVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IExtractMenu_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define IExtractMenu_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define IExtractMenu_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __IExtractMenu_INTERFACE_DEFINED__ */
+
+
 
 #ifndef __ArcMapExtractorLib_LIBRARY_DEFINED__
 #define __ArcMapExtractorLib_LIBRARY_DEFINED__
@@ -252,6 +339,14 @@ EXTERN_C const CLSID CLSID_ExtractCommand;
 
 class DECLSPEC_UUID("444FF0D6-E29E-4402-80C6-7252FEC7FA03")
 ExtractCommand;
+#endif
+
+EXTERN_C const CLSID CLSID_ExtractMenu;
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("B0B36C11-166F-4143-BFA4-55AE24E2E67D")
+ExtractMenu;
 #endif
 #endif /* __ArcMapExtractorLib_LIBRARY_DEFINED__ */
 

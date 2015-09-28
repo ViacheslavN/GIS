@@ -18,12 +18,20 @@
 
 
 #define ATL_NO_ASSERT_ON_DESTROY_NONEXISTENT_WINDOW
+#define  _WTL_USE_CSTRING
 
 #include "resource.h"
 #include <atlbase.h>
-#include <atlcom.h>
-#include <atlctl.h>
-#include <atlcore.h>
+#include <atlstr.h>
+#include <atlapp.h>
+#include <atlwin.h>
+
+#include <atlframe.h>
+#include <atlctrls.h>
+#include <atldlgs.h>
+#include <atlctrlw.h>
+
+#include <atltypes.h>
 
 #include "esriCore.h"
 #include "ArcCATIDs.h"

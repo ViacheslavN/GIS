@@ -1,12 +1,12 @@
-// MapToolBar.h : Declaration of the CMapToolBar
+// ExtractMenu.h : Declaration of the CExtractMenu
 
 #pragma once
 #include "resource.h"       // main symbols
 
-#include "CommonLibrary/guid.h"
 
+#include "CommonLibrary/guid.h"
 #include "ArcMapExtractor_i.h"
-#include "ExtractMenu.h"
+#include "BaseEsriMenu.h"
 
 
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)
@@ -16,31 +16,26 @@
 using namespace ATL;
 
 
-// CMapToolBar
+// CExtractMenu
 
-class ATL_NO_VTABLE CMapToolBar :
+class ATL_NO_VTABLE CExtractMenu :
 	public CComObjectRootEx<CComSingleThreadModel>,
-	public CComCoClass<CMapToolBar, &CLSID_MapToolBar>,
-	public IMapToolBar,
-	public esriCore::IToolBarDef
+	public CComCoClass<CExtractMenu, &CLSID_ExtractMenu>,
+	public IExtractMenu,
+	public CBaseEsriMenu
 {
 public:
-	CMapToolBar()
+	CExtractMenu() : CBaseEsriMenu(IDS_EXTRACT_CAPTION, IDS_EXTRACT_MAP_MENU)
 	{
 	}
 
-DECLARE_REGISTRY_RESOURCEID(IDR_MAPTOOLBAR)
+DECLARE_REGISTRY_RESOURCEID(IDR_EXTRACTMENU)
 
 
-BEGIN_COM_MAP(CMapToolBar)
-	COM_INTERFACE_ENTRY(IMapToolBar)
-	COM_INTERFACE_ENTRY(esriCore::IToolBarDef)
+BEGIN_COM_MAP(CExtractMenu)
+	COM_INTERFACE_ENTRY(IExtractMenu)
+	COM_INTERFACE_ENTRY(esriCore::IMenuDef)
 END_COM_MAP()
-
-
-BEGIN_CATEGORY_MAP(CMapToolBar)
-	IMPLEMENTED_CATEGORY(__uuidof(CATID_MxCommandBars))
-END_CATEGORY_MAP()
 
 
 
@@ -48,22 +43,14 @@ END_CATEGORY_MAP()
 
 	HRESULT FinalConstruct();
 	
-
 	void FinalRelease()
 	{
 	}
 
-	// IToolBarDef
-	STDMETHOD(get_ItemCount)(long * numItems );
-	STDMETHOD(raw_GetItemInfo)(long pos, esriCore::IItemDef * itemDef );
-	STDMETHOD(get_Name)(BSTR * Name );
-	STDMETHOD(get_Caption)(BSTR * Name );
-
 public:
-private:
-	 std::vector<std::pair<CommonLib::CGuid, bool> > m_vecItems;
+
 
 
 };
 
-OBJECT_ENTRY_AUTO(__uuidof(MapToolBar), CMapToolBar)
+OBJECT_ENTRY_AUTO(__uuidof(ExtractMenu), CExtractMenu)

@@ -1,0 +1,15 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {B0B36C11-166F-4143-BFA4-55AE24E2E67D} = s 'ExtractMenu Class'
+		{
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{878FA1E3-92B8-42EF-A9CF-5010428EAF21}'
+			Version = s '1.0'
+		}
+	}
+}

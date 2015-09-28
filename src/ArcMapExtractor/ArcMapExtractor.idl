@@ -22,6 +22,13 @@ interface IMapToolBar : IUnknown{
 interface IExtractCommand : IUnknown{
 };
 [
+	object,
+	uuid(4D0D3953-C534-40E2-BE52-15080965FBBE),
+	pointer_default(unique)
+]
+interface IExtractMenu : IUnknown{
+};
+[
 	uuid(878FA1E3-92B8-42EF-A9CF-5010428EAF21),
 	version(1.0),
 ]
@@ -41,6 +48,13 @@ library ArcMapExtractorLib
 	coclass ExtractCommand
 	{
 		[default] interface IExtractCommand;
+	};
+	[
+		uuid(B0B36C11-166F-4143-BFA4-55AE24E2E67D)		
+	]
+	coclass ExtractMenu
+	{
+		[default] interface IExtractMenu;
 	};
 };
 

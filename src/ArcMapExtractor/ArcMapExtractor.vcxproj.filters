@@ -9,13 +9,22 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{05f7c207-0a6d-43ab-bdfd-592c0fda0816}</UniqueIdentifier>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="ExtractMap">
+      <UniqueIdentifier>{326adbce-1b1d-4df8-9731-d491bee470fd}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Generated Files">
-      <UniqueIdentifier>{05f7c207-0a6d-43ab-bdfd-592c0fda0816}</UniqueIdentifier>
-      <SourceControlFiles>False</SourceControlFiles>
+    <Filter Include="ImportMap">
+      <UniqueIdentifier>{26e8c208-9058-42c7-b11f-febfb042f627}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ExtractMap\Pages">
+      <UniqueIdentifier>{df8b951d-0368-4baa-a509-ebac47350f14}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,11 +40,29 @@
     <ClCompile Include="ArcMapExtractor_i.c">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="MapToolBar.cpp">
+    <ClCompile Include="BaseEsriMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ExtractDlg.cpp">
+      <Filter>ExtractMap</Filter>
+    </ClCompile>
     <ClCompile Include="ExtractCommand.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>ExtractMap</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtractMenu.cpp">
+      <Filter>ExtractMap</Filter>
+    </ClCompile>
+    <ClCompile Include="MapToolBar.cpp">
+      <Filter>ExtractMap</Filter>
+    </ClCompile>
+    <ClCompile Include="ListViewCtrlEx.cpp">
+      <Filter>ExtractMap</Filter>
+    </ClCompile>
+    <ClCompile Include="MapNamePage.cpp">
+      <Filter>ExtractMap\Pages</Filter>
+    </ClCompile>
+    <ClCompile Include="MapOutPutPage.cpp">
+      <Filter>ExtractMap\Pages</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -57,11 +84,29 @@
     <ClInclude Include="esriCore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MapToolBar.h">
+    <ClInclude Include="BaseEsriMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ExtractDlg.h">
+      <Filter>ExtractMap</Filter>
+    </ClInclude>
     <ClInclude Include="ExtractCommand.h">
-      <Filter>Header Files</Filter>
+      <Filter>ExtractMap</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtractMenu.h">
+      <Filter>ExtractMap</Filter>
+    </ClInclude>
+    <ClInclude Include="MapToolBar.h">
+      <Filter>ExtractMap</Filter>
+    </ClInclude>
+    <ClInclude Include="ListViewCtrlEx.h">
+      <Filter>ExtractMap</Filter>
+    </ClInclude>
+    <ClInclude Include="MapNamePage.h">
+      <Filter>ExtractMap\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="MapOutPutPage.h">
+      <Filter>ExtractMap\Pages</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -87,6 +132,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="extractcmd.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="ExtractMenu1.rgs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
