@@ -7,6 +7,7 @@
 #include "GeometryDef.h"
 #include "Field.h"
 #include "ShapefileRowCursor.h"
+
 namespace GisEngine
 {
 	namespace GeoDatabase

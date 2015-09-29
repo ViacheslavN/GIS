@@ -2,10 +2,12 @@
 //
 
 #include "stdafx.h"
+#include <memory>
 #include "TestSQLiteWks.h"
 void testLoadXML();
 void TestXML();
-#include <memory>
+void TestShapeIndex();
+
 class ITest : public CommonLib::AutoRefCounter
 {
 public:
@@ -23,10 +25,10 @@ typedef std::map<ITestPtr, int> TtestMap;
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	
+	TestShapeIndex();
 	//TestSQLiteWks();
  
-	TestXML();
+	//TestXML();
 	/*for(int i =0; i < 100000000; ++i)
 	{
 		CommonLib::CString s1 = L"vfdgggf";

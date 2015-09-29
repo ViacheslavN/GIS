@@ -13,8 +13,10 @@ namespace DatasetLite
 			virtual ~IStatialTree(){}
 
 			virtual embDB::eDataTypes GetType() = 0;
-			virtual bool insert(ShapeLib::SHPObject* pObject);
-			IShapeCursorPtr search(CommonLib::bbox& extent);
+			virtual bool insert(ShapeLib::SHPObject* pObject) = 0;
+			virtual IShapeCursorPtr search(const CommonLib::bbox& extent) = 0;
+			virtual bool commit() = 0;
+			virtual bool init() = 0;
 
 	};
 

@@ -4,6 +4,8 @@
 #include "GeoDatabase.h"
 #include "ShapefileUtils.h"
 #include "CursorBase.h"
+#include "../../EmbDB/DatasetLite/SpatialDataset.h"
+
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -52,6 +54,8 @@ namespace GisEngine
 			/*GisBoundingBox m_Extent;*/
 			CShapefileFeatureClass* m_pParentFC;
 			bool m_bInvalidCursor;
+			DatasetLite::IShapeFileIndexPtr m_pShapeIndex;
+			DatasetLite::IShapeCursorPtr m_pCursorPtr;
 			//bool m_bRecycling;
 
 

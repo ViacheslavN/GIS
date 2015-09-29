@@ -447,8 +447,19 @@ namespace embDB
 	}
 	bool CStorage::setFileSize(int64 nSize)
 	{
-		assert(nSize % m_nPageSize == 0);
-		m_nLastAddr = (nSize / m_nPageSize) + 1;
+		if(nSize == -1)
+		{
+			int64 nSize = m_pFile.getFileSize();
+			assert(nSize % m_nPageSize == 0);
+			m_nLastAddr = nSize/m_nPageSize;
+			m_nCalcFileSize = m_nLastAddr;
+		}
+		else
+		{
+			assert(nSize % m_nPageSize == 0);
+			m_nLastAddr = (nSize / m_nPageSize) + 1;
+			
+		}
 		return true;
 		//return m_pFile.setFileSize();
 	}

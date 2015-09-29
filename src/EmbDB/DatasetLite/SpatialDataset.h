@@ -49,6 +49,7 @@ namespace DatasetLite
 		virtual bool next() = 0;
 		virtual int row() const = 0;
 		virtual bool IsEnd() const =0;
+		virtual CommonLib::bbox extent() const =0;
 	 
 	};
 
@@ -59,6 +60,7 @@ namespace DatasetLite
 		virtual ~IShapeFileIndex(){}
 		virtual const CommonLib::bbox& extent() const = 0;
 		virtual IShapeCursorPtr spatialQuery(const CommonLib::bbox& extent) = 0;
+		virtual bool insert(ShapeLib::SHPObject* pObject) = 0;
 
  		static IShapeFileIndexPtr open(const CommonLib::CString& sDbName);
 		static IShapeFileIndexPtr create(const CommonLib::CString& sDbName, size_t nPageSize, const CommonLib::CString& sShapeFileName);

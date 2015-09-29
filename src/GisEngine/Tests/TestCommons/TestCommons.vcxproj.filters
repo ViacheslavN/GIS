@@ -41,5 +41,8 @@
     <ClCompile Include="TestSQLiteWks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestShapeIndex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

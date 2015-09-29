@@ -16,4 +16,6 @@
 #include "../../GeoDatabase/GeoDatabaseLib.h"
 #include "../../ThirdParty/ShapeLib/shape_lib.h"
 #include "../../GisGeometry/GisGeometryLib.h"
+#include "../../EmbDB/EmbDB/embDBLib.h"
+#include "../../EmbDB/DatasetLite/DatasetLiteLib.h"
 // TODO: reference additional headers your program requires here

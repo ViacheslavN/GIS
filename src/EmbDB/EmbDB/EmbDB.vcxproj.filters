@@ -708,6 +708,9 @@
     <ClInclude Include="CacheLRU_2Q.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="embDBLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

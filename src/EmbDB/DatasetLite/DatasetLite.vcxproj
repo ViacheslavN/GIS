@@ -60,12 +60,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">
     <OutDir>$(SolutionDir)Output\</OutDir>
     <IntDir>$(SolutionDir)Obj\$(Configuration)\</IntDir>
-    <TargetName>DatasetLite_ds32</TargetName>
+    <TargetName>LibDatasetLite32_ds</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">
     <OutDir>$(SolutionDir)Output\</OutDir>
     <IntDir>$(SolutionDir)Obj\$(Configuration)\</IntDir>
-    <TargetName>DatasetLite_rs</TargetName>
+    <TargetName>LibDatasetLite32_rs</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">
     <ClCompile>
@@ -81,7 +81,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\DatasetLite_ds32.lib</OutputFile>
+      <OutputFile>$(OutDir)\$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">
@@ -102,7 +102,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\DatasetLite_rs.lib</OutputFile>
+      <OutputFile>$(OutDir)\$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -122,9 +122,12 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DatasetLiteLib.h" />
     <ClInclude Include="PointIndex.h" />
     <ClInclude Include="ShapeCursor.h" />
     <ClInclude Include="ShapeFileIndex.h" />
+    <ClInclude Include="ShapeFileIndexRect.h" />
+    <ClInclude Include="ShapeIndexBase.h" />
     <ClInclude Include="SpatialDataset.h" />
     <ClInclude Include="SpatialTree.h" />
     <ClInclude Include="stdafx.h" />
@@ -133,6 +136,7 @@
   <ItemGroup>
     <ClCompile Include="ShapeCursor.cpp" />
     <ClCompile Include="ShapeFileIndex.cpp" />
+    <ClCompile Include="ShapeFileIndexRect.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">Create</PrecompiledHeader>

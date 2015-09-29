@@ -5,6 +5,8 @@
 #include "GeoDatabase.h"
 #include "ShapefileUtils.h"
 #include "FeatureClassBase.h"
+
+ 
 namespace GisEngine
 {
 	namespace GeoDatabase

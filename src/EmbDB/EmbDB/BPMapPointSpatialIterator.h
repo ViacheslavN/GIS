@@ -119,6 +119,9 @@ namespace embDB
 			m_pTree = iter.m_pTree;
 			m_nIndex = iter.m_nIndex;
 			m_pCurLeafNode = iter.m_pCurLeafNode;
+			m_zMax = iter.m_zMax;
+			m_zMin = iter.m_zMin;
+			m_QueryRect = iter.m_QueryRect;
 
 		}
 		~TBPTSpatialPointIteratorMap()
@@ -132,6 +135,8 @@ namespace embDB
 			m_pTree = iter.m_pTree;
 			m_nIndex = iter.m_nIndex;
 			m_pCurLeafNode = iter.m_pCurLeafNode;
+			m_zMax = iter.m_zMax;
+			m_zMin = iter.m_zMin;
 			return this;
 		}
 
@@ -153,12 +158,12 @@ namespace embDB
 			return m_pCurNode->value(m_nIndex);
 		}
 
-		bool isNull()
+		bool isNull() const
 		{
 			if(m_pCurNode.get() == NULL || m_nIndex == - 1)
 				return true;
 					
-			TPointKey& zPage = m_pCurNode->key(m_nIndex);
+			const TPointKey& zPage = m_pCurNode->key(m_nIndex);
 			if(m_zMax < zPage)
 				return true;
 			return false;
@@ -211,7 +216,11 @@ namespace embDB
 			if(m_nIndex < (int32)m_pCurLeafNode->count())
 			   return true;
 
- 
+			if(m_pCurNode->next() == -1)
+			{
+				m_nIndex = -1;
+				return false;
+			}
 
 			TBTreeNodePtr pParentNode = m_pTree->getNode(m_pCurNode->parentAddr(), false, false, true);
 			if(/*pParentNode.get() && */(m_pCurNode->foundIndex()  == -1 || (m_pCurNode->foundIndex() + 1) < (int32)pParentNode->count()))
