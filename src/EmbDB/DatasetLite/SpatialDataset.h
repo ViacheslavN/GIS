@@ -51,7 +51,7 @@ namespace DatasetLite
 		virtual bool next() = 0;
 		virtual int row() const = 0;
 		virtual bool IsEnd() const =0;
-		//virtual CommonLib::bbox extent() const =0;
+		virtual CommonLib::bbox extent() const =0;
 	 
 	};
 

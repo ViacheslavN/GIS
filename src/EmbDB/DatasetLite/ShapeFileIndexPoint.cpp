@@ -41,7 +41,7 @@ namespace DatasetLite
 
 		typedef typename TSPTree::TSpatialIterator TIterator;
 		typedef typename TIterator::TPointKey TPointKey;
-		typedef TShapeCursor<TIterator, TPointKey>  TShapeCursor;
+		typedef TShapeCursorPoint<TIterator, TPointKey>  TShapeCursor;
 
 
 		TStatialTreePoint(CommonLib::alloc_t* pAlloc, embDB::CStorage* pStorage, int64 nTreeRootPageID, 

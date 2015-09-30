@@ -84,6 +84,7 @@ namespace embDB
 		}
 		virtual bool insert(const TKey& key, TLink nLink)
 		{
+			assert(nLink!= 0);
 			assert(m_pCompressor->count() == m_innerMemSet.size());
 			TMemSetNode *pNode = m_innerMemSet.insert(key, nLink);
 			bool bRet = false;

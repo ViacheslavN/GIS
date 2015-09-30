@@ -10,10 +10,9 @@
 #include "../EmbDB/RectSpatialBPMapTree.h"
 #include "../EmbDB/SpatialRectQuery.h"
 #include "../EmbDB/storage.h"
-#include "PointIndex.h"
 #include "../GisEngine/GisGeometry/SpatialReferenceProj4.h"
 #include "ShapeFileIndexRect.h"
-
+#include "ShapeFileIndexPoint.h"
 
 
 
@@ -32,7 +31,11 @@ namespace DatasetLite
 	{ 
 		CShapeFileIndexRect *pShapeFileIndexRect = new CShapeFileIndexRect();
 
-		pShapeFileIndexRect->Open(sDbName);
+		if(!pShapeFileIndexRect->Open(sDbName))
+		{
+			delete pShapeFileIndexRect;
+			pShapeFileIndexRect = NULL;
+		}
 		return IShapeFileIndexPtr(pShapeFileIndexRect);
 	}
 	struct SHPGuard
@@ -117,12 +120,16 @@ namespace DatasetLite
 		{
 			if(bbox.xMin < 0)
 				dOffsetX = fabs(bbox.xMin);
+			else
+				dOffsetX = -1 *bbox.xMin;
 		}
 
 		if(dOffsetY == 0)
 		{
 			if(bbox.yMin < 0)
 				dOffsetY = fabs(bbox.yMin);
+			else
+				dOffsetY = -1 *bbox.yMin;
 		}
 
 		embDB::eDataTypes DataType = embDB::dtUnknown; 
@@ -177,24 +184,35 @@ namespace DatasetLite
 		switch(DataType)
 		{
 			case embDB::dtPoint16:
-				break;
 			case embDB::dtPoint32:
-				break;
 			case embDB::dtPoint64:
+				{
+					CShapeFileIndexPoint *pShapeFileIndexPoint =
+						new CShapeFileIndexPoint(NULL, nPageSize, bbox, dOffsetX, dOffsetY, dScaleX, dScaleY, units, DataType, shapeType);
+					if(pShapeFileIndexPoint->Create(sDbName))
+					{
+						pShapeFileIndex = pShapeFileIndexPoint;
+					}
+					else
+						delete pShapeFileIndexPoint;
+				}
+			
 				break;
 
 			case embDB::dtRect16:
 			case embDB::dtRect32:
 			case embDB::dtRect64:
 				{
-					CShapeFileIndexRect *pShapeFileIndexRect =
-						new CShapeFileIndexRect(NULL, nPageSize, bbox, dOffsetX, dOffsetY, dScaleX, dScaleY, units, DataType, shapeType);
-					if(pShapeFileIndexRect->Create(sDbName))
 					{
-						pShapeFileIndex = pShapeFileIndexRect;
+						CShapeFileIndexRect *pShapeFileIndexRect =
+							new CShapeFileIndexRect(NULL, nPageSize, bbox, dOffsetX, dOffsetY, dScaleX, dScaleY, units, DataType, shapeType);
+						if(pShapeFileIndexRect->Create(sDbName))
+						{
+							pShapeFileIndex = pShapeFileIndexRect;
+						}
+						else
+							delete pShapeFileIndexRect;
 					}
-					else
-						delete pShapeFileIndexRect;
 				}
 				break;
 		}

@@ -98,6 +98,7 @@ namespace embDB
 		virtual bool insert(const TCoordPoint& key, TLink link )
 		{
 			m_nSize++;
+			assert(link!= 0);
 			return true;
 		}
 		virtual bool add(const TKeyMemSet& keySet, const TLinkMemSet& linkSet)

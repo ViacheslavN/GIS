@@ -25,6 +25,10 @@ typedef std::map<ITestPtr, int> TtestMap;
 int _tmain(int argc, _TCHAR* argv[])
 {
 
+	/*CommonLib::CString *s1 = new  CommonLib::CString(L"vfdgggf");
+	CommonLib::CString s2(*s1);
+	delete s1;*/
+
 	TestShapeIndex();
 	//TestSQLiteWks();
  

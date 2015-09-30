@@ -26,11 +26,7 @@ namespace GisEngine
 			if(m_pShapeIndex.get())
 			{
 				m_pCursor = m_pShapeIndex->spatialQuery(m_pExtentSource->GetBoundingBox());
-				if(m_pCursor.get() || m_pCursor->IsEnd())
-				{
-					int i = 0;
-					i++;
-				}
+				
 			}
 			else
 			if(!m_bInvalidCursor)
@@ -90,7 +86,8 @@ namespace GisEngine
 					m_pCurrentRow.reset();
 				}
 
-				return m_pCursor->next();
+				m_pCursor->next();
+				return true;
 			}
 
 			if(m_bInvalidCursor)

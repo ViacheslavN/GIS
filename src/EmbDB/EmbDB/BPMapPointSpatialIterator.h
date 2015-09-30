@@ -189,7 +189,10 @@ namespace embDB
 				FindRectMinZVal(zNextVal, m_zMin, m_zMax, zRes);
 				TBTree::iterator it = m_pTree->lower_bound(zRes);
 				if(it.isNull())
+				{
+					m_nIndex = -1;
 					return false;
+				}
 
 				m_pCurNode = it.m_pCurNode;
 				m_nIndex = it.m_nIndex;
@@ -207,6 +210,12 @@ namespace embDB
 			m_nIndex++;
 			while(m_nIndex <  (int32)m_pCurLeafNode->count())
 			{
+				/*int Val = m_pCurNode->value(m_nIndex);
+				if(Val == 85)
+				{
+					int i = 0;
+					i++;
+				}*/
 				TPointKey& zVal = m_pCurNode->key(m_nIndex);
 				if(zVal.IsInRect(m_QueryRect))
 					break;

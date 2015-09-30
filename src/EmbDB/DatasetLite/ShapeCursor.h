@@ -6,12 +6,12 @@
 namespace DatasetLite
 {
 	template<class TIterator, class TZOrderVal>
-	class TShapeCursor : public IShapeCursor
+	class TShapeCursorBase : public IShapeCursor
 	{
 	public:
 		typedef typename TZOrderVal::TPointType TPointType;
 
-		TShapeCursor(TIterator& iterator, double dOffsetX, double dOffsetY, double dScaleX, double dScaleY) :
+		TShapeCursorBase(TIterator& iterator, double dOffsetX, double dOffsetY, double dScaleX, double dScaleY) :
 		  m_Iterator(iterator),  m_dOffsetX(dOffsetX),  m_dOffsetY(dOffsetY),  m_dScaleX(dScaleX),  m_dScaleY(dScaleY)
 		{
 
@@ -29,7 +29,30 @@ namespace DatasetLite
 		{
 			return m_Iterator.isNull();
 		}
-		/*virtual  CommonLib::bbox extent() const
+		
+	protected:
+		TIterator m_Iterator;
+		double m_dOffsetX;
+		double m_dOffsetY;
+		double m_dScaleX;
+		double m_dScaleY;
+		
+	};
+
+
+	template<class TIterator, class TZOrderVal>
+	class TShapeCursorRect : public TShapeCursorBase<TIterator, TZOrderVal>
+	{
+	public:
+		typedef TShapeCursorBase<TIterator, TZOrderVal> TBase;
+		typedef typename TBase::TPointType TPointType;
+		
+		TShapeCursorRect(TIterator& iterator, double dOffsetX, double dOffsetY, double dScaleX, double dScaleY) :
+			TBase(iterator, dOffsetX, dOffsetY, dScaleX, dScaleY)
+			{}
+
+		
+		virtual  CommonLib::bbox extent() const
 		{
 			const TZOrderVal& zVal = m_Iterator.key();
 			TPointType xMin = 0, xMax = 0, yMin = 0, yMax = 0;
@@ -41,15 +64,36 @@ namespace DatasetLite
 			bbox.yMax = (yMax*m_dScaleY) - m_dOffsetY;
 
 			return bbox;
-		}*/
-	private:
-		TIterator m_Iterator;
-		double m_dOffsetX;
-		double m_dOffsetY;
-		double m_dScaleX;
-		double m_dScaleY;
-		
+		}
+	
 	};
+
+
+	template<class TIterator, class TZOrderVal>
+	class TShapeCursorPoint : public TShapeCursorBase<TIterator, TZOrderVal>
+	{
+	public:
+		typedef TShapeCursorBase<TIterator, TZOrderVal> TBase;
+		typedef typename TBase::TPointType TPointType;
+
+		TShapeCursorPoint(TIterator& iterator, double dOffsetX, double dOffsetY, double dScaleX, double dScaleY) :
+		TBase(iterator, dOffsetX, dOffsetY, dScaleX, dScaleY)
+		{}
+
+
+		virtual  CommonLib::bbox extent() const
+		{
+			const TZOrderVal& zVal = m_Iterator.key();
+			TPointType X = 0, Y = 0;
+			zVal.getXY(X, Y);
+			CommonLib::bbox bbox;
+			bbox.xMax = bbox.xMin = (X*m_dScaleX) - m_dOffsetX;
+			bbox.yMax = bbox.yMin = (Y*m_dScaleY) - m_dOffsetY;
+			return bbox;
+		}
+
+	};
+
 
 }
 

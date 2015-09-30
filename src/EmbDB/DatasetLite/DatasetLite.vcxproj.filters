@@ -36,9 +36,6 @@
     <ClInclude Include="ShapeCursor.h">
       <Filter>ShapeFileIndex</Filter>
     </ClInclude>
-    <ClInclude Include="PointIndex.h">
-      <Filter>ShapeFileIndex</Filter>
-    </ClInclude>
     <ClInclude Include="SpatialTree.h">
       <Filter>ShapeFileIndex</Filter>
     </ClInclude>

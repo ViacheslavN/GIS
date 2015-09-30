@@ -83,6 +83,9 @@ namespace GisEngine
 			if(!feature || (!m_pSymbolAssigner.get() && !pCustomSymbol))
 				return;
 
+			//if(feature->GetOID() != 85)
+			//	return;
+
 			/*CommonLib::CVariant *pVal = feature->GetValue(m_nShapeFieldIndex);
 			if(!pVal)
 				return;

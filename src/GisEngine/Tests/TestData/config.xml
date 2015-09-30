@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<IMPORT_MAP>
+<CLEAN_TABLE>
+        <UMLRREKS/>
+        <UMLRKVAS/>
+        <UMLRBOUN/>
+        <UMLRRLBL/>
+        <UMLRULBL/>
+        <UMLRJDST/>
+	<UMLRJELD/>
+        <UMLRMOST/>
+        <UMLRHOUS/>
+        <UMLRMGST/>
+        <UMLRKVAR/>
+        <UMLRLREG/>
+        <UMLRADM0/>
+        <UMLRULIC/>
+        <UMLRREKA/>
+        <UMTBSTR0/>
+	<UMAPCITY/>
+
+</CLEAN_TABLE>
+<IMPORT shape_path = "D:\work\nsk\">
+	<TABLE file = "D_CITY" table = "UMAPCITY" disc = "Город">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+	  <IMPORT_FIELD src_field = "NAME" disc = "Название" type = "string" length = "64"  dst_field = "NAME"/>
+	</TABLE>
+	<TABLE file = "D_STREET" table = "UMTBSTR0" disc = "Код улиц">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+	  <IMPORT_FIELD src_field = "NAME" type = "string" length = "64"  dst_field = "NUL"/>
+	  <IMPORT_FIELD src_field = "RCITY" type = "dictref" RefObjectCode = "UMAPCITY"  dst_field = "CITY"/>
+	</TABLE>
+	<SHAPE file="arial.shp"   table = "UMLRADM0" disc = "Административные районы">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+	  <IMPORT_FIELD src_field = "NAME" type = "string" length = "64"   dst_field = "ARRIAL"/>
+	  <SHAPELR value = "Административные районы" rule ="value"/>
+	</SHAPE>
+	<SHAPE file="larial.shp"   table = "UMLRLREG" disc = "Жилмассивы">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+	  <IMPORT_FIELD src_field = "NAME" type = "string" length = "64"   dst_field = "LARIAL"/>
+	  <SHAPELR value = "Жилмассивы" rule ="value"/>
+	</SHAPE>
+	<SHAPE file="district.shp"   table = "UMLRKVAR" disc = "Кварталы">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+	  <IMPORT_FIELD1 src_field = "TYPE" type = "string" length = "64"   dst_field = "LARIAL"/>
+	  <SHAPELR value = "Жилмассивы" rule ="inner_field" field = "TYPE"/>
+	</SHAPE>
+	<SHAPE file="river_l.shp"   table = "UMLRREKA" disc = "Река линейный">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+   	  <SHAPELR value = "Река линейный" rule ="value"/>
+	</SHAPE>
+	<SHAPE file="river_a.shp"   table = "UMLRREKA" disc = "Река линейный">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+   	  <SHAPELR value = "Река площадной" rule ="value"/>
+	</SHAPE>
+	<SHAPE file="street.shp"   table = "UMLRULIC" disc = "Улицы">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+	  <IMPORT_FIELD src_field = "RNAME" type = "dictref" RefObjectCode = "UMTBSTR0"  dst_field = "STREET"/>
+	  <SHAPELR value = "Осевые линии" rule ="value"/>
+	</SHAPE>
+	<SHAPE file="highway.shp"   table = "UMLRMGST" disc = "Магистрали">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+	  <SHAPELR value = "" rule ="inner_field" field = "TYPE"/>
+	</SHAPE>
+	<SHAPE file="building.shp"   table = "UMLRHOUS" disc = "Здания площадной">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+          <IMPORT_FIELD1 src_field = "PURPOSE" type = "dictref_and_insert" type_insert = "string" length = "64"  insert_field ="PURPOSE"   RefObjectCode = "UMTBPURP" dst_field = "PURPOSE"/>
+          <IMPORT_FIELD src_field = "PURPOSE" type = "string" length = "64"  dst_field = "PURPOSE"/>
+	  <IMPORT_FIELD src_field = "NAME" type = "dictref_and_insert" type_insert = "string"  length = "128" insert_field ="NAME"  RefObjectCode = "UMTBNAME"  dst_field = "NAME"/>
+          <IMPORT_FIELD src_field = "POSTIDX" type = "string" length = "6"   dst_field = "INDEX"/>
+          <IMPORT_FIELD src_field = "NUMCORN" type = "string" length = "32"   dst_field = "NUMCORN"/>
+          <IMPORT_FIELD src_field = "RSTREET1" type = "dictref"  RefObjectCode = "UMTBSTR0"    dst_field = "STREET"/>
+          <IMPORT_FIELD src_field = "RSTREET2" type = "dictref"  RefObjectCode = "UMTBSTR0"    dst_field = "STREET2"/>
+          <IMPORT_FIELD src_field = "NUMBER1" type = "string" length = "32"   dst_field = "NUMBER"/>
+          <IMPORT_FIELD src_field = "NUMBER2" type = "string" length = "32"   dst_field = "NUMBER2"/>
+	  <SHAPELR value = "" rule ="inner_field" field = "TYPE"/>
+	</SHAPE>
+	<SHAPE file="bridge.shp"   table = "UMLRMOST" disc = "Мосты линейный">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+  	  <SHAPELR value = "Мосты" rule ="value"/>
+	</SHAPE>
+	<SHAPE file="rway.shp"   table = "UMLRJELD" disc = "ЖД">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+  	  <SHAPELR value = "ЖД" rule ="value"/>
+	</SHAPE>
+	<SHAPE file="rwstation.shp"   table = "UMLRJDST" disc = "ЖД Станции">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+  	  <SHAPELR value = "ЖД Станции" rule ="value"/>
+	</SHAPE>
+	<SHAPE_EX file="street_c.shp" text_field="CAPTION"  table = "UMLRULBL" disc = "Подписи улиц">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+     	  <SHAPELR value = "" rule ="inner_field" field = "TYPE"/>
+	</SHAPE_EX>
+	<SHAPE_EX file="river_c.shp" text_field="CAPTION"  table = "UMLRRLBL" disc = "Подписи рек">
+	  <IMPORT_FIELD1 src_field = "ID"   type = "ID" dst_field = "_ID"/>
+     	  <SHAPELR value = "Подпись реки" rule ="value"/>
+	</SHAPE_EX>
+	<SHAPE file="river_d.shp"  table = "UMLRRLBL" disc = "Направления течения рек">
+	  <IMPORT_FIELD1 src_field = "ID"   type = "ID" dst_field = "_ID"/>
+     	  <SHAPELR value = "Направление течения" rule ="value"/>
+	</SHAPE>
+        <SHAPE_EX file="island_c.shp" text_field="CAPTION"  table = "UMLRRLBL" disc = "Подписи островов">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+     	  <SHAPELR value = "Подпись реки" rule ="value"/>
+	</SHAPE_EX>
+	<SHAPE_EX1 file="highway_c.shp" text_field="CAPTION"  table = "UMLRROUT" disc = "Подписи автодорог">
+	  <IMPORT_FIELD src_field = "ID"   type = "ID" dst_field = "_ID"/>
+         <SHAPELR value = "" rule ="inner_field" field = "TYPE"/>
+	</SHAPE_EX1>
+	<SHAPE file="UMLRKVAS.shp"   table = "UMLRKVAS" disc = "Кварталы генерализация">
+	  <IMPORT_FIELD src_field = "_ID"   type = "ID" dst_field = "_ID"/>
+  	  <SHAPELR value = "" rule ="inner_field" field = "SHAPELR"/>
+  	</SHAPE>
+  	<SHAPE file="UMLRREKS.shp"   table = "UMLRREKS" disc = "Река генерализация">
+	  <IMPORT_FIELD src_field = "_ID"   type = "ID" dst_field = "_ID"/>
+  	  <SHAPELR value = "" rule ="inner_field" field = "SHAPELR"/>
+	</SHAPE>
+	<SHAPE file="UMLRBOUN.shp"   table = "UMLRBOUN" disc = "Районы">
+	  <IMPORT_FIELD1 src_field = "_ID"   type = "ID" dst_field = "_ID"/>
+  	  <SHAPELR value = "" rule ="inner_field" field = "SHAPELR"/>
+	</SHAPE>
+	<SHAPE_EX file="arial_c.shp" text_field="CAPTION"  table = "UMLRBOUN" disc = "Подписи районов">
+	  <IMPORT_FIELD1 src_field = "ID"   type = "ID" dst_field = "_ID"/>
+     	  <SHAPELR value = "Подписи к районам" rule ="value"/>
+	</SHAPE_EX>
+
+
+</IMPORT>
+</IMPORT_MAP>

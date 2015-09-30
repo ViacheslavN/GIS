@@ -123,7 +123,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DatasetLiteLib.h" />
-    <ClInclude Include="PointIndex.h" />
     <ClInclude Include="ShapeCursor.h" />
     <ClInclude Include="ShapeFileIndex.h" />
     <ClInclude Include="ShapeFileIndexPoint.h" />
