@@ -5,7 +5,7 @@
 #include "GeoDatabase.h"
 #include "ShapefileUtils.h"
 #include "FeatureClassBase.h"
-
+#include "../../EmbDB/DatasetLite/SpatialDataset.h"
  
 namespace GisEngine
 {
@@ -18,32 +18,18 @@ namespace GisEngine
 			CShapefileFeatureClass(IWorkspace *pWorkSpace, const CommonLib::CString& sPath, const CommonLib::CString& sName, const CommonLib::CString& sViewName);
 			~CShapefileFeatureClass();
 
-			//IDataset
-		/*	virtual eDatasetType  GetDatasetType() const {return dtFeatureClass;}
-			virtual IWorkspace*    GetWorkspace() const {return m_pWorkspace;}
-			virtual const CommonLib::CString&   GetDatasetName() const {return m_sDatasetName;}
-			virtual const CommonLib::CString&   GetDatasetViewName() const {return m_sDatasetViewName;}*/
-
-			//ITable
-		/*	virtual void                 AddField(IField* field);
-			virtual void                 DeleteField(const CommonLib::CString& fieldName);
-			virtual IFieldsPtr             GetFields() const;
-			virtual bool                 HasOIDField() const;
-			virtual const CommonLib::CString& GetOIDFieldName() const;*/
+		
 			virtual IRowPtr				  GetRow(int64 id);
 			virtual ICursorPtr			  Search(IQueryFilter* filter, bool recycling);
-
-			//IFeatureClass
-			/*virtual CommonLib::eShapeType GetGeometryType() const;
-			virtual const CommonLib::CString&         GetShapeFieldName() const;
-			virtual GisGeometry::IEnvelopePtr			 GetExtent() const ;
-			virtual GisGeometry::ISpatialReferencePtr GetSpatialReference() const;*/
 
 
 			bool reload(bool write);
 			void close();
 			ShapefileUtils::SHPGuard* GetSHP();
 			ShapefileUtils::DBFGuard* GetDBF();
+			DatasetLite::IShapeFileIndexPtr GetShapeIndex();
+			bool CreateShapeIndex(const CommonLib::CString& sIndexName = L"");
+
 
 			CommonLib::CString GetFullName();
 
@@ -54,27 +40,16 @@ namespace GisEngine
 			virtual bool load(const GisCommon::IXMLNode* pXmlNode);
 
 		private:
-			//IWorkspace *m_pWorkSpace;
+		 
 			IShapeFieldPtr m_pShapeField;
 			IFieldPtr m_pOIDField;
-			//IFieldsPtr m_FieldsPtr;
+		 
 
 			CommonLib::CString m_sPath;
-			/*CommonLib::CString m_sName;
-			CommonLib::CString m_sViewName;
-			CommonLib::CString m_sShapeFieldName;
-			CommonLib::CString m_sOIDName;*/
-
-
+		 
 			ShapefileUtils::SHPGuard m_shp;
 			ShapefileUtils::DBFGuard m_dbf;
-		/*	GisGeometry::IEnvelopePtr	 m_pExtent;
-			CommonLib::eShapeType m_ShapeType;
-			GisGeometry::ISpatialReferencePtr m_pSpatialReferencePtr;*/
-			
-
-	
-
+			DatasetLite::IShapeFileIndexPtr m_pShapeIndex;
 		};
 	}
 }

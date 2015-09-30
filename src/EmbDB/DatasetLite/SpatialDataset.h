@@ -9,6 +9,8 @@
 #include "../EmbDB/ICursor.h"
 #include "../EmbDB/ISpatialQuery.h"
 #include "ShapeLib/shapefil.h"
+
+#include "../GisEngine/GisGeometry/Geometry.h"
 namespace DatasetLite
 {
 
@@ -49,7 +51,7 @@ namespace DatasetLite
 		virtual bool next() = 0;
 		virtual int row() const = 0;
 		virtual bool IsEnd() const =0;
-		virtual CommonLib::bbox extent() const =0;
+		//virtual CommonLib::bbox extent() const =0;
 	 
 	};
 
@@ -60,10 +62,13 @@ namespace DatasetLite
 		virtual ~IShapeFileIndex(){}
 		virtual const CommonLib::bbox& extent() const = 0;
 		virtual IShapeCursorPtr spatialQuery(const CommonLib::bbox& extent) = 0;
-		virtual bool insert(ShapeLib::SHPObject* pObject) = 0;
+		virtual bool insert(ShapeLib::SHPObject* pObject, int nRow = -1) = 0;
+		virtual bool commit() = 0;
 
  		static IShapeFileIndexPtr open(const CommonLib::CString& sDbName);
-		static IShapeFileIndexPtr create(const CommonLib::CString& sDbName, size_t nPageSize, const CommonLib::CString& sShapeFileName);
+		static IShapeFileIndexPtr create(const CommonLib::CString& sDbName, size_t nPageSize,
+			const CommonLib::CString& sShapeFileName, GisEngine::GisCommon::Units units = GisEngine::GisCommon::UnitsUnknown, 
+			double dOffsetX = 0, double dOffsetY = 0, double dScaleX = 0, double dScaleY = 0, CommonLib::bbox bbox = CommonLib::bbox());
 
 	};
 
@@ -73,7 +78,7 @@ namespace DatasetLite
 		IShapeFileIndexPoint(){}
 		virtual ~IShapeFileIndexPoint(){}
 
-		bool insert(double dX, double dY, int nShapeId);
+		virtual bool insert(double dX, double dY, int nShapeId) = 0;
 		
 	};
 
@@ -82,7 +87,7 @@ namespace DatasetLite
 		IShapeFileIndexRect(){}
 		virtual ~IShapeFileIndexRect(){}
 
-		bool insert(const CommonLib::bbox& extent, int nShapeId);
+		virtual bool insert(const CommonLib::bbox& extent, int nShapeId) = 0;
 	};
 
 

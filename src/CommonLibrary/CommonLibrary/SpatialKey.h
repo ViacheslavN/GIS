@@ -85,7 +85,7 @@ namespace CommonLib
 			else if(Y < m_minY)
 				m_minY = Y;
 		}
-		bool isInRectEQ (TRect2D& rect) const
+		bool isInRectEQ (const TRect2D& rect) const
 		{
 
 			if(m_minX <= rect.m_minX) return false;
@@ -94,7 +94,7 @@ namespace CommonLib
 			if(m_maxY >= rect.m_maxY) return false;
 			return true;
 		}
-		bool isInRect(TRect2D& rect) const
+		bool isInRect(const TRect2D& rect) const
 		{
 
 			if(m_minX < rect.m_minX) return false;

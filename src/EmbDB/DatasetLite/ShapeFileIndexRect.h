@@ -11,10 +11,14 @@ namespace DatasetLite
 	{			
 	public:
 		typedef TShapeIndexBase<IShapeFileIndexRect> TBase;
+		CShapeFileIndexRect(CommonLib::alloc_t* pAlloc, uint32 nPageSize, const CommonLib::bbox& bbox, double dOffsetX, double dOffsetY, double dScaleX, 
+			double dScaleY, GisEngine::GisCommon::Units units, embDB::eDataTypes type, int nShapeType );
 		CShapeFileIndexRect(CommonLib::alloc_t* pAlloc = NULL);
 		~CShapeFileIndexRect();
 		bool Open(const CommonLib::CString& sDbName);
-		bool Create(const CommonLib::CString& sDbName, size_t nPageSize, const CommonLib::CString& sShapeFileName);
+		bool Create(const CommonLib::CString& sDbName);
+		virtual bool commit();
+		virtual bool insert(const CommonLib::bbox& extent, int nShapeId);
 	private:
 		
 	};

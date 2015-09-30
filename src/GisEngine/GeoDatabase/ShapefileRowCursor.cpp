@@ -22,10 +22,15 @@ namespace GisEngine
 		
 			m_bInvalidCursor = !m_pParentFC->reload(false);
 
-			m_pShapeIndex = DatasetLite::IShapeFileIndex::open(L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\world_adm0.idx" );//for test
+			m_pShapeIndex = pFClass->GetShapeIndex();
 			if(m_pShapeIndex.get())
 			{
-				m_pCursorPtr = m_pShapeIndex->spatialQuery(m_pExtentSource->GetBoundingBox());
+				m_pCursor = m_pShapeIndex->spatialQuery(m_pExtentSource->GetBoundingBox());
+				if(m_pCursor.get() || m_pCursor->IsEnd())
+				{
+					int i = 0;
+					i++;
+				}
 			}
 			else
 			if(!m_bInvalidCursor)
@@ -47,32 +52,33 @@ namespace GisEngine
 
 		bool CShapefileRowCursor::NextRowEx(IRowPtr* row, IRow* rowCache)
 		{
-
-			if(m_pCursorPtr.get())
+			if(rowCache || !m_pCurrentRow || !m_bRecycling)
 			{
-				if(m_pCursorPtr->IsEnd())
-					return false;
-
-				m_nCurrentRowID = m_pCursorPtr->row();
-
-				if(rowCache || !m_pCurrentRow || !m_bRecycling)
+				if(rowCache)
+					m_pCurrentRow = rowCache;
+				else
 				{
-					if(rowCache)
-						m_pCurrentRow = rowCache;
-					else
+					m_pCurrentRow = new  CFeature(m_pFieldSet.get(), m_pSourceFields.get());
+				}
+				if(m_nShapeFieldIndex >= 0/* && IsFieldSelected(m_nShapeFieldIndex)*/)
+				{
+					IFeature* feature = (IFeature*)(m_pCurrentRow.get());
+					if(feature)
 					{
-						m_pCurrentRow = new  CFeature(m_pFieldSet.get(), m_pSourceFields.get());
-					}
-					if(m_nShapeFieldIndex >= 0/* && IsFieldSelected(m_nShapeFieldIndex)*/)
-					{
-						IFeature* feature = (IFeature*)(m_pCurrentRow.get());
-						if(feature)
-						{
-							m_pCacheShape = new CommonLib::CGeoShape();
-							feature->SetShape(m_pCacheShape.get());
-						}
+						m_pCacheShape = new CommonLib::CGeoShape();
+						feature->SetShape(m_pCacheShape.get());
 					}
 				}
+			}
+
+			if(m_pCursor.get())
+			{
+				if(m_pCursor->IsEnd())
+					return false;
+
+				m_nCurrentRowID = m_pCursor->row();
+
+				
 
 				FillRow(m_pCurrentRow.get());
 
@@ -84,7 +90,7 @@ namespace GisEngine
 					m_pCurrentRow.reset();
 				}
 
-				return m_pCursorPtr->next();
+				return m_pCursor->next();
 			}
 
 			if(m_bInvalidCursor)
@@ -100,28 +106,7 @@ namespace GisEngine
 					row->reset();
 					return false;
 				}
-
-				if(rowCache || !m_pCurrentRow || !m_bRecycling)
-				{
-					if(rowCache)
-						m_pCurrentRow = rowCache;
-					else
-					{
-						m_pCurrentRow = new  CFeature(m_pFieldSet.get(), m_pSourceFields.get());
-					}
-					if(m_nShapeFieldIndex >= 0/* && IsFieldSelected(m_nShapeFieldIndex)*/)
-					{
-						IFeature* feature = (IFeature*)(m_pCurrentRow.get());
-						if(feature)
-						{
-							m_pCacheShape = new CommonLib::CGeoShape();
-							feature->SetShape(m_pCacheShape.get());
-						}
-					}
-				}
-
 				recordGood = FillRow(m_pCurrentRow.get());
-
 				SimpleNext();
 				
 			}

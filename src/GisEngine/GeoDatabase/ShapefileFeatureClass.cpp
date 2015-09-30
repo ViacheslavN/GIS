@@ -14,44 +14,16 @@ namespace GisEngine
 	{
 		CShapefileFeatureClass::CShapefileFeatureClass(IWorkspace *pWorkSpace, const CommonLib::CString& sPath, 
 			const CommonLib::CString& sName, const CommonLib::CString& sViewName) : TBase(pWorkSpace),
-			m_sPath(sPath)/*, m_ShapeType(CommonLib::shape_type_null)*/
+			m_sPath(sPath)
 		{
 
 			m_sDatasetName = sName;
 			m_sDatasetViewName = sViewName;
-		/*	if(m_sName.isEmpty())
-			{
-				m_sPath = CommonLib::FileSystem::FindFilePath(m_sPath);
-				m_sName = CommonLib::FileSystem::FindFileName(m_sName);
-			}*/
-
-			//m_FieldsPtr = new CFields();
 		}
 		CShapefileFeatureClass::~CShapefileFeatureClass()
 		{
 
 		}
-
-	/*	void CShapefileFeatureClass::AddField(IField* pField)
-		{
-			
-		}
-		void  CShapefileFeatureClass::DeleteField(const CommonLib::CString& fieldName)
-		{
-			
-		}
-		IFieldsPtr CShapefileFeatureClass::GetFields() const
-		{
-			return m_FieldsPtr;
-		}
-		bool   CShapefileFeatureClass::HasOIDField() const
-		{
-			return true;
-		}
-		const CommonLib::CString& CShapefileFeatureClass::GetOIDFieldName() const
-		{
-			return m_sOIDName;
-		}*/
 		IRowPtr	CShapefileFeatureClass::GetRow(int64 id)
 		{
 			return IRowPtr();
@@ -61,23 +33,6 @@ namespace GisEngine
 			return  ICursorPtr(new CShapefileRowCursor(filter, recycling, this));
 		}
 
-		//IFeatureClass
-		/*CommonLib::eShapeType CShapefileFeatureClass::GetGeometryType() const
-		{
-			return m_ShapeType;
-		}
-		const CommonLib::CString&  CShapefileFeatureClass::GetShapeFieldName() const
-		{
-			return m_sShapeFieldName;
-		}
-		GisGeometry::IEnvelopePtr CShapefileFeatureClass::GetExtent() const
-		{
-			return m_pExtent;
-		}
-		GisGeometry::ISpatialReferencePtr CShapefileFeatureClass::GetSpatialReference() const
-		{
-			return m_pSpatialReferencePtr;
-		}*/
 		void CShapefileFeatureClass::close()
 		{
 			m_shp.clear();
@@ -104,6 +59,7 @@ namespace GisEngine
 			CommonLib::CString shpFilePath = filePathBase + L".shp";
 			CommonLib::CString dbfFilePath = filePathBase + L".dbf";
 			CommonLib::CString prjFileName = filePathBase + L".prj";
+			CommonLib::CString shpIdxFilePath = filePathBase + L".shapeidx";
 
 			  const char* szAccess = write ? "r+b" : "rb";
 			 m_shp.file = ShapeLib::SHPOpen(shpFilePath.cstr(), szAccess);
@@ -201,10 +157,28 @@ namespace GisEngine
 			 pOidField->SetName(m_sOIDFieldName);
 			 m_pFields->AddField(pOidField.get());
 
-
+			 m_pShapeIndex.release();
+			 m_pShapeIndex = DatasetLite::IShapeFileIndex::open(shpIdxFilePath);
 			 return true;
 		}
 
+		bool CShapefileFeatureClass::CreateShapeIndex(const CommonLib::CString& sIndexName)
+		{
+			CommonLib::CString sFileName = sIndexName;
+			CommonLib::CString filePathBase = m_sPath + m_sDatasetViewName;
+			CommonLib::CString shpFilePath = filePathBase + L".shp";
+			if(sFileName.isEmpty())
+			{
+			
+				sFileName = filePathBase + L".shapeidx";
+			}
+			m_pShapeIndex = DatasetLite::IShapeFileIndex::create(sFileName, 8192, shpFilePath);
+			return m_pShapeIndex.get() != 0;
+		}
+		DatasetLite::IShapeFileIndexPtr CShapefileFeatureClass::GetShapeIndex()
+		{
+			return m_pShapeIndex;
+		}
 		ShapefileUtils::SHPGuard* CShapefileFeatureClass::GetSHP()
 		{
 			return &m_shp;

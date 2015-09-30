@@ -16,9 +16,6 @@
     <Filter Include="ShapeFileIndex">
       <UniqueIdentifier>{0761f78d-db2f-444e-a850-42b59b64f01f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ShapeFileIndex\Rect">
-      <UniqueIdentifier>{b37e9c96-f723-4890-8267-83a094ea300f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -48,10 +45,13 @@
     <ClInclude Include="DatasetLiteLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShapeFileIndexRect.h">
-      <Filter>ShapeFileIndex\Rect</Filter>
-    </ClInclude>
     <ClInclude Include="ShapeIndexBase.h">
+      <Filter>ShapeFileIndex</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeFileIndexRect.h">
+      <Filter>ShapeFileIndex</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeFileIndexPoint.h">
       <Filter>ShapeFileIndex</Filter>
     </ClInclude>
   </ItemGroup>
@@ -66,7 +66,10 @@
       <Filter>ShapeFileIndex</Filter>
     </ClCompile>
     <ClCompile Include="ShapeFileIndexRect.cpp">
-      <Filter>ShapeFileIndex\Rect</Filter>
+      <Filter>ShapeFileIndex</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeFileIndexPoint.cpp">
+      <Filter>ShapeFileIndex</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

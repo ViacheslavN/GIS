@@ -46,7 +46,15 @@ namespace GisEngine
 		}
 		 void	CMap::SelectFeatures(const GisBoundingBox& extent, bool resetSelection)
 		 {
-			 
+			 if(resetSelection)
+				 m_pSelection->Clear();
+
+			 int layerCount = m_pLayers->GetLayerCount();
+			 for(int i = 0; i < layerCount; ++i)
+			 {
+				 ILayerPtr pLayer = m_pLayers->GetLayer(i);
+				 
+			 }
 		 }
 		ISelectionPtr   CMap::GetSelection() const
 		{

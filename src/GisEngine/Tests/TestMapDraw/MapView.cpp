@@ -123,6 +123,30 @@ LRESULT  CMapView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 	}*/
 	return 0;
 }
+LRESULT CMapView::OnMouseDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	if(!m_pMap.get())
+		return 0;
+	GisEngine::Display::GPoint pt;
+	GisXYPoint mapPt;
+	pt.x = LOWORD(lParam); 
+	pt.y = HIWORD(lParam);
+	GisEngine::Display::IDisplayTransformationPtr pDisplayTransformation = m_pMapDrawer->GetCalcTransformation();
+
+	pDisplayTransformation->DeviceToMap(&pt, &mapPt, 1);
+	CommonLib::bbox bbox;
+	bbox.type = CommonLib::bbox_type_normal;
+
+	bbox.xMin = pt.x;
+	bbox.xMax = pt.x;
+
+	bbox.yMin = pt.y;
+	bbox.yMax = pt.y;
+
+	 
+	m_pMap->SelectFeatures(bbox, true);
+	return 0;
+}
 LRESULT CMapView::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
 	GisEngine::Display::IDisplayTransformationPtr pDisplayTransformation = m_pMapDrawer->GetCalcTransformation();

@@ -55,7 +55,7 @@ namespace GisEngine
 			CShapefileFeatureClass* m_pParentFC;
 			bool m_bInvalidCursor;
 			DatasetLite::IShapeFileIndexPtr m_pShapeIndex;
-			DatasetLite::IShapeCursorPtr m_pCursorPtr;
+			DatasetLite::IShapeCursorPtr m_pCursor;
 			//bool m_bRecycling;
 
 

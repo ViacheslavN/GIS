@@ -126,6 +126,7 @@
     <ClInclude Include="PointIndex.h" />
     <ClInclude Include="ShapeCursor.h" />
     <ClInclude Include="ShapeFileIndex.h" />
+    <ClInclude Include="ShapeFileIndexPoint.h" />
     <ClInclude Include="ShapeFileIndexRect.h" />
     <ClInclude Include="ShapeIndexBase.h" />
     <ClInclude Include="SpatialDataset.h" />
@@ -136,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="ShapeCursor.cpp" />
     <ClCompile Include="ShapeFileIndex.cpp" />
+    <ClCompile Include="ShapeFileIndexPoint.cpp" />
     <ClCompile Include="ShapeFileIndexRect.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">Create</PrecompiledHeader>

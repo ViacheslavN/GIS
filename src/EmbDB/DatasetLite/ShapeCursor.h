@@ -29,7 +29,7 @@ namespace DatasetLite
 		{
 			return m_Iterator.isNull();
 		}
-		virtual  CommonLib::bbox extent() const
+		/*virtual  CommonLib::bbox extent() const
 		{
 			const TZOrderVal& zVal = m_Iterator.key();
 			TPointType xMin = 0, xMax = 0, yMin = 0, yMax = 0;
@@ -41,7 +41,7 @@ namespace DatasetLite
 			bbox.yMax = (yMax*m_dScaleY) - m_dOffsetY;
 
 			return bbox;
-		}
+		}*/
 	private:
 		TIterator m_Iterator;
 		double m_dOffsetX;

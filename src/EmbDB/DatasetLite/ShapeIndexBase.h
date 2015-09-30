@@ -13,16 +13,28 @@ namespace DatasetLite
 	class TShapeIndexBase : public I 
 	{
 		public:
-			TShapeIndexBase(CommonLib::alloc_t* pAlloc) : 
-			  m_dOffsetX(0),  m_dOffsetY(0),  m_dScaleX(1.),  m_dScaleY(1.), m_Units(GisEngine::GisCommon::UnitsUnknown),
-				  m_Type(embDB::dtUnknown), m_ShapeType(CommonLib::shape_type_null), m_pAlloc(pAlloc), m_nRootTreePage(1),
-				  m_ObjectCount(0), m_nPageSize(8192)
+			TShapeIndexBase(CommonLib::alloc_t* pAlloc, uint32 nPageSize, const CommonLib::bbox& bbox, double dOffsetX, double dOffsetY, double dScaleX, 
+				double dScaleY, GisEngine::GisCommon::Units units, embDB::eDataTypes type, int nShapeType ) : 
+					m_pAlloc(pAlloc),m_nPageSize(nPageSize), m_bbox(bbox), m_dOffsetX(dOffsetX),  m_dOffsetY(dOffsetY),  m_dScaleX(dScaleX),  m_dScaleY(dScaleY), m_Units(units),
+					m_Type(type), m_ShapeType(nShapeType), m_nRootTreePage(1)
 			{
 				if(!m_pAlloc)
 					m_pAlloc = &m_alloc;
 
 			}
-			~TShapeIndexBase(){}
+
+			TShapeIndexBase(CommonLib::alloc_t* pAlloc) : 
+				m_pAlloc(pAlloc),m_nPageSize(8192), m_dOffsetX(0),  m_dOffsetY(0),  m_dScaleX(0),  m_dScaleY(0), m_Units(GisEngine::GisCommon::UnitsUnknown),
+					m_Type(embDB::dtUnknown), m_ShapeType(0), m_nRootTreePage(1)
+			{
+					if(!m_pAlloc)
+						m_pAlloc = &m_alloc;
+			}
+			~TShapeIndexBase()
+			{
+				if(m_pStorage.get() && m_pStorage->isValid())
+					m_pStorage->close();
+			}
 			
 			virtual IShapeCursorPtr spatialQuery(const CommonLib::bbox& extent)
 			{
@@ -46,100 +58,22 @@ namespace DatasetLite
 			{
 				return m_bbox;
 			}
-			virtual bool insert(ShapeLib::SHPObject* pObject)
+			virtual bool insert(ShapeLib::SHPObject* pObject, int nRow = -1)
 			{
 				if(!m_SpTree.get())
 					return false;
-				return m_SpTree->insert(pObject);
+				return m_SpTree->insert(pObject, nRow);
 			}
 		protected:
-			bool Create(const CommonLib::CString& sDbName, size_t nPageSize, const CommonLib::CString & sShapeFileName, ShapeLib::SHPHandle shFile )
+			bool Create(const CommonLib::CString& sDbName )
 			{
-			
-				m_nPageSize = nPageSize;
-			 
+		
 				m_pStorage.reset(new embDB::CStorage(m_pAlloc));
 
 				if(!m_pStorage->open(sDbName.cwstr(), false, false,  true, false, m_nPageSize))
 				{
 					return false;
 				}
-
-				CommonLib::CString sFilePath = CommonLib::FileSystem::FindFilePath(sShapeFileName);
-				CommonLib::CString sFileName = CommonLib::FileSystem::FindOnlyFileName(sShapeFileName);
-				CommonLib::CString prjFileName = sFilePath + sFileName + L".prj";
-
-			
-		 		double minBounds[4];
-				double maxBounds[4];
-				SHPGetInfo(shFile, &m_ObjectCount, &m_ShapeType, &minBounds[0], &maxBounds[0]);
-			 
-				if(m_ObjectCount > 0)
-				{
-					m_bbox.type = CommonLib::bbox_type_normal;
-					m_bbox.xMin = minBounds[0];
-					m_bbox.xMax = maxBounds[0];
-					m_bbox.yMin = minBounds[1];
-					m_bbox.yMax = maxBounds[1];
-					m_bbox.zMin = minBounds[2];
-					m_bbox.zMax = maxBounds[2];
-					m_bbox.mMin = minBounds[3];
-					m_bbox.mMax = maxBounds[3];
-				}
-
-				GisEngine::GisGeometry::CSpatialReferenceProj4* pSpatialReference = new GisEngine::GisGeometry::CSpatialReferenceProj4(prjFileName, GisEngine::GisGeometry::eSPRefTypePRJFilePath);
-				if(!pSpatialReference->IsValid())
-				{
-					pSpatialReference = new GisEngine::GisGeometry::CSpatialReferenceProj4(m_bbox);
-				}
-				if(pSpatialReference->IsValid())
-				{
-					m_Units = pSpatialReference->GetUnits();
-				}
-
-				delete pSpatialReference;
-				m_Type =  embDB::dtShape64;
-
-			 
-
-				if(m_bbox.xMin < 0)
-					m_dOffsetX = fabs(m_bbox.xMin);
-				if(m_bbox.yMin < 0)
-					m_dOffsetY = fabs(m_bbox.yMin);
-
-				if(m_Units == GisEngine::GisCommon::UnitsDecimalDegrees)
-				{
-					m_dScaleX = 0.0000001;
-					m_dScaleY = 0.0000001;
-					m_Type = embDB::dtShape32;
-				}
-				else if(m_Units == GisEngine::GisCommon::UnitsMeters)
-				{
-					/*uint32 nInt32Max = 0xFFFFFFFF;
-					int64 ndistX = fabs(bounds.xMax - bounds.xMin);
-					int64 ndistY = fabs(bounds.yMax - bounds.yMin);
-					*/
-					m_dScaleX = 0.001;
-					m_dScaleY = 0.001;
-				}
-
-				if(m_ShapeType == SHPT_POINT || m_ShapeType == SHPT_POINTZ || m_ShapeType == SHPT_POINTM || 
-					m_ShapeType == SHPT_MULTIPOINT || m_ShapeType == SHPT_MULTIPOINTZ || m_ShapeType == SHPT_MULTIPOINTM)
-				{
-					if(m_Type == embDB::dtShape32)
-						m_Type = embDB::dtPoint32;
-					else
-						m_Type = embDB::dtPoint64;
-				}
-				else
-				{
-					if(m_Type == embDB::dtShape32)
-						m_Type = embDB::dtRect32;
-					else
-						m_Type = embDB::dtRect64;
-				}
-		 
-
 
 				embDB::FilePagePtr pPage = m_pStorage->getNewPage();
 				embDB::FilePagePtr pTreePage = m_pStorage->getNewPage(true);
@@ -159,7 +93,7 @@ namespace DatasetLite
 				stream.write((uint32)m_Type);
 				stream.write(m_nPageSize);
 				stream.write(m_nRootTreePage); //Root SP Tree Page
-
+		
 				m_pStorage->saveFilePage(pPage.get());
 				return true;
 			
@@ -193,7 +127,7 @@ namespace DatasetLite
 
 				return true;
 			}
-
+			
 		protected:
 			double m_dOffsetX;
 			double m_dOffsetY;

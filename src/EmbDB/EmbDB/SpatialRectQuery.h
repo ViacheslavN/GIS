@@ -14,7 +14,7 @@ namespace embDB
 		TPoint xMin, xMax, yMin, yMax;
 		zOrder.getXY(xMin, yMin,  xMax, yMax);
  		TRect zRect(xMin, yMin, xMax, yMax);
-		return rect.isIntersection(zRect) || rect.isInRect(zRect);
+		return rect.isIntersection(zRect) || rect.isInRect(zRect) || zRect.isInRect(rect);
 	}
 
 	struct ZOrderRect2DU16

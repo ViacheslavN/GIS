@@ -76,22 +76,31 @@ namespace DatasetLite
 		{
 			return (embDB::eDataTypes)TreeType;
 		}
-		virtual bool insert(ShapeLib::SHPObject* pObject)
+		bool insert(double xMin, double yMin, double xMax, double yMax, int nShapeId)
 		{
+			TCoord xMinT = TCoord((xMin + m_dOffsetX) / m_dScaleX);
+			TCoord yMinT = TCoord((yMin + m_dOffsetY) / m_dScaleY);
+			TCoord xMaxT = TCoord((xMax + m_dOffsetX) / m_dScaleX);
+			TCoord yMaxT = TCoord((yMax + m_dOffsetY) / m_dScaleY);
 
+			return m_SpatialTree->insert(xMinT, yMinT, xMaxT, yMaxT, nShapeId);
+		}
+		bool insert(const CommonLib::bbox& extent, int nShapeId)
+		{
+			return insert(extent.xMin, extent.yMin, extent.xMax, extent.yMax, nShapeId);
+		}
 
-			TCoord xMin = TCoord((pObject->dfXMin + m_dOffsetX) / m_dScaleX);
-			TCoord yMin = TCoord((pObject->dfYMin + m_dOffsetY) / m_dScaleY);
-			TCoord xMax = TCoord((pObject->dfXMax + m_dOffsetX) / m_dScaleX);
-			TCoord yMax = TCoord((pObject->dfYMax + m_dOffsetY) / m_dScaleY);
-
-			//embDB::ZOrderRect2DU32 zVal(xMin, yMin, xMax, yMax);
-
-			return m_SpatialTree->insert(xMin, yMin, xMax, yMax, pObject->nShapeId);
-
+		virtual bool insert(ShapeLib::SHPObject* pObject, int nRow = -1 )
+		{
+			return insert(pObject->dfXMin, pObject->dfYMin, pObject->dfXMax, pObject->dfYMax, nRow == -1 ?  pObject->nShapeId : nRow);
+		}
+		virtual bool insert(double dX, double dY, int nRow )
+		{
+			return insert(dX, dY, dX, dY, nRow);
 		}
 		IShapeCursorPtr search(const CommonLib::bbox& extent)
 		{
+ 
 
 			TCoord xMin = TCoord((extent.xMin + m_dOffsetX) / m_dScaleX);
 			TCoord yMin = TCoord((extent.yMin + m_dOffsetY) / m_dScaleY);
@@ -113,12 +122,17 @@ namespace DatasetLite
 	 
 
 	};
-
+	typedef TStatialTreeRect<uint16, TBPMapRect32, embDB::dtRect16> TSpatialTreeU16;
 	typedef TStatialTreeRect<uint32, TBPMapRect32, embDB::dtRect32> TSpatialTreeU32;
 	typedef TStatialTreeRect<uint64, TBPMapRect64, embDB::dtRect64> TSpatialTreeU64;
 
-	CShapeFileIndexRect::CShapeFileIndexRect(CommonLib::alloc_t* pAlloc) : 
-		TBase(pAlloc)
+	CShapeFileIndexRect::CShapeFileIndexRect(CommonLib::alloc_t* pAlloc, uint32 nPageSize, const CommonLib::bbox& bbox, double dOffsetX, double dOffsetY, double dScaleX, 
+		double dScaleY, GisEngine::GisCommon::Units units, embDB::eDataTypes type, int nShapeType ) : 
+		TBase(pAlloc, nPageSize, bbox, dOffsetX, dOffsetY, dScaleX, dScaleY, units, type, nShapeType)
+	{
+
+	}
+	CShapeFileIndexRect::CShapeFileIndexRect(CommonLib::alloc_t* pAlloc) : TBase(pAlloc)
 	{
 
 	}
@@ -134,36 +148,59 @@ namespace DatasetLite
 
 		switch(m_Type)
 		{
+			case embDB::dtRect16:
+				m_SpTree.reset(new TSpatialTreeU16(m_pAlloc, m_pStorage.get(), m_nRootTreePage,
+					m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
+					break;
 			case embDB::dtRect32:
 				m_SpTree.reset(new TSpatialTreeU32(m_pAlloc, m_pStorage.get(), m_nRootTreePage,
+					m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
+				break;
+			case embDB::dtRect64:
+				m_SpTree.reset(new TSpatialTreeU64(m_pAlloc, m_pStorage.get(), m_nRootTreePage,
 					m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 				break;
 		}
 
 		return bBaseOpen;
 	}
-	bool CShapeFileIndexRect::Create(const CommonLib::CString& sDbName, size_t nPageSize, const CommonLib::CString& sShapeFileName)
+	bool CShapeFileIndexRect::Create(const CommonLib::CString& sDbName)
 	{
-		ShapeLib::SHPHandle shFile = ShapeLib::SHPOpen(sShapeFileName.cstr(), "rb");
-		if(!shFile)
-			return false;
 
-		bool bBaseCreate =  TBase::Create(sDbName, nPageSize, sShapeFileName, shFile);
+
+		bool bBaseCreate =  TBase::Create(sDbName);
 		switch(m_Type)
 		{
+		case embDB::dtRect16:
+			m_SpTree.reset(new TSpatialTreeU16(m_pAlloc, m_pStorage.get(), m_nRootTreePage, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
+			break;
 		case embDB::dtRect32:
 			m_SpTree.reset(new TSpatialTreeU32(m_pAlloc, m_pStorage.get(), m_nRootTreePage, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 			break;
+		case embDB::dtRect64:
+			m_SpTree.reset(new TSpatialTreeU64(m_pAlloc, m_pStorage.get(), m_nRootTreePage, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
+			break;
 		}
-		m_SpTree->init();
-		for (int i = 0; i < m_ObjectCount; ++i)
-		{
-			ShapeLib::SHPObject*  pObject = ShapeLib::SHPReadObject(shFile, i);
-			m_SpTree->insert(pObject);
-		}
-		m_SpTree->commit();
+		if(m_SpTree.get() == NULL)
+			return false;
 
-		ShapeLib::SHPClose(shFile);
-		return bBaseCreate;
+		m_SpTree->init();
+		m_SpTree->commit();
+			
+		return true;
+	}
+	bool CShapeFileIndexRect::commit()
+	{
+		if(m_SpTree.get())
+			return m_SpTree->commit();
+		return false;
+	}
+	bool CShapeFileIndexRect::insert(const CommonLib::bbox& extent, int nShapeId)
+	{
+		if(m_SpTree.get())
+		{
+			return m_SpTree->insert(extent, nShapeId);
+		}
+		return false;
 	}
 }
