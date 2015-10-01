@@ -175,6 +175,15 @@
     <Filter Include="DB\transactions\Cursors\InsertCursor">
       <UniqueIdentifier>{13d6e32b-db1e-452a-a85a-6c06f340fed1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\Fields\string">
+      <UniqueIdentifier>{c6ac11b9-b310-4b67-8873-2a37aba9f37f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Fields\blob">
+      <UniqueIdentifier>{8af869ca-9ff6-4451-8a8b-17f95fc82a5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Fields\shape">
+      <UniqueIdentifier>{09e32243-a22a-4e7c-a43b-35ebcdf3ea8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -383,9 +392,6 @@
     </ClInclude>
     <ClInclude Include="BPTreeLeafFixedStringNode.h">
       <Filter>DB\BPTrees\BTreePlus</Filter>
-    </ClInclude>
-    <ClInclude Include="PageID.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BaseBPMap.h">
       <Filter>DB\BPTrees\BTreePlus\BPMap</Filter>
@@ -710,6 +716,15 @@
     </ClInclude>
     <ClInclude Include="embDBLib.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StringInnerNodeCompressor.h">
+      <Filter>DB\Fields\string</Filter>
+    </ClInclude>
+    <ClInclude Include="StringLeafNodeCompressor.h">
+      <Filter>DB\Fields\string</Filter>
+    </ClInclude>
+    <ClInclude Include="StringCompressorParams.h">
+      <Filter>DB\Fields\string</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

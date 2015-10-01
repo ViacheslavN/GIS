@@ -4,3 +4,4 @@
 4.Grafh Lock
 5.SQL
 6. установка parent-a через соседнею ноду
+7 string, blob, shapes

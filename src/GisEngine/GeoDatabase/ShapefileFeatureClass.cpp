@@ -121,7 +121,7 @@ namespace GisEngine
 				 IFieldPtr pFieldPtr(new CField());
 				 pFieldPtr->SetName(CommonLib::CString(name));
 				 pFieldPtr->SetIsEditable(true);
-				 pFieldPtr->SetIsNullable(false);
+				 pFieldPtr->SetIsNullable(true);
 				 pFieldPtr->SetIsRequired(false);
 				 pFieldPtr->SetType(fieldType);
 				 pFieldPtr->SetLength(length);

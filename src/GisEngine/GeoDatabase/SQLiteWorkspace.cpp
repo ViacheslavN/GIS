@@ -11,6 +11,7 @@ extern "C" {
 #include "SQLiteTable.h"
 #include "SQLiteFeatureClass.h"
 #include "SQLiteDB.h"
+#include "SQLiteTransaction.h"
 
 namespace GisEngine
 {
@@ -408,7 +409,17 @@ namespace GisEngine
 		}
 		ITransactionPtr CSQLiteWorkspace::startTransaction()
 		{
-			return ITransactionPtr();
+			if(!m_pDB.get())
+			{
+				return ITransactionPtr();
+			}
+			CSQLiteTransaction *pTran = new  CSQLiteTransaction(m_pDB.get());
+			if(!pTran->begin())
+			{
+				delete pTran;
+				return ITransactionPtr();
+			}
+			return ITransactionPtr(pTran);
 		}
 	}
 }

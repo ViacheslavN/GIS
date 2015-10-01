@@ -12,14 +12,14 @@ void TestShapeIndex()
 	{
 		//DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::create(L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\world_adm0.shapeidx", 8192, L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\world_adm0.shp" );
 	//	DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::create(L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\world_adm0.shapeidx", 8192, L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\world_adm0.shp" );
-	DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::create(L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shapeidx", 8192, L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp" );
-
+	//DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::create(L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shapeidx", 8192, L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp" );
+		DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::create(L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shapeidx", 8192, L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp" );
 	}
 
 	{
 		//DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::open(L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\world_adm0.shapeidx");
-		DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::open(L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shapeidx");
-	
+		//DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::open(L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shapeidx");
+		DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::open(L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shapeidx");
 		CommonLib::bbox bbox;
 		bbox.type = CommonLib::bbox_type_normal;
 		/*bbox.xMin = 10;

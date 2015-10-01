@@ -20,7 +20,7 @@ namespace GisEngine
 			//, m_bRecycling(recycling)
 		{
 		
-			m_bInvalidCursor = !m_pParentFC->reload(false);
+			//m_bInvalidCursor = !m_pParentFC->reload(false);
 
 			m_pShapeIndex = pFClass->GetShapeIndex();
 			if(m_pShapeIndex.get())
@@ -42,8 +42,8 @@ namespace GisEngine
 			if(m_pCacheObject)
 				ShapeLib::SHPDestroyObject(m_pCacheObject);
 
-			if(!m_bInvalidCursor)
-				m_pParentFC->close();
+			//if(!m_bInvalidCursor)
+			//	m_pParentFC->close();
 		}
 
 		bool CShapefileRowCursor::NextRowEx(IRowPtr* row, IRow* rowCache)
@@ -66,29 +66,51 @@ namespace GisEngine
 					}
 				}
 			}
+		
 
 			if(m_pCursor.get())
-			{
-				if(m_pCursor->IsEnd())
-					return false;
-
-				m_nCurrentRowID = m_pCursor->row();
-
-				
-
-				FillRow(m_pCurrentRow.get());
-
-				*row = m_pCurrentRow.get();
-
-				if(rowCache)
+			{	
+				bool recordGood = false;
+				while(!recordGood)
 				{
-					m_pCacheShape.reset();
-					m_pCurrentRow.reset();
+					if(m_pCursor->IsEnd())
+						return false;
+
+					GisBoundingBox bbox = m_pCursor->extent();
+
+					if (m_bNeedTransform)
+						m_pExtentSource->GetSpatialReference()->Project(m_pExtentOutput->GetSpatialReference().get(), bbox);
+					GisBoundingBox& boxOutput = m_pExtentOutput->GetBoundingBox();
+					if((bbox.type & CommonLib::bbox_type_normal) && (bbox.type & CommonLib::bbox_type_normal))
+					{
+						if (bbox.xMin > boxOutput.xMax || bbox.xMax < boxOutput.xMin || 
+							bbox.yMin > boxOutput.yMax || bbox.yMax < boxOutput.yMin)
+						{
+
+						}
+					}
+
+					m_nCurrentRowID = m_pCursor->row();
+
+
+
+					FillRow(m_pCurrentRow.get());
+
+					*row = m_pCurrentRow.get();
+
+					if(rowCache)
+					{
+						m_pCacheShape.reset();
+						m_pCurrentRow.reset();
+					}
+
+					m_pCursor->next();
+					recordGood  = true;
 				}
 
-				m_pCursor->next();
 				return true;
 			}
+				
 
 			if(m_bInvalidCursor)
 				return false;
@@ -187,9 +209,12 @@ namespace GisEngine
 					m_pCacheObject = 0;
 				}
 				// end bb changes
-
-				if(!AlterShape(m_pCacheShape.get()))
-					return false;
+				if(!m_pCursor.get())
+				{
+					if(!AlterShape(m_pCacheShape.get()))
+						return false;
+				}
+			
 
 				if(IFeature *pFeature = (IFeature *)row)
 				{
@@ -217,8 +242,8 @@ namespace GisEngine
 				m_pExtentSource->GetSpatialReference()->Project(m_pExtentOutput->GetSpatialReference().get(), pShape);
 		
 
-			GisBoundingBox boxShape = pShape->getBB();
-			GisBoundingBox boxOutput = m_pExtentOutput->GetBoundingBox();
+			GisBoundingBox& boxShape = pShape->getBB();
+			GisBoundingBox& boxOutput = m_pExtentOutput->GetBoundingBox();
 			if((boxShape.type & CommonLib::bbox_type_normal) && (boxOutput.type & CommonLib::bbox_type_normal))
 			{
 				if (boxShape.xMin > boxOutput.xMax || boxShape.xMax < boxOutput.xMin || 

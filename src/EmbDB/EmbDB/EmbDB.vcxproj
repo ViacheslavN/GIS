@@ -559,6 +559,9 @@
     <ClInclude Include="ListDBPage.h" />
     <ClInclude Include="RowIDCounter.h" />
     <ClInclude Include="Statement.h" />
+    <ClInclude Include="StringCompressorParams.h" />
+    <ClInclude Include="StringInnerNodeCompressor.h" />
+    <ClInclude Include="StringLeafNodeCompressor.h" />
     <ClInclude Include="UniqueCompIndexBase.h" />
     <ClInclude Include="UniqueIndex.h" />
     <ClInclude Include="ValueField.h" />
@@ -567,7 +570,6 @@
     <ClInclude Include="Key.h" />
     <ClInclude Include="MapIteratorImp.h" />
     <ClInclude Include="NodeLoader.h" />
-    <ClInclude Include="PageID.h" />
     <ClInclude Include="PointSpatialBPMapTree.h" />
     <ClInclude Include="BPMapPointSpatialIteratorOld.h" />
     <ClInclude Include="SpatialOIDField.h" />

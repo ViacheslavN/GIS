@@ -74,6 +74,8 @@ namespace GisEngine
 		};
 
 
+	 
+
 		struct IField;
 		struct IRow;
 		struct IQueryFilter;

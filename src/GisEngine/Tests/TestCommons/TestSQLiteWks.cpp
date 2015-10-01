@@ -12,25 +12,29 @@ void TestSQLiteWks()
 	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData");
 	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
 	
-	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->GetFeatureClass(L"world_adm0.shp");
+	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->GetFeatureClass(L"building.shp");
 	if(!pShapeFC.get())
 		return;
 
 	
 	//GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CSQLiteWorkspace::Open( L"TestSpatialDB.sqlite", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData", true, false);
 		
-	GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CSQLiteWorkspace::Open( L"TestSpatialDB.sqlite", L"d:\\db", true, true);
+	GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CSQLiteWorkspace::Open( L"building.sqlite", L"d:\\db", true, true);
 
 	if(!pWks.get())
 	{
 		//pWks = GisEngine::GeoDatabase::CSQLiteWorkspace::Create( L"TestSpatialDB.sqlite", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
-		pWks = GisEngine::GeoDatabase::CSQLiteWorkspace::Create( L"TestSpatialDB.sqlite", L"d:\\db");
+		pWks = GisEngine::GeoDatabase::CSQLiteWorkspace::Create( L"building.sqlite", L"d:\\db");
 	}
 
-	GisEngine::GeoDatabase::IFeatureClassPtr pSQLFC = pWks->OpenFeatureClass(L"TestFeatureClass");
+	GisEngine::GeoDatabase::IFeatureClassPtr pSQLFC = pWks->OpenFeatureClass(L"building");
 	if(!pSQLFC.get())
 	{
-		pSQLFC = pWks->CreateFeatureClass(L"TestFeatureClass", pShapeFC->GetFields().get()/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
+		GisEngine::GeoDatabase::ITransactionPtr pTran = pWks->startTransaction();
+		if(!pTran.get())
+			return;
+
+		pSQLFC = pWks->CreateFeatureClass(L"building", pShapeFC->GetFields().get()/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
 
 
 
@@ -63,8 +67,11 @@ void TestSQLiteWks()
 		GisEngine::GeoDatabase::ICursorPtr pCursor = pShapeFC->Search(&filter, true);
 		GisEngine::GeoDatabase::IRowPtr pRow;
 
-		GisEngine::GeoDatabase::CSQLiteWorkspace *pSQLWke = (GisEngine::GeoDatabase::CSQLiteWorkspace *)pWks.get();
-		GisEngine::GeoDatabase::SQLiteInsertCursor SQLiteCusor((GisEngine::GeoDatabase::ITable*)pSQLFC.get(), NULL, pSQLWke->GetDB());
+
+		GisEngine::GeoDatabase::IInsertCursorPtr pInsertCursor = pTran->CreateInsertCusor((GisEngine::GeoDatabase::ITable*)pSQLFC.get());
+
+		//GisEngine::GeoDatabase::CSQLiteWorkspace *pSQLWke = (GisEngine::GeoDatabase::CSQLiteWorkspace *)pWks.get();
+		//GisEngine::GeoDatabase::SQLiteInsertCursor SQLiteCusor((GisEngine::GeoDatabase::ITable*)pSQLFC.get(), NULL, pSQLWke->GetDB());
 		uint32 nRow = 0;
 		int64 nRowID = 0;
 		int nError = 0;
@@ -75,11 +82,12 @@ void TestSQLiteWks()
 			nRow++;
 		
 			nOID.insert(pRow->GetOID());
-			nRowID = SQLiteCusor.InsertRow(pRow.get());
+			nRowID = pInsertCursor->InsertRow(pRow.get());
 			if(nRowID == -1)
 				nError++;
 
 		}
+		pTran->commit();
 	}
 	else
 	{

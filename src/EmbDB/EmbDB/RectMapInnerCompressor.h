@@ -88,7 +88,7 @@ namespace embDB
 				TCoordPoint& coord = keySet[i];
 				for (size_t j = 0; j < nCount; ++j )
 				{
-					KeyStreams.write(coord.m_nZValue[i]);
+					KeyStreams.write(coord.m_nZValue[j]);
 				}
 				LinkStreams.write(linkSet[i]);
 			}

@@ -291,6 +291,13 @@ namespace embDB
 				m_pRoot->Save(m_pTransaction);
 				m_pRoot->setFlags(CHANGE_NODE, false);
 			}
+
+		/*	FilePagePtr pFilePage = m_pTransaction->getFilePage(m_pRoot->addr());
+			TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, m_pRoot->addr(), m_bMulti, m_pRoot->isLeaf(), m_bCheckCRC32,  m_InnerCompParams.get(),
+				m_LeafCompParams.get() );
+			pNode->LoadFromPage(pFilePage.get(), m_pTransaction);*/
+
+
 			m_BTreeInfo.Save(m_pTransaction);
 			m_nStateTree = eBPTNoChange;
 			return true;

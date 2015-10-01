@@ -125,7 +125,13 @@ namespace embDB
 		ptUINT32,
 		ptUINT64
 	};
-
+	enum eStringCoding
+	{
+		scUndefined =0,
+		scASCII,
+		scUTF8,
+		scUTF16
+	};
 
 	enum eGeoSpatialCoordinatesFormat
 	{
