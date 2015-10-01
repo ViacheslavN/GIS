@@ -33,7 +33,7 @@ namespace GisEngine
 			{
 				m_sName = ShapefileUtils::NormalizePath(CommonLib::apply_visitor<CommonLib::ToStringVisitor>(*pVarName, CommonLib::ToStringVisitor()));
 			}
-			load();
+			//load();
 		}
 		CShapefileWorkspace::CShapefileWorkspace(const wchar_t *pszName, const wchar_t *pszPath, int32 nID) : TBase(wtShapeFile, nID), 
 			m_bLoad(false)
@@ -47,7 +47,7 @@ namespace GisEngine
 
 			m_ConnectProp->SetProperty(c_PropertyName, varName);
 			m_ConnectProp->SetProperty(c_PropertyPath, varPath);
-			load();
+			//load();
 		}
 		 
 		CShapefileWorkspace::~CShapefileWorkspace()
@@ -263,8 +263,10 @@ namespace GisEngine
 				return pWks;
 
 			CShapefileWorkspace* pShapeWks = new CShapefileWorkspace(pszName, pszPath, CWorkspaceHolder::GetIDWorkspace());
+			pWks = pShapeWks;
+			pShapeWks->load();
 			CWorkspaceHolder::AddWorkspace((IWorkspace*)pShapeWks);
-			return IWorkspacePtr((IWorkspace*)pShapeWks);
+			return pWks;
 		}
 		IWorkspacePtr CShapefileWorkspace::Open(CommonLib::IReadStream* pSteram)
 		{

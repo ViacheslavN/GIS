@@ -12,7 +12,10 @@ class ITest : public CommonLib::AutoRefCounter
 {
 public:
 	ITest(){}
+	ITest(const CommonLib::CString & str) : m_sStr(str){}
 	~ITest(){}
+private:
+	CommonLib::CString m_sStr;
 };
 
 COMMON_LIB_REFPTR_TYPEDEF(ITest);
@@ -25,11 +28,13 @@ typedef std::map<ITestPtr, int> TtestMap;
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	/*CommonLib::CString *s1 = new  CommonLib::CString(L"vfdgggf");
-	CommonLib::CString s2(*s1);
-	delete s1;*/
 
-	TestShapeIndex();
+	/*CommonLib::CString s1(L"vfdgggf");
+	CommonLib::CString s2(s1);
+
+	ITest *pTest = new ITest(s1);
+	delete pTest;*/
+	//TestShapeIndex();
 	//TestSQLiteWks();
  
 	//TestXML();
