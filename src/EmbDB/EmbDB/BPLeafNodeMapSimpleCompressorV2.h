@@ -15,13 +15,13 @@ namespace embDB
 		typedef _TValue TValue;
 		typedef  TBPVector<TKey> TLeafKeyMemSet;
 		typedef  TBPVector<TValue> TLeafValueMemSet;
-		typedef CompressorParamsBaseImp TLeafCompressorParamsBase;
+		typedef CompressorParamsBaseImp TLeafCompressorParams;
 
-		BPLeafNodeMapSimpleCompressorV2(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParamsBase *pParams = NULL) : m_nSize(0)
+		BPLeafNodeMapSimpleCompressorV2(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL) : m_nSize(0)
 		{}
 		
 		template<typename _Transactions  >
-		static TLeafCompressorParamsBase *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		static TLeafCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
 		{
 			return NULL;
 		}

@@ -16,11 +16,11 @@ namespace embDB
 		typedef  int64 TLink;
 		typedef TBPVectorNoPOD<CompositeIndexKey> TKeyMemSet;
 		typedef  TBPVector<TLink> TLinkMemSet;
-		typedef CompIndexParams TInnerCompressorParamsBase;
+		typedef CompIndexParams TInnerCompressorParams;
 
 
 		template<typename _Transactions  >
-		static TInnerCompressorParamsBase *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		static TInnerCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
 		{
 			CompIndexParams *pCompParams = new  CompIndexParams();
 			pCompParams->setRootPage(nPage);
@@ -29,7 +29,7 @@ namespace embDB
 		}
 
 
-		BPInnerCompIndexCompressor(CommonLib::alloc_t *pAlloc, TInnerCompressorParamsBase *pParams) 
+		BPInnerCompIndexCompressor(CommonLib::alloc_t *pAlloc, TInnerCompressorParams *pParams) 
 			: m_nSize(0), m_pAlloc(pAlloc), m_pCompParams(pParams)
 		{}
 		virtual ~BPInnerCompIndexCompressor(){}
@@ -144,7 +144,7 @@ namespace embDB
 	private:
 		size_t m_nSize;
 		CommonLib::alloc_t* m_pAlloc;
-		TInnerCompressorParamsBase* m_pCompParams;
+		TInnerCompressorParams* m_pCompParams;
 	};
 }
 

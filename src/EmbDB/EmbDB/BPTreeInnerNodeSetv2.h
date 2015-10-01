@@ -29,7 +29,7 @@ namespace embDB
 				
 	public:
 
-		typedef typename _TCompressor::TInnerCompressorParamsBase TInnerCompressorParamsBase;
+		typedef typename _TCompressor::TInnerCompressorParams TInnerCompressorParams;
 		
 		BPTreeInnerNodeSetv2( CommonLib::alloc_t *pAlloc,  bool bMulti) :
 		  m_pCompressor(0), m_nLess(-1),  m_innerKeyMemSet(pAlloc), m_innerLinkMemSet(pAlloc), m_bMulti(bMulti),
@@ -38,7 +38,7 @@ namespace embDB
 			
 		}
 
-		virtual bool init(TInnerCompressorParamsBase *pParams = NULL)
+		virtual bool init(TInnerCompressorParams *pParams = NULL)
 		{
 			assert(!m_pCompressor);
 			m_pCompressor = new TCompressor(m_pAlloc, pParams);

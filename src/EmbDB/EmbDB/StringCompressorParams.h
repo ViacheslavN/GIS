@@ -10,7 +10,7 @@ namespace embDB
 	class StringFieldCompressorParams
 	{
 	public:
-		StringFieldCompressorParams() : m_nRootPage(-1), m_StringCoding(scUndefined), m_nLen(0)
+		StringFieldCompressorParams(int64 nRootPage = -1) : m_nRootPage(nRootPage), m_StringCoding(scUndefined), m_nLen(0)
 		{}
 		virtual ~StringFieldCompressorParams(){}
 

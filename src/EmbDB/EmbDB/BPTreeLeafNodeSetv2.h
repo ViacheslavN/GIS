@@ -23,7 +23,7 @@ namespace embDB
 		typedef _TCompressor TCompressor;
 		typedef _TLeafMemSet TLeafMemSet;
 
-		typedef typename _TCompressor::TLeafCompressorParamsBase TLeafCompressorParamsBase;
+		typedef typename _TCompressor::TLeafCompressorParams TLeafCompressorParams;
 
 		BPTreeLeafNodeSetv2Base( CommonLib::alloc_t *pAlloc, bool bMulti) :
 		m_leafKeyMemSet(pAlloc),  m_pCompressor(0),	m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti),
@@ -38,7 +38,7 @@ namespace embDB
 				delete m_pCompressor;
 		}
 
-		virtual bool init(TLeafCompressorParamsBase *pParams = NULL)
+		virtual bool init(TLeafCompressorParams *pParams = NULL)
 		{
 			assert(!m_pCompressor);
 			m_pCompressor = new TCompressor(m_pAlloc, pParams);

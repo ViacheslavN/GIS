@@ -19,12 +19,12 @@ namespace embDB
 		typedef  TBPVector<TCoordPoint> TLeafKeyMemSet;
 		typedef  TBPVector<TValue> TLeafValueMemSet;
 		//TRect2D<TPointType>         TRect;
-		typedef CompressorParamsBaseImp TLeafCompressorParamsBase;
-		BPSpatialPointLeafNodeMapSimpleCompressor(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParamsBase *pParms = NULL) : m_nSize(0)
+		typedef CompressorParamsBaseImp TLeafCompressorParams;
+		BPSpatialPointLeafNodeMapSimpleCompressor(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParms = NULL) : m_nSize(0)
 		{}
 
 		template<typename _Transactions  >
-		static TLeafCompressorParamsBase *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		static TLeafCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
 		{
 			return NULL;
 		}

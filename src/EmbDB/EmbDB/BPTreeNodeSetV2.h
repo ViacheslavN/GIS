@@ -28,12 +28,12 @@ namespace embDB
 		typedef _TInnerNode TInnerNode;
 		typedef _TLeafNode  TLeafNode;
 
-		typedef typename TInnerCompressor::TInnerCompressorParamsBase TInnerCompressorParamsBase;
-		typedef typename TLeafCompressor::TLeafCompressorParamsBase TLeafCompressorParamsBase;
+		typedef typename TInnerCompressor::TInnerCompressorParams TInnerCompressorParams;
+		typedef typename TLeafCompressor::TLeafCompressorParams TLeafCompressorParams;
 
 
 		BPTreeNodeSetv2(int64 nParentAddr, CommonLib::alloc_t *pAlloc, int64 nPageAddr, bool bMulti, bool  bIsLeaf, bool bCheckCRC32,
-			TInnerCompressorParamsBase *pInnerCompParams = NULL, TLeafCompressorParamsBase *pLeafCompParams = NULL) :
+			TInnerCompressorParams *pInnerCompParams = NULL, TLeafCompressorParams *pLeafCompParams = NULL) :
 		m_bIsLeaf(bIsLeaf)
 			,m_nPageAddr(nPageAddr)
 			,m_pAlloc(pAlloc)
@@ -432,8 +432,8 @@ namespace embDB
  
 
 
-		TInnerCompressorParamsBase *m_pInnerCompParams;
-		TLeafCompressorParamsBase *m_pLeafCompParams;
+		TInnerCompressorParams *m_pInnerCompParams;
+		TLeafCompressorParams *m_pLeafCompParams;
 
 		bool m_bCheckCRC32;
 	private:

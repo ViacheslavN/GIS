@@ -17,9 +17,9 @@ namespace embDB
 		typedef TBPVectorNoPOD<CompositeIndexKey> TLeafKeyMemSet;
 		typedef  TBPVector<TValue> TLeafValueMemSet;
 
-		typedef CompIndexParams TLeafCompressorParamsBase;
+		typedef CompIndexParams TLeafCompressorParams;
 
-		BPLeafCompIndexCompressor(CommonLib::alloc_t *pAlloc, TLeafCompressorParamsBase *pParams) 
+		BPLeafCompIndexCompressor(CommonLib::alloc_t *pAlloc, TLeafCompressorParams *pParams) 
 			: m_nSize(0), m_pAlloc(pAlloc), m_pCompParams(pParams)
 		{
 			assert(m_pCompParams);
@@ -28,7 +28,7 @@ namespace embDB
 
 
 		template<typename _Transactions  >
-		static TLeafCompressorParamsBase *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		static TLeafCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
 		{
 
 			CompIndexParams *pCompParams = new  CompIndexParams();
@@ -147,7 +147,7 @@ namespace embDB
 	private:
 		size_t m_nSize;
 		CommonLib::alloc_t* m_pAlloc;
-		TLeafCompressorParamsBase* m_pCompParams;
+		TLeafCompressorParams* m_pCompParams;
 
 	};
 }

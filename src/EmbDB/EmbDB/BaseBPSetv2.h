@@ -122,8 +122,8 @@ namespace embDB
 		typedef CommonLib::delegateimpl1_t<TBPlusTreeSetV2, CommonLib::RefCounter*> TRemoveNodeDelegate;
 		std::auto_ptr<TRemoveNodeDelegate> m_NodeRemove;
 
-		typedef typename TInnerNode::TInnerCompressorParamsBase TInnerCompressorParamsBase;
-		typedef typename TLeafNode::TLeafCompressorParamsBase TLeafCompressorParamsBase;
+		typedef typename TInnerNode::TInnerCompressorParams TInnerCompressorParams;
+		typedef typename TLeafNode::TLeafCompressorParams TLeafCompressorParams;
 	
 /*
 		typedef TBPSetIteratorV2<TKey, TComp,Transaction, TInnerCompess, TLeafCompess,
@@ -1901,8 +1901,8 @@ namespace embDB
 		bool m_bMulti;
 		bool m_bCheckCRC32;
 
-		std::auto_ptr<TLeafCompressorParamsBase> m_LeafCompParams;
-		std::auto_ptr<TInnerCompressorParamsBase> m_InnerCompParams;
+		std::auto_ptr<TLeafCompressorParams> m_LeafCompParams;
+		std::auto_ptr<TInnerCompressorParams> m_InnerCompParams;
 		uint32 m_nStateTree;
 	};
 

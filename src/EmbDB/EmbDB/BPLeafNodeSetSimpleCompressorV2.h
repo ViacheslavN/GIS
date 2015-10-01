@@ -13,13 +13,13 @@ namespace embDB
 	public:	
 		typedef _TKey TKey;
 		typedef  TBPVector<TKey> TLeafMemSet;
-		typedef CompressorParamsBaseImp TLeafCompressorParamsBase;
+		typedef CompressorParamsBaseImp TLeafCompressorParams;
 
-		BPLeafNodeSetSimpleCompressorV2(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParamsBase *pParams = NULL) : m_nSize(0)
+		BPLeafNodeSetSimpleCompressorV2(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL) : m_nSize(0)
 		{}
 
 		template<typename _Transactions  >
-		static TLeafCompressorParamsBase *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		static TLeafCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
 		{
 			return NULL;
 		}

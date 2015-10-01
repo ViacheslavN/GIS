@@ -4,7 +4,7 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CompressorParams.h"
 #include "BPVectorNoPod.h"
-#include "StringCompressorParams.h
+#include "StringCompressorParams.h"
 namespace embDB
 {
 
@@ -16,20 +16,24 @@ namespace embDB
 		typedef int64 TLink;
 		typedef  TBPVectorNoPOD<CommonLib::CString> TKeyMemSet;
 		typedef  TBPVector<TLink> TLinkMemSet;
-		typedef StringFieldCompressorParams TInnerCompressorParamsBase;
+		typedef StringFieldCompressorParams TInnerCompressorParams;
 
 		 
 
 		template<typename _Transactions  >
-		static TInnerCompressorParamsBase *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		static TInnerCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
 		{
-			TInnerCompressorParamsBase *pInnerComp = new TInnerCompressorParamsBase();
-
-			return NULL;
+			TInnerCompressorParams *pInnerComp = new TInnerCompressorParams(nPage);
+			pInnerComp->read(pTran);
+			return pInnerComp;
 		}
 
-		BPStringInnerNodeSimpleCompressor(CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParamsBase *pParams = 0) : m_nSize(0)
-		{}
+		BPStringInnerNodeSimpleCompressor(CommonLib::alloc_t *pAlloc = 0, 
+			TInnerCompressorParams *pParams = 0) : m_nSize(0), m_pAlloc(pAlloc), m_pInnerComp(pParams)
+		{
+
+			assert(m_pInnerComp);
+		}
 		virtual ~BPStringInnerNodeSimpleCompressor(){}
 		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
 		{
@@ -43,21 +47,23 @@ namespace embDB
 			keySet.reserve(m_nSize);
 			linkSet.reserve(m_nSize);
 
-			uint32 nKeySize =  m_nSize * TCoordPoint::SizeInByte;
+			uint32 nKeySize =  m_nSize * m_pInnerComp->GetStringLen();
 			uint32 nLinkSize =  m_nSize * sizeof(int64);
 
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 
-			TCoordPoint zPoint;
-			TLink nlink;
-			size_t nCount = TCoordPoint::SizeInByte/8;
+ 			TLink nlink;
+			 CommonLib::CString sString;
+ 
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
-				for (size_t i = 0; i < nCount; ++i )
-				{
-					KeyStreams.read(zPoint.m_nZValue[i]);
-				}
+
+
+				sString.importFromUTF8()
+
+				KeyStreams.read(zPoint.m_nZValue[i]);
+		
 				LinkStreams.read(nlink);
 
 				keySet.push_back(zPoint);
@@ -100,15 +106,35 @@ namespace embDB
 			return true;
 		}
 
-		virtual bool insert(const TCoordPoint& key, TLink link )
+		virtual bool insert(const CommonLib::CString& sStr, TLink link )
 		{
 			m_nSize++;
+			uint32 nStrSize = 0;
+			switch(m_pInnerComp->GetStringCoding())
+			{
+				case scASCII:
+					nStrSize = sStr.length();
+					break;
+				case  scUTF8:
+					nStrSize = sStr.calcUTF8Length();
+					break;
+				default:
+					assert(false);
+					break;;
+			}
+
+			m_nRowStringSize += nStrSize;
+
 			assert(link!= 0);
 			return true;
 		}
 		virtual bool add(const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
 		{
-			m_nSize += keySet.size();
+			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
+			{
+				insert(keySet[i], linkSet[i]);
+			}
+			
 			return true;
 		}
 		virtual bool recalc(const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
@@ -150,7 +176,10 @@ namespace embDB
 			return  (TCoordPoint::SizeInByte + sizeof(TLink));
 		}
 	private:
+		size_t m_nRowStringSize;
 		size_t m_nSize;
+		CommonLib::alloc_t* m_pAlloc;
+		TInnerCompressorParams *m_pInnerComp;
 	};
 }
 
