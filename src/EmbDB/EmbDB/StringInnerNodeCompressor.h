@@ -59,14 +59,7 @@ namespace embDB
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
 
-
-				sString.importFromUTF8()
-
-				KeyStreams.read(zPoint.m_nZValue[i]);
-		
-				LinkStreams.read(nlink);
-
-				keySet.push_back(zPoint);
+				 
 				linkSet.push_back(nlink);
 			}
 			assert(LinkStreams.pos() < stream.size());

@@ -29,7 +29,8 @@ namespace embDB
 		}
 
 
-		BPInnerNodeSimpleCompressorV2(CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = NULL) : m_nSize(0)
+		BPInnerNodeSimpleCompressorV2(TKeyMemSet* pKeyMemSet, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = NULL) : 
+		m_pKeyMemSet(pKeyMemSet), m_pLinkMemSet(pLinkMemSet), m_nSize(0)
 		{}
 		virtual ~BPInnerNodeSimpleCompressorV2(){}
 		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
@@ -92,7 +93,7 @@ namespace embDB
 			return true;
 		}
 
-		virtual bool insert(const TKey& key, TLink link )
+		virtual bool insert(int nIndex, const TKey& key, TLink link )
 		{
 			m_nSize++;
 			return true;
@@ -107,12 +108,12 @@ namespace embDB
 			m_nSize = keySet.size();
 			return true;
 		}
-		virtual bool remove(const TKey& key, TLink link)
+		virtual bool remove(int nIndex, const TKey& key, TLink link)
 		{
 			m_nSize--;
 			return true;
 		}
-		virtual bool update(const TKey& key, TLink link)
+		virtual bool update(int nIndex, const TKey& key, TLink link)
 		{
 			return true;
 		}
@@ -142,6 +143,8 @@ namespace embDB
 		}
 	private:
 		size_t m_nSize;
+		TKeyMemSet* m_pKeyMemSet;
+		TLinkMemSet* m_pLinkMemSet;
 	};
 }
 

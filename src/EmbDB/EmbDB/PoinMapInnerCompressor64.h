@@ -14,7 +14,7 @@ namespace embDB
 		typedef  TBPVector<ZOrderPoint2DU64> TKeyMemSet;
 		typedef  TBPVector<int64> TLinkMemSet;
 		typedef CompressorParamsBaseImp TInnerCompressorParams;
-		BPSpatialPointInnerNodeSimpleCompressor64(CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParms = NULL) : m_nSize(0)
+		BPSpatialPointInnerNodeSimpleCompressor64(TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParms = NULL) : m_nSize(0)
 		{}
 
 
@@ -91,7 +91,7 @@ namespace embDB
 		}
 
 
-		virtual bool insert(const ZOrderPoint2DU64& key, int64 link )
+		virtual bool insert(int nIndex, const ZOrderPoint2DU64& key, int64 link )
 		{
 			m_nSize++;
 			return true;
@@ -106,12 +106,12 @@ namespace embDB
 			m_nSize = keySet.size();
 			return true;
 		}
-		virtual bool remove(const ZOrderPoint2DU64& key, int64 link)
+		virtual bool remove(int nIndex, const ZOrderPoint2DU64& key, int64 link)
 		{
 			m_nSize--;
 			return true;
 		}
-		virtual bool update(const ZOrderPoint2DU64& key, int64 link)
+		virtual bool update(int nIndex, const ZOrderPoint2DU64& key, int64 link)
 		{
 			return true;
 		}

@@ -160,14 +160,33 @@ namespace CommonLib
 
 		return compare(blob.buffer(), blob.size());
 	}
+	void  CBlob::reserve(uint32 nSize, bool bClear)
+	{
+		if(m_bAttach)
+			deattach();
 
+		if(m_nCapacity < nSize)
+		{
+			byte* pBuffer = (byte*)m_pAlloc->alloc(nSize);
+			if(m_pBuffer != NULL)
+			{
+				if(!bClear)
+					memcpy(pBuffer, m_pBuffer, nSize);
+				m_pAlloc->free(m_pBuffer);
+			}
+			m_pBuffer = pBuffer;
+			m_nCapacity = nSize;
+		}
+		if(bClear)
+			m_nSize = 0;
+	}
 	void  CBlob::resize(uint32 nSize)
 	{
 		if(m_bAttach)
 			deattach();
 		if(m_nCapacity >= nSize)
 		{
-			nSize = 0;
+			m_nSize = m_nSize;
 			return;
 		}
 

@@ -23,7 +23,7 @@ namespace embDB
 			return NULL;
 		}
 
-		BPSpatialRectInnerNodeSimpleCompressor(CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = 0) : m_nSize(0)
+		BPSpatialRectInnerNodeSimpleCompressor(TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = 0) : m_nSize(0)
 		{}
 		virtual ~BPSpatialRectInnerNodeSimpleCompressor(){}
 		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
@@ -95,7 +95,7 @@ namespace embDB
 			return true;
 		}
 
-		virtual bool insert(const TCoordPoint& key, TLink link )
+		virtual bool insert(int nIndex, const TCoordPoint& key, TLink link )
 		{
 			m_nSize++;
 			assert(link!= 0);
@@ -111,12 +111,12 @@ namespace embDB
 			m_nSize = keySet.size();
 			return true;
 		}
-		virtual bool remove(const TCoordPoint& key, TLink link)
+		virtual bool remove(int nIndex, const TCoordPoint& key, TLink link)
 		{
 			m_nSize--;
 			return true;
 		}
-		virtual bool update(const TCoordPoint& key, TLink link)
+		virtual bool update(int nIndex, const TCoordPoint& key, TLink link)
 		{
 			return true;
 		}

@@ -29,7 +29,7 @@ namespace embDB
 		}
 
 
-		BPInnerCompIndexCompressor(CommonLib::alloc_t *pAlloc, TInnerCompressorParams *pParams) 
+		BPInnerCompIndexCompressor(TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemset, CommonLib::alloc_t *pAlloc, TInnerCompressorParams *pParams) 
 			: m_nSize(0), m_pAlloc(pAlloc), m_pCompParams(pParams)
 		{}
 		virtual ~BPInnerCompIndexCompressor(){}
@@ -93,7 +93,7 @@ namespace embDB
 			return true;
 		}
 
-		virtual bool insert(const CompositeIndexKey& key, TLink link )
+		virtual bool insert(int nIndex, const CompositeIndexKey& key, TLink link )
 		{
 			m_nSize++;
 			return true;
@@ -108,12 +108,12 @@ namespace embDB
 			m_nSize = keySet.size();
 			return true;
 		}
-		virtual bool remove(const CompositeIndexKey& key, TLink link)
+		virtual bool remove(int nIndex, const CompositeIndexKey& key, TLink link)
 		{
 			m_nSize--;
 			return true;
 		}
-		virtual bool update(const CompositeIndexKey& key, TLink link)
+		virtual bool update(int nIndex, const CompositeIndexKey& key, TLink link)
 		{
 			return true;
 		}

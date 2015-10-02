@@ -1242,7 +1242,7 @@ bool CString::split(const wchar_t* _separator, CString& _left, CString& _right) 
   return true;
 }
 
-int CString::importFromUTF8 (const char *utf)
+int CString::loadFromUTF8 (const char *utf)
 {
   if (NULL == utf)
     return false;
@@ -1288,5 +1288,16 @@ CString::calcUTF8Length (void) const
 {
   const wchar_t *tmp = cwstr ();
   return (int)dest_wcsmblen (tmp);
+}
+
+int CString::loadFromASCII(const char *pBuf, int nSize)
+{
+	if(pBuf == NULL || nSize == 0)
+		return 0;
+
+	m_pBuffer->safeRelease();
+	m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, pBuf, nSize);
+
+	return m_pBuffer->length();
 }
 }

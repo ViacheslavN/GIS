@@ -54,9 +54,10 @@ class CString
     const twchar* cwstr() const;
     size_t capacity() const;
     
-    int importFromUTF8 (const char *utf);
+    int loadFromUTF8 (const char *utf);
     int exportToUTF8 (char *utf, int maxbuf) const;
     int calcUTF8Length (void) const;
+	int loadFromASCII(const char *pBuf, int nSize = 0);
 
 
 

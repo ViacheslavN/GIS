@@ -28,7 +28,7 @@ namespace embDB
 			return NULL;
 		}
 
-		BPMultiIndexInnerNodeCompressor(CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = NULL) : m_nSize(0)
+		BPMultiIndexInnerNodeCompressor(TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = NULL) : m_nSize(0)
 		{}
 		virtual ~BPMultiIndexInnerNodeCompressor(){}
 		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
@@ -94,7 +94,7 @@ namespace embDB
 			return true;
 		}
 
-		virtual bool insert(const TIndex& key, TLink link )
+		virtual bool insert(int nIndex, const TIndex& key, TLink link )
 		{
 			m_nSize++;
 			return true;
@@ -109,12 +109,12 @@ namespace embDB
 			m_nSize = keySet.size();
 			return true;
 		}
-		virtual bool remove(const TIndex& key, TLink link)
+		virtual bool remove(int nIndex, const TIndex& key, TLink link)
 		{
 			m_nSize--;
 			return true;
 		}
-		virtual bool update(const TIndex& key, TLink link)
+		virtual bool update(int nIndex, const TIndex& key, TLink link)
 		{
 			return true;
 		}

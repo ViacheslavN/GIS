@@ -40,6 +40,7 @@ namespace CommonLib
 		void copy(const byte* pBuf, uint32 nSize);
 
 		void  resize(uint32 nSize);
+		void  reserve(uint32 nSize, bool bClear = true);
 		bool   empty() const;
 		uint32 size() const;
 		uint32 capacity() const;

@@ -136,7 +136,7 @@ namespace GisEngine
 								m_vecText.push_back(0);
 							CommonLib::CString sText;
 							//utf8_to_utf16((const char *)&m_vecText[0], sText);
-							sText.importFromUTF8((const char *)&m_vecText[0]);
+							sText.loadFromUTF8((const char *)&m_vecText[0]);
 							pNode->SetText( sText );
 						}
 
@@ -159,7 +159,7 @@ namespace GisEngine
 								m_vecText.push_back(0);
 							CommonLib::CString sText;
 							//utf8_to_utf16((const char *)&m_vecText[0], sText);
-							sText.importFromUTF8((const char *)&m_vecText[0]);
+							sText.loadFromUTF8((const char *)&m_vecText[0]);
 							pNode->AddPropertyString(sAttrName, sText);
 						}
 					}
@@ -182,7 +182,7 @@ namespace GisEngine
 								m_vecText.push_back(0);
 							CommonLib::CString sText;
 							//utf8_to_utf16((const char *)&m_vecText[0], sText);
-							sText.importFromUTF8((const char *)&m_vecText[0]);
+							sText.loadFromUTF8((const char *)&m_vecText[0]);
 							pNode->SetText( sText );
 						}
 						

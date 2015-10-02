@@ -66,7 +66,7 @@ namespace embDB
 			return true;
 		}
 
-		virtual bool insert(const TIndex& key)
+		virtual bool insert(int nIndex, const TIndex& key)
 		{
 			m_nSize++;
 			return true;
@@ -81,11 +81,11 @@ namespace embDB
 			m_nSize = Set.size();
 			return true;
 		}
-		virtual bool update(const TIndex& key)
+		virtual bool update(int nIndex, const TIndex& key)
 		{
 			return true;
 		}
-		virtual bool remove(const TIndex& key)
+		virtual bool remove(int nIndex, const TIndex& key)
 		{
 			m_nSize--;
 			return true;

@@ -31,6 +31,7 @@ namespace embDB
 		{
  
 		}
+		 
 		virtual  bool Save(	CommonLib::FxMemoryWriteStream& stream) 
 		{
 			stream.write(m_nNext);

@@ -129,8 +129,8 @@ namespace embDB
 	{
 		scUndefined =0,
 		scASCII,
-		scUTF8,
-		scUTF16
+		scUTF8
+		//scUTF16
 	};
 
 	enum eGeoSpatialCoordinatesFormat

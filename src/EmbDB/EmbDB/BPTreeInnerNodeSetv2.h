@@ -41,7 +41,7 @@ namespace embDB
 		virtual bool init(TInnerCompressorParams *pParams = NULL)
 		{
 			assert(!m_pCompressor);
-			m_pCompressor = new TCompressor(m_pAlloc, pParams);
+			m_pCompressor = new TCompressor(&m_innerKeyMemSet, &m_innerLinkMemSet, m_pAlloc, pParams);
 			return true;
 		}
 		~BPTreeInnerNodeSetv2()
@@ -155,7 +155,7 @@ namespace embDB
 			
 		
 
-			bool bRet = m_pCompressor->insert(key, nLink);
+			bool bRet = m_pCompressor->insert(nIndex, key, nLink);
 	
 			return bRet ? nIndex : -1;
 		}
@@ -189,7 +189,7 @@ namespace embDB
 
 		bool removeByIndex(int32 nIndex)
 		{
-			m_pCompressor->remove(m_innerKeyMemSet[nIndex], m_innerLinkMemSet[nIndex]);
+			m_pCompressor->remove(nIndex, m_innerKeyMemSet[nIndex], m_innerLinkMemSet[nIndex]);
 			bool bRet = m_innerKeyMemSet.remove(nIndex);
 			if(!bRet)
 			{
@@ -223,15 +223,15 @@ namespace embDB
 			nSize++;
 			while(nSize   < m_innerKeyMemSet.size())
 			{						 
-				m_pCompressor->remove(m_innerKeyMemSet[nSize], m_innerLinkMemSet[nSize]);
-				pNewNodeComp->insert(m_innerKeyMemSet[nSize], m_innerLinkMemSet[nSize]);
+				m_pCompressor->remove(nSize, m_innerKeyMemSet[nSize], m_innerLinkMemSet[nSize]);
+				pNewNodeComp->insert(nSize, m_innerKeyMemSet[nSize], m_innerLinkMemSet[nSize]);
 				++nSize;
 			}	
 
 			*pSplitKey = m_innerKeyMemSet[nNewSize];
 			pNode->m_nLess = m_innerLinkMemSet[nNewSize];
 
-			m_pCompressor->remove(m_innerKeyMemSet[nNewSize], m_innerLinkMemSet[nNewSize]);
+			m_pCompressor->remove(nNewSize, m_innerKeyMemSet[nNewSize], m_innerLinkMemSet[nNewSize]);
 		
 
 			assert(pNode->m_nLess  != -1);
@@ -262,15 +262,17 @@ namespace embDB
 
 		void updateLink(int32 nIndex, TLink nLink)
 		{
+			m_pCompressor->update(nIndex, m_innerKeyMemSet[nIndex], nLink);
 			m_innerLinkMemSet[nIndex] = nLink;
-			m_pCompressor->update(m_innerKeyMemSet[nIndex], m_innerLinkMemSet[nIndex]);
+			
 		}
 
 
 		void updateKey(int32 nIndex, const TKey& key)
 		{
+			m_pCompressor->update(nIndex, key, m_innerLinkMemSet[nIndex]);
 			m_innerKeyMemSet[nIndex] = key;
-			m_pCompressor->update(m_innerKeyMemSet[nIndex], m_innerLinkMemSet[nIndex]);
+			
 		}
 
 		bool UnionWith(BPTreeInnerNodeSetv2* pNode,  const TKey& LessMin, bool bLeft)
@@ -318,7 +320,7 @@ namespace embDB
 	 
 			if(bLeft)
 			{
-				m_pCompressor->insert(LessMin, m_nLess);
+				
 
 				size_t oldSize = m_innerKeyMemSet.size();
 
@@ -327,6 +329,8 @@ namespace embDB
 
 				m_innerKeyMemSet[nCnt - 1] = LessMin;
 				m_innerLinkMemSet[nCnt - 1] = m_nLess;
+
+				//m_pCompressor->insert(nCnt - 1, LessMin, m_nLess);
 
 				size_t newSize = pNode->m_innerLinkMemSet.size() -nCnt;
 

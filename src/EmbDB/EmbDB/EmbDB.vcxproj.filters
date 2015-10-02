@@ -184,6 +184,9 @@
     <Filter Include="DB\Fields\shape">
       <UniqueIdentifier>{09e32243-a22a-4e7c-a43b-35ebcdf3ea8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\Fields\string\fixedStringField">
+      <UniqueIdentifier>{baa61b41-847b-45c3-9279-6eb33bb3ead1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -717,14 +720,14 @@
     <ClInclude Include="embDBLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StringCompressorParams.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
     <ClInclude Include="StringInnerNodeCompressor.h">
-      <Filter>DB\Fields\string</Filter>
+      <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
     <ClInclude Include="StringLeafNodeCompressor.h">
-      <Filter>DB\Fields\string</Filter>
-    </ClInclude>
-    <ClInclude Include="StringCompressorParams.h">
-      <Filter>DB\Fields\string</Filter>
+      <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
