@@ -2,6 +2,7 @@
 #define _EMBEDDED_DATABASE_STRING_LEAF_NODE_SIMPLE_COMPRESSOR_H_
 
 #include "CommonLibrary/FixedMemoryStream.h"
+#include "CommonLibrary/blob.h"
 #include "CompressorParams.h"
 #include "BPVectorNoPod.h"
 #include "StringCompressorParams.h"
@@ -33,8 +34,8 @@ namespace embDB
 		}
 
 		BPStringLeafNodeSimpleCompressor(CommonLib::alloc_t *pAlloc = 0, 
-			TInnerCompressorParams *pParams = 0) : m_nSize(0), m_pAlloc(pAlloc), m_pLeafCompParams(pParams),
-			m_nStringDataSize(0), m_pValueMemset(0)
+			TLeafCompressorParams *pParams = 0) : m_nSize(0), m_pAlloc(pAlloc), m_pLeafCompParams(pParams),
+			m_nStringDataSize(0), m_pValueMemset(0), m_bCalcRecalc(false)
 		{
 
 			assert(m_pLeafCompParams);
@@ -45,12 +46,13 @@ namespace embDB
 
 			assert(m_pValueMemset == 0);
 			m_pValueMemset = &valueSet;
+			m_bCalcRecalc = false;
 
 			CommonLib::FxMemoryReadStream KeyStream;
 			CommonLib::FxMemoryReadStream ValueStream;
 
 
-			eStringCoding sCode = pInnerComp->GetStringCoding();
+			eStringCoding sCode = m_pLeafCompParams->GetStringCoding();
 
 			m_nStringDataSize = 0;
 			m_nSize = stream.readInt32();
@@ -66,29 +68,30 @@ namespace embDB
 			KeyStream.attach(stream.buffer() + stream.pos(), nKeySize);
 			ValueStream.attach(stream.buffer() + stream.pos() + nKeySize, stream.size() -  stream.pos() -  nKeySize);
 
-			TLink nlink;
+			TKey nKey;
+
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
-				KeyStream.read(nlink);
+				KeyStream.read(nKey);
 				CommonLib::CString sString;
-
+				uint32 nStrSize = 0;
 				if(sCode == scASCII)
 				{
-					nStrSize = sString.loadFromASCII((const char*)ValueStream.buffer());
+					nStrSize = sString.loadFromASCII((const char*)ValueStream.buffer() + ValueStream.pos());
 				}
 				else if(sCode == scUTF8)
 				{
-					nStrSize = sString.loadtFromUTF8((const char*)ValueStream.buffer());
+					nStrSize = sString.loadFromUTF8((const char*)ValueStream.buffer()+ ValueStream.pos()) + 1;
 				}
 
 				m_nStringDataSize += nStrSize;
 
-				ValueStream.seek(nStrSize, CommonLib::soFromCurrent)
+				ValueStream.seek(nStrSize, CommonLib::soFromCurrent);
 
 				valueSet.push_back(sString);
-				keySet.push_back(nlink);
+				keySet.push_back(nKey);
 			}
-			assert(LinkStreams.pos() < stream.size());
+			assert(KeyStream.pos() < stream.size());
 			return true;
 		}
 		virtual bool Write(TLeafKeyMemSet& keySet, TLeafValueMemSet& valueSet, CommonLib::FxMemoryWriteStream& stream)
@@ -102,7 +105,7 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream KeyStream;
 			CommonLib::FxMemoryWriteStream ValueStream;
 
-			eStringCoding sCode = pInnerComp->GetStringCoding();
+			eStringCoding sCode = m_pLeafCompParams->GetStringCoding();
 			uint32 nKeySize =  m_nSize * sizeof(TKey);
 	
 
@@ -121,10 +124,10 @@ namespace embDB
 				}
 				else if(sCode == scUTF8)
 				{
-					int utf8Len = valueSet[i].calcUTF8Length();
+					int utf8Len = valueSet[i].calcUTF8Length() + 1;
 					bufForUff8.resize(utf8Len);
 
-					valueSet[i].exportToUTF8(bufForUff8.buffer(), utf8Len);
+					valueSet[i].exportToUTF8((char*)bufForUff8.buffer(), utf8Len);
 					ValueStream.write((const byte*)bufForUff8.buffer(), utf8Len);
 				}
 
@@ -136,12 +139,16 @@ namespace embDB
 		{
 			m_nSize++;
 			uint32 nStrSize = GetStingSize(sStr);
+			if(nStrSize != sStr.length())
+				m_bCalcRecalc = true;
+
+
 			m_nStringDataSize += nStrSize;
 
-			assert(link!= 0);
+	
 			return true;
 		}
-		virtual bool add(const TKeyMemSet& keySet, const TLeafValueMemSet& valuekSet)
+		virtual bool add(const TLeafKeyMemSet& keySet, const TLeafValueMemSet& valuekSet)
 		{
 			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
@@ -150,18 +157,25 @@ namespace embDB
 
 			return true;
 		}
-		virtual bool recalc(const TKeyMemSet& keySet, const TLeafValueMemSet& valuekSet)
+		virtual bool recalc(const TLeafKeyMemSet& keySet, const TLeafValueMemSet& valueSet)
 		{
+
+		
+			m_nSize = 0;
+			m_nStringDataSize = 0;
 			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
-				insert(i, keySet[i], valuekSet[i]);
+				insert(i, keySet[i], valueSet[i]);
 			}
+		
+
+			return true;
 		}
 		virtual bool remove(int nIndex, TKey key, const CommonLib::CString& sStr)
 		{
 			m_nSize--;
 			uint32 nStrSize = GetStingSize(sStr);
-			m_nStringDataSize -= sStr;
+			m_nStringDataSize -= nStrSize;
 			return true;
 		}
 		virtual bool update(int nIndex, TKey key, const CommonLib::CString& sStr)
@@ -174,7 +188,7 @@ namespace embDB
 		}
 		virtual size_t size() const
 		{
-			return (sizeof(TKey) ) *  m_nSize + sizeof(uint32) + m_nStringDataSize;
+			return (sizeof(TKey) *  m_nSize )  + sizeof(uint32) + m_nStringDataSize;
 		}
 		virtual size_t count() const
 		{
@@ -186,7 +200,7 @@ namespace embDB
 		}
 		size_t rowSize()
 		{
-			return (sizeof(TLink)) *  m_nSize + m_nStringDataSize;
+			return (sizeof(TKey) *  m_nSize ) + m_nStringDataSize;
 		}
 		void clear()
 		{
@@ -194,10 +208,10 @@ namespace embDB
 		}
 		size_t tupleSize() const
 		{
-			return  (m_pLeafCompParams->GetStringLen() + sizeof(TLink));
+			return  (m_pLeafCompParams->GetStringLen() + sizeof(TKey));
 		}
 	private:
-		int GetStingSize(const CString& sStr) const 
+		int GetStingSize(const CommonLib::CString& sStr) const 
 		{
 			switch(m_pLeafCompParams->GetStringCoding())
 			{
@@ -205,7 +219,7 @@ namespace embDB
 				return sStr.length();
 				break;
 			case  scUTF8:
-				return sStr.calcUTF8Length();
+				return sStr.calcUTF8Length() + 1;
 				break;
 			default:
 				assert(false);
@@ -217,6 +231,7 @@ namespace embDB
 	private:
 		size_t m_nStringDataSize;
 		size_t m_nSize;
+		bool m_bCalcRecalc;
 		CommonLib::alloc_t* m_pAlloc;
 		TLeafCompressorParams *m_pLeafCompParams;
 		TLeafValueMemSet *m_pValueMemset;

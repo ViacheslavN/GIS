@@ -383,7 +383,7 @@ long dest_wcsmblen (const wchar_t *src)
   long written = 0;
   const wchar_t *run = src;
 
-  while (run[0])
+  while (run[0] != L'\0')
     {
       wchar_t wc = run[0];
       run++;

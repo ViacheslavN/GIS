@@ -50,7 +50,7 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../ThirdParty/WTL/;../../../CommonLibrary;../../;../../../ThirdParty/freetype-2.5.4/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../ThirdParty/WTL/;../../../CommonLibrary;../../;../../../ThirdParty/freetype-2.5.4/include;../../../ThirdParty</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

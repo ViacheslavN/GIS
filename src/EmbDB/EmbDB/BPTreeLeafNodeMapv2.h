@@ -53,7 +53,7 @@ namespace embDB
 				return -1;
 
 			m_leafValueMemSet.insert(value, nIndex);
-			if(!m_pCompressor->insert(key, value))
+			if(!m_pCompressor->insert(nIndex, key, value))
 				return -1;
 			return nIndex;
 		}
@@ -104,7 +104,7 @@ namespace embDB
 
 		bool removeByIndex(int32 nIndex)
 		{
-			m_pCompressor->remove(m_leafKeyMemSet[nIndex], m_leafValueMemSet[nIndex]);
+			m_pCompressor->remove(nIndex, m_leafKeyMemSet[nIndex], m_leafValueMemSet[nIndex]);
 			bool bRet = m_leafKeyMemSet.remove(nIndex);
 			if(!bRet)
 			{

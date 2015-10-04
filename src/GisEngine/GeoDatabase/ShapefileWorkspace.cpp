@@ -264,7 +264,7 @@ namespace GisEngine
 
 			CShapefileWorkspace* pShapeWks = new CShapefileWorkspace(pszName, pszPath, CWorkspaceHolder::GetIDWorkspace());
 			pWks = pShapeWks;
-			pShapeWks->load();
+			//pShapeWks->load();
 			CWorkspaceHolder::AddWorkspace((IWorkspace*)pShapeWks);
 			return pWks;
 		}

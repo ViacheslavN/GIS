@@ -61,6 +61,9 @@ namespace embDB
 
 		uint32 GetStringLen() const {return m_nLen;}
 		eStringCoding GetStringCoding() const {return m_StringCoding;}
+
+		void SetStringLen(uint32 nLen){m_nLen = nLen;}
+		void setStringCoding(eStringCoding sc){m_StringCoding = sc;}
 	private:
 		uint32 m_nLen;
 		int64 m_nRootPage;

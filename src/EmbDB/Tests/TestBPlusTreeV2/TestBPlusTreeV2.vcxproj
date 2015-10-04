@@ -94,6 +94,7 @@
     <ClCompile Include="TestBPlusTreeV2.cpp" />
     <ClCompile Include="TestBPMap.cpp" />
     <ClCompile Include="TestBPSet.cpp" />
+    <ClCompile Include="TestBPString.cpp" />
     <ClCompile Include="TestBPVector.cpp" />
     <ClCompile Include="TestBPVectorNoPod.cpp" />
     <ClCompile Include="TestBTreeRedo.cpp" />

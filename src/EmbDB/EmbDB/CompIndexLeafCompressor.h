@@ -100,7 +100,7 @@ namespace embDB
 			return true;
 		}
 
-		virtual bool insert(const CompositeIndexKey& key, const TValue& value)
+		virtual bool insert(uint32 nIndex, const CompositeIndexKey& key, const TValue& value)
 		{
 			m_nSize++;
 			return true;
@@ -115,11 +115,11 @@ namespace embDB
 			m_nSize = vecKeys.size();
 			return true;
 		}
-		virtual bool update(const CompositeIndexKey& key, const TValue& value)
+		virtual bool update(uint32 nIndex, const CompositeIndexKey& key, const TValue& value)
 		{
 			return true;
 		}
-		virtual bool remove(const CompositeIndexKey& key, const TValue& value)
+		virtual bool remove(uint32 nIndex, const CompositeIndexKey& key, const TValue& value)
 		{
 			m_nSize--;
 			return true;

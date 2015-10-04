@@ -1267,7 +1267,7 @@ int CString::loadFromUTF8 (const char *utf)
   wchar_t *ldst = wstr ();
   int ret = dest_mbsnrtowcs (ldst, psrc, srcByteCount, dstByteCount);
   wstr ()[dstCharCount] = 0;
-  return ret;
+  return srcByteCount;
 }
 
 int CString::exportToUTF8 (char *utf, int maxbuf) const 

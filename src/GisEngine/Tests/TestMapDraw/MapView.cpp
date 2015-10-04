@@ -22,7 +22,7 @@
 #include "../../Common/GisEngineCommon.h"
 #include "../../Common/XMLDoc.h"
 #include "CommonLibrary/FileStream.h"
-
+#include "../../GeoDatabase/ShapefileFeatureClass.h"
 class CTrackCancel : public GisEngine::GisCommon::ITrackCancel
 {
 public:
@@ -321,7 +321,23 @@ void CMapView::AddShapeFile(const wchar_t *pszFile)
 
 	GisEngine::GeoDatabase::IFeatureClassPtr pFC = pWks->GetFeatureClass(sFileName);
 	if(!pFC.get())
+	{
+		 pFC = pWks->OpenFeatureClass(sFileName);
+	}
+
+
+	if(!pFC.get())
 		return;
+
+	GisEngine::GeoDatabase::CShapefileFeatureClass *pShapeFC = (GisEngine::GeoDatabase::CShapefileFeatureClass*)pFC.get();
+	if(!pShapeFC->GetShapeIndex().get())
+	{
+		int nRet = ::MessageBox(m_hWnd, L"File not found with a spatial index. Create it?", L"Info", MB_YESNO);
+		if(nRet == IDYES)
+		{
+			pShapeFC->CreateShapeIndex();
+		}
+	}
 
 	AddFeatureClass(pFC.get());
 }
@@ -341,6 +357,9 @@ void CMapView::AddFeatureClass(GisEngine::GeoDatabase::IFeatureClass *pFC)
 
 	switch(type)
 	{
+	case CommonLib::shape_type_point:
+		pSymbol = new GisEngine::Display::CSimpleLineSymbol(GisEngine::Display::Color(0, 255, 255, 255), 0.5);
+		break;
 	case CommonLib::shape_type_polyline:
 		pSymbol = new GisEngine::Display::CSimpleLineSymbol(GisEngine::Display::Color(0, 255, 255, 255), 0.5);
 		break;

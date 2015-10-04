@@ -12,6 +12,7 @@ void testUndo();
 void testRedo();
 void TestPODTypeVector();
 void testCompKey();
+void TestBPStringTree();
 int _tmain(int argc, _TCHAR* argv[])
 {
 
@@ -20,10 +21,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	//TestSearch();
 	// TestInsert();
 	//TestBPVector();
-	TestBRteeSet();
+	//TestBRteeSet();
 	//TestBRteeMap();
 	//testUndo();
 	//testRedo();
+
+	TestBPStringTree();
 	return 0;
 }
 

@@ -87,7 +87,7 @@ namespace embDB
 			return true;
 		}
 
-		virtual bool insert(const ZOrderPoint2DU64& key, int64 link )
+		virtual bool insert(uint32 nIndex, const ZOrderPoint2DU64& key, const TValue& value)
 		{
 			m_nSize++;
 			return true;
@@ -102,12 +102,12 @@ namespace embDB
 			m_nSize = keySet.size();
 			return true;
 		}
-		virtual bool remove(const ZOrderPoint2DU64& key)
+		virtual bool remove(uint32 nIndex, const ZOrderPoint2DU64& key, const TValue& value)
 		{
 			m_nSize--;
 			return true;
 		}
-		virtual bool update(const ZOrderPoint2DU64& key, const TValue& value)
+		virtual bool update(uint32 nIndex, const ZOrderPoint2DU64& key, const TValue& value)
 		{
 			return true;
 		}
