@@ -141,6 +141,14 @@ namespace embDB
 		{
 			return  (sizeof(TKey) + sizeof(TLink));
 		}
+
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPInnerNodeSimpleCompressorV2 *pCompressor)
+		{
+			uint32 nSize = nEnd- nBegin;
+
+			m_nSize -= nSize;
+			pCompressor->m_nSize += nSize;
+		}
 	private:
 		size_t m_nSize;
 		TKeyMemSet* m_pKeyMemSet;

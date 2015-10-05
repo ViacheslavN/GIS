@@ -144,6 +144,13 @@ namespace embDB
 		{
 			return  (TCoordPoint::SizeInByte + sizeof(TLink));
 		}
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPSpatialRectInnerNodeSimpleCompressor *pCompressor)
+		{
+			uint32 nSize = nEnd- nBegin;
+
+			m_nSize -= nSize;
+			pCompressor->m_nSize += nSize;
+		}
 	private:
 		size_t m_nSize;
 	};

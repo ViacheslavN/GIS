@@ -729,6 +729,12 @@
     <ClInclude Include="StringLeafNodeCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
+    <ClInclude Include="StringVal.h">
+      <Filter>DB\Fields\string</Filter>
+    </ClInclude>
+    <ClInclude Include="LeafSetCompBase.h">
+      <Filter>DB\BPTrees\BtreePlusv2\Compressors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

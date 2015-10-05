@@ -265,7 +265,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			embDB::FilePagePtr pPage = storage.getNewPage();
 			nStorageInfoPage = pPage->getAddr();
 			storage.initStorage(pPage->getAddr());
-
+			pPage.release();
 			storage.saveStorageInfo();
 
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran1.data", &storage, 1);
@@ -369,8 +369,8 @@ void TestBRteeMap()
 {
 	//__int64 nCount = 1531;
 
-	__int64 nCount = 1000000;
+	__int64 nCount = 10000000;
 		size_t nPageSize = 8192;
 
-	testBPTreeMapImpl<TBInt64Map,  embDB::CDirectTransactions, int64, int64>(nCount, nPageSize, 5000, 1000);
+	testBPTreeMapImpl<TBInt64Map,  embDB::CDirectTransactions, int64, int64>(nCount, nPageSize, 5000, 10);
 }

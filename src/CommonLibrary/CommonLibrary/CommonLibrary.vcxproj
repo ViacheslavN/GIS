@@ -175,7 +175,7 @@
     <IntDir>$(SolutionDir)Obj\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">
-    <TargetName>lib_common_rs</TargetName>
+    <TargetName>LibCommon32_rs</TargetName>
     <OutDir>$(SolutionDir)Output\</OutDir>
     <IntDir>$(SolutionDir)Obj\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -366,7 +366,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)/lib_common_rs.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibCommon32_rs.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">

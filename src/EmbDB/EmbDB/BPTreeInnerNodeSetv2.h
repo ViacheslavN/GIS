@@ -220,16 +220,16 @@ namespace embDB
 			newNodeKeySet.copy(m_innerKeyMemSet, 0,  nSize + 1,  m_innerKeyMemSet.size());
 			newNodeLinkSet.copy(m_innerLinkMemSet, 0, nSize + 1,  m_innerLinkMemSet.size());
 
-			m_pCompressor->SplitIn(0, nSize + 1, m_innerKeyMemSet.size(), pNewNodeComp);
+			m_pCompressor->SplitIn(nSize + 1, m_innerKeyMemSet.size(), pNewNodeComp);
 
 			size_t nNewSize = nSize;
-			nSize++;
+			/*nSize++;
 			while(nSize   < m_innerKeyMemSet.size())
 			{						 
 				m_pCompressor->remove(nSize, m_innerKeyMemSet[nSize], m_innerLinkMemSet[nSize]);
 				pNewNodeComp->insert(nSize, m_innerKeyMemSet[nSize], m_innerLinkMemSet[nSize]);
 				++nSize;
-			}	
+			}*/
 
 			*pSplitKey = m_innerKeyMemSet[nNewSize];
 			pNode->m_nLess = m_innerLinkMemSet[nNewSize];

@@ -6,6 +6,8 @@
 #include "CompressorParams.h"
 #include "BPVectorNoPod.h"
 #include "StringCompressorParams.h"
+#include "CommonLibrary/PodVector.h"
+#include "StringVal.h"
 namespace embDB
 {
 
@@ -19,7 +21,7 @@ namespace embDB
 		typedef _TKey TKey;
 
 		typedef  TBPVector<TKey> TLeafKeyMemSet;
-		typedef  TBPVectorNoPOD<CommonLib::CString> TLeafValueMemSet;
+		typedef  TBPVector<sStringVal> TLeafValueMemSet;
 
 		typedef StringFieldCompressorParams TLeafCompressorParams;
 
@@ -34,19 +36,32 @@ namespace embDB
 		}
 
 		BPStringLeafNodeSimpleCompressor(CommonLib::alloc_t *pAlloc = 0, 
-			TLeafCompressorParams *pParams = 0) : m_nSize(0), m_pAlloc(pAlloc), m_pLeafCompParams(pParams),
-			m_nStringDataSize(0), m_pValueMemset(0), m_bCalcRecalc(false)
+			TLeafCompressorParams *pParams = 0,
+			TLeafKeyMemSet *pKeyMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nSize(0), m_pAlloc(pAlloc), m_pLeafCompParams(pParams),
+			m_nStringDataSize(0), m_pValueMemset(pValueMemSet) 
 		{
 
+			assert(m_pAlloc);
 			assert(m_pLeafCompParams);
+			assert(m_pValueMemset);
+
 		}
-		virtual ~BPStringLeafNodeSimpleCompressor(){}
+		virtual ~BPStringLeafNodeSimpleCompressor()
+		{
+			if(!m_pValueMemset)
+				return;
+
+			for (size_t i = 0; i < m_pValueMemset->size(); ++i )
+			{
+				sStringVal& val = (*m_pValueMemset)[i];
+				m_pAlloc->free(val.m_pBuf);
+			}
+			
+
+		}
 		virtual bool Load(TLeafKeyMemSet& keySet, TLeafValueMemSet& valueSet, CommonLib::FxMemoryReadStream& stream)
 		{
-
-			assert(m_pValueMemset == 0);
-			m_pValueMemset = &valueSet;
-			m_bCalcRecalc = false;
+		
 
 			CommonLib::FxMemoryReadStream KeyStream;
 			CommonLib::FxMemoryReadStream ValueStream;
@@ -73,21 +88,40 @@ namespace embDB
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
 				KeyStream.read(nKey);
-				CommonLib::CString sString;
-				uint32 nStrSize = 0;
-				if(sCode == scASCII)
+				//CommonLib::CString sString;
+	 
+
+
+				sStringVal sString;
+
+			/*	if(sCode == scASCII)
 				{
 					nStrSize = sString.loadFromASCII((const char*)ValueStream.buffer() + ValueStream.pos());
 				}
 				else if(sCode == scUTF8)
 				{
 					nStrSize = sString.loadFromUTF8((const char*)ValueStream.buffer()+ ValueStream.pos()) + 1;
+				}*/
+
+			/*	if(sCode == scASCII)
+				{
+					nStrSize = strlen((const char*)ValueStream.buffer() + ValueStream.pos());//sString.loadFromASCII((const char*)ValueStream.buffer() + ValueStream.pos());
 				}
+				else if(sCode == scUTF8)
+				{
+					nStrSize = sString.loadFromUTF8((const char*)ValueStream.buffer()+ ValueStream.pos()) + 1;
+				}*/
 
-				m_nStringDataSize += nStrSize;
+				sString.m_nLen  = strlen((const char*)ValueStream.buffer() + ValueStream.pos()) + 1;
+				m_nStringDataSize += sString.m_nLen;
 
-				ValueStream.seek(nStrSize, CommonLib::soFromCurrent);
+				sString.m_pBuf = (byte*)m_pAlloc->alloc(sString.m_nLen);
+				memcpy(sString.m_pBuf, ValueStream.buffer() + ValueStream.pos(), sString.m_nLen);
+				
 
+				ValueStream.seek(sString.m_nLen, CommonLib::soFromCurrent);
+
+				//m_vecStringSize.push_back(sString.m_nLen);
 				valueSet.push_back(sString);
 				keySet.push_back(nKey);
 			}
@@ -117,8 +151,8 @@ namespace embDB
 		 	for (size_t i = 0, sz = keySet.size(); i < sz; ++i )
 			{
 				KeyStream.write(keySet[i]);
-
-				if(sCode == scASCII)
+				ValueStream.write(valueSet[i].m_pBuf, valueSet[i].m_nLen);
+				/*if(sCode == scASCII)
 				{
 					ValueStream.write(valueSet[i].cstr());
 				}
@@ -129,20 +163,17 @@ namespace embDB
 
 					valueSet[i].exportToUTF8((char*)bufForUff8.buffer(), utf8Len);
 					ValueStream.write((const byte*)bufForUff8.buffer(), utf8Len);
-				}
+				}*/
 
 			}
 			return true;
 		}
 
-		virtual bool insert(int nIndex, TKey key, const CommonLib::CString& sStr)
+		virtual bool insert(int nIndex, TKey key, /*const CommonLib::CString&*/ const sStringVal& sStr)
 		{
 			m_nSize++;
-			uint32 nStrSize = GetStingSize(sStr);
-			if(nStrSize != sStr.length())
-				m_bCalcRecalc = true;
-
-
+			uint32 nStrSize = sStr.m_nLen;//GetStingSize(sStr);
+			//m_vecStringSize.insert(nIndex, nStrSize);
 			m_nStringDataSize += nStrSize;
 
 	
@@ -171,18 +202,19 @@ namespace embDB
 
 			return true;
 		}
-		virtual bool remove(int nIndex, TKey key, const CommonLib::CString& sStr)
+		virtual bool remove(int nIndex, TKey key, const sStringVal& sStr)
 		{
 			m_nSize--;
-			uint32 nStrSize = GetStingSize(sStr);
+			uint32 nStrSize = sStr.m_nLen;//GetStingSize(sStr);
 			m_nStringDataSize -= nStrSize;
+			//m_vecStringSize.remove(nIndex);
 			return true;
 		}
-		virtual bool update(int nIndex, TKey key, const CommonLib::CString& sStr)
+		virtual bool update(int nIndex, TKey key, const sStringVal& sStr)
 		{
 			assert(m_pValueMemset);
-			int oldSize = GetStingSize((*m_pValueMemset)[nIndex]);
-			int newSize = GetStingSize(sStr);
+			int oldSize = (*m_pValueMemset)[nIndex].m_nLen;//GetStingSize((*m_pValueMemset)[nIndex]);
+			int newSize =sStr.m_nLen; //GetStingSize(sStr);
 			m_nStringDataSize += (newSize - oldSize);
 			return true;
 		}
@@ -210,6 +242,30 @@ namespace embDB
 		{
 			return  (m_pLeafCompParams->GetStringLen() + sizeof(TKey));
 		}
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPStringLeafNodeSimpleCompressor *pCompressor)
+		{
+			uint32 nSplitStringDataSize = 0;
+			for (size_t i  = nBegin; i < nEnd; ++i)
+			{
+				nSplitStringDataSize += (*m_pValueMemset)[i].m_nLen;
+			}
+			
+
+
+			uint32 nCount = nEnd - nBegin;
+
+
+			pCompressor->m_nSize = m_nSize - nCount;
+			pCompressor->m_nStringDataSize = m_nStringDataSize - nSplitStringDataSize;
+
+			m_nSize = nCount;
+			m_nStringDataSize = nSplitStringDataSize; 
+
+	
+			//pCompressor->m_vecStringSize.copy(m_vecStringSize, 0, nEnd,  m_vecStringSize.size());
+			//m_vecStringSize.resize(nCount);
+
+		}
 	private:
 		int GetStingSize(const CommonLib::CString& sStr) const 
 		{
@@ -228,10 +284,12 @@ namespace embDB
 			}
 
 		}
+	
 	private:
+	//	CommonLib::TPodVector<uint32> m_vecStringSize;
 		size_t m_nStringDataSize;
 		size_t m_nSize;
-		bool m_bCalcRecalc;
+ 
 		CommonLib::alloc_t* m_pAlloc;
 		TLeafCompressorParams *m_pLeafCompParams;
 		TLeafValueMemSet *m_pValueMemset;

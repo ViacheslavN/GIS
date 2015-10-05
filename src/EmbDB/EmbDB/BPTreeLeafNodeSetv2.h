@@ -38,12 +38,7 @@ namespace embDB
 				delete m_pCompressor;
 		}
 
-		virtual bool init(TLeafCompressorParams *pParams = NULL)
-		{
-			assert(!m_pCompressor);
-			m_pCompressor = new TCompressor(m_pAlloc, pParams);
-			return true;
-		}
+	
 
 		virtual bool isLeaf() const {return true;}
 		virtual size_t size() const
@@ -201,14 +196,16 @@ namespace embDB
 			TCompressor* pNewNodeComp = pNode->m_pCompressor;
 
 			int nSplitIndex = SplitInVec(m_leafKeyMemSet, newNodeMemSet, pSplitKey);
+
+			m_pCompressor->SplitIn(0, nSplitIndex, pNewNodeComp);
 			/*size_t nSize = m_leafKeyMemSet.size()/2;
 
 			newNodeMemSet.copy(m_leafKeyMemSet, 0, nSize, m_leafKeyMemSet.size());
 			m_leafKeyMemSet.resize(nSize);
 			*pSplitKey = newNodeMemSet[0];*/
 
-			m_pCompressor->recalc(m_leafKeyMemSet);
-			pNewNodeComp->recalc(newNodeMemSet);
+			/*m_pCompressor->recalc(m_leafKeyMemSet);
+			pNewNodeComp->recalc(newNodeMemSet);*/
 			return nSplitIndex;
 		}
 		size_t count() const 
@@ -334,6 +331,14 @@ namespace embDB
 
 		BPTreeLeafNodeSetv2( CommonLib::alloc_t *pAlloc, bool bMulti) : TBase(pAlloc, bMulti)
 		{}
+
+
+		bool init(TLeafCompressorParams *pParams = NULL)
+		{
+			assert(!m_pCompressor);
+			m_pCompressor = new TCompressor(m_pAlloc, pParams, &m_leafKeyMemSet);
+			return true;
+		}
 	
 
 		virtual  bool Save(	CommonLib::FxMemoryWriteStream& stream) 

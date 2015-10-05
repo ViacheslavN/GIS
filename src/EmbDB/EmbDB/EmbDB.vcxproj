@@ -503,6 +503,7 @@
     <ClInclude Include="ISpatialQuery.h" />
     <ClInclude Include="IStatement.h" />
     <ClInclude Include="LeafCounterCompress.h" />
+    <ClInclude Include="LeafSetCompBase.h" />
     <ClInclude Include="MemPageCache.h" />
     <ClInclude Include="MultiIndex.h" />
     <ClInclude Include="MultiIndexBase.h" />
@@ -562,6 +563,7 @@
     <ClInclude Include="StringCompressorParams.h" />
     <ClInclude Include="StringInnerNodeCompressor.h" />
     <ClInclude Include="StringLeafNodeCompressor.h" />
+    <ClInclude Include="StringVal.h" />
     <ClInclude Include="UniqueCompIndexBase.h" />
     <ClInclude Include="UniqueIndex.h" />
     <ClInclude Include="ValueField.h" />

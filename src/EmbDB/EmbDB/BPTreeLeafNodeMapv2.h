@@ -31,7 +31,15 @@ namespace embDB
 		{
  
 		}
-		 
+
+
+		bool init(TLeafCompressorParams *pParams = NULL)
+		{
+			assert(!m_pCompressor);
+			m_pCompressor = new TCompressor(m_pAlloc, pParams, &m_leafKeyMemSet, &m_leafValueMemSet);
+			return true;
+		}
+		
 		virtual  bool Save(	CommonLib::FxMemoryWriteStream& stream) 
 		{
 			stream.write(m_nNext);
@@ -63,9 +71,9 @@ namespace embDB
 
 			int nSplitIndex = SplitInVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
 			SplitInVec(m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
-
-			recalc();
-			pNode->recalc();
+			m_pCompressor->SplitIn(0, nSplitIndex, pNewNodeComp);
+			//recalc();
+			//pNode->recalc();
 			return nSplitIndex;
 		}
 		

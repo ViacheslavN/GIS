@@ -1,29 +1,31 @@
-#ifndef _EMBEDDED_DATABASE_MULTI_INDEX_LEAF_NODE_COMPRESSOR_H_
-#define _EMBEDDED_DATABASE_MULTI_INDEX_LEAF_NODE_COMPRESSOR_H_
+#ifndef _EMBEDDED_DATABASE_BTREE_PLUS_V2_LEAF_NODE_SET_COMPRESSOR_BASE_H_
+#define _EMBEDDED_DATABASE_BTREE_PLUS_V2_LEAF_NODE_SET_COMPRESSOR_BASE_H_
 
 #include "CommonLibrary/FixedMemoryStream.h"
+#include "CommonLibrary/alloc_t.h"
 #include "CompressorParams.h"
 namespace embDB
 {
 
 	template<typename _TKey>
-	class BPLeafNodeMultiIndexCompressor
+	class BPLeafNodeSetSimpleCompressorV2
 	{
 	public:	
 		typedef _TKey TKey;
-		typedef IndexTuple<TKey> TIndex;
-		typedef TBPVector<TIndex> TLeafMemSet;
+		typedef  TBPVector<TKey> TLeafMemSet;
 		typedef CompressorParamsBaseImp TLeafCompressorParams;
+
+		TLeafMemSet m_LeafMemSet;
+
+		BPLeafNodeSetSimpleCompressorV2(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL) : m_nSize(0)
+		{}
 
 		template<typename _Transactions  >
 		static TLeafCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
 		{
 			return NULL;
 		}
-
-		BPLeafNodeMultiIndexCompressor(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL, TLeafMemSet *pLeafMemSet = NULL) : m_nSize(0)
-		{}
-		virtual ~BPLeafNodeMultiIndexCompressor(){}
+		virtual ~BPLeafNodeSetSimpleCompressorV2(){}
 		virtual bool Load(TLeafMemSet& Set, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;
@@ -32,16 +34,16 @@ namespace embDB
 				return true;
 
 			Set.reserve(m_nSize);
- 
-			uint32 nKeySize =  m_nSize * (sizeof(TKey) + sizeof(int64));
+
+			/*uint32 nKeySize = stream.readInt32();*/
+			uint32 nKeySize =  m_nSize * sizeof(TKey);
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
-			TIndex index;
+			TKey nkey;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
-				KeyStreams.read(index.m_key);
-				KeyStreams.read(index.m_nObjectID);
-				Set.push_back(index);
+				KeyStreams.read(nkey);
+				Set.push_back(nkey);
 			}
 
 			return true;
@@ -52,21 +54,20 @@ namespace embDB
 			stream.write(m_nSize);
 			if(!m_nSize)
 				return true;
-			uint32 nKeySize =  m_nSize * (sizeof(TKey) + sizeof(int64));
+			uint32 nKeySize =  m_nSize * sizeof(TKey);
 			/*stream.write(nKeySize);*/
 			CommonLib::FxMemoryWriteStream KeyStreams;
 			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
 			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
 			for(size_t i = 0, sz = Set.size(); i < sz; ++i)
 			{
-				KeyStreams.write(Set[i].m_key);
-				KeyStreams.write(Set[i].m_nObjectID);
+				KeyStreams.write(Set[i]);
 			}
 
 			return true;
 		}
 
-		virtual bool insert(int nIndex, const TIndex& key)
+		virtual bool insert(int nIndex, const TKey& key)
 		{
 			m_nSize++;
 			return true;
@@ -81,18 +82,18 @@ namespace embDB
 			m_nSize = Set.size();
 			return true;
 		}
-		virtual bool update(int nIndex, const TIndex& key)
+		virtual bool update(int nIndex, const TKey& key)
 		{
 			return true;
 		}
-		virtual bool remove(int nIndex, const TIndex& key)
+		virtual bool remove(int nIndex, const TKey& key)
 		{
 			m_nSize--;
 			return true;
 		}
 		virtual size_t size() const
 		{
-			return (sizeof(TKey) + sizeof(int64))*  m_nSize +  sizeof(uint32);
+			return sizeof(TKey) *  m_nSize +  sizeof(uint32);
 		}
 		virtual size_t count() const
 		{
@@ -104,13 +105,13 @@ namespace embDB
 		}
 		size_t rowSize() const
 		{
-			return (sizeof(TKey) + sizeof(int64)) *  m_nSize;
+			return sizeof(TKey) *  m_nSize;
 		}
 		size_t tupleSize() const
 		{
-			return  sizeof(TKey) + sizeof(int64);
+			return  sizeof(TKey);
 		}
-		void SplitIn(uint32 nBegin, uint32 nEnd, BPLeafNodeMultiIndexCompressor *pCompressor)
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPLeafNodeSetSimpleCompressorV2 *pCompressor)
 		{
 			uint32 nSize = nEnd- nBegin;
 

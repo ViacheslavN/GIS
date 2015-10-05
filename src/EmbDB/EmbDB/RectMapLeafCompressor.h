@@ -24,7 +24,8 @@ namespace embDB
 			return NULL;
 		}
 
-		BPSpatialRectLeafNodeMapSimpleCompressor(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = 0) : m_nSize(0)
+		BPSpatialRectLeafNodeMapSimpleCompressor(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = 0,
+			TLeafKeyMemSet *pKeyMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nSize(0)
 		{}
 		virtual ~BPSpatialRectLeafNodeMapSimpleCompressor(){}
 		virtual bool Load(TLeafKeyMemSet& vecKeys, TLeafValueMemSet& vecValues, CommonLib::FxMemoryReadStream& stream)
@@ -138,6 +139,13 @@ namespace embDB
 		size_t tupleSize() const
 		{
 			return  (TCoordPoint::SizeInByte + sizeof(TValue));
+		}
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPSpatialRectLeafNodeMapSimpleCompressor *pCompressor)
+		{
+			uint32 nSize = nEnd- nBegin;
+
+			m_nSize -= nSize;
+			pCompressor->m_nSize += nSize;
 		}
 	private:
 		size_t m_nSize;

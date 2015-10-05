@@ -1292,8 +1292,10 @@ CString::calcUTF8Length (void) const
 
 int CString::loadFromASCII(const char *pBuf, int nSize)
 {
-	if(pBuf == NULL || nSize == 0)
+	if(pBuf == NULL)
 		return 0;
+	if(!nSize)
+		nSize = strlen(pBuf);
 
 	m_pBuffer->safeRelease();
 	m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, pBuf, nSize);

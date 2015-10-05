@@ -15,7 +15,8 @@ namespace embDB
 		typedef  TBPVector<ZOrderPoint2DU64> TLeafKeyMemSet;
 		typedef  TBPVector<TValue> TLeafValueMemSet;
 		typedef CompressorParamsBaseImp TLeafCompressorParams;
-		BPSpatialPointLeafNodeMapSimpleCompressor64(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParms = NULL) : m_nSize(0)
+		BPSpatialPointLeafNodeMapSimpleCompressor64(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParms = NULL,
+			TLeafKeyMemSet *pKeyMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nSize(0)
 		{}
 
 
@@ -130,6 +131,13 @@ namespace embDB
 		size_t tupleSize() const
 		{
 			return  (2 *sizeof(uint64) + sizeof(TValue));
+		}
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPSpatialPointLeafNodeMapSimpleCompressor64 *pCompressor)
+		{
+			uint32 nSize = nEnd- nBegin;
+
+			m_nSize -= nSize;
+			pCompressor->m_nSize += nSize;
 		}
 	private:
 		size_t m_nSize;

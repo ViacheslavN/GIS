@@ -139,6 +139,13 @@ namespace embDB
 		{
 			return  (2 *sizeof(uint64) + sizeof(uint64));
 		}
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPSpatialPointInnerNodeSimpleCompressor64 *pCompressor)
+		{
+			uint32 nSize = nEnd- nBegin;
+
+			m_nSize -= nSize;
+			pCompressor->m_nSize += nSize;
+		}
 	private:
 		size_t m_nSize;
 	};

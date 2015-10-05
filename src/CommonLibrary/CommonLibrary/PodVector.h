@@ -79,12 +79,14 @@ namespace CommonLib
 				return m_pData;
 			}
 
-			void reserve(uint32 nSize, bool bClear = false)
+			bool reserve(uint32 nSize, bool bClear = false)
 			{
 				if(nSize > m_nCapacity)
 				{
 					m_nCapacity = nSize;
 					TValue* pTmp = (TValue*)m_pAlloc->alloc(m_nCapacity * sizeof(TValue));
+					if(!pTmp)
+						return false;
 
 					if(m_pData)
 					{
@@ -96,6 +98,7 @@ namespace CommonLib
 				}
 				if(bClear)
 					m_nSize = 0;
+				return true;
 			}
 			void resize(uint32 nSize)
 			{
@@ -135,6 +138,47 @@ namespace CommonLib
 					reserve( m_nSize != 0 ? m_nSize *2 : 2);
 				m_pData[m_nSize] = value;
 				m_nSize++;
+			}
+
+			bool insert(uint32 idx, const TValue& value)
+			{
+				if(idx > m_nSize)
+				{
+					assert(false);
+					return false;
+				}
+				if((m_nSize + 1) > m_nCapacity)
+				{
+					if(!m_nCapacity)
+						m_nCapacity = 1;
+					reserve(2 * m_nCapacity);
+				}
+
+				if(m_nSize == idx)
+				{
+					push_back(value);
+					return true;
+				}
+
+				::memmove( m_pData + idx + 1, m_pData + idx, ( m_nSize - idx) * sizeof( TValue ) );
+				m_pData[idx] = value;
+				m_nSize++;
+				return true;
+			}
+
+			bool copy(const TPodVector& vec, size_t nPos, size_t nBegin, size_t nEnd)
+			{
+				size_t nLen = nEnd - nBegin;
+				if(m_nSize + nPos + nLen >= m_nCapacity)
+				{
+					if(!reserve((2 * m_nCapacity) > (m_nSize + nPos + nLen) ? 2 * m_nCapacity :  2 * (m_nSize + nPos + nLen) ))
+						return false;
+				}
+				memcpy(m_pData + nPos, vec.m_pData + nBegin,  nLen * sizeof(TValue));
+
+				if((nPos + nLen) > m_nSize)
+					m_nSize += (nPos + nLen) - m_nSize;
+				return true;
 			}
 
 			void push_back(const TSelfType& vec)

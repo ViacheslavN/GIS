@@ -20,7 +20,8 @@ namespace embDB
 		typedef  TBPVector<TValue> TLeafValueMemSet;
 		//TRect2D<TPointType>         TRect;
 		typedef CompressorParamsBaseImp TLeafCompressorParams;
-		BPSpatialPointLeafNodeMapSimpleCompressor(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParms = NULL) : m_nSize(0)
+		BPSpatialPointLeafNodeMapSimpleCompressor(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParms = NULL,
+			TLeafKeyMemSet *pKeyMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nSize(0)
 		{}
 
 		template<typename _Transactions  >
@@ -129,6 +130,13 @@ namespace embDB
 		size_t tupleSize() const
 		{
 			return  (sizeof(ZValueType) + sizeof(TValue));
+		}
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPSpatialPointLeafNodeMapSimpleCompressor *pCompressor)
+		{
+			uint32 nSize = nEnd- nBegin;
+
+			m_nSize -= nSize;
+			pCompressor->m_nSize += nSize;
 		}
 	private:
 		size_t m_nSize;
