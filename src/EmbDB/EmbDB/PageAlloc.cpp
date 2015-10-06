@@ -42,7 +42,7 @@ namespace embDB
 
 		SMemPage& page = m_vecPage[m_nCurrPage];
 		int32 nFreeMem = m_nMemPageSize - (page.m_nPos + sizeof(uint32));
-		if(size < nFreeMem)
+		if((int32)size < nFreeMem && nFreeMem)
 		{
 			  return allocFromPage(&page, size);
 		}
