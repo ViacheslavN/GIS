@@ -6,6 +6,8 @@
 #include "../../EmbDB/DirectTransactions.h"
 #include "../../EmbDB/StringLeafNodeCompressor.h"
 #include "CommonLibrary/DebugTime.h"
+#include "../../EmbDB/StringTree.h"
+
 
 typedef embDB::BPInnerNodeSimpleCompressorV2<int64> TInnerCompressor;
 typedef embDB::BPStringLeafNodeSimpleCompressor<int64> TLeafCompressor;
@@ -20,7 +22,7 @@ embDB::BPInnerNodeSimpleCompressorV2<int64>,
 embDB::BPStringLeafNodeSimpleCompressor<int64>, TInnerNode, TLeafNode, TBPTreeNode> TBMapString;
 
 
-class TBPString : public TBMapString
+/*class TBPString : public TBMapString
 {
 	public:
 
@@ -49,13 +51,39 @@ class TBPString : public TBMapString
 			return TBMapString::insert(nValue, sValue);
 
 		}
+};*/
+
+class CBufAlloc: public CommonLib::alloc_t
+{
+public:
+	CBufAlloc() : pos(0)
+	{
+
+	}
+	virtual void* alloc(size_t size)
+	{
+		byte *pBuf =  buf + pos;
+		pos += size;
+		return pBuf;
+	}
+	virtual void  free(void* buf)
+	{
+
+	}
+	void clear()
+	{
+		pos = 0;
+	}
+private:
+	byte buf[1024];
+	int pos;
 };
-
-
 
 template<class Tran>
 void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, int64& nTreeRootPage, Tran* pTran)
 {
+
+	typedef embDB::TBPString<int64, Tran> TBPString;
 	std::cout << "Insert Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
 	double tmInsert = 0;
@@ -65,9 +93,12 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 	tree.loadBTreeInfo(); 
 	time.start();
 	int64 n = 0;
-	CommonLib::CString sString;
+	CBufAlloc alloc;
+	 
+	CommonLib::CString sString(&alloc);
 	if(nStart < nEndStart)
 	{
+		
 		int64 nCount = nEndStart - nStart;
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
@@ -81,6 +112,7 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 			{
 				std::cout << n  << "  " << (n* 100)/nCount << " %" << '\r';
 			}
+			alloc.clear();
 		}
 	}
 	else
@@ -129,7 +161,8 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 	double tmInsert = 0;
 	double treeCom = 0;
 	double tranCom  = 0;
-	TBMapString tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	typedef embDB::TBPString<int64, Tran> TBPString;
+	TBPString tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
 	tree.loadBTreeInfo(); 
 	time.start();
 	int64 n = 0;
@@ -142,7 +175,7 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 		{
 			sString.format(L"Строка_%I64d", i);
 
-			TBMapString::iterator it = tree.find(i);
+			TBPString::iterator it = tree.find(i);
 			if(it.isNull())
 			{
 				std::cout << "Not found " << i << std::endl;
@@ -187,7 +220,7 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 		for (__int64 i = nStart; i > nEndStart; --i)
 		{
 			sString.format(L"Строка_%I64d", i);
-			TBMapString::iterator it = tree.find(i);
+			TBPString::iterator it = tree.find(i);
 			if(it.isNull())
 			{
 				std::cout << "Not found " << i << std::endl;
@@ -281,7 +314,7 @@ void TestBPStringTree()
 	str2.loadFromUTF8((char*)blob.buffer());
 
 	CommonLib::simple_alloc_t alloc;
-	int64 nRootTreePage = CreateTree<embDB::CDirectTransactions>(&alloc, L"d:\\db\\BPTreeString.data", 8192, embDB::scASCII, 100);
+	int64 nRootTreePage = CreateTree<embDB::CDirectTransactions>(&alloc, L"d:\\db\\BPTreeString.data", 8192, embDB::scUTF8, 100);
 
 	{
 		embDB::CStorage storage( &alloc, 10000);
@@ -292,7 +325,7 @@ void TestBPStringTree()
 		embDB::CDirectTransactions InsertTran(&alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, L"d:\\db\\inserttran.data", &storage, 1);
 
 
-		insertINBTreeMapString<embDB::CDirectTransactions>(&alloc, 100, 0, 100000, 1, nRootTreePage, &InsertTran);
+		insertINBTreeMapString<embDB::IDBTransactions>(&alloc, 10, 0, 1000000, 1, nRootTreePage, &InsertTran);
 	}
 
 	{
@@ -304,7 +337,7 @@ void TestBPStringTree()
 		embDB::CDirectTransactions InsertTran(&alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, L"d:\\db\\inserttran.data", &storage, 1);
 
 
-		searchINBTreeMapString<embDB::CDirectTransactions>(&alloc, 100, 0, 100000, 1, nRootTreePage, &InsertTran, embDB::scASCII);
+		searchINBTreeMapString<embDB::IDBTransactions>(&alloc, 10, 0, 1000000, 1, nRootTreePage, &InsertTran, embDB::scUTF8);
 	}
 	
 }

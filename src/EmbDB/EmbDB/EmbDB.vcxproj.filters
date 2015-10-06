@@ -735,6 +735,18 @@
     <ClInclude Include="LeafSetCompBase.h">
       <Filter>DB\BPTrees\BtreePlusv2\Compressors</Filter>
     </ClInclude>
+    <ClInclude Include="StringTree.h">
+      <Filter>DB\Fields\string</Filter>
+    </ClInclude>
+    <ClInclude Include="StringBPNode.h">
+      <Filter>DB\Fields\string</Filter>
+    </ClInclude>
+    <ClInclude Include="StringBPLeafNode.h">
+      <Filter>DB\Fields\string</Filter>
+    </ClInclude>
+    <ClInclude Include="PageAlloc.h">
+      <Filter>utils\alloc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -832,6 +844,9 @@
     </ClCompile>
     <ClCompile Include="CompositeIndexKey.cpp">
       <Filter>DB\Fields\Index\CompositeIndex</Filter>
+    </ClCompile>
+    <ClCompile Include="PageAlloc.cpp">
+      <Filter>utils\alloc</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

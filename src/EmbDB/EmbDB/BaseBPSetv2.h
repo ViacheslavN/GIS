@@ -82,6 +82,11 @@ namespace embDB
 		}
 		~TBPlusTreeSetV2()
 		{
+			DeleteNodes();
+		}
+
+		void DeleteNodes()
+		{
 			TNodesCache::iterator it =	m_Cache.begin();
 			while(!it.isNull())
 			{
@@ -103,6 +108,7 @@ namespace embDB
 			{
 				delete m_pRoot.release();
 			}
+			m_Cache.clear();
 		}
 		//typedef _Traits Traits;
 		typedef _TKey      TKey;
@@ -303,10 +309,17 @@ namespace embDB
 			return true;
 		}
 		
-	TBTreeNodePtr newNode(bool bIsRoot, bool bIsLeaf)
+	virtual TBTreeNode* CreateNode(int64 nAddr, bool bIsLeaf)
 	{
-		TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, -1, m_bMulti, bIsLeaf, m_bCheckCRC32,  m_InnerCompParams.get(),
-				 m_LeafCompParams.get() );
+							 
+			TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, nAddr, m_bMulti, bIsLeaf, m_bCheckCRC32,  m_InnerCompParams.get(),
+				m_LeafCompParams.get());
+		return pNode;
+	}
+	virtual TBTreeNodePtr newNode(bool bIsRoot, bool bIsLeaf)
+	{
+		TBTreeNode *pNode = CreateNode(-1, bIsLeaf);/*new TBTreeNode(-1, m_pAlloc, -1, m_bMulti, bIsLeaf, m_bCheckCRC32,  m_InnerCompParams.get(),
+				 m_LeafCompParams.get() );*/
 			pNode->Load(m_pTransaction);
 			m_BTreeInfo.AddNode(1, bIsLeaf);
 			if(bIsRoot)
@@ -334,7 +347,7 @@ namespace embDB
 				{
 					return TBTreeNodePtr(NULL);
 				}
-				pBNode = new TBTreeNode(-1, m_pAlloc, nAddr, m_bMulti, false, m_bCheckCRC32,  m_InnerCompParams.get(),  m_LeafCompParams.get());
+				pBNode =  CreateNode(nAddr, false);//new TBTreeNode(-1, m_pAlloc, nAddr, m_bMulti, false, m_bCheckCRC32,  m_InnerCompParams.get(),  m_LeafCompParams.get());
 				if(!pBNode->LoadFromPage(pFilePage.get(), m_pTransaction))
 				{
 					delete pBNode;

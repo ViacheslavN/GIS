@@ -46,6 +46,8 @@ namespace embDB
 			assert(m_pValueMemset);
 
 		}
+
+
 		virtual ~BPStringLeafNodeSimpleCompressor()
 		{
 			if(!m_pValueMemset)
@@ -58,6 +60,17 @@ namespace embDB
 			}
 			
 
+		}
+		void Clear()
+		{
+			if(!m_pValueMemset)
+				return;
+
+			for (size_t i = 0; i < m_pValueMemset->size(); ++i )
+			{
+				sStringVal& val = (*m_pValueMemset)[i];
+				m_pAlloc->free(val.m_pBuf);
+			}
 		}
 		virtual bool Load(TLeafKeyMemSet& keySet, TLeafValueMemSet& valueSet, CommonLib::FxMemoryReadStream& stream)
 		{

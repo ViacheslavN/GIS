@@ -17,7 +17,6 @@ namespace embDB
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;
 		typedef typename TBase::Transaction Transaction;
-//		typedef typename TBase::TComporator	 TComporator;
 		typedef typename TBase::TCompressor TCompressor;
 		typedef typename TBase::TLeafMemSet TLeafMemSet;
 		typedef _TValueMemSet TValueMemSet;

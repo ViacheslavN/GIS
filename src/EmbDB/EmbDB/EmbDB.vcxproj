@@ -558,11 +558,15 @@
     <ClInclude Include="ITable.h" />
     <ClInclude Include="ITransactions.h" />
     <ClInclude Include="ListDBPage.h" />
+    <ClInclude Include="PageAlloc.h" />
     <ClInclude Include="RowIDCounter.h" />
     <ClInclude Include="Statement.h" />
+    <ClInclude Include="StringBPLeafNode.h" />
+    <ClInclude Include="StringBPNode.h" />
     <ClInclude Include="StringCompressorParams.h" />
     <ClInclude Include="StringInnerNodeCompressor.h" />
     <ClInclude Include="StringLeafNodeCompressor.h" />
+    <ClInclude Include="StringTree.h" />
     <ClInclude Include="StringVal.h" />
     <ClInclude Include="UniqueCompIndexBase.h" />
     <ClInclude Include="UniqueIndex.h" />
@@ -640,6 +644,7 @@
     <ClCompile Include="DBTranManager.cpp" />
     <ClCompile Include="DirectTransactions.cpp" />
     <ClCompile Include="FreePageManage.cpp" />
+    <ClCompile Include="PageAlloc.cpp" />
     <ClCompile Include="Statement.cpp" />
     <ClCompile Include="ValueField.cpp" />
     <ClCompile Include="FilePage.cpp" />
