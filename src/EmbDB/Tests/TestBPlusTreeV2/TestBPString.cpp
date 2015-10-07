@@ -102,7 +102,7 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 		int64 nCount = nEndStart - nStart;
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
-			sString.format(L"Строка_%I64d", i);
+			sString.format(L"Строка_Строка_Строка_Строка_%I64d", i);
 			if(!tree.insert(i, sString))
 			{
 				std::cout   << "Error Insert key:  " << i << std::endl;
@@ -173,7 +173,7 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 		int64 nCount = nEndStart - nStart;
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
-			sString.format(L"Строка_%I64d", i);
+			sString.format(L"Строка_Строка_Строка_Строка_%I64d", i);
 
 			TBPString::iterator it = tree.find(i);
 			if(it.isNull())
@@ -219,7 +219,7 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 		int64 nCount = nStart - nEndStart;
 		for (__int64 i = nStart; i > nEndStart; --i)
 		{
-			sString.format(L"Строка_%I64d", i);
+			sString.format(L"Строка_Строка_Строка_Строка_%I64d", i);
 			TBPString::iterator it = tree.find(i);
 			if(it.isNull())
 			{
@@ -298,46 +298,43 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 
 	return pTreeRootPage->getAddr();
 }
-
-void TestBPStringTree()
+template<class Transactions>
+void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, uint32 nBPCache,embDB::eStringCoding coding )
 {
-
-	CommonLib::CString str(L"Строка_1");
-	CommonLib::CBlob blob;
-
-	int nLen = str.calcUTF8Length() + 1;
-	blob.reserve(nLen);
-	
-	str.exportToUTF8((char*)blob.buffer(), nLen);
-
-	CommonLib::CString str2;
-	str2.loadFromUTF8((char*)blob.buffer());
-
-	CommonLib::simple_alloc_t alloc;
-	int64 nRootTreePage = CreateTree<embDB::CDirectTransactions>(&alloc, L"d:\\db\\BPTreeString.data", 8192, embDB::scUTF8, 100);
+	 
+	int64  nStep = (nEnd - nBegin)/100;
+ 
+	int64 nRootTreePage = CreateTree<Transactions>(pAlloc, L"d:\\db\\BPTreeString.data", 8192, coding, 100);
 
 	{
-		embDB::CStorage storage( &alloc, 10000);
+		embDB::CStorage storage( pAlloc, 10000);
 		if(!storage.open(L"d:\\db\\BPTreeString.data", false, false,  false, false, 8192))
 			return;
 		storage.setStoragePageInfo(0);
 		storage.loadStorageInfo();
-		embDB::CDirectTransactions InsertTran(&alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, L"d:\\db\\inserttran.data", &storage, 1);
+		Transactions InsertTran(pAlloc, embDB::rtUndo, embDB::eTT_UNDEFINED, L"d:\\db\\inserttran.data", &storage, 1);
 
 
-		insertINBTreeMapString<embDB::IDBTransactions>(&alloc, 10, 0, 1000000, 1, nRootTreePage, &InsertTran);
+		insertINBTreeMapString<embDB::IDBTransactions>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran);
 	}
 
 	{
-		embDB::CStorage storage( &alloc, 10000);
+		embDB::CStorage storage(pAlloc, 10000);
 		if(!storage.open(L"d:\\db\\BPTreeString.data", false, false,  false, false, 8192))
 			return;
 		storage.setStoragePageInfo(0);
 		storage.loadStorageInfo();
-		embDB::CDirectTransactions InsertTran(&alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, L"d:\\db\\inserttran.data", &storage, 1);
+		Transactions InsertTran(pAlloc, embDB::rtUndo, embDB::eTT_UNDEFINED, L"d:\\db\\inserttran.data", &storage, 1);
 
 
-		searchINBTreeMapString<embDB::IDBTransactions>(&alloc, 10, 0, 1000000, 1, nRootTreePage, &InsertTran, embDB::scUTF8);
+		searchINBTreeMapString<embDB::IDBTransactions>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran, coding);
 	}
 	
 }
+
+
+void TestBPStringTree()
+{
+		CommonLib::simple_alloc_t alloc;
+		TestBPStringTreeImpl<embDB::CDirectTransactions>(&alloc, 0, 10000000, 10, embDB::scUTF8);
+};

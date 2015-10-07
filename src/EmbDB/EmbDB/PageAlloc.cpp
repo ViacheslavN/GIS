@@ -37,6 +37,7 @@ namespace embDB
 
 	void* CPageAlloc::alloc(size_t size)
 	{
+ 
 		if(size >= m_nMemPageSize)
 			return NULL;
 
@@ -79,6 +80,7 @@ namespace embDB
 	}
 	void  CPageAlloc::free(void* ptr)
 	{
+ 
 		uint32 nPageID = 0;
 		byte* pBuf = (byte*)ptr;
 		pBuf -= sizeof(size_t);
