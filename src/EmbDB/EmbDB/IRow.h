@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_I_ROW_H_
 
 #include "IField.h"
-
+#include "CommonLibrary/Variant.h"
 namespace embDB
 {
 
@@ -13,8 +13,8 @@ namespace embDB
 		virtual ~IRow(){};
 		virtual int32 count() const = 0;
 
-		virtual IVariant* value(int32 nNum) = 0;
-		virtual bool set(IVariant*, int32 nNum) = 0;
+		virtual CommonLib::CVariant* value(int32 nNum) = 0;
+		virtual bool set(CommonLib::CVariant* pValue, int32 nNum) = 0;
 	};
 
 	class INameIRow : public IRow
@@ -23,8 +23,8 @@ namespace embDB
 		INameIRow(){}
 		virtual ~INameIRow(){};
 
-		virtual IVariant* value(const wchar_t* pszName) = 0;
-		virtual bool set(const CommonLib::CString& sName, IVariant*) = 0;
+		virtual CommonLib::CVariant* value(const wchar_t* pszName) = 0;
+		virtual bool set(const CommonLib::CString& sName,  CommonLib::CVariant* pValue) = 0;
 	};
 
 	typedef CommonLib::IRefCntPtr<IRow> IRowPtr;

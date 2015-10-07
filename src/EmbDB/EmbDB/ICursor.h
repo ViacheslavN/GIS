@@ -3,7 +3,7 @@
 
 #include "IField.h"
 #include "IRow.h"
-
+#include "CommonLibrary/Variant.h"
 namespace embDB
 {
 	
@@ -16,8 +16,11 @@ namespace embDB
 		virtual bool next(IRow * pRow) = 0;
 		virtual IField* getField(uint32 nCount) = 0;
 		virtual uint32 getFieldCount() const = 0;
-		virtual IVariant* value(const wchar_t* pszName) = 0;
-		virtual bool set(const CommonLib::CString& sName, IVariant*) = 0;
+		virtual  CommonLib::CVariant*  value(const wchar_t* pszName) = 0;
+		virtual bool set(const CommonLib::CString& sName, CommonLib::CVariant* pValue) = 0;
+		virtual  CommonLib::CVariant*  value(uint32 nIdx) = 0;
+		virtual bool set(uint32 nIdx, CommonLib::CVariant* pValue) = 0;
+
 
 		virtual IRowPtr createRow() = 0;
 

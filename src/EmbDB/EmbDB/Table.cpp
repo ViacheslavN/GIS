@@ -721,7 +721,7 @@ namespace embDB
 			 return false;
 
 		FieldIteratorPtr pFieldIterator =  pField->begin();
-		IVariant val;
+		/*IVariant*/CommonLib::CVariant val;
 		while (!pFieldIterator->isNull())
 		{
 			if(!pFieldIterator->getVal(&val))

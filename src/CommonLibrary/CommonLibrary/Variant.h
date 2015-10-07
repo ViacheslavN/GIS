@@ -5,6 +5,7 @@
 #include "IRefCnt.h"
 #include "String.h"
 #include "blob.h"
+#include "SpatialKey.h"
 namespace CommonLib
 {
 	struct CNullVariant
@@ -63,8 +64,22 @@ namespace CommonLib
 		virtual void Visit(const CString      & val) = 0;
 		virtual void Visit(const IRefObjectPtr     & val) = 0;
 		virtual void Visit(const CBlob     & val) = 0;
+
+		virtual void Visit(const TPoint2D16		& val) = 0;
+		virtual void Visit(const TPoint2D32     & val) = 0;
+		virtual void Visit(const TPoint2D64     & val) = 0;
+		virtual void Visit(const TPoint2Du16     & val) = 0;
+		virtual void Visit(const TPoint2Du32     & val) = 0;
+		virtual void Visit(const TPoint2Du64     & val) = 0;
+		virtual void Visit(const TRect2D16      & val) = 0;
+		virtual void Visit(const TRect2D32     & val) = 0;
+		virtual void Visit(const TRect2D64    & val) = 0;
+		virtual void Visit(const TRect2Du16      & val) = 0;
+		virtual void Visit(const TRect2Du32     & val) = 0;
+		virtual void Visit(const TRect2Du64     & val) = 0;
 	};
 
+ 
 
 	typedef void (*constructorVariant)(void *,const void *);
 	typedef void (*destructorVariant)(void *);
@@ -140,7 +155,7 @@ namespace CommonLib
 		eDataTypes m_id;
 
 #define DECLARE_TYPE(TT)
-#define DECLARE_SIMPLE_TYPE(TT) TT val_##TT;
+#define DECLARE_SIMPLE_TYPE(TT) TT m_val##TT;
 		union{
 			char buffer[MAX_GV_SIZE];
 #include "VartTypeList.h"
@@ -233,6 +248,27 @@ namespace CommonLib
 			return *(T *)getBuffer();
 		}
 
+		template <typename T>
+		void getVal(T& value) const
+		{
+			if (m_id != type2int<T>::typeId)
+				assert(false);
+			value = *(T *)getBuffer();
+		}
+		template <typename T>
+		void setVal(const T& value)
+		{
+			eDataTypes destId = (eDataTypes)type2int<T>::typeId;
+			if(m_id == destId)
+				var_copy_[m_id](getBuffer(), &value);
+			else
+			{
+				var_assign_[m_id](getBuffer(), destId, &value);
+				m_id = destId;
+			}	
+		 
+		}
+		
 		template <typename T> 
 		T* GetPtr()
 		{
@@ -319,40 +355,89 @@ class ToStringVisitor : public IVisitor
 {
 public:
 	ToStringVisitor (){}
-	operator CString()const{return val_;};
+	operator CString()const{return m_val;};
 
 
-	virtual void Visit(const CNullVariant&){val_ = CString();}
+	virtual void Visit(const CNullVariant&){m_val = CString();}
 	virtual void Visit(const bool           & val)
-	{ val_ = val ? CString(L"true") : CString(L"false"); }
+	{ m_val = val ? CString(L"true") : CString(L"false"); }
 	virtual void Visit(const byte     & val)
-	{ val_.format(L"%u", (uint32)val); }
+	{ m_val.format(L"%u", (uint32)val); }
 	virtual void Visit(const int8     & val)
-	{ val_.format(L"%d", (int)val); }
+	{ m_val.format(L"%d", (int)val); }
 	virtual void Visit(const int16    & val)
-	{ val_.format(L"%u", (uint32)val); }
+	{ m_val.format(L"%u", (uint32)val); }
 	virtual void Visit(const uint16    & val)
-	{ val_.format(L"%d", (int)val); }
+	{ m_val.format(L"%d", (int)val); }
 	virtual void Visit(const int32    & val)
-	{ val_.format(L"%d", (int)val); }
+	{ m_val.format(L"%d", (int)val); }
 	virtual void Visit(const uint32   & val)
-	{ val_.format(L"%u", val); }
+	{ m_val.format(L"%u", val); }
 	virtual void Visit(const uint64   & val)
-	{ val_.format(L"%I64u", val); }
+	{ m_val.format(L"%I64u", val); }
 	virtual void Visit(const int64    & val)
-	{ val_.format(L"%UI64d", val); }
+	{ m_val.format(L"%UI64d", val); }
 	virtual void Visit(const float    & val)
-	{ val_.format_c (L"%20.20f", val); }
+	{ m_val.format_c (L"%20.20f", val); }
 	virtual void Visit(const double     & val)
-	{ val_.format_c (L"%20.20lf", val); }
+	{ m_val.format_c (L"%20.20lf", val); }
 	virtual void Visit(const CString      & val)
-	{ val_ = val;}
+	{ m_val = val;}
 	virtual void Visit(const IRefObjectPtr     &)
-	{ val_ = CString();}
+	{ m_val = CString();}
 	virtual void Visit(const CBlob     &)
-	{ val_ = CString();}
+	{ m_val = CString();}
+
+	virtual void Visit(const TPoint2D16	& val)
+	{
+
+	}
+	virtual void Visit(const TPoint2D32   & val)
+	{
+
+	}
+	virtual void Visit(const TPoint2D64   & val)
+	{
+
+	}
+	virtual void Visit(const TPoint2Du16  & val)
+	{
+
+	}
+	virtual void Visit(const TPoint2Du32  & val)
+	{
+
+	}
+	virtual void Visit(const TPoint2Du64   & val)
+	{
+
+	}
+	virtual void Visit(const TRect2D16    & val)
+	{
+
+	}
+	virtual void Visit(const TRect2D32   & val)
+	{
+
+	}
+	virtual void Visit(const TRect2D64  & val)
+	{
+
+	}
+	virtual void Visit(const TRect2Du16    & val)
+	{
+
+	}
+	virtual void Visit(const TRect2Du32   & val)
+	{
+
+	}
+	virtual void Visit(const TRect2Du64   & val)
+	{
+
+	}
 private:
-	CString val_;
+	CString m_val;
 
 
 };

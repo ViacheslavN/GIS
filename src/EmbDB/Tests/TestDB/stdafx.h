@@ -19,5 +19,7 @@
 #include "../../EmbDB/Transactions.h"
 #include "../../EmbDB/BitMap.h"
 
+#include "CommonLibrary/CommonLib_lib.h"
+#include "../../EmbDB/embDBLib.h"
 
 // TODO: reference additional headers your program requires here

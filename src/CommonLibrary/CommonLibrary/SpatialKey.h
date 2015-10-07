@@ -3,14 +3,44 @@
 #include "general.h"
 namespace CommonLib
 {
-	template <typename _TPointType >
+
+
+	template <typename _TPointType>
 	struct TPoint2D
 	{
 	public:
 		typedef _TPointType TPointType;
 		TPointType m_x;
 		TPointType m_y;
+
+		bool operator ==(const TPoint2D& point) const
+		{
+			return m_x == point.m_x && m_y == point.m_y;
+		}
+		bool operator !=(const TPoint2D& point) const
+		{
+			return m_x != point.m_x || m_y != point.m_y;
+		}
+		bool operator <(const TPoint2D& point) const
+		{
+			return false;
+		}
+		bool operator >(const TPoint2D& point) const
+		{
+			return false;
+		}
+		bool operator <=(const TPoint2D& point) const
+		{
+			return false;
+		}
+		bool operator >=(const TPoint2D& point) const
+		{
+			return false;
+		}
+
+
 	};
+
 
 
 	template <typename _TPointType >
@@ -123,6 +153,33 @@ namespace CommonLib
 			return true;
 		}
 
+
+		bool operator ==(const TRect2D& rect) const
+		{
+			return m_minX == rect.m_minX && m_maxX == rect.m_maxX &&
+				m_minY == rect.m_minY && m_maxY == rect.m_maxY;
+		}
+		bool operator !=(const TRect2D& rect) const
+		{
+			return m_minX != rect.m_minX || m_maxX != rect.m_maxX ||
+				m_minY != rect.m_minY || m_maxY != rect.m_maxY;
+		}
+		bool operator <(const TRect2D& rect) const
+		{
+				return false;
+		}
+		bool operator >(const TRect2D& rect) const
+		{
+				return false;
+		}
+		bool operator <=(const TRect2D& rect) const
+		{
+				return false;
+		}
+		bool operator >=(const TRect2D& rect) const
+		{
+				return false;
+		}
 
 
 	};

@@ -492,6 +492,7 @@
     <ClInclude Include="CreateFields.h" />
     <ClInclude Include="ACIntegerDiffComp.h" />
     <ClInclude Include="embDBLib.h" />
+    <ClInclude Include="FixedStringField.h" />
     <ClInclude Include="IConnection.h" />
     <ClInclude Include="ICursor.h" />
     <ClInclude Include="IDBField.h" />

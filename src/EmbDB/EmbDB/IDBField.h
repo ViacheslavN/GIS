@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_I_DB_FIELD_H_
 
 #include "IField.h"
-
+#include "CommonLibrary/Variant.h"
 namespace embDB
 {
 
@@ -15,7 +15,7 @@ namespace embDB
 		virtual bool next() = 0;
 		virtual bool back() = 0;
 		virtual bool isNull() = 0;
-		virtual bool getVal(IVariant* pVal) = 0;
+		virtual bool getVal(/*IVariant**/CommonLib::CVariant* pVal) = 0;
 		virtual uint64 getRowID() = 0;
 
 		virtual int64 addr() const = 0;
@@ -72,11 +72,16 @@ namespace embDB
 	public:
 		IValueFiled() {}
 		virtual ~IValueFiled() {}
-		virtual bool insert (uint64 nOID, IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
-		virtual uint64 insert (IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
-		virtual bool update (uint64 nRowID, IVariant* pFieldVal) = 0;
+		//virtual bool insert (uint64 nOID, IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
+		//virtual uint64 insert (IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
+
+		virtual bool insert (uint64 nOID, CommonLib::CVariant* pVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
+		virtual uint64 insert ( CommonLib::CVariant* pVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
+
+
+		virtual bool update (uint64 nRowID, CommonLib::CVariant* pFieldVal) = 0;
 		virtual bool remove (uint64 nRowID, IFieldIterator **pRetIter = NULL) = 0;
-		virtual bool find(uint64 nOID, IVariant* pFieldVal) = 0;
+		virtual bool find(uint64 nOID, CommonLib::CVariant* pFieldVal) = 0;
 		virtual FieldIteratorPtr find(uint64 nRowID) = 0;
 		virtual FieldIteratorPtr begin() = 0;
 		virtual FieldIteratorPtr last() = 0;
@@ -100,7 +105,7 @@ namespace embDB
 	};
 
 
-	typedef TIndexFiled<IVariant, IIndexIterator, IndexIteratorPtr> IndexFiled;
+	typedef TIndexFiled</*IVariant*/CommonLib::CVariant, IIndexIterator, IndexIteratorPtr> IndexFiled;
 
 	/*class IndexFiled  
 	{

@@ -27,7 +27,7 @@ namespace embDB
 			{}
 		~CUniqueIndex(){}
 
-		virtual bool insert (IVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		virtual bool insert (CommonLib::CVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
 
 			iterator *pFromIterator = NULL;
@@ -53,7 +53,7 @@ namespace embDB
 			}
 			return bRet;
 		}
-		virtual bool update (IVariant* pOldIndexKey, IVariant* pNewIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		virtual bool update (CommonLib::CVariant* pOldIndexKey, CommonLib::CVariant* pNewIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
 			//FType val;
 			//pIndexKey->getVal(val);
@@ -61,7 +61,7 @@ namespace embDB
 			return true;
 
 		}
-		virtual bool remove (IVariant* pIndexKey, IIndexIterator** pRetIter = NULL)
+		virtual bool remove (CommonLib::CVariant* pIndexKey, IIndexIterator** pRetIter = NULL)
 		{
 			return true;
 		}
@@ -69,7 +69,7 @@ namespace embDB
 		{
 			return true;
 		}
-		virtual IndexIteratorPtr find(IVariant* pIndexKey)
+		virtual IndexIteratorPtr find(CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -77,7 +77,7 @@ namespace embDB
 			TIndexIterator *pIndexIterator = new TIndexIterator(it);
 			return IndexIteratorPtr(pIndexIterator);
 		}
-		virtual IndexIteratorPtr lower_bound(IVariant* pIndexKey)
+		virtual IndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -86,7 +86,7 @@ namespace embDB
 			TIndexIterator *pIndexIterator = new TIndexIterator(it);
 			return IndexIteratorPtr(pIndexIterator);
 		}
-		virtual IndexIteratorPtr upper_bound(IVariant* pIndexKey)
+		virtual IndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -95,7 +95,7 @@ namespace embDB
 			return IndexIteratorPtr(pIndexIterator);
 		}
 
-		bool remove (IVariant* pIndexKey)
+		bool remove (CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);

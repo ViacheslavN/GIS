@@ -118,9 +118,10 @@ namespace embDB
 		{
 			return m_ParentIt.isNull();
 		}
-		virtual bool getVal(IVariant* pVal)
+		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
-			return pVal->setVal(m_ParentIt.value());
+			pVal->setVal(m_ParentIt.value());
+			return true;
 		}
 		virtual uint64 getRowID()
 		{
@@ -184,8 +185,8 @@ namespace embDB
 			typedef typename TBase::TBTree TBTree;
 			typedef typename TBTree::iterator  iterator;
 			typedef _FType FType;
-		
-			virtual bool insert (uint64 nOID, IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
+
+			virtual bool insert (uint64 nOID, CommonLib::CVariant* pVariant, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
 				iterator *pFromIterator = NULL;
 				iterator RetIterator;
@@ -195,9 +196,9 @@ namespace embDB
 					assert(pFromIterator);
 					pFromIterator = &pFieldIterator->m_ParentIt;
 				}
-				
-				FType val;
-				pFieldVal->getVal(val);
+
+			
+				FType val = pVariant->Get<FType>();
 				bool bRet =  m_tree.insert(nOID, val, pFromIterator, pRetIter ? &RetIterator : NULL);
 
 
@@ -210,7 +211,7 @@ namespace embDB
 				}
 				return bRet;
 			}
-			virtual uint64 insert (IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
+			virtual uint64 insert (CommonLib::CVariant* pVariant, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
 
 				iterator *pFromIterator = NULL;
@@ -222,8 +223,7 @@ namespace embDB
 					pFromIterator = &pFieldIterator->m_ParentIt;
 				}
 
-				FType val;
-				pFieldVal->getVal(val);
+				FType val = pVariant->Get<FType>();
 				uint64 nOID;
 				if(!m_tree.insertLast(TOIDIncFunctor(), val, &nOID, pFromIterator, pRetIter ? &RetIterator : NULL))
 					return  0;
@@ -237,7 +237,9 @@ namespace embDB
 				}
 				return nOID;
 			}
-			virtual bool update (uint64 nOID, IVariant* pFieldVal)
+
+
+			virtual bool update (uint64 nOID, CommonLib::CVariant* pFieldVal)
 			{
 				FType val;
 				pFieldVal->getVal(val);
@@ -257,12 +259,13 @@ namespace embDB
 				else
 					return m_tree.remove(nOID);
 			}
-			virtual bool find(uint64 nOID, IVariant* pFieldVal)
+			virtual bool find(uint64 nOID, CommonLib::CVariant* pFieldVal)
 			{
 				TBTree::iterator it = m_tree.find(nOID);
 				if(it.isNull())
 					return false;
-				return pFieldVal->setVal(it.value());
+				pFieldVal->setVal(it.value());
+				return true;
 			}
 			FieldIteratorPtr find(uint64 nOID)
 			{
