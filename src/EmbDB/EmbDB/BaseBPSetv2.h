@@ -1891,6 +1891,15 @@ namespace embDB
 
 		BPTreeStatisticsInfo m_BTreeInfo;
 		TComp& getComp(){ return m_comp;}
+		
+		TInnerCompressorParams* GetInnerCompressorParams()
+		{
+			return m_InnerCompParams.get();
+		}
+		TLeafCompressorParams* GetLeafCompressorParams()
+		{
+			return m_LeafCompParams.get();
+		}
 	protected:
 
 		TComp		 m_comp;

@@ -198,7 +198,7 @@ namespace embDB
 		virtual void setFieldInfoType(sFieldInfo& fi) = 0;
 		virtual bool save(int64 nAddr, IDBTransactions *pTran) = 0;
 		virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
-		virtual IValueFiled* getOIDField(IDBTransactions* pTransactions, IDBStorage *pStorage) = 0;
+		virtual IValueFiled* getValueField(IDBTransactions* pTransactions, IDBStorage *pStorage) = 0;
 		virtual bool release(IValueFiled* pField) = 0;
 
 		virtual void setIndexHandler(IDBIndexHandler *pIndexHandler) = 0;

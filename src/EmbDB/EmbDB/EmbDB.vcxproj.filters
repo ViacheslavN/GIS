@@ -750,6 +750,12 @@
     <ClInclude Include="FixedStringField.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
+    <ClInclude Include="ShapeLeafNodeCompressor.h">
+      <Filter>DB\Fields\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeValue.h">
+      <Filter>DB\Fields\shape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

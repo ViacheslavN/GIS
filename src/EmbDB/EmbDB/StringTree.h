@@ -44,10 +44,8 @@ public:
 		return pNode;
 	  }
 
-
-	  bool insert(int64 nValue, const CommonLib::CString& sString)
+	  void convert(const CommonLib::CString& sString, sStringVal& sValue)
 	  {
-		  embDB::sStringVal sValue;
 		  if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
 		  {
 			  sValue.m_nLen = sString.length() + 1;
@@ -61,8 +59,39 @@ public:
 			  sValue.m_pBuf = (byte*)m_PageAlloc.alloc(sValue.m_nLen);
 			  sString.exportToUTF8((char*)sValue.m_pBuf, sValue.m_nLen);
 		  }
-		  return TBase::insert(nValue, sValue);
+	  }
+	  void convert(const sStringVal& sStrVal, CommonLib::CString& sString) 
+	  {
+		  CommonLib::CString sVal(m_pAlloc);
+		  if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
+		  {
+			  sString.loadFromASCII((const char*)sStrVal.m_pBuf);
+		  }
+		   else if(m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
+		  {
+			  sString.loadFromUTF8((const char*)sStrVal.m_pBuf);
+		  }
+	  }
+		  
+	  bool insert(int64 nValue, const CommonLib::CString& sString, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
+	  {
+		  embDB::sStringVal sValue;
+		  convert(sString, sValue);
+		  return TBase::insert(nValue, sValue, pFromIterator, pRetItertor);
 
+	  }
+	  bool update(const TKey& key, const CommonLib::CString& sString)
+	  {
+		  embDB::sStringVal sValue;
+		  convert(sString, sValue);
+		  return TBase::update(key, sValue);
+	  }
+	  	template<class TKeyFunctor>
+	  bool insertLast(TKeyFunctor& keyFunctor, const CommonLib::CString& sString, TKey* pKey = NULL,  iterator* pFromIterator = NULL,  iterator* pRetIterator = NULL)
+	  {
+		  embDB::sStringVal sValue;
+		  convert(sString, sValue);
+		  return TBase::insertLast(keyFunctor, sValue, pKey, pFromIterator, pRetIterator);
 	  }
 	private:
 		CPageAlloc m_PageAlloc;

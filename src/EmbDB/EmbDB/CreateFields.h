@@ -39,6 +39,11 @@ namespace embDB
 		case dtDouble:
 			pField = (IDBFieldHandler*)new TValFieldDouble(pDB->getBTreeAlloc());
 			break;
+		case dtString:
+			pField = (IDBFieldHandler*)new StringValueFieldHandler(pDB->getBTreeAlloc());
+			break;
+
+			
 		}
 
 		return pField;

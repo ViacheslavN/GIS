@@ -561,6 +561,8 @@
     <ClInclude Include="ListDBPage.h" />
     <ClInclude Include="PageAlloc.h" />
     <ClInclude Include="RowIDCounter.h" />
+    <ClInclude Include="ShapeLeafNodeCompressor.h" />
+    <ClInclude Include="ShapeValue.h" />
     <ClInclude Include="Statement.h" />
     <ClInclude Include="StringBPLeafNode.h" />
     <ClInclude Include="StringBPNode.h" />

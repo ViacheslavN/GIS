@@ -15,7 +15,7 @@ namespace embDB
 		virtual bool next() = 0;
 		virtual bool back() = 0;
 		virtual bool isNull() = 0;
-		virtual bool getVal(/*IVariant**/CommonLib::CVariant* pVal) = 0;
+		virtual bool getVal(CommonLib::CVariant* pVal) = 0;
 		virtual uint64 getRowID() = 0;
 
 		virtual int64 addr() const = 0;

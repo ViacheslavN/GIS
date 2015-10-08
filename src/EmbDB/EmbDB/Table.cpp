@@ -11,6 +11,7 @@
 #include "Index.h"
 #include "MultiIndexBPTree.h"
 #include "UniqueIndex.h"
+#include "FixedStringField.h"
 #include "CreateFields.h"
 
 namespace embDB
@@ -714,7 +715,7 @@ namespace embDB
 
 	bool CTable::BuildIndex(IDBIndexHandler* pIndexHandler, IDBFieldHandler *pFieldHandler, IDBTransactions* pTran)
 	{
-		IValueFiled *pField = pFieldHandler->getOIDField(pTran, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
+		IValueFiled *pField = pFieldHandler->getValueField(pTran, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
 		IndexFiled* pIndex =	pIndexHandler->getIndex(pTran, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
 
 		 if(!pField || !pIndex)
