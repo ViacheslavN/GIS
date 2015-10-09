@@ -756,6 +756,12 @@
     <ClInclude Include="ShapeValue.h">
       <Filter>DB\Fields\shape</Filter>
     </ClInclude>
+    <ClInclude Include="ReadStreamPage.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="WriteStreamPage.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

@@ -85,7 +85,7 @@ namespace embDB
 		stream.attach(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream);
 		if(!header.isValid())
-			return false;//TO DO DB LOg
+			return false;//TO DO Log
 		if(header.m_nObjectPageType != TRAN_MANAGE_PAGE || header.m_nSubObjectPageType != TM_HEADER_PAGE)
 			return false;
 		stream.read(m_Info.nRootPageTree);

@@ -564,6 +564,7 @@
     <ClInclude Include="ShapeLeafNodeCompressor.h" />
     <ClInclude Include="ShapeValue.h" />
     <ClInclude Include="Statement.h" />
+    <ClInclude Include="ReadStreamPage.h" />
     <ClInclude Include="StringBPLeafNode.h" />
     <ClInclude Include="StringBPNode.h" />
     <ClInclude Include="StringCompressorParams.h" />
@@ -623,6 +624,7 @@
     <ClInclude Include="TranUndoPageManager.h" />
     <ClInclude Include="VariantField.h" />
     <ClInclude Include="PageVector.h" />
+    <ClInclude Include="WriteStreamPage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseRBMultiTree.cpp">

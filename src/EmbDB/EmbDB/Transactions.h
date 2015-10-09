@@ -79,7 +79,7 @@ namespace embDB
 		virtual void dropFilePage(FilePagePtr pPage);
 		virtual void dropFilePage(int64 nAddr);
 		virtual FilePagePtr getNewPage();
-		virtual void saveFilePage(FilePagePtr pPage,  size_t nSize = 0, bool bChandgeInCache = false);
+		virtual void saveFilePage(FilePagePtr pPage,  size_t nSize = 0, bool bChangeInCache = false);
 		virtual size_t getPageSize() const;
 		virtual eTransactionsType getType() const {return (eTransactionsType)m_nTranType;}
 
