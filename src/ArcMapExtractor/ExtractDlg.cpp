@@ -23,14 +23,14 @@ LRESULT CExtractDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lPa
 
 	 
 	m_ctlList.SelectItem(1);
-
 	CWindow workSpase = GetDlgItem(IDC_WORK_SPACE);
 	CRect rcClient;
 	workSpase.GetWindowRect(rcClient);
+	ScreenToClient(rcClient);
 	//workSpase.ShowWindow(SW_HIDE);
-	m_mapNamePage.Create(m_hWnd, rcClient, NULL);
-	//m_mapNamePage.MoveWindow(rcClient);
-	//m_mapNamePage.ShowWindow(SW_SHOW);
+	m_mapNamePage.Create(m_hWnd, IDD_MAP_NAME_PAGE);
+	m_mapNamePage.MoveWindow(rcClient);
+	m_mapNamePage.ShowWindow(SW_SHOW);
 	return TRUE;
 }
 LRESULT CExtractDlg::OnOk(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)

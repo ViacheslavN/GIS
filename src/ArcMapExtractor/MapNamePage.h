@@ -1,6 +1,6 @@
 #pragma once
 
-class CMapNamePage : public ATL::CWindowImpl<CMapNamePage>
+class CMapNamePage  : public ATL::CDialogImpl<CMapNamePage>
 {
 public:
 	enum { IDD = IDD_MAP_NAME_PAGE };
