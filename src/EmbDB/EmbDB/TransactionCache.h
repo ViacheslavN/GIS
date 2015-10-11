@@ -35,7 +35,7 @@ namespace embDB
 		  void AddPage(int64 nAddr, int64 nTranAddr, CFilePage* pPage, bool bAddBack = false);
 		  void DropPage(int64 nAddr, CFilePage* pAddPage) {  }
 		   size_t size() const {return m_nPageInMemory;}
-		  CFilePage* GetPage(int64 nAddr, bool bNotMove = false, bool bRead = true);
+		  CFilePage* GetPage(int64 nAddr, bool bNotMove = false, bool bRead = true, uint32 nSize = 0);
 		
 		  void saveChange(IDBStorage *pStorage);
 		  void dropChange(IDBStorage *pStorage);

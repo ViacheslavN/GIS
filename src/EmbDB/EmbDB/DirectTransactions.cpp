@@ -18,9 +18,9 @@ namespace embDB
 	{
 
 	}
-	FilePagePtr CDirectTransactions::getFilePage(int64 nAddr, bool bRead )
+	FilePagePtr CDirectTransactions::getFilePage(int64 nAddr, bool bRead, uint32 nSize )
 	{
-		return  m_pDBStorage->getFilePage(nAddr, bRead);
+		return  m_pDBStorage->getFilePage(nAddr, bRead, nSize);
 		/*if(!pFilePage)
 			return NULL;
 		if(pFilePage->getFlags() & eFP_FROM_FREE_PAGES)
@@ -38,9 +38,9 @@ namespace embDB
 		m_setRemovePages.insert(nAddr);
 		//m_pDBStorage->dropFilePage(nAddr);
 	}
-	FilePagePtr CDirectTransactions::getNewPage()
+	FilePagePtr CDirectTransactions::getNewPage(uint32 nSize)
 	{
-		FilePagePtr pFilePage(m_pDBStorage->getNewPage());
+		FilePagePtr pFilePage(m_pDBStorage->getNewPage(false, nSize));
 		if(!pFilePage.get())
 			return FilePagePtr(NULL);
 		if(pFilePage->getFlags() & eFP_FROM_FREE_PAGES)

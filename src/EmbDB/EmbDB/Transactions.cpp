@@ -205,18 +205,18 @@ namespace embDB
 
 		return bRet;
 	}
-	FilePagePtr CTransactions::getFilePage(int64 nAddr, bool bRead)
+	FilePagePtr CTransactions::getFilePage(int64 nAddr, bool bRead, uint32 nSize)
 	{
 		if(m_nTranType == eTT_SELECT)
 		{
 			m_TranPerfCounter.ReadDBPage();
-			return m_pDBStorage->getFilePage(nAddr, bRead);
+			return m_pDBStorage->getFilePage(nAddr, bRead, nSize);
 		}
-		CFilePage* pPage = m_PageChache.GetPage(nAddr, false, bRead);
+		CFilePage* pPage = m_PageChache.GetPage(nAddr, false, bRead, nSize);
 		if(!pPage)
 		{
 			m_TranPerfCounter.ReadDBPage();
-			FilePagePtr pStoragePage =  m_pDBStorage->getFilePage(nAddr, bRead);
+			FilePagePtr pStoragePage =  m_pDBStorage->getFilePage(nAddr, bRead, nSize);
 			pPage = new CFilePage(m_pAlloc, pStoragePage->getRowData(), pStoragePage->getPageSize(), nAddr);
 			/*if(m_nRestoreType == rtUndo || m_nRestoreType == rtUndoRedo)
 			{
@@ -257,17 +257,17 @@ namespace embDB
 			SaveDBPage(pPage.get());
 	}
 
-	FilePagePtr CTransactions::getTranNewPage()
+	FilePagePtr CTransactions::getTranNewPage(uint32 nSize)
 	{
-		int64 nTranAddr = m_TranStorage.getNewPageAddr();
+		int64 nTranAddr = m_TranStorage.getNewPageAddr(nSize);
 		CFilePage *pFilePage = new CFilePage(m_pAlloc, m_pDBStorage->getPageSize(), nTranAddr);
 		pFilePage->setFlag(eFP_NEW|eFP_INNER_TRAN_PAGE, true);
 		m_PageChache.AddPage(-1, nTranAddr, pFilePage);
 		return FilePagePtr(pFilePage);
 	}
-	FilePagePtr CTransactions::getTranFilePage(int64 nAddr, bool bRead)
+	FilePagePtr CTransactions::getTranFilePage(int64 nAddr, bool bRead, uint32 nSize)
 	{
-		CFilePage* pPage = m_PageChache.GetPage(nAddr, false, bRead);
+		CFilePage* pPage = m_PageChache.GetPage(nAddr, false, bRead, nSize);
 	 	return FilePagePtr(pPage);
 	}
 	void CTransactions::saveTranFilePage(FilePagePtr pPage,  size_t nSize,  bool bChandgeInCache)
@@ -285,14 +285,19 @@ namespace embDB
 		addUndoPage(pRemPage);
 		m_vecRemovePages.push_back(nAddr);
 	}
-	FilePagePtr CTransactions::getNewPage()
+	FilePagePtr CTransactions::getNewPage(uint32 nSize)
 	{
+		if((nSize%m_pDBStorage->getPageSize()) != 0)
+			return FilePagePtr();
+		if(nSize == 0)
+			nSize = m_pDBStorage->getPageSize();
+
 		assert(m_nTranType != eTT_SELECT);
 		uint32 nType = 0;
-		int64 nAddr = m_pDBStorage->getNewPageAddr(&nType);
+		int64 nAddr = m_pDBStorage->getNewPageAddr(&nType, nSize);
 
 		int64 nTranAddr = m_TranStorage.getNewPageAddr();
-		CFilePage *pFilePage = new CFilePage(m_pAlloc, m_pDBStorage->getPageSize(), nAddr);
+		CFilePage *pFilePage = new CFilePage(m_pAlloc, nSize, nAddr);
 		pFilePage->setFlag(eFP_NEW, true);
 
 

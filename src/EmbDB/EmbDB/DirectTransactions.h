@@ -34,10 +34,10 @@ namespace embDB
 		virtual IUpdateCursorPtr createUpdateCursor() {return  IUpdateCursorPtr();}
 		virtual IDeleteCursorPtr createDeleteCursor() {return  IDeleteCursorPtr();}
 
-		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true);
+		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0);
 		virtual void dropFilePage(FilePagePtr pPage);
 		virtual void dropFilePage(int64 nAddr);
-		virtual FilePagePtr getNewPage();
+		virtual FilePagePtr getNewPage(uint32 nSize = 0);
 		virtual void saveFilePage(FilePagePtr pPage,  size_t nSize = 0, bool bChandgeInCache = false);
 		virtual size_t getPageSize() const;
 		virtual eTransactionsType getType() const {return eTT_UNDEFINED;}
@@ -81,17 +81,17 @@ namespace embDB
 		virtual void stop() {}
 
 
-		virtual FilePagePtr getTranFilePage(int64 nAddr, bool bRead = true)
+		virtual FilePagePtr getTranFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0)
 		{
-			return getFilePage(nAddr, bRead);
+			return getFilePage(nAddr, bRead, nSize);
 		}
 		virtual void saveTranFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false) 
 		{
 			return saveTranFilePage(pPage, nSize, bChandgeInCache);
 		}
-		virtual FilePagePtr getTranNewPage()
+		virtual FilePagePtr getTranNewPage(uint32 nSize = 0)
 		{
-			return getNewPage();
+			return getNewPage(nSize);
 		}
 		void OutDebugInfo(){}
 	private:

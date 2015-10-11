@@ -29,16 +29,16 @@ namespace embDB
 		virtual bool restore(bool Force = false) = 0;
 
 
-		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true) = 0;
+		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0) = 0;
 		virtual void dropFilePage(FilePagePtr pPage) = 0;
 		virtual void dropFilePage(int64 nAddr) = 0;
-		virtual FilePagePtr getNewPage() = 0;
+		virtual FilePagePtr getNewPage(uint32 nSize = 0) = 0;
 		virtual void saveFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false) = 0;
 		virtual size_t getPageSize() const = 0;
 
 
-		virtual FilePagePtr getTranNewPage()= 0;
-		virtual FilePagePtr getTranFilePage(int64 nAddr, bool bRead = true) = 0;
+		virtual FilePagePtr getTranNewPage(uint32 nSize = 0)= 0;
+		virtual FilePagePtr getTranFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0) = 0;
 		virtual void saveTranFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false) = 0;
 		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false) = 0;
 

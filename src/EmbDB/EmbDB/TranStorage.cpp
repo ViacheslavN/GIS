@@ -56,14 +56,21 @@ namespace embDB
 		m_pCounter->WriteTranPage();
 		return nAddr;
 	}
-	CFilePage* CTranStorage::getFilePage(int64 nAddr, bool bRead, bool bDecrypt)
+	CFilePage* CTranStorage::getFilePage(int64 nAddr, bool bRead, bool bDecrypt, uint32 nSize)
 	{
-		CFilePage* pPage = new CFilePage(m_pAlloc, m_nPageSize, nAddr);
+		if(nSize%m_nPageSize != 0)
+			return NULL;
+		if(nSize == 0)
+			nSize = m_nPageSize;
+
+		uint32 nCnt = nSize/m_nPageSize;
+
+		CFilePage* pPage = new CFilePage(m_pAlloc, nSize, nAddr);
 		if(bRead)
 		{
 			bool bRet = m_pFile.setFilePos64(nAddr * m_nPageSize, CommonLib::soFromBegin);
 			assert(bRet);
-			uint32 nWCnt = m_pFile.readFile((void*)pPage->getRowData(),  (uint32)m_nPageSize );
+			uint32 nWCnt = m_pFile.readFile((void*)pPage->getRowData(),  (uint32)nSize );
 			assert(nWCnt != 0);
 
 			if(m_pPageCrypto && bDecrypt)
@@ -73,20 +80,34 @@ namespace embDB
 		}
 	
 		if(m_nLastAddr <= nAddr)
-			m_nLastAddr =  nAddr + 1;
+			m_nLastAddr =  nAddr + nCnt;
 			m_pCounter->ReadTranPage();
 		return pPage;
 	}
-	CFilePage* CTranStorage::getNewPage()
+	CFilePage* CTranStorage::getNewPage(uint32 nSize)
 	{
-		CFilePage* pPage = new CFilePage(m_pAlloc, m_nPageSize, m_nLastAddr);
-		m_nLastAddr += 1;
+		if(nSize%m_nPageSize != 0)
+			return NULL;
+		if(nSize == 0)
+			nSize = m_nPageSize;
+
+		uint32 nCnt = nSize/m_nPageSize;
+
+		CFilePage* pPage = new CFilePage(m_pAlloc, nSize, m_nLastAddr);
+		m_nLastAddr += nCnt;
 		return pPage;
 	}
-	int64 CTranStorage::getNewPageAddr()
+	int64 CTranStorage::getNewPageAddr(uint32 nSize)
 	{
+		if(nSize%m_nPageSize != 0)
+			return -1;
+		if(nSize == 0)
+			nSize = m_nPageSize;
+
+		uint32 nCnt = nSize/m_nPageSize;
+
 		int64 nAddr = m_nLastAddr;
-		m_nLastAddr += 1;
+		m_nLastAddr += nCnt;
 		return nAddr;
 	}
 	bool CTranStorage::Flush()

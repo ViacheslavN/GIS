@@ -75,16 +75,16 @@ namespace embDB
 		bool close();
 		
 
-		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true);
+		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0);
 		virtual void dropFilePage(FilePagePtr pPage);
 		virtual void dropFilePage(int64 nAddr);
-		virtual FilePagePtr getNewPage();
+		virtual FilePagePtr getNewPage(uint32 nSize = 0);
 		virtual void saveFilePage(FilePagePtr pPage,  size_t nSize = 0, bool bChangeInCache = false);
 		virtual size_t getPageSize() const;
 		virtual eTransactionsType getType() const {return (eTransactionsType)m_nTranType;}
 
-		virtual FilePagePtr getTranNewPage();
-		virtual FilePagePtr getTranFilePage(int64 nAddr, bool bRead = true);
+		virtual FilePagePtr getTranNewPage(uint32 nSize = 0);
+		virtual FilePagePtr getTranFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0);
 		virtual void saveTranFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false);
 
 		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false);

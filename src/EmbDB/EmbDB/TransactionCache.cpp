@@ -207,7 +207,7 @@ namespace embDB
 	}
 
  
-	CFilePage*  CTransactionsCache::GetPage(int64 nAddr, bool bNotMove, bool bRead)
+	CFilePage*  CTransactionsCache::GetPage(int64 nAddr, bool bNotMove, bool bRead, uint32 nSize)
 	{
 		CFilePage* pPage = m_Chache.GetElem(nAddr);
 		if(pPage)
@@ -219,11 +219,11 @@ namespace embDB
 		sFileTranPageInfo& PageInfo = it->second;
 		if(PageInfo.m_nFileAddr == -1)
 		{
-			CFilePage* pPage = new CFilePage(m_pAlloc, m_pFileStorage->getPageSize(), -1);
+			CFilePage* pPage = new CFilePage(m_pAlloc, nSize, -1);
 			m_Chache.AddElem(nAddr, pPage);
 			return pPage;
 		}
-		pPage = m_pFileStorage->getFilePage(PageInfo.m_nFileAddr, bRead);
+		pPage = m_pFileStorage->getFilePage(PageInfo.m_nFileAddr, bRead, false, nSize);
 		assert(pPage);
 		pPage->setAddr(nAddr);
 		pPage->setFlag(PageInfo.m_nFlags, true);

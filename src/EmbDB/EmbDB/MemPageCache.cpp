@@ -26,7 +26,11 @@ namespace embDB
 	}
 	void* CMemPageCache::alloc(size_t size)
 	{
-		assert(size == m_nPageSize);
+		//assert(size == m_nPageSize);
+		if(size != m_nPageSize)
+		{
+			return m_pAlloc->alloc(size);
+		}
 		return getMemPage();
 	}
 	void* CMemPageCache::getMemPage()
