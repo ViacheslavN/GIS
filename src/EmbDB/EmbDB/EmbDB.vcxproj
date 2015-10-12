@@ -447,6 +447,9 @@
     <ClInclude Include="BaseRBMultiTree.h" />
     <ClInclude Include="BaseRBTree.h" />
     <ClInclude Include="BitMap.h" />
+    <ClInclude Include="BlobCompressorParams.h" />
+    <ClInclude Include="BlobLeafNodeCompressor.h" />
+    <ClInclude Include="BlobVal.h" />
     <ClInclude Include="BPCompressors.h" />
     <ClInclude Include="BPInneOIDNodeCompressor.h" />
     <ClInclude Include="BPInnerNodeSetROSimpleCompressor.h" />

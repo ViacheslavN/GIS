@@ -762,6 +762,15 @@
     <ClInclude Include="WriteStreamPage.h">
       <Filter>DB\Fields\blob</Filter>
     </ClInclude>
+    <ClInclude Include="BlobVal.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="BlobLeafNodeCompressor.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="BlobCompressorParams.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

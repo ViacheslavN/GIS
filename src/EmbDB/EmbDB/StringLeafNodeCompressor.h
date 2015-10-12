@@ -50,16 +50,8 @@ namespace embDB
 
 		virtual ~BPStringLeafNodeSimpleCompressor()
 		{
-			if(!m_pValueMemset)
-				return;
-
-			for (size_t i = 0; i < m_pValueMemset->size(); ++i )
-			{
-				sStringVal& val = (*m_pValueMemset)[i];
-				m_pAlloc->free(val.m_pBuf);
-			}
+			Clear();
 			
-
 		}
 		void Clear()
 		{
@@ -101,29 +93,8 @@ namespace embDB
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
 				KeyStream.read(nKey);
-				//CommonLib::CString sString;
-	 
-
 
 				sStringVal sString;
-
-			/*	if(sCode == scASCII)
-				{
-					nStrSize = sString.loadFromASCII((const char*)ValueStream.buffer() + ValueStream.pos());
-				}
-				else if(sCode == scUTF8)
-				{
-					nStrSize = sString.loadFromUTF8((const char*)ValueStream.buffer()+ ValueStream.pos()) + 1;
-				}*/
-
-			/*	if(sCode == scASCII)
-				{
-					nStrSize = strlen((const char*)ValueStream.buffer() + ValueStream.pos());//sString.loadFromASCII((const char*)ValueStream.buffer() + ValueStream.pos());
-				}
-				else if(sCode == scUTF8)
-				{
-					nStrSize = sString.loadFromUTF8((const char*)ValueStream.buffer()+ ValueStream.pos()) + 1;
-				}*/
 
 				sString.m_nLen  = strlen((const char*)ValueStream.buffer() + ValueStream.pos()) + 1;
 				m_nStringDataSize += sString.m_nLen;
@@ -165,18 +136,6 @@ namespace embDB
 			{
 				KeyStream.write(keySet[i]);
 				ValueStream.write(valueSet[i].m_pBuf, valueSet[i].m_nLen);
-				/*if(sCode == scASCII)
-				{
-					ValueStream.write(valueSet[i].cstr());
-				}
-				else if(sCode == scUTF8)
-				{
-					int utf8Len = valueSet[i].calcUTF8Length() + 1;
-					bufForUff8.resize(utf8Len);
-
-					valueSet[i].exportToUTF8((char*)bufForUff8.buffer(), utf8Len);
-					ValueStream.write((const byte*)bufForUff8.buffer(), utf8Len);
-				}*/
 
 			}
 			return true;
@@ -185,8 +144,7 @@ namespace embDB
 		virtual bool insert(int nIndex, TKey key, /*const CommonLib::CString&*/ const sStringVal& sStr)
 		{
 			m_nSize++;
-			uint32 nStrSize = sStr.m_nLen;//GetStingSize(sStr);
-			//m_vecStringSize.insert(nIndex, nStrSize);
+			uint32 nStrSize = sStr.m_nLen;
 			m_nStringDataSize += nStrSize;
 
 	
@@ -218,16 +176,15 @@ namespace embDB
 		virtual bool remove(int nIndex, TKey key, const sStringVal& sStr)
 		{
 			m_nSize--;
-			uint32 nStrSize = sStr.m_nLen;//GetStingSize(sStr);
+			uint32 nStrSize = sStr.m_nLen;
 			m_nStringDataSize -= nStrSize;
-			//m_vecStringSize.remove(nIndex);
 			return true;
 		}
 		virtual bool update(int nIndex, TKey key, const sStringVal& sStr)
 		{
 			assert(m_pValueMemset);
-			int oldSize = (*m_pValueMemset)[nIndex].m_nLen;//GetStingSize((*m_pValueMemset)[nIndex]);
-			int newSize =sStr.m_nLen; //GetStingSize(sStr);
+			int oldSize = (*m_pValueMemset)[nIndex].m_nLen;
+			int newSize =sStr.m_nLen; 
 			m_nStringDataSize += (newSize - oldSize);
 			return true;
 		}
@@ -274,10 +231,6 @@ namespace embDB
 			m_nSize = nCount;
 			m_nStringDataSize = nSplitStringDataSize; 
 
-	
-			//pCompressor->m_vecStringSize.copy(m_vecStringSize, 0, nEnd,  m_vecStringSize.size());
-			//m_vecStringSize.resize(nCount);
-
 		}
 	private:
 		int GetStingSize(const CommonLib::CString& sStr) const 
@@ -299,7 +252,7 @@ namespace embDB
 		}
 	
 	private:
-	//	CommonLib::TPodVector<uint32> m_vecStringSize;
+
 		size_t m_nStringDataSize;
 		size_t m_nSize;
  
