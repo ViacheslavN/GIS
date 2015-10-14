@@ -7,26 +7,33 @@
 namespace embDB
 {
 
-	class StreamWritePage : public CommonLib::IWriteStreamBase
+	class WriteStreamPage : public CommonLib::IWriteStreamBase, public CommonLib::AutoRefCounter
 	{
 	public:
-		StreamWritePage(embDB::IDBTransactions* pTran, int64 nPageHeader, uint32 nBeginPos) :
-		  m_pTran(pTran), m_nPageHeader(nPageHeader), m_nBeginPos(nBeginPos)
+		WriteStreamPage(embDB::IDBTransactions* pTran) :
+		  m_pTran(pTran), m_nPageHeader(-1), m_nBeginPos(0)
 		  {
 			
 
 		  }
-		  ~StreamWritePage()
+		  ~WriteStreamPage()
 		  {
 
 		  }
 
-		  bool open()
+		  bool open(int64 nPageHeader, uint32 nBeginPos, bool bReopen = false)
 		  {
-		 
-			  m_pPage = m_pTran->getFilePage(m_nPageHeader);
-			  if(!m_pPage.get())
-				  return false; //TO DO Log;
+ 
+			  if(!m_pPage.get() || m_nPageHeader != nPageHeader || bReopen)
+			  {
+				  m_nPageHeader = nPageHeader;
+				  m_nBeginPos = nBeginPos;
+				  m_pPage = m_pTran->getFilePage(m_nPageHeader);
+				  if(!m_pPage.get())
+					  return false; //TO DO Log;
+			  }
+
+			
 
 			
 			  assert(m_nBeginPos < m_pPage->getPageSize());
@@ -36,7 +43,7 @@ namespace embDB
 			 
 		  }
 
-		  virtual void write_bytes(byte* buffer, size_t size)
+		  virtual void write_bytes(const byte* buffer, size_t size)
 		  {
 
 			  uint32 nFreeSize = m_stream.size() - m_stream.pos();
@@ -64,7 +71,7 @@ namespace embDB
 				  }
 			  }
 		  }
-		  virtual void write_inverse(byte* buffer, size_t size)
+		  virtual void write_inverse(const byte* buffer, size_t size)
 		  {
 
 			  uint32 nFreeSize = m_stream.size() - m_stream.pos();
@@ -105,4 +112,8 @@ namespace embDB
  
 	};
 
+
+	COMMON_LIB_REFPTR_TYPEDEF(WriteStreamPage);
 }
+
+#endif

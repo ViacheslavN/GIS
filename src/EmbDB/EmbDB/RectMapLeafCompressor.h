@@ -7,7 +7,7 @@
 namespace embDB
 {
 
-	template<class _TCoordPoint, class _TValue>
+	template<class _TCoordPoint, class _TValue, class _Transaction = IDBTransactions>
 	class BPSpatialRectLeafNodeMapSimpleCompressor 
 	{
 	public:
@@ -24,7 +24,7 @@ namespace embDB
 			return NULL;
 		}
 
-		BPSpatialRectLeafNodeMapSimpleCompressor(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = 0,
+		BPSpatialRectLeafNodeMapSimpleCompressor(_Transaction *pTran = 0, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = 0,
 			TLeafKeyMemSet *pKeyMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nSize(0)
 		{}
 		virtual ~BPSpatialRectLeafNodeMapSimpleCompressor(){}

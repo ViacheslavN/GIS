@@ -448,7 +448,9 @@
     <ClInclude Include="BaseRBTree.h" />
     <ClInclude Include="BitMap.h" />
     <ClInclude Include="BlobCompressorParams.h" />
+    <ClInclude Include="BlobLeafNode.h" />
     <ClInclude Include="BlobLeafNodeCompressor.h" />
+    <ClInclude Include="BlobTree.h" />
     <ClInclude Include="BlobVal.h" />
     <ClInclude Include="BPCompressors.h" />
     <ClInclude Include="BPInneOIDNodeCompressor.h" />
@@ -508,6 +510,7 @@
     <ClInclude Include="IStatement.h" />
     <ClInclude Include="LeafCounterCompress.h" />
     <ClInclude Include="LeafSetCompBase.h" />
+    <ClInclude Include="LeafStringCompress.h" />
     <ClInclude Include="MemPageCache.h" />
     <ClInclude Include="MultiIndex.h" />
     <ClInclude Include="MultiIndexBase.h" />
@@ -568,6 +571,7 @@
     <ClInclude Include="ShapeValue.h" />
     <ClInclude Include="Statement.h" />
     <ClInclude Include="ReadStreamPage.h" />
+    <ClInclude Include="StreamPageIngo.h" />
     <ClInclude Include="StringBPLeafNode.h" />
     <ClInclude Include="StringBPNode.h" />
     <ClInclude Include="StringCompressorParams.h" />

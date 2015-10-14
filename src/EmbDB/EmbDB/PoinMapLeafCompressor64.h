@@ -7,7 +7,7 @@
 namespace embDB
 {
 
-	template<class _TValue>
+	template<class _TValue, class _Transaction = IDBTransactions>
 	class BPSpatialPointLeafNodeMapSimpleCompressor64 
 	{
 	public:
@@ -15,7 +15,7 @@ namespace embDB
 		typedef  TBPVector<ZOrderPoint2DU64> TLeafKeyMemSet;
 		typedef  TBPVector<TValue> TLeafValueMemSet;
 		typedef CompressorParamsBaseImp TLeafCompressorParams;
-		BPSpatialPointLeafNodeMapSimpleCompressor64(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParms = NULL,
+		BPSpatialPointLeafNodeMapSimpleCompressor64(_Transaction *pTran = 0, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParms = NULL,
 			TLeafKeyMemSet *pKeyMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nSize(0)
 		{}
 

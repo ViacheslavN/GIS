@@ -9,7 +9,7 @@
 namespace embDB
 {
 
-	template<typename _TValue = uint64>
+	template<typename _TValue = uint64, class _Transaction = IDBTransactions>
 	class BPLeafCompIndexCompressor
 	{
 	public:	
@@ -19,7 +19,7 @@ namespace embDB
 
 		typedef CompIndexParams TLeafCompressorParams;
 
-		BPLeafCompIndexCompressor(CommonLib::alloc_t *pAlloc, TLeafCompressorParams *pParams,
+		BPLeafCompIndexCompressor(_Transaction *pTran, CommonLib::alloc_t *pAlloc, TLeafCompressorParams *pParams,
 			TLeafKeyMemSet *pKeyMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) 
 			: m_nSize(0), m_pAlloc(pAlloc), m_pCompParams(pParams)
 		{

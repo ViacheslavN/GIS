@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_B_PLUS_V2_TREE_STRING_H_
-#define _EMBEDDED_DATABASE_B_PLUS_V2_TREE_STRING_H_
+#ifndef _EMBEDDED_DATABASE_B_PLUS_V2_TREE_FIXED_STRING_H_
+#define _EMBEDDED_DATABASE_B_PLUS_V2_TREE_FIXED_STRING_H_
 
 #include "BaseBPMapv2.h"
 #include "StringBPNode.h"
@@ -9,9 +9,9 @@ namespace embDB
 
 
 template<class _TKey, class _Transaction>
-class TBPString : public TBPMapV2<_TKey, sStringVal, comp<_TKey>, _Transaction, 
+class TBPFixedString : public TBPMapV2<_TKey, sStringVal, comp<_TKey>, _Transaction, 
 		 BPInnerNodeSimpleCompressorV2<_TKey> ,
-		 BPStringLeafNodeSimpleCompressor<_TKey>, 
+		 BPFixedStringLeafNodeCompressor<_TKey,  _Transaction>, 
 		 BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
 		 TStringLeafNode<_TKey, _Transaction>,
 		 BPStringTreeNodeMapv2<_TKey, _Transaction>	>
@@ -20,18 +20,18 @@ public:
 
 	typedef TBPMapV2<_TKey, sStringVal, comp<_TKey>, _Transaction, 
 		BPInnerNodeSimpleCompressorV2<_TKey> ,
-		BPStringLeafNodeSimpleCompressor<_TKey>, 
+		BPFixedStringLeafNodeCompressor<_TKey,  _Transaction>, 
 		BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
 		TStringLeafNode<_TKey, _Transaction>,
 		BPStringTreeNodeMapv2<_TKey, _Transaction>	> TBase;
 
-	TBPString(int64 nPageBTreeInfo, embDB::IDBTransactions* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
+	TBPFixedString(int64 nPageBTreeInfo, embDB::IDBTransactions* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
 	  TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, bMulti, bCheckCRC32), m_PageAlloc(pAlloc, 1024*1024, 2)
 	  {
 
 	  }
 
-	  ~TBPString()
+	  ~TBPFixedString()
 	  {
 		  DeleteNodes();
 	  }

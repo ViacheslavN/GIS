@@ -231,7 +231,7 @@ namespace embDB
 		{
 			return  (m_pLeafCompParams->GetMaxPageBlobSize() + sizeof(TKey));
 		}
-		void SplitIn(uint32 nBegin, uint32 nEnd, BPStringLeafNodeSimpleCompressor *pCompressor)
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPFixedStringLeafNodeCompressor *pCompressor)
 		{
 			uint32 nSplitBlobDataSize = 0;
 			for (size_t i  = nBegin; i < nEnd; ++i)

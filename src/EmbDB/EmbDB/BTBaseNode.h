@@ -20,6 +20,7 @@ namespace embDB
 		CHECK_REM_NODE = 16
 	};
 
+ 
 	class BPBaseTreeNode
 	{
 	public:

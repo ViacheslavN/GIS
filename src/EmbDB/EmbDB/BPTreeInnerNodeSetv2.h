@@ -14,7 +14,7 @@ namespace embDB
 	template<typename _TKey,/* typename _TComp,*/
 	class _Transaction, class _TCompressor,
 	class _TKeyMemSet = TBPVector<_TKey> >
-	class BPTreeInnerNodeSetv2 :   public  BPBaseTreeNode
+	class BPTreeInnerNodeSetv2 :   public  BPBaseTreeNode 
 	{
 		typedef _TKey TKey;
 		typedef int64 TLink;
@@ -38,7 +38,7 @@ namespace embDB
 			
 		}
 
-		virtual bool init(TInnerCompressorParams *pParams = NULL)
+		virtual bool init(TInnerCompressorParams *pParams = NULL, Transaction* pTransaction = NULL )
 		{
 			assert(!m_pCompressor);
 			m_pCompressor = new TCompressor(&m_innerKeyMemSet, &m_innerLinkMemSet, m_pAlloc, pParams);

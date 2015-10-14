@@ -7,26 +7,37 @@
 namespace embDB
 {
 
-	class StreamReadPage : public CommonLib::IReadStreamBase
+	class ReadStreamPage : public CommonLib::IReadStreamBase, public CommonLib::AutoRefCounter
 	{
 	public:
-		StreamReadPage(embDB::IDBTransactions* pTran, int64 nPageHeader, uint32 nBeginPos) :
-		  m_pTran(pTran), m_nPageHeader(nPageHeader)
-		  {
+		ReadStreamPage(embDB::IDBTransactions* pTran, int64 nEndPage, uint32 nEndPos) :
+		  m_pTran(pTran), m_nPageHeader(-1), m_nEndPage(nEndPage), m_nEndPos(nEndPos)
+		  {									  
 			
 
 		  }
-		  ~StreamReadPage()
+		  ~ReadStreamPage()
 		  {
 
 		  }
 
-		  bool open()
+		  void SetEnd(int64 nEndPage, uint32 nEndPos)
+		  {
+			  m_nEndPage = nEndPage;
+			  m_nEndPos = nEndPos;
+		  }
+
+		  bool open(int64 nPageHeader, uint32 nBeginPos, bool bReopen = false)
 		  {
 		 
-			  m_pPage = m_pTran->getFilePage(m_nPageHeader);
-			  if(!m_pPage.get())
-				  return false; //TO DO Log;
+			  if(!m_pPage.get() || m_nPageHeader != nPageHeader || bReopen)
+			  {
+				  m_nPageHeader = nPageHeader;
+				  m_nBeginPos = nBeginPos;
+				  m_pPage = m_pTran->getFilePage(m_nPageHeader);
+				  if(!m_pPage.get())
+					  return false; //TO DO Log;
+			  }
 
 			
 			  assert(m_nBeginPos < m_pPage->getPageSize());
@@ -83,6 +94,20 @@ namespace embDB
 			  }
 		  }
 
+
+		  virtual bool checkRead(uint32 nSize) const
+		  {
+			  return true;
+		  }
+		  virtual bool IsEndOfStream() const
+		  {
+			  return m_nPageHeader == m_nEndPage && m_stream.pos() == m_nEndPos;
+		  }
+		  virtual bool AttachStream(CommonLib::IStream *pStream, uint32 nSize, bool bSeek = true)
+		  {
+			  return false;
+		  }
+
 		  bool NextPage(int64 nNextPage)
 		  {
 			  if(nNextPage == -1)
@@ -101,9 +126,13 @@ namespace embDB
 		embDB::IDBTransactions* m_pTran;
 		uint32 m_nBeginPos;
 		int64 m_nPageHeader;
+		int64 m_nEndPage;
+		uint32 m_nEndPos;
     	 CommonLib::FxMemoryReadStream m_stream;
 	
  
 	};
-
+	COMMON_LIB_REFPTR_TYPEDEF(ReadStreamPage);
 }
+
+#endif

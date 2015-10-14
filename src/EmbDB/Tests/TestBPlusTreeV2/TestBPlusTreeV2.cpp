@@ -26,6 +26,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//testUndo();
 	//testRedo();
 
+
+
 	TestBPStringTree();
 	return 0;
 }

@@ -130,7 +130,7 @@ namespace embDB
 	{
 	public:
  
-		typedef TBPString<uint64, IDBTransactions> TBTree;
+		typedef TBPFixedString<uint64, IDBTransactions> TBTree;
 		typedef CFixedStringValueField<TBTree> TField;
 
 		StringValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)

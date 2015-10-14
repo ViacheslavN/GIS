@@ -7,7 +7,7 @@
 namespace embDB
 {
 
-	template<typename _TKey, typename _TValue>
+	template<typename _TKey, typename _TValue, class _Transaction = IDBTransactions>
 	class BPLeafNodeMapSimpleCompressorV2
 	{
 	public:	
@@ -17,7 +17,7 @@ namespace embDB
 		typedef  TBPVector<TValue> TLeafValueMemSet;
 		typedef CompressorParamsBaseImp TLeafCompressorParams;
 
-		BPLeafNodeMapSimpleCompressorV2(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
+		BPLeafNodeMapSimpleCompressorV2(_Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
 			TLeafKeyMemSet *pKeyMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nSize(0)
 		{}
 		

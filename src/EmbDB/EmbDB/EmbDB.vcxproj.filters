@@ -16,9 +16,6 @@
     <Filter Include="storage">
       <UniqueIdentifier>{b737b726-6d9a-4e49-a38c-69997a57e967}</UniqueIdentifier>
     </Filter>
-    <Filter Include="streams">
-      <UniqueIdentifier>{2a49b6f6-6c4f-4dd3-bf53-cc22a0c976a1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB">
       <UniqueIdentifier>{7e7768b9-cbbe-4f19-963b-ddc4d2c5ca2e}</UniqueIdentifier>
     </Filter>
@@ -186,6 +183,12 @@
     </Filter>
     <Filter Include="DB\Fields\string\fixedStringField">
       <UniqueIdentifier>{baa61b41-847b-45c3-9279-6eb33bb3ead1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils\streams">
+      <UniqueIdentifier>{2a49b6f6-6c4f-4dd3-bf53-cc22a0c976a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Fields\string\StringField">
+      <UniqueIdentifier>{452f6a01-d664-4cda-8c1b-5da814583628}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -770,6 +773,18 @@
     </ClInclude>
     <ClInclude Include="BlobCompressorParams.h">
       <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="BlobLeafNode.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="BlobTree.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamPageIngo.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="LeafStringCompress.h">
+      <Filter>DB\Fields\string\StringField</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

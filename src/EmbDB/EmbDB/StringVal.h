@@ -10,8 +10,10 @@ namespace embDB
 	{
 		byte *m_pBuf;
 		uint32 m_nLen;
+		uint32 m_nPos;
+		int64 m_nPage;
 
-		sStringVal() : m_pBuf(0), m_nLen(0)
+		sStringVal() : m_pBuf(0), m_nLen(0), m_nPos(0), m_nPage(-1)
 		{}
 
 		

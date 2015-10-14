@@ -6,7 +6,7 @@
 namespace embDB
 {
 
-	template<typename _TKey>
+	template<typename _TKey, class _Transaction = IDBTransactions>
 	class BPLeafNodeMultiIndexCompressor
 	{
 	public:	
@@ -21,7 +21,7 @@ namespace embDB
 			return NULL;
 		}
 
-		BPLeafNodeMultiIndexCompressor(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL, TLeafMemSet *pLeafMemSet = NULL) : m_nSize(0)
+		BPLeafNodeMultiIndexCompressor(_Transaction *pTran = 0, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL, TLeafMemSet *pLeafMemSet = NULL) : m_nSize(0)
 		{}
 		virtual ~BPLeafNodeMultiIndexCompressor(){}
 		virtual bool Load(TLeafMemSet& Set, CommonLib::FxMemoryReadStream& stream)

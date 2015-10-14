@@ -10,7 +10,7 @@
 
 
 typedef embDB::BPInnerNodeSimpleCompressorV2<int64> TInnerCompressor;
-typedef embDB::BPStringLeafNodeSimpleCompressor<int64> TLeafCompressor;
+typedef embDB::BPFixedStringLeafNodeCompressor<int64> TLeafCompressor;
 
 typedef embDB::BPTreeInnerNodeSetv2<int64, embDB::IDBTransactions, TInnerCompressor> TInnerNode;
 typedef embDB::BPTreeLeafNodeMapv2<int64, embDB::sStringVal, embDB::IDBTransactions, TLeafCompressor> TLeafNode;
@@ -19,7 +19,7 @@ typedef embDB::BPTreeNodeMapv2<int64, embDB::sStringVal, embDB::IDBTransactions,
 
 typedef embDB::TBPMapV2 <int64,  embDB::sStringVal, embDB::comp<int64>, embDB::IDBTransactions,
 embDB::BPInnerNodeSimpleCompressorV2<int64>,
-embDB::BPStringLeafNodeSimpleCompressor<int64>, TInnerNode, TLeafNode, TBPTreeNode> TBMapString;
+embDB::BPFixedStringLeafNodeCompressor<int64>, TInnerNode, TLeafNode, TBPTreeNode> TBMapString;
 
 
 /*class TBPString : public TBMapString
@@ -83,7 +83,7 @@ template<class Tran>
 void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, int64& nTreeRootPage, Tran* pTran)
 {
 
-	typedef embDB::TBPString<int64, Tran> TBPString;
+	typedef embDB::TBPFixedString<int64, Tran> TBPString;
 	std::cout << "Insert Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
 	double tmInsert = 0;
@@ -161,7 +161,7 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 	double tmInsert = 0;
 	double treeCom = 0;
 	double tranCom  = 0;
-	typedef embDB::TBPString<int64, Tran> TBPString;
+	typedef embDB::TBPFixedString<int64, Tran> TBPString;
 	TBPString tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
 	tree.loadBTreeInfo(); 
 	time.start();

@@ -69,12 +69,12 @@ namespace embDB
 				if(m_bIsLeaf)
 				{
 					m_pBaseNode = &m_LeafNode;
-					return m_LeafNode.init(m_pLeafCompParams);
+					return m_LeafNode.init(m_pLeafCompParams, pTransactions);
 				}
 				else
 				{
 					m_pBaseNode = &m_InnerNode;
-					return m_InnerNode.init(m_pInnerCompParams);
+					return m_InnerNode.init(m_pInnerCompParams, pTransactions);
 				}
 			
 			}
@@ -141,13 +141,13 @@ namespace embDB
 			if(m_bIsLeaf)
 			{
 				m_pBaseNode = &m_LeafNode;
-				if(!m_LeafNode.init(m_pLeafCompParams ))
+				if(!m_LeafNode.init(m_pLeafCompParams, pTransactions ))
 					return false;
 			}
 			else
 			{
 				m_pBaseNode = &m_InnerNode;
-				if(!m_InnerNode.init(m_pInnerCompParams))
+				if(!m_InnerNode.init(m_pInnerCompParams, pTransactions))
 					return false;
 			}
 		 

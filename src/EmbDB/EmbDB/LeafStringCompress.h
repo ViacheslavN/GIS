@@ -1,18 +1,20 @@
-#ifndef _EMBEDDED_DATABASE_STRING_LEAF_NODE_SIMPLE_COMPRESSOR_H_
-#define _EMBEDDED_DATABASE_STRING_LEAF_NODE_SIMPLE_COMPRESSOR_H_
+#ifndef _EMBEDDED_DATABASE_STRING_LEAF_NODE_COMPRESSOR_H_
+#define _EMBEDDED_DATABASE_STRING_LEAF_NODE_COMPRESSOR_H_
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/blob.h"
 #include "CompressorParams.h"
 #include "BPVectorNoPod.h"
 #include "StringCompressorParams.h"
-#include "CommonLibrary/PodVector.h"
 #include "StringVal.h"
+#include "ReadStreamPage.h"
+#include "WriteStreamPage.h"
 namespace embDB
 {
 
 
-	template<class _TKey = int64,	class _Transaction = IDBTransactions>
+	template<class _TKey = int64, 
+	 class _Transaction = IDBTransactions>
 	class BPFixedStringLeafNodeCompressor  
 	{
 	public:
@@ -22,9 +24,10 @@ namespace embDB
 
 		typedef  TBPVector<TKey> TLeafKeyMemSet;
 		typedef  TBPVector<sStringVal> TLeafValueMemSet;
-		typedef StringFieldCompressorParams TLeafCompressorParams;
 
+		typedef StringFieldCompressorParams TLeafCompressorParams;
 		typedef _Transaction Transaction;
+
 
 		template<typename _Transactions  >
 		static TLeafCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
@@ -34,14 +37,20 @@ namespace embDB
 			return pInnerComp;
 		}
 
-		BPFixedStringLeafNodeCompressor(Transaction *pTran , CommonLib::alloc_t *pAlloc,	TLeafCompressorParams* pParams,
-			TLeafKeyMemSet *pKeyMemset, TLeafValueMemSet *pValueMemSet) : m_nSize(0), m_pAlloc(pAlloc), m_pLeafCompParams(pParams),
-			m_nStringDataSize(0), m_pValueMemset(pValueMemSet) 
+		BPFixedStringLeafNodeCompressor(Transaction *pTransaction, CommonLib::alloc_t *pAlloc, 
+			TLeafCompressorParams *pParams,
+			TLeafKeyMemSet *pKeyMemset, TLeafValueMemSet *pValueMemSet) : m_nSize(0), 
+			m_pTransaction(pTransaction),
+			m_pAlloc(pAlloc), m_pLeafCompParams(pParams),		m_nStringDataSize(0), m_pValueMemset(pValueMemSet) 
 		{
 
+			assert(m_pTransaction);
 			assert(m_pAlloc);
 			assert(m_pLeafCompParams);
 			assert(m_pValueMemset);
+
+
+			m_nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();
 
 		}
 
@@ -71,6 +80,7 @@ namespace embDB
 
 
 			eStringCoding sCode = m_pLeafCompParams->GetStringCoding();
+			uint32 nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();
 
 			m_nStringDataSize = 0;
 			m_nSize = stream.readInt32();
@@ -94,16 +104,26 @@ namespace embDB
 
 				sStringVal sString;
 
-				sString.m_nLen  = strlen((const char*)ValueStream.buffer() + ValueStream.pos()) + 1;
+				/*sString.m_nLen  = strlen((const char*)ValueStream.buffer() + ValueStream.pos()) + 1;
 				m_nStringDataSize += sString.m_nLen;
 
 				sString.m_pBuf = (byte*)m_pAlloc->alloc(sString.m_nLen);
-				memcpy(sString.m_pBuf, ValueStream.buffer() + ValueStream.pos(), sString.m_nLen);
+				memcpy(sString.m_pBuf, ValueStream.buffer() + ValueStream.pos(), sString.m_nLen);*/
+
+				sString.m_nLen = ValueStream.readIntu32();
+				if(sString.m_nLen < nMaxPageLen)
+				{
+					sString.m_pBuf = (byte*)m_pAlloc->alloc(sString.m_nLen);
+					memcpy(sString.m_pBuf, ValueStream.buffer() + ValueStream.pos(), sString.m_nLen);
+					ValueStream.seek(sString.m_nLen, CommonLib::soFromCurrent);
+				}
+				else
+				{
+					sString.m_nPage = ValueStream.readIntu64();
+					sString.m_nPos = ValueStream.readIntu32();
+					//ReadStreamPagePtr pStream = m_pLeafCompParams->GetReadStream(m_pTransaction);
+				}
 				
-
-				ValueStream.seek(sString.m_nLen, CommonLib::soFromCurrent);
-
-				//m_vecStringSize.push_back(sString.m_nLen);
 				valueSet.push_back(sString);
 				keySet.push_back(nKey);
 			}
@@ -129,11 +149,26 @@ namespace embDB
 			ValueStream.attach(stream.buffer() + stream.pos() + nKeySize, m_nStringDataSize);
 			stream.seek(stream.pos() + nKeySize + m_nStringDataSize, CommonLib::soFromBegin);		
 
+			uint32 nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();
+
+
 			CommonLib::CBlob bufForUff8;
 		 	for (size_t i = 0, sz = keySet.size(); i < sz; ++i )
 			{
 				KeyStream.write(keySet[i]);
-				ValueStream.write(valueSet[i].m_pBuf, valueSet[i].m_nLen);
+
+				if(sString.m_nLen < nMaxPageLen)
+				{
+					ValueStream.write(sString.m_nLen);
+					ValueStream.write(valueSet[i].m_pBuf, valueSet[i].m_nLen);
+				}
+				else
+				{
+					ValueStream.write(sString.m_nPage);
+					ValueStream.write(sString.m_nPos);
+				}
+
+				
 
 			}
 			return true;
@@ -142,10 +177,9 @@ namespace embDB
 		virtual bool insert(int nIndex, TKey key, /*const CommonLib::CString&*/ const sStringVal& sStr)
 		{
 			m_nSize++;
-			uint32 nStrSize = sStr.m_nLen;
-			m_nStringDataSize += nStrSize;
-
-	
+			uint32 nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();
+			m_nStringDataSize += GetStingSize(sStr);
+				
 			return true;
 		}
 		virtual bool add(const TLeafKeyMemSet& keySet, const TLeafValueMemSet& valuekSet)
@@ -174,15 +208,14 @@ namespace embDB
 		virtual bool remove(int nIndex, TKey key, const sStringVal& sStr)
 		{
 			m_nSize--;
-			uint32 nStrSize = sStr.m_nLen;
-			m_nStringDataSize -= nStrSize;
+			m_nStringDataSize -=GetStingSize(sStr);
 			return true;
 		}
 		virtual bool update(int nIndex, TKey key, const sStringVal& sStr)
 		{
 			assert(m_pValueMemset);
-			int oldSize = (*m_pValueMemset)[nIndex].m_nLen;
-			int newSize =sStr.m_nLen; 
+			int oldSize = GetStingSize(*m_pValueMemset)[nIndex]);
+			int newSize = GetStingSize(sStr); 
 			m_nStringDataSize += (newSize - oldSize);
 			return true;
 		}
@@ -208,14 +241,14 @@ namespace embDB
 		}
 		size_t tupleSize() const
 		{
-			return  (m_pLeafCompParams->GetStringLen() + sizeof(TKey));
+			return  (m_nMaxPageLen  + sizeof(uint32) + sizeof(TKey));
 		}
 		void SplitIn(uint32 nBegin, uint32 nEnd, BPFixedStringLeafNodeCompressor *pCompressor)
 		{
 			uint32 nSplitStringDataSize = 0;
 			for (size_t i  = nBegin; i < nEnd; ++i)
 			{
-				nSplitStringDataSize += (*m_pValueMemset)[i].m_nLen;
+				nSplitStringDataSize += GetStingSize(*m_pValueMemset)[i]);
 			}
 			
 
@@ -231,21 +264,20 @@ namespace embDB
 
 		}
 	private:
-		int GetStingSize(const CommonLib::CString& sStr) const 
+		int GetStingSize(const sStringVal& sStr) const 
 		{
-			switch(m_pLeafCompParams->GetStringCoding())
+			
+			uint32 nSize = sizeof(uint32);
+			if(sString.m_nLen < m_nMaxPageLen)
 			{
-			case scASCII:
-				return sStr.length();
-				break;
-			case  scUTF8:
-				return sStr.calcUTF8Length() + 1;
-				break;
-			default:
-				assert(false);
-				return 0;
-				break;
+				nSize += (sStr.m_nLen);
 			}
+			else
+			{
+				nSize += (uint32);
+				nSize += (uint64);
+			}
+			return nSize;
 
 		}
 	
@@ -253,10 +285,12 @@ namespace embDB
 
 		size_t m_nStringDataSize;
 		size_t m_nSize;
+		uint32 m_nMaxPageLen;
  
 		CommonLib::alloc_t* m_pAlloc;
 		TLeafCompressorParams *m_pLeafCompParams;
 		TLeafValueMemSet *m_pValueMemset;
+		Transaction		*m_pTransaction;
 	};
 }
 

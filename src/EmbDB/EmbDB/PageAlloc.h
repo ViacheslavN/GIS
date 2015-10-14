@@ -5,6 +5,7 @@
 #include "Commonlibrary/alloc_t.h"
 #include <algorithm>
 #include "list.h"
+#include <map>
 
 namespace embDB
 {
@@ -33,13 +34,14 @@ namespace embDB
 			virtual void  free(void* buf);
 		private:
 			void* allocFromPage(SMemPage* page, uint32 nSize);
+			void free(SMemPage*pPage, void *ptr);
 		private:
 			CommonLib::alloc_t* m_pAlloc;
 			CommonLib::simple_alloc_t m_alloc;
-			std::vector<SMemPage> m_vecPage;
-			std::list<uint32> m_listFreePage;
+			std::map<void*, SMemPage*> m_mapPage;
+			std::list<SMemPage*> m_listFreePage;
 			uint32 m_nMemPageSize;
-			uint32 m_nCurrPage;
+			SMemPage *m_pCurrPage;
 
 	};
 }
