@@ -4,15 +4,15 @@
 #include "Commonlibrary/alloc_t.h"
 #include "BPTreeLeafNodeMapv2.h"
 #include "StringVal.h"
-#include "StringLeafNodeCompressor.h"
+#include "LeafStringCompress.h"
 #include "PageAlloc.h"
 namespace embDB
 {
 	template<typename _TKey, typename _Transaction>
-	class TStringLeafNode : public  BPTreeLeafNodeMapv2<_TKey, sStringVal, _Transaction, BPFixedStringLeafNodeCompressor<_TKey, _Transaction> >
+	class TStringLeafNode : public  BPTreeLeafNodeMapv2<_TKey, sStringVal, _Transaction, BPStringLeafNodeCompressor<_TKey, _Transaction> >
 	{
 	public:
-		typedef   BPTreeLeafNodeMapv2<_TKey, sStringVal, _Transaction, BPFixedStringLeafNodeCompressor<_TKey,  _Transaction> > TBase;
+		typedef   BPTreeLeafNodeMapv2<_TKey, sStringVal, _Transaction, BPStringLeafNodeCompressor<_TKey,  _Transaction> > TBase;
 		typedef sStringVal TValue;
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;

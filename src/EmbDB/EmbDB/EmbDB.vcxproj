@@ -572,11 +572,13 @@
     <ClInclude Include="Statement.h" />
     <ClInclude Include="ReadStreamPage.h" />
     <ClInclude Include="StreamPageIngo.h" />
+    <ClInclude Include="FixedStringBPLeafNode.h" />
+    <ClInclude Include="FixedStringBPNode.h" />
     <ClInclude Include="StringBPLeafNode.h" />
     <ClInclude Include="StringBPNode.h" />
     <ClInclude Include="StringCompressorParams.h" />
-    <ClInclude Include="StringInnerNodeCompressor.h" />
-    <ClInclude Include="StringLeafNodeCompressor.h" />
+    <ClInclude Include="FixedStringLeafCompressor.h" />
+    <ClInclude Include="FixedStringTree.h" />
     <ClInclude Include="StringTree.h" />
     <ClInclude Include="StringVal.h" />
     <ClInclude Include="UniqueCompIndexBase.h" />

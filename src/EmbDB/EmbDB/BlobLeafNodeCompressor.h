@@ -61,7 +61,7 @@ namespace embDB
 
 			for (size_t i = 0; i < m_pValueMemset->size(); ++i )
 			{
-				sStringVal& val = (*m_pValueMemset)[i];
+				sFixedStringVal& val = (*m_pValueMemset)[i];
 				m_pAlloc->free(val.m_pBuf);
 			}
 		}

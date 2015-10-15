@@ -24,7 +24,7 @@ namespace embDB
 		  bool open(int64 nPageHeader, uint32 nBeginPos, bool bReopen = false)
 		  {
  
-			  if(!m_pPage.get() || m_nPageHeader != nPageHeader || bReopen)
+			  if(!m_pPage.get() || m_pPage->getAddr() != nPageHeader || bReopen)
 			  {
 				  m_nPageHeader = nPageHeader;
 				  m_nBeginPos = nBeginPos;
@@ -43,6 +43,8 @@ namespace embDB
 			 
 		  }
 
+		  int64 GetPage() const {return m_pPage.get() ? m_pPage->getAddr() : -1;}
+		  int32 GetPos() const {return m_stream.pos();}
 		  virtual void write_bytes(const byte* buffer, size_t size)
 		  {
 

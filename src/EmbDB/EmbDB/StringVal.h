@@ -6,17 +6,31 @@ namespace embDB
 
  
 
+	struct sFixedStringVal  
+	{
+		byte *m_pBuf;
+		uint32 m_nLen;
+
+		sFixedStringVal() : m_pBuf(0), m_nLen(0)
+		{}
+
+		
+	};
+
+
 	struct sStringVal  
 	{
 		byte *m_pBuf;
 		uint32 m_nLen;
-		uint32 m_nPos;
+		uint32 m_nNewLen;
+		int32 m_nPos;
 		int64 m_nPage;
+		bool m_bChange;
 
-		sStringVal() : m_pBuf(0), m_nLen(0), m_nPos(0), m_nPage(-1)
+		sStringVal() : m_pBuf(0), m_nLen(0), m_nPos(0), m_nPage(-1), m_bChange(true), m_nNewLen(0)
 		{}
 
-		
+
 	};
 
 	struct CompStringValue  
@@ -30,11 +44,11 @@ namespace embDB
 			return *pszLeft - *pszRight;
 		}
 
-		bool LE(const sStringVal& _Left, const sStringVal& _Right) const
+		bool LE(const sFixedStringVal& _Left, const sFixedStringVal& _Right) const
 		{
 			return StrValcmp((const char *)_Left.m_pBuf, (const char *)_Right.m_pBuf) < 0;
 		}
-		bool EQ(const sStringVal& _Left, const sStringVal& _Right) const
+		bool EQ(const sFixedStringVal& _Left, const sFixedStringVal& _Right) const
 		{
 			if(_Left.m_nLen != _Right.m_nLen)
 				return false;

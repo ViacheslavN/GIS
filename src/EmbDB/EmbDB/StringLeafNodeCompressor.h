@@ -21,7 +21,7 @@ namespace embDB
 		typedef _TKey TKey;
 
 		typedef  TBPVector<TKey> TLeafKeyMemSet;
-		typedef  TBPVector<sStringVal> TLeafValueMemSet;
+		typedef  TBPVector<sFixedStringVal> TLeafValueMemSet;
 		typedef StringFieldCompressorParams TLeafCompressorParams;
 
 		typedef _Transaction Transaction;
@@ -58,7 +58,7 @@ namespace embDB
 
 			for (size_t i = 0; i < m_pValueMemset->size(); ++i )
 			{
-				sStringVal& val = (*m_pValueMemset)[i];
+				sFixedStringVal& val = (*m_pValueMemset)[i];
 				m_pAlloc->free(val.m_pBuf);
 			}
 		}
@@ -92,7 +92,7 @@ namespace embDB
 			{
 				KeyStream.read(nKey);
 
-				sStringVal sString;
+				sFixedStringVal sString;
 
 				sString.m_nLen  = strlen((const char*)ValueStream.buffer() + ValueStream.pos()) + 1;
 				m_nStringDataSize += sString.m_nLen;
@@ -139,7 +139,7 @@ namespace embDB
 			return true;
 		}
 
-		virtual bool insert(int nIndex, TKey key, /*const CommonLib::CString&*/ const sStringVal& sStr)
+		virtual bool insert(int nIndex, TKey key, /*const CommonLib::CString&*/ const sFixedStringVal& sStr)
 		{
 			m_nSize++;
 			uint32 nStrSize = sStr.m_nLen;
@@ -171,14 +171,14 @@ namespace embDB
 
 			return true;
 		}
-		virtual bool remove(int nIndex, TKey key, const sStringVal& sStr)
+		virtual bool remove(int nIndex, TKey key, const sFixedStringVal& sStr)
 		{
 			m_nSize--;
 			uint32 nStrSize = sStr.m_nLen;
 			m_nStringDataSize -= nStrSize;
 			return true;
 		}
-		virtual bool update(int nIndex, TKey key, const sStringVal& sStr)
+		virtual bool update(int nIndex, TKey key, const sFixedStringVal& sStr)
 		{
 			assert(m_pValueMemset);
 			int oldSize = (*m_pValueMemset)[nIndex].m_nLen;

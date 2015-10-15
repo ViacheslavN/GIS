@@ -9,20 +9,20 @@ namespace embDB
 
 
 	template<class _TKey, class _Transaction>
-	class TBPFixedString : public TBPMapV2<_TKey, sStringVal, comp<_TKey>, _Transaction, 
+	class TBPFixedString : public TBPMapV2<_TKey, sFixedStringVal, comp<_TKey>, _Transaction, 
 		BPInnerNodeSimpleCompressorV2<_TKey> ,
 		BPFixedStringLeafNodeCompressor<_TKey>, 
 		BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
-		TStringLeafNode<_TKey, _Transaction>,
+		TFixedStringLeafNode<_TKey, _Transaction>,
 		BPStringTreeNodeMapv2<_TKey, _Transaction>	>
 	{
 	public:
 
-		typedef TBPMapV2<_TKey, sStringVal, comp<_TKey>, _Transaction, 
+		typedef TBPMapV2<_TKey, sFixedStringVal, comp<_TKey>, _Transaction, 
 			BPInnerNodeSimpleCompressorV2<_TKey> ,
 			BPFixedStringLeafNodeCompressor<_TKey>, 
 			BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
-			TStringLeafNode<_TKey, _Transaction>,
+			TFixedStringLeafNode<_TKey, _Transaction>,
 			BPStringTreeNodeMapv2<_TKey, _Transaction>	> TBase;
 
 		TBPFixedString(int64 nPageBTreeInfo, embDB::IDBTransactions* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
@@ -44,7 +44,7 @@ namespace embDB
 			return pNode;
 		}
 
-		void convert(const CommonLib::CString& sString, sStringVal& sValue)
+		void convert(const CommonLib::CString& sString, sFixedStringVal& sValue)
 		{
 			if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
 			{
@@ -60,7 +60,7 @@ namespace embDB
 				sString.exportToUTF8((char*)sValue.m_pBuf, sValue.m_nLen);
 			}
 		}
-		void convert(const sStringVal& sStrVal, CommonLib::CString& sString) 
+		void convert(const sFixedStringVal& sStrVal, CommonLib::CString& sString) 
 		{
 			CommonLib::CString sVal(m_pAlloc);
 			if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
@@ -75,21 +75,21 @@ namespace embDB
 
 		bool insert(int64 nValue, const CommonLib::CString& sString, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
 		{
-			embDB::sStringVal sValue;
+			embDB::sFixedStringVal sValue;
 			convert(sString, sValue);
 			return TBase::insert(nValue, sValue, pFromIterator, pRetItertor);
 
 		}
 		bool update(const TKey& key, const CommonLib::CString& sString)
 		{
-			embDB::sStringVal sValue;
+			embDB::sFixedStringVal sValue;
 			convert(sString, sValue);
 			return TBase::update(key, sValue);
 		}
 		template<class TKeyFunctor>
 		bool insertLast(TKeyFunctor& keyFunctor, const CommonLib::CString& sString, TKey* pKey = NULL,  iterator* pFromIterator = NULL,  iterator* pRetIterator = NULL)
 		{
-			embDB::sStringVal sValue;
+			embDB::sFixedStringVal sValue;
 			convert(sString, sValue);
 			return TBase::insertLast(keyFunctor, sValue, pKey, pFromIterator, pRetIterator);
 		}

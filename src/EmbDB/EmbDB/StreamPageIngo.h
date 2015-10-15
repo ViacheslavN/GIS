@@ -78,28 +78,29 @@ namespace embDB
 				return true;
 			}
 
-			WriteStreamPagePtr GetWriteStream(IDBTransactions* pTran)
+			WriteStreamPagePtr GetWriteStream(IDBTransactions* pTran, int64 nPage = -1, int32 nPos = -1)
 			{
-				if(m_pWriteStream.get())
-					return m_pWriteStream;
-
-
-
-				m_pWriteStream = new WriteStreamPage(pTran);
-				if(m_nBeginStream == -1)
+				if(!m_pWriteStream.get())
 				{
-					Init(pTran);
-					m_pWriteStream->open(m_nBeginStream, m_nPos);
+					m_pWriteStream = new WriteStreamPage(pTran);
+					if(m_nEndStream == -1)
+					{ 
+						Init(pTran);
+						m_pWriteStream->open(m_nEndStream, m_nPos);
+						return m_pWriteStream;
+					}
 				}
+				m_pWriteStream->open(nPage != 1 ? nPage : m_nEndStream, nPos  != -1 ? nPos : m_nPos);
 				return m_pWriteStream;
 			}
-			ReadStreamPagePtr GetReadStream(IDBTransactions* pTran)
+			ReadStreamPagePtr GetReadStream(IDBTransactions* pTran, int64 nPage = -1, int32 nPos = -1)
 			{
-				if(m_pWriteStream.get())
-					return m_pReadStream;
-
-
-				m_pReadStream = new ReadStreamPage(pTran, m_nEndStream, m_nPos);
+				if(!m_pReadStream.get())
+				{
+					m_pReadStream = new ReadStreamPage(pTran);
+				}
+				m_pReadStream->SetEnd(m_nEndStream, nPos);
+				m_pReadStream->open(nPage != 1 ? nPage : m_nEndStream, nPos  != -1 ? nPos : m_nPos);
 				return m_pReadStream;
 			}
 

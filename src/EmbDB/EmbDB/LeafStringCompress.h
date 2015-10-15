@@ -15,7 +15,7 @@ namespace embDB
 
 	template<class _TKey = int64, 
 	 class _Transaction = IDBTransactions>
-	class BPFixedStringLeafNodeCompressor  
+	class BPStringLeafNodeCompressor  
 	{
 	public:
 
@@ -37,7 +37,7 @@ namespace embDB
 			return pInnerComp;
 		}
 
-		BPFixedStringLeafNodeCompressor(Transaction *pTransaction, CommonLib::alloc_t *pAlloc, 
+		BPStringLeafNodeCompressor(Transaction *pTransaction, CommonLib::alloc_t *pAlloc, 
 			TLeafCompressorParams *pParams,
 			TLeafKeyMemSet *pKeyMemset, TLeafValueMemSet *pValueMemSet) : m_nSize(0), 
 			m_pTransaction(pTransaction),
@@ -55,7 +55,7 @@ namespace embDB
 		}
 
 
-		virtual ~BPFixedStringLeafNodeCompressor()
+		virtual ~BPStringLeafNodeCompressor()
 		{
 			Clear();
 			
@@ -103,6 +103,7 @@ namespace embDB
 				KeyStream.read(nKey);
 
 				sStringVal sString;
+				sString.m_bChange = false;
 
 				/*sString.m_nLen  = strlen((const char*)ValueStream.buffer() + ValueStream.pos()) + 1;
 				m_nStringDataSize += sString.m_nLen;
@@ -111,6 +112,7 @@ namespace embDB
 				memcpy(sString.m_pBuf, ValueStream.buffer() + ValueStream.pos(), sString.m_nLen);*/
 
 				sString.m_nLen = ValueStream.readIntu32();
+	 
 				if(sString.m_nLen < nMaxPageLen)
 				{
 					sString.m_pBuf = (byte*)m_pAlloc->alloc(sString.m_nLen);
@@ -141,7 +143,7 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream KeyStream;
 			CommonLib::FxMemoryWriteStream ValueStream;
 
-			eStringCoding sCode = m_pLeafCompParams->GetStringCoding();
+		 
 			uint32 nKeySize =  m_nSize * sizeof(TKey);
 	
 
@@ -157,15 +159,35 @@ namespace embDB
 			{
 				KeyStream.write(keySet[i]);
 
+				sStringVal& sString = valueSet[i];
+
 				if(sString.m_nLen < nMaxPageLen)
 				{
 					ValueStream.write(sString.m_nLen);
-					ValueStream.write(valueSet[i].m_pBuf, valueSet[i].m_nLen);
+					ValueStream.write(sString.m_pBuf, sString.m_nLen);
 				}
 				else
 				{
+				
+					if(sString.m_bChange || sString.m_nPage == -1)
+					{
+						WriteStreamPagePtr pWriteStream;
+						if(sString.m_nNewLen <= sString.m_nLen || sString.m_nPage == -1)
+							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction, sString.m_nPage, sString.m_nPos);
+						else
+							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction, sString.m_nPage);
+						 
+						if(sString.m_nPage == -1)
+						{
+							sString.m_nPage = pWriteStream->GetPage();
+							sString.m_nPos = pWriteStream->GetPos();
+						}
+
+						pWriteStream->write(sString.m_pBuf, sString.m_nLen);
+					}
+
 					ValueStream.write(sString.m_nPage);
-					ValueStream.write(sString.m_nPos);
+					ValueStream.write((uint32)sString.m_nPos);
 				}
 
 				
@@ -177,7 +199,6 @@ namespace embDB
 		virtual bool insert(int nIndex, TKey key, /*const CommonLib::CString&*/ const sStringVal& sStr)
 		{
 			m_nSize++;
-			uint32 nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();
 			m_nStringDataSize += GetStingSize(sStr);
 				
 			return true;
@@ -214,7 +235,7 @@ namespace embDB
 		virtual bool update(int nIndex, TKey key, const sStringVal& sStr)
 		{
 			assert(m_pValueMemset);
-			int oldSize = GetStingSize(*m_pValueMemset)[nIndex]);
+			int oldSize = GetStingSize((*m_pValueMemset)[nIndex]);
 			int newSize = GetStingSize(sStr); 
 			m_nStringDataSize += (newSize - oldSize);
 			return true;
@@ -243,12 +264,12 @@ namespace embDB
 		{
 			return  (m_nMaxPageLen  + sizeof(uint32) + sizeof(TKey));
 		}
-		void SplitIn(uint32 nBegin, uint32 nEnd, BPFixedStringLeafNodeCompressor *pCompressor)
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPStringLeafNodeCompressor *pCompressor)
 		{
 			uint32 nSplitStringDataSize = 0;
 			for (size_t i  = nBegin; i < nEnd; ++i)
 			{
-				nSplitStringDataSize += GetStingSize(*m_pValueMemset)[i]);
+				nSplitStringDataSize += GetStingSize((*m_pValueMemset)[i]);
 			}
 			
 
@@ -268,14 +289,14 @@ namespace embDB
 		{
 			
 			uint32 nSize = sizeof(uint32);
-			if(sString.m_nLen < m_nMaxPageLen)
+			if(sStr.m_nLen < m_nMaxPageLen)
 			{
 				nSize += (sStr.m_nLen);
 			}
 			else
 			{
-				nSize += (uint32);
-				nSize += (uint64);
+				nSize += sizeof(uint32);
+				nSize += sizeof(uint64);
 			}
 			return nSize;
 

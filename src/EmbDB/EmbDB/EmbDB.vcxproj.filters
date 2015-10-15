@@ -726,29 +726,11 @@
     <ClInclude Include="StringCompressorParams.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
-    <ClInclude Include="StringInnerNodeCompressor.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="StringLeafNodeCompressor.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="StringVal.h">
-      <Filter>DB\Fields\string</Filter>
-    </ClInclude>
     <ClInclude Include="LeafSetCompBase.h">
       <Filter>DB\BPTrees\BtreePlusv2\Compressors</Filter>
     </ClInclude>
     <ClInclude Include="PageAlloc.h">
       <Filter>utils\alloc</Filter>
-    </ClInclude>
-    <ClInclude Include="StringBPLeafNode.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="StringTree.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="StringBPNode.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringField.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
@@ -784,6 +766,30 @@
       <Filter>DB\Fields\blob</Filter>
     </ClInclude>
     <ClInclude Include="LeafStringCompress.h">
+      <Filter>DB\Fields\string\StringField</Filter>
+    </ClInclude>
+    <ClInclude Include="StringVal.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringTree.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="StringTree.h">
+      <Filter>DB\Fields\string\StringField</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringBPLeafNode.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringBPNode.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="StringBPLeafNode.h">
+      <Filter>DB\Fields\string\StringField</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="StringBPNode.h">
       <Filter>DB\Fields\string\StringField</Filter>
     </ClInclude>
   </ItemGroup>

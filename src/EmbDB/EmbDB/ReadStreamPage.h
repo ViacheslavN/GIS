@@ -10,8 +10,8 @@ namespace embDB
 	class ReadStreamPage : public CommonLib::IReadStreamBase, public CommonLib::AutoRefCounter
 	{
 	public:
-		ReadStreamPage(embDB::IDBTransactions* pTran, int64 nEndPage, uint32 nEndPos) :
-		  m_pTran(pTran), m_nPageHeader(-1), m_nEndPage(nEndPage), m_nEndPos(nEndPos)
+		ReadStreamPage(embDB::IDBTransactions* pTran) :
+		  m_pTran(pTran), m_nPageHeader(-1), m_nEndPage(-1), m_nEndPos(0)
 		  {									  
 			
 
@@ -30,7 +30,7 @@ namespace embDB
 		  bool open(int64 nPageHeader, uint32 nBeginPos, bool bReopen = false)
 		  {
 		 
-			  if(!m_pPage.get() || m_nPageHeader != nPageHeader || bReopen)
+			  if(!m_pPage.get() || m_pPage->getAddr() != nPageHeader || bReopen)
 			  {
 				  m_nPageHeader = nPageHeader;
 				  m_nBeginPos = nBeginPos;

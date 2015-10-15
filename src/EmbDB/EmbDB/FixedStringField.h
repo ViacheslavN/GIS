@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_STRING_FIXED_STRING_H_
 
 #include "ValueField.h"
-#include "StringTree.h"
+#include "FixedStringTree.h"
 
 namespace embDB
 {
@@ -41,7 +41,7 @@ namespace embDB
 		}
 		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
-			const sStringVal& sString= m_ParentIt.value();
+			const sFixedStringVal& sString= m_ParentIt.value();
 			CommonLib::CString sVal;
 
 			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), sVal);

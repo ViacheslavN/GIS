@@ -6,6 +6,7 @@
 #include "../../EmbDB/DirectTransactions.h"
 #include "../../EmbDB/StringLeafNodeCompressor.h"
 #include "CommonLibrary/DebugTime.h"
+#include "../../EmbDB/FixedStringTree.h"
 #include "../../EmbDB/StringTree.h"
 
 
@@ -13,11 +14,11 @@ typedef embDB::BPInnerNodeSimpleCompressorV2<int64> TInnerCompressor;
 typedef embDB::BPFixedStringLeafNodeCompressor<int64> TLeafCompressor;
 
 typedef embDB::BPTreeInnerNodeSetv2<int64, embDB::IDBTransactions, TInnerCompressor> TInnerNode;
-typedef embDB::BPTreeLeafNodeMapv2<int64, embDB::sStringVal, embDB::IDBTransactions, TLeafCompressor> TLeafNode;
+typedef embDB::BPTreeLeafNodeMapv2<int64, embDB::sFixedStringVal, embDB::IDBTransactions, TLeafCompressor> TLeafNode;
 
-typedef embDB::BPTreeNodeMapv2<int64, embDB::sStringVal, embDB::IDBTransactions, TInnerCompressor, TLeafCompressor, TInnerNode, TLeafNode> TBPTreeNode;
+typedef embDB::BPTreeNodeMapv2<int64, embDB::sFixedStringVal, embDB::IDBTransactions, TInnerCompressor, TLeafCompressor, TInnerNode, TLeafNode> TBPTreeNode;
 
-typedef embDB::TBPMapV2 <int64,  embDB::sStringVal, embDB::comp<int64>, embDB::IDBTransactions,
+typedef embDB::TBPMapV2 <int64,  embDB::sFixedStringVal, embDB::comp<int64>, embDB::IDBTransactions,
 embDB::BPInnerNodeSimpleCompressorV2<int64>,
 embDB::BPFixedStringLeafNodeCompressor<int64>, TInnerNode, TLeafNode, TBPTreeNode> TBMapString;
 
@@ -83,7 +84,7 @@ template<class Tran>
 void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, int64& nTreeRootPage, Tran* pTran)
 {
 
-	typedef embDB::TBPFixedString<int64, Tran> TBPString;
+	typedef embDB::TBPStringTree<int64, Tran> TBPString;
 	std::cout << "Insert Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
 	double tmInsert = 0;
@@ -191,7 +192,7 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 
 
 
-				const embDB::sStringVal& val = it.value();
+				const embDB::sFixedStringVal& val = it.value();
 				CommonLib::CString sFoundStr;
 				if(sCode == embDB::scASCII)
 					sFoundStr.loadFromASCII((const char*)val.m_pBuf);
@@ -285,6 +286,7 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 	compParams.setRootPage(pLeafCompRootPage->getAddr());
 	compParams.SetStringLen(nLen);
 	compParams.setStringCoding(sc);
+	compParams.SetMaxPageStringSize(400);
 	compParams.save(&tran);
 
 

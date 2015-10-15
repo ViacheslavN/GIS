@@ -96,16 +96,16 @@ namespace embDB
 			}
 			return &m_StreamPageInfo;
 		}
-		ReadStreamPagePtr GetReadStream(IDBTransactions *pTran)
+		ReadStreamPagePtr GetReadStream(IDBTransactions *pTran, int64 nPage = -1, int32 nPos = -1)
 		{
 			CStreamPageInfo* pStreamInfo = GetStreamInfo(pTran);
-			return pStreamInfo->GetReadStream(pTran);
+			return pStreamInfo->GetReadStream(pTran, nPage, nPos);
 
 		}
-		WriteStreamPagePtr GetWriteStream(IDBTransactions *pTran)
+		WriteStreamPagePtr GetWriteStream(IDBTransactions *pTran, int64 nPage = -1, int32 nPos = -1)
 		{
 			CStreamPageInfo* pStreamInfo = GetStreamInfo(pTran);
-			return pStreamInfo->GetWriteStream(pTran);
+			return pStreamInfo->GetWriteStream(pTran, nPage, nPos);
 
 		}
 	private:
