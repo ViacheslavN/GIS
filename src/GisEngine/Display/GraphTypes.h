@@ -89,6 +89,8 @@ namespace GisEngine
 			TextDrawAll = 3
 		};
 
+ 
+
 		enum eBitmapFormatType
 		{
 			BitmapFormatType1bpp           = 0,  //Specifies that the format is 1 bit per pixel, indexed.

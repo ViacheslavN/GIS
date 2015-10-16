@@ -150,6 +150,9 @@
     <ClInclude Include="Screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MarkerSymbolBase.h">
+      <Filter>symbols</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

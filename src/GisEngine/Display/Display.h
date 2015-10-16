@@ -273,6 +273,9 @@ namespace GisEngine
 
 			virtual double GetYOffset() const = 0;
 			virtual void   SetYOffset(double offset) = 0;
+
+			virtual bool GetIgnoreRotation() const = 0;
+			virtual void SetIgnoreRotation(bool gnore) = 0;
 		};
 
 

@@ -449,6 +449,7 @@
     <ClInclude Include="Display.h" />
     <ClInclude Include="DisplayTransformation2D.h" />
     <ClInclude Include="DisplayUtils.h" />
+    <ClInclude Include="MarkerSymbolBase.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="SymbolFillBase.h" />
     <ClInclude Include="LoaderSymbols.h" />
