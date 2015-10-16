@@ -10,8 +10,8 @@ namespace embDB
 	class ReadStreamPage : public CommonLib::IReadStreamBase, public CommonLib::AutoRefCounter
 	{
 	public:
-		ReadStreamPage(embDB::IDBTransactions* pTran) :
-		  m_pTran(pTran), m_nPageHeader(-1), m_nEndPage(-1), m_nEndPos(0)
+		ReadStreamPage(embDB::IDBTransactions* pTran, uint32 nPageSize) :
+		  m_pTran(pTran), m_nPageHeader(-1), m_nEndPage(-1), m_nEndPos(0), m_nPageSize(nPageSize)
 		  {									  
 			
 
@@ -34,7 +34,7 @@ namespace embDB
 			  {
 				  m_nPageHeader = nPageHeader;
 				  m_nBeginPos = nBeginPos;
-				  m_pPage = m_pTran->getFilePage(m_nPageHeader);
+				  m_pPage = m_pTran->getFilePage(m_nPageHeader, true, m_nPageSize);
 				  if(!m_pPage.get())
 					  return false; //TO DO Log;
 			  }
@@ -44,53 +44,69 @@ namespace embDB
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
 			  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
 			 
+				return true;
 
 		  }
 
 		  virtual void read_bytes(byte* buffer, size_t size)
 		  {
 
-			   uint32 nFreeSize = m_stream.size() - m_stream.pos();
-			  if(nFreeSize > size)
+			
+			  uint32 nPos = 0;
+			  while(size)
 			  {
-				  m_stream.read_bytes(buffer, size);
-			  }
-			  else
-			  {
-				  uint32 nReadSize = size - nFreeSize - sizeof(int64);
-				  if(nReadSize)
-				  {
-					  m_stream.read_bytes(buffer, nReadSize);
-					 int64 nNextPage = m_stream.readInt64();
-					  if(!NextPage(nNextPage))
-						  return; //TO DO Log
+				    uint32 nFreeSize = m_stream.size() - m_stream.pos();
+					if(nFreeSize >= size)
+					{
+						m_stream.read_bytes(buffer + nPos, size);
+						size = 0;
+					}
+					else
+					{
+						uint32 nReadSize = nFreeSize - sizeof(int64);
+						if(nReadSize)
+						{
+							m_stream.read_bytes(buffer + nPos, nReadSize);
+							size -= nReadSize;
+							nPos += nReadSize;
 
-					   m_stream.read_bytes(buffer + nReadSize, size - nReadSize);
-				  }
-			  }
+							int64 nNextPage = m_stream.readInt64();
+							if(!NextPage(nNextPage))
+								return; //TO DO Log
+						}
+					}
 
+			  }
+			
 			 
 
 		  }
 		  virtual void read_inverse(byte* buffer, size_t size)
 		  {
-			  uint32 nFreeSize = m_stream.size() - m_stream.pos();
-			  if(nFreeSize > size)
+			  uint32 nPos = 0;
+			  while(size)
 			  {
-				  m_stream.read_inverse(buffer, size);
-			  }
-			  else
-			  {
-				  uint32 nReadSize = size - nFreeSize - sizeof(int64);;
-				  if(nReadSize)
+				  uint32 nFreeSize = m_stream.size() - m_stream.pos();
+				  if(nFreeSize >= size)
 				  {
-					  m_stream.read_inverse(buffer, nReadSize);
-					  int64 nNextPage = m_stream.readInt64();
-					  if(!NextPage(nNextPage))
-						  return;
-
-					  m_stream.read_inverse(buffer + nReadSize, size - nReadSize);
+					  m_stream.read_inverse(buffer + nPos, size);
+					  size = 0;
 				  }
+				  else
+				  {
+					  uint32 nReadSize = nFreeSize - sizeof(int64);
+					  if(nReadSize)
+					  {
+						  m_stream.read_inverse(buffer + nPos, nReadSize);
+						  size -= nReadSize;
+						  nPos += nReadSize;
+
+						  int64 nNextPage = m_stream.readInt64();
+						  if(!NextPage(nNextPage))
+							  return; //TO DO Log
+					  }
+				  }
+
 			  }
 		  }
 
@@ -113,12 +129,12 @@ namespace embDB
 			  if(nNextPage == -1)
 				  return false; // TO DO Log
 
-			 m_pPage = m_pTran->getFilePage(nNextPage);
+			 m_pPage = m_pTran->getFilePage(nNextPage, true, m_nPageSize);
 			  if(!m_pPage.get())
 				  return false;  // TO DO Log
 
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
- 
+			return true;
 		  }
 
 	public:
@@ -128,6 +144,7 @@ namespace embDB
 		int64 m_nPageHeader;
 		int64 m_nEndPage;
 		uint32 m_nEndPos;
+		uint32 m_nPageSize;
     	 CommonLib::FxMemoryReadStream m_stream;
 	
  

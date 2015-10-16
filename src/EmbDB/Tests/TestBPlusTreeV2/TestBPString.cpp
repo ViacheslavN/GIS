@@ -97,14 +97,32 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 	CBufAlloc alloc;
 	 
 	CommonLib::CString sString(&alloc);
+	CommonLib::CString sBigString;
+
+	sBigString += L"begin";
+	for (size_t i =0; i < 10000; ++i)
+	{
+
+		sBigString += _T("ST");
+	}
+	
+
+	
 	if(nStart < nEndStart)
 	{
 		
 		int64 nCount = nEndStart - nStart;
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
+			
 			sString.format(L"Строка_Строка_Строка_Строка_%I64d", i);
-			if(!tree.insert(i, sString))
+
+			if(i%10000 == 0)
+			{
+				sBigString += sString;
+			}
+
+			if(!tree.insert(i, i%10000 == 0 ? sBigString : sString))
 			{
 				std::cout   << "Error Insert key:  " << i << std::endl;
 			}
@@ -162,13 +180,22 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 	double tmInsert = 0;
 	double treeCom = 0;
 	double tranCom  = 0;
-	typedef embDB::TBPFixedString<int64, Tran> TBPString;
+	typedef embDB::TBPStringTree<int64, Tran> TBPString;
 	TBPString tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
 	tree.loadBTreeInfo(); 
 	time.start();
 	int64 n = 0;
 	CommonLib::CString sString(pAlloc);
 	int64 nNotFound = 0;
+
+	CommonLib::CString sBigString;
+
+	sBigString += L"begin";
+	for (size_t i =0; i < 10000; ++i)
+	{
+
+		sBigString += _T("ST");
+	}
 	if(nStart < nEndStart)
 	{
 		int64 nCount = nEndStart - nStart;
@@ -189,21 +216,49 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 			}
 			else /*if( sString != it.value())*/
 			{
-
-
-
-				const embDB::sFixedStringVal& val = it.value();
-				CommonLib::CString sFoundStr;
-				if(sCode == embDB::scASCII)
-					sFoundStr.loadFromASCII((const char*)val.m_pBuf);
-				else
-					sFoundStr.loadFromUTF8((const char*)val.m_pBuf);
-
-				if(sString != sFoundStr)
+				const embDB::sStringVal& val = it.value();
+				if(i%10000 == 0)
 				{
-					std::cout << "String not found search string" << sString.cstr() << " found " << sFoundStr.cstr() <<std::endl;
-					nNotFound++;
+					if(2990000 == i)
+					{
+						int d = 0;
+						d++;
+					}
+					sBigString += sString;
+					embDB::ReadStreamPage readStream(pTran, 1024*1024);
+					readStream.open(val.m_nPage, val.m_nPos);
+					CommonLib::CBlob blob(val.m_nLen);
+					readStream.read(blob.buffer(), val.m_nLen);
+					CommonLib::CString sFoundStr;
+					if(sCode == embDB::scASCII)
+						sFoundStr.loadFromASCII((const char*)blob.buffer());
+					else
+						sFoundStr.loadFromUTF8((const char*)blob.buffer());
+
+					if(sBigString != sFoundStr)
+					{
+						std::cout << "String not found search string" << sString.cstr() << " found " << sFoundStr.cstr() <<std::endl;
+						nNotFound++;
+					}
+
 				}
+				else
+				{
+				
+					CommonLib::CString sFoundStr;
+					if(sCode == embDB::scASCII)
+						sFoundStr.loadFromASCII((const char*)val.m_pBuf);
+					else
+						sFoundStr.loadFromUTF8((const char*)val.m_pBuf);
+
+					if(sString != sFoundStr)
+					{
+						std::cout << "String not found search string" << sString.cstr() << " found " << sFoundStr.cstr() <<std::endl;
+						nNotFound++;
+					}
+				}
+
+			
 			
 			}
 		
@@ -338,5 +393,5 @@ void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, 
 void TestBPStringTree()
 {
 		CommonLib::simple_alloc_t alloc;
-		TestBPStringTreeImpl<embDB::CDirectTransactions>(&alloc, 0, 10000000, 10, embDB::scUTF8);
+		TestBPStringTreeImpl<embDB::CDirectTransactions>(&alloc, 0, 3000000, 10, embDB::scUTF8);
 };

@@ -60,6 +60,11 @@ namespace embDB
 		{
 			return true;
 		}
+		template<class _Transaction>
+		void Save(_Transaction * pTransaction)
+		{
+
+		}
 	private:
 		int64 m_nRootPage;
 	};

@@ -306,6 +306,11 @@ namespace embDB
 
 			m_BTreeInfo.Save(m_pTransaction);
 			m_nStateTree = eBPTNoChange;
+
+			if(m_LeafCompParams.get())
+				m_LeafCompParams->Save(m_pTransaction);
+			if(m_InnerCompParams.get())
+				m_InnerCompParams->Save(m_pTransaction);
 			return true;
 		}
 		

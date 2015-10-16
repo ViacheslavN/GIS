@@ -792,6 +792,9 @@
     <ClInclude Include="StringBPNode.h">
       <Filter>DB\Fields\string\StringField</Filter>
     </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

@@ -108,6 +108,14 @@ namespace embDB
 			return pStreamInfo->GetWriteStream(pTran, nPage, nPos);
 
 		}
+
+
+		template<class _Transaction>
+		void Save(_Transaction * pTransaction)
+		{
+			 if(m_StreamPageInfo.GetRootPage() != -1)
+				 m_StreamPageInfo.Save(pTransaction);
+		}
 	private:
 		uint32 m_nMaxPageStringSize;
 		uint32 m_nLen;

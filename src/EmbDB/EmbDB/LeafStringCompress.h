@@ -68,7 +68,8 @@ namespace embDB
 			for (size_t i = 0; i < m_pValueMemset->size(); ++i )
 			{
 				sStringVal& val = (*m_pValueMemset)[i];
-				m_pAlloc->free(val.m_pBuf);
+				if(val.m_pBuf)
+					m_pAlloc->free(val.m_pBuf);
 			}
 		}
 		virtual bool Load(TLeafKeyMemSet& keySet, TLeafValueMemSet& valueSet, CommonLib::FxMemoryReadStream& stream)
@@ -159,11 +160,19 @@ namespace embDB
 			{
 				KeyStream.write(keySet[i]);
 
+				if(2990000 == keySet[i])
+				{
+					int  i = 0;
+					i++;
+				}
+
 				sStringVal& sString = valueSet[i];
 
+
+				ValueStream.write(sString.m_nLen);
 				if(sString.m_nLen < nMaxPageLen)
 				{
-					ValueStream.write(sString.m_nLen);
+					
 					ValueStream.write(sString.m_pBuf, sString.m_nLen);
 				}
 				else

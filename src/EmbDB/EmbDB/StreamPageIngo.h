@@ -14,7 +14,7 @@ namespace embDB
 	{
 	public:
 
-			CStreamPageInfo(uint32 nSizePage = 65536) : m_nSizePage(nSizePage), m_nRootPage(-1), m_nBeginStream(-1), m_nEndStream(-1), 
+			CStreamPageInfo(uint32 nSizePage = 1024*1024) : m_nSizePage(nSizePage), m_nRootPage(-1), m_nBeginStream(-1), m_nEndStream(-1), 
 				m_nPos(0)
 			{
 
@@ -44,6 +44,14 @@ namespace embDB
 				FilePagePtr pPage = pTran->getFilePage(m_nRootPage);
 				if(!pPage.get())
 					return false; //TO DO Error
+
+				if(m_pWriteStream.get())
+				{
+					m_nEndStream = m_pWriteStream->GetPage();
+					m_nPos		= m_pWriteStream->GetPos();
+
+					m_pWriteStream->Save();
+				}
 
 
 				CommonLib::FxMemoryWriteStream stream;
@@ -82,7 +90,7 @@ namespace embDB
 			{
 				if(!m_pWriteStream.get())
 				{
-					m_pWriteStream = new WriteStreamPage(pTran);
+					m_pWriteStream = new WriteStreamPage(pTran, m_nSizePage);
 					if(m_nEndStream == -1)
 					{ 
 						Init(pTran);
@@ -90,14 +98,14 @@ namespace embDB
 						return m_pWriteStream;
 					}
 				}
-				m_pWriteStream->open(nPage != 1 ? nPage : m_nEndStream, nPos  != -1 ? nPos : m_nPos);
+				m_pWriteStream->open(nPage, nPos);
 				return m_pWriteStream;
 			}
 			ReadStreamPagePtr GetReadStream(IDBTransactions* pTran, int64 nPage = -1, int32 nPos = -1)
 			{
 				if(!m_pReadStream.get())
 				{
-					m_pReadStream = new ReadStreamPage(pTran);
+					m_pReadStream = new ReadStreamPage(pTran, m_nSizePage);
 				}
 				m_pReadStream->SetEnd(m_nEndStream, nPos);
 				m_pReadStream->open(nPage != 1 ? nPage : m_nEndStream, nPos  != -1 ? nPos : m_nPos);
@@ -115,6 +123,9 @@ namespace embDB
 					m_nEndStream  = pPage->getAddr();
 					m_nPos = 0;
 					Save(pTran);
+
+					m_pWriteStream = new WriteStreamPage(pTran, m_nSizePage);
+					m_pWriteStream->open(m_nEndStream, m_nPos);
 				 
 				}
 			}

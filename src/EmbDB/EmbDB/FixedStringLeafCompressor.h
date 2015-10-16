@@ -1,148 +1,262 @@
-#ifndef _EMBEDDED_DATABASE_BTREE_PLUS_LEAF_FIXED_STRING_COMPRESSOR_H_
-#define _EMBEDDED_DATABASE_BTREE_PLUS_LEAF_FIXED_STRING_COMPRESSOR_H_
+#ifndef _EMBEDDED_DATABASE_STRING_LEAF_NODE_SIMPLE_COMPRESSOR_H_
+#define _EMBEDDED_DATABASE_STRING_LEAF_NODE_SIMPLE_COMPRESSOR_H_
 
 #include "CommonLibrary/FixedMemoryStream.h"
-#include "CommonLibrary/String.h"
-#include "RBSet.h"
-#include "BTVector.h"
-#include "Key.h"
-#include "BPCompressors.h"
+#include "CommonLibrary/blob.h"
+#include "CompressorParams.h"
+#include "BPVectorNoPod.h"
+#include "StringCompressorParams.h"
+#include "CommonLibrary/PodVector.h"
+#include "StringVal.h"
 namespace embDB
 {
 
-	template<typename _TKey,  typename _TComp>
-	class BPLeafNodeFixedStringCompressor  : public BPLeafNodeCompressorBase<_TKey, CommonLib::CString, _TComp>
+
+	template<class _TKey = int64,	class _Transaction = IDBTransactions>
+	class BPFixedStringLeafNodeCompressor  
 	{
 	public:
 
-		typedef  BPLeafNodeCompressorBase<_TKey, CommonLib::CString, _TComp> TBase;
-		typedef typename TBase::TKey TKey;
-		//typedef typename TBase::TValue TValue;
-		typedef typename TBase::TComp TComp;
-		typedef typename TBase::TLeafMemSet TLeafMemSet;
-		typedef typename TBase::TLeafNodeObj TLeafNodeObj;
-		typedef typename TBase::TLeafVector TLeafVector;
-		typedef typename TBase::TTreeNode  TTreeNode;
 
-		BPLeafNodeFixedStringCompressor(short nStringSize) : m_nCount(0), m_nStringSize(nStringSize)
-		{}
-		virtual ~BPLeafNodeFixedStringCompressor(){}
-		virtual bool Load(TLeafMemSet& Set, CommonLib::FxMemoryReadStream& stream)
+		typedef _TKey TKey;
+
+		typedef  TBPVector<TKey> TLeafKeyMemSet;
+		typedef  TBPVector<sFixedStringVal> TLeafValueMemSet;
+		typedef StringFieldCompressorParams TLeafCompressorParams;
+
+		typedef _Transaction Transaction;
+
+		template<typename _Transactions  >
+		static TLeafCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
 		{
-			CommonLib::FxMemoryReadStream KeyStreams;
-			CommonLib::FxMemoryReadStream ValStreams;
-			m_nCount = stream.readInt32();
-			if(!m_nCount)
-				return true;
-
-			Set.reserve(m_nSize);
-
-			uint32 nKeySize = stream.readInt32();
-			uint32 nValSize = stream.readInt32();
-
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValSize);
-
-			TKey nkey;
-			TValue nval;
-			for (uint32 nIndex = 0; nIndex < m_nCount; ++nIndex)
-			{
-				KeyStreams.read(nkey);
-				ValStreams.read(nval);
-				Set.insert(nkey, nval);
-			}
-			assert(ValStreams.pos() < stream.size());
-			return true;
+			TLeafCompressorParams *pInnerComp = new TLeafCompressorParams(nPage);
+			pInnerComp->read(pTran);
+			return pInnerComp;
 		}
-		virtual bool Load(TLeafVector& vec, CommonLib::FxMemoryReadStream& stream)
+
+		BPFixedStringLeafNodeCompressor(Transaction *pTran , CommonLib::alloc_t *pAlloc,	TLeafCompressorParams* pParams,
+			TLeafKeyMemSet *pKeyMemset, TLeafValueMemSet *pValueMemSet) : m_nSize(0), m_pAlloc(pAlloc), m_pLeafCompParams(pParams),
+			m_nStringDataSize(0), m_pValueMemset(pValueMemSet) 
 		{
-			CommonLib::FxMemoryReadStream KeyStreams;
-			CommonLib::FxMemoryReadStream ValStreams;
-			m_nCount = stream.readInt32();
-			if(!m_nCount)
+
+			assert(m_pAlloc);
+			assert(m_pLeafCompParams);
+			assert(m_pValueMemset);
+
+		}
+
+
+		virtual ~BPFixedStringLeafNodeCompressor()
+		{
+			Clear();
+
+		}
+		void Clear()
+		{
+			if(!m_pValueMemset)
+				return;
+
+			for (size_t i = 0; i < m_pValueMemset->size(); ++i )
+			{
+				sFixedStringVal& val = (*m_pValueMemset)[i];
+				m_pAlloc->free(val.m_pBuf);
+			}
+		}
+		virtual bool Load(TLeafKeyMemSet& keySet, TLeafValueMemSet& valueSet, CommonLib::FxMemoryReadStream& stream)
+		{
+
+
+			CommonLib::FxMemoryReadStream KeyStream;
+			CommonLib::FxMemoryReadStream ValueStream;
+
+
+			eStringCoding sCode = m_pLeafCompParams->GetStringCoding();
+
+			m_nStringDataSize = 0;
+			m_nSize = stream.readInt32();
+			if(!m_nSize)
 				return true;
 
-			vec.reserve(m_nCount);
 
-			uint32 nKeySize = stream.readInt32();
-			uint32 nValSize = stream.readInt32();
+			keySet.reserve(m_nSize);
+			valueSet.reserve(m_nSize);
 
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValSize);
+			uint32 nKeySize =  m_nSize * sizeof(TKey);
 
-			TKey nkey;
-			TValue nval;
+			KeyStream.attach(stream.buffer() + stream.pos(), nKeySize);
+			ValueStream.attach(stream.buffer() + stream.pos() + nKeySize, stream.size() -  stream.pos() -  nKeySize);
+
+			TKey nKey;
+
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
-				KeyStreams.read(nkey);
-				ValStreams.read(nval);
-				vec.push_back(nkey, nval);
+				KeyStream.read(nKey);
+
+				sFixedStringVal sString;
+
+				sString.m_nLen  = strlen((const char*)ValueStream.buffer() + ValueStream.pos()) + 1;
+				m_nStringDataSize += sString.m_nLen;
+
+				sString.m_pBuf = (byte*)m_pAlloc->alloc(sString.m_nLen);
+				memcpy(sString.m_pBuf, ValueStream.buffer() + ValueStream.pos(), sString.m_nLen);
+
+
+				ValueStream.seek(sString.m_nLen, CommonLib::soFromCurrent);
+
+				//m_vecStringSize.push_back(sString.m_nLen);
+				valueSet.push_back(sString);
+				keySet.push_back(nKey);
 			}
-			assert(ValStreams.pos() < stream.size());
+			assert(KeyStream.pos() < stream.size());
 			return true;
 		}
-		virtual bool Write(TLeafMemSet& Set, CommonLib::FxMemoryWriteStream& stream)
+		virtual bool Write(TLeafKeyMemSet& keySet, TLeafValueMemSet& valueSet, CommonLib::FxMemoryWriteStream& stream)
 		{
-			assert(m_nCount == Set.size());
-			uint32 nSize = (uint32)Set.size();
+			uint32 nSize = (uint32)keySet.size();
+			assert(m_nSize == nSize);
 			stream.write(nSize);
 			if(!nSize)
 				return true;
 
-			CommonLib::FxMemoryWriteStream KeyStreams;
-			CommonLib::FxMemoryWriteStream ValStreams;
+			CommonLib::FxMemoryWriteStream KeyStream;
+			CommonLib::FxMemoryWriteStream ValueStream;
 
-			uint32 nKeySize =  nSize * sizeof(TKey);
-			uint32 nValSize =  nSize * sizeof(TValue);
+			eStringCoding sCode = m_pLeafCompParams->GetStringCoding();
+			uint32 nKeySize =  m_nSize * sizeof(TKey);
 
-			stream.write(nKeySize);
-			stream.write(nValSize);
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValSize);
 
-			TLeafMemSet::iterator it = Set.begin();
-			for(; !it.isNull(); ++it)
+			KeyStream.attach(stream.buffer() + stream.pos(), nKeySize);
+			ValueStream.attach(stream.buffer() + stream.pos() + nKeySize, m_nStringDataSize);
+			stream.seek(stream.pos() + nKeySize + m_nStringDataSize, CommonLib::soFromBegin);		
+
+			CommonLib::CBlob bufForUff8;
+			for (size_t i = 0, sz = keySet.size(); i < sz; ++i )
 			{
-				KeyStreams.write(it.key());
-				ValStreams.write(it.value());
+				KeyStream.write(keySet[i]);
+				ValueStream.write(valueSet[i].m_pBuf, valueSet[i].m_nLen);
+
 			}
-			assert((stream.pos() + KeyStreams.pos() +  ValStreams.pos())< stream.size());
 			return true;
 		}
 
-		virtual bool insert(TTreeNode *pObj)
+		virtual bool insert(int nIndex, TKey key, /*const CommonLib::CString&*/ const sFixedStringVal& sStr)
 		{
-			m_nCount++;
+			m_nSize++;
+			uint32 nStrSize = sStr.m_nLen;
+			m_nStringDataSize += nStrSize;
+
+
 			return true;
 		}
-		virtual bool update(TTreeNode *pObj,  const TValue& nValue)
+		virtual bool add(const TLeafKeyMemSet& keySet, const TLeafValueMemSet& valuekSet)
 		{
+			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
+			{
+				insert(i, keySet[i], valuekSet[i]);
+			}
+
 			return true;
 		}
-		virtual bool remove(TTreeNode *pObj)
+		virtual bool recalc(const TLeafKeyMemSet& keySet, const TLeafValueMemSet& valueSet)
 		{
-			m_nCount--;
+
+
+			m_nSize = 0;
+			m_nStringDataSize = 0;
+			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
+			{
+				insert(i, keySet[i], valueSet[i]);
+			}
+
+
+			return true;
+		}
+		virtual bool remove(int nIndex, TKey key, const sFixedStringVal& sStr)
+		{
+			m_nSize--;
+			uint32 nStrSize = sStr.m_nLen;
+			m_nStringDataSize -= nStrSize;
+			return true;
+		}
+		virtual bool update(int nIndex, TKey key, const sFixedStringVal& sStr)
+		{
+			assert(m_pValueMemset);
+			int oldSize = (*m_pValueMemset)[nIndex].m_nLen;
+			int newSize =sStr.m_nLen; 
+			m_nStringDataSize += (newSize - oldSize);
 			return true;
 		}
 		virtual size_t size() const
 		{
-			return (sizeof(TKey) + sizeof(TValue)) *  m_nCount + 3 * sizeof(uint32);
+			return (sizeof(TKey) *  m_nSize )  + sizeof(uint32) + m_nStringDataSize;
 		}
 		virtual size_t count() const
 		{
-			return m_nCount;
+			return m_nSize;
 		}
 		size_t headSize() const
 		{
-			return  3 * sizeof(uint32);
+			return  sizeof(uint32);
 		}
-		size_t rowSize() const
+		size_t rowSize()
 		{
-			return (sizeof(TKey) + sizeof(TValue)) *  m_nCount;
+			return (sizeof(TKey) *  m_nSize ) + m_nStringDataSize;
+		}
+		void clear()
+		{
+			m_nSize = 0;
+		}
+		size_t tupleSize() const
+		{
+			return  (m_pLeafCompParams->GetStringLen() + sizeof(TKey));
+		}
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPFixedStringLeafNodeCompressor *pCompressor)
+		{
+			uint32 nSplitStringDataSize = 0;
+			for (size_t i  = nBegin; i < nEnd; ++i)
+			{
+				nSplitStringDataSize += (*m_pValueMemset)[i].m_nLen;
+			}
+
+
+
+			uint32 nCount = nEnd - nBegin;
+
+
+			pCompressor->m_nSize = m_nSize - nCount;
+			pCompressor->m_nStringDataSize = m_nStringDataSize - nSplitStringDataSize;
+
+			m_nSize = nCount;
+			m_nStringDataSize = nSplitStringDataSize; 
+
 		}
 	private:
-		size_t m_nCount;
-		size_t m_nStringSize;
+		int GetStingSize(const CommonLib::CString& sStr) const 
+		{
+			switch(m_pLeafCompParams->GetStringCoding())
+			{
+			case scASCII:
+				return sStr.length();
+				break;
+			case  scUTF8:
+				return sStr.calcUTF8Length() + 1;
+				break;
+			default:
+				assert(false);
+				return 0;
+				break;
+			}
+
+		}
+
+	private:
+
+		size_t m_nStringDataSize;
+		size_t m_nSize;
+
+		CommonLib::alloc_t* m_pAlloc;
+		TLeafCompressorParams *m_pLeafCompParams;
+		TLeafValueMemSet *m_pValueMemset;
 	};
 }
 
