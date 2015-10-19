@@ -795,6 +795,15 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StringField.h">
+      <Filter>DB\Fields\string\StringField</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeComp.h">
+      <Filter>DB\Fields\shape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

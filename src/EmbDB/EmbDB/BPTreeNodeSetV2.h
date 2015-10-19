@@ -413,6 +413,13 @@ namespace embDB
 		int32 foundIndex(){return m_nFoundIndex;}
 		void setFoundIndex(int32 nFoundIndex){m_nFoundIndex = nFoundIndex;}
 		TParentNodePtr& parentNodePtr(){return m_pParent;}
+
+		void SetOneSplit(bool bOneSplit )
+		{
+			m_LeafNode.SetOneSplit(bOneSplit);
+			m_InnerNode.SetOneSplit(bOneSplit);
+		}
+
 	public:
 
 		BPBaseTreeNode* m_pBaseNode;

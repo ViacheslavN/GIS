@@ -160,12 +160,6 @@ namespace embDB
 			{
 				KeyStream.write(keySet[i]);
 
-				if(2990000 == keySet[i])
-				{
-					int  i = 0;
-					i++;
-				}
-
 				sStringVal& sString = valueSet[i];
 
 

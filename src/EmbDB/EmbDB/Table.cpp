@@ -12,6 +12,7 @@
 #include "MultiIndexBPTree.h"
 #include "UniqueIndex.h"
 #include "FixedStringField.h"
+#include "StringField.h"
 #include "CreateFields.h"
 
 namespace embDB
@@ -328,7 +329,7 @@ namespace embDB
 		
 		bool bRet = true;
 		int64 nFieldAddr = -1;
-		IDBFieldHandler* pField =  CreateValueField(fi, m_pDB);
+		IDBFieldHandler* pField =  CreateValueField(fi, m_pDB, pTran);
 		if(!pField)
 			return false;
 		if(fi.m_nFieldPage == -1)

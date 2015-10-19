@@ -75,6 +75,7 @@ namespace embDB
 		 ,m_bCheckCRC32(bCheckCRC32)
 		 ,m_BTreeInfo(bCheckCRC32)
 		 ,m_nStateTree(eBPTNoChange)
+		 ,m_bOneSplit(false)
 		{
 
 			m_NodeRemove.reset(new TRemoveNodeDelegate(this, &TBPlusTreeSetV2::deleteNodeRef));
@@ -140,6 +141,12 @@ namespace embDB
 		void setTransactions(Transaction *pTransaction)
 		{
 			m_pTransaction  = pTransaction;
+		}
+
+		void setOneSplit(bool bOneSplit)
+		{
+			m_bOneSplit = bOneSplit;
+			
 		}
 
 		void clear(bool bNotSetFreePage = true)
@@ -326,6 +333,7 @@ namespace embDB
 		TBTreeNode *pNode = CreateNode(-1, bIsLeaf);/*new TBTreeNode(-1, m_pAlloc, -1, m_bMulti, bIsLeaf, m_bCheckCRC32,  m_InnerCompParams.get(),
 				 m_LeafCompParams.get() );*/
 			pNode->Load(m_pTransaction);
+			pNode->SetOneSplit(m_bOneSplit);
 			m_BTreeInfo.AddNode(1, bIsLeaf);
 			if(bIsRoot)
 				pNode->setFlags(ROOT_NODE, true);
@@ -624,7 +632,7 @@ namespace embDB
 				int nSplitIndex = splitLeafNode(pNode, pNewLeafNode.get(), pParentNode.get());
 				if(pInIndex)
 				{
-					if(*pInIndex > nSplitIndex)
+					if(*pInIndex >= nSplitIndex)
 					{
 						*pInIndex = *pInIndex - nSplitIndex;
 						pRetNode = pNewLeafNode.get();
@@ -1931,6 +1939,7 @@ namespace embDB
 		std::auto_ptr<TLeafCompressorParams> m_LeafCompParams;
 		std::auto_ptr<TInnerCompressorParams> m_InnerCompParams;
 		uint32 m_nStateTree;
+		bool m_bOneSplit;
 	};
 
 

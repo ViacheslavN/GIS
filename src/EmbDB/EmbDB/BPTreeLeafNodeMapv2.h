@@ -68,12 +68,24 @@ namespace embDB
 		{
  			TCompressor* pNewNodeComp = pNode->m_pCompressor;
 
-			int nSplitIndex = SplitInVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
-			SplitInVec(m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
-			m_pCompressor->SplitIn(0, nSplitIndex, pNewNodeComp);
-			//recalc();
-			//pNode->recalc();
-			return nSplitIndex;
+			if(m_bOneSplit)
+			{
+				int nSplitIndex = SplitOne(m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
+				SplitOne(m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
+				m_pCompressor->remove(nSplitIndex, pNode->m_leafKeyMemSet[0], pNode->m_leafValueMemSet[0]);
+				pNewNodeComp->insert(0, pNode->m_leafKeyMemSet[0], pNode->m_leafValueMemSet[0]);
+				return nSplitIndex;
+			}
+			else
+			{
+
+				int nSplitIndex = SplitInVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
+				SplitInVec(m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
+				m_pCompressor->SplitIn(0, nSplitIndex, pNewNodeComp);
+				return nSplitIndex;
+			}
+
+	
 		}
 		
 		const TValue& value(uint32 nIndex) const

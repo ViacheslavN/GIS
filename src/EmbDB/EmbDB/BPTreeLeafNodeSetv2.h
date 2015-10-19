@@ -27,7 +27,7 @@ namespace embDB
 
 		BPTreeLeafNodeSetv2Base( CommonLib::alloc_t *pAlloc, bool bMulti) :
 		m_leafKeyMemSet(pAlloc),  m_pCompressor(0),	m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti),
-			m_pAlloc(pAlloc)
+			m_pAlloc(pAlloc), m_bOneSplit(false)
 
 		{
 		
@@ -189,24 +189,44 @@ namespace embDB
 			return (int)nSize;
 
 		}
+
+
+		template<class TVector, class TVecVal>
+		int SplitOne(TVector& src, TVector& dst, TVecVal* pSplitVal)
+		{
+			size_t nSize = src.size() - 1;
+			dst.push_back(src[nSize]);
+			src.resize(nSize);
+			if(pSplitVal)
+				*pSplitVal = dst[0];
+			return (int)nSize;
+
+		}
+
 		int  SplitIn(BPTreeLeafNodeSetv2Base *pNode, TKey* pSplitKey)
 		{
-	
+
 			TLeafMemSet& newNodeMemSet = pNode->m_leafKeyMemSet;
 			TCompressor* pNewNodeComp = pNode->m_pCompressor;
+	
+			if(m_bOneSplit)
+			{
+				int nSplitIndex = SplitOne(m_leafKeyMemSet, newNodeMemSet, pSplitKey);
+				m_pCompressor->remove(nSplitIndex, newNodeMemSet[0]);
+				pNewNodeComp->insert(0, newNodeMemSet[0]);
+				return nSplitIndex;
+			}
+			else
+			{
 
-			int nSplitIndex = SplitInVec(m_leafKeyMemSet, newNodeMemSet, pSplitKey);
+			
 
-			m_pCompressor->SplitIn(0, nSplitIndex, pNewNodeComp);
-			/*size_t nSize = m_leafKeyMemSet.size()/2;
+				int nSplitIndex = SplitInVec(m_leafKeyMemSet, newNodeMemSet, pSplitKey);
+				m_pCompressor->SplitIn(0, nSplitIndex, pNewNodeComp);
+				return nSplitIndex;
+			}
 
-			newNodeMemSet.copy(m_leafKeyMemSet, 0, nSize, m_leafKeyMemSet.size());
-			m_leafKeyMemSet.resize(nSize);
-			*pSplitKey = newNodeMemSet[0];*/
 
-			/*m_pCompressor->recalc(m_leafKeyMemSet);
-			pNewNodeComp->recalc(newNodeMemSet);*/
-			return nSplitIndex;
 		}
 		size_t count() const 
 		{
@@ -303,6 +323,11 @@ namespace embDB
 			return comp.EQ(key, m_leafKeyMemSet[nIndex]);
 		}
 		
+		void SetOneSplit(bool bOneSplit )
+		{
+			m_bOneSplit = bOneSplit;
+		}
+
 	public:
 		TCompressor * m_pCompressor;
 		TLeafMemSet m_leafKeyMemSet;
@@ -310,6 +335,7 @@ namespace embDB
 		TLink m_nPrev;
 		bool m_bMulti;
 		CommonLib::alloc_t *m_pAlloc;
+		bool m_bOneSplit;
 		//TComporator m_comp;
 	};
 

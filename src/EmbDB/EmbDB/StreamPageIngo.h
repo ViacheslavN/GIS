@@ -35,6 +35,7 @@ namespace embDB
 			int64 GetRootPage() const {return m_nRootPage;}
 			int64 GetBeginPage() const {return m_nBeginStream;}
 			int64 GetEndPage() const  {return m_nEndStream;}
+			uint32 GetPageSize() {return m_nSizePage;}
 			uint32 GetPos() const  {return m_nPos;}
 
 

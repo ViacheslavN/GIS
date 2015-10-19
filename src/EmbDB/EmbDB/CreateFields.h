@@ -4,7 +4,7 @@
 namespace embDB
 {
 
-	static IDBFieldHandler* CreateValueField(sFieldInfo& fi, CDatabase* pDB)
+	static IDBFieldHandler* CreateValueField(sFieldInfo& fi, CDatabase* pDB, IDBTransactions *pTran)
 	{
 		IDBFieldHandler* pField = NULL;
 		switch(fi.m_nFieldType)
@@ -40,7 +40,13 @@ namespace embDB
 			pField = (IDBFieldHandler*)new TValFieldDouble(pDB->getBTreeAlloc());
 			break;
 		case dtString:
-			pField = (IDBFieldHandler*)new StringValueFieldHandler(pDB->getBTreeAlloc());
+			{
+				if(fi.m_nLenField != 0 && fi.m_nLenField < pTran->getPageSize()/25)
+					pField = (IDBFieldHandler*)new FixedStringValueFieldHandler(pDB->getBTreeAlloc());
+				else
+					pField = (IDBFieldHandler*)new StringValueFieldHandler(pDB->getBTreeAlloc());
+			}
+		
 			break;
 
 			

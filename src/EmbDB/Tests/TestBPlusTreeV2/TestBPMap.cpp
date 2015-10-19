@@ -20,6 +20,7 @@ void insertINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 	double tranCom  = 0;
 	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
 	tree.loadBTreeInfo(); 
+	tree.setOneSplit(true);
 	time.start();
 	int64 n = 0;
 	if(nStart < nEndStart)
@@ -369,7 +370,7 @@ void TestBRteeMap()
 {
 	//__int64 nCount = 1531;
 
-	__int64 nCount = 10000000;
+	__int64 nCount = 1000000;
 		size_t nPageSize = 8192;
 
 	testBPTreeMapImpl<TBInt64Map,  embDB::CDirectTransactions, int64, int64>(nCount, nPageSize, 5000, 10);

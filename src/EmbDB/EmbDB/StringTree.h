@@ -63,14 +63,30 @@ namespace embDB
 		void convert(const sStringVal& sStrVal, CommonLib::CString& sString) 
 		{
 			CommonLib::CString sVal(m_pAlloc);
-			if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
+
+			if(sStrVal.m_nLen < m_LeafCompParams->GetMaxPageStringSize())
 			{
-				sString.loadFromASCII((const char*)sStrVal.m_pBuf);
+				if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
+				{
+					sString.loadFromASCII((const char*)sStrVal.m_pBuf);
+				}
+				else if(m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
+				{
+					sString.loadFromUTF8((const char*)sStrVal.m_pBuf);
+				}
 			}
-			else if(m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
+			else
 			{
-				sString.loadFromUTF8((const char*)sStrVal.m_pBuf);
+				embDB::ReadStreamPagePtr pReadStream = m_LeafCompParams->GetReadStream(m_pTransaction, sStrVal.m_nPage, sStrVal.m_nPos);
+				m_CacheBlob.resize(sStrVal.m_nLen);
+				pReadStream->read(m_CacheBlob.buffer(), sStrVal.m_nLen);
+				if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
+					sString.loadFromASCII((const char*)m_CacheBlob.buffer());
+				else
+					sString.loadFromUTF8((const char*)m_CacheBlob.buffer());
+
 			}
+			
 		}
 
 		bool insert(int64 nValue, const CommonLib::CString& sString, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
@@ -95,6 +111,7 @@ namespace embDB
 		}
 	private:
 		CPageAlloc m_PageAlloc;
+		CommonLib::CBlob m_CacheBlob;
 	};
 
 }

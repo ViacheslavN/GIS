@@ -1,27 +1,27 @@
-#ifndef _EMBEDDED_DATABASE_FIXED_STRING_FIELD_H_
-#define _EMBEDDED_DATABASE_FIXED_STRING_FIELD_H_
+#ifndef _EMBEDDED_DATABASE_STRING_FIELD_H_
+#define _EMBEDDED_DATABASE_STRING_FIELD_H_
 
 #include "ValueField.h"
-#include "FixedStringTree.h"
+#include "StringTree.h"
 
 namespace embDB
 {
 
 	template<class TBTree>
-	class FixedStringFieldIterator: public IFieldIterator
+	class StringFieldIterator: public IFieldIterator
 	{
 	public:
 		typedef typename TBTree::iterator  iterator;
 
-		FixedStringFieldIterator(iterator& it) 
+		StringFieldIterator(iterator& it) 
 			: m_ParentIt(it)
 
 		{
 
 		}
-		FixedStringFieldIterator() :
+		StringFieldIterator() :
 		{}
-		virtual ~FixedStringFieldIterator(){}
+		virtual ~StringFieldIterator(){}
 
 		virtual bool isValid()
 		{
@@ -41,12 +41,12 @@ namespace embDB
 		}
 		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
-			const sFixedStringVal& sString= m_ParentIt.value();
+			const sStringVal& sString= m_ParentIt.value();
 			CommonLib::CString sVal;
 
 			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), sVal);
 
-			
+
 			pVal->setVal(sVal);
 			return true;
 		}
@@ -91,10 +91,10 @@ namespace embDB
 
 
 	template<class _TBTree>
-	class CFixedStringValueField : public ValueFieldBase<CommonLib::CString, _TBTree, FixedStringFieldIterator<_TBTree> >
+	class CStringValueField : public ValueFieldBase<CommonLib::CString, _TBTree, StringFieldIterator<_TBTree> >
 	{
 	public:
-		typedef  FixedStringFieldIterator<_TBTree> TFieldIterator;
+		typedef  StringFieldIterator<_TBTree> TFieldIterator;
 		typedef ValueFieldBase<CommonLib::CString,_TBTree, TFieldIterator> TBase;
 		typedef typename TBase::TBTree TBTree;
 		typedef typename TBTree::iterator  iterator;
@@ -102,7 +102,7 @@ namespace embDB
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		CFixedStringValueField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
+		CStringValueField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
 		{
 
 		}
@@ -113,7 +113,7 @@ namespace embDB
 			TBTree::iterator it = m_tree.find(nOID);
 			if(it.isNull())
 				return false;
-		 
+
 			CommonLib::CString sVal(m_pAlloc);
 			m_tree.convert(it.value(), sVal);
 
@@ -121,21 +121,21 @@ namespace embDB
 			return true;
 		}
 
-	
- 
+
+
 	};
 
 
-	class FixedStringValueFieldHandler : public CDBFieldHandlerBase
+	class StringValueFieldHandler : public CDBFieldHandlerBase
 	{
 	public:
- 
-		typedef TBPFixedString<uint64, IDBTransactions> TBTree;
-		typedef CFixedStringValueField<TBTree> TField;
 
-		FixedStringValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
+		typedef TBPStringTree<uint64, IDBTransactions> TBTree;
+		typedef CStringValueField<TBTree> TField;
+
+		StringValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
 		{}
-		~FixedStringValueFieldHandler()
+		~StringValueFieldHandler()
 		{}
 
 		virtual bool save(int64 nAddr, IDBTransactions *pTran)

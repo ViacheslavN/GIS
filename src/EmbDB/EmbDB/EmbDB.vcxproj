@@ -567,6 +567,7 @@
     <ClInclude Include="ListDBPage.h" />
     <ClInclude Include="PageAlloc.h" />
     <ClInclude Include="RowIDCounter.h" />
+    <ClInclude Include="ShapeComp.h" />
     <ClInclude Include="ShapeLeafNodeCompressor.h" />
     <ClInclude Include="ShapeValue.h" />
     <ClInclude Include="Statement.h" />
@@ -579,6 +580,7 @@
     <ClInclude Include="StringCompressorParams.h" />
     <ClInclude Include="FixedStringLeafCompressor.h" />
     <ClInclude Include="FixedStringTree.h" />
+    <ClInclude Include="StringField.h" />
     <ClInclude Include="StringTree.h" />
     <ClInclude Include="StringVal.h" />
     <ClInclude Include="UniqueCompIndexBase.h" />

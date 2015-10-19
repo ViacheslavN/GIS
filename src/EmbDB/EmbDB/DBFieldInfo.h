@@ -42,6 +42,7 @@ namespace embDB
 			,m_bCheckCRC32(true)
 			,m_nOffsetX(0)
 			,m_nOffsetY(0)
+			,m_nLenField(0)
 		{
 
 		}
@@ -61,6 +62,7 @@ namespace embDB
 		CommonLib::TRect2D64 m_Extent;
 		uint64	  m_nOffsetX;
 		uint64	  m_nOffsetY;
+		uint32   m_nLenField;
 
 
 		bool Read(CommonLib::FxMemoryReadStream* pStream)
@@ -93,6 +95,7 @@ namespace embDB
 			m_nRefTFieldID = pStream->readInt64();
 			m_nFieldPage =  pStream->readInt64();
 			m_bCheckCRC32 = pStream->readBool();
+			m_nLenField= pStream->readIntu32(); 
 			return true;
 		}
 		void Write(CommonLib::FxMemoryWriteStream* pStream)
@@ -111,6 +114,7 @@ namespace embDB
 			pStream->write(m_nRefTFieldID);
 			pStream->write(m_nFieldPage);
 			pStream->write(m_bCheckCRC32);
+			pStream->write(m_nLenField);
 		}
 	};
 
