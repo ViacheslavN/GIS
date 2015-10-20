@@ -6,7 +6,7 @@
 #include "CompressorParams.h"
 #include "BPVectorNoPod.h"
 #include "StringCompressorParams.h"
-#include "StringVal.h"
+#include "ShapeValue.h"
 #include "ReadStreamPage.h"
 #include "WriteStreamPage.h"
 namespace embDB
@@ -23,7 +23,7 @@ namespace embDB
 		typedef _TKey TKey;
 
 		typedef  TBPVector<TKey> TLeafKeyMemSet;
-		typedef  TBPVector<sStringVal> TLeafValueMemSet;
+		typedef  TBPVector<sShapeVal> TLeafValueMemSet;
 
 		typedef StringFieldCompressorParams TLeafCompressorParams;
 		typedef _Transaction Transaction;

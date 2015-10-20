@@ -13,6 +13,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="exportFromShape">
+      <UniqueIdentifier>{4745cc24-84da-4f6f-9b5c-73ed0d6ea142}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -27,6 +30,9 @@
     <ClInclude Include="CreateFields.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="exportFromShape.h">
+      <Filter>exportFromShape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -40,6 +46,9 @@
     </ClCompile>
     <ClCompile Include="CreateFields.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="exportFromShape.cpp">
+      <Filter>exportFromShape</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
