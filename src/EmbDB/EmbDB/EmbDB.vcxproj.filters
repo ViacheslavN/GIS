@@ -145,9 +145,6 @@
     <Filter Include="DB\Statistics">
       <UniqueIdentifier>{7fccf5ab-64b0-424f-b3de-80d04da6abe2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\Table">
-      <UniqueIdentifier>{8e35fad5-4a97-4f20-93b7-810c27bd7cbc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB\Fields\Counters">
       <UniqueIdentifier>{bd557f27-de7f-414a-9a85-7a7cd002971a}</UniqueIdentifier>
     </Filter>
@@ -189,6 +186,9 @@
     </Filter>
     <Filter Include="DB\Fields\string\StringField">
       <UniqueIdentifier>{452f6a01-d664-4cda-8c1b-5da814583628}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Statistics\Table">
+      <UniqueIdentifier>{8e35fad5-4a97-4f20-93b7-810c27bd7cbc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -637,13 +637,13 @@
       <Filter>DB\Fields</Filter>
     </ClInclude>
     <ClInclude Include="Table.h">
-      <Filter>DB\Table</Filter>
+      <Filter>DB\Statistics\Table</Filter>
     </ClInclude>
     <ClInclude Include="CreateFields.h">
-      <Filter>DB\Table</Filter>
+      <Filter>DB\Statistics\Table</Filter>
     </ClInclude>
     <ClInclude Include="TableHeader.h">
-      <Filter>DB\Table</Filter>
+      <Filter>DB\Statistics\Table</Filter>
     </ClInclude>
     <ClInclude Include="LeafCounterCompress.h">
       <Filter>DB\Fields\Counters</Filter>
@@ -655,7 +655,7 @@
       <Filter>DB\Fields</Filter>
     </ClInclude>
     <ClInclude Include="RowIDCounter.h">
-      <Filter>DB\Table</Filter>
+      <Filter>DB\Statistics\Table</Filter>
     </ClInclude>
     <ClInclude Include="UniqueIndex.h">
       <Filter>DB\Fields\Index\UniqueIndex</Filter>
@@ -804,6 +804,9 @@
     <ClInclude Include="ShapeComp.h">
       <Filter>DB\Fields\shape</Filter>
     </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -885,10 +888,10 @@
       <Filter>utils\alloc</Filter>
     </ClCompile>
     <ClCompile Include="Table.cpp">
-      <Filter>DB\Table</Filter>
+      <Filter>DB\Statistics\Table</Filter>
     </ClCompile>
     <ClCompile Include="TableHeader.cpp">
-      <Filter>DB\Table</Filter>
+      <Filter>DB\Statistics\Table</Filter>
     </ClCompile>
     <ClCompile Include="ValueField.cpp">
       <Filter>DB\Fields</Filter>

@@ -110,7 +110,7 @@ namespace embDB
 					sBlobValue.m_nPage = ValueStream.readInt64();
 					sBlobValue.m_nBeginPos = ValueStream.readintu16();
 
-					m_nBlobDataSize += (sizeof(int64) + sizeof(uint16) + sizeof(uint32));
+					m_nBlobDataSize += (sizeof(int64) + sizeof(uint16) + sizeof(uint64));
 				}
 
 			 

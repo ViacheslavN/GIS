@@ -98,13 +98,20 @@ namespace embDB
 
 	enum eSpatialCoordinatesType
 	{
-		sctNotDef =0,
-		sctDegrees,
-		sctMillimeters,
-		sctMeters,
-		sctKilometers,
-		sctPixels,
-		sctUnits
+
+		sctUnknown         = 0,
+		sctInches          = 1,
+		sctPoints          = 2,
+		sctFeet            = 3,
+		sctYards           = 4,
+		sctMiles           = 5,
+		sctNauticalMiles   = 6,
+		sctMillimeters     = 7,
+		sctCentimeters     = 8,
+		sctMeters          = 9,
+		sctKilometers      = 10,
+		sctDecimalDegrees  = 11,
+		sctDecimeters      = 12
 	};
 
 	enum eShapeType

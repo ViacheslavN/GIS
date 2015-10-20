@@ -6,6 +6,7 @@
 #include "Key.h"
 #include "CommonLibrary/SpatialKey.h"
 #include "IDBField.h"
+#include "CommonLibrary/BoundaryBox.h"
 
 namespace embDB
 {
@@ -121,32 +122,39 @@ namespace embDB
 
 	struct sSpatialFieldInfo : public sFieldInfo
 	{
-		sSpatialFieldInfo() : m_nFieldPointType(-1)
+		sSpatialFieldInfo() :  m_nCoordType(sctUnknown), m_nIndexType(dtUnknown),  m_dScaleX(1.), m_dScaleY(1.), m_dOffsetX(0.), m_dOffsetY(0.)
 		{
 
 		}
-		int32 m_nFieldPointType;
-		CommonLib::TRect2D64 m_nExtent;
+	 
+		//CommonLib::TRect2D64 m_nExtent;
+
+
+		double m_dScaleX;
+		double m_dScaleY;
+		double m_dOffsetX;
+		double m_dOffsetY;
+
+		eSpatialCoordinatesType m_nCoordType;
+		eDataTypes m_nIndexType;
+		CommonLib::bbox m_bbox;
 
 		bool Read(CommonLib::FxMemoryReadStream* pStream)
 		{
 			if(!sFieldInfo::Read(pStream))
 				return false;
 
-			m_nFieldPointType = pStream->readInt32();
+			m_dScaleX = pStream->readDouble();
+			m_dScaleY = pStream->readDouble();
+			m_dOffsetX = pStream->readDouble();
+			m_dOffsetY = pStream->readDouble();
 
-			switch(m_nFieldPointType)
-			{
-				case ptUINT16:
-					ReadExtent<int16>(pStream);
-					break;
-				case ptUINT32:
-					ReadExtent<int32>(pStream);
-					break;
-				case ptUINT64:
-					ReadExtent<int64>(pStream);
-					break;
-			}
+			m_nCoordType = (eSpatialCoordinatesType)pStream->readIntu32();
+			m_nIndexType = (eDataTypes)pStream->readIntu32();
+			pStream->read(m_bbox.xMin);
+			pStream->read(m_bbox.yMin);
+			pStream->read(m_bbox.xMax);
+			pStream->read(m_bbox.yMax);
 			
 
 			return true;
@@ -155,21 +163,23 @@ namespace embDB
 		void Write(CommonLib::FxMemoryWriteStream* pStream)
 		{
 			sFieldInfo::Write(pStream);
-			switch(m_nFieldPointType)
-			{
-			case ptUINT16:
-				WriteExtent<int16>(pStream);
-				break;
-			case ptUINT32:
-				WriteExtent<int32>(pStream);
-				break;
-			case ptUINT64:
-				WriteExtent<int64>(pStream);
-				break;
-			}
+
+			  pStream->write(m_dScaleX);
+			  pStream->write(m_dScaleY);
+			  pStream->write(m_dOffsetX);
+			  pStream->write(m_dOffsetY);
+
+			  pStream->write((uint32)m_nCoordType);
+			  pStream->write((uint32)m_nIndexType);
+
+			  pStream->write(m_bbox.xMin);
+			  pStream->write(m_bbox.yMin);
+			  pStream->write(m_bbox.xMax);
+			  pStream->write(m_bbox.yMax);
+		
 
 		}
-		template <class TPoint>
+		/*template <class TPoint>
 		void ReadExtent(CommonLib::FxMemoryReadStream* pStream)
 		{
 			TPoint xMin, xMax, yMin, yMax;
@@ -187,7 +197,7 @@ namespace embDB
 			pStream->write((TPoint)m_nExtent.m_minY);
 			pStream->write((TPoint)m_nExtent.m_maxX);
 			pStream->write((TPoint)m_nExtent.m_maxY);
-		}
+		}*/
 
 	};
 

@@ -457,6 +457,7 @@
   <ItemGroup>
     <ClInclude Include="CursorBase.h" />
     <ClInclude Include="DatasetBase.h" />
+    <ClInclude Include="EmbDBWorkspace.h" />
     <ClInclude Include="Feature.h" />
     <ClInclude Include="FeatureClassBase.h" />
     <ClInclude Include="Field.h" />
@@ -491,6 +492,7 @@
     <ClInclude Include="LoaderWorkspase.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="EmbDBWorkspace.cpp" />
     <ClCompile Include="Feature.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Fields.cpp" />

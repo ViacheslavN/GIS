@@ -135,6 +135,9 @@
     <ClInclude Include="LoaderWorkspase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EmbDBWorkspace.h">
+      <Filter>GeoDatabaseEmbDB</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -211,6 +214,9 @@
     </ClCompile>
     <ClCompile Include="LoaderWorkspase.cpp">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EmbDBWorkspace.cpp">
+      <Filter>GeoDatabaseEmbDB</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

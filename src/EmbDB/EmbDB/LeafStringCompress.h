@@ -114,17 +114,21 @@ namespace embDB
 
 				sString.m_nLen = ValueStream.readIntu32();
 	 
+				m_nStringDataSize += sizeof(uint32);
 				if(sString.m_nLen < nMaxPageLen)
 				{
 					sString.m_pBuf = (byte*)m_pAlloc->alloc(sString.m_nLen);
 					memcpy(sString.m_pBuf, ValueStream.buffer() + ValueStream.pos(), sString.m_nLen);
 					ValueStream.seek(sString.m_nLen, CommonLib::soFromCurrent);
+
+					m_nStringDataSize += (sizeof(uint32) + sString.m_nLen );
 				}
 				else
 				{
 					sString.m_nPage = ValueStream.readIntu64();
 					sString.m_nPos = ValueStream.readIntu32();
-					//ReadStreamPagePtr pStream = m_pLeafCompParams->GetReadStream(m_pTransaction);
+					m_nStringDataSize += (sizeof(uint32) + sizeof(uint64));
+					 
 				}
 				
 				valueSet.push_back(sString);

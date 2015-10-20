@@ -40,7 +40,7 @@ namespace embDB
 			return true;
 		}
 
-		bool insertBlob(const TKey& key, const CommonLib::CBlob& sString)
+		bool insertBlob(const TKey& key, const CommonLib::CBlob& blob)
 		{
 
 		}
