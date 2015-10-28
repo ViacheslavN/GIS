@@ -22,12 +22,12 @@ namespace embDB
 	{
 		byte *m_pBuf;
 		uint32 m_nLen;
-		uint32 m_nNewLen;
+		uint32 m_nOldLen;
 		int32 m_nPos;
 		int64 m_nPage;
 		bool m_bChange;
 
-		sStringVal() : m_pBuf(0), m_nLen(0), m_nPos(0), m_nPage(-1), m_bChange(true), m_nNewLen(0)
+		sStringVal() : m_pBuf(0), m_nLen(0), m_nPos(0), m_nPage(-1), m_bChange(true), m_nOldLen(0)
 		{}
 
 

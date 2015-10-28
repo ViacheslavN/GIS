@@ -91,7 +91,7 @@ namespace embDB
 
 
 	template<class _TBTree>
-	class CStringValueField : public ValueFieldBase<CommonLib::CString, _TBTree, StringFieldIterator<_TBTree> >
+	class TStringValueField : public ValueFieldBase<CommonLib::CString, _TBTree, StringFieldIterator<_TBTree> >
 	{
 	public:
 		typedef  StringFieldIterator<_TBTree> TFieldIterator;
@@ -102,7 +102,7 @@ namespace embDB
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		CStringValueField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
+		TStringValueField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
 		{
 
 		}
@@ -131,7 +131,7 @@ namespace embDB
 	public:
 
 		typedef TBPStringTree<uint64, IDBTransactions> TBTree;
-		typedef CStringValueField<TBTree> TField;
+		typedef TStringValueField<TBTree> TField;
 
 		StringValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
 		{}

@@ -14,8 +14,8 @@ namespace embDB
 		uint32 m_nBeginPos;
 		int64 m_nPage;
 		byte* m_pBuf;
-
-		sBlobVal() : m_nSize(0), m_nBeginPos(0), m_nPage(-1), m_pBuf(0)
+		bool m_bChange;
+		sBlobVal() : m_nSize(0), m_nBeginPos(0), m_nPage(-1), m_pBuf(0), m_bChange(false)
 		{}
 
 

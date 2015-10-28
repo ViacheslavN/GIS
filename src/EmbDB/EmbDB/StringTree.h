@@ -62,7 +62,6 @@ namespace embDB
 		}
 		void convert(const sStringVal& sStrVal, CommonLib::CString& sString) 
 		{
-			CommonLib::CString sVal(m_pAlloc);
 
 			if(sStrVal.m_nLen < m_LeafCompParams->GetMaxPageStringSize())
 			{

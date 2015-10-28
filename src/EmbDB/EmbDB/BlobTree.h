@@ -1,37 +1,37 @@
-#ifndef _EMBEDDED_DATABASE_B_PLUS_V2_TREE_STRING_H_
-#define _EMBEDDED_DATABASE_B_PLUS_V2_TREE_STRING_H_
+#ifndef _EMBEDDED_DATABASE_B_PLUS_V2_TREE_BLOB_H_
+#define _EMBEDDED_DATABASE_B_PLUS_V2_TREE_BLOB_H_
 
 #include "BaseBPMapv2.h"
-#include "StringBPNode.h"
+#include "BlobBPNode.h"
 #include "PageAlloc.h"
 namespace embDB
 {
 
 
 	template<class _TKey, class _Transaction>
-	class TBPFixedString : public TBPMapV2<_TKey, sFixedStringVal, comp<_TKey>, _Transaction, 
+	class TBPBlobTree : public TBPMapV2<_TKey, sBlobVal, comp<_TKey>, _Transaction, 
 		BPInnerNodeSimpleCompressorV2<_TKey> ,
-		BPFixedStringLeafNodeCompressor<_TKey>, 
+		BPStringLeafNodeCompressor<_TKey,  _Transaction>, 
 		BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
-		TFixedStringLeafNode<_TKey, _Transaction>,
-		BPStringTreeNodeMapv2<_TKey, _Transaction>	>
+		TBlobLeafNode<_TKey, _Transaction>,
+		TBlobNodeMap<_TKey, _Transaction>	>
 	{
 	public:
 
-		typedef TBPMapV2<_TKey, sFixedStringVal, comp<_TKey>, _Transaction, 
+		typedef TBPMapV2<_TKey, sBlobVal, comp<_TKey>, _Transaction, 
 			BPInnerNodeSimpleCompressorV2<_TKey> ,
-			BPFixedStringLeafNodeCompressor<_TKey>, 
+			BPStringLeafNodeCompressor<_TKey,  _Transaction>, 
 			BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
-			TFixedStringLeafNode<_TKey, _Transaction>,
-			BPStringTreeNodeMapv2<_TKey, _Transaction>	> TBase;
+			TBlobLeafNode<_TKey, _Transaction>,
+			TBlobNodeMap<_TKey, _Transaction>	> TBase;
 
-		TBPFixedString(int64 nPageBTreeInfo, embDB::IDBTransactions* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
+		TBPBlobTree(int64 nPageBTreeInfo, embDB::IDBTransactions* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
 		TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, bMulti, bCheckCRC32), m_PageAlloc(pAlloc, 1024*1024, 2)
 		{
 
 		}
 
-		~TBPFixedString()
+		~TBPBlobTree()
 		{
 			DeleteNodes();
 		}
@@ -43,58 +43,67 @@ namespace embDB
 			pNode->m_LeafNode.SetPageAlloc(&m_PageAlloc);
 			return pNode;
 		}
-
-		void convert(const CommonLib::CString& sString, sFixedStringVal& sValue)
+		void convert(const CommonLib::CBlob& blob, sBlobVal& sValue)
 		{
-			if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
+
+			sValue.m_nPage = -1;
+			sValue.m_nBeginPos = 0;
+			if(blob.size())
 			{
-				sValue.m_nLen = sString.length() + 1;
-				sValue.m_pBuf = (byte*)m_PageAlloc.alloc(sValue.m_nLen);
-				strcpy((char*)sValue.m_pBuf, sString.cstr());
-				sValue.m_pBuf[sValue.m_nLen] = 0;
+				sValue.m_nSize = blob.size();
+				sValue.m_pBuf = m_pAlloc->alloc(blob.size());
+				memcpy(sValue.m_pBuf, blob.buffer(), blob.size());
 			}
-			else if(m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
+			else
 			{
-				sValue.m_nLen  = sString.calcUTF8Length() + 1;
-				sValue.m_pBuf = (byte*)m_PageAlloc.alloc(sValue.m_nLen);
-				sString.exportToUTF8((char*)sValue.m_pBuf, sValue.m_nLen);
+				sValue.m_nSize = 0;
+				sValue.m_pBuf = NULL;
 			}
 		}
-		void convert(const sFixedStringVal& sStrVal, CommonLib::CString& sString) 
+		void convert(const sBlobVal& blobVal, CommonLib::CBlob& blob) 
 		{
-			CommonLib::CString sVal(m_pAlloc);
-			if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
+
+			blob.resize(blobVal.m_nSize);
+			if(!blobVal.m_nSize)
+				return;
+
+			if(blobVal.m_nSize < m_LeafCompParams->GetMaxPageStringSize())
 			{
-				sString.loadFromASCII((const char*)sStrVal.m_pBuf);
+				blob.copy(blobVal.m_pBuf, blobVal.m_nSize);
 			}
-			else if(m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
+			else
 			{
-				sString.loadFromUTF8((const char*)sStrVal.m_pBuf);
+				embDB::ReadStreamPagePtr pReadStream = m_LeafCompParams->GetReadStream(m_pTransaction, blobVal.m_nPage, blobVal.m_nPos);
+				pReadStream->read(blob.buffer(), blobVal.m_nSize);
+				 
 			}
+
 		}
 
-		bool insert(int64 nValue, const CommonLib::CString& sString, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
+		bool insert(int64 nValue, const CommonLib::CBlob& blob, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
 		{
-			embDB::sFixedStringVal sValue;
-			convert(sString, sValue);
+			sBlobVal sValue;
+			convert(blob, sValue);
 			return TBase::insert(nValue, sValue, pFromIterator, pRetItertor);
 
 		}
-		bool update(const TKey& key, const CommonLib::CString& sString)
+		bool update(const TKey& key, const CommonLib::CBlob& blob)
 		{
-			embDB::sFixedStringVal sValue;
-			convert(sString, sValue);
+			sBlobVal sValue;
+			convert(blob, sValue);
 			return TBase::update(key, sValue);
 		}
 		template<class TKeyFunctor>
-		bool insertLast(TKeyFunctor& keyFunctor, const CommonLib::CString& sString, TKey* pKey = NULL,  iterator* pFromIterator = NULL,  iterator* pRetIterator = NULL)
+		bool insertLast(TKeyFunctor& keyFunctor, const CommonLib::CBlob& blob, TKey* pKey = NULL,  iterator* pFromIterator = NULL,  iterator* pRetIterator = NULL)
 		{
-			embDB::sFixedStringVal sValue;
-			convert(sString, sValue);
+			sBlobVal sValue;
+			convert(blob, sValue);
 			return TBase::insertLast(keyFunctor, sValue, pKey, pFromIterator, pRetIterator);
 		}
+	
 	private:
 		CPageAlloc m_PageAlloc;
+ 
 	};
 
 }

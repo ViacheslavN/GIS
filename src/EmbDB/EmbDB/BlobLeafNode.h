@@ -9,17 +9,17 @@
 namespace embDB
 {
 	template<typename _TKey, typename _Transaction>
-	class TBlobLeafNode : public  BPTreeLeafNodeMapv2<_TKey, sFixedStringVal, _Transaction, BPFixedStringLeafNodeCompressor<_TKey> >
+	class TBlobLeafNode : public  BPTreeLeafNodeMapv2<_TKey, sBlobVal, _Transaction, BlobLeafNodeCompressor<_TKey> >
 	{
 	public:
-		typedef   BPTreeLeafNodeMapv2<_TKey, sFixedStringVal, _Transaction, BPFixedStringLeafNodeCompressor<_TKey> > TBase;
-		typedef sFixedStringVal TValue;
+		typedef   BPTreeLeafNodeMapv2<_TKey, sBlobVal, _Transaction, BlobLeafNodeCompressor<_TKey> > TBase;
+		typedef sBlobVal TValue;
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;
 		typedef typename TBase::Transaction Transaction;
 		typedef typename TBase::TCompressor TCompressor;
 		typedef typename TBase::TLeafMemSet TLeafMemSet;
-		typedef TBPVector<sFixedStringVal>		TValueMemSet;
+		typedef TBPVector<sBlobVal>		TValueMemSet;
 
 		TBlobLeafNode( CommonLib::alloc_t *pAlloc, bool bMulti) :
 		TBase(pAlloc, bMulti), m_pPageAlloc(NULL)

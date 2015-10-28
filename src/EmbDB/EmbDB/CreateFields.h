@@ -48,6 +48,9 @@ namespace embDB
 			}
 		
 			break;
+		case dtBlob:
+			pField = (IDBFieldHandler*)new BlobValueFieldHandler(pDB->getBTreeAlloc());
+			break;
 
 			
 		}

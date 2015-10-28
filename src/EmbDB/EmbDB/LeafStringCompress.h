@@ -179,10 +179,13 @@ namespace embDB
 					if(sString.m_bChange || sString.m_nPage == -1)
 					{
 						WriteStreamPagePtr pWriteStream;
-						if(sString.m_nNewLen <= sString.m_nLen || sString.m_nPage == -1)
+						if(sString.m_nOldLen >= sString.m_nLen || sString.m_nPage == -1)
 							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction, sString.m_nPage, sString.m_nPos);
 						else
-							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction, sString.m_nPage);
+						{
+							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction);
+							sString.m_nPage = -1;
+						}
 						 
 						if(sString.m_nPage == -1)
 						{
@@ -244,6 +247,8 @@ namespace embDB
 			assert(m_pValueMemset);
 			int oldSize = GetStingSize((*m_pValueMemset)[nIndex]);
 			int newSize = GetStingSize(sStr); 
+			sStr.m_nOldLen = oldSize;
+			sStr.m_bChange = true;
 			m_nStringDataSize += (newSize - oldSize);
 			return true;
 		}

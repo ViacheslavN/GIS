@@ -1,27 +1,27 @@
-#ifndef _EMBEDDED_DATABASE_FIXED_STRING_FIELD_H_
-#define _EMBEDDED_DATABASE_FIXED_STRING_FIELD_H_
+#ifndef _EMBEDDED_DATABASE_BLOB_FIELD_H_
+#define _EMBEDDED_DATABASE_BLOB_FIELD_H_
 
 #include "ValueField.h"
-#include "FixedStringTree.h"
+#include "BlobTree.h"
 
 namespace embDB
 {
 
 	template<class TBTree>
-	class FixedStringFieldIterator: public IFieldIterator
+	class BlobFieldIterator: public IFieldIterator
 	{
 	public:
 		typedef typename TBTree::iterator  iterator;
 
-		FixedStringFieldIterator(iterator& it) 
+		BlobFieldIterator(iterator& it) 
 			: m_ParentIt(it)
 
 		{
 
 		}
-		FixedStringFieldIterator() :
+		BlobFieldIterator() :
 		{}
-		virtual ~FixedStringFieldIterator(){}
+		virtual ~BlobFieldIterator(){}
 
 		virtual bool isValid()
 		{
@@ -41,19 +41,19 @@ namespace embDB
 		}
 		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
-			const sFixedStringVal& sString= m_ParentIt.value();
-			CommonLib::CString sVal;
+			const sBlobVal& sBlob = m_ParentIt.value();
+			CommonLib::CBlob blob;
 
-			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), sVal);
+			((TBTree*)m_ParentIt.m_pTree)->convert(sBlob, blob);
 
-			
-			pVal->setVal(sVal);
+
+			pVal->setVal(blob);
 			return true;
 		}
 
-		virtual bool getVal(CommonLib::CString& sValue)
+		virtual bool getVal(CommonLib::CBlob& blob)
 		{
-			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), sValue);
+			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), blob);
 			return true;
 		}
 		virtual uint64 getRowID()
@@ -91,10 +91,10 @@ namespace embDB
 
 
 	template<class _TBTree>
-	class TFixedStringValueField : public ValueFieldBase<CommonLib::CString, _TBTree, FixedStringFieldIterator<_TBTree> >
+	class TBlobValueField : public ValueFieldBase<CommonLib::CString, _TBTree, BlobFieldIterator<_TBTree> >
 	{
 	public:
-		typedef  FixedStringFieldIterator<_TBTree> TFieldIterator;
+		typedef  BlobFieldIterator<_TBTree> TFieldIterator;
 		typedef ValueFieldBase<CommonLib::CString,_TBTree, TFieldIterator> TBase;
 		typedef typename TBase::TBTree TBTree;
 		typedef typename TBTree::iterator  iterator;
@@ -102,7 +102,7 @@ namespace embDB
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		TFixedStringValueField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
+		TBlobValueField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
 		{
 
 		}
@@ -113,29 +113,29 @@ namespace embDB
 			TBTree::iterator it = m_tree.find(nOID);
 			if(it.isNull())
 				return false;
-		 
-			CommonLib::CString sVal(m_pAlloc);
-			m_tree.convert(it.value(), sVal);
 
-			pFieldVal->setVal(sVal);
+			CommonLib::CBlob blob(m_pAlloc);
+			m_tree.convert(it.value(), blob);
+
+			pFieldVal->setVal(blob);
 			return true;
 		}
 
-	
- 
+
+
 	};
 
 
-	class FixedStringValueFieldHandler : public CDBFieldHandlerBase
+	class BlobValueFieldHandler : public CDBFieldHandlerBase
 	{
 	public:
- 
-		typedef TBPFixedString<uint64, IDBTransactions> TBTree;
-		typedef TFixedStringValueField<TBTree> TField;
 
-		FixedStringValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
+		typedef TBPBlobTree<uint64, IDBTransactions> TBTree;
+		typedef TBlobValueField<TBTree> TField;
+
+		BlobValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
 		{}
-		~FixedStringValueFieldHandler()
+		~BlobValueFieldHandler()
 		{}
 
 		virtual bool save(int64 nAddr, IDBTransactions *pTran)

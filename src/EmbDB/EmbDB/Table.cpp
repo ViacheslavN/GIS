@@ -13,6 +13,7 @@
 #include "UniqueIndex.h"
 #include "FixedStringField.h"
 #include "StringField.h"
+#include "BlobField.h"
 #include "CreateFields.h"
 
 namespace embDB
