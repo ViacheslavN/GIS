@@ -179,7 +179,7 @@ namespace embDB
 					if(sString.m_bChange || sString.m_nPage == -1)
 					{
 						WriteStreamPagePtr pWriteStream;
-						if(sString.m_nOldLen >= sString.m_nLen || sString.m_nPage == -1)
+						if(sString.m_nOldLen >= sString.m_nLen && sString.m_nPage != -1)
 							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction, sString.m_nPage, sString.m_nPos);
 						else
 						{
@@ -242,7 +242,7 @@ namespace embDB
 			m_nStringDataSize -=GetStingSize(sStr);
 			return true;
 		}
-		virtual bool update(int nIndex, TKey key, const sStringVal& sStr)
+		virtual bool update(int nIndex, TKey key, sStringVal& sStr)
 		{
 			assert(m_pValueMemset);
 			int oldSize = GetStingSize((*m_pValueMemset)[nIndex]);

@@ -15,7 +15,7 @@ namespace embDB
 
 	template<class _TKey = int64, 
 	 class _Transaction = IDBTransactions>
-	class BPBlobLeafNodeCompressor  
+	class BlobLeafNodeCompressor  
 	{
 	public:
 
@@ -37,11 +37,11 @@ namespace embDB
 			return pInnerComp;
 		}
 
-		BPBlobLeafNodeCompressor(Transaction *pTransaction, CommonLib::alloc_t *pAlloc, 
+		BlobLeafNodeCompressor(Transaction *pTransaction, CommonLib::alloc_t *pAlloc, 
 			TLeafCompressorParams *pParams,
 			TLeafKeyMemSet *pKeyMemset, TLeafValueMemSet *pValueMemSet) : m_nSize(0), 
 			m_pTransaction(pTransaction),
-			m_pAlloc(pAlloc), m_pLeafCompParams(pParams),		m_nStringDataSize(0), m_pValueMemset(pValueMemSet) 
+			m_pAlloc(pAlloc), m_pLeafCompParams(pParams),	m_nBlobDataSize(0), m_pValueMemset(pValueMemSet) 
 		{
 
 			assert(m_pTransaction);
@@ -50,12 +50,12 @@ namespace embDB
 			assert(m_pValueMemset);
 
 
-			m_nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();
+			m_nMaxPageLen = m_pLeafCompParams->GetMaxPageBlobSize();
 
 		}
 
 
-		virtual ~BPBlobLeafNodeCompressor()
+		virtual ~BlobLeafNodeCompressor()
 		{
 			Clear();
 			
@@ -78,12 +78,9 @@ namespace embDB
 
 			CommonLib::FxMemoryReadStream KeyStream;
 			CommonLib::FxMemoryReadStream ValueStream;
-
-
-			eStringCoding sCode = m_pLeafCompParams->GetStringCoding();
-			uint32 nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();
-
-			m_nStringDataSize = 0;
+			
+		
+ 
 			m_nSize = stream.readInt32();
 			if(!m_nSize)
 				return true;
@@ -104,34 +101,26 @@ namespace embDB
 				KeyStream.read(nKey);
 
 				sBlobVal blob;
-				sString.m_bChange = false;
+				blob.m_bChange = false;
 
-				/*sString.m_nLen  = strlen((const char*)ValueStream.buffer() + ValueStream.pos()) + 1;
-				m_nStringDataSize += sString.m_nLen;
-
-				sString.m_pBuf = (byte*)m_pAlloc->alloc(sString.m_nLen);
-				memcpy(sString.m_pBuf, ValueStream.buffer() + ValueStream.pos(), sString.m_nLen);*/
-
-				sString.m_nLen = ValueStream.readIntu32();
-	 
-				m_nStringDataSize += sizeof(uint32);
-				if(sString.m_nLen < nMaxPageLen)
+			 
+				blob.m_nSize = ValueStream.readIntu32();
+	 			m_nBlobDataSize += sizeof(uint32);
+				if(blob.m_nSize  < m_nMaxPageLen)
 				{
-					sString.m_pBuf = (byte*)m_pAlloc->alloc(sString.m_nLen);
-					memcpy(sString.m_pBuf, ValueStream.buffer() + ValueStream.pos(), sString.m_nLen);
-					ValueStream.seek(sString.m_nLen, CommonLib::soFromCurrent);
-
-					m_nStringDataSize += (sizeof(uint32) + sString.m_nLen );
+					blob.m_pBuf = (byte*)m_pAlloc->alloc(blob.m_nSize);
+					ValueStream.read(blob.m_pBuf, blob.m_nSize);
+					m_nBlobDataSize += blob.m_nSize;
 				}
 				else
 				{
-					sString.m_nPage = ValueStream.readIntu64();
-					sString.m_nPos = ValueStream.readIntu32();
-					m_nStringDataSize += (sizeof(uint32) + sizeof(uint64));
+					blob.m_nPage = ValueStream.readIntu64();
+					blob.m_nBeginPos = ValueStream.readIntu32();
+					m_nBlobDataSize += (sizeof(uint32) + sizeof(uint64));
 					 
 				}
 				
-				valueSet.push_back(sString);
+				valueSet.push_back(blob);
 				keySet.push_back(nKey);
 			}
 			assert(KeyStream.pos() < stream.size());
@@ -153,48 +142,46 @@ namespace embDB
 	
 
 			KeyStream.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValueStream.attach(stream.buffer() + stream.pos() + nKeySize, m_nStringDataSize);
-			stream.seek(stream.pos() + nKeySize + m_nStringDataSize, CommonLib::soFromBegin);		
+			ValueStream.attach(stream.buffer() + stream.pos() + nKeySize, m_nBlobDataSize);
+			stream.seek(stream.pos() + nKeySize + m_nBlobDataSize, CommonLib::soFromBegin);		
+ 
 
-			uint32 nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();
 
-
-			CommonLib::CBlob bufForUff8;
 		 	for (size_t i = 0, sz = keySet.size(); i < sz; ++i )
 			{
 				KeyStream.write(keySet[i]);
+				sBlobVal& blob = valueSet[i];
 
-				sStringVal& sString = valueSet[i];
 
-
-				ValueStream.write(sString.m_nLen);
-				if(sString.m_nLen < nMaxPageLen)
-				{
-					
-					ValueStream.write(sString.m_pBuf, sString.m_nLen);
+				ValueStream.write(blob.m_nSize);
+				if(blob.m_nSize < m_nMaxPageLen)
+				{					
+					ValueStream.write(blob.m_pBuf, blob.m_nSize);
 				}
 				else
-				{
-				
-					if(sString.m_bChange || sString.m_nPage == -1)
+				{				
+					if(blob.m_bChange || blob.m_nPage == -1)
 					{
 						WriteStreamPagePtr pWriteStream;
-						if(sString.m_nOldLen <= sString.m_nLen || sString.m_nPage == -1)
-							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction, sString.m_nPage, sString.m_nPos);
+						if(blob.m_nOldSize >= blob.m_nSize && blob.m_nPage != -1)
+							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction, blob.m_nPage, blob.m_nBeginPos);
 						else
-							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction, sString.m_nPage);
-						 
-						if(sString.m_nPage == -1)
 						{
-							sString.m_nPage = pWriteStream->GetPage();
-							sString.m_nPos = pWriteStream->GetPos();
+							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction);
+							blob.m_nPage = -1;
+						}
+						 
+						if(blob.m_nPage == -1)
+						{
+							blob.m_nPage = pWriteStream->GetPage();
+							blob.m_nBeginPos = pWriteStream->GetPos();
 						}
 
-						pWriteStream->write(sString.m_pBuf, sString.m_nLen);
+						pWriteStream->write(blob.m_pBuf, blob.m_nSize);
 					}
 
-					ValueStream.write(sString.m_nPage);
-					ValueStream.write((uint32)sString.m_nPos);
+					ValueStream.write(blob.m_nPage);
+					ValueStream.write((uint32)blob.m_nBeginPos);
 				}
 
 				
@@ -203,10 +190,10 @@ namespace embDB
 			return true;
 		}
 
-		virtual bool insert(int nIndex, TKey key, /*const CommonLib::CString&*/ const sStringVal& sStr)
+		virtual bool insert(int nIndex, TKey key, /*const CommonLib::CString&*/ const sBlobVal& blob)
 		{
 			m_nSize++;
-			m_nStringDataSize += GetStingSize(sStr);
+			m_nBlobDataSize += GetBlobSize(blob);
 				
 			return true;
 		}
@@ -224,7 +211,7 @@ namespace embDB
 
 		
 			m_nSize = 0;
-			m_nStringDataSize = 0;
+			m_nBlobDataSize = 0;
 			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
 				insert(i, keySet[i], valueSet[i]);
@@ -233,23 +220,25 @@ namespace embDB
 
 			return true;
 		}
-		virtual bool remove(int nIndex, TKey key, const sStringVal& sStr)
+		virtual bool remove(int nIndex, TKey key, const sBlobVal& blob)
 		{
 			m_nSize--;
-			m_nStringDataSize -=GetStingSize(sStr);
+			m_nBlobDataSize -= GetBlobSize(blob);
 			return true;
 		}
-		virtual bool update(int nIndex, TKey key, const sStringVal& sStr)
+		virtual bool update(int nIndex, TKey key,  sBlobVal& blob)
 		{
 			assert(m_pValueMemset);
-			int oldSize = GetStingSize((*m_pValueMemset)[nIndex]);
-			int newSize = GetStingSize(sStr); 
-			m_nStringDataSize += (newSize - oldSize);
+			int oldSize = GetBlobSize((*m_pValueMemset)[nIndex]);
+			int newSize = GetBlobSize(blob); 
+			blob.m_nOldSize = oldSize;
+			blob.m_bChange = true;
+			m_nBlobDataSize  += (newSize - oldSize);
 			return true;
 		}
 		virtual size_t size() const
 		{
-			return (sizeof(TKey) *  m_nSize )  + sizeof(uint32) + m_nStringDataSize;
+			return (sizeof(TKey) *  m_nSize )  + sizeof(uint32) + m_nBlobDataSize;
 		}
 		virtual size_t count() const
 		{
@@ -261,7 +250,7 @@ namespace embDB
 		}
 		size_t rowSize()
 		{
-			return (sizeof(TKey) *  m_nSize ) + m_nStringDataSize;
+			return (sizeof(TKey) *  m_nSize ) + m_nBlobDataSize;
 		}
 		void clear()
 		{
@@ -271,12 +260,12 @@ namespace embDB
 		{
 			return  (m_nMaxPageLen  + sizeof(uint32) + sizeof(TKey));
 		}
-		void SplitIn(uint32 nBegin, uint32 nEnd, BPStringLeafNodeCompressor *pCompressor)
+		void SplitIn(uint32 nBegin, uint32 nEnd, BlobLeafNodeCompressor *pCompressor)
 		{
-			uint32 nSplitStringDataSize = 0;
+			uint32 nSplitBlobDataSize = 0;
 			for (size_t i  = nBegin; i < nEnd; ++i)
 			{
-				nSplitStringDataSize += GetStingSize((*m_pValueMemset)[i]);
+				nSplitBlobDataSize += GetBlobSize((*m_pValueMemset)[i]);
 			}
 			
 
@@ -285,20 +274,20 @@ namespace embDB
 
 
 			pCompressor->m_nSize = m_nSize - nCount;
-			pCompressor->m_nStringDataSize = m_nStringDataSize - nSplitStringDataSize;
+			pCompressor->m_nBlobDataSize = m_nBlobDataSize - nSplitBlobDataSize;
 
 			m_nSize = nCount;
-			m_nStringDataSize = nSplitStringDataSize; 
+			m_nBlobDataSize = nSplitBlobDataSize; 
 
 		}
 	private:
-		int GetStingSize(const sStringVal& sStr) const 
+		int GetBlobSize(const sBlobVal& blob) const 
 		{
 			
 			uint32 nSize = sizeof(uint32);
-			if(sStr.m_nLen < m_nMaxPageLen)
+			if(blob.m_nSize < m_nMaxPageLen)
 			{
-				nSize += (sStr.m_nLen);
+				nSize += (blob.m_nSize);
 			}
 			else
 			{
@@ -311,7 +300,7 @@ namespace embDB
 	
 	private:
 
-		size_t m_nStringDataSize;
+		size_t m_nBlobDataSize;
 		size_t m_nSize;
 		uint32 m_nMaxPageLen;
  

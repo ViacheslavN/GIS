@@ -61,7 +61,7 @@ namespace embDB
 			return true;
 		}
 		template<class _Transaction>
-		void Save(_Transaction * pTransaction)
+		void SaveState(_Transaction * pTransaction)
 		{
 
 		}

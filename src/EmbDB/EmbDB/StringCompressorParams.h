@@ -111,7 +111,7 @@ namespace embDB
 
 
 		template<class _Transaction>
-		void Save(_Transaction * pTransaction)
+		void SaveState(_Transaction * pTransaction)
 		{
 			 if(m_StreamPageInfo.GetRootPage() != -1)
 				 m_StreamPageInfo.Save(pTransaction);

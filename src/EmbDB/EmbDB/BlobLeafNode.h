@@ -33,10 +33,10 @@ namespace embDB
 		}
 
 
-		bool init(TLeafCompressorParams *pParams = NULL)
+		bool init(TLeafCompressorParams *pParams, Transaction* pTransaction)
 		{
 			assert(!m_pCompressor);
-			m_pCompressor = new TCompressor((CommonLib::alloc_t*)m_pPageAlloc, pParams, &m_leafKeyMemSet, &m_leafValueMemSet);
+			m_pCompressor = new TCompressor(pTransaction, (CommonLib::alloc_t*)m_pPageAlloc, pParams, &m_leafKeyMemSet, &m_leafValueMemSet);
 			return true;
 		}
 

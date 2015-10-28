@@ -91,11 +91,11 @@ namespace embDB
 
 
 	template<class _TBTree>
-	class TBlobValueField : public ValueFieldBase<CommonLib::CString, _TBTree, BlobFieldIterator<_TBTree> >
+	class TBlobValueField : public ValueFieldBase<CommonLib::CBlob, _TBTree, BlobFieldIterator<_TBTree> >
 	{
 	public:
 		typedef  BlobFieldIterator<_TBTree> TFieldIterator;
-		typedef ValueFieldBase<CommonLib::CString,_TBTree, TFieldIterator> TBase;
+		typedef ValueFieldBase<CommonLib::CBlob,_TBTree, TFieldIterator> TBase;
 		typedef typename TBase::TBTree TBTree;
 		typedef typename TBTree::iterator  iterator;
 

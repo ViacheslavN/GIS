@@ -11,7 +11,7 @@ namespace embDB
 	template<class _TKey, class _Transaction>
 	class TBPBlobTree : public TBPMapV2<_TKey, sBlobVal, comp<_TKey>, _Transaction, 
 		BPInnerNodeSimpleCompressorV2<_TKey> ,
-		BPStringLeafNodeCompressor<_TKey,  _Transaction>, 
+		BlobLeafNodeCompressor<_TKey,  _Transaction>, 
 		BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
 		TBlobLeafNode<_TKey, _Transaction>,
 		TBlobNodeMap<_TKey, _Transaction>	>
@@ -20,7 +20,7 @@ namespace embDB
 
 		typedef TBPMapV2<_TKey, sBlobVal, comp<_TKey>, _Transaction, 
 			BPInnerNodeSimpleCompressorV2<_TKey> ,
-			BPStringLeafNodeCompressor<_TKey,  _Transaction>, 
+			BlobLeafNodeCompressor<_TKey,  _Transaction>, 
 			BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
 			TBlobLeafNode<_TKey, _Transaction>,
 			TBlobNodeMap<_TKey, _Transaction>	> TBase;
@@ -51,7 +51,7 @@ namespace embDB
 			if(blob.size())
 			{
 				sValue.m_nSize = blob.size();
-				sValue.m_pBuf = m_pAlloc->alloc(blob.size());
+				sValue.m_pBuf = (byte*)m_pAlloc->alloc(blob.size());
 				memcpy(sValue.m_pBuf, blob.buffer(), blob.size());
 			}
 			else
@@ -67,13 +67,13 @@ namespace embDB
 			if(!blobVal.m_nSize)
 				return;
 
-			if(blobVal.m_nSize < m_LeafCompParams->GetMaxPageStringSize())
+			if(blobVal.m_nSize < m_LeafCompParams->GetMaxPageBlobSize())
 			{
 				blob.copy(blobVal.m_pBuf, blobVal.m_nSize);
 			}
 			else
 			{
-				embDB::ReadStreamPagePtr pReadStream = m_LeafCompParams->GetReadStream(m_pTransaction, blobVal.m_nPage, blobVal.m_nPos);
+				embDB::ReadStreamPagePtr pReadStream = m_LeafCompParams->GetReadStream(m_pTransaction, blobVal.m_nPage, blobVal.m_nBeginPos);
 				pReadStream->read(blob.buffer(), blobVal.m_nSize);
 				 
 			}

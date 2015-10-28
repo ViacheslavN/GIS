@@ -315,9 +315,9 @@ namespace embDB
 			m_nStateTree = eBPTNoChange;
 
 			if(m_LeafCompParams.get())
-				m_LeafCompParams->Save(m_pTransaction);
+				m_LeafCompParams->SaveState(m_pTransaction);
 			if(m_InnerCompParams.get())
-				m_InnerCompParams->Save(m_pTransaction);
+				m_InnerCompParams->SaveState(m_pTransaction);
 			return true;
 		}
 		

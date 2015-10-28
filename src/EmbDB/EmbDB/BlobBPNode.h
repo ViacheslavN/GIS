@@ -14,7 +14,7 @@ namespace embDB
 	template<class _TKey, class _Transaction>
 	class TBlobNodeMap : public BPTreeNodeMapv2<_TKey, sBlobVal, _Transaction, 	BPInnerNodeSimpleCompressorV2<_TKey>,
 		BlobLeafNodeCompressor<_TKey,  _Transaction>, 
-		BPTreeInnerNodeSetv2<_TKey, _Transaction, BlobLeafNodeCompressor<_TKey> >,
+		BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >,
 		TBlobLeafNode<_TKey, _Transaction> >
 	{
 	public:

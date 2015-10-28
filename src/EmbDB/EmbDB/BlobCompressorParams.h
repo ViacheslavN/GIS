@@ -3,6 +3,7 @@
 
 #include "IDBTransactions.h"
 #include "CommonLibrary/FixedMemoryStream.h"
+#include "StreamPageIngo.h"
 namespace embDB
 {
 
@@ -10,7 +11,7 @@ namespace embDB
 	class BlobFieldCompressorParams
 	{
 	public:
-		BlobFieldCompressorParams(int64 nRootPage = -1) : m_nRootPage(nRootPage), m_nMaxPageBlobSize(0)
+		BlobFieldCompressorParams(int64 nRootPage = -1) : m_nRootPage(nRootPage), m_nMaxPageBlobSize(0), m_nStreamPageInfo(-1)
 		{}
 		virtual ~BlobFieldCompressorParams(){}
 
@@ -38,7 +39,13 @@ namespace embDB
 			}
 
 			m_nMaxPageBlobSize = (eStringCoding)stream.readIntu32();
-		
+			m_nStreamPageInfo = stream.readInt64();
+
+			if(m_nStreamPageInfo != -1)
+			{
+				m_StreamPageInfo.SetRootPage(m_nStreamPageInfo);
+				return m_StreamPageInfo.Load(pTran);
+			}
 			return true;
 		}
 		virtual bool save(IDBTransactions *pTran)
@@ -52,17 +59,56 @@ namespace embDB
 			stream.attach(pPage->getRowData(), pPage->getPageSize());
 			sFilePageHeader header(stream, BTREE_PAGE, BTREE_BLOB_PARAMS_COMPRESS_PAGE);
 			stream.write((uint32)m_nMaxPageBlobSize);
+			stream.write(m_nStreamPageInfo);
 
 			header.writeCRC32(stream);
 			pTran->saveFilePage(pPage);
+			if(m_nStreamPageInfo != -1)
+			{			 
+				return m_StreamPageInfo.Save(pTran);
+			}
 			return !pTran->isError();
 		}
 
 		uint32 GetMaxPageBlobSize() const {return m_nMaxPageBlobSize;}
 		void SetMaxPageBlobSize (uint32 nSize) {m_nMaxPageBlobSize = nSize;}
+
+
+		CStreamPageInfo* GetStreamInfo(IDBTransactions *pTran)
+		{
+			if(m_StreamPageInfo.GetRootPage() == -1)
+			{
+				FilePagePtr pPage = pTran->getNewPage();
+				m_StreamPageInfo.SetRootPage(pPage->getAddr());
+				m_StreamPageInfo.Init(pTran);
+			}
+			return &m_StreamPageInfo;
+		}
+		ReadStreamPagePtr GetReadStream(IDBTransactions *pTran, int64 nPage = -1, int32 nPos = -1)
+		{
+			CStreamPageInfo* pStreamInfo = GetStreamInfo(pTran);
+			return pStreamInfo->GetReadStream(pTran, nPage, nPos);
+
+		}
+		WriteStreamPagePtr GetWriteStream(IDBTransactions *pTran, int64 nPage = -1, int32 nPos = -1)
+		{
+			CStreamPageInfo* pStreamInfo = GetStreamInfo(pTran);
+			return pStreamInfo->GetWriteStream(pTran, nPage, nPos);
+
+		}
+
+
+		template<class _Transaction>
+		void SaveState(_Transaction * pTransaction)
+		{
+			if(m_StreamPageInfo.GetRootPage() != -1)
+				m_StreamPageInfo.Save(pTransaction);
+		}
 	private:
 		int64 m_nRootPage;
 		uint32 m_nMaxPageBlobSize;
+		int64 m_nStreamPageInfo;
+			CStreamPageInfo m_StreamPageInfo;
 
 	};
 }
