@@ -42,6 +42,10 @@ struct DBFGuard
 
 void CreateDBFromShape(const wchar_t* pszShapeFileName)
 {
+
+	
+
+
 	SHPGuard shp;
 	DBFGuard dbf;
 
@@ -53,12 +57,23 @@ void CreateDBFromShape(const wchar_t* pszShapeFileName)
 	CommonLib::CString EmbDBName =  sFilePath + sFileName + L".embDB";
 	
 
+
+
+
 	shp.file = ShapeLib::SHPOpen(shpFilePath.cstr(), "rb");
 	if(!shp.file)
 		return;
 	dbf.file = ShapeLib::DBFOpen(dbfFilePath.cstr(), "rb");
 	if(!dbf.file)
 		return; 
+
+
+	embDB::CDatabase db;
+	if(!db.create(EmbDBName.cwstr(), 8192, embDB::eTMSingleTransactions, sFilePath.cwstr()))
+		return;
+	embDB::CSchema* pSchema = db.getSchema();
+	pSchema->addTable(sFileName, L"");
+	embDB::ITable *pTable = pSchema->getTable(sFileName);
 
 	int objectCount;
 	int shapeType;
@@ -80,6 +95,8 @@ void CreateDBFromShape(const wchar_t* pszShapeFileName)
 		bounds.mMax = maxBounds[3];
 	}
 
+
+
 	int fieldCount = ShapeLib::DBFGetFieldCount(dbf.file);
 	for(int fieldNum = 0; fieldNum < fieldCount; ++fieldNum)
 	{
@@ -88,6 +105,27 @@ void CreateDBFromShape(const wchar_t* pszShapeFileName)
 		int dec;
 		ShapeLib::DBFFieldType shpFieldType = ShapeLib::DBFGetFieldInfo(dbf.file, fieldNum, name, &width, &dec);
 
+
+		embDB::SFieldProp fp;
+	
+		fp.dateTypeExt = embDB::dteSimple;
+		fp.sFieldName = name;
+
+		switch(shpFieldType)
+		{
+		case ShapeLib::FTString:
+			fp.dataType =  embDB::dtString;
+			fp.nLenField = width;
+			break;
+		case ShapeLib::FTInteger:
+			fp.dataType =  embDB::dtInteger32;
+			break;
+		case ShapeLib::FTDouble:
+			fp.dataType =  embDB::dtDouble;
+			break;			 
+		case ShapeLib::FTDate:
+			break;
+		}
 	}
 
 

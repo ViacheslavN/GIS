@@ -45,7 +45,7 @@ namespace embDB
 		virtual bool copy(TIIndexIterator *pIter) = 0;
 	};
 
-	typedef TIIndexIterator<IVariant> IIndexIterator;
+	typedef TIIndexIterator<CommonLib::CVariant> IIndexIterator;
 
 	typedef CommonLib::IRefCntPtr<IIndexIterator> IndexIteratorPtr;
 

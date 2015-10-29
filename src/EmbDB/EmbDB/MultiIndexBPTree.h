@@ -29,9 +29,10 @@ namespace embDB
 		{
 			return !m_ParentIt.isNull();
 		}
-		virtual bool getKey(IVariant* pVal)
+		virtual bool getKey(CommonLib::CVariant* pVal)
 		{
-			return pVal->setVal(m_ParentIt.key().m_key);
+			pVal->setVal(m_ParentIt.key().m_key);
+			return true;
 		}
 		virtual uint64 getRowID()
 		{

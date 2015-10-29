@@ -14,6 +14,7 @@
 #include "FixedStringField.h"
 #include "StringField.h"
 #include "BlobField.h"
+#include "ShapeField.h"
 #include "CreateFields.h"
 
 namespace embDB
@@ -97,6 +98,7 @@ namespace embDB
 			bRet = createIndexField(fi, pTran, bNew);
 			break;
 		case itSpatial:
+			bRet =  createSpatialIndexField(fi, pTran, bNew);
 			break;
 		case itFreeText:
 			break;
@@ -502,6 +504,13 @@ namespace embDB
 		}
 		m_FieldByName.insert(std::make_pair(fi.m_sFieldName, pSpatialField));
 		m_FieldByID.insert(std::make_pair(fi.m_nFIPage, pSpatialField));
+
+	/*	TFieldByName::iterator it = m_FieldByName.find(fi.m_sFieldName);
+		if(it != m_FieldByName.end())
+			it->second->setIndexHandler(pIndex);
+		else
+			assert(false);*/
+
 		return true;
 	 
 	}
@@ -646,6 +655,7 @@ namespace embDB
 		fi.m_nFieldDataType = sFP.dateTypeExt;
 		fi.m_sFieldName = sFP.sFieldName;
 		fi.m_sFieldAlias = sFP.sFieldAlias;
+		fi.m_nLenField = sFP.nLenField;
 		IDBTransactions* pTran =  (IDBTransactions*)m_pDB->startTransaction(eTT_DDL);
 		pTran->begin();
 

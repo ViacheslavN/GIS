@@ -22,6 +22,33 @@ namespace CommonLib
 		CGeoShape(const CGeoShape& shp);
 		CGeoShape& operator = (const CGeoShape& shp);
 		CGeoShape& operator += (const CGeoShape& shp);
+
+
+		bool operator ==(const CGeoShape& shp) const
+		{
+			return false;
+		}
+		bool operator !=(const CGeoShape& shp) const
+		{
+			return false;
+		}
+		bool operator <(const CGeoShape& shp) const
+		{
+			return false;
+		}
+		bool operator >(const CGeoShape& shp) const
+		{
+			return false;
+		}
+		bool operator <=(const CGeoShape& shp) const
+		{
+			return false;
+		}
+		bool operator >=(const CGeoShape& shp) const
+		{
+			return false;
+		}
+
 		/*
 		CGeoShape(eShapeType shapeType, alloc_t *pAlloc = 0);
 		CGeoShape(eShapeType shapeType, size_t npoints, size_t nparts = 1, size_t ncurves = 0, size_t mpatchSpecificSize = 0, alloc_t *pAlloc = 0);

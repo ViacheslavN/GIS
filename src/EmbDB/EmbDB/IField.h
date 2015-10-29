@@ -94,7 +94,13 @@ namespace embDB
 		itRouting,
 		itOID
 	};
-
+	enum SpatialQueryMode
+	{
+		sqmIntersect = 0,
+		sqmqOver,
+		sqmInside,
+		sqmByFeature
+	};
 
 	enum eSpatialCoordinatesType
 	{

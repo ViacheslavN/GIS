@@ -8,11 +8,11 @@
 #include "PageAlloc.h"
 namespace embDB
 {
-	template<typename _TKey, typename _Transaction>
-	class TBlobLeafNode : public  BPTreeLeafNodeMapv2<_TKey, sBlobVal, _Transaction, BlobLeafNodeCompressor<_TKey> >
+	template<typename _TKey, typename _Transaction, typename _TCompParams>
+	class TBlobLeafNode : public  BPTreeLeafNodeMapv2<_TKey, sBlobVal, _Transaction, BlobLeafNodeCompressor<_TKey, _Transaction, _TCompParams> >
 	{
 	public:
-		typedef   BPTreeLeafNodeMapv2<_TKey, sBlobVal, _Transaction, BlobLeafNodeCompressor<_TKey> > TBase;
+		typedef   BPTreeLeafNodeMapv2<_TKey, sBlobVal, _Transaction, BlobLeafNodeCompressor<_TKey, _Transaction, _TCompParams> > TBase;
 		typedef sBlobVal TValue;
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;

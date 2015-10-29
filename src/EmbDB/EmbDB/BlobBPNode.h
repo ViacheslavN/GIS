@@ -11,17 +11,17 @@ namespace embDB
 {
 
 
-	template<class _TKey, class _Transaction>
+	template<class _TKey, class _Transaction, class _TCompParams = BlobFieldCompressorParams>
 	class TBlobNodeMap : public BPTreeNodeMapv2<_TKey, sBlobVal, _Transaction, 	BPInnerNodeSimpleCompressorV2<_TKey>,
-		BlobLeafNodeCompressor<_TKey,  _Transaction>, 
+		BlobLeafNodeCompressor<_TKey,  _Transaction, _TCompParams>, 
 		BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >,
-		TBlobLeafNode<_TKey, _Transaction> >
+		TBlobLeafNode<_TKey, _Transaction, _TCompParams> >
 	{
 	public:
 		typedef BPInnerNodeSimpleCompressorV2<_TKey> TInnerCompressor;
-		typedef BlobLeafNodeCompressor<_TKey,  _Transaction> TLeafCompressor;
+		typedef BlobLeafNodeCompressor<_TKey,  _Transaction, _TCompParams> TLeafCompressor;
 		typedef BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> > TInnerNode;
-		typedef TBlobLeafNode<_TKey, _Transaction>	TLeafNode;
+		typedef TBlobLeafNode<_TKey, _Transaction, _TCompParams>	TLeafNode;
 
 		typedef BPTreeNodeMapv2<TKey, sBlobVal, _Transaction, TInnerCompressor, TLeafCompressor, TInnerNode,	 TLeafNode > TBase;
 

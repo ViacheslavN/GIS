@@ -14,7 +14,9 @@ namespace embDB
 
 
 	template<class _TKey = int64, 
-	 class _Transaction = IDBTransactions>
+	 class _Transaction = IDBTransactions,
+	 class _TCompParams = BlobFieldCompressorParams
+	>
 	class BlobLeafNodeCompressor  
 	{
 	public:
@@ -25,7 +27,7 @@ namespace embDB
 		typedef  TBPVector<TKey> TLeafKeyMemSet;
 		typedef  TBPVector<sBlobVal> TLeafValueMemSet;
 
-		typedef BlobFieldCompressorParams TLeafCompressorParams;
+		typedef _TCompParams TLeafCompressorParams;
 		typedef _Transaction Transaction;
 
 

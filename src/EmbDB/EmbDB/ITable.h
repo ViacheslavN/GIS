@@ -11,6 +11,10 @@ namespace embDB
 		CommonLib::CString sFieldAlias;
 		eDataTypes dataType;
 		eDataTypesExt dateTypeExt;
+		uint32 nLenField;
+
+		SFieldProp() : nLenField(0), dataType(dtUnknown), dateTypeExt(dteSimple)
+		{}
 	};
 
 	struct SIndexProp

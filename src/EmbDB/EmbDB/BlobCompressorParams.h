@@ -34,7 +34,7 @@ namespace embDB
 			sFilePageHeader header(stream);
 			if(header.m_nObjectPageType != BTREE_PAGE || header.m_nSubObjectPageType != BTREE_BLOB_PARAMS_COMPRESS_PAGE)
 			{
-				pTran->error(_T("BTREE: Page %I64d is not string params compress page"), m_nRootPage);
+				pTran->error(_T("BTREE: Page %I64d is not blob params compress page"), m_nRootPage);
 				return false;
 			}
 

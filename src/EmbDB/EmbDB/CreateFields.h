@@ -51,6 +51,17 @@ namespace embDB
 		case dtBlob:
 			pField = (IDBFieldHandler*)new BlobValueFieldHandler(pDB->getBTreeAlloc());
 			break;
+		case dtPoint16:
+		case dtPoint32:
+		case dtPoint64:
+		case dtShape16:
+		case dtShape32:
+		case dtShape64:
+		case dtRect16:
+		case dtRect32:
+		case dtRect64:
+			pField = (IDBFieldHandler*)new ShapeValueFieldHandler(pDB->getBTreeAlloc());
+			break;
 
 			
 		}

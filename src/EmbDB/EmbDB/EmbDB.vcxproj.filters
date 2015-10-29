@@ -193,6 +193,9 @@
     <Filter Include="DB\Table">
       <UniqueIdentifier>{8e35fad5-4a97-4f20-93b7-810c27bd7cbc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\Fields\Index\spatial">
+      <UniqueIdentifier>{a0a506b6-5750-4b96-bab7-a3a3f317054d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -738,12 +741,6 @@
     <ClInclude Include="FixedStringField.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
-    <ClInclude Include="ShapeLeafNodeCompressor.h">
-      <Filter>DB\Fields\shape</Filter>
-    </ClInclude>
-    <ClInclude Include="ShapeValue.h">
-      <Filter>DB\Fields\shape</Filter>
-    </ClInclude>
     <ClInclude Include="ReadStreamPage.h">
       <Filter>DB\Fields\blob</Filter>
     </ClInclude>
@@ -824,6 +821,18 @@
     </ClInclude>
     <ClInclude Include="BlobField.h">
       <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeTree.h">
+      <Filter>DB\Fields\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeField.h">
+      <Filter>DB\Fields\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialIndex.h">
+      <Filter>DB\Fields\Index\spatial</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

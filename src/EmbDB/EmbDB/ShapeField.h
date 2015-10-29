@@ -1,27 +1,27 @@
-#ifndef _EMBEDDED_DATABASE_BLOB_FIELD_H_
-#define _EMBEDDED_DATABASE_BLOB_FIELD_H_
+#ifndef _EMBEDDED_DATABASE_SHAPE_FIELD_H_
+#define _EMBEDDED_DATABASE_SHAPE_FIELD_H_
 
 #include "ValueField.h"
-#include "BlobTree.h"
+#include "ShapeTree.h"
 
 namespace embDB
 {
 
 	template<class TBTree>
-	class BlobFieldIterator: public IFieldIterator
+	class ShapeFieldIterator: public IFieldIterator
 	{
 	public:
 		typedef typename TBTree::iterator  iterator;
 
-		BlobFieldIterator(iterator& it) 
+		ShapeFieldIterator(iterator& it) 
 			: m_ParentIt(it)
 
 		{
 
 		}
-		BlobFieldIterator() :
+		ShapeFieldIterator() :
 		{}
-		virtual ~BlobFieldIterator(){}
+		virtual ~ShapeFieldIterator(){}
 
 		virtual bool isValid()
 		{
@@ -42,18 +42,18 @@ namespace embDB
 		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
 			const sBlobVal& sBlob = m_ParentIt.value();
-			CommonLib::CBlob blob;
+			CommonLib::CGeoShape shape;
 
-			((TBTree*)m_ParentIt.m_pTree)->convert(sBlob, blob);
+			((TBTree*)m_ParentIt.m_pTree)->convert(sBlob, shape);
 
 
-			pVal->setVal(blob);
+			pVal->setVal(shape);
 			return true;
 		}
 
-		virtual bool getVal(CommonLib::CBlob& blob)
+		virtual bool getVal(CommonLib::CGeoShape& shape)
 		{
-			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), blob);
+			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), shape);
 			return true;
 		}
 		virtual uint64 getRowID()
@@ -90,18 +90,18 @@ namespace embDB
 
 
 	template<class _TBTree>
-	class TBlobValueField : public ValueFieldBase<CommonLib::CBlob, _TBTree, BlobFieldIterator<_TBTree> >
+	class TShapeValueField : public ValueFieldBase<CommonLib::CGeoShape, _TBTree, ShapeFieldIterator<_TBTree> >
 	{
 	public:
-		typedef  BlobFieldIterator<_TBTree> TFieldIterator;
-		typedef ValueFieldBase<CommonLib::CBlob,_TBTree, TFieldIterator> TBase;
+		typedef  ShapeFieldIterator<_TBTree> TFieldIterator;
+		typedef ValueFieldBase<CommonLib::CGeoShape,_TBTree, TFieldIterator> TBase;
 		typedef typename TBase::TBTree TBTree;
 		typedef typename TBTree::iterator  iterator;
 
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		TBlobValueField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
+		TShapeValueField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
 		{
 
 		}
@@ -113,10 +113,10 @@ namespace embDB
 			if(it.isNull())
 				return false;
 
-			CommonLib::CBlob blob(m_pAlloc);
-			m_tree.convert(it.value(), blob);
+			CommonLib::CGeoShape shape(m_pAlloc);
+			m_tree.convert(it.value(), shape);
 
-			pFieldVal->setVal(blob);
+			pFieldVal->setVal(shape);
 			return true;
 		}
 
@@ -125,16 +125,16 @@ namespace embDB
 	};
 
 
-	class BlobValueFieldHandler : public CDBFieldHandlerBase
+	class ShapeValueFieldHandler : public CDBFieldHandlerBase
 	{
 	public:
 
-		typedef TBPBlobTree<uint64, IDBTransactions> TBTree;
-		typedef TBlobValueField<TBTree> TField;
+		typedef TBPShapeTree<uint64, IDBTransactions> TBTree;
+		typedef TShapeValueField<TBTree> TField;
 
-		BlobValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
+		ShapeValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
 		{}
-		~BlobValueFieldHandler()
+		~ShapeValueFieldHandler()
 		{}
 
 		virtual bool save(int64 nAddr, IDBTransactions *pTran)

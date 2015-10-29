@@ -6,6 +6,7 @@
 #include "String.h"
 #include "blob.h"
 #include "SpatialKey.h"
+#include "GeoShape.h"
 namespace CommonLib
 {
 	struct CNullVariant
@@ -64,6 +65,7 @@ namespace CommonLib
 		virtual void Visit(const CString      & val) = 0;
 		virtual void Visit(const IRefObjectPtr     & val) = 0;
 		virtual void Visit(const CBlob     & val) = 0;
+		virtual void Visit(const CGeoShape     & val) = 0;
 
 		virtual void Visit(const TPoint2D16		& val) = 0;
 		virtual void Visit(const TPoint2D32     & val) = 0;
@@ -386,6 +388,8 @@ public:
 	virtual void Visit(const IRefObjectPtr     &)
 	{ m_val = CString();}
 	virtual void Visit(const CBlob     &)
+	{ m_val = CString();}
+	virtual void Visit(const CGeoShape     &)
 	{ m_val = CString();}
 
 	virtual void Visit(const TPoint2D16	& val)

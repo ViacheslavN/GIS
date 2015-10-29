@@ -8,22 +8,22 @@ namespace embDB
 {
 
 
-	template<class _TKey, class _Transaction>
+	template<class _TKey, class _Transaction, class _TCompParams = BlobFieldCompressorParams>
 	class TBPBlobTree : public TBPMapV2<_TKey, sBlobVal, comp<_TKey>, _Transaction, 
 		BPInnerNodeSimpleCompressorV2<_TKey> ,
-		BlobLeafNodeCompressor<_TKey,  _Transaction>, 
+		BlobLeafNodeCompressor<_TKey,  _Transaction, _TCompParams>, 
 		BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
-		TBlobLeafNode<_TKey, _Transaction>,
-		TBlobNodeMap<_TKey, _Transaction>	>
+		TBlobLeafNode<_TKey, _Transaction, _TCompParams>,
+		TBlobNodeMap<_TKey, _Transaction, _TCompParams>	>
 	{
 	public:
 
 		typedef TBPMapV2<_TKey, sBlobVal, comp<_TKey>, _Transaction, 
 			BPInnerNodeSimpleCompressorV2<_TKey> ,
-			BlobLeafNodeCompressor<_TKey,  _Transaction>, 
+			BlobLeafNodeCompressor<_TKey,  _Transaction, _TCompParams>, 
 			BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
-			TBlobLeafNode<_TKey, _Transaction>,
-			TBlobNodeMap<_TKey, _Transaction>	> TBase;
+			TBlobLeafNode<_TKey, _Transaction, _TCompParams>,
+			TBlobNodeMap<_TKey, _Transaction, _TCompParams>	> TBase;
 
 		TBPBlobTree(int64 nPageBTreeInfo, embDB::IDBTransactions* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
 		TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, bMulti, bCheckCRC32), m_PageAlloc(pAlloc, 1024*1024, 2)
