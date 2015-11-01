@@ -140,9 +140,9 @@ namespace embDB
 			{
 				return &m_fi;
 			}
-			virtual void setFieldInfoType(sFieldInfo& fi)
+			virtual void setFieldInfoType(sFieldInfo* fi)
 			{
-				m_fi = fi;
+				m_fi = *fi;
 			}
 			virtual bool save(int64 nAddr, IDBTransactions *pTran)
 			{

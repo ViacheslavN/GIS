@@ -139,7 +139,20 @@ namespace embDB
 
 		virtual bool save(int64 nAddr, IDBTransactions *pTran)
 		{
-			return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE);
+
+			FilePagePtr pLeafCompRootPage = pTran->getNewPage();
+			TBTree::TLeafCompressorParams compParams;
+			compParams.setRootPage(pLeafCompRootPage->getAddr());
+			compParams.SetParams(m_SpatialFi);
+			compParams.save(pTran);
+
+			if(!CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE))
+				return false;
+
+			
+
+			return true;
+
 		}
 		virtual IValueFiled* getValueField(IDBTransactions* pTransactions, IDBStorage *pStorage)
 		{
@@ -156,6 +169,23 @@ namespace embDB
 			delete pField;
 			return true;
 		}
+
+		virtual sFieldInfo* getFieldInfoType()
+		{
+			return (sFieldInfo*)&m_SpatialFi;
+		}
+		virtual void setFieldInfoType(sFieldInfo* fi)
+		{
+			assert(fi);
+			sSpatialFieldInfo *pSpFi = dynamic_cast<sSpatialFieldInfo *>(fi);
+			assert(pSpFi);
+			if(pSpFi)
+				m_SpatialFi = *pSpFi;
+		}
+	private:
+		sSpatialFieldInfo m_SpatialFi;
+
+
 	};
 
 }

@@ -12,6 +12,10 @@ namespace embDB
 		y = BackTableZpoint16[zY & 0xFFFF] | (BackTableZpoint16[(zY >> 16) & 0xFFFF]) << 8;
 		
 	}
+	void ZOrderPoint2DU16::getXY(TPoint& point) const
+	{
+		getXY(point.m_x, point.m_y);
+	}
 
 	uint32 getX32FromZ(uint64 zX)
 	{
@@ -25,7 +29,10 @@ namespace embDB
 		x = getX32FromZ(zX);
 		y = getX32FromZ(zY);
 	}
-
+	void ZOrderPoint2DU32::getXY(TPoint& point) const
+	{
+		getXY(point.m_x, point.m_y);
+	}
 
 	void ZOrderPoint2DU64::getXY(uint64& x,  uint64& y)  const
 	{
@@ -44,7 +51,10 @@ namespace embDB
 		x = nXmin | (nXmax << 32);
 		y = nYmin | (nYmax << 32);
 	}
-
+	void ZOrderPoint2DU64::getXY(TPoint& point) const
+	{
+		getXY(point.m_x, point.m_y);
+	}
 	void ZOrderPoint2DU64::setLowBits(int idx)
 	{
 

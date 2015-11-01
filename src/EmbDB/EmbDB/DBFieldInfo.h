@@ -47,6 +47,8 @@ namespace embDB
 		{
 
 		}
+		virtual ~sFieldInfo(){}
+
 		CommonLib::CString m_sFieldName;
 		CommonLib::CString m_sFieldAlias;
 		uint32 m_nFieldType;
@@ -122,11 +124,11 @@ namespace embDB
 
 	struct sSpatialFieldInfo : public sFieldInfo
 	{
-		sSpatialFieldInfo() :  m_nCoordType(sctUnknown), m_nIndexType(dtUnknown),  m_dScaleX(1.), m_dScaleY(1.), m_dOffsetX(0.), m_dOffsetY(0.)
+		sSpatialFieldInfo() :  m_nCoordType(scuUnknown), m_dScaleX(1.), m_dScaleY(1.), m_dOffsetX(0.), m_dOffsetY(0.), m_ShapeType(CommonLib::shape_type_null)
 		{
 
 		}
-	 
+		 virtual ~sSpatialFieldInfo(){}
 		//CommonLib::TRect2D64 m_nExtent;
 
 
@@ -135,9 +137,9 @@ namespace embDB
 		double m_dOffsetX;
 		double m_dOffsetY;
 
-		eSpatialCoordinatesType m_nCoordType;
-		eDataTypes m_nIndexType;
-		CommonLib::bbox m_bbox;
+		eSpatialCoordinatesUnits m_nCoordType;
+		CommonLib::eShapeType m_ShapeType;
+		CommonLib::bbox m_extent;
 
 		bool Read(CommonLib::FxMemoryReadStream* pStream)
 		{
@@ -149,12 +151,12 @@ namespace embDB
 			m_dOffsetX = pStream->readDouble();
 			m_dOffsetY = pStream->readDouble();
 
-			m_nCoordType = (eSpatialCoordinatesType)pStream->readIntu32();
+			m_nCoordType = (eSpatialCoordinatesUnits)pStream->readIntu32();
 			m_nIndexType = (eDataTypes)pStream->readIntu32();
-			pStream->read(m_bbox.xMin);
-			pStream->read(m_bbox.yMin);
-			pStream->read(m_bbox.xMax);
-			pStream->read(m_bbox.yMax);
+			pStream->read(m_extent.xMin);
+			pStream->read(m_extent.yMin);
+			pStream->read(m_extent.xMax);
+			pStream->read(m_extent.yMax);
 			
 
 			return true;
@@ -172,10 +174,10 @@ namespace embDB
 			  pStream->write((uint32)m_nCoordType);
 			  pStream->write((uint32)m_nIndexType);
 
-			  pStream->write(m_bbox.xMin);
-			  pStream->write(m_bbox.yMin);
-			  pStream->write(m_bbox.xMax);
-			  pStream->write(m_bbox.yMax);
+			  pStream->write(m_extent.xMin);
+			  pStream->write(m_extent.yMin);
+			  pStream->write(m_extent.xMax);
+			  pStream->write(m_extent.yMax);
 		
 
 		}
@@ -209,7 +211,7 @@ namespace embDB
 		IDBFieldHandler(){}
 		~IDBFieldHandler(){}
 		virtual sFieldInfo* getFieldInfoType() = 0;
-		virtual void setFieldInfoType(sFieldInfo& fi) = 0;
+		virtual void setFieldInfoType(sFieldInfo* fi) = 0;
 		virtual bool save(int64 nAddr, IDBTransactions *pTran) = 0;
 		virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
 		virtual IValueFiled* getValueField(IDBTransactions* pTransactions, IDBStorage *pStorage) = 0;
@@ -234,7 +236,8 @@ namespace embDB
 		{}
 		~CDBFieldHandlerBase(){}
 		template<class TField>
-		bool save(int64 nAddr, IDBTransactions *pTran, CommonLib::alloc_t *pAlloc,  uint16 nObjectPageType, uint16 nSubObjectPageType  )
+		bool save(int64 nAddr, IDBTransactions *pTran, CommonLib::alloc_t *pAlloc,  uint16 nObjectPageType, uint16 nSubObjectPageType,
+			int64 nInnerCompParams = -1, int64 nLeafCompParams = -1)
 		{
 			//m_nFieldInfoPage = nAddr;
 			FilePagePtr pPage(pTran->getFilePage(nAddr));
@@ -254,7 +257,7 @@ namespace embDB
 			pTran->saveFilePage(pPage);
 
 			TField field(pTran, pAlloc);
-			field.init(m_nBTreeRootPage);
+			field.init(m_nBTreeRootPage, nInnerCompParams, nLeafCompParams);
 			return field.save();
 		}
 		bool isCanBeRemoving()
@@ -292,9 +295,10 @@ namespace embDB
 		{
 			return &m_fi;
 		}
-		virtual void setFieldInfoType(sFieldInfo& fi)
+		virtual void setFieldInfoType(sFieldInfo* fi)
 		{
-			m_fi = fi;
+			assert(fi);
+			m_fi = *fi;
 		}
 		virtual bool load(int64 nAddr, IDBStorage *pStorage)
 		{

@@ -53,12 +53,14 @@ namespace embDB
 			virtual bool deleteField(IField* pField);
 			virtual bool createIndex(const CommonLib::CString& , SIndexProp& ip);
 			virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip);
+			virtual IField* createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true);
+
 
 
 			bool addIndex(const CommonLib::CString& , SIndexProp& ip, bool bNew);
-			bool addIndex(sFieldInfo& fi, IDBTransactions *pTran, bool bNew);
-			bool addField(sFieldInfo& fi, IDBTransactions *pTran, bool bNew);
-			bool addSpatialField(sFieldInfo& fi, IDBTransactions *pTran, bool bNew);
+			bool addIndex(sFieldInfo* fi, IDBTransactions *pTran, bool bNew);
+			bool addField(sFieldInfo* fi, IDBTransactions *pTran, bool bNew);
+			 
 			bool load();
 			int64 getAddr();
 			//int64 getID() const {return m_nTableID;}
@@ -88,14 +90,17 @@ namespace embDB
 			bool ReadField(int64 nAddr, IDBTransactions *pTran);
 			bool ReadIndex(int64 nAddr, IDBTransactions *pTran);
 			bool readHeader(CommonLib::FxMemoryReadStream& stream);
-			bool createValueField(sFieldInfo& fi, IDBTransactions *pTran, bool bNew);
-			bool createSpatialIndexField(sFieldInfo& fi, IDBTransactions *pTran, bool bNew);
-			bool createIndexField(sFieldInfo& fi, IDBTransactions *pTran, bool bNew);
+			bool createValueField(sFieldInfo* fi, IDBTransactions *pTran, bool bNew);
+			bool createSpatialIndexField(sFieldInfo* fi, IDBTransactions *pTran, bool bNew);
+			bool createIndexField(sFieldInfo* fi, IDBTransactions *pTran, bool bNew);
 
 	
 			bool loadTableStorage(int64 nAddr);
 			bool ReadIndices(int64 nAddr, IDBTransactions *pTran);
 			bool BuildIndex(IDBIndexHandler* pIndexHandler, IDBFieldHandler *pFieldHandler, IDBTransactions* pTran);
+			eDataTypes GetType(uint64 nMaxVal, bool isPoint);
+			
+
 			
 	    private:
 			typedef std::map<CommonLib::CString, IDBFieldHandler*> TFieldByName;

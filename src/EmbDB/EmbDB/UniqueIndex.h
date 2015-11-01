@@ -179,7 +179,7 @@ namespace embDB
 		{
 			TIndex* pDelIndex = (TIndex*)pIndex;
 
-			TIndex::TBTree *pBTree = pDelIndex->getBTree();
+			//TIndex::TBTree *pBTree = pDelIndex->getBTree();
 
 			delete pDelIndex;
 			return true;

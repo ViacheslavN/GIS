@@ -90,12 +90,21 @@ namespace embDB
 			}
 
 
-			virtual bool init(int64 nBTreeRootPage)
+			virtual bool init(int64 nBTreeRootPage, int64 nInnerCompPage = -1, int64 nLeafCompPage = -1)
 			{
 
 				m_nBTreeRootPage = nBTreeRootPage;
 				m_tree.setRootPage(m_nBTreeRootPage);
-				return m_tree.init();
+				if(! m_tree.init())
+					return false;
+
+				if(nInnerCompPage != -1 || nLeafCompPage != -1)
+				{
+					m_tree.setCompPageInfo(nInnerCompPage, nLeafCompPage);
+					m_tree.saveBTreeInfo(); 
+				}
+			
+				return true;
 			}
 
 			TBTree* getBTree() {return &m_tree;}

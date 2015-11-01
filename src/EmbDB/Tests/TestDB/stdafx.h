@@ -22,5 +22,6 @@
 #include "CommonLibrary/CommonLib_lib.h"
 #include "../../EmbDB/embDBLib.h"
 #include "ShapeLib/shape_lib.h"
+#include "../GisEngine/GisGeometry/GisGeometryLib.h"
 
 // TODO: reference additional headers your program requires here

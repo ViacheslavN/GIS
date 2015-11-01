@@ -55,6 +55,7 @@ namespace embDB
 		typedef int16  TPointTypei;
 		typedef uint16 TPointType;
 		typedef uint32 ZValueType;		
+		typedef CommonLib::TPoint2D<uint16> TPoint;
 		static const uint16 SizeInByte = 4;
 		ZOrderPoint2DU16() : m_nZValue(0)
 		{}
@@ -63,6 +64,10 @@ namespace embDB
 		ZOrderPoint2DU16(uint16 nX, uint16 nY) : m_nZValue(0)
 		{
 			setZOrder(nX, nY);
+		}
+		ZOrderPoint2DU16(const TPoint& point) 
+		{
+			setZOrder(point.m_x, point.m_y);
 		}
 		void setZOrder(uint16 nXPos, uint16 nYPos)
 		{
@@ -124,6 +129,7 @@ namespace embDB
 		}
 				
 		void getXY(uint16& x,  uint16& y) const;
+		void getXY(TPoint& point) const;
 		uint32 m_nZValue;
 	};
 	//typename ZOrderPoint2D<uint16> PointZOrderU16;
@@ -146,6 +152,7 @@ namespace embDB
 		typedef int32  TPointTypei;
 		typedef uint32 TPointType;
 		typedef uint64 ZValueType;
+		typedef CommonLib::TPoint2D<uint32> TPoint;
 		static const uint16 SizeInByte = 8;
 		ZOrderPoint2DU32() : m_nZValue(0)
 		{}
@@ -154,6 +161,10 @@ namespace embDB
 		ZOrderPoint2DU32(uint32 nX, uint32 nY) : m_nZValue(0)
 		{
 			setZOrder(nX, nY);
+		}
+		ZOrderPoint2DU32(const TPoint& point)
+		{
+			setZOrder(point.m_x, point.m_y);
 		}
 		void setZOrder(uint32 nXPos, uint32 nYPos)
 		{
@@ -164,7 +175,7 @@ namespace embDB
 			return uint64(m_nZValue >> (idx & 0x3f));
 		}
 		void getXY(uint32& x,  uint32& y) const;
-		
+		void getXY(TPoint& point) const;
 		void setLowBits(int idx)
 		{
 			uint64 bitMask = 0xAAAAAAAAAAAAAAAA >> (63 - idx);
@@ -229,6 +240,7 @@ namespace embDB
 	{
 		typedef uint64 TPointType;
 		typedef int64  TPointTypei;
+		typedef CommonLib::TPoint2D<uint64> TPoint;
 		static const uint16 SizeInByte = 16;
 		ZOrderPoint2DU64()
 		{
@@ -240,6 +252,10 @@ namespace embDB
 			//m_nZValue[0] = nZorderMax;
 			//m_nZValue[1] = nZorderMin;
 			setZOrder(nXPos, nYPos);
+		}
+		ZOrderPoint2DU64(const TPoint& point)
+		{
+			setZOrder(point.m_x, point.m_y);
 		}
 		void setZOrder(uint64 nXPos, uint64 nYPos)
 		{
@@ -253,7 +269,7 @@ namespace embDB
 			SetZOrderInt32(m_nZValue[0], (uint32)nXmin, (uint32)nYmin);
 		}
 		void getXY(uint64& x, uint64& y) const;
-		
+		void getXY(TPoint& point) const;
 		uint64 m_nZValue[2];
 
 		uint64 getBit (int idx) const

@@ -124,20 +124,18 @@ public:
 	IDBIndexHandler(){}
 	~IDBIndexHandler(){}
 	virtual sFieldInfo* getFieldInfoType() = 0;
-	virtual void setFieldInfoType(sFieldInfo& fi) = 0;
+	virtual void setFieldInfoType(sFieldInfo* fi) = 0;
 	virtual bool save(int64 nAddr, IDBTransactions *pTran) = 0;
 	virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
 	virtual IndexFiled* getIndex(IDBTransactions* pTransactions, IDBStorage *pStorage) = 0;
-	virtual bool release(IndexFiled* pField) = 0;
+	virtual bool release(IndexFiled* pInxex) = 0;
 
 	virtual bool lock() =0;
 	virtual bool unlock() =0;
 	virtual bool isCanBeRemoving() = 0;
 
 };
-
-
-
+ 
 
 class CIndexHandlerBase : public IDBIndexHandler
 {
@@ -198,9 +196,9 @@ public:
 	{
 		return &m_fi;
 	}
-	virtual void setFieldInfoType(sFieldInfo& fi)
+	virtual void setFieldInfoType(sFieldInfo* fi)
 	{
-		m_fi = fi;
+		m_fi = *fi;
 	}
 	bool isCanBeRemoving()
 	{

@@ -97,27 +97,27 @@ namespace embDB
 	enum SpatialQueryMode
 	{
 		sqmIntersect = 0,
-		sqmqOver,
+		sqmOver,
 		sqmInside,
 		sqmByFeature
 	};
 
-	enum eSpatialCoordinatesType
+	enum eSpatialCoordinatesUnits
 	{
 
-		sctUnknown         = 0,
-		sctInches          = 1,
-		sctPoints          = 2,
-		sctFeet            = 3,
-		sctYards           = 4,
-		sctMiles           = 5,
-		sctNauticalMiles   = 6,
-		sctMillimeters     = 7,
-		sctCentimeters     = 8,
-		sctMeters          = 9,
-		sctKilometers      = 10,
-		sctDecimalDegrees  = 11,
-		sctDecimeters      = 12
+		scuUnknown         = 0,
+		scuInches          = 1,
+		scuPoints          = 2,
+		scuFeet            = 3,
+		scuYards           = 4,
+		scuMiles           = 5,
+		scuNauticalMiles   = 6,
+		scuMillimeters     = 7,
+		scuCentimeters     = 8,
+		scuMeters          = 9,
+		scuKilometers      = 10,
+		scuDecimalDegrees  = 11,
+		scuDecimeters      = 12
 	};
 
 	enum eShapeType
@@ -156,7 +156,7 @@ namespace embDB
 	//http://gis-lab.info/qa/dms2dd.html#sel=
 
 	class IField
-	{
+       	{
 		public:
 			IField(){}
 			virtual ~IField(){}

@@ -100,6 +100,10 @@ namespace embDB
 	{
 
 	}
+	ZOrderRect2DU16::ZOrderRect2DU16(const TRect& rect)
+	{
+		setZOrder(rect.m_minX, rect.m_minY, rect.m_maxX, rect.m_maxY);
+	}
 	ZOrderRect2DU16::ZOrderRect2DU16(uint16 xMin, uint16 yMin, uint16 xMax, uint16 yMax)
 	{
 		setZOrder(xMin, yMin, xMax, yMax);
@@ -122,7 +126,10 @@ namespace embDB
 		yMax = getFromZu16((m_nZValue >> 3 ) & 0x1111111111111111);*/
 		getXYFromZValue16(xMin, yMin, xMax, yMax, m_nZValue);
 	}
-
+	void ZOrderRect2DU16::getXY(TRect& rect) const
+	{
+		getXY(rect.m_minX, rect.m_minY, rect.m_maxX, rect.m_maxY);
+	}
 
 	void ZOrderRect2DU16::setLowBits(int idx)
 	{					  
@@ -148,6 +155,10 @@ namespace embDB
 		 m_nZValue[0] = 0;
 		 m_nZValue[1] = 0;
 	}
+	ZOrderRect2DU32::ZOrderRect2DU32(const TRect& rect)
+	{
+		setZOrder(rect.m_minX, rect.m_minY, rect.m_maxX, rect.m_maxY);
+	}
 	ZOrderRect2DU32::ZOrderRect2DU32(uint32 xMin, uint32 yMin, uint32 xMax, uint32 yMax)
 	{
 		setZOrder(xMin, yMin, xMax, yMax);
@@ -166,7 +177,10 @@ namespace embDB
 	{
 		getXYFromZValue32(xMin, yMin, xMax, yMax, m_nZValue[0], m_nZValue[1]);
 	}
-
+	void ZOrderRect2DU32::getXY(TRect& rect) const
+	{
+		getXY(rect.m_minX, rect.m_minY, rect.m_maxX, rect.m_maxY);
+	}
 	void ZOrderRect2DU32::setLowBits(int idx)
 	{
 
@@ -220,6 +234,10 @@ namespace embDB
 	{
 		m_nZValue[0] = m_nZValue[1] = m_nZValue[2] = m_nZValue[3] = 0;
 	}
+	ZOrderRect2DU64::ZOrderRect2DU64(const TRect& rect)
+	{
+		setZOrder(rect.m_minX, rect.m_minY, rect.m_maxX, rect.m_maxY);
+	}
 	ZOrderRect2DU64::ZOrderRect2DU64(uint64 xMin, uint64 yMin, uint64 xMax, uint64 yMax)
 	{
 		setZOrder(xMin, yMin, xMax, yMax);
@@ -261,6 +279,11 @@ namespace embDB
 		yMin = (uint64)yLowMin | ((uint64)yHighMin << 32);
 		xMax = (uint64)xLowMax | ((uint64)xHighMax << 32);
 		yMax = (uint64)yLowMax | ((uint64)yHighMax << 32);
+	}
+
+	void ZOrderRect2DU64::getXY(TRect& rect) const
+	{
+		getXY(rect.m_minX, rect.m_minY, rect.m_maxX, rect.m_maxY);
 	}
 	uint64 ZOrderRect2DU64::getBit (int idx)
 	{

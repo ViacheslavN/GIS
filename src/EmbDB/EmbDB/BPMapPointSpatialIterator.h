@@ -259,6 +259,37 @@ namespace embDB
 			m_pCurNode->setFlags(CHANGE_NODE, true);
 		}
 
+		int64 addr() const
+		{
+			if(isNull())
+				return - 1;
+			return m_pCurNode->addr();
+		}
+		int32 pos() const
+		{
+			return m_nIndex;
+		}
+		bool setAddr(int64 nAddr, int32  nPos)
+		{
+
+			if(nAddr == -1)
+			{
+				m_pCurLeafNode = NULL;
+				m_pCurNode = NULL;
+				return true;
+			}
+
+			TBTreeNodePtr pNode = m_pTree->getNode(nAddr); 
+			if(!pNode.get())
+			{
+				//to do log error
+				return false;
+			}
+			m_pCurNode = pNode;
+			m_pCurLeafNode = &m_pCurNode->m_LeafNode;
+			m_nIndex = nPos;
+			return true;
+		}
 	
 
 	public:

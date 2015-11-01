@@ -2,7 +2,7 @@
 #include "exportFromShape.h"
 #include "CommonLibrary/File.h"
 #include "CommonLibrary/BoundaryBox.h"
-
+#include "../GisEngine/GisGeometry/SpatialReferenceProj4.h"
 struct SHPGuard
 {
 	ShapeLib::SHPHandle file;
@@ -38,6 +38,140 @@ struct DBFGuard
 		file = NULL;
 	}
 };
+CommonLib::eShapeType SHPTypeToGeometryType(int shpType, bool* hasZ, bool* hasM)
+{
+	CommonLib::eShapeType geomType = CommonLib::shape_type_null;
+
+	switch((size_t)shpType)
+	{
+	case SHPT_NULL:
+		geomType = CommonLib::shape_type_null;
+		break;
+	case SHPT_POINT:
+	case SHPT_POINTZ:
+	case SHPT_POINTM:
+		geomType = CommonLib::shape_type_point;
+		break;
+	case SHPT_ARC:
+	case SHPT_ARCZ:
+	case SHPT_ARCM:
+		geomType = CommonLib::shape_type_polyline;
+		break;
+	case SHPT_POLYGON:
+	case SHPT_POLYGONZ:
+	case SHPT_POLYGONM:
+		geomType = CommonLib::shape_type_polygon;
+		break;
+	case SHPT_MULTIPOINT:
+	case SHPT_MULTIPOINTZ:
+	case SHPT_MULTIPOINTM:
+		geomType = CommonLib::shape_type_multipoint;
+		break;
+	case SHPT_MULTIPATCH:
+		geomType = CommonLib::shape_type_multipatch;
+		break;
+	}
+
+	if(hasZ)
+	{ 
+		if(shpType == SHPT_POINTZ || shpType == SHPT_ARCZ || 
+			shpType == SHPT_POLYGONZ || shpType == SHPT_MULTIPOINTZ || 
+			shpType == SHPT_MULTIPOINTZ)
+			*hasZ = true;
+		else
+			*hasZ = false;
+	}
+
+	if(hasM)
+	{ 
+		if(shpType == SHPT_POINTM || shpType == SHPT_ARCM || 
+			shpType == SHPT_POLYGONM || shpType == SHPT_MULTIPOINTM)
+			*hasM = true;
+		else
+			*hasM = false;
+	}
+
+	return geomType;
+}
+
+
+        
+	         
+	         
+	           
+ 
+
+
+
+	        
+
+	        
+	          
+	         
+	         
+	 
+	   
+	   
+	        
+	    
+	
+	    
+          
+	          
+	  
+	    
+	    
+	         
+	     
+	 
+	    
+embDB::eSpatialCoordinatesUnits GetGeometryUnits(GisEngine::GisCommon::Units units)
+{
+	switch(units)
+	{
+		case GisEngine::GisCommon::UnitsUnknown:
+			return embDB::scuUnknown;
+			break;
+		case GisEngine::GisCommon::UnitsInches:
+			return embDB::scuInches;
+			break;
+		case GisEngine::GisCommon::UnitsPoints:
+			return embDB::scuPoints;
+			break;
+		case GisEngine::GisCommon::UnitsFeet:
+			return embDB::scuFeet;
+			break;
+		case GisEngine::GisCommon::UnitsYards:
+			return embDB::scuYards;
+			break;
+		case GisEngine::GisCommon::UnitsMiles:
+			return embDB::scuMiles;
+			break;
+		case GisEngine::GisCommon::UnitsNauticalMiles:
+			return embDB::scuNauticalMiles;
+			break;
+		case GisEngine::GisCommon::UnitsMillimeters:
+			return embDB::scuMillimeters;
+			break;
+		case GisEngine::GisCommon::UnitsCentimeters:
+			return embDB::scuCentimeters;
+			break;
+		case GisEngine::GisCommon::UnitsMeters:
+			return embDB::scuMeters;
+			break;
+		case GisEngine::GisCommon::UnitsKilometers:
+			return embDB::scuKilometers;
+			break;
+		case GisEngine::GisCommon::UnitsDecimalDegrees:
+			return embDB::scuDecimalDegrees;
+			break;
+		case GisEngine::GisCommon::UnitsDecimeters:
+			return embDB::scuDecimeters;
+			break;
+		}
+
+	return embDB::scuUnknown;
+}
 
 
 void CreateDBFromShape(const wchar_t* pszShapeFileName)
@@ -73,7 +207,7 @@ void CreateDBFromShape(const wchar_t* pszShapeFileName)
 		return;
 	embDB::CSchema* pSchema = db.getSchema();
 	pSchema->addTable(sFileName, L"");
-	embDB::ITable *pTable = pSchema->getTable(sFileName);
+	embDB::IDBTable *pTable = pSchema->getTable(sFileName);
 
 	int objectCount;
 	int shapeType;
@@ -94,8 +228,19 @@ void CreateDBFromShape(const wchar_t* pszShapeFileName)
 		bounds.mMin = minBounds[3];
 		bounds.mMax = maxBounds[3];
 	}
+ 
+	GisEngine::GisCommon::Units units;
+	GisEngine::GisGeometry::CSpatialReferenceProj4* pSpatialReference = new GisEngine::GisGeometry::CSpatialReferenceProj4(prjFileName, GisEngine::GisGeometry::eSPRefTypePRJFilePath);
+	if(!pSpatialReference->IsValid())
+	{
+		pSpatialReference = new GisEngine::GisGeometry::CSpatialReferenceProj4(bounds);
+	}
+	if(pSpatialReference->IsValid())
+	{
+		units = pSpatialReference->GetUnits();
+	}
 
-
+	pTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), true );
 
 	int fieldCount = ShapeLib::DBFGetFieldCount(dbf.file);
 	for(int fieldNum = 0; fieldNum < fieldCount; ++fieldNum)

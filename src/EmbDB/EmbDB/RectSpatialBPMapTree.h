@@ -50,14 +50,34 @@ namespace embDB
 			return TBase::lower_bound(key);
 		}
 
-		TSpatialIterator spatialQuery(TPointType xMin, TPointType yMin, TPointType xMax, TPointType yMax)
+		TSpatialIterator spatialQuery(TPointType xMin, TPointType yMin, TPointType xMax, TPointType yMax, SpatialQueryMode mode = sqmIntersect)
 		{
 			TRect rectQuery(xMin, yMin, xMax, yMax);
 			if(!m_Extent.isIntersection(rectQuery))
 				return TSpatialIterator((TBase*)this);
 
-			TPointKey zKeyMin(m_Extent.m_minX, m_Extent.m_minY, xMin, yMin);
-			TPointKey zKeyMax(xMax, yMax, TPointKey::coordMax, TPointKey::coordMax);
+			//TPointKey zKeyMin(m_Extent.m_minX, m_Extent.m_minY, xMin, yMin);
+			//TPointKey zKeyMax(xMax, yMax, TPointKey::coordMax, TPointKey::coordMax);
+			TPointKey zKeyMin;
+			TPointKey zKeyMax;
+			if(mode == sqmIntersect || mode == sqmByFeature)
+			{
+				zKeyMin.setZOrder(m_Extent.m_minX, m_Extent.m_minY, xMin, yMin);
+				zKeyMax.setZOrder(xMax, yMax, TPointKey::coordMax, TPointKey::coordMax);
+			}
+			else if(mode = sqmOver)
+			{
+				zKeyMin.setZOrder(m_Extent.m_minX, m_Extent.m_minY, TPointKey::coordMax, TPointKey::coordMax);
+				zKeyMax.setZOrder(xMin, yMin, xMax, yMax);
+			}	
+			else if(mode = sqmInside)
+			{
+				zKeyMin.setZOrder( xMin, yMin, xMax, yMax);
+				zKeyMax.setZOrder(TPointKey::coordMax,TPointKey::coordMax,  m_Extent.m_minX, m_Extent.m_minY);
+			}
+
+
+
 			TBase::iterator it = TBase::lower_bound(zKeyMin);
 			return TSpatialIterator(this, it.m_pCurNode.get(), it.m_nIndex, zKeyMin, zKeyMax, rectQuery);
 
@@ -69,11 +89,11 @@ namespace embDB
 			*/
 		}
 
-		bool insert(const TRect& rect, const TValue& val)
+		bool insert(const TRect& rect, const TValue& val, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
 		{
-			return insert(rect.m_minX, rect.m_minY, rect.m_maxX, rect.m_maxY, val);
+			return insert(rect.m_minX, rect.m_minY, rect.m_maxX, rect.m_maxY, val, pFromIterator, pRetItertor);
 		}
-		bool insert(TPointType xMin, TPointType yMin, TPointType xMax, TPointType yMax, const TValue& val)
+		bool insert(TPointType xMin, TPointType yMin, TPointType xMax, TPointType yMax, const TValue& val, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
 		{
 			TRect rect(xMin, yMin, xMax, yMax);
 			if(!rect.isInRect(m_Extent))
@@ -81,7 +101,7 @@ namespace embDB
 
 
 			TPointKey key(xMin /*+ m_shiftX*/, yMin /*+ m_shiftY*/, xMax /*+ m_shiftX*/, yMax/* + m_shiftY*/);
-			return TSubBase::insert(key, val); 
+			return TSubBase::insert(key, val,  pFromIterator, pRetItertor ); 
 		}
 
 

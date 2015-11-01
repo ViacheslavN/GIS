@@ -573,7 +573,8 @@
     <ClInclude Include="ShapeCompressorParams.h" />
     <ClInclude Include="ShapeField.h" />
     <ClInclude Include="ShapeTree.h" />
-    <ClInclude Include="SpatialIndex.h" />
+    <ClInclude Include="SpatialIndexBase.h" />
+    <ClInclude Include="SpatialIndexHandler.h" />
     <ClInclude Include="Statement.h" />
     <ClInclude Include="ReadStreamPage.h" />
     <ClInclude Include="StreamPageIngo.h" />

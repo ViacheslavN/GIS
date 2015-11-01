@@ -93,8 +93,17 @@ namespace embDB
 		void SetOffsetY(double dOffsetY)   { m_dOffsetY = dOffsetY; } 
 		void SetScaleX(double dScaleX)   { m_dScaleX = dScaleX; } 
 		void SetScaleY(double dScaleY)   { m_dScaleY = dScaleY; } 
-		void SetCoordTypes(embDB::eDataTypes CoordTypes)   { m_CoordTypes = CoordTypes; } 
-		void SetShapeTypes(CommonLib::eShapeType ShapeType)   { m_ShapeType = ShapeType; } 
+		void SetCoordType(embDB::eDataTypes CoordTypes)   { m_CoordTypes = CoordTypes; } 
+		void SetShapeType(CommonLib::eShapeType ShapeType)   { m_ShapeType = ShapeType; } 
+		void SetParams(const sSpatialFieldInfo& spInfo)
+		{
+			SetOffsetX(spInfo.m_dOffsetX);
+			SetOffsetY(spInfo.m_dOffsetY);
+			SetScaleX(spInfo.m_dScaleX);
+			SetScaleY(spInfo.m_dScaleY);
+			SetCoordType((embDB::eDataTypes)spInfo.m_nFieldType);
+			SetShapeType(spInfo.m_ShapeType);
+		}
 
 
 
@@ -102,8 +111,8 @@ namespace embDB
 		double GetOffsetY()  const { return m_dOffsetY;} 
 		double GetScaleX()  const { return m_dScaleX; } 
 		double GetScaleY() const  { return m_dScaleY;} 
-		embDB::eDataTypes GetCoordTypes() const  {return  m_CoordTypes;} 
-		CommonLib::eShapeType GetShapeTypes() const  { return m_ShapeType;} 
+		embDB::eDataTypes GetCoordType() const  {return  m_CoordTypes;} 
+		CommonLib::eShapeType GetShapeType() const  { return m_ShapeType;} 
 
 		CStreamPageInfo* GetStreamInfo(IDBTransactions *pTran)
 		{

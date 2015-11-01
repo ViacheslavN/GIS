@@ -46,11 +46,11 @@ namespace embDB
 		typedef TBPTSpatialPointIteratorMap<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess,
 			 TInnerNode, TLeafNode, TBTreeNode> TSpatialIterator;
 		
-		bool insert(const TPoint& point, const TValue& val)
+		bool insert(const TPoint& point, const TValue& val, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
 		{
-			return insert(point.m_x, point.m_y, val);
+			return insert(point.m_x, point.m_y, val, pFromIterator, pRetItertor);
 		}
-		bool insert(TPointType x, TPointType y, const TValue& val)
+		bool insert(TPointType x, TPointType y, const TValue& val, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
 		{
 			if(x < m_Extent.m_minX || x > m_Extent.m_maxX)
 				return false;
@@ -60,6 +60,12 @@ namespace embDB
 			TPointKey key(x/* + m_shiftX*/, y/* + m_shiftY*/);
 			return TBase::insert(key, val); 
 		}
+
+		bool insert(const TPointKey& key, const TValue& val, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
+		{
+			return TBase::insert(key, val, pFromIterator, pRetItertor); 
+		}
+
 		void setExtent(TRect& extent)
 		{
 			m_Extent = extent;
@@ -79,7 +85,7 @@ namespace embDB
 			return TBase::lower_bound(key);
 		}
 
-		TSpatialIterator spatialQuery(TPointType xMin, TPointType yMin, TPointType xMax, TPointType yMax)
+		TSpatialIterator spatialQuery(TPointType xMin, TPointType yMin, TPointType xMax, TPointType yMax, SpatialQueryMode mode = sqmIntersect)
 		{
 			TRect rectQuery(xMin, yMin, xMax, yMax);
 			if(!m_Extent.isIntersection(rectQuery))

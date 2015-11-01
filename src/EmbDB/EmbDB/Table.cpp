@@ -15,6 +15,7 @@
 #include "StringField.h"
 #include "BlobField.h"
 #include "ShapeField.h"
+#include "SpatialIndexHandler.h"
 #include "CreateFields.h"
 
 namespace embDB
@@ -68,15 +69,15 @@ namespace embDB
 
 	}
 
-	bool CTable::addField(sFieldInfo& fi, IDBTransactions *pTran, bool bNew)
+	bool CTable::addField(sFieldInfo* fi, IDBTransactions *pTran, bool bNew)
 	{
-		TFieldByName::iterator it = m_FieldByName.find(fi.m_sFieldName);
+		TFieldByName::iterator it = m_FieldByName.find(fi->m_sFieldName);
 		if(it != m_FieldByName.end())
 			return false;
 
 		bool bRet = false;
 
-		switch(fi.m_nFieldDataType)
+		switch(fi->m_nFieldDataType)
 		{
 		case dteSimple:
 		case dteIsNotEmpty:
@@ -88,10 +89,10 @@ namespace embDB
 
 
 	}
-	bool CTable::addIndex(sFieldInfo& fi, IDBTransactions *pTran, bool bNew)
+	bool CTable::addIndex(sFieldInfo* fi, IDBTransactions *pTran, bool bNew)
 	{
 		bool bRet = false;
-		switch(fi.m_nIndexType)
+		switch(fi->m_nIndexType)
 		{
 		case itUnique:
 		case itMultiRegular:
@@ -108,10 +109,7 @@ namespace embDB
 
 		return bRet;
 	}
-	bool CTable::addSpatialField(sFieldInfo& fi, IDBTransactions *pTran, bool bNew)
-	{
-		return createSpatialIndexField(fi, pTran, bNew);
-	}
+	 
 	bool CTable::load()
 	{
 		CommonLib::FxMemoryReadStream stream;
@@ -284,7 +282,7 @@ namespace embDB
 		if(!fi.Read(&stream))
 			return false;
 		fi.m_nFIPage = nAddr;
-		return addField(fi, pTran, false);
+		return addField(&fi, pTran, false);
 	}
 
 	bool CTable::ReadIndex(int64 nAddr, IDBTransactions *pTran)
@@ -314,7 +312,7 @@ namespace embDB
 		if(!fi.Read(&stream))
 			return false;
 		fi.m_nFIPage = nAddr;
-		return addIndex(fi, pTran, false);
+		return addIndex(&fi, pTran, false);
 	}
 	bool CTable::readHeader(CommonLib::FxMemoryReadStream& stream)
 	{
@@ -327,7 +325,7 @@ namespace embDB
 		return true;
 
 	}
-	bool CTable::createValueField(sFieldInfo& fi, IDBTransactions *pTran, bool bNew)
+	bool CTable::createValueField(sFieldInfo* fi, IDBTransactions *pTran, bool bNew)
 	{
 		
 		bool bRet = true;
@@ -335,7 +333,7 @@ namespace embDB
 		IDBFieldHandler* pField =  CreateValueField(fi, m_pDB, pTran);
 		if(!pField)
 			return false;
-		if(fi.m_nFieldPage == -1)
+		if(fi->m_nFieldPage == -1)
 		{
 			assert(pTran);
 			FilePagePtr pFieldInfoPage = pTran->getNewPage();
@@ -344,57 +342,57 @@ namespace embDB
 			FilePagePtr pFieldPage = pTran->getNewPage();
 			if(!pFieldPage.get())
 				return false;
-			fi.m_nFieldPage = pFieldPage->getAddr();
-			fi.m_nFIPage = pFieldInfoPage->getAddr();
+			fi->m_nFieldPage = pFieldPage->getAddr();
+			fi->m_nFIPage = pFieldInfoPage->getAddr();
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attach(pFieldInfoPage->getRowData(), pFieldInfoPage->getPageSize());
 			//stream.write((int64)DB_FIELD_INFO_SYMBOL);
 			sFilePageHeader header (stream, TABLE_PAGE, TABLE_FIELD_PAGE);
-			fi.Write(&stream);
+			fi->Write(&stream);
 			pFieldInfoPage->setFlag(eFP_CHANGE, true);
 			header.writeCRC32(stream);
 			pTran->saveFilePage(pFieldInfoPage);
 			pField->setFieldInfoType(fi);
 			bRet = pField->save(pFieldPage->getAddr(), pTran);
-			if(!m_nFieldsAddr.push(fi.m_nFIPage, pTran))
+			if(!m_nFieldsAddr.push(fi->m_nFIPage, pTran))
 				return false;
 		}
 		else
 		{
 			pField->setFieldInfoType(fi);
-			bRet = pField->load(fi.m_nFieldPage, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
+			bRet = pField->load(fi->m_nFieldPage, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
 			
 			if(!bRet)
 				delete pField;
 		}
-		m_FieldByName.insert(std::make_pair(fi.m_sFieldName, pField));
-		m_FieldByID.insert(std::make_pair(fi.m_nFIPage, pField));
+		m_FieldByName.insert(std::make_pair(fi->m_sFieldName, pField));
+		m_FieldByID.insert(std::make_pair(fi->m_nFIPage, pField));
 
-		if(bNew && fi.m_nFieldDataType == dteIsUNIQUE)
+		if(bNew && fi->m_nFieldDataType == dteIsUNIQUE)
 		{
 		 
 			embDB::SIndexProp indexProp;
 			indexProp.indexType = embDB::itUnique;
-			addIndex(fi.m_sFieldName, indexProp, false);
+			addIndex(fi->m_sFieldName, indexProp, false);
 		}
 
 		return true;
 	}
-	bool CTable::createIndexField(sFieldInfo& fi, IDBTransactions *pTran, bool bNew)
+	bool CTable::createIndexField(sFieldInfo* fi, IDBTransactions *pTran, bool bNew)
 	{
 		IDBIndexHandler* pIndex = NULL;
 		bool bRet = true;
 		int64 nFieldAddr = -1;
  
-		if(fi.m_nIndexType == itUnique)
+		if(fi->m_nIndexType == itUnique)
 			pIndex = CreateUniqueIndex(fi, m_pDB);
-		else if(fi.m_nIndexType == itMultiRegular)
+		else if(fi->m_nIndexType == itMultiRegular)
 			pIndex = CreateMultiIndex(fi, m_pDB);
 
 		if(!pIndex)
 			return false;
 		//return pField != NULL;
-		if(fi.m_nFieldPage == -1)
+		if(fi->m_nFieldPage == -1)
 		{
 			assert(pTran);
 			FilePagePtr pFieldInfoPage = pTran->getNewPage();
@@ -403,32 +401,32 @@ namespace embDB
 			FilePagePtr pFieldPage = pTran->getNewPage();
 			if(!pFieldPage.get())
 				return false;
-			fi.m_nFieldPage = pFieldPage->getAddr();
-			fi.m_nFIPage = pFieldInfoPage->getAddr();
+			fi->m_nFieldPage = pFieldPage->getAddr();
+			fi->m_nFIPage = pFieldInfoPage->getAddr();
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attach(pFieldInfoPage->getRowData(), pFieldInfoPage->getPageSize());
 			sFilePageHeader header (stream, TABLE_PAGE, TABLE_INDEX_PAGE);
-			fi.Write(&stream);
+			fi->Write(&stream);
 			pFieldInfoPage->setFlag(eFP_CHANGE, true);
 			header.writeCRC32(stream);
 			pTran->saveFilePage(pFieldInfoPage);
 			pIndex->setFieldInfoType(fi);
 			bRet = pIndex->save(pFieldPage->getAddr(), pTran);
-			if(!m_nIndexAddr.push(fi.m_nFIPage, pTran))
+			if(!m_nIndexAddr.push(fi->m_nFIPage, pTran))
 				return false;
 		}
 		else
 		{
 			pIndex->setFieldInfoType(fi);
-			bRet = pIndex->load(fi.m_nFieldPage, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
+			bRet = pIndex->load(fi->m_nFieldPage, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
 
 			if(!bRet)
 				delete pIndex;
 		}
-		m_IndexByName.insert(std::make_pair(fi.m_sFieldName, pIndex));
-		m_IndexByID.insert(std::make_pair(fi.m_nFIPage, pIndex));
+		m_IndexByName.insert(std::make_pair(fi->m_sFieldName, pIndex));
+		m_IndexByID.insert(std::make_pair(fi->m_nFIPage, pIndex));
 
-		TFieldByName::iterator it = m_FieldByName.find(fi.m_sFieldName);
+		TFieldByName::iterator it = m_FieldByName.find(fi->m_sFieldName);
 		if(it != m_FieldByName.end())
 			it->second->setIndexHandler(pIndex);
 		else
@@ -436,41 +434,50 @@ namespace embDB
 
 		return true;
 	}
-	bool  CTable::createSpatialIndexField(sFieldInfo& fi, IDBTransactions *pTran, bool bNew)
+	bool  CTable::createSpatialIndexField(sFieldInfo* fi, IDBTransactions *pTran, bool bNew)
 	{
+		TFieldByName::iterator it = m_FieldByName.find(fi->m_sFieldName);
+		if(it == m_FieldByName.end())
+			return false;
 
-		IDBFieldHandler *pSpatialField = NULL;
+		IDBFieldHandler *pFieldHandler = it->second;
+		sFieldInfo* pFieldInfo = pFieldHandler->getFieldInfoType();
+		sSpatialFieldInfo *pSPFi = dynamic_cast<sSpatialFieldInfo *>(pFieldInfo);
+		if(!pSPFi)
+			return false;
 
-		switch(fi.m_nFieldDataType)
+		IDBIndexHandler *pSpatialIndex = NULL;
+
+		switch(pSPFi->m_nFieldDataType)
 		{
 			case dtPoint16:
-				pSpatialField = new TPoint16Field(m_pDB->getBTreeAlloc());
+				pSpatialIndex = new THandlerIndexPoint16(m_pDB->getBTreeAlloc());
 				break;
 			case dtPoint32:
-				pSpatialField = new TPoint32Field(m_pDB->getBTreeAlloc());
+				pSpatialIndex = new THandlerIndexPoint32(m_pDB->getBTreeAlloc());
 				break;
 			case dtPoint64:
-				pSpatialField = new TPoint64Field(m_pDB->getBTreeAlloc());
+				pSpatialIndex = new THandlerIndexPoint64(m_pDB->getBTreeAlloc());
 				break;
 			case dtShape16:
 			case dtRect16:
-				pSpatialField = new TRect16Field(m_pDB->getBTreeAlloc());
-					break;
+				pSpatialIndex = new THandlerIndexRect16(m_pDB->getBTreeAlloc());
+				break;
 			case dtShape32:
 			case dtRect32:
-					pSpatialField = new TRect32Field(m_pDB->getBTreeAlloc());
-					break;
+				pSpatialIndex = new THandlerIndexRect32(m_pDB->getBTreeAlloc());
+				break;
 			case dtShape64:
 			case dtRect64:
-				pSpatialField = new TRect64Field(m_pDB->getBTreeAlloc());
+				pSpatialIndex = new THandlerIndexRect64(m_pDB->getBTreeAlloc());
 					break;
 		
 		}
 
-		if(!pSpatialField)
+		if(!pSpatialIndex)
 			return false;
 
-		if(fi.m_nFieldPage == -1)
+		if(fi->m_nFieldPage == -1)
 		{
 			assert(pTran);
 			FilePagePtr pFieldInfoPage = pTran->getNewPage();
@@ -479,37 +486,37 @@ namespace embDB
 			FilePagePtr pFieldPage = pTran->getNewPage();
 			if(!pFieldPage.get())
 				return false;
-			fi.m_nFieldPage = pFieldPage->getAddr();
-			fi.m_nFIPage = pFieldInfoPage->getAddr();
+			fi->m_nFieldPage = pFieldPage->getAddr();
+			fi->m_nFIPage = pFieldInfoPage->getAddr();
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attach(pFieldInfoPage->getRowData(), pFieldInfoPage->getPageSize());
 			//stream.write((int64)DB_FIELD_INFO_SYMBOL);
 			sFilePageHeader header (stream, TABLE_PAGE, TABLE_FIELD_PAGE);
-			fi.Write(&stream);
+			fi->Write(&stream);
 			pFieldInfoPage->setFlag(eFP_CHANGE, true);
 			header.writeCRC32(stream);
 			pTran->saveFilePage(pFieldInfoPage);
-			pSpatialField->setFieldInfoType(fi);
-			pSpatialField->save(pFieldPage->getAddr(), pTran);
-			if(!m_nFieldsAddr.push(fi.m_nFIPage, pTran))
+			pSpatialIndex->setFieldInfoType(fi);
+			pSpatialIndex->save(pFieldPage->getAddr(), pTran);
+			if(!m_nFieldsAddr.push(fi->m_nFIPage, pTran))
 				return false;
 		}
 		else
 		{
-			pSpatialField->setFieldInfoType(fi);
-			bool bRet = pSpatialField->load(fi.m_nFieldPage, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
+			pSpatialIndex->setFieldInfoType(fi);
+			bool bRet = pSpatialIndex->load(fi->m_nFieldPage, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
 
 			if(!bRet)
-				delete pSpatialField;
+				delete pSpatialIndex;
 		}
-		m_FieldByName.insert(std::make_pair(fi.m_sFieldName, pSpatialField));
-		m_FieldByID.insert(std::make_pair(fi.m_nFIPage, pSpatialField));
+		m_IndexByName.insert(std::make_pair(fi->m_sFieldName, pSpatialIndex));
+		m_IndexByID.insert(std::make_pair(fi->m_nFIPage, pSpatialIndex));
 
-	/*	TFieldByName::iterator it = m_FieldByName.find(fi.m_sFieldName);
+		TFieldByName::iterator it = m_FieldByName.find(fi->m_sFieldName);
 		if(it != m_FieldByName.end())
-			it->second->setIndexHandler(pIndex);
+			it->second->setIndexHandler(pSpatialIndex);
 		else
-			assert(false);*/
+			assert(false);
 
 		return true;
 	 
@@ -659,13 +666,15 @@ namespace embDB
 		IDBTransactions* pTran =  (IDBTransactions*)m_pDB->startTransaction(eTT_DDL);
 		pTran->begin();
 
-		if(!addField(fi, pTran, true))
+		if(!addField(&fi, pTran, true))
 		{	
 			pTran->rollback();
+			m_pDB->closeTransaction(pTran);
 			return NULL;
 		}
 
 		pTran->commit();
+		m_pDB->closeTransaction(pTran);
 		return getField(sFP.sFieldName);
 	}
 	bool CTable::deleteField(IField* pField)
@@ -702,7 +711,7 @@ namespace embDB
 		indexFi.m_sFieldName = filedFi.m_sFieldName;
 		indexFi.m_sFieldAlias = filedFi.m_sFieldAlias;
 
-		if(!addIndex(indexFi, pTran, true))
+		if(!addIndex(&indexFi, pTran, true))
 		{
 			pTran->rollback();
 			return false;
@@ -748,4 +757,122 @@ namespace embDB
 		return true;
 	}
 
+	eDataTypes CTable::GetType(uint64 nMaxVal, bool isPoint)
+	{
+		if(nMaxVal < 0xFFFF)
+			return  isPoint ? dtPoint16 : dtRect16;
+		else if(nMaxVal < 0xFFFFFFFF)
+			return  isPoint ? dtPoint32 : dtRect32;
+
+		return  isPoint ? dtPoint64 : dtRect64;
+	}
+
+	IField* CTable::createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias,  CommonLib::eShapeType shapeType,
+		const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex)
+	{
+
+		TFieldByName::iterator it = m_FieldByName.find(pszFieldName);
+		if(it != m_FieldByName.end())
+			return NULL;
+
+		if(shapeType == CommonLib::shape_type_null || extent.type == CommonLib::bbox_type_invalid)
+			return NULL; //TO DO Log
+
+		double dOffsetX = 0., dOffsetY = 0., dScaleX = 1., dScaleY = 1.;
+		if(extent.xMin < 0)
+			dOffsetX = fabs(extent.xMin);
+		else
+			dOffsetX = -1 *extent.xMin;
+	
+		if(extent.yMin < 0)
+			dOffsetY = fabs(extent.yMin);
+		else
+			dOffsetY = -1 *extent.yMin;
+
+		
+		eDataTypes DataType = dtUnknown; 			 
+
+		bool isPoint = false;
+		if(shapeType == CommonLib::shape_type_point || shapeType == CommonLib::shape_type_point_m || shapeType == CommonLib::shape_type_point_zm /* || 
+			shapeType == CommonLib::shape_type_multipoint || shapeType == CommonLib::shape_type_multipoint_m || shapeType == CommonLib::shape_type_multipoint_zm || shapeType == CommonLib::shape_type_multipoint_z*/)
+		{
+			isPoint = true;
+		}
+		double dMaxX = fabs(extent.xMax + dOffsetX);
+		double dMaxY = fabs(extent.yMax + dOffsetY);
+		double dMaxCoord = max(dMaxX, dMaxY);
+		switch(CoordUnits)
+		{
+			case scuDecimalDegrees:
+				dScaleX = 0.0000001;
+				dScaleY = 0.0000001;
+				break;
+			case scuKilometers:
+			case scuMiles:
+				dScaleX = 0.001;
+				dScaleY = 0.001;
+				break;
+			case scuMeters:
+			case scuYards:
+			case scuFeet:
+			case scuDecimeters:
+			case scuInches:
+				dScaleX = 0.01;
+				dScaleY = 0.01;
+				break;
+			case scuMillimeters:
+				dScaleX = 1;
+				dScaleY = 1;
+				break;
+			default:
+				dScaleX = 0.0001;
+				dScaleY = 0.0001;
+				break;
+		}
+		
+		int64 nMaxVal = int64(dMaxCoord/dScaleX);
+		DataType = GetType(nMaxVal, isPoint);
+	
+		sSpatialFieldInfo fi;
+		fi.m_extent = extent;
+		fi.m_bCheckCRC32 = true;
+		fi.m_ShapeType = shapeType;
+		fi.m_sFieldName = pszFieldName;
+		fi.m_sFieldAlias = pszAlias;
+		fi.m_dOffsetX = dOffsetX;
+		fi.m_dOffsetY = dOffsetY;
+		fi.m_dScaleX = dScaleX;
+		fi.m_dScaleY = dScaleY;
+		fi.m_nFieldType = DataType;
+
+
+		IDBTransactions* pTran =  (IDBTransactions*)m_pDB->startTransaction(eTT_DDL);
+		pTran->begin();
+		if(!createValueField(&fi, pTran, true))
+		{	
+			pTran->rollback();
+			m_pDB->closeTransaction(pTran);
+			return NULL;
+		}
+
+		if(bCreateIndex)
+		{
+			if(!addIndex(&fi, pTran, true))
+			{	
+				pTran->rollback();
+				m_pDB->closeTransaction(pTran);
+				return NULL;
+			}
+		}
+
+
+
+		pTran->commit();
+		m_pDB->closeTransaction(pTran);
+
+		
+		
+		return getField(fi.m_sFieldName);
+
+	}
 }
