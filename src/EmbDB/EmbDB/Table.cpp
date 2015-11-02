@@ -730,10 +730,10 @@ namespace embDB
 
 	bool CTable::BuildIndex(IDBIndexHandler* pIndexHandler, IDBFieldHandler *pFieldHandler, IDBTransaction* pTran)
 	{
-		IValueFiled *pField = pFieldHandler->getValueField(pTran, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
-		IndexFiled* pIndex =	pIndexHandler->getIndex(pTran, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
+		IValueFiledPtr pField = pFieldHandler->getValueField(pTran, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
+		IndexFiledPtr pIndex =	pIndexHandler->getIndex(pTran, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
 
-		 if(!pField || !pIndex)
+		 if(!pField.get() || !pIndex.get())
 			 return false;
 
 		IFieldIteratorPtr pFieldIterator =  pField->begin();

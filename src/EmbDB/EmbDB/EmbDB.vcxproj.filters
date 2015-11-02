@@ -792,6 +792,12 @@
     <ClInclude Include="embDBInternal.h">
       <Filter>SDK\internal</Filter>
     </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransactionBase.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

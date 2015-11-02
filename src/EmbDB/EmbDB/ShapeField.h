@@ -154,19 +154,24 @@ namespace embDB
 			return true;
 
 		}
-		virtual IValueFiled* getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
+		virtual IValueFiledPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 			TField * pField = new  TField(pTransactions, m_pAlloc);
-			pField->load(m_fi.m_nFieldPage, pTransactions->getType());
-			return pField;	
+			pField->load(m_SpatialFi.m_nFieldPage, pTransactions->getType());
+			if(m_pIndexHandler.get())
+			{
+				IndexFiledPtr pIndex = m_pIndexHandler->getIndex(pTransactions, pStorage);
+				pField->SetIndex(pIndex.get());
+			}
+			return IValueFiledPtr(pField);	
 		}
 		virtual bool release(IValueFiled* pField)
 		{
-			TField* pOIDField = (TField*)pField;
+			/*TField* pOIDField = (TField*)pField;
 
 			TField::TBTree *pBTree = pOIDField->getBTree();
 
-			delete pField;
+			delete pField;*/
 			return true;
 		}
 

@@ -160,12 +160,15 @@ namespace embDB
 			template<class TValue>
 			bool updateImpl (uint64 nOID, const TValue& value)
 			{
-	 
+				//TO DO Update  Index
 				return  m_tree.update(nOID, value);
 			}
 			virtual bool remove(uint64 nOID)
 			{
+				//TO DO Delete from Index
 				return m_tree.remove(nOID);
+
+				 
 			}
 			virtual bool remove (uint64 nOID, IFieldIterator **pRetIter) 
 			{
@@ -179,11 +182,21 @@ namespace embDB
 			}
 			virtual bool insert (uint64 nOID, CommonLib::CVariant* pVariant, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
-				return insertImpl(nOID, pVariant->Get<FType>(), pFromIter, pRetIter);
+				bool bRet = insertImpl(nOID, pVariant->Get<FType>(), pFromIter, pRetIter);
+				if(bRet && m_pIndex.get())
+				{
+					m_pIndex->insert(pVariant, nOID);
+				}
+				return bRet;
 			}
 			virtual uint64 insert (CommonLib::CVariant* pVariant, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
-				return insertImpl(pVariant->Get<FType>(), pFromIter, pRetIter);
+				uint64 nOID =  insertImpl(pVariant->Get<FType>(), pFromIter, pRetIter);
+				if(nOID != 0 && m_pIndex.get())
+				{
+					m_pIndex->insert(pVariant, nOID);
+				}
+				return nOID;
 			}
 			virtual bool update (uint64 nOID, CommonLib::CVariant* pVariant)
 			{
@@ -191,6 +204,8 @@ namespace embDB
 			}
 			virtual bool commit()
 			{
+				if(m_pIndex.get())
+					m_pIndex->commit();
 				return m_tree.commit();
 			}
 			IFieldIteratorPtr find(uint64 nOID)
@@ -211,11 +226,20 @@ namespace embDB
 				TFieldIterator *pFiledIterator = new TFieldIterator(it);
 				return IFieldIteratorPtr(pFiledIterator);
 			}
+			virtual IndexFiledPtr GetIndex()
+			{
+				return m_pIndex;
+			}
+			virtual void SetIndex(IndexFiled *pIndex)
+			{
+				m_pIndex = pIndex;
+			}
 	 protected:
 		IDBTransaction* m_pDBTransactions;
 		TBTree m_tree;
 		int64 m_nBTreeRootPage;
 		CommonLib::alloc_t* m_pAlloc;
+		IndexFiledPtr m_pIndex;
 	};
 	
 
@@ -343,19 +367,19 @@ namespace embDB
 			{
 				return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE);
 			}
-			virtual IValueFiled* getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
+			virtual IValueFiledPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 			{
 				TField * pField = new  TField(pTransactions, m_pAlloc);
 				pField->load(m_fi.m_nFieldPage, pTransactions->getType());
-				return pField;	
+				return IValueFiledPtr(pField);	
 			}
 			virtual bool release(IValueFiled* pField)
 			{
-				TField* pOIDField = (TField*)pField;
+				/*TField* pOIDField = (TField*)pField;
 
 				TField::TBTree *pBTree = pOIDField->getBTree();
 
-				delete pField;
+				delete pField;*/
 				return true;
 			}
 	};

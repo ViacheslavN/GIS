@@ -77,15 +77,15 @@ namespace embDB
 			return index.save();
 		}
 
-		virtual IndexFiled* getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
+		virtual IndexFiledPtr getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 			TSpatialIndex * pIndex = new  TSpatialIndex(pTransactions, m_pAlloc);
 			pIndex->load(m_fi.m_nFieldPage, pTransactions->getType());
-			return pIndex;
+			return IndexFiledPtr(pIndex);
 		}
 		virtual bool release(IndexFiled* pIndex)
 		{
-			delete pIndex;
+			//delete pIndex;
 			return true;
 		}
 

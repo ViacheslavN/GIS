@@ -571,6 +571,7 @@
     <ClInclude Include="StringField.h" />
     <ClInclude Include="StringTree.h" />
     <ClInclude Include="StringVal.h" />
+    <ClInclude Include="TransactionBase.h" />
     <ClInclude Include="UniqueCompIndexBase.h" />
     <ClInclude Include="UniqueIndex.h" />
     <ClInclude Include="ValueField.h" />

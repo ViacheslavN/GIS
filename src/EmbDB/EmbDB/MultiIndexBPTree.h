@@ -84,6 +84,8 @@ namespace embDB
 		}
 		~MultiIndex(){}
 
+		virtual indexTypes GetType() const  {return itMultiRegular;}
+
 		virtual bool insert (/*IVariant* pIndexKey*/CommonLib::CVariant *pValue, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
 
@@ -240,22 +242,22 @@ namespace embDB
 			return CIndexHandlerBase::save<TMultiIndex>(nAddr, pTran, m_pAlloc, INDEX_PAGE, MULTI_INDEX_INFO_PAGE);
 		}
 		
-		virtual IndexFiled* getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
+		virtual IndexFiledPtr getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 
 			TMultiIndex * pIndex = new  TMultiIndex(pTransactions, m_pAlloc);
 			pIndex->load(m_fi.m_nFieldPage, pTransactions->getType());
-			return pIndex;	
+			return IndexFiledPtr(pIndex);	
 		}
 
 
 		virtual bool release(IndexFiled* pIndex)
 		{
-			TMultiIndex* pMultiIndex = (TMultiIndex*)pIndex;
+			/*TMultiIndex* pMultiIndex = (TMultiIndex*)pIndex;
 
 			TMultiIndex::TBTree *pBTree = pMultiIndex->getBTree();
 
-			delete pIndex;
+			delete pIndex;*/
 			return true;
 		}
 

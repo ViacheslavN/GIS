@@ -26,6 +26,7 @@ namespace embDB
 			TBase(pTransactions, pAlloc)
 			{}
 		~CUniqueIndex(){}
+		virtual indexTypes GetType() const  {return itUnique;}
 
 		virtual bool insert (CommonLib::CVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
@@ -166,22 +167,22 @@ namespace embDB
 			return true;
 		}
 
-		virtual IndexFiled* getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
+		virtual IndexFiledPtr getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 
 			TIndex * pIndex = new  TIndex(pTransactions, m_pAlloc);
 			pIndex->load(m_fi.m_nFieldPage, pTransactions->getType());
-			return pIndex;	
+			return IndexFiledPtr(pIndex);	
 		}
 
 
 		virtual bool release(IndexFiled* pIndex)
 		{
-			TIndex* pDelIndex = (TIndex*)pIndex;
+			/*TIndex* pDelIndex = (TIndex*)pIndex;
 
-			//TIndex::TBTree *pBTree = pDelIndex->getBTree();
+			TIndex::TBTree *pBTree = pDelIndex->getBTree();
 
-			delete pDelIndex;
+			delete pDelIndex;*/
 			return true;
 		}
 

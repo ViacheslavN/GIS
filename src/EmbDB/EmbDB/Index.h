@@ -118,24 +118,7 @@ protected:
 };
 
 
-class IDBIndexHandler : public IField
-{
-public:
-	IDBIndexHandler(){}
-	~IDBIndexHandler(){}
-	virtual sFieldInfo* getFieldInfoType() = 0;
-	virtual void setFieldInfoType(sFieldInfo* fi) = 0;
-	virtual bool save(int64 nAddr, IDBTransaction *pTran) = 0;
-	virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
-	virtual IndexFiled* getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
-	virtual bool release(IndexFiled* pInxex) = 0;
 
-	virtual bool lock() =0;
-	virtual bool unlock() =0;
-	virtual bool isCanBeRemoving() = 0;
-
-};
- COMMON_LIB_REFPTR_TYPEDEF(IDBIndexHandler);
 
 class CIndexHandlerBase : public IDBIndexHandler
 {

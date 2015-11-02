@@ -166,6 +166,7 @@ namespace embDB
 
 
 		 
+		  virtual indexTypes GetType() const  {return itSpatial;}
 
 		  virtual IIndexIteratorPtr find(const CommonLib::bbox& extent, SpatialQueryMode mode = sqmIntersect)
 		  {
