@@ -20,7 +20,7 @@ typedef embDB::TBPRectSpatialMap<embDB::ZOrderRect2DU16, uint32,
 > TBPMapRect16;
 
 typedef embDB::TBPRectSpatialMap<embDB::ZOrderRect2DU32, uint32,
-	embDB::ZRect32Comp, embDB::IDBTransactions,
+	embDB::ZRect32Comp, embDB::IDBTransaction,
 	embDB::BPSpatialRectInnerNodeSimpleCompressor<embDB::ZOrderRect2DU32 >,	
 	embDB:: BPSpatialRectLeafNodeMapSimpleCompressor<embDB::ZOrderRect2DU32, uint32> > TBPMapRect32;
 
@@ -28,7 +28,7 @@ typedef embDB::TBPRectSpatialMap<embDB::ZOrderRect2DU32, uint32,
 
 
 typedef embDB::TBPRectSpatialMap<embDB::ZOrderRect2DU64, uint32,
-	embDB::ZRect64Comp, embDB::IDBTransactions,
+	embDB::ZRect64Comp, embDB::IDBTransaction,
 	embDB::BPSpatialRectInnerNodeSimpleCompressor<embDB::ZOrderRect2DU64>,	
 	embDB:: BPSpatialRectLeafNodeMapSimpleCompressor<embDB::ZOrderRect2DU64, uint32 > > TBPMapRect64;
 

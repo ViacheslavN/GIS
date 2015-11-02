@@ -9,7 +9,7 @@ namespace embDB
 	CompIndexParams::~CompIndexParams()
 	{}
 
-	bool CompIndexParams::read(IDBTransactions *pTran)
+	bool CompIndexParams::read(IDBTransaction *pTran)
 	{
 
 		FilePagePtr pPage = pTran->getFilePage(getRootPage());
@@ -40,7 +40,7 @@ namespace embDB
 		return true;
 
 	}
-	bool CompIndexParams::save(IDBTransactions *pTran)
+	bool CompIndexParams::save(IDBTransaction *pTran)
 	{
 		FilePagePtr pPage = pTran->getFilePage(getRootPage());
 		if(!pPage.get())

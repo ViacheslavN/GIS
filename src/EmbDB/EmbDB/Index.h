@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_B_INDEX_H_
 #define _EMBEDDED_DATABASE_B_INDEX_H_
 #include "BaseBPMapv2.h"
-#include "IDBField.h"
+#include "embDBInternal.h"
 #include "DBFieldInfo.h"
 namespace embDB
 
@@ -63,7 +63,7 @@ template<class _TBTree>
 class CIndexBase 
 {
 public:
-	CIndexBase( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
+	CIndexBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
 	  m_pDBTransactions(pTransactions),
 		  m_tree(-1, pTransactions, pAlloc, 100), 
 		  m_nBTreeRootPage(-1)
@@ -112,22 +112,22 @@ public:
 
 	  TBTree* getBTree() {return &m_tree;}
 protected:
-	IDBTransactions* m_pDBTransactions;
+	IDBTransaction* m_pDBTransactions;
 	TBTree m_tree;
 	int64 m_nBTreeRootPage;
 };
 
 
-class IDBIndexHandler : IField
+class IDBIndexHandler : public IField
 {
 public:
 	IDBIndexHandler(){}
 	~IDBIndexHandler(){}
 	virtual sFieldInfo* getFieldInfoType() = 0;
 	virtual void setFieldInfoType(sFieldInfo* fi) = 0;
-	virtual bool save(int64 nAddr, IDBTransactions *pTran) = 0;
+	virtual bool save(int64 nAddr, IDBTransaction *pTran) = 0;
 	virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
-	virtual IndexFiled* getIndex(IDBTransactions* pTransactions, IDBStorage *pStorage) = 0;
+	virtual IndexFiled* getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
 	virtual bool release(IndexFiled* pInxex) = 0;
 
 	virtual bool lock() =0;
@@ -135,7 +135,7 @@ public:
 	virtual bool isCanBeRemoving() = 0;
 
 };
- 
+ COMMON_LIB_REFPTR_TYPEDEF(IDBIndexHandler);
 
 class CIndexHandlerBase : public IDBIndexHandler
 {
@@ -146,7 +146,7 @@ public:
 	~CIndexHandlerBase(){}
 
 	template<class TField>
-	bool save(int64 nAddr, IDBTransactions *pTran, CommonLib::alloc_t *pAlloc,  uint16 nObjectPageType, uint16 nSubObjectPageType  )
+	bool save(int64 nAddr, IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,  uint16 nObjectPageType, uint16 nSubObjectPageType  )
 	{
 		//m_nFieldInfoPage = nAddr;
 		FilePagePtr pPage(pTran->getFilePage(nAddr));

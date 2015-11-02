@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_BTREE_PLUS_COMP_INFO_HEADER_H_
 #define _EMBEDDED_DATABASE_BTREE_PLUS_COMP_INFO_HEADER_H_
 
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 namespace embDB
 {
@@ -52,11 +52,11 @@ namespace embDB
 		{
 			m_nRootPage = nPageID;
 		}
-		virtual bool read(IDBTransactions *pTran)
+		virtual bool read(IDBTransaction *pTran)
 		{
 			return true;
 		}
-		virtual bool save(IDBTransactions *pTran)
+		virtual bool save(IDBTransaction *pTran)
 		{
 			return true;
 		}

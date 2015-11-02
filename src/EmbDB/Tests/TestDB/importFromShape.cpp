@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "exportFromShape.h"
+#include "importFromShape.h"
 #include "CommonLibrary/File.h"
 #include "CommonLibrary/BoundaryBox.h"
 #include "../GisEngine/GisGeometry/SpatialReferenceProj4.h"
@@ -174,12 +174,9 @@ embDB::eSpatialCoordinatesUnits GetGeometryUnits(GisEngine::GisCommon::Units uni
 }
 
 
-void CreateDBFromShape(const wchar_t* pszShapeFileName)
+void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 {
-
 	
-
-
 	SHPGuard shp;
 	DBFGuard dbf;
 
@@ -188,11 +185,31 @@ void CreateDBFromShape(const wchar_t* pszShapeFileName)
 	CommonLib::CString shpFilePath = sFilePath + sFileName + L".shp";
 	CommonLib::CString dbfFilePath = sFilePath + sFileName + L".dbf";
 	CommonLib::CString prjFileName = sFilePath + sFileName + L".prj";
-	CommonLib::CString EmbDBName =  sFilePath + sFileName + L".embDB";
+
+
+	CommonLib::CString sDBPath = CommonLib::FileSystem::FindFilePath(pszDBName);
+ 
+	embDB::CDatabase db;
+	if(!db.open(pszDBName, embDB::eTMSingleTransactions, sDBPath.wstr()))
+	{
+		if(!db.create(pszDBName, 8192, embDB::eTMSingleTransactions,  sDBPath.wstr()))
+		{
+			std::cout << "Error create db";
+			return;
+		}
+	}
+
+
+	embDB::CSchema* pSchema = db.getSchema();
+	embDB::IDBTable *pTable = pSchema->getTable(sFileName);
+	if(pTable)
+		return;
 	
+	pSchema->addTable(sFileName, L"");
+	pTable = pSchema->getTable(sFileName);
 
-
-
+	if(!pTable)
+		return;
 
 	shp.file = ShapeLib::SHPOpen(shpFilePath.cstr(), "rb");
 	if(!shp.file)
@@ -202,12 +219,7 @@ void CreateDBFromShape(const wchar_t* pszShapeFileName)
 		return; 
 
 
-	embDB::CDatabase db;
-	if(!db.create(EmbDBName.cwstr(), 8192, embDB::eTMSingleTransactions, sFilePath.cwstr()))
-		return;
-	embDB::CSchema* pSchema = db.getSchema();
-	pSchema->addTable(sFileName, L"");
-	embDB::IDBTable *pTable = pSchema->getTable(sFileName);
+
 
 	int objectCount;
 	int shapeType;
@@ -271,7 +283,15 @@ void CreateDBFromShape(const wchar_t* pszShapeFileName)
 		case ShapeLib::FTDate:
 			break;
 		}
+
+		pTable->createField(fp);
 	}
 
+
+}
+
+
+void testDBFromShape()
+{
 
 }

@@ -314,7 +314,7 @@ namespace embDB
 	template<class _TKey, class _TValue, class _TComp ,
 	class _TInnerCompess = BPInnerNodeSetSimpleCompressor<RBMap<_TKey, int64, _TComp> > ,
 	class _TLeafCompess = BPLeafNodeMapSimpleCompressor<RBMap<_TKey, _TValue, _TComp> > ,
-	class _Transaction = IDBTransactions, 
+	class _Transaction = IDBTransaction, 
 	class _TInnerMemSet = RBMap<_TKey, int64, _TComp>,	
 	class _TLeafMemSet = RBMap<_TKey, _TValue, _TComp>,
 	class _TInnerNode = BPTreeInnerNodeSet<_TInnerCompess, _TInnerMemSet>,

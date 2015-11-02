@@ -512,7 +512,7 @@ namespace embDB
 		return true;
 	}
 
-	bool CStorage::lockWrite(IDBTransactions *pTran)
+	bool CStorage::lockWrite(IDBTransaction *pTran)
 	{
 	 //TO-DO lock
 		if(!pTran)
@@ -524,7 +524,7 @@ namespace embDB
 		m_bCommitState = true;
 		return saveStorageInfo();
 	}
-	bool CStorage::unlockWrite(IDBTransactions *pTran)
+	bool CStorage::unlockWrite(IDBTransaction *pTran)
 	{
 		//TO-DO lock
 		if(!pTran)
@@ -553,7 +553,7 @@ namespace embDB
 		saveStorageInfo();
 	}
 
-	bool  CStorage::saveForUndoState(IDBTransactions *pTran)
+	bool  CStorage::saveForUndoState(IDBTransaction *pTran)
 	{
 #ifdef USE_FREE_PAGES		
 		return m_FreePageManager.saveForUndoState(pTran);
@@ -561,7 +561,7 @@ namespace embDB
 		return true;
 #endif
 	}
-	bool  CStorage::undo(IDBTransactions *pTran)
+	bool  CStorage::undo(IDBTransaction *pTran)
 	{
 		return true;
 		//return m_FreePageManager.undo(pTran, nPageBegin);

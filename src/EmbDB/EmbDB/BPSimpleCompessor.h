@@ -4,7 +4,7 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "CommonLibrary/FixedMemoryStream.h"
-#include "IDBStorage.h"
+#include "embDBInternal.h"
 #include "BPCompressors.h"
 namespace embDB
 {

@@ -11,7 +11,7 @@
 namespace embDB
 {
 	template<class _TCoord, class _TValue, class _TComp, 
-	class _Transaction = IDBTransactions,
+	class _Transaction = IDBTransaction,
 	class _TInnerCompess =  BPSpatialPointInnerNodeSimpleCompressor<_TCoord > ,	
 	class _TLeafCompess = BPSpatialPointLeafNodeMapSimpleCompressor<_TCoord, _TValue>,
 	class _TInnerNode = BPTreeInnerNodeSetv2<_TCoord,/* _TComp,*/ _Transaction, _TInnerCompess>,

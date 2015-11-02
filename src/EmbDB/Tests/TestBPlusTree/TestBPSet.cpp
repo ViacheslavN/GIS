@@ -19,7 +19,7 @@
 
 typedef embDB::TBPSet<int64, embDB::comp<int64>> TBTreeSet;
 typedef embDB::TBaseBPlusTreeSetRO<int64, int64, embDB::comp<int64>, 
-	embDB::IDBTransactions> TBTreeSetRO;
+	embDB::IDBTransaction> TBTreeSetRO;
 
 
 

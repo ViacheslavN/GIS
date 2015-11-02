@@ -102,7 +102,7 @@ namespace embDB
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		TFixedStringValueField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
+		TFixedStringValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
 		{
 
 		}
@@ -130,7 +130,7 @@ namespace embDB
 	{
 	public:
  
-		typedef TBPFixedString<uint64, IDBTransactions> TBTree;
+		typedef TBPFixedString<uint64, IDBTransaction> TBTree;
 		typedef TFixedStringValueField<TBTree> TField;
 
 		FixedStringValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
@@ -138,11 +138,11 @@ namespace embDB
 		~FixedStringValueFieldHandler()
 		{}
 
-		virtual bool save(int64 nAddr, IDBTransactions *pTran)
+		virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
 			return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE);
 		}
-		virtual IValueFiled* getValueField(IDBTransactions* pTransactions, IDBStorage *pStorage)
+		virtual IValueFiled* getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 			TField * pField = new  TField(pTransactions, m_pAlloc);
 			pField->load(m_fi.m_nFieldPage, pTransactions->getType());

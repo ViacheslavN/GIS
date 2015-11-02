@@ -3,13 +3,13 @@
 
 #include "CommonLibrary/File.h"
 #include "CommonLibrary/String.h"
+#include "embDBInternal.h"
 #include "RBMap.h"
 #include "List.h"
 
 #include "DBConfig.h"
-#include "IDBStorage.h"
+#include "embDBInternal.h"
 #include "FreePageManage.h"
-#include "IDBTransactions.h"
 #include "StorageInfo.h"
 #include "MemPageCache.h"
 #include "PageCrypto.h"
@@ -39,13 +39,13 @@ namespace embDB
 		virtual bool setFileSize(int64 nSize);
 
 		virtual bool isLockWrite(){return false;}
-		virtual bool lockWrite(IDBTransactions *pTran = NULL);
+		virtual bool lockWrite(IDBTransaction *pTran = NULL);
 		virtual bool try_lockWrite(){return false;}
-		virtual bool unlockWrite(IDBTransactions *pTran = NULL);
+		virtual bool unlockWrite(IDBTransaction *pTran = NULL);
 		virtual void clearDirty();
 
-		virtual bool saveForUndoState(IDBTransactions *pTran);
-		virtual bool undo(IDBTransactions *pTran);
+		virtual bool saveForUndoState(IDBTransaction *pTran);
+		virtual bool undo(IDBTransaction *pTran);
 		virtual bool reload();
 
 		bool isValid() const;

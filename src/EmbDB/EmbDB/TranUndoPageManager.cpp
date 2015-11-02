@@ -5,7 +5,7 @@
 
 namespace embDB
 {
-	CTranUndoPageManager::CTranUndoPageManager(IDBTransactions *pTran, CTranStorage *pStorage) :
+	CTranUndoPageManager::CTranUndoPageManager(IDBTransaction *pTran, CTranStorage *pStorage) :
 		m_pTran(pTran)
 		,m_pStorage(pStorage)
 		,m_nCurPage(-1)

@@ -1,14 +1,13 @@
 #ifndef _EMBEDDED_DATABASE_C_DIRECT_TRANSACTIONS_H_
 #define _EMBEDDED_DATABASE_C_DIRECT_TRANSACTIONS_H_
 
-#include "IDBTransactions.h"
-#include "IDBStorage.h"
+#include "embDBInternal.h"
 
 #include <set>
 #include <iostream>
 namespace embDB
 {
-	class CDirectTransactions : public IDBTransactions
+	class CDirectTransactions : public IDBTransaction
 	{
 	public:
 
@@ -30,7 +29,7 @@ namespace embDB
 		virtual ICursorPtr executeQuery(IStatement* pStatement) {return  ICursorPtr();}
 		virtual ICursorPtr executeQuery(const wchar_t* pszQuery = NULL) {return  ICursorPtr();}
 
-		virtual IInsertCursorPtr createInsertCursor() {return  IInsertCursorPtr();}
+		virtual IInsertCursorPtr createInsertCursor(ITable *pTable, IFieldSet *pFileds = 0) {return  IInsertCursorPtr();}
 		virtual IUpdateCursorPtr createUpdateCursor() {return  IUpdateCursorPtr();}
 		virtual IDeleteCursorPtr createDeleteCursor() {return  IDeleteCursorPtr();}
 
@@ -42,7 +41,7 @@ namespace embDB
 		virtual size_t getPageSize() const;
 		virtual eTransactionsType getType() const {return eTT_UNDEFINED;}
 
-		virtual void addInnerTransactions(IDBTransactions *pTran){}
+		virtual void addInnerTransactions(IDBTransaction *pTran){}
 
 		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false){}
 		virtual bool isError() const

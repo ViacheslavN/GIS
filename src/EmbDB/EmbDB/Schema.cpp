@@ -32,16 +32,16 @@ namespace embDB
 	{
 		return true;
 	}
-	bool CSchema::addTable(const CommonLib::CString& sTableName, const CommonLib::CString& sStorageName, IDBTransactions *pTran )
+	bool CSchema::addTable(const CommonLib::CString& sTableName, const CommonLib::CString& sStorageName, IDBTransaction *pTran )
 	{
 		TTablesByName::iterator it = m_TablesByName.find(sTableName);
 		if(!it.isNull())
 			return false;
 
-		IDBTransactions *pInnerTran = 0;
+		IDBTransaction *pInnerTran = 0;
 		if(!pTran)
 		{
-			 pInnerTran =  (IDBTransactions*)m_pDB->startTransaction(eTT_DDL);
+			 pInnerTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();
 			 pTran = pInnerTran;
 		}
 	
@@ -186,7 +186,7 @@ namespace embDB
 		}
 		return true;
 	}
-	bool CSchema::saveHead(IDBTransactions *pTran)
+	bool CSchema::saveHead(IDBTransaction *pTran)
 	{
 		FilePagePtr pPage(pTran ? pTran->getFilePage(m_nAddr) : m_pStorage->getFilePage(m_nAddr));
 		if(!pPage.get())
@@ -213,7 +213,7 @@ namespace embDB
 		}
 		return true;
 	}
-	bool CSchema::save(IDBTransactions *pTran)
+	bool CSchema::save(IDBTransaction *pTran)
 	{
 		if(!pTran && !m_pStorage)
 			return false;
@@ -235,7 +235,7 @@ namespace embDB
 			return m_nTablesAddr.save(m_pStorage);
 	}
 
-	bool CSchema::dropTable(CTable *pTable, IDBTransactions *pTran)
+	bool CSchema::dropTable(CTable *pTable, IDBTransaction *pTran)
 	{
 		assert(pTable);
 		if(!pTable)
@@ -258,14 +258,14 @@ namespace embDB
 		return true;
 	}
 
-	bool CSchema::dropTable(const CommonLib::CString& sTableName, IDBTransactions *Tran)
+	bool CSchema::dropTable(const CommonLib::CString& sTableName, IDBTransaction *Tran)
 	{
 		TTablesByName::iterator it = m_TablesByName.find(sTableName);
 		if(it.isNull())
 			return false;
 		return dropTable(it.value(), Tran);
 	}
-	bool CSchema::dropTable(int64 nID, IDBTransactions *Tran)
+	bool CSchema::dropTable(int64 nID, IDBTransaction *Tran)
 	{
 		TTablesByID::iterator it = m_TablesByID.find(nID);
 		if(it.isNull())

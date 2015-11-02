@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "TranStorage.h"
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "TranUndoPageManager.h"
 #include "storage.h"
 #include "PageVectorLazySave.h"
@@ -37,7 +37,7 @@ namespace embDB
 		typedef std::vector<sRedoPageInfo> TRedoDBPages;
 
 	public:
-		CTranRedoPageManager(IDBTransactions *pTran, CTranStorage *pStorage);
+		CTranRedoPageManager(IDBTransaction *pTran, CTranStorage *pStorage);
 		~CTranRedoPageManager();
 
 		void setFirstPage(int64 nPage, bool bCreate);
@@ -70,7 +70,7 @@ namespace embDB
 
 		typedef TPageVectorLazySave<sRedoPageInfo, TReaderWriter> TRedoPageList;
 	private:
-		IDBTransactions *m_pTran;
+		IDBTransaction *m_pTran;
 		CTranStorage *m_pStorage;
 		size_t m_nLastPos;
 		TRedoPageList m_RedoPages;

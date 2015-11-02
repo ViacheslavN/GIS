@@ -1,9 +1,10 @@
 #ifndef _EMBEDDED_DATABASE_COMPOSITE_INDEX_H_
 #define _EMBEDDED_DATABASE_COMPOSITE_INDEX_H_
 
-#include "IField.h"
+#include "embDBInternal.h"
 #include "CommonLibrary/alloc_t.h"
 #include "CommonLibrary/FixedMemoryStream.h"
+#include "CommonLibrary/Variant.h"
 #include "BPVector.h"
 
 namespace embDB
@@ -30,18 +31,18 @@ namespace embDB
 
 		uint32 getSize() const;
  
-		IVariant * getValue(uint32 nNum);
-		const IVariant * getValue(uint32 nNum) const;
-		bool setValue(uint32 nNum, const IVariant* pValue);
-		bool addValue(const IVariant* pValue);
+		CommonLib::CVariant * getValue(uint32 nNum);
+		const CommonLib::CVariant * getValue(uint32 nNum) const;
+		bool setValue(uint32 nNum, const CommonLib::CVariant* pValue);
+		bool addValue(const CommonLib::CVariant* pValue);
 
 		void write(CommonLib::FxMemoryWriteStream& stream);
 		bool load(const std::vector<uint16>& vecScheme, CommonLib::FxMemoryReadStream& stream);
 	private:
 		void clear();
-		IVariant* createVariant(uint16 nType);
+		//CommonLib::CVariant* createVariant(uint16 nType);
 	private:
-		TBPVector<IVariant*> m_vecVariants;
+		TBPVector<CommonLib::CVariant> m_vecVariants;
 		CommonLib::alloc_t *m_pAlloc;
 
 	};

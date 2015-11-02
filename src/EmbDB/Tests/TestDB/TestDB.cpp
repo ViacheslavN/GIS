@@ -5,12 +5,17 @@
 
 #include <iostream>
 #include "CreateFields.h"
+#include "importFromShape.h"
 
 void TestSpatialField(embDB::CDatabase& db);
 int _tmain(int argc, _TCHAR* argv[])
 {
+
+
+	testDBFromShape();
+	return 0;
 	
-	embDB::TVarINT32 int32key;
+/*	embDB::TVarINT32 int32key;
 
 	//CommonLib::alloc_t* alloc;
 	//embDB::BNodeVector<embDB::TFieldINT32> vec(NULL);
@@ -36,7 +41,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			bNew = true;
 			CreateTables(&db);
 		}
-		/*	embDB::CSchema* pSchema = db.getSchema();
+			embDB::CSchema* pSchema = db.getSchema();
 			CommonLib::CString sTableName; 
 			embDB::ITransactions *pTableTran = db.startTransaction(embDB::eTT_DDL);
 			pTableTran->begin();
@@ -70,11 +75,11 @@ int _tmain(int argc, _TCHAR* argv[])
 			}
 			pFieldTran->commit();
 			db.closeTransaction(pFieldTran);
-		}*/
+		}
 
 		
 	}
-	/*
+	
 	embDB::CSchema* pSchema = db.getSchema();
 	CommonLib::CString sTableName; 
 	for (int i = 0; i < 1000; ++i)
@@ -152,7 +157,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	TestSpatialField(db);
-	/*embDB::CSchema* pSchema = db.getSchema();
+	embDB::CSchema* pSchema = db.getSchema();
 	embDB::CTable *pTable = pSchema->getTable("table1");
 	embDB::IDBFieldHandler *pField1 = pTable->getField("field1");
 	if(!pField)								   
@@ -177,12 +182,12 @@ int _tmain(int argc, _TCHAR* argv[])
 		pTran->commit();
 	}
 	embDB::IDBTransactions *pDBTran = (embDB::IDBTransactions*)pTran;
-//	pDBTran->setType(embDB::eTT_UNDEFINED);
+	pDBTran->setType(embDB::eTT_UNDEFINED);
 	for (int64 i = 0; i < nCount; ++i)
 	{
 		if(!pOIDField->find(i, &int32key))
 			std::cout << "Not found " << i << std::endl;
-	}*/
-	return 0;
+	}
+	return 0;*/
 }
 

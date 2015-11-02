@@ -1,14 +1,12 @@
 #ifndef _EMBEDDED_DATABASE_FIELD_VALUE_H_
 #define _EMBEDDED_DATABASE_FIELD_VALUE_H_
+#include "embDBInternal.h"
 #include "Key.h"
 #include "BaseBPMapv2.h"
-#include "VariantField.h"
+//#include "VariantField.h"
 #include "DBFieldInfo.h"
-#include "IDBTransactions.h"
 #include "Database.h"
 #include "DBMagicSymbol.h"
-#include "IDBStorage.h"
-#include "IDBTransactions.h"
 #include "BaseBPTreeRO.h"
 namespace embDB
 {
@@ -24,7 +22,7 @@ namespace embDB
 	public:
 		IOIDFiledRO() {}
 		virtual ~IOIDFiledRO() {}
-		virtual bool find(int64 nOID, IVariant* pFieldVal) = 0;
+		virtual bool find(int64 nOID, CommonLib::CVariant* pFieldVal) = 0;
 	};
 
 	//TBaseBPlusTree(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false) :
@@ -49,7 +47,7 @@ namespace embDB
 			}
 		};
 
-		ValueFieldBase( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
+		ValueFieldBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
 			  m_pDBTransactions(pTransactions),
 			  m_tree(-1, pTransactions, pAlloc, 100), 
 			  m_nBTreeRootPage(-1), m_pAlloc(pAlloc)
@@ -195,26 +193,26 @@ namespace embDB
 			{
 				return m_tree.commit();
 			}
-			FieldIteratorPtr find(uint64 nOID)
+			IFieldIteratorPtr find(uint64 nOID)
 			{
 				TBTree::iterator it = m_tree.find(nOID);
 				TFieldIterator *pFiledIterator = new TFieldIterator(it);
-				return FieldIteratorPtr(pFiledIterator);
+				return IFieldIteratorPtr(pFiledIterator);
 			}
-			FieldIteratorPtr begin()
+			IFieldIteratorPtr begin()
 			{
 				TBTree::iterator it = m_tree.begin();
 				TFieldIterator *pFiledIterator = new TFieldIterator(it);
-				return FieldIteratorPtr(pFiledIterator);
+				return IFieldIteratorPtr(pFiledIterator);
 			}
-			virtual FieldIteratorPtr last()
+			virtual IFieldIteratorPtr last()
 			{
 				TBTree::iterator it = m_tree.last();
 				TFieldIterator *pFiledIterator = new TFieldIterator(it);
-				return FieldIteratorPtr(pFiledIterator);
+				return IFieldIteratorPtr(pFiledIterator);
 			}
 	 protected:
-		IDBTransactions* m_pDBTransactions;
+		IDBTransaction* m_pDBTransactions;
 		TBTree m_tree;
 		int64 m_nBTreeRootPage;
 		CommonLib::alloc_t* m_pAlloc;
@@ -294,7 +292,7 @@ namespace embDB
 			typedef _FieldIterator TFieldIterator;
 
 
-			ValueField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
+			ValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
 			  ValueFieldBase(pTransactions, pAlloc)
 			{
 
@@ -331,7 +329,7 @@ namespace embDB
 			typedef _TLeafCompressor TLeafCompressor;
 
 			typedef embDB::TBPMapV2<uint64, FType, embDB::comp<uint64>, 
-				embDB::IDBTransactions, TInnerCompressor, TLeafCompressor> TBTree;
+				embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
  
 			typedef FieldIterator<TBTree> TFieldIterator;
 			typedef ValueField<FType, TBTree, TFieldIterator> TField;
@@ -341,11 +339,11 @@ namespace embDB
 			~ValueFieldHandler()
 			{}
 			
-			virtual bool save(int64 nAddr, IDBTransactions *pTran)
+			virtual bool save(int64 nAddr, IDBTransaction *pTran)
 			{
 				return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE);
 			}
-			virtual IValueFiled* getValueField(IDBTransactions* pTransactions, IDBStorage *pStorage)
+			virtual IValueFiled* getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 			{
 				TField * pField = new  TField(pTransactions, m_pAlloc);
 				pField->load(m_fi.m_nFieldPage, pTransactions->getType());

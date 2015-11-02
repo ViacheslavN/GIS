@@ -7,7 +7,7 @@
 namespace embDB
 {
 
-	template<class _TValue, class _Transaction = IDBTransactions>
+	template<class _TValue, class _Transaction = IDBTransaction>
 	class BPSpatialPointLeafNodeMapSimpleCompressor64 
 	{
 	public:

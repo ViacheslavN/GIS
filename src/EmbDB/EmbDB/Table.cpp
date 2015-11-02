@@ -69,7 +69,7 @@ namespace embDB
 
 	}
 
-	bool CTable::addField(sFieldInfo* fi, IDBTransactions *pTran, bool bNew)
+	bool CTable::addField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew)
 	{
 		TFieldByName::iterator it = m_FieldByName.find(fi->m_sFieldName);
 		if(it != m_FieldByName.end())
@@ -89,7 +89,7 @@ namespace embDB
 
 
 	}
-	bool CTable::addIndex(sFieldInfo* fi, IDBTransactions *pTran, bool bNew)
+	bool CTable::addIndex(sFieldInfo* fi, IDBTransaction *pTran, bool bNew)
 	{
 		bool bRet = false;
 		switch(fi->m_nIndexType)
@@ -180,7 +180,7 @@ namespace embDB
 		
 		return true;
 	}
-	bool CTable::save(IDBTransactions *pTran)
+	bool CTable::save(IDBTransaction *pTran)
 	{
 		FilePagePtr pFPage = pTran->getFilePage(m_nTablePage);
 		if(!pFPage.get())
@@ -228,7 +228,7 @@ namespace embDB
 				loadTableStorage(m_nStoragePageID);
 			if(!m_pTableStorage)
 				return false; //TO DO Log
-			IDBTransactions* pInnerTran =  (IDBTransactions*)m_pDB->startTransaction(eTT_DDL);
+			IDBTransaction* pInnerTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();
 			pInnerTran->setDBStorage(m_pTableStorage);
 	
 			if(!pInnerTran->begin())
@@ -255,7 +255,7 @@ namespace embDB
 		return m_nTablePage;
 	}
 	 
-	bool CTable::ReadField(int64 nAddr, IDBTransactions *pTran)
+	bool CTable::ReadField(int64 nAddr, IDBTransaction *pTran)
 	{
 		CommonLib::FxMemoryReadStream stream;
 		FilePagePtr pPage = m_pTableStorage ? m_pTableStorage->getFilePage(nAddr) : m_pMainDBStorage->getFilePage(nAddr);
@@ -285,7 +285,7 @@ namespace embDB
 		return addField(&fi, pTran, false);
 	}
 
-	bool CTable::ReadIndex(int64 nAddr, IDBTransactions *pTran)
+	bool CTable::ReadIndex(int64 nAddr, IDBTransaction *pTran)
 	{
 		CommonLib::FxMemoryReadStream stream;
 		FilePagePtr pPage = m_pTableStorage ? m_pTableStorage->getFilePage(nAddr) : m_pMainDBStorage->getFilePage(nAddr);
@@ -325,7 +325,7 @@ namespace embDB
 		return true;
 
 	}
-	bool CTable::createValueField(sFieldInfo* fi, IDBTransactions *pTran, bool bNew)
+	bool CTable::createValueField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew)
 	{
 		
 		bool bRet = true;
@@ -378,7 +378,7 @@ namespace embDB
 
 		return true;
 	}
-	bool CTable::createIndexField(sFieldInfo* fi, IDBTransactions *pTran, bool bNew)
+	bool CTable::createIndexField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew)
 	{
 		IDBIndexHandler* pIndex = NULL;
 		bool bRet = true;
@@ -434,13 +434,13 @@ namespace embDB
 
 		return true;
 	}
-	bool  CTable::createSpatialIndexField(sFieldInfo* fi, IDBTransactions *pTran, bool bNew)
+	bool  CTable::createSpatialIndexField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew)
 	{
 		TFieldByName::iterator it = m_FieldByName.find(fi->m_sFieldName);
 		if(it == m_FieldByName.end())
 			return false;
 
-		IDBFieldHandler *pFieldHandler = it->second;
+		IDBFieldHandlerPtr pFieldHandler = it->second;
 		sFieldInfo* pFieldInfo = pFieldHandler->getFieldInfoType();
 		sSpatialFieldInfo *pSPFi = dynamic_cast<sSpatialFieldInfo *>(pFieldInfo);
 		if(!pSPFi)
@@ -511,23 +511,17 @@ namespace embDB
 		}
 		m_IndexByName.insert(std::make_pair(fi->m_sFieldName, pSpatialIndex));
 		m_IndexByID.insert(std::make_pair(fi->m_nFIPage, pSpatialIndex));
-
-		TFieldByName::iterator it = m_FieldByName.find(fi->m_sFieldName);
-		if(it != m_FieldByName.end())
-			it->second->setIndexHandler(pSpatialIndex);
-		else
-			assert(false);
-
+		pFieldHandler->setIndexHandler(pSpatialIndex);
 		return true;
 	 
 	}
 	
 
-	IDBFieldHandler* CTable::getFieldHandler(const CommonLib::CString&  sName)
+	IDBFieldHandlerPtr CTable::getFieldHandler(const CommonLib::CString&  sName)
 	{
 		TFieldByName::iterator it = m_FieldByName.find(sName);
 		if(it == m_FieldByName.end())
-			return NULL;
+			return IDBFieldHandlerPtr();
 		return it->second;
 	}
 
@@ -570,7 +564,7 @@ namespace embDB
 	{
 		return true;
 	}
-	bool CTable::delField(IDBFieldHandler *pField, IDBTransactions *pTran )
+	bool CTable::delField(IDBFieldHandler *pField, IDBTransaction *pTran )
 	{
 		assert(pField);
 		if(!pField)
@@ -599,7 +593,7 @@ namespace embDB
 	}
 
 
-	bool CTable::delField(const CommonLib::CString& sFieldName, IDBTransactions *pTran )
+	bool CTable::delField(const CommonLib::CString& sFieldName, IDBTransaction *pTran )
 	{
 
 		TFieldByName::iterator it = m_FieldByName.find(sFieldName);
@@ -608,10 +602,10 @@ namespace embDB
 			pTran->error(L"");//TO DO error msg
 			return false;
 		}
-		return delField(it->second, pTran);
+		return delField(it->second.get(), pTran);
 	 
 	}
-	bool CTable::delField(int64 nID, IDBTransactions *pTran )
+	bool CTable::delField(int64 nID, IDBTransaction *pTran )
 	{
 
 		TFieldByID::iterator it = m_FieldByID.find(nID);
@@ -620,7 +614,7 @@ namespace embDB
 			pTran->error(L"");//TO DO error msg
 			return false;
 		}
-		return delField(it->second, pTran);
+		return delField(it->second.get(), pTran);
 	}
 	bool CTable::commit()
 	{
@@ -641,19 +635,19 @@ namespace embDB
 	{
 		return m_sTableName;
 	}
-	IField* CTable::getField(const CommonLib::CString& sName) const 
+	IFieldPtr CTable::getField(const CommonLib::CString& sName) const 
 	{
-		return NULL;
+		return IFieldPtr();
 	}
 	size_t CTable::getFieldCnt() const
 	{
 		return m_FieldByID.size();
 	}
-	IField* CTable::getField(size_t nIdx) const
+	IFieldPtr CTable::getField(size_t nIdx) const
 	{
-		return NULL;
+		return IFieldPtr();
 	}
-	IField* CTable::createField(SFieldProp& sFP)
+	IFieldPtr CTable::createField(SFieldProp& sFP)
 	{
 
 		sFieldInfo fi;
@@ -663,18 +657,18 @@ namespace embDB
 		fi.m_sFieldName = sFP.sFieldName;
 		fi.m_sFieldAlias = sFP.sFieldAlias;
 		fi.m_nLenField = sFP.nLenField;
-		IDBTransactions* pTran =  (IDBTransactions*)m_pDB->startTransaction(eTT_DDL);
+		IDBTransactionPtr pTran ((IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get());
 		pTran->begin();
 
-		if(!addField(&fi, pTran, true))
+		if(!addField(&fi, pTran.get(), true))
 		{	
 			pTran->rollback();
-			m_pDB->closeTransaction(pTran);
-			return NULL;
+			m_pDB->closeTransaction(pTran.get());
+			return IFieldPtr();
 		}
 
 		pTran->commit();
-		m_pDB->closeTransaction(pTran);
+		m_pDB->closeTransaction(pTran.get());
 		return getField(sFP.sFieldName);
 	}
 	bool CTable::deleteField(IField* pField)
@@ -697,19 +691,19 @@ namespace embDB
 		if(it == m_FieldByName.end())
 			return false;
 
-		IDBFieldHandler* pFieldHandler = it->second;
-		assert(pFieldHandler);
+		IDBFieldHandlerPtr pFieldHandler = it->second;
+		assert(pFieldHandler.get());
 
-		IDBTransactions* pTran =  (IDBTransactions*)m_pDB->startTransaction(eTT_DDL);
+		IDBTransaction* pTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();
 		pTran->begin();
 
-		sFieldInfo  filedFi = *pFieldHandler->getFieldInfoType();
+		sFieldInfo*  filedFi = pFieldHandler->getFieldInfoType();
 		sFieldInfo indexFi;
 		indexFi.m_nIndexType = ip.indexType;
-		indexFi.m_nFieldType = filedFi.m_nFieldType;
-		indexFi.m_nFieldDataType = filedFi.m_nFieldDataType;
-		indexFi.m_sFieldName = filedFi.m_sFieldName;
-		indexFi.m_sFieldAlias = filedFi.m_sFieldAlias;
+		indexFi.m_nFieldType = filedFi->m_nFieldType;
+		indexFi.m_nFieldDataType = filedFi->m_nFieldDataType;
+		indexFi.m_sFieldName = filedFi->m_sFieldName;
+		indexFi.m_sFieldAlias = filedFi->m_sFieldAlias;
 
 		if(!addIndex(&indexFi, pTran, true))
 		{
@@ -720,10 +714,10 @@ namespace embDB
 		TIndexByName::iterator idx_it = m_IndexByName.find(sFieldName);
 		assert(idx_it != m_IndexByName.end());
 
-		IDBIndexHandler *pHandlerIndex = idx_it->second;
+		IDBIndexHandlerPtr pHandlerIndex = idx_it->second;
 
 
-		BuildIndex(pHandlerIndex, pFieldHandler, pTran);
+		BuildIndex(pHandlerIndex.get(), pFieldHandler.get(), pTran);
 		pTran->commit();
 		return true;
 	}
@@ -734,7 +728,7 @@ namespace embDB
 
 
 
-	bool CTable::BuildIndex(IDBIndexHandler* pIndexHandler, IDBFieldHandler *pFieldHandler, IDBTransactions* pTran)
+	bool CTable::BuildIndex(IDBIndexHandler* pIndexHandler, IDBFieldHandler *pFieldHandler, IDBTransaction* pTran)
 	{
 		IValueFiled *pField = pFieldHandler->getValueField(pTran, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
 		IndexFiled* pIndex =	pIndexHandler->getIndex(pTran, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
@@ -742,7 +736,7 @@ namespace embDB
 		 if(!pField || !pIndex)
 			 return false;
 
-		FieldIteratorPtr pFieldIterator =  pField->begin();
+		IFieldIteratorPtr pFieldIterator =  pField->begin();
 		/*IVariant*/CommonLib::CVariant val;
 		while (!pFieldIterator->isNull())
 		{
@@ -767,16 +761,16 @@ namespace embDB
 		return  isPoint ? dtPoint64 : dtRect64;
 	}
 
-	IField* CTable::createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias,  CommonLib::eShapeType shapeType,
+	IFieldPtr CTable::createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias,  CommonLib::eShapeType shapeType,
 		const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex)
 	{
 
 		TFieldByName::iterator it = m_FieldByName.find(pszFieldName);
 		if(it != m_FieldByName.end())
-			return NULL;
+			return IFieldPtr();
 
 		if(shapeType == CommonLib::shape_type_null || extent.type == CommonLib::bbox_type_invalid)
-			return NULL; //TO DO Log
+			return IFieldPtr(); //TO DO Log
 
 		double dOffsetX = 0., dOffsetY = 0., dScaleX = 1., dScaleY = 1.;
 		if(extent.xMin < 0)
@@ -846,32 +840,26 @@ namespace embDB
 		fi.m_nFieldType = DataType;
 
 
-		IDBTransactions* pTran =  (IDBTransactions*)m_pDB->startTransaction(eTT_DDL);
+		IDBTransaction* pTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();
 		pTran->begin();
 		if(!createValueField(&fi, pTran, true))
 		{	
 			pTran->rollback();
 			m_pDB->closeTransaction(pTran);
-			return NULL;
+			return IFieldPtr();
 		}
+		pTran->commit();
+		m_pDB->closeTransaction(pTran);		
 
 		if(bCreateIndex)
 		{
-			if(!addIndex(&fi, pTran, true))
-			{	
-				pTran->rollback();
-				m_pDB->closeTransaction(pTran);
-				return NULL;
-			}
+
+			//addIndex(const CommonLib::CString& sFieldName, SIndexProp& ip, bool bNew)
+			
+			SIndexProp ip;
+			ip.indexType = itSpatial;
+			addIndex(pszFieldName, ip, true);
 		}
-
-
-
-		pTran->commit();
-		m_pDB->closeTransaction(pTran);
-
-		
-		
 		return getField(fi.m_sFieldName);
 
 	}

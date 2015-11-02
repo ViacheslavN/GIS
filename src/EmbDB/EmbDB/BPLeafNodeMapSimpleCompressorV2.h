@@ -7,7 +7,7 @@
 namespace embDB
 {
 
-	template<typename _TKey, typename _TValue, class _Transaction = IDBTransactions>
+	template<typename _TKey, typename _TValue, class _Transaction = IDBTransaction>
 	class BPLeafNodeMapSimpleCompressorV2
 	{
 	public:	

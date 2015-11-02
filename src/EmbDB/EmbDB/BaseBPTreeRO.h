@@ -4,7 +4,7 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "BPNodeRO.h"
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "simple_stack.h"
 #include "CacheLRU.h"
 #include "DBMagicSymbol.h"
@@ -20,7 +20,7 @@ namespace embDB
 	class TBaseBPlusTreeRO
 	{
 	public:
-		TBaseBPlusTreeRO(int64 nPageBTreeInfo, IDBTransactions* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false) :
+		TBaseBPlusTreeRO(int64 nPageBTreeInfo, IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false) :
 		  m_nPageBTreeInfo(nPageBTreeInfo), m_pTransaction(pTransaction), m_pAlloc(pAlloc), m_nChacheSize(nChacheSize)
 		 ,m_bChangeRoot(false), m_nRootAddr(-1), m_bMulti(bMulti)
 		 ,m_Chache(pAlloc)

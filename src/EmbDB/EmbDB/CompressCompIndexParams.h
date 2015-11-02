@@ -1,7 +1,8 @@
 #ifndef _EMBEDDED_DATABASE_COMPOSITE_INDEX_COMPRESS_PARAMS_H_
 #define _EMBEDDED_DATABASE_COMPOSITE_INDEX_COMPRESS_PARAMS_H_
+#include "embDBInternal.h"
 #include "CompressorParams.h"
-#include "IField.h"
+ 
 
 
 namespace embDB
@@ -12,8 +13,8 @@ class CompIndexParams : public CompressorParamsBaseImp
 		CompIndexParams();
 		~CompIndexParams();
 
-		virtual bool read(IDBTransactions *pTran);
-		virtual bool save(IDBTransactions *pTran);
+		virtual bool read(IDBTransaction *pTran);
+		virtual bool save(IDBTransaction *pTran);
 		const std::vector<uint16>& getScheme() const {return m_vecScheme;}
 		uint32 getRowSize() const{ return m_nRowSize;}
 		void addParams(eDataTypes type, uint32 nSize = 0);

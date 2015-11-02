@@ -23,11 +23,11 @@ void CreateTables(embDB::CDatabase* pDb)
 {
 	embDB::CSchema* pSchema = pDb->getSchema();
 	CommonLib::CString sTableName; 
-	embDB::ITransactions *pTableTran = pDb->startTransaction(embDB::eTT_DDL);
+	embDB::ITransactionPtr pTableTran = pDb->startTransaction(embDB::eTT_DDL);
 	pTableTran->begin();
-	pSchema->addTable("Table", "", 	(embDB::IDBTransactions*)pTableTran);
+	pSchema->addTable("Table", "", 	(embDB::IDBTransaction*)pTableTran.get());
 	pTableTran->commit();
-	pDb->closeTransaction(pTableTran);
+	pDb->closeTransaction(pTableTran.get());
 	embDB::CTable *pTable = pSchema->getTable("Table");
 
 

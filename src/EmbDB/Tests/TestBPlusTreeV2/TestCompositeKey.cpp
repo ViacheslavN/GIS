@@ -13,18 +13,18 @@
 #include "CommonLibrary/DebugTime.h"
 
  
-typedef embDB::BPTreeLeafNodeMapv2<embDB::CompositeIndexKey, uint64, embDB::IDBTransactions,
+typedef embDB::BPTreeLeafNodeMapv2<embDB::CompositeIndexKey, uint64, embDB::IDBTransaction,
 	embDB::BPLeafCompIndexCompressor<uint64>, embDB::TBPVectorNoPOD<embDB::CompositeIndexKey> > TLeafNode;
 
-typedef embDB::BPTreeInnerNodeSetv2<embDB::CompositeIndexKey, embDB::IDBTransactions,
+typedef embDB::BPTreeInnerNodeSetv2<embDB::CompositeIndexKey, embDB::IDBTransaction,
 	embDB::BPInnerCompIndexCompressor, embDB::TBPVectorNoPOD<embDB::CompositeIndexKey> > TInnerNode;
 
-typedef embDB::TBPMapV2<embDB::CompositeIndexKey, uint64, embDB::comp<embDB::CompositeIndexKey>, embDB::IDBTransactions,
+typedef embDB::TBPMapV2<embDB::CompositeIndexKey, uint64, embDB::comp<embDB::CompositeIndexKey>, embDB::IDBTransaction,
 	embDB::BPInnerCompIndexCompressor, embDB::BPLeafCompIndexCompressor<uint64>, TInnerNode, TLeafNode> TBPTree;
 
 
 
-int64 CreateCompParams(embDB::IDBTransactions* pTran)
+int64 CreateCompParams(embDB::IDBTransaction* pTran)
 {
 	embDB::CompIndexParams compParmas;
 	embDB::FilePagePtr pPage = pTran->getNewPage();

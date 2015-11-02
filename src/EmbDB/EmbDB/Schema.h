@@ -10,7 +10,7 @@ namespace embDB
 	class CDatabase;
 	class CTable;
 	class CStorage;
-	class IDBTransactions;
+	struct IDBTransaction;
 	class CSchema
 	{
 		public:
@@ -18,20 +18,20 @@ namespace embDB
 			~CSchema();
 			bool open(CStorage* pStorage, __int64 nFileAddr, bool bNew = false);
 			bool close();
-			bool addTable(const CommonLib::CString& sTableName, const CommonLib::CString& sStorageName, IDBTransactions *Tran = NULL);
+			bool addTable(const CommonLib::CString& sTableName, const CommonLib::CString& sStorageName, IDBTransaction *Tran = NULL);
 			CTable* getTable(const CommonLib::CString& sTableName);
 			CTable* getTable(int64 nID);
 
-			bool dropTable(const CommonLib::CString& sTableName, IDBTransactions *Tran = NULL);
-			bool dropTable(int64 nID, IDBTransactions *Tran = NULL);
-			bool dropTable(CTable *pTable, IDBTransactions *Tran = NULL);
+			bool dropTable(const CommonLib::CString& sTableName, IDBTransaction *Tran = NULL);
+			bool dropTable(int64 nID, IDBTransaction *Tran = NULL);
+			bool dropTable(CTable *pTable, IDBTransaction *Tran = NULL);
 
 			uint32 getTableCount();
 			
-			bool save(IDBTransactions *pTran);
+			bool save(IDBTransaction *pTran);
 		private:
 			bool LoadSchema();
-			bool saveHead(IDBTransactions *Tran);
+			bool saveHead(IDBTransaction *Tran);
 			bool readTablePage(CommonLib::IReadStream* pStream);
 		
 		private:

@@ -101,7 +101,7 @@ namespace embDB
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		TShapeValueField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
+		TShapeValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
 		{
 
 		}
@@ -129,7 +129,7 @@ namespace embDB
 	{
 	public:
 
-		typedef TBPShapeTree<uint64, IDBTransactions> TBTree;
+		typedef TBPShapeTree<uint64, IDBTransaction> TBTree;
 		typedef TShapeValueField<TBTree> TField;
 
 		ShapeValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
@@ -137,7 +137,7 @@ namespace embDB
 		~ShapeValueFieldHandler()
 		{}
 
-		virtual bool save(int64 nAddr, IDBTransactions *pTran)
+		virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
 
 			FilePagePtr pLeafCompRootPage = pTran->getNewPage();
@@ -154,7 +154,7 @@ namespace embDB
 			return true;
 
 		}
-		virtual IValueFiled* getValueField(IDBTransactions* pTransactions, IDBStorage *pStorage)
+		virtual IValueFiled* getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 			TField * pField = new  TField(pTransactions, m_pAlloc);
 			pField->load(m_fi.m_nFieldPage, pTransactions->getType());

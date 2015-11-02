@@ -95,20 +95,20 @@ namespace embDB
 	bool  CDBTranManager::close()
 	{
 		TDBTransactions::iterator it = m_Transactions.begin();
-		while(!it.isNull())
+		for(; it != m_Transactions.end(); ++it)
 		{
-			IDBTransactions* pTran = (IDBTransactions* )(*it);
+			IDBTransaction* pTran = (IDBTransaction* )(it->get());
 			if(!pTran->isCompleted())
 			{//TODO login and create  observer
 				pTran->stop();
 				pTran->wait();
 			}
-			delete pTran;
+			//delete pTran;
 		}
 		return m_Storage.close();
 	}
 
-	ITransactions* CDBTranManager::CreateTransaction(eTransactionsType trType)
+	ITransactionPtr CDBTranManager::CreateTransaction(eTransactionsType trType)
 	{
 		CommonLib::CString sFileName;
 		long nDate = 0;
@@ -119,18 +119,18 @@ namespace embDB
 		{
 			sFileName.format(_T("\\%d_%d_%I64d"),nDate, nTime, m_nTranID++);
 		}
-		CTransactions *pTran = new CTransactions(m_pAlloc, rtUndo, trType, m_sWorkingPath + sFileName, m_pDB->getMainStorage(), m_nTranID++ );
+		CTransaction *pTran = new CTransaction(m_pAlloc, rtUndo, trType, m_sWorkingPath + sFileName, m_pDB->getMainStorage(), m_nTranID++ );
 		//CDirectTransactions *pTran = new CDirectTransactions(m_pAlloc, rtUndo, trType, m_sWorkingPath + sFileName, m_pDB->getMainStorage(), m_nTranID++ );
-		m_Transactions.insert(pTran);
-		return pTran;
+		ITransactionPtr pTranPtr(pTran);
+		m_Transactions.insert(pTranPtr);
+		return pTranPtr;
 	}
-	bool CDBTranManager::releaseTransaction(ITransactions* pTran)
+	bool CDBTranManager::releaseTransaction(ITransaction* pTran)
 	{
-		TDBTransactions::iterator it = m_Transactions.find(pTran);
-		if(it.isNull())
+		TDBTransactions::iterator it = m_Transactions.find(ITransactionPtr(pTran));
+		if(it == m_Transactions.end())
 			return false;
-		m_Transactions.remove(it);
-		delete pTran;
+		m_Transactions.erase(it);
 		return true;
 	}
 }

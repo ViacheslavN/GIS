@@ -4,7 +4,7 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "BPSetTraits.h"
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "simple_stack.h"
 #include "CacheLRU.h"
 #include "DBMagicSymbol.h"
@@ -1807,7 +1807,7 @@ namespace embDB
 	template<class _TKey, class _TComp ,
 	class _TInnerCompess = BPInnerNodeSetSimpleCompressor<RBMap<_TKey, int64, _TComp> > ,
 	class _TLeafCompess = BPLeafNodeSetSimpleCompressor<RBSet<_TKey, _TComp> > ,
-	class _Transaction = IDBTransactions, 
+	class _Transaction = IDBTransaction, 
 	class _TInnerMemSet = RBMap<_TKey, int64, _TComp>,	
 	class _TLeafMemSet = RBSet<_TKey, _TComp>,
 	class _TInnerNode = BPTreeInnerNodeSet<_TInnerCompess, _TInnerMemSet>,

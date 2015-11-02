@@ -30,7 +30,7 @@
     <ClInclude Include="CreateFields.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="exportFromShape.h">
+    <ClInclude Include="importFromShape.h">
       <Filter>exportFromShape</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,7 +47,7 @@
     <ClCompile Include="CreateFields.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="exportFromShape.cpp">
+    <ClCompile Include="importFromShape.cpp">
       <Filter>exportFromShape</Filter>
     </ClCompile>
   </ItemGroup>

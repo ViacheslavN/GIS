@@ -6,7 +6,7 @@
 #include "TranStorage.h" 
 //#include "RBSet.h"
 #include "FilePage.h"
-#include "IDBStorage.h"
+#include "embDBInternal.h"
 #include "BPTreeInfoPage.h"
 #include "BaseBPMapv2.h"
 #include <map>
@@ -15,11 +15,11 @@
 namespace embDB
 {
 	class CTranRedoPageManager;
-	class CTransactions;
+	class CTransaction;
 	class CTransactionsCache
 	{
 	public:
-		CTransactionsCache(CommonLib::alloc_t* pAlloc, CTranStorage *pStorage, CTransactions *pTransaction, CTranPerfCounter *pCounter, uint32 nTranCache) : 
+		CTransactionsCache(CommonLib::alloc_t* pAlloc, CTranStorage *pStorage, CTransaction *pTransaction, CTranPerfCounter *pCounter, uint32 nTranCache) : 
 			    m_pFileStorage(pStorage)
 			  , m_nPageInMemory(0)
 			  , m_nMaxPageBuf(nTranCache)
@@ -42,7 +42,7 @@ namespace embDB
 		  void CheckCache();
 		  void savePage(CFilePage *Page);
 		  void clear();
-		  bool savePageForUndo(IDBTransactions *pTran);
+		  bool savePageForUndo(IDBTransaction *pTran);
 		  bool savePageForRedo(CTranRedoPageManager *pRepoPageManager);
 	public:
 		typedef std::map<int64, sFileTranPageInfo> TPages; 
@@ -53,7 +53,7 @@ namespace embDB
 		size_t m_nPageInMemory;
 		size_t m_nMaxPageBuf;
 		CommonLib::alloc_t* m_pAlloc;
-		CTransactions* m_pTransaction;
+		CTransaction* m_pTransaction;
 		CTranPerfCounter *m_pCounter;
 		
 	};   

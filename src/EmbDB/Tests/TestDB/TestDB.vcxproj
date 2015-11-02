@@ -81,13 +81,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CreateFields.h" />
-    <ClInclude Include="exportFromShape.h" />
+    <ClInclude Include="importFromShape.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CreateFields.cpp" />
-    <ClCompile Include="exportFromShape.cpp" />
+    <ClCompile Include="importFromShape.cpp" />
     <ClCompile Include="SpatialTest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

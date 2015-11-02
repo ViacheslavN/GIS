@@ -17,16 +17,16 @@
 
 
 typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU16, uint32,
-	embDB::ZPointComp<embDB::ZOrderPoint2DU16>, embDB::IDBTransactions > TBPMapPoint16;
+	embDB::ZPointComp<embDB::ZOrderPoint2DU16>, embDB::IDBTransaction > TBPMapPoint16;
 
 
 typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU32, uint32,
-	embDB::ZPointComp<embDB::ZOrderPoint2DU32>, embDB::IDBTransactions  > TBPMapPoint32;
+	embDB::ZPointComp<embDB::ZOrderPoint2DU32>, embDB::IDBTransaction  > TBPMapPoint32;
 
 
 typedef embDB::TBPPointSpatialMap<
 	embDB::ZOrderPoint2DU64, 	uint32,	embDB::ZPointComp64, 
-	embDB::IDBTransactions,
+	embDB::IDBTransaction,
 	embDB::BPSpatialPointInnerNodeSimpleCompressor64,
 	embDB::BPSpatialPointLeafNodeMapSimpleCompressor64<uint32> 
 > TBPMapPoint64;

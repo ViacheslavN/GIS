@@ -23,7 +23,7 @@ namespace embDB
 		typedef TIndexIterator<TBTree> TIndexIterator;
 
 
-		CCompUniqueIndex( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
+		CCompUniqueIndex( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
 			TBase(pTransactions, pAlloc)
 			{}
 		~CCompUniqueIndex(){}
@@ -114,7 +114,7 @@ namespace embDB
 
 
 		typedef embDB::TBPMapV2<CompositeIndexKey, uint64, TComp, 
-			embDB::IDBTransactions, TInnerCompressor, TLeafCompressor> TBTree;
+			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
 
 		typedef CCompUniqueIndex<TBTree> TIndex;
 
@@ -127,7 +127,7 @@ namespace embDB
 
 		}
 	
-		virtual bool save(int64 nAddr, IDBTransactions *pTran)
+		virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
 			return CIndexHandlerBase::save<TIndex>(nAddr, pTran, m_pAlloc, INDEX_PAGE, INDEX_INFO_PAGE);
 		}
@@ -136,7 +136,7 @@ namespace embDB
 			return true;
 		}
 
-		virtual IndexFiled* getIndex(IDBTransactions* pTransactions, IDBStorage *pStorage)
+		virtual IndexFiled* getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 
 			TIndex * pIndex = new  TIndex(pTransactions, m_pAlloc);

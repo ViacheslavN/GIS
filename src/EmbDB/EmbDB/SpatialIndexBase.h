@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_B_SPATIAL_INDEX_H_
 #define _EMBEDDED_DATABASE_B_SPATIAL_INDEX_H_
-#include "IDBField.h"
+#include "embDBInternal.h"
 #include "CommonLibrary/BoundaryBox.h"
 #include "CommonLibrary/SpatialKey.h"
 #include "SpatialPointQuery.h"
@@ -72,7 +72,7 @@ namespace embDB
 	public:
 		ISpatialIndex() {}
 		virtual ~ISpatialIndex() {}
-		virtual IndexIteratorPtr find(const CommonLib::bbox& bbox, SpatialQueryMode mode = sqmIntersect) = 0;
+		virtual IIndexIteratorPtr find(const CommonLib::bbox& bbox, SpatialQueryMode mode = sqmIntersect) = 0;
 		
 	};
 
@@ -92,7 +92,7 @@ namespace embDB
 	class TStatialIndexBase : public _TIndex
 	{
 	public:
-		TStatialIndexBase( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
+		TStatialIndexBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
 		  m_pDBTransactions(pTransactions),
 			  m_tree(-1, pTransactions, pAlloc, 100), 
 			  m_nBTreeRootPage(-1)
@@ -167,7 +167,7 @@ namespace embDB
 
 		 
 
-		  virtual IndexIteratorPtr find(const CommonLib::bbox& extent, SpatialQueryMode mode = sqmIntersect)
+		  virtual IIndexIteratorPtr find(const CommonLib::bbox& extent, SpatialQueryMode mode = sqmIntersect)
 		  {
 
 			  CommonLib::bbox bb = extent;
@@ -188,7 +188,7 @@ namespace embDB
 			   
 			 TSpatialIterator it =  m_tree.spatialQuery(xMin, yMin, xMax, yMax, mode);
 			 SpatialIndexIterator *pSpIndexIterator = new SpatialIndexIterator(it);
-			 return IndexIteratorPtr(pSpIndexIterator);
+			 return IIndexIteratorPtr(pSpIndexIterator);
 		  }
 		  virtual bool insert(CommonLib::CVariant* pValue, uint64 nOID)
 		  {
@@ -250,7 +250,7 @@ namespace embDB
 		  {
 			  return true;
 		  }
-		  virtual IndexIteratorPtr find(CommonLib::CVariant* pIndexKey)
+		  virtual IIndexIteratorPtr find(CommonLib::CVariant* pIndexKey)
 		  {
 			  TSpatialObj val;
 			  
@@ -258,25 +258,25 @@ namespace embDB
 			  TZCoordType zVal(val);
 			  iterator it = m_tree.find(zVal);
 			  TIndexIterator *pIndexIterator = new TIndexIterator(it);
-			  return IndexIteratorPtr(pIndexIterator);
+			  return IIndexIteratorPtr(pIndexIterator);
 		  }
-		  virtual IndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
+		  virtual IIndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
 		  {
 			  TSpatialObj val;
 			  pIndexKey->getVal(val);
 			  TZCoordType zVal(val);
 			  iterator it = m_tree.lower_bound(zVal);
 			  TIndexIterator *pIndexIterator = new TIndexIterator(it);
-			  return IndexIteratorPtr(pIndexIterator);
+			  return IIndexIteratorPtr(pIndexIterator);
 		  }
-		  virtual IndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
+		  virtual IIndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
 		  {
 			  TSpatialObj val;
 			  pIndexKey->getVal(val);
 			   TZCoordType zVal(val);
 			  iterator it = m_tree.upper_bound(zVal);
 			  TIndexIterator *pIndexIterator = new TIndexIterator(it);
-			  return IndexIteratorPtr(pIndexIterator);
+			  return IIndexIteratorPtr(pIndexIterator);
 		  }
 
 		  bool remove (CommonLib::CVariant* pIndexKey)
@@ -290,7 +290,7 @@ namespace embDB
 		 
 
 	protected:
-		IDBTransactions* m_pDBTransactions;
+		IDBTransaction* m_pDBTransactions;
 		TSpatialTree m_tree;
 		int64 m_nBTreeRootPage;
 
@@ -312,7 +312,7 @@ namespace embDB
 
 
 
-		TStatialIndexRect( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions, pAlloc)
+		TStatialIndexRect( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions, pAlloc)
 		{}
 
 		~TStatialIndexRect()
@@ -346,7 +346,7 @@ namespace embDB
 	public:
 		typedef TStatialIndexBase<_TSpatialTree, _TZCoordType,  _TSpObj, ISpatialIndexPoint> TBase;
 
-		TStatialIndexPoint( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions, pAlloc)
+		TStatialIndexPoint( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions, pAlloc)
 		{}
 
 		~TStatialIndexPoint()
@@ -373,7 +373,7 @@ namespace embDB
 	typedef TBPPointSpatialMap<ZOrderPoint2DU32, uint64,
 		ZPointComp<ZOrderPoint2DU32> > TBPMapPoint32;
 
-	typedef TBPPointSpatialMap<ZOrderPoint2DU64, 	uint64,	ZPointComp64, IDBTransactions,
+	typedef TBPPointSpatialMap<ZOrderPoint2DU64, 	uint64,	ZPointComp64, IDBTransaction,
 		BPSpatialPointInnerNodeSimpleCompressor64,
 		BPSpatialPointLeafNodeMapSimpleCompressor64<uint64> > TBPMapPoint64;
 
@@ -382,12 +382,12 @@ namespace embDB
 		ZPointComp<ZOrderRect2DU16> 	> TBPMapRect16;
 
 	typedef TBPRectSpatialMap<ZOrderRect2DU32, uint64,
-		ZRect32Comp, IDBTransactions,
+		ZRect32Comp, IDBTransaction,
 		BPSpatialRectInnerNodeSimpleCompressor< ZOrderRect2DU32>,	
 		 BPSpatialRectLeafNodeMapSimpleCompressor<ZOrderRect2DU32, uint64> > TBPMapRect32;
 
 	typedef TBPRectSpatialMap<ZOrderRect2DU64, uint64,
-		ZRect64Comp, IDBTransactions,
+		ZRect64Comp, IDBTransaction,
 		BPSpatialRectInnerNodeSimpleCompressor<ZOrderRect2DU64 >,	
 		 BPSpatialRectLeafNodeMapSimpleCompressor<ZOrderRect2DU64, uint64 > > TBPMapRect64;
 

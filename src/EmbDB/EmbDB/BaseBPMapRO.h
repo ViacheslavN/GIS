@@ -3,7 +3,7 @@
 
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "simple_stack.h"
 #include "CacheNodes.h"
 #include "DBMagicSymbol.h"
@@ -38,7 +38,7 @@ namespace embDB
 
 		
 
-		TBaseBPlusTreeMapRO(int64 nPageBTreeInfo, IDBTransactions* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC = true) :
+		TBaseBPlusTreeMapRO(int64 nPageBTreeInfo, IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC = true) :
 			TBase(nPageBTreeInfo, pTransaction, pAlloc,nChacheSize, bMulti, bCheckCRC)
 		{}
 		~TBaseBPlusTreeMapRO()

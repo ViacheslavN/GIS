@@ -14,7 +14,7 @@ namespace embDB
 		typedef typename TMemSet::TTreeNode TTreeNode;
 		typedef _TBreeNode TBTreeNode;
 
-		TBaseBTreeRO(int64 nPageBTreeInfo, IDBTransactions* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize) :
+		TBaseBTreeRO(int64 nPageBTreeInfo, IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize) :
 			m_nPageBTreeInfo(nPageBTreeInfo)
 			,m_pTransaction(pTransaction)
 			,m_pAlloc(pAlloc)
@@ -133,7 +133,7 @@ namespace embDB
 		int64 m_nPageBTreeInfo;
 
 		CommonLib::alloc_t* m_pAlloc;
-		IDBTransactions* m_pTransaction;
+		IDBTransaction* m_pTransaction;
 		typedef TSimpleCache<int64, TBTreeNode> TNodesCache;
 		TNodesCache m_Chache;
 	};

@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_BLOB_VALUE_H_
 #define _EMBEDDED_DATABASE_BLOB_VALUE_H_
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 namespace embDB
 {
 

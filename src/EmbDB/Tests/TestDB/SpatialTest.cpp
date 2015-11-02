@@ -1,5 +1,5 @@
 #include "stdafx.h"
-
+/*
 
 #include "../../EmbDB/Database.h"
 #include "../../EmbDB/VariantField.h"
@@ -32,7 +32,7 @@ void CreateSpatialRectField(const CommonLib::CString& sFieldName, embDB::CDataba
 	fi.m_Extent.m_minY = yMin;
 	fi.m_Extent.m_maxX = xMax;
 	fi.m_Extent.m_maxY = yMax;
-	pTable->addField(fi, (embDB::IDBTransactions*)pFieldTran);
+	pTable->addField(fi, (embDB::IDBTransaction*)pFieldTran);
  
 
 	pFieldTran->commit();
@@ -47,7 +47,7 @@ void CreateSpatialRectField(const CommonLib::CString& sFieldName, embDB::CDataba
  
 	
 	TSpatialField *pField = (TSpatialField*)pTable->getField(sFieldName);
-	TSpatialField::TOIDSpatialField* pOIDField = pField->getSpatialOIDField((embDB::IDBTransactions*)pInsertTran, (embDB::IDBStorage*)db.getMainStorage());
+	TSpatialField::TOIDSpatialField* pOIDField = pField->getSpatialOIDField((embDB::IDBTransaction*)pInsertTran, (embDB::IDBStorage*)db.getMainStorage());
 
 	uint64 nEndX = xMax - xMin;
 	uint64 nEndY = yMax - yMin;
@@ -83,5 +83,5 @@ void TestSpatialField(embDB::CDatabase& db)
 	else
 	{
 
-	}*/
-}
+	}
+}*/

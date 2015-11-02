@@ -77,7 +77,7 @@ namespace embDB
 		TKeyComp m_CompKeyOnly;
 
 
-		MultiIndex( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
+		MultiIndex( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
 		TBase(pTransactions, pAlloc)
 		{
 
@@ -128,7 +128,7 @@ namespace embDB
 		{
 			return true;
 		}
-		virtual IndexIteratorPtr find(CommonLib::CVariant* pIndexKey)
+		virtual IIndexIteratorPtr find(CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -136,9 +136,9 @@ namespace embDB
 
 			TBTree::iterator it = m_tree.find(m_CompKeyOnly, index);
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
-			return IndexIteratorPtr(pIndexIterator);
+			return IIndexIteratorPtr(pIndexIterator);
 		}
-		virtual IndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
+		virtual IIndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -146,9 +146,9 @@ namespace embDB
 
 			TBTree::iterator it = m_tree.lower_bound(m_CompKeyOnly, index);
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
-			return IndexIteratorPtr(pIndexIterator);
+			return IIndexIteratorPtr(pIndexIterator);
 		}
-		virtual IndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
+		virtual IIndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -156,11 +156,11 @@ namespace embDB
 
 			TBTree::iterator it = m_tree.upper_bound(m_CompKeyOnly, index);
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
-			return IndexIteratorPtr(pIndexIterator);
+			return IIndexIteratorPtr(pIndexIterator);
 		}
 
 
-		IndexIteratorPtr find(CommonLib::CVariant* pIndexKey, uint64 nOID)
+		IIndexIteratorPtr find(CommonLib::CVariant* pIndexKey, uint64 nOID)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -168,9 +168,9 @@ namespace embDB
 
 			TBTree::iterator it = m_tree.find(index);
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
-			return IndexIteratorPtr(pIndexIterator);
+			return IIndexIteratorPtr(pIndexIterator);
 		}
-		IndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey, uint64 nOID)
+		IIndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey, uint64 nOID)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -178,9 +178,9 @@ namespace embDB
 
 			TBTree::iterator it = m_tree.lower_bound(index);
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
-			return IndexIteratorPtr(pIndexIterator);
+			return IIndexIteratorPtr(pIndexIterator);
 		}
-		IndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey, uint64 nOID)
+		IIndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey, uint64 nOID)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -188,7 +188,7 @@ namespace embDB
 
 			TBTree::iterator it = m_tree.upper_bound(index);
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
-			return IndexIteratorPtr(pIndexIterator);
+			return IIndexIteratorPtr(pIndexIterator);
 		}
 		bool remove (CommonLib::CVariant* pIndexKey, uint64 nOID)
 		{
@@ -223,7 +223,7 @@ namespace embDB
 		typedef _TKeyComp  TKeyComp;
 
 		typedef embDB::TBPSetV2<TIndexTuple, TBaseComp, 
-			embDB::IDBTransactions, TInnerCompressor, TLeafCompressor> TBTree;
+			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
 
 		typedef MultiIndex<FType, TBTree, FieldDataType, TBaseComp, TKeyComp> TMultiIndex;
 
@@ -235,12 +235,12 @@ namespace embDB
 		{
 
 		}
-		virtual bool save(int64 nAddr, IDBTransactions *pTran)
+		virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
 			return CIndexHandlerBase::save<TMultiIndex>(nAddr, pTran, m_pAlloc, INDEX_PAGE, MULTI_INDEX_INFO_PAGE);
 		}
 		
-		virtual IndexFiled* getIndex(IDBTransactions* pTransactions, IDBStorage *pStorage)
+		virtual IndexFiled* getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 
 			TMultiIndex * pIndex = new  TMultiIndex(pTransactions, m_pAlloc);

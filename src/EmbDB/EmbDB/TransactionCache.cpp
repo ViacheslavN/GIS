@@ -63,7 +63,7 @@ namespace embDB
 		
 	}
 
-	 bool CTransactionsCache::savePageForUndo(IDBTransactions *pTran)
+	 bool CTransactionsCache::savePageForUndo(IDBTransaction *pTran)
 	 {
 		 
 		 TPages::iterator it = m_pages.begin();

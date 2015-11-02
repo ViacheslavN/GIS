@@ -5,7 +5,7 @@
 #include "Key.h"
 #include "RBMap.h"
 #include "BPCompressors.h"
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "BPSimpleCompessor.h"
 #include "BTVector.h"
 #include "CompressorParams.h"

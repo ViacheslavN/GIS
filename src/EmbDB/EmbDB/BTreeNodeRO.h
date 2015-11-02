@@ -6,7 +6,7 @@
 #include "Compressors.h"
 #include "BTVector.h"
 #include "SimpleCompessor.h"
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "DBConfig.h"
 namespace embDB
 {
@@ -47,7 +47,7 @@ namespace embDB
 		typedef BNodeVectorRO<TNodeElem, TComp>   TMemSet;
 		typedef NodeCompressor<TNodeElem> TCompressor;
 
-		bool Load(IDBTransactions* pTransactions)
+		bool Load(IDBTransaction* pTransactions)
 		{
 			assert(m_nPageAddr != -1);
 			CFilePage* pFilePage =  pTransactions->getFilePage(m_nPageAddr);

@@ -8,7 +8,7 @@
 
 
 
-typedef embDB::TBPSetV2 <int64,  embDB::comp<int64>, embDB::IDBTransactions> TBDoubleSet;
+typedef embDB::TBPSetV2 <int64,  embDB::comp<int64>, embDB::IDBTransaction> TBDoubleSet;
  
 
 

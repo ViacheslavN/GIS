@@ -14,7 +14,7 @@ namespace embDB
 {
 	class CStorage;
 
-	typedef embDB::TBPlusTreeSet<int64, int64, embDB::comp<int64>, embDB::IDBTransactions> TBTreeSet;
+	typedef embDB::TBPlusTreeSet<int64, int64, embDB::comp<int64>, embDB::IDBTransaction> TBTreeSet;
 	class CFreePageManager
 	{
 		public:
@@ -27,8 +27,8 @@ namespace embDB
 			int64 getFreePage(bool bSave = false);
 			bool removeFromFreePage(int64 nAddr);
 			int64 getRoot(){return m_nRootPage;};
-			bool saveForUndoState(IDBTransactions *pTran);
-			bool undo(IDBTransactions *pTran, int64 nPageBegin);
+			bool saveForUndoState(IDBTransaction *pTran);
+			bool undo(IDBTransaction *pTran, int64 nPageBegin);
 
 		
 	    private:
@@ -165,7 +165,7 @@ namespace embDB
 			typedef TPageVectorLazySave<sUndoPageInfo, UndoPageInfoReaderWriter> TUndoVector;
 
 
-			bool SaveUndoPage(__int64 nPage, IDBTransactions *pTran, TUndoVector& vec);
+			bool SaveUndoPage(__int64 nPage, IDBTransaction *pTran, TUndoVector& vec);
 		private:
 		
 			

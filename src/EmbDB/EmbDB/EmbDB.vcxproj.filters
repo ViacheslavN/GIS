@@ -276,41 +276,14 @@
     <ClInclude Include="DBConfig.h">
       <Filter>DB</Filter>
     </ClInclude>
-    <ClInclude Include="ITransactions.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="IDBTransactions.h">
-      <Filter>SDK\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="IDBFilePage.h">
-      <Filter>SDK\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="IDBBTreeNode.h">
-      <Filter>SDK\internal</Filter>
-    </ClInclude>
     <ClInclude Include="VariantField.h">
       <Filter>DB\Fields</Filter>
-    </ClInclude>
-    <ClInclude Include="IField.h">
-      <Filter>SDK</Filter>
     </ClInclude>
     <ClInclude Include="BTreeNodeRO.h">
       <Filter>DB\BPTrees\BTreeNotUse\BtreeReadOnly</Filter>
     </ClInclude>
     <ClInclude Include="BaseBTreeRO.h">
       <Filter>DB\BPTrees\BTreeNotUse\BtreeReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="IQuery.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="IDatabase.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="IShema.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="ITable.h">
-      <Filter>SDK</Filter>
     </ClInclude>
     <ClInclude Include="Transactions.h">
       <Filter>DB\transactions</Filter>
@@ -320,9 +293,6 @@
     </ClInclude>
     <ClInclude Include="TransactionCache.h">
       <Filter>DB\transactions</Filter>
-    </ClInclude>
-    <ClInclude Include="IDBTable.h">
-      <Filter>SDK\internal</Filter>
     </ClInclude>
     <ClInclude Include="BPCompressors.h">
       <Filter>DB\BPTrees\BTreePlus\Compressors</Filter>
@@ -392,9 +362,6 @@
     </ClInclude>
     <ClInclude Include="StorageInfo.h">
       <Filter>storage</Filter>
-    </ClInclude>
-    <ClInclude Include="IDBStorage.h">
-      <Filter>SDK\internal</Filter>
     </ClInclude>
     <ClInclude Include="ListDBPage.h">
       <Filter>utils</Filter>
@@ -537,15 +504,6 @@
     <ClInclude Include="SpatialKey.h">
       <Filter>SDK</Filter>
     </ClInclude>
-    <ClInclude Include="ICursor.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="ISpatialQuery.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="IShape.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
     <ClInclude Include="Shape.h">
       <Filter>DB\BPTrees\spatial</Filter>
     </ClInclude>
@@ -633,9 +591,6 @@
     <ClInclude Include="MultiIndex.h">
       <Filter>DB\Fields\Index\MultiIndex</Filter>
     </ClInclude>
-    <ClInclude Include="IDBField.h">
-      <Filter>SDK\internal</Filter>
-    </ClInclude>
     <ClInclude Include="DBFieldInfo.h">
       <Filter>DB\Fields</Filter>
     </ClInclude>
@@ -666,9 +621,6 @@
     <ClInclude Include="PageCrypto.h">
       <Filter>Crypto</Filter>
     </ClInclude>
-    <ClInclude Include="IConnection.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
     <ClInclude Include="ACIntegerDiffComp.h">
       <Filter>DB\BPTrees\Compress</Filter>
     </ClInclude>
@@ -678,17 +630,8 @@
     <ClInclude Include="BPMapPointSpatialIterator.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
     </ClInclude>
-    <ClInclude Include="IStatement.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="IRecordset.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
     <ClInclude Include="Statement.h">
       <Filter>DB\SQL</Filter>
-    </ClInclude>
-    <ClInclude Include="IDBShema.h">
-      <Filter>SDK\internal</Filter>
     </ClInclude>
     <ClInclude Include="CompIndexInnerCompressor.h">
       <Filter>DB\Fields\Index\CompositeIndex\Unique</Filter>
@@ -710,9 +653,6 @@
     </ClInclude>
     <ClInclude Include="DirectTransactions.h">
       <Filter>DB\transactions\DirectTran</Filter>
-    </ClInclude>
-    <ClInclude Include="IRow.h">
-      <Filter>SDK</Filter>
     </ClInclude>
     <ClInclude Include="CacheLRU.h">
       <Filter>utils</Filter>
@@ -840,6 +780,18 @@
     <ClInclude Include="SpatialIndexHandler.h">
       <Filter>DB\Fields\Index\spatial</Filter>
     </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InsertCursor.h">
+      <Filter>DB\transactions\Cursors\InsertCursor</Filter>
+    </ClInclude>
+    <ClInclude Include="embDB.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="embDBInternal.h">
+      <Filter>SDK\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -940,6 +892,9 @@
     </ClCompile>
     <ClCompile Include="PageAlloc.cpp">
       <Filter>utils\alloc</Filter>
+    </ClCompile>
+    <ClCompile Include="InsertCursor.cpp">
+      <Filter>DB\transactions\Cursors\InsertCursor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

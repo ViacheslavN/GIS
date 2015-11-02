@@ -5,7 +5,7 @@
 #include "Commonlibrary/alloc_t.h"
 #include "Key.h"
 #include "RBMap.h"
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "BTBaseNode.h"
 #include "CompressorParams.h"
 #include "BPVector.h"

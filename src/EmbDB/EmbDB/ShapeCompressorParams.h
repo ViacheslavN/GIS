@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_SHAPE_COMPRESSOR_PARAMS_H_
 #define _EMBEDDED_DATABASE_SHAPE_COMPRESSOR_PARAMS_H_
 
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/IGeoShape.h"
 #include "StreamPageIngo.h"
@@ -28,7 +28,7 @@ namespace embDB
 		{
 			m_nRootPage = nPageID;
 		}
-		virtual bool read(IDBTransactions *pTran)
+		virtual bool read(IDBTransaction *pTran)
 		{
 			FilePagePtr pPage = pTran->getFilePage(m_nRootPage);
 			if(!pPage.get())
@@ -57,7 +57,7 @@ namespace embDB
 			}
 			return true;
 		}
-		virtual bool save(IDBTransactions *pTran)
+		virtual bool save(IDBTransaction *pTran)
 		{
 			FilePagePtr pPage = pTran->getFilePage(m_nRootPage);
 			if(!pPage.get())
@@ -114,7 +114,7 @@ namespace embDB
 		embDB::eDataTypes GetCoordType() const  {return  m_CoordTypes;} 
 		CommonLib::eShapeType GetShapeType() const  { return m_ShapeType;} 
 
-		CStreamPageInfo* GetStreamInfo(IDBTransactions *pTran)
+		CStreamPageInfo* GetStreamInfo(IDBTransaction *pTran)
 		{
 			if(m_StreamPageInfo.GetRootPage() == -1)
 			{
@@ -124,13 +124,13 @@ namespace embDB
 			}
 			return &m_StreamPageInfo;
 		}
-		ReadStreamPagePtr GetReadStream(IDBTransactions *pTran, int64 nPage = -1, int32 nPos = -1)
+		ReadStreamPagePtr GetReadStream(IDBTransaction *pTran, int64 nPage = -1, int32 nPos = -1)
 		{
 			CStreamPageInfo* pStreamInfo = GetStreamInfo(pTran);
 			return pStreamInfo->GetReadStream(pTran, nPage, nPos);
 
 		}
-		WriteStreamPagePtr GetWriteStream(IDBTransactions *pTran, int64 nPage = -1, int32 nPos = -1)
+		WriteStreamPagePtr GetWriteStream(IDBTransaction *pTran, int64 nPage = -1, int32 nPos = -1)
 		{
 			CStreamPageInfo* pStreamInfo = GetStreamInfo(pTran);
 			return pStreamInfo->GetWriteStream(pTran, nPage, nPos);

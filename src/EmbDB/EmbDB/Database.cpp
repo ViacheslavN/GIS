@@ -145,15 +145,15 @@ namespace embDB
 		return m_pAlloc.get();
 	}
 	
-	ITransactions* CDatabase::startTransaction(eTransactionsType trType)
+	ITransactionPtr CDatabase::startTransaction(eTransactionsType trType)
 	{
 		if(!m_bOpen)
-			return NULL;
+			return ITransactionPtr();
 		return m_pTranManager->CreateTransaction(trType);
 
 		
 	}
-	bool CDatabase::closeTransaction(ITransactions* pTran)
+	bool CDatabase::closeTransaction(ITransaction* pTran)
 	{
 		if(!m_bOpen)
 			return false;
@@ -164,7 +164,7 @@ namespace embDB
 		if(!m_pStorage->isDirty())
 			return true;
 		
-		CTransactions tran(m_pAlloc.get(), rtUndo,  eTT_UNDEFINED, m_pStorage->getTranFileName(), m_pStorage.get(), -1);
+		CTransaction tran(m_pAlloc.get(), rtUndo,  eTT_UNDEFINED, m_pStorage->getTranFileName(), m_pStorage.get(), -1);
 		return tran.restore();
 		
 	}
@@ -192,7 +192,7 @@ namespace embDB
 			{
 				if(pStorage->isDirty())
 				{
-					CTransactions tran(m_pAlloc.get(), rtUndo,  eTT_UNDEFINED, pStorage->getTranFileName(), pStorage, -1);
+					CTransaction tran(m_pAlloc.get(), rtUndo,  eTT_UNDEFINED, pStorage->getTranFileName(), pStorage, -1);
 					if(!tran.restore())
 					{
 						delete pStorage;

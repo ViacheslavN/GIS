@@ -2,11 +2,9 @@
 #define _EMBEDDED_DATABASE_DB_TRAN_MANAGER_H_
 
 #include "CommonLibrary/String.h"
+#include "embDBInternal.h"
 #include "storage.h"
-#include "IDBTransactions.h"
 #include "FilePage.h"
-
-#include "IDBTransactions.h"
 #include "RBSet.h"
 #include "Database.h"
 namespace embDB
@@ -147,8 +145,8 @@ namespace embDB
 		~CDBTranManager();
 		bool open(const CommonLib::CString &sFileName, const CommonLib::CString& sWorkingPath);
 		bool close();
-		ITransactions* CreateTransaction(eTransactionsType trType);
-		bool releaseTransaction(ITransactions* pTran);
+		ITransactionPtr CreateTransaction(eTransactionsType trType);
+		bool releaseTransaction(ITransaction* pTran);
 	private:
 		bool SaveHeader(CFilePage *pPage);
 		bool LoadHeader(CFilePage *pPage);
@@ -158,7 +156,7 @@ namespace embDB
 	//	std::auto_ptr<TBTreePlus> m_pBPtree;
 		int64 m_nTranID;
 		CommonLib::alloc_t *m_pAlloc;
-		typedef RBSet<ITransactions*> TDBTransactions;
+		typedef std::set<ITransactionPtr> TDBTransactions;
 		TDBTransactions m_Transactions;
 		CDatabase* m_pDB;
 		CommonLib::CString m_sWorkingPath;

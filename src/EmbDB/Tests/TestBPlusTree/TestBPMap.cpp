@@ -41,22 +41,22 @@ typedef embDB::TBPMap<int64,  int64, embDB::comp<int64>> TBTreePlus;
 typedef embDB::BPInnerNodeSetROSimpleCompressor<int64, int64 > TInnerCompressorRO;
 typedef embDB::BPLeafNodeMapROSimpleCompressor<int64, int64> TLeafCompressorRO;
 
-typedef embDB::TBaseBPlusTreeMapRO<int64, int64, int64, embDB::comp<int64>, embDB::IDBTransactions> TBTreePlusRO;
+typedef embDB::TBaseBPlusTreeMapRO<int64, int64, int64, embDB::comp<int64>, embDB::IDBTransaction> TBTreePlusRO;
 
 
  
  
 
 typedef embDB::TBPlusTreeMap<int64, sStringStrustTest, int64, embDB::comp<int64>, 
-	embDB::IDBTransactions, 
+	embDB::IDBTransaction, 
 	embDB::TBPMapTraitsRBTreeBaseCustomCompress<int64, sStringStrustTest,
 	int64, embDB::comp<int64>,
-	embDB::IDBTransactions, 
+	embDB::IDBTransaction, 
 	TInnerCompressor,
 	BPStringLeafNodeCompressor >
 > TBTreePlusString;
 
-typedef embDB::TBaseBPlusTreeRO<int64, sStringStrustTest, int64, embDB::comp<int64>, embDB::IDBTransactions, TInnerCompressor, BPStringLeafNodeCompressor  > TBTreePlusROString;
+typedef embDB::TBaseBPlusTreeRO<int64, sStringStrustTest, int64, embDB::comp<int64>, embDB::IDBTransaction, TInnerCompressor, BPStringLeafNodeCompressor  > TBTreePlusROString;
 
 
 
@@ -68,7 +68,7 @@ typedef embDB::TBPMap<sStringInnerStrustTest, double, InnerComp,
 
 
 
-typedef embDB::TBaseBPlusTreeRO<sStringInnerStrustTest, double, int64, InnerComp, embDB::IDBTransactions, BPStringInnerNodeCompressor, BPKeyStringLeafNodeCompressor  > TBTreePlusROInnerString;
+typedef embDB::TBaseBPlusTreeRO<sStringInnerStrustTest, double, int64, InnerComp, embDB::IDBTransaction, BPStringInnerNodeCompressor, BPKeyStringLeafNodeCompressor  > TBTreePlusROInnerString;
 
 
 template<class TBtree, class Tran, class TVal, class TKey>
@@ -446,7 +446,7 @@ void testBPTreeMap ()
 	//testBPTreeMapImpl<TBTreePlusString, TBTreePlusROString, embDB::CTransactions, sStringStrustTest, int64>(nCount, nPageSize, strTest);
 	
 	nCount = 1000000;
-	testBPTreeMapImpl<TBTreePlus, TBTreePlusRO, embDB::CTransactions, int64, int64>(nCount, nPageSize, 5000, 1000, nVal, 0);
+	testBPTreeMapImpl<TBTreePlus, TBTreePlusRO, embDB::CTransaction, int64, int64>(nCount, nPageSize, 5000, 1000, nVal, 0);
 	//testBPTreeMapImpl<TBTreePlus, TBTreePlusRO, embDB::CTransactions, int64, int64>(nCount, nPageSize, nVal);
 	
 	

@@ -8,7 +8,7 @@ namespace embDB
 
 	
 
-	CTransactions::CTransactions(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
+	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
 		eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) :
 		m_TranStorage(pAlloc, &m_TranPerfCounter)
 		, m_nRestoreType(nRestoreType)
@@ -28,7 +28,7 @@ namespace embDB
 	{
 		
 	}
-	CTransactions::CTransactions(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache) :
+	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache) :
 	m_TranStorage(pAlloc, &m_TranPerfCounter)
 		,m_nRestoreType(rtUndefined)
 		,m_nTranType(eTT_UNDEFINED)
@@ -47,13 +47,13 @@ namespace embDB
 	{
 
 	}
-	CTransactions::~CTransactions()
+	CTransaction::~CTransaction()
 	{
 
 	}
 
 	//ITransactions
-	bool CTransactions::begin()
+	bool CTransaction::begin()
 	{
 		if(m_bIsBegin)
 		{
@@ -104,7 +104,7 @@ namespace embDB
 		return true;
 
 	}
-	bool CTransactions::commit()
+	bool CTransaction::commit()
 	{
 		m_bIsBegin = false;
 		if(m_nTranType == eTT_SELECT)
@@ -122,7 +122,7 @@ namespace embDB
 		m_bIsCompleted = true;
 		return true;
 	}
-	bool CTransactions::rollback()
+	bool CTransaction::rollback()
 	{
 		m_bIsBegin = false;
 		if(m_nTranType == eTT_SELECT)
@@ -136,7 +136,7 @@ namespace embDB
 
 		return true;
 	}
-	bool CTransactions::restore(bool bForce)
+	bool CTransaction::restore(bool bForce)
 	{
 		bool bOpen =  m_TranStorage.open(m_sFileName, m_pDBStorage->getPageSize(), false);
 		if(!bOpen)
@@ -168,7 +168,7 @@ namespace embDB
 		return false;
 	}
 
-	bool CTransactions::restore_undo(bool bForce)
+	bool CTransaction::restore_undo(bool bForce)
 	{
 		m_TranUndoManager.setFirstPage(m_Header.nPageUndoRedoHeader);
 		bool bRet = true;
@@ -198,14 +198,14 @@ namespace embDB
 		return bRet;
 	}
 
-	bool CTransactions::restore_redo(bool bForce)
+	bool CTransaction::restore_redo(bool bForce)
 	{
 		m_TranRedoManager.setFirstPage(m_Header.nPageUndoRedoHeader, false);
 		bool bRet = true;
 
 		return bRet;
 	}
-	FilePagePtr CTransactions::getFilePage(int64 nAddr, bool bRead, uint32 nSize)
+	FilePagePtr CTransaction::getFilePage(int64 nAddr, bool bRead, uint32 nSize)
 	{
 		if(m_nTranType == eTT_SELECT)
 		{
@@ -240,13 +240,13 @@ namespace embDB
 		return FilePagePtr(pPage);
 	}
 
-	FilePagePtr CTransactions::getFileDBPage(int64 nAddr, bool bRead)
+	FilePagePtr CTransaction::getFileDBPage(int64 nAddr, bool bRead)
 	{
 		m_TranPerfCounter.ReadDBPage();
 		return m_pDBStorage->getFilePage(nAddr, bRead);
 	}
 
-	void CTransactions::addUndoPage(FilePagePtr pPage, bool bReadFromDB )
+	void CTransaction::addUndoPage(FilePagePtr pPage, bool bReadFromDB )
 	{
 		if(bReadFromDB)
 		{
@@ -257,7 +257,7 @@ namespace embDB
 			SaveDBPage(pPage.get());
 	}
 
-	FilePagePtr CTransactions::getTranNewPage(uint32 nSize)
+	FilePagePtr CTransaction::getTranNewPage(uint32 nSize)
 	{
 		int64 nTranAddr = m_TranStorage.getNewPageAddr(nSize);
 		CFilePage *pFilePage = new CFilePage(m_pAlloc, m_pDBStorage->getPageSize(), nTranAddr);
@@ -265,27 +265,27 @@ namespace embDB
 		m_PageChache.AddPage(-1, nTranAddr, pFilePage);
 		return FilePagePtr(pFilePage);
 	}
-	FilePagePtr CTransactions::getTranFilePage(int64 nAddr, bool bRead, uint32 nSize)
+	FilePagePtr CTransaction::getTranFilePage(int64 nAddr, bool bRead, uint32 nSize)
 	{
 		CFilePage* pPage = m_PageChache.GetPage(nAddr, false, bRead, nSize);
 	 	return FilePagePtr(pPage);
 	}
-	void CTransactions::saveTranFilePage(FilePagePtr pPage,  size_t nSize,  bool bChandgeInCache)
+	void CTransaction::saveTranFilePage(FilePagePtr pPage,  size_t nSize,  bool bChandgeInCache)
 	{
 		m_TranStorage.saveFilePage(pPage.get(), pPage->getAddr());
 	}
-	void CTransactions::dropFilePage(FilePagePtr pPage)
+	void CTransaction::dropFilePage(FilePagePtr pPage)
 	{
 		addUndoPage(pPage, true);
 		m_vecRemovePages.push_back(pPage->getAddr());
 	}
-	void CTransactions::dropFilePage(int64 nAddr)
+	void CTransaction::dropFilePage(int64 nAddr)
 	{
 		FilePagePtr pRemPage = m_pDBStorage->getFilePage(nAddr);
 		addUndoPage(pRemPage);
 		m_vecRemovePages.push_back(nAddr);
 	}
-	FilePagePtr CTransactions::getNewPage(uint32 nSize)
+	FilePagePtr CTransaction::getNewPage(uint32 nSize)
 	{
 		if((nSize%m_pDBStorage->getPageSize()) != 0)
 			return FilePagePtr();
@@ -311,17 +311,17 @@ namespace embDB
 		m_PageChache.AddPage(nAddr, nTranAddr, pFilePage);
 		return FilePagePtr(pFilePage);
 	}
-	void CTransactions::saveFilePage(FilePagePtr pPage,  size_t nSize, bool bChangeInCache )
+	void CTransaction::saveFilePage(FilePagePtr pPage,  size_t nSize, bool bChangeInCache )
 	{
 		m_PageChache.savePage(pPage.get());
 	}
-	size_t CTransactions::getPageSize() const
+	size_t CTransaction::getPageSize() const
 	{
 		return m_pDBStorage->getPageSize();
 	}
 
 
-	void CTransactions::error(const wchar_t *pszFormat, ...)
+	void CTransaction::error(const wchar_t *pszFormat, ...)
 	{
 		m_bError = true;
 		va_list args;
@@ -343,21 +343,21 @@ namespace embDB
 
 
 	}
-	uint32 CTransactions::getLogLevel() const
+	uint32 CTransaction::getLogLevel() const
 	{
 		return 1;
 	}
-	void CTransactions::log(uint32 nLevel, const wchar_t *pszFormat, ...)
+	void CTransaction::log(uint32 nLevel, const wchar_t *pszFormat, ...)
 	{
 
 	}
 
-	void CTransactions::addDBBTree(IDBBtree *pTree)
+	void CTransaction::addDBBTree(IDBBtree *pTree)
 	{
 		m_btrees.push_back(pTree);
 	}
 
-	bool CTransactions::SaveDBPage(CFilePage* pPage)
+	bool CTransaction::SaveDBPage(CFilePage* pPage)
 	{
 		m_TranPerfCounter.AddUndoPage();
 
@@ -378,7 +378,7 @@ namespace embDB
 		return false;
 	}
 	
-	bool CTransactions::commit_undo()
+	bool CTransaction::commit_undo()
 	{
 		for (size_t i = 0, sz = m_InnerTran.size(); i < sz; ++i)
 		{
@@ -426,7 +426,7 @@ namespace embDB
 		m_bIsCompleted = true;
 		return true;
 	}
-	bool CTransactions::commit_redo()
+	bool CTransaction::commit_redo()
 	{
 		for (size_t i = 0, sz = m_InnerTran.size(); i < sz; ++i)
 		{
@@ -480,33 +480,33 @@ namespace embDB
 
 
 
-	bool  CTransactions::isError() const
+	bool  CTransaction::isError() const
 	{
 		return m_bError;
 	}
-	size_t  CTransactions::getErrorMessageSize() const
+	size_t  CTransaction::getErrorMessageSize() const
 	{
 		return 0;
 	}
-	size_t  CTransactions::getErroMessage(wchar_t * pBuf, size_t nSize) const
+	size_t  CTransaction::getErroMessage(wchar_t * pBuf, size_t nSize) const
 	{
 		return 0;
 	}
 
-	bool CTransactions::close()
+	bool CTransaction::close()
 	{
 		m_TranStorage.close();
 		m_PageChache.clear();
 		return true;
 	}
 
-	void  CTransactions::addInnerTransactions(IDBTransactions *pTran)
+	void  CTransaction::addInnerTransactions(IDBTransaction *pTran)
 	{
 		m_InnerTran.push_back(pTran);
 	}
 
 
-	void  CTransactions::OutDebugInfo()
+	void  CTransaction::OutDebugInfo()
 	{
 		 m_TranPerfCounter.OutDebugInfo();
 	}

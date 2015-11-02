@@ -2,10 +2,11 @@
 #define _EMBEDDED_DATABASE__DB_FIELD_INFO_H_
 
 #include "CommonLibrary/String.h"
+#include "embDBInternal.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "Key.h"
 #include "CommonLibrary/SpatialKey.h"
-#include "IDBField.h"
+
 #include "CommonLibrary/BoundaryBox.h"
 
 namespace embDB
@@ -203,22 +204,23 @@ namespace embDB
 
 	};
 
+ 
 	class IDBIndexHandler;
-
-	class IDBFieldHandler : IField
+	 COMMON_LIB_REFPTR_TYPEDEF(IDBIndexHandler);
+	class IDBFieldHandler : public IField
 	{
 	public:
 		IDBFieldHandler(){}
 		~IDBFieldHandler(){}
 		virtual sFieldInfo* getFieldInfoType() = 0;
 		virtual void setFieldInfoType(sFieldInfo* fi) = 0;
-		virtual bool save(int64 nAddr, IDBTransactions *pTran) = 0;
+		virtual bool save(int64 nAddr, IDBTransaction *pTran) = 0;
 		virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
-		virtual IValueFiled* getValueField(IDBTransactions* pTransactions, IDBStorage *pStorage) = 0;
+		virtual IValueFiled* getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
 		virtual bool release(IValueFiled* pField) = 0;
 
 		virtual void setIndexHandler(IDBIndexHandler *pIndexHandler) = 0;
-		virtual IDBIndexHandler * getIndexIndexHandler() = 0;
+		virtual IDBIndexHandlerPtr getIndexIndexHandler() = 0;
 
 		virtual bool lock() =0;
 		virtual bool unlock() =0;
@@ -226,7 +228,7 @@ namespace embDB
 		virtual bool isCanBeRemoving() = 0;
 		 
 	};
-
+	COMMON_LIB_REFPTR_TYPEDEF(IDBFieldHandler);
 
 	class CDBFieldHandlerBase  : IDBFieldHandler
 	{
@@ -236,7 +238,7 @@ namespace embDB
 		{}
 		~CDBFieldHandlerBase(){}
 		template<class TField>
-		bool save(int64 nAddr, IDBTransactions *pTran, CommonLib::alloc_t *pAlloc,  uint16 nObjectPageType, uint16 nSubObjectPageType,
+		bool save(int64 nAddr, IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,  uint16 nObjectPageType, uint16 nSubObjectPageType,
 			int64 nInnerCompParams = -1, int64 nLeafCompParams = -1)
 		{
 			//m_nFieldInfoPage = nAddr;
@@ -269,7 +271,7 @@ namespace embDB
 		{
 			m_pIndexHandler = pIndexHandler;
 		}
-		virtual IDBIndexHandler * getIndexIndexHandler()
+		virtual IDBIndexHandlerPtr getIndexIndexHandler()
 		{
 			return m_pIndexHandler;
 		}
@@ -308,7 +310,7 @@ namespace embDB
 	protected:
 		sFieldInfo m_fi;
 		CommonLib::alloc_t* m_pAlloc;
-		IDBIndexHandler *m_pIndexHandler;
+		IDBIndexHandlerPtr m_pIndexHandler;
 	};
 
  

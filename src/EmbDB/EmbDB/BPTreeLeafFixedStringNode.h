@@ -5,7 +5,7 @@
 #include "CommonLibrary/String.h"
 #include "Key.h"
 #include "RBMap.h"
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "BTBaseNode.h"
 #include "FixedStringLeafCompressor.h"
 #include "BPTreeLeafNode.h"

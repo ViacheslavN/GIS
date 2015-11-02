@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_STREAM_READ_PAGE_H_
 #define _EMBEDDED_DATABASE_STREAM_READ_PAGE_H_
 #include "CommonLibrary/String.h"
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "CommonLibrary/stream.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 namespace embDB
@@ -10,7 +10,7 @@ namespace embDB
 	class ReadStreamPage : public CommonLib::IReadStreamBase, public CommonLib::AutoRefCounter
 	{
 	public:
-		ReadStreamPage(embDB::IDBTransactions* pTran, uint32 nPageSize) :
+		ReadStreamPage(embDB::IDBTransaction* pTran, uint32 nPageSize) :
 		  m_pTran(pTran), m_nPageHeader(-1), m_nEndPage(-1), m_nEndPos(0), m_nPageSize(nPageSize)
 		  {									  
 			
@@ -139,7 +139,7 @@ namespace embDB
 
 	public:
 		FilePagePtr m_pPage;
-		embDB::IDBTransactions* m_pTran;
+		embDB::IDBTransaction* m_pTran;
 		uint32 m_nBeginPos;
 		int64 m_nPageHeader;
 		int64 m_nEndPage;

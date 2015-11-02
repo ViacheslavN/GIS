@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_I_DB_STATE_MANAGER_H_
 #include "storage.h"
 #include "RBMap.h"
-#include "IDBStorage.h"
+#include "embDBInternal.h"
 namespace embDB
 {
 

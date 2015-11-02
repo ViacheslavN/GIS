@@ -7,7 +7,7 @@
 
 
 
-typedef embDB::TBPSetV2 <int64,  embDB::comp<int64>, embDB::IDBTransactions> TBSet;
+typedef embDB::TBPSetV2 <int64,  embDB::comp<int64>, embDB::IDBTransaction> TBSet;
 
 
 
@@ -321,5 +321,5 @@ void testUndo()
 {
 	__int64 nCount = 1000000;
 	size_t nPageSize = 8192;
-	testBPTreeSetUndoImpl<TBSet, embDB::CTransactions, int64>(nCount, nPageSize, 1000, 10, 10000);
+	testBPTreeSetUndoImpl<TBSet, embDB::CTransaction, int64>(nCount, nPageSize, 1000, 10, 10000);
 }

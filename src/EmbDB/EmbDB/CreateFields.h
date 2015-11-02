@@ -4,7 +4,7 @@
 namespace embDB
 {
 
-	static IDBFieldHandler* CreateValueField(sFieldInfo* fi, CDatabase* pDB, IDBTransactions *pTran)
+	static IDBFieldHandler* CreateValueField(sFieldInfo* fi, CDatabase* pDB, IDBTransaction *pTran)
 	{
 		IDBFieldHandler* pField = NULL;
 		switch(fi->m_nFieldType)

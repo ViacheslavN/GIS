@@ -4,7 +4,7 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "BPTreeNodeSetV2.h"
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "simple_stack.h"
 //#include "CacheNodes.h"
 #include "DBMagicSymbol.h"

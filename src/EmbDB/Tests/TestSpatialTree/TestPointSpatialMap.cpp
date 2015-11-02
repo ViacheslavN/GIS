@@ -23,7 +23,7 @@ typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU32, uint64,
 
 typedef embDB::TBPPointSpatialMap<
 	embDB::ZOrderPoint2DU64, 	uint64,	embDB::ZPointComp64, 
-	embDB::IDBTransactions,
+	embDB::IDBTransaction,
 	embDB::BPSpatialPointInnerNodeSimpleCompressor64,
     embDB::BPSpatialPointLeafNodeMapSimpleCompressor64<uint64> 
 > TBPMapPOint64;

@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "TranStorage.h"
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "TranUndoPageManager.h"
 #include "storage.h"
 #include "PageVectorLazySave.h"
@@ -17,7 +17,7 @@ namespace embDB
 	class CTranUndoPageManager
 	{
 	public:
-		CTranUndoPageManager(IDBTransactions *pTran, CTranStorage *pStorage);
+		CTranUndoPageManager(IDBTransaction *pTran, CTranStorage *pStorage);
 		~CTranUndoPageManager();
 
 
@@ -67,7 +67,7 @@ namespace embDB
 
 		typedef TPageVectorLazySave<sUndoPageInfo, TReaderWriter> TUndoPageList;
 	private:
-		IDBTransactions *m_pTran;
+		IDBTransaction *m_pTran;
 		CTranStorage *m_pStorage;
 		int64 m_nCurPage;
 		size_t m_nLastPos;

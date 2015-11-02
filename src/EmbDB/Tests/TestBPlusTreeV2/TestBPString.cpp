@@ -13,12 +13,12 @@
 typedef embDB::BPInnerNodeSimpleCompressorV2<int64> TInnerCompressor;
 typedef embDB::BPFixedStringLeafNodeCompressor<int64> TLeafCompressor;
 
-typedef embDB::BPTreeInnerNodeSetv2<int64, embDB::IDBTransactions, TInnerCompressor> TInnerNode;
-typedef embDB::BPTreeLeafNodeMapv2<int64, embDB::sFixedStringVal, embDB::IDBTransactions, TLeafCompressor> TLeafNode;
+typedef embDB::BPTreeInnerNodeSetv2<int64, embDB::IDBTransaction, TInnerCompressor> TInnerNode;
+typedef embDB::BPTreeLeafNodeMapv2<int64, embDB::sFixedStringVal, embDB::IDBTransaction, TLeafCompressor> TLeafNode;
 
-typedef embDB::BPTreeNodeMapv2<int64, embDB::sFixedStringVal, embDB::IDBTransactions, TInnerCompressor, TLeafCompressor, TInnerNode, TLeafNode> TBPTreeNode;
+typedef embDB::BPTreeNodeMapv2<int64, embDB::sFixedStringVal, embDB::IDBTransaction, TInnerCompressor, TLeafCompressor, TInnerNode, TLeafNode> TBPTreeNode;
 
-typedef embDB::TBPMapV2 <int64,  embDB::sFixedStringVal, embDB::comp<int64>, embDB::IDBTransactions,
+typedef embDB::TBPMapV2 <int64,  embDB::sFixedStringVal, embDB::comp<int64>, embDB::IDBTransaction,
 embDB::BPInnerNodeSimpleCompressorV2<int64>,
 embDB::BPFixedStringLeafNodeCompressor<int64>, TInnerNode, TLeafNode, TBPTreeNode> TBMapString;
 
@@ -373,7 +373,7 @@ void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, 
 		Transactions InsertTran(pAlloc, embDB::rtUndo, embDB::eTT_UNDEFINED, L"d:\\db\\inserttran.data", &storage, 1);
 
 
-		insertINBTreeMapString<embDB::IDBTransactions>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran);
+		insertINBTreeMapString<embDB::IDBTransaction>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran);
 	}
 
 	{
@@ -385,7 +385,7 @@ void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, 
 		Transactions InsertTran(pAlloc, embDB::rtUndo, embDB::eTT_UNDEFINED, L"d:\\db\\inserttran.data", &storage, 1);
 
 
-		searchINBTreeMapString<embDB::IDBTransactions>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran, coding);
+		searchINBTreeMapString<embDB::IDBTransaction>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran, coding);
 	}
 	
 }

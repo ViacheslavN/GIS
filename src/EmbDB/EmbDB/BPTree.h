@@ -1,8 +1,8 @@
 #ifndef _EMBEDDED_DATABASE_I_BP_TREE_H_
 #define _EMBEDDED_DATABASE_I_BP_TREE_H_
 
-#include "IDBTransactions.h"
-#include "IField.h"
+#include "embDBInternal.h"
+
 namespace embDB
 {
 	template<class _TKey, class _TValue>
@@ -15,7 +15,7 @@ namespace embDB
 		virtual bool insert(const Tkey& key, const TValue& value ) = 0;
 		virtual bool remove(const Tkey& key) = 0;
 		virtual bool update(const Tkey& key, const TValue& value ) = 0;
-		virtual bool search(const Tkey& key, IVariant* value) = 0;
+		virtual bool search(const Tkey& key, CommonLib::CVariant* value) = 0;
 
 	};
 }

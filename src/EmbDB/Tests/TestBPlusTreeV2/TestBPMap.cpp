@@ -7,7 +7,7 @@
 #include "CommonLibrary/DebugTime.h"
 
 
-typedef embDB::TBPMapV2 <int64,  uint64, embDB::comp<uint64>, embDB::IDBTransactions> TBInt64Map;
+typedef embDB::TBPMapV2 <int64,  uint64, embDB::comp<uint64>, embDB::IDBTransaction> TBInt64Map;
 
 
 template<class TBtree, class Tran, class TKey, class TValue>

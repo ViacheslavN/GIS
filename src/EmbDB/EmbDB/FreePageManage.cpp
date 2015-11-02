@@ -353,7 +353,7 @@ namespace embDB
 		return -1;
 	}
 
-	bool CFreePageManager::saveForUndoState(IDBTransactions *pTran)
+	bool CFreePageManager::saveForUndoState(IDBTransaction *pTran)
 	{
 
 		TMapFreeMaps::iterator it =  m_FreeMaps.begin();
@@ -367,7 +367,7 @@ namespace embDB
 		}
 		return true;
 	}
-	bool CFreePageManager::undo(IDBTransactions *pTran, int64 nPageBegin)
+	bool CFreePageManager::undo(IDBTransaction *pTran, int64 nPageBegin)
 	{
 
 		FilePagePtr pRootPage = pTran->getTranFilePage(nPageBegin, false);
@@ -393,7 +393,7 @@ namespace embDB
 		int64 nPageList = stream.readInt64();
 		
 		TUndoVector UndoVector(nPageList, pTran->getPageSize(), TRANSACTION_PAGE, UNDO_FREEMAP_PAGES_LIST);
-		TUndoVector::iterator<IDBTransactions> it = UndoVector.begin(pTran);
+		TUndoVector::iterator<IDBTransaction> it = UndoVector.begin(pTran);
 		while(!it.isNull())
 		{
 			const sUndoPageInfo& undoPageInfo = it.value();
@@ -405,7 +405,7 @@ namespace embDB
 	}
 
 
-	bool  CFreePageManager::SaveUndoPage(__int64 nPageAddr, IDBTransactions *pTran, TUndoVector& UndoVector)
+	bool  CFreePageManager::SaveUndoPage(__int64 nPageAddr, IDBTransaction *pTran, TUndoVector& UndoVector)
 	{
 		sUndoPageInfo undoPageInfo;
 		undoPageInfo.m_BitMapAddr = nPageAddr;
@@ -423,7 +423,7 @@ namespace embDB
 			return false;
 		}
 		undoPageInfo.m_nBitMapAddInTran = pTranPage->getAddr();
-		if(!UndoVector.push<IDBTransactions, FilePagePtr>(undoPageInfo, pTran))
+		if(!UndoVector.push<IDBTransaction, FilePagePtr>(undoPageInfo, pTran))
 		{
 			//TO DO LOGs
 			return false;

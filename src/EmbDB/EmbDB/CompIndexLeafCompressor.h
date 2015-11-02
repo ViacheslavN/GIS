@@ -9,7 +9,7 @@
 namespace embDB
 {
 
-	template<typename _TValue = uint64, class _Transaction = IDBTransactions>
+	template<typename _TValue = uint64, class _Transaction = IDBTransaction>
 	class BPLeafCompIndexCompressor
 	{
 	public:	

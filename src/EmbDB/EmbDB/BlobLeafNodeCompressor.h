@@ -14,7 +14,7 @@ namespace embDB
 
 
 	template<class _TKey = int64, 
-	 class _Transaction = IDBTransactions,
+	 class _Transaction = IDBTransaction,
 	 class _TCompParams = BlobFieldCompressorParams
 	>
 	class BlobLeafNodeCompressor  

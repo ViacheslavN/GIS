@@ -1,10 +1,8 @@
 #ifndef _EMBEDDED_DATABASE_C_TRANSACTIONS_H_
 #define _EMBEDDED_DATABASE_C_TRANSACTIONS_H_
 
-
+#include "embDBInternal.h"
 #include "TransactionCache.h"
-#include "IDBTransactions.h"
-#include "IDBStorage.h"
 #include "TranStorage.h"
 #include "RBMap.h"
 #include <vector>
@@ -43,15 +41,15 @@ namespace embDB
 		int32 nTime;
 		int32 nState;
 	};
-	class CTransactions : public IDBTransactions
+	class CTransaction : public IDBTransaction
 	{
 	public:
-		CTransactions(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
+		CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
 			eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
 
-		CTransactions(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache = 10000);
+		CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache = 10000);
 
-		~CTransactions();
+		~CTransaction();
 
 		//ITransactions
 		virtual bool begin();
@@ -64,7 +62,7 @@ namespace embDB
 		virtual ICursorPtr executeQuery(IStatement* pStatement) {return  ICursorPtr();}
 		virtual ICursorPtr executeQuery(const wchar_t* pszQuery = NULL) {return  ICursorPtr();}
 
-		virtual IInsertCursorPtr createInsertCursor() {return  IInsertCursorPtr();}
+		virtual IInsertCursorPtr createInsertCursor(ITable *pTable, IFieldSet *pFileds = 0) {return  IInsertCursorPtr();}
 		virtual IUpdateCursorPtr createUpdateCursor() {return  IUpdateCursorPtr();}
 		virtual IDeleteCursorPtr createDeleteCursor() {return  IDeleteCursorPtr();}
 
@@ -89,7 +87,7 @@ namespace embDB
 
 		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false);
 		 
-		virtual void addInnerTransactions(IDBTransactions *pTran);
+		virtual void addInnerTransactions(IDBTransaction *pTran);
 
 
 		virtual bool isError() const;
@@ -131,7 +129,7 @@ namespace embDB
 		CommonLib::CString m_sFileName;
 		typedef std::vector<IDBBtree*> TBTrees;
 		TBTrees m_btrees; 
-		typedef  std::vector<IDBTransactions*> TInnerTransactions;
+		typedef  std::vector<IDBTransaction*> TInnerTransactions;
 		CTranStorage m_TranStorage;
 		CTransactionsCache m_PageChache;
 		IDBStorage* m_pDBStorage;

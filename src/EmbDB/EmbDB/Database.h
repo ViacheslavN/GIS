@@ -5,8 +5,7 @@
 #include "Schema.h"
 #include "CommonLibrary/String.h"
 #include "DBConfig.h"
-#include "ITransactions.h"
-#include "IDatabase.h"
+#include "embDBInternal.h"
 
 namespace embDB
 {
@@ -57,8 +56,8 @@ namespace embDB
 			virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL);
 			virtual bool create(const wchar_t* pszDbName, size_t nPageSize, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL) ;
 			virtual bool close();
-			virtual ITransactions* startTransaction(eTransactionsType trType);
-			virtual bool closeTransaction(ITransactions* );
+			virtual ITransactionPtr startTransaction(eTransactionsType trType);
+			virtual bool closeTransaction(ITransaction* );
 			virtual IShema* getShema() {return 0;}
 			CSchema* getSchema();
 			CStorage* getMainStorage();

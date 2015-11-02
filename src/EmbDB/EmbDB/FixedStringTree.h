@@ -25,7 +25,7 @@ public:
 		TFixedStringLeafNode<_TKey, _Transaction>,
 		BPFixedStringTreeNodeMapv2<_TKey, _Transaction>	> TBase;
 
-	TBPFixedString(int64 nPageBTreeInfo, embDB::IDBTransactions* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
+	TBPFixedString(int64 nPageBTreeInfo, embDB::IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
 	  TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, bMulti, bCheckCRC32), m_PageAlloc(pAlloc, 1024*1024, 2)
 	  {
 

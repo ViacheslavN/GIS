@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_B_KEY_H_
 #define _EMBEDDED_DATABASE_B_KEY_H_
-#include "IField.h"
+#include "embDBInternal.h"
 namespace embDB
 {
 

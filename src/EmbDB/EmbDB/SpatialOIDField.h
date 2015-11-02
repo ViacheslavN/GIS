@@ -21,7 +21,7 @@ namespace embDB
 		typedef CommonLib::TRect2D<TPointType>   TRect;
 		typedef _TSpatialObject TSpatialObject;
 
-		OIDSpatialField( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc, sFieldInfo fi) :
+		OIDSpatialField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, sFieldInfo fi) :
 			m_pDBTransactions(pTransactions),
 			m_SpatialTree(-1, pTransactions, pAlloc, 100), 
 			m_nBTreeRootPage(-1), m_fi(fi), m_shiftX(0), m_shiftY(0)
@@ -76,7 +76,7 @@ namespace embDB
 		}
 
 
-		virtual bool insert (IVariant* pFieldVal, uint64 nOID)
+		virtual bool insert (CommonLib::CVariant* pFieldVal, uint64 nOID)
 		{
 			TSpatialObject obj;
 			pFieldVal->getVal(obj);
@@ -98,7 +98,7 @@ namespace embDB
 		TPointType getShiftY(){return m_shiftY; }
 	private:
 		TSpatialBPTree m_SpatialTree;
-		IDBTransactions* m_pDBTransactions;
+		IDBTransaction* m_pDBTransactions;
 		int64 m_nBTreeRootPage;
 		sFieldInfo m_fi;
 		TPointType m_shiftX;
@@ -144,7 +144,7 @@ namespace embDB
 			{
 				m_fi = *fi;
 			}
-			virtual bool save(int64 nAddr, IDBTransactions *pTran)
+			virtual bool save(int64 nAddr, IDBTransaction *pTran)
 			{
 				FilePagePtr pPage = pTran->getFilePage(nAddr);
 				if(!pPage.get())
@@ -191,7 +191,7 @@ namespace embDB
 				return true;
 			}
 
-			TOIDSpatialField* getSpatialOIDField(IDBTransactions* pTransactions, IDBStorage *pStorage)
+			TOIDSpatialField* getSpatialOIDField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 			{
 
 				TOIDSpatialField * pField = new  TOIDSpatialField(pTransactions, m_pAlloc, m_fi);
@@ -203,7 +203,7 @@ namespace embDB
 			{
 				return true;
 			}
-			IValueFiled* getValueField(IDBTransactions* pTransactions, IDBStorage *pStorage) 
+			IValueFiled* getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage) 
 			{
 				return NULL;
 			}
@@ -233,7 +233,7 @@ namespace embDB
 	typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU32, uint64,
 		embDB::ZPointComp<embDB::ZOrderPoint2DU32> > TBPMapPoint32;
 
-	typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU64, 	uint64,	embDB::ZPointComp64, IDBTransactions,
+	typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU64, 	uint64,	embDB::ZPointComp64, IDBTransaction,
 		embDB::BPSpatialPointInnerNodeSimpleCompressor64,
 		embDB::BPSpatialPointLeafNodeMapSimpleCompressor64<uint64> > TBPMapPoint64;
 
@@ -242,12 +242,12 @@ namespace embDB
 		embDB::ZPointComp<embDB::ZOrderRect2DU16> 	> TBPMapRect16;
 
 	typedef embDB::TBPRectSpatialMap<embDB::ZOrderRect2DU32, uint64,
-		embDB::ZRect32Comp, IDBTransactions,
+		embDB::ZRect32Comp, IDBTransaction,
 		embDB::BPSpatialRectInnerNodeSimpleCompressor< embDB::ZOrderRect2DU32>,	
 		embDB:: BPSpatialRectLeafNodeMapSimpleCompressor<embDB::ZOrderRect2DU32, uint64> > TBPMapRect32;
 
 	typedef embDB::TBPRectSpatialMap<embDB::ZOrderRect2DU64, uint64,
-		embDB::ZRect64Comp, IDBTransactions,
+		embDB::ZRect64Comp, IDBTransaction,
 		embDB::BPSpatialRectInnerNodeSimpleCompressor<ZOrderRect2DU64 >,	
 		embDB:: BPSpatialRectLeafNodeMapSimpleCompressor<embDB::ZOrderRect2DU64, uint64 > > TBPMapRect64;
 

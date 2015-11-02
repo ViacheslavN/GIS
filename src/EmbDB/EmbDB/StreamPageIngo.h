@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_STREAM_PAGE_INFO_H_
 #define _EMBEDDED_DATABASE_STREAM_PAGE_INFO_H_
 #include "CommonLibrary/String.h"
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "CommonLibrary/stream.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "WriteStreamPage.h"
@@ -39,7 +39,7 @@ namespace embDB
 			uint32 GetPos() const  {return m_nPos;}
 
 
-			bool Save(embDB::IDBTransactions* pTran)
+			bool Save(embDB::IDBTransaction* pTran)
 			{
 
 				FilePagePtr pPage = pTran->getFilePage(m_nRootPage);
@@ -67,7 +67,7 @@ namespace embDB
 				return !pTran->isError();
 			}
 
-			bool Load(IDBTransactions* pTran)
+			bool Load(IDBTransaction* pTran)
 			{
 				FilePagePtr pPage = pTran->getFilePage(m_nRootPage);
 				if(!pPage.get())
@@ -87,7 +87,7 @@ namespace embDB
 				return true;
 			}
 
-			WriteStreamPagePtr GetWriteStream(IDBTransactions* pTran, int64 nPage = -1, int32 nPos = -1)
+			WriteStreamPagePtr GetWriteStream(IDBTransaction* pTran, int64 nPage = -1, int32 nPos = -1)
 			{
 				if(!m_pWriteStream.get())
 				{
@@ -102,7 +102,7 @@ namespace embDB
 				m_pWriteStream->open(nPage, nPos);
 				return m_pWriteStream;
 			}
-			ReadStreamPagePtr GetReadStream(IDBTransactions* pTran, int64 nPage = -1, int32 nPos = -1)
+			ReadStreamPagePtr GetReadStream(IDBTransaction* pTran, int64 nPage = -1, int32 nPos = -1)
 			{
 				if(!m_pReadStream.get())
 				{
@@ -113,7 +113,7 @@ namespace embDB
 				return m_pReadStream;
 			}
 
-			void Init(IDBTransactions* pTran)
+			void Init(IDBTransaction* pTran)
 			{
 				if(m_nBeginStream == -1)
 				{

@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_B_PLUS_TREE_STATISTICS_H_
 #define _EMBEDDED_DATABASE_B_PLUS_TREE_STATISTICS_H_
 
-#include "IDBTransactions.h"
+#include "embDBInternal.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "BTVector.h"
 namespace embDB

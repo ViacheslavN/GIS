@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_UNIQUE_INDEX_H_
 #define _EMBEDDED_DATABASE_UNIQUE_INDEX_H_
 #include "BaseBPMapv2.h"
-#include "IDBField.h"
+#include "embDBInternal.h"
 #include "DBFieldInfo.h"
 #include "Index.h"
 
@@ -22,7 +22,7 @@ namespace embDB
 		typedef TIndexIterator<TBTree> TIndexIterator;
 
 
-		CUniqueIndex( IDBTransactions* pTransactions, CommonLib::alloc_t* pAlloc) :
+		CUniqueIndex( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
 			TBase(pTransactions, pAlloc)
 			{}
 		~CUniqueIndex(){}
@@ -69,30 +69,30 @@ namespace embDB
 		{
 			return true;
 		}
-		virtual IndexIteratorPtr find(CommonLib::CVariant* pIndexKey)
+		virtual IIndexIteratorPtr find(CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
 			TBTree::iterator it = m_tree.find(val);
 			TIndexIterator *pIndexIterator = new TIndexIterator(it);
-			return IndexIteratorPtr(pIndexIterator);
+			return IIndexIteratorPtr(pIndexIterator);
 		}
-		virtual IndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
+		virtual IIndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
 
 			TBTree::iterator it = m_tree.lower_bound(val);
 			TIndexIterator *pIndexIterator = new TIndexIterator(it);
-			return IndexIteratorPtr(pIndexIterator);
+			return IIndexIteratorPtr(pIndexIterator);
 		}
-		virtual IndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
+		virtual IIndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
 			TBTree::iterator it = m_tree.upper_bound(val);
 			TIndexIterator *pIndexIterator = new TIndexIterator(it);
-			return IndexIteratorPtr(pIndexIterator);
+			return IIndexIteratorPtr(pIndexIterator);
 		}
 
 		bool remove (CommonLib::CVariant* pIndexKey)
@@ -123,7 +123,7 @@ namespace embDB
 
 
 		typedef embDB::TBPMapV2<FType, uint64, TComp, 
-			embDB::IDBTransactions, TInnerCompressor, TLeafCompressor> TBTree;
+			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
 
 		typedef CUniqueIndex<FType, TBTree, FieldDataType> TIndex;
 
@@ -136,7 +136,7 @@ namespace embDB
 
 		}
 	
-		virtual bool save(int64 nAddr, IDBTransactions *pTran)
+		virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
 			//m_nFieldInfoPage = nAddr;
 			return CIndexHandlerBase::save<TIndex>(nAddr, pTran, m_pAlloc, INDEX_PAGE, INDEX_INFO_PAGE);
@@ -166,7 +166,7 @@ namespace embDB
 			return true;
 		}
 
-		virtual IndexFiled* getIndex(IDBTransactions* pTransactions, IDBStorage *pStorage)
+		virtual IndexFiled* getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 
 			TIndex * pIndex = new  TIndex(pTransactions, m_pAlloc);

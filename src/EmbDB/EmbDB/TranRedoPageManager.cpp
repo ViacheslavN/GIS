@@ -6,7 +6,7 @@
 
 namespace embDB
 {
-	CTranRedoPageManager::CTranRedoPageManager(IDBTransactions *pTran, CTranStorage *pStorage) :
+	CTranRedoPageManager::CTranRedoPageManager(IDBTransaction *pTran, CTranStorage *pStorage) :
 	m_pTran(pTran)
 	,m_pStorage(pStorage)
 	,m_nRootPage(-1)

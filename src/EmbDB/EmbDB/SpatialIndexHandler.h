@@ -41,7 +41,7 @@ namespace embDB
 		{
 			return true;
 		}
-		virtual bool save(int64 nAddr, IDBTransactions *pTran)
+		virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
 			FilePagePtr pPage = pTran->getFilePage(nAddr);
 			if(!pPage.get())
@@ -77,7 +77,7 @@ namespace embDB
 			return index.save();
 		}
 
-		virtual IndexFiled* getIndex(IDBTransactions* pTransactions, IDBStorage *pStorage)
+		virtual IndexFiled* getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 			TSpatialIndex * pIndex = new  TSpatialIndex(pTransactions, m_pAlloc);
 			pIndex->load(m_fi.m_nFieldPage, pTransactions->getType());
