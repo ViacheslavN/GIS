@@ -264,9 +264,6 @@
     <ClInclude Include="Schema.h">
       <Filter>DB</Filter>
     </ClInclude>
-    <ClInclude Include="Row.h">
-      <Filter>DB</Filter>
-    </ClInclude>
     <ClInclude Include="FreePageManage.h">
       <Filter>storage</Filter>
     </ClInclude>
@@ -663,9 +660,6 @@
     <ClInclude Include="CacheLRU_2Q.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="embDBLib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StringCompressorParams.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
@@ -798,6 +792,24 @@
     <ClInclude Include="TransactionBase.h">
       <Filter>DB\transactions</Filter>
     </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="embDBLib.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Counter.h">
+      <Filter>DB\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Fields.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldSet.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Row.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -901,6 +913,15 @@
     </ClCompile>
     <ClCompile Include="InsertCursor.cpp">
       <Filter>DB\transactions\Cursors\InsertCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="Fields.cpp">
+      <Filter>SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldSet.cpp">
+      <Filter>SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="Row.cpp">
+      <Filter>SDK</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

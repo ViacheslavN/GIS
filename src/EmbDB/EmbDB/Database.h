@@ -48,7 +48,7 @@ namespace embDB
 		}
 
 	};
-	class CDatabase : public IDatabase
+	class CDatabase : public IDBDatabase
 	{
 		public:
 			CDatabase();
@@ -58,10 +58,11 @@ namespace embDB
 			virtual bool close();
 			virtual ITransactionPtr startTransaction(eTransactionsType trType);
 			virtual bool closeTransaction(ITransaction* );
-			virtual IShema* getShema() {return 0;}
-			CSchema* getSchema();
-			CStorage* getMainStorage();
-			CStorage* getTableStorage(const CommonLib::CString& sFileName, bool bCreate);
+			virtual ISchemaPtr getSchema() const {return ISchemaPtr(m_pSchema.get());}
+			virtual IDBStoragePtr getDBStorage() const  {return m_pStorage;}
+
+			//CStorage* getMainStorage();
+			//CStorage* getTableStorage(const CommonLib::CString& sFileName, bool bCreate);
 
 			CommonLib::alloc_t* getBTreeAlloc();
 				
@@ -70,8 +71,8 @@ namespace embDB
 			bool CheckDirty();
 		private:
 			std::auto_ptr<CommonLib::alloc_t > m_pAlloc;
-			std::auto_ptr<CStorage> m_pStorage;
-			CSchema m_schema;
+			IDBStoragePtr m_pStorage;
+			IDBShemaPtr m_pSchema;
 			sDBHeader m_dbHeader;
 			std::auto_ptr<CDBTranManager>  m_pTranManager;
 			bool m_bOpen;

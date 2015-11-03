@@ -430,6 +430,7 @@
     <ClInclude Include="GeneralTypes.h" />
     <ClInclude Include="GeoPoint.h" />
     <ClInclude Include="guid.h" />
+    <ClInclude Include="HashKey.h" />
     <ClInclude Include="IGeoShape.h" />
     <ClInclude Include="Interlocked.h" />
     <ClInclude Include="IRefCnt.h" />

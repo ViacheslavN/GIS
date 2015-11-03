@@ -107,7 +107,7 @@ namespace DatasetLite
 	private:
 		std::auto_ptr<TSPTree> m_SpatialTree;
 		embDB::CStorage* m_Storage;
-		embDB::CDirectTransactions m_DBTran;
+		embDB::CDirectTransaction m_DBTran;
 		double m_dOffsetX;
 		double m_dOffsetY;
 		double m_dScaleX;

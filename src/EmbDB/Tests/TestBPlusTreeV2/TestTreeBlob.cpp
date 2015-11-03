@@ -309,5 +309,5 @@ void TestTreeBlobImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, uint
 void TestTreeBlob()
 {
 		CommonLib::simple_alloc_t alloc;
-		TestTreeBlobImpl<embDB::CDirectTransactions>(&alloc, 0, 3000000, 10, embDB::scUTF8);
+		TestTreeBlobImpl<embDB::CDirectTransaction>(&alloc, 0, 3000000, 10, embDB::scUTF8);
 };

@@ -41,22 +41,22 @@ namespace embDB
 			pPage->setFlag(eFP_CHANGE, true);
 			pTran->saveFilePage(pPage);
 
-			TField field(pTran, pAlloc);
+			TField field(pTran, pAlloc, NULL);
 			field.init(m_nBTreeRootPage, nInnerCompParams, nLeafCompParams);
 			return field.save();
 		}
 
 		template<class TField>
-		IValueFiledPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
+		IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
-			TField * pField = new  TField(pTransactions, m_pAlloc);
+			TField * pField = new  TField(pTransactions, m_pAlloc, &m_fi);
 			pField->load(m_fi.m_nFieldPage, pTransactions->getType());
 			if(m_pIndexHandler.get())
 			{
 				IndexFiledPtr pIndex = m_pIndexHandler->getIndex(pTransactions, pStorage);
 				pField->SetIndex(pIndex.get());
 			}
-			return IValueFiledPtr(pField);	
+			return IValueFieldPtr(pField);	
 		}
 
 		bool isCanBeRemoving()
@@ -98,6 +98,10 @@ namespace embDB
 		{
 			assert(fi);
 			m_fi = *fi;
+		}
+		virtual const CommonLib::CString& getAlias() const
+		{
+			return m_fi.m_sFieldAlias;
 		}
 		virtual bool load(int64 nAddr, IDBStorage *pStorage)
 		{

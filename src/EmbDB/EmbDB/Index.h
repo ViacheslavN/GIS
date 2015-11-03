@@ -174,11 +174,15 @@ public:
 	{
 		return m_fi.m_sFieldName;
 	}
-
+	virtual const CommonLib::CString& getAlias() const
+	{
+		return m_fi.m_sFieldAlias;
+	}
 	virtual sFieldInfo* getFieldInfoType()
 	{
 		return &m_fi;
 	}
+
 	virtual void setFieldInfoType(sFieldInfo* fi)
 	{
 		m_fi = *fi;

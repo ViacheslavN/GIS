@@ -17,52 +17,54 @@
 #include "ShapeField.h"
 #include "SpatialIndexHandler.h"
 #include "CreateFields.h"
-
+#include "Fields.h"
 namespace embDB
 {
-	CTable::CTable(CDatabase* pDB, int64 nPageAddr, CStorage* pTableStorage) : m_pDB(pDB), m_pMainDBStorage(pDB->getMainStorage()), 
+	CTable::CTable(CDatabase* pDB, int64 nPageAddr) : m_pDB(pDB), 
 		m_nTablePage(nPageAddr), 
 		m_nFieldsPage(-1),
-		m_nStoragePageID(-1),
-		m_pTableStorage(pTableStorage),
-		m_nRowIDPage(-1),
 		m_nIndexsPage(-1),
 		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE),
-		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE)
+		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE),
+		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE)
 	{
-		m_nFieldsAddr.setPageSize(m_pMainDBStorage->getPageSize());
-		m_nIndexAddr.setPageSize(m_pMainDBStorage->getPageSize());
+		m_nFieldsAddr.setPageSize(m_pDBStorage->getPageSize());
+		m_nIndexAddr.setPageSize(m_pDBStorage->getPageSize());
+		m_pDBStorage = pDB->getDBStorage();
+		m_pFields = new CFields();
+		m_pIndexs = new CFields();
 	}
-	CTable::CTable(CDatabase* pDB, int64 nPageAddr, const CommonLib::CString& sTableName, CStorage* pTableStorage) : 
+	CTable::CTable(CDatabase* pDB, int64 nPageAddr, const CommonLib::CString& sTableName) : 
 		m_pDB(pDB),
-		m_pMainDBStorage(pDB->getMainStorage()), 
 		m_nTablePage(nPageAddr), 
 		m_sTableName(sTableName),
 		m_nFieldsPage(-1),
-		m_nStoragePageID(-1),
-		m_pTableStorage(pTableStorage),
-		m_nRowIDPage(-1),
 		m_nIndexsPage(-1),
 		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE),
-		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE)
+		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE),
+		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE)
 	{
-		m_nFieldsAddr.setPageSize(m_pMainDBStorage->getPageSize());
-		m_nIndexAddr.setPageSize(m_pMainDBStorage->getPageSize());
+		m_nFieldsAddr.setPageSize(m_pDBStorage->getPageSize());
+		m_nIndexAddr.setPageSize(m_pDBStorage->getPageSize());
+		m_pDBStorage = pDB->getDBStorage();
+		m_pFields = new CFields();
+		m_pIndexs = new CFields();
 	}
-	CTable::CTable(CDatabase* pDB, CFilePage* pFilePage, const CommonLib::CString& sTableName, CStorage* pTableStorage/*, int64 nTableID*/) :
+	CTable::CTable(CDatabase* pDB, CFilePage* pFilePage, const CommonLib::CString& sTableName) :
 		m_pDB(pDB), 
-		m_pMainDBStorage(pDB->getMainStorage()), 
 		m_nTablePage(pFilePage->getAddr()), 
 		m_sTableName(sTableName),
 		m_nFieldsPage(-1),
-		m_nStoragePageID(-1),
-		m_pTableStorage(pTableStorage),
 		m_nIndexsPage(-1),
 		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE),
-		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE)
+		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE),
+		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE)
 	{
-		m_nFieldsAddr.setPageSize(m_pMainDBStorage->getPageSize());
-		m_nIndexAddr.setPageSize(m_pMainDBStorage->getPageSize());
+		m_nFieldsAddr.setPageSize(m_pDBStorage->getPageSize());
+		m_nIndexAddr.setPageSize(m_pDBStorage->getPageSize());
+		m_pDBStorage = pDB->getDBStorage();
+		m_pFields = new CFields();
+		m_pIndexs = new CFields();
 	}
 	CTable::~CTable()
 	{
@@ -71,19 +73,18 @@ namespace embDB
 
 	bool CTable::addField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew)
 	{
-		TFieldByName::iterator it = m_FieldByName.find(fi->m_sFieldName);
-		if(it != m_FieldByName.end())
+
+		if(m_pFields->FieldExists(fi->m_sFieldName))
 			return false;
+		/*TFieldByName::iterator it = m_FieldByName.find(fi->m_sFieldName);
+		if(it != m_FieldByName.end())
+			return false;*/
 
 		bool bRet = false;
 
-		switch(fi->m_nFieldDataType)
+		if(fi->m_nFieldDataType & (dteSimple|dteIsNotEmpty|dteIsUNIQUE))
 		{
-		case dteSimple:
-		case dteIsNotEmpty:
-		case dteIsUNIQUE:
 			bRet = createValueField(fi, pTran, bNew);
-			break;
 		}
 		return bRet;
 
@@ -113,7 +114,7 @@ namespace embDB
 	bool CTable::load()
 	{
 		CommonLib::FxMemoryReadStream stream;
-		FilePagePtr pPage = m_pMainDBStorage->getFilePage(m_nTablePage);
+		FilePagePtr pPage = m_pDBStorage->getFilePage(m_nTablePage);
 		if(!pPage.get())
 			return false;
 		stream.attach(pPage->getRowData(), pPage->getPageSize());
@@ -131,28 +132,23 @@ namespace embDB
 		std::vector<wchar_t> buf(nlenStr + 1, L'\0');
 		stream.read((byte*)&buf[0], nlenStr * 2);
 		m_sTableName = CommonLib::CString(&buf[0]);
-		m_nStoragePageID = stream.readInt64();
-		m_nFieldsPage = 0;
 
-		if(m_nStoragePageID != -1)
-		{
-			if(!loadTableStorage(m_nStoragePageID))
-			{
-				return false;
-			}
-		}
-		else
-		{
-			m_nFieldsPage = stream.readInt64();
-			m_nIndexsPage = stream.readInt64();
-		}
+		m_nFieldsPage = stream.readInt64();
+		m_nIndexsPage = stream.readInt64();
+		int64 nCounterOIDPage = stream.readInt64();
+
+
+		m_OIDCounter.SetPage(nCounterOIDPage);
+		if(!m_OIDCounter.load<IDBStorage>(m_pDBStorage.get()))
+			return false;
+ 
 
 		if(m_nFieldsPage == -1)
 			return true;
 		{
 			m_nFieldsAddr.setFirstPage(m_nFieldsPage);
-			m_nFieldsAddr.setPageSize(m_pMainDBStorage->getPageSize());
-			m_nFieldsAddr.load(m_pMainDBStorage);
+			m_nFieldsAddr.setPageSize(m_pDBStorage->getPageSize());
+			m_nFieldsAddr.load(m_pDBStorage.get());
 			TFieldPages::iterator it = m_nFieldsAddr.begin();
 			while(!it.isNull())
 			{
@@ -168,8 +164,8 @@ namespace embDB
 
 
 		m_nIndexAddr.setFirstPage(m_nIndexsPage);
-		m_nIndexAddr.setPageSize(m_pMainDBStorage->getPageSize());
-		m_nIndexAddr.load(m_pMainDBStorage);
+		m_nIndexAddr.setPageSize(m_pDBStorage->getPageSize());
+		m_nIndexAddr.load(m_pDBStorage.get());
 		TFieldPages::iterator it = m_nIndexAddr.begin();
 		while(!it.isNull())
 		{
@@ -190,64 +186,42 @@ namespace embDB
 		sFilePageHeader header(stream, TABLE_PAGE, TABLE_HEADER_PAGE);
 		stream.write((int64)-1);	
 		stream.write((int64)-1);	
-		//stream.write(m_nTableID);
+	 
 		stream.write((uint32)m_sTableName.length());
 		stream.write((byte*)m_sTableName.cwstr(), m_sTableName.length() * 2);
-		stream.write(m_nStoragePageID);
 		pFPage->setFlag(eFP_CHANGE, true);
-		if(m_nStoragePageID == -1)
+		FilePagePtr pOIDFPage = pTran->getNewPage();
+
+		m_OIDCounter.SetPage(pOIDFPage->getAddr());
+		m_OIDCounter.SetValue(1);
+		if(!m_OIDCounter.save<IDBTransaction>(pTran))
+			return false;
+
+
+		if(m_nFieldsPage == -1)
 		{
-			if(m_nFieldsPage == -1)
-			{
-				FilePagePtr pPage = pTran->getNewPage();
-				if(!pPage.get())
-					return false;
-				m_nFieldsPage = pPage->getAddr();
-				m_nFieldsAddr.setFirstPage(m_nFieldsPage);
-
-			}
-
-			if(m_nIndexsPage == -1)
-			{
-				FilePagePtr pPage = pTran->getNewPage();
-				if(!pPage.get())
-					return false;
-				m_nIndexsPage = pPage->getAddr();
-				m_nIndexAddr.setFirstPage(m_nIndexsPage);
-
-			}
-			stream.write(m_nFieldsPage);
-			stream.write(m_nIndexsPage);
-			header.writeCRC32(stream);
-			pTran->saveFilePage(pFPage);
-			return m_nFieldsAddr.save(pTran) && m_nIndexAddr.save(pTran);
-		}
-		else
-		{
-			if(!m_pTableStorage)
-				loadTableStorage(m_nStoragePageID);
-			if(!m_pTableStorage)
-				return false; //TO DO Log
-			IDBTransaction* pInnerTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();
-			pInnerTran->setDBStorage(m_pTableStorage);
-	
-			if(!pInnerTran->begin())
-			{
-				m_pDB->closeTransaction(pInnerTran);
+			FilePagePtr pPage = pTran->getNewPage();
+			if(!pPage.get())
 				return false;
-			}
-			if(!m_nFieldsAddr.save(pInnerTran))
-			{
-				pInnerTran->rollback();
-				m_pDB->closeTransaction(pInnerTran);
-				return false;
-			}
-			pTran->addInnerTransactions(pInnerTran);
-			//bool bRet = pInnerTran->commit();
-			//m_pDB->closeTransaction(pInnerTran);
-			return true;
+			m_nFieldsPage = pPage->getAddr();
+			m_nFieldsAddr.setFirstPage(m_nFieldsPage);
+
 		}
 
+		if(m_nIndexsPage == -1)
+		{
+			FilePagePtr pPage = pTran->getNewPage();
+			if(!pPage.get())
+				return false;
+			m_nIndexsPage = pPage->getAddr();
+			m_nIndexAddr.setFirstPage(m_nIndexsPage);
+
+		}
+		stream.write(m_nFieldsPage);
+		stream.write(m_nIndexsPage);
+		header.writeCRC32(stream);
+		pTran->saveFilePage(pFPage);
+		return m_nFieldsAddr.save(pTran) && m_nIndexAddr.save(pTran);
 		
 	}
 	int64 CTable::getAddr()
@@ -258,7 +232,7 @@ namespace embDB
 	bool CTable::ReadField(int64 nAddr, IDBTransaction *pTran)
 	{
 		CommonLib::FxMemoryReadStream stream;
-		FilePagePtr pPage = m_pTableStorage ? m_pTableStorage->getFilePage(nAddr) : m_pMainDBStorage->getFilePage(nAddr);
+		FilePagePtr pPage = m_pDBStorage->getFilePage(nAddr);
 		if(!pPage.get())
 			return false;
 		stream.attach(pPage->getRowData(), pPage->getPageSize());
@@ -288,7 +262,7 @@ namespace embDB
 	bool CTable::ReadIndex(int64 nAddr, IDBTransaction *pTran)
 	{
 		CommonLib::FxMemoryReadStream stream;
-		FilePagePtr pPage = m_pTableStorage ? m_pTableStorage->getFilePage(nAddr) : m_pMainDBStorage->getFilePage(nAddr);
+		FilePagePtr pPage = m_pDBStorage->getFilePage(nAddr);
 		if(!pPage.get())
 			return false;
 		stream.attach(pPage->getRowData(), pPage->getPageSize());
@@ -360,15 +334,17 @@ namespace embDB
 		else
 		{
 			pField->setFieldInfoType(fi);
-			bRet = pField->load(fi->m_nFieldPage, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
+			bRet = pField->load(fi->m_nFieldPage, m_pDBStorage.get());
 			
 			if(!bRet)
 				delete pField;
 		}
-		m_FieldByName.insert(std::make_pair(fi->m_sFieldName, pField));
-		m_FieldByID.insert(std::make_pair(fi->m_nFIPage, pField));
+		//m_FieldByName.insert(std::make_pair(fi->m_sFieldName, pField));
+		//m_FieldByID.insert(std::make_pair(fi->m_nFIPage, pField));
 
-		if(bNew && fi->m_nFieldDataType == dteIsUNIQUE)
+		m_pFields->AddField(pField);
+
+		if(bNew && fi->m_nFieldDataType & dteIsUNIQUE)
 		{
 		 
 			embDB::SIndexProp indexProp;
@@ -418,29 +394,42 @@ namespace embDB
 		else
 		{
 			pIndex->setFieldInfoType(fi);
-			bRet = pIndex->load(fi->m_nFieldPage, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
+			bRet = pIndex->load(fi->m_nFieldPage, m_pDBStorage.get());
 
 			if(!bRet)
 				delete pIndex;
 		}
-		m_IndexByName.insert(std::make_pair(fi->m_sFieldName, pIndex));
+	/*	m_IndexByName.insert(std::make_pair(fi->m_sFieldName, pIndex));
 		m_IndexByID.insert(std::make_pair(fi->m_nFIPage, pIndex));
 
 		TFieldByName::iterator it = m_FieldByName.find(fi->m_sFieldName);
 		if(it != m_FieldByName.end())
 			it->second->setIndexHandler(pIndex);
 		else
-			assert(false);
+			assert(false);*/
+
+		m_pIndexs->AddField(pIndex);
+		IFieldPtr pField = m_pFields->GetField(fi->m_sFieldName);
+		assert(pField.get());
+
+		IDBFieldHandler *pBFieldHandler = (IDBFieldHandler*)pField.get();
+		pBFieldHandler->setIndexHandler(pIndex);
 
 		return true;
 	}
 	bool  CTable::createSpatialIndexField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew)
 	{
-		TFieldByName::iterator it = m_FieldByName.find(fi->m_sFieldName);
+		/*TFieldByName::iterator it = m_FieldByName.find(fi->m_sFieldName);
 		if(it == m_FieldByName.end())
+			return false;*/
+		if(m_pIndexs->FieldExists(fi->m_sFieldName))
 			return false;
 
-		IDBFieldHandlerPtr pFieldHandler = it->second;
+		IFieldPtr pField = m_pFields->GetField(fi->m_sFieldName.cwstr());
+		if(!pField.get())
+			return false;
+
+		IDBFieldHandler* pFieldHandler = (IDBFieldHandler*)pField.get();
 		sFieldInfo* pFieldInfo = pFieldHandler->getFieldInfoType();
 		sSpatialFieldInfo *pSPFi = dynamic_cast<sSpatialFieldInfo *>(pFieldInfo);
 		if(!pSPFi)
@@ -504,28 +493,29 @@ namespace embDB
 		else
 		{
 			pSpatialIndex->setFieldInfoType(fi);
-			bool bRet = pSpatialIndex->load(fi->m_nFieldPage, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
+			bool bRet = pSpatialIndex->load(fi->m_nFieldPage, m_pDBStorage.get());
 
 			if(!bRet)
 				delete pSpatialIndex;
 		}
-		m_IndexByName.insert(std::make_pair(fi->m_sFieldName, pSpatialIndex));
-		m_IndexByID.insert(std::make_pair(fi->m_nFIPage, pSpatialIndex));
+		//m_IndexByName.insert(std::make_pair(fi->m_sFieldName, pSpatialIndex));
+		//m_IndexByID.insert(std::make_pair(fi->m_nFIPage, pSpatialIndex));
+		m_pIndexs->AddField(pSpatialIndex);
 		pFieldHandler->setIndexHandler(pSpatialIndex);
 		return true;
 	 
 	}
 	
 
-	IDBFieldHandlerPtr CTable::getFieldHandler(const CommonLib::CString&  sName)
+	/*IDBFieldHandlerPtr CTable::getFieldHandler(const CommonLib::CString&  sName)
 	{
 		TFieldByName::iterator it = m_FieldByName.find(sName);
 		if(it == m_FieldByName.end())
 			return IDBFieldHandlerPtr();
 		return it->second;
-	}
+	}*/
 
-	bool CTable::loadTableStorage(int64 nAddr)
+	/*bool CTable::loadTableStorage(int64 nAddr)
 	{
 		FilePagePtr pPage(m_pMainDBStorage->getFilePage(nAddr));
 		if(!pPage.get())
@@ -549,45 +539,73 @@ namespace embDB
 		return true;
 
 
-	}
+	}*/
 	
 	bool CTable::lock()
 	{
-		TFieldByName::iterator it = m_FieldByName.begin();
+		/*TFieldByName::iterator it = m_FieldByName.begin();
 		while(it != m_FieldByName.end())
 		{
 			it->second->lock();
-		}
+		}*/
 		return true;
 	}
 	bool CTable::isCanBeRemoving()
 	{
 		return true;
 	}
-	bool CTable::delField(IDBFieldHandler *pField, IDBTransaction *pTran )
+	bool CTable::delField( IField *pField, IDBTransaction *pTran )
 	{
 		assert(pField);
 		if(!pField)
 			return false;
 
-		pField->lock();
-		if(!pField->isCanBeRemoving())
+		int nIndex = m_pFields->FindField(pField->getName());
+		if(nIndex == -1)
+			return false;
+
+		IDBFieldHandler *pDBField = dynamic_cast<IDBFieldHandler *>(pField);
+		if(!pDBField)
+			return false; //TO DO add  message
+
+
+		pDBField->lock();
+		if(!pDBField->isCanBeRemoving())
 		{
-			pField->unlock();
+			pDBField->unlock();
 			pTran->error(L""); //TO DO add  message
 			return false;
 		}
-		if(!m_nFieldsAddr.remove(pField->getFieldInfoType()->m_nFIPage, pTran))
+		if(!m_nFieldsAddr.remove(pDBField->getFieldInfoType()->m_nFIPage, pTran))
 		{
-			pField->unlock();
+			pDBField->unlock();
 			pTran->error(L""); //TO DO add  message
 			return false;
 		}
 
-		m_FieldByName.erase(pField->getFieldInfoType()->m_sFieldName);
-		m_FieldByID.erase(pField->getFieldInfoType()->m_nFIPage);
+		IDBIndexHandlerPtr pIndexHandler = pDBField->getIndexIndexHandler();
+		if(pIndexHandler.get())
+		{
 
-		delete pField;
+			if(!m_nIndexAddr.remove(pIndexHandler->getFieldInfoType()->m_nFIPage, pTran))
+			{
+				pDBField->unlock();
+				pTran->error(L""); //TO DO add  message
+				return false;
+			}
+			int nIdx = m_pIndexs->FindField(pIndexHandler->getName());
+			if(nIdx != -1)
+			{
+				m_pIndexs->RemoveField(nIdx);
+			}
+		}
+		m_pFields->RemoveField(nIndex);
+		//m_FieldByName.erase(pField->getFieldInfoType()->m_sFieldName);
+		//m_FieldByID.erase(pField->getFieldInfoType()->m_nFIPage);
+
+
+		//delete pField;
+		
 
 		return false;
 	}
@@ -596,31 +614,25 @@ namespace embDB
 	bool CTable::delField(const CommonLib::CString& sFieldName, IDBTransaction *pTran )
 	{
 
-		TFieldByName::iterator it = m_FieldByName.find(sFieldName);
-		if(it != m_FieldByName.end())
+		int nIndex = m_pFields->FindField(sFieldName.cwstr());
+		if(nIndex == -1)
 		{
 			pTran->error(L"");//TO DO error msg
 			return false;
 		}
-		return delField(it->second.get(), pTran);
+		return delField(m_pFields->GetField(nIndex).get(), pTran);
 	 
 	}
-	bool CTable::delField(int64 nID, IDBTransaction *pTran )
+	
+	bool CTable::commit(IDBTransaction *pTran)
 	{
-
-		TFieldByID::iterator it = m_FieldByID.find(nID);
-		if(it == m_FieldByID.end())
-		{
-			pTran->error(L"");//TO DO error msg
-			return false;
-		}
-		return delField(it->second.get(), pTran);
-	}
-	bool CTable::commit()
-	{
+		m_OIDCounter.save(pTran);
 		return true;
 	}
-
+	 uint64 CTable::GetNextOID()
+	{
+		return m_OIDCounter.GetNext();
+	}
 
 
 	bool CTable::getOIDFieldName(CommonLib::CString& sOIDName)
@@ -634,18 +646,6 @@ namespace embDB
 	const CommonLib::CString& CTable::getName() const 
 	{
 		return m_sTableName;
-	}
-	IFieldPtr CTable::getField(const CommonLib::CString& sName) const 
-	{
-		return IFieldPtr();
-	}
-	size_t CTable::getFieldCnt() const
-	{
-		return m_FieldByID.size();
-	}
-	IFieldPtr CTable::getField(size_t nIdx) const
-	{
-		return IFieldPtr();
 	}
 	IFieldPtr CTable::createField(SFieldProp& sFP)
 	{
@@ -673,10 +673,21 @@ namespace embDB
 	}
 	bool CTable::deleteField(IField* pField)
 	{
-		return true;
+		return delField(pField);
 	}
 
-
+	IFieldPtr CTable::getField(const CommonLib::CString& sName) const
+	{
+		return m_pFields->GetField(sName);
+	}
+	size_t  CTable::getFieldCnt() const
+	{
+		return m_pFields->GetFieldCount();
+	}
+	IFieldPtr CTable::getField(size_t nIdx) const
+	{
+		return m_pFields->GetField(nIdx);
+	}
  
 
 	bool CTable::createIndex(const CommonLib::CString& sFieldName, SIndexProp& ip)
@@ -687,12 +698,18 @@ namespace embDB
 	}
 	bool  CTable::addIndex(const CommonLib::CString& sFieldName, SIndexProp& ip, bool bNew)
 	{
-		TFieldByName::iterator it = m_FieldByName.find(sFieldName);
+		/*TFieldByName::iterator it = m_FieldByName.find(sFieldName);
 		if(it == m_FieldByName.end())
+			return false;*/
+		if(m_pIndexs->FieldExists(sFieldName))
 			return false;
 
-		IDBFieldHandlerPtr pFieldHandler = it->second;
-		assert(pFieldHandler.get());
+		IFieldPtr pField  = m_pFields->GetField(sFieldName);
+		if(!pField.get())
+			return false;
+
+		IDBFieldHandler* pFieldHandler = (IDBFieldHandler*)pField.get();
+	 
 
 		IDBTransaction* pTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();
 		pTran->begin();
@@ -711,13 +728,15 @@ namespace embDB
 			return false;
 		}
 
-		TIndexByName::iterator idx_it = m_IndexByName.find(sFieldName);
-		assert(idx_it != m_IndexByName.end());
+		//TIndexByName::iterator idx_it = m_IndexByName.find(sFieldName);
+		//assert(idx_it != m_IndexByName.end());
 
-		IDBIndexHandlerPtr pHandlerIndex = idx_it->second;
+		IFieldPtr pIndex = m_pIndexs->GetField(sFieldName);
+
+		IDBIndexHandler* pHandlerIndex =  (IDBIndexHandler* )pIndex.get();
 
 
-		BuildIndex(pHandlerIndex.get(), pFieldHandler.get(), pTran);
+		BuildIndex(pHandlerIndex, pFieldHandler, pTran);
 		pTran->commit();
 		return true;
 	}
@@ -730,8 +749,8 @@ namespace embDB
 
 	bool CTable::BuildIndex(IDBIndexHandler* pIndexHandler, IDBFieldHandler *pFieldHandler, IDBTransaction* pTran)
 	{
-		IValueFiledPtr pField = pFieldHandler->getValueField(pTran, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
-		IndexFiledPtr pIndex =	pIndexHandler->getIndex(pTran, m_pTableStorage ? m_pTableStorage : m_pMainDBStorage);
+		IValueFieldPtr pField = pFieldHandler->getValueField(pTran,  m_pDBStorage.get());
+		IndexFiledPtr pIndex =	pIndexHandler->getIndex(pTran, m_pDBStorage.get());
 
 		 if(!pField.get() || !pIndex.get())
 			 return false;
@@ -765,8 +784,10 @@ namespace embDB
 		const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex)
 	{
 
-		TFieldByName::iterator it = m_FieldByName.find(pszFieldName);
+		/*TFieldByName::iterator it = m_FieldByName.find(pszFieldName);
 		if(it != m_FieldByName.end())
+			return IFieldPtr();*/
+		if(m_pFields->FieldExists(pszFieldName))
 			return IFieldPtr();
 
 		if(shapeType == CommonLib::shape_type_null || extent.type == CommonLib::bbox_type_invalid)

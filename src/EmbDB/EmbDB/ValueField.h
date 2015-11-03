@@ -29,7 +29,7 @@ namespace embDB
 	
 
 	template<class FType, class _TBTree, class TFieldIterator>
-	class ValueFieldBase : public  IValueFiled
+	class ValueFieldBase : public  IValueField
 	{
 	public:
 
@@ -47,16 +47,23 @@ namespace embDB
 			}
 		};
 
-		ValueFieldBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
+		ValueFieldBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, const sFieldInfo *pFieldInfo) :
 			  m_pDBTransactions(pTransactions),
 			  m_tree(-1, pTransactions, pAlloc, 100), 
-			  m_nBTreeRootPage(-1), m_pAlloc(pAlloc)
+			  m_nBTreeRootPage(-1), m_pAlloc(pAlloc), m_pFieldInfo(pFieldInfo)
 			  {
 
 			  }
 
 			typedef _TBTree TBTree;
 			typedef typename TBTree::iterator iterator;
+
+
+
+			virtual const sFieldInfo* getFieldInfoType() const 
+			{
+				return m_pFieldInfo;
+			}
 			virtual bool save()
 			{
 				return m_tree.saveBTreeInfo();
@@ -240,6 +247,7 @@ namespace embDB
 		int64 m_nBTreeRootPage;
 		CommonLib::alloc_t* m_pAlloc;
 		IndexFiledPtr m_pIndex;
+		const sFieldInfo *m_pFieldInfo;
 	};
 	
 
@@ -316,8 +324,8 @@ namespace embDB
 			typedef _FieldIterator TFieldIterator;
 
 
-			ValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
-			  ValueFieldBase(pTransactions, pAlloc)
+			ValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, const sFieldInfo* pFieldInfo) :
+			  ValueFieldBase(pTransactions, pAlloc, pFieldInfo)
 			{
 
 			}
@@ -367,13 +375,13 @@ namespace embDB
 			{
 				return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE);
 			}
-			virtual IValueFiledPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
+			virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 			{
-				TField * pField = new  TField(pTransactions, m_pAlloc);
+				TField * pField = new  TField(pTransactions, m_pAlloc, &m_fi);
 				pField->load(m_fi.m_nFieldPage, pTransactions->getType());
-				return IValueFiledPtr(pField);	
+				return IValueFieldPtr(pField);	
 			}
-			virtual bool release(IValueFiled* pField)
+			virtual bool release(IValueField* pField)
 			{
 				/*TField* pOIDField = (TField*)pField;
 

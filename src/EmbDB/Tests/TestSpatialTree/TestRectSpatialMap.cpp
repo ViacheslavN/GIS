@@ -397,7 +397,7 @@ void TestRectSpatial(const CommonLib::CString& sFileName,  int nCacheStorageSize
 
 void TestRectSpatialTree()
 {
-	 TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransactions, embDB::ZOrderRect2DU16>("d:\\db\\dbspatialrect16.data", 50, 8192, 0, 1000, 10,  0, 0, 100, 100, INSERT);
+	 TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransaction, embDB::ZOrderRect2DU16>("d:\\db\\dbspatialrect16.data", 50, 8192, 0, 1000, 10,  0, 0, 100, 100, INSERT);
 	// TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransactions, embDB::ZOrderRect2DU16>("d:\\db\\dbspatialrect16.data", 50, 8192, 0, 2000, 10, 333, 444, 999, 1245, SEARCH);
 	// TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransactions, embDB::ZOrderRect2DU16>("d:\\dbspatialrect16.data", 50, 8192, 0, 0xFFFF,100, 1000, IDENTIFY);
 	  TestRectZorder(2000, 2000, 333, 444, 999, 1245);

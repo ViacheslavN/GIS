@@ -52,11 +52,11 @@ namespace embDB
 
 		virtual bool saveState();
 
-		bool open(const wchar_t* pszName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways, size_t nPageSize);
-		bool close();
-		void setPageSize(size_t nPageSize);
-		size_t getPageSize() const;
-		int64 getFileSzie();
+		virtual bool open(const wchar_t* pszName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways, size_t nPageSize);
+		virtual bool close();
+		virtual void setPageSize(size_t nPageSize);
+		virtual size_t getPageSize() const;
+		virtual int64 getFileSzie();
 		virtual int64 getBeginFileSize() const;
 		virtual bool isDirty() const;
 		virtual const CommonLib::CString & getTranFileName() const;

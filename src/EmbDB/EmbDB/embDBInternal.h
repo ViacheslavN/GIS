@@ -185,18 +185,27 @@ namespace embDB
 
 	struct IFieldIterator;
 	struct IIndexPageIterator;
-	struct IValueFiled;
+	struct IValueField;
 	struct IDBTransaction;
 	struct IDBIndexHandler;
 	struct IDBFieldHandler;
 	struct IDBStorage;
+	struct IDBShema;
+	struct ILink;
+	struct IDBStorage;
+	struct IDBDatabase;
+	struct IDBTable;
 
 	COMMON_LIB_REFPTR_TYPEDEF(IFieldIterator); 
 	COMMON_LIB_REFPTR_TYPEDEF(IIndexPageIterator); 
-	COMMON_LIB_REFPTR_TYPEDEF(IValueFiled); 
+	COMMON_LIB_REFPTR_TYPEDEF(IValueField); 
 	COMMON_LIB_REFPTR_TYPEDEF(IDBTransaction);
 	COMMON_LIB_REFPTR_TYPEDEF(IDBIndexHandler);
 	COMMON_LIB_REFPTR_TYPEDEF(IDBFieldHandler);
+	COMMON_LIB_REFPTR_TYPEDEF(IDBShema);
+	COMMON_LIB_REFPTR_TYPEDEF(ILink);
+	COMMON_LIB_REFPTR_TYPEDEF(IDBStorage);
+	COMMON_LIB_REFPTR_TYPEDEF(IDBTable);
 
 	struct IFieldIterator : public CommonLib::AutoRefCounter
 	{
@@ -276,11 +285,12 @@ namespace embDB
 
 	COMMON_LIB_REFPTR_TYPEDEF(IndexFiled); 
 
-	struct IValueFiled: public CommonLib::RefCounter
+	struct IValueField: public CommonLib::RefCounter
 	{
 	public:
-		IValueFiled() {}
-		virtual ~IValueFiled() {}
+		IValueField() {}
+		virtual ~IValueField() {}
+		virtual const sFieldInfo* getFieldInfoType() const = 0;
 		//virtual bool insert (uint64 nOID, IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
 		//virtual uint64 insert (IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
 
@@ -331,8 +341,8 @@ namespace embDB
 		virtual void setFieldInfoType(sFieldInfo* fi) = 0;
 		virtual bool save(int64 nAddr, IDBTransaction *pTran) = 0;
 		virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
-		virtual IValueFiledPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
-		virtual bool release(IValueFiled* pField) = 0;
+		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
+		virtual bool release(IValueField* pField) = 0;
 
 		virtual void setIndexHandler(IDBIndexHandler *pIndexHandler) = 0;
 		virtual IDBIndexHandlerPtr getIndexIndexHandler() = 0;
@@ -366,34 +376,44 @@ namespace embDB
 		ltManyToMany
 
 	};
-	class ILink
+	struct ILink : CommonLib::AutoRefCounter
 	{
 		ILink(){}
 		virtual ~ILink(){}
 		virtual eLinkType getType() const = 0;
-		virtual ITable* getTableFrom() const = 0;
-		virtual ITable* getTableTo() const = 0;
-		virtual IField* getFieldFrom() const = 0;
-		virtual IField* getFieldTo() const = 0;
+		virtual ITablePtr getTableFrom() const = 0;
+		virtual ITablePtr getTableTo() const = 0;
+		virtual IFieldPtr getFieldFrom() const = 0;
+		virtual IFieldPtr getFieldTo() const = 0;
 	};
-	struct IDBShema : public IShema
+	struct IDBShema : public ISchema
 	{
 	public:
 		IDBShema(){}
 		virtual ~IDBShema(){}
 
-		virtual ILink* AddLink(ITable* pTableFrom, IField* pFieldFrom, ITable* pTableTo, IField* pFieldTo,  eLinkType nLinkType) = 0;
-		virtual ILink* AddLink(const CommonLib::CString& sTableFrom, const CommonLib::CString& sFieldFrom, const CommonLib::CString& sTableTo, const CommonLib::CString& sFieldTo,  eLinkType nLinkType) = 0;
+		virtual ILinkPtr AddLink(ITable* pTableFrom, IField* pFieldFrom, ITable* pTableTo, IField* pFieldTo,  eLinkType nLinkType) = 0;
+		virtual ILinkPtr AddLink(const CommonLib::CString& sTableFrom, const CommonLib::CString& sFieldFrom, const CommonLib::CString& sTableTo, const CommonLib::CString& sFieldTo,  eLinkType nLinkType) = 0;
 		virtual bool deleteLink(ILink *pLink) = 0;
 		virtual size_t getLinkCnt() const = 0;
-		virtual ILink* getLink(size_t nIndex) const = 0;
+		virtual ILinkPtr getLink(size_t nIndex) const = 0;
+
+		virtual bool open(IDBStorage* pStorage, __int64 nFileAddr, bool bNew = false) = 0;
+		virtual bool close() = 0;
+		virtual bool save(IDBTransaction *pTran) = 0;
 	};
 
-	struct IDBStorage
+	struct IDBStorage : CommonLib::AutoRefCounter
 	{
 	public:
 		IDBStorage(){}
 		virtual ~IDBStorage(){};
+
+		virtual bool open(const wchar_t* pszName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways, size_t nPageSize) = 0;
+		virtual bool close() = 0;
+		virtual void setPageSize(size_t nPageSize) = 0;
+ 		virtual int64 getFileSzie() = 0;
+ 
 
 		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0) = 0;
 		virtual bool dropFilePage(FilePagePtr pPage) = 0;
@@ -415,6 +435,11 @@ namespace embDB
 		virtual bool isDirty() const = 0;
 		virtual const CommonLib::CString & getTranFileName() const = 0;
 		virtual void clearDirty() = 0;
+		virtual void setStoragePageInfo(int64 nStorageInfo)= 0;
+		virtual bool initStorage(int64 nStorageInfo)= 0;
+		virtual bool loadStorageInfo()= 0;
+		virtual bool saveStorageInfo()= 0;
+
 
 		//for write/save
 		virtual bool isLockWrite() = 0;
@@ -430,7 +455,7 @@ namespace embDB
 	};
 
 
-	class IDBTable : public ITable
+	struct IDBTable : public ITable
 	{
 	public:
 		IDBTable(){}
@@ -441,6 +466,8 @@ namespace embDB
 		virtual bool try_lockWrite() = 0;
 		virtual bool unlockWrite() = 0;
 
+		
+
 
 		//	virtual bool insert(IRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
 		//	virtual bool insert(INameRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
@@ -450,6 +477,9 @@ namespace embDB
 		virtual bool deleteField(IField* pField) = 0;
 		virtual bool createIndex(const CommonLib::CString& sName, SIndexProp& ip) = 0;
 		virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip) = 0;
+
+		virtual uint64 GetNextOID() = 0;
+		virtual bool commit(IDBTransaction *pTran) = 0;
 	};
 
 
@@ -502,10 +532,15 @@ namespace embDB
 		virtual void stop() = 0;
 		virtual void wait() = 0;
 
-		virtual IValueFiledPtr GetField(CommonLib::CString& sTable, CommonLib::CString& sName) = 0;
+		virtual IValueFieldPtr GetField(const wchar_t* pszTableName, const wchar_t* pszFieldName) = 0;
 
 	};
-	
+	struct IDBDatabase : public IDatabase
+	{
+		IDBDatabase(){}
+		virtual ~IDBDatabase(){}
+		virtual IDBStoragePtr getDBStorage() const = 0;
+	};
 }
 
 #endif

@@ -12,13 +12,21 @@ namespace embDB
 		public:
 			CInsertCursor(IDBTransaction* pTran, ITable* pTable,  IFieldSet *pFileds = 0);
 			~CInsertCursor();
-			virtual int64 insert(IRow* pRow) = 0;
-			virtual IFieldSetPtr GetFieldSet() const = 0;
-			virtual IFieldsPtr   GetSourceFields() const = 0;
+			virtual uint64 insert(IRow* pRow);
+			virtual IFieldSetPtr GetFieldSet() const;
+			virtual IFieldsPtr   GetSourceFields() const;
+			virtual IRowPtr createRow();
+			bool init();
+		private:
+			bool AddField(const CommonLib::CString& sFieldName);
 		private:
 			IDBTransactionPtr m_pTran;
+			IDBTablePtr m_pTable;
 			IFieldSetPtr m_pFieldSet;
 			IFieldsPtr   m_pSourceFields;
+			typedef std::vector<IValueFieldPtr> TVecInsertFields;
+	 
+			TVecInsertFields m_vecInsertFields;
 	};
 }
 #endif

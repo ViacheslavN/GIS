@@ -119,7 +119,7 @@ namespace embDB
 		{
 			sFileName.format(_T("\\%d_%d_%I64d"),nDate, nTime, m_nTranID++);
 		}
-		CTransaction *pTran = new CTransaction(m_pAlloc, rtUndo, trType, m_sWorkingPath + sFileName, m_pDB->getMainStorage(), m_nTranID++ );
+		CTransaction *pTran = new CTransaction(m_pAlloc, rtUndo, trType, m_sWorkingPath + sFileName, m_pDB, m_nTranID++ );
 		//CDirectTransactions *pTran = new CDirectTransactions(m_pAlloc, rtUndo, trType, m_sWorkingPath + sFileName, m_pDB->getMainStorage(), m_nTranID++ );
 		ITransactionPtr pTranPtr(pTran);
 		m_Transactions.insert(pTranPtr);

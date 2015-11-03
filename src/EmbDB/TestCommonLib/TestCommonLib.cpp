@@ -11,6 +11,9 @@
 void testAlloc ();
 int _tmain(int argc, _TCHAR* argv[])
 {
+
+	int i = 0;
+	int j = i++;
 	CommonLib::alloc_t *alloc = new CommonLib::simple_alloc_t();
 	CommonLib::FxMemoryReadStream readStrim(alloc);
 	CommonLib::MemoryStream memStream(alloc);

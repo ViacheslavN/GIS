@@ -1,24 +1,37 @@
 #include "stdafx.h"
+#include "Database.h"
 #include "DirectTransactions.h"
+
 namespace embDB
 {
-	CDirectTransactions::CDirectTransactions(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache) 
-		: m_pDBStorage(pDBStorage)
+	CDirectTransaction::CDirectTransaction(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache) 
+		: TBase(NULL)
+		,m_bError(false)
+		
+	{
+		assert(m_pDBStorage);
+		 m_pDBStorage =pDBStorage;
+	}
+	CDirectTransaction::CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
+		eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) : TBase(NULL)
 		,m_bError(false)
 	{
 		assert(m_pDBStorage);
+		 m_pDBStorage = pDBStorage;
 	}
-	CDirectTransactions::CDirectTransactions(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache): m_pDBStorage(pDBStorage)
+
+
+	CDirectTransaction::CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
+		eTransactionsType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache) : TBase(pDatabase)
 		,m_bError(false)
-	{
-		assert(m_pDBStorage);
-	}
-	CDirectTransactions::~CDirectTransactions()
 	{
 
 	}
-	FilePagePtr CDirectTransactions::getFilePage(int64 nAddr, bool bRead, uint32 nSize )
+	CDirectTransaction::~CDirectTransaction()
+	{
+
+	}
+	FilePagePtr CDirectTransaction::getFilePage(int64 nAddr, bool bRead, uint32 nSize )
 	{
 		return  m_pDBStorage->getFilePage(nAddr, bRead, nSize);
 		/*if(!pFilePage)
@@ -27,18 +40,18 @@ namespace embDB
 			m_setPagesFromFree.insert(pFilePage->getAddr());
 		return pFilePage;*/
 	}
-	void CDirectTransactions::dropFilePage(FilePagePtr pPage)
+	void CDirectTransaction::dropFilePage(FilePagePtr pPage)
 	{
 		m_setRemovePages.insert(pPage->getAddr());
 		//m_pDBStorage->dropFilePage(pPage);
 	}
-	void CDirectTransactions::dropFilePage(int64 nAddr)
+	void CDirectTransaction::dropFilePage(int64 nAddr)
 	{
 
 		m_setRemovePages.insert(nAddr);
 		//m_pDBStorage->dropFilePage(nAddr);
 	}
-	FilePagePtr CDirectTransactions::getNewPage(uint32 nSize)
+	FilePagePtr CDirectTransaction::getNewPage(uint32 nSize)
 	{
 		FilePagePtr pFilePage(m_pDBStorage->getNewPage(false, nSize));
 		if(!pFilePage.get())
@@ -47,16 +60,16 @@ namespace embDB
 			m_setPagesFromFree.insert(pFilePage->getAddr());
 		return FilePagePtr(pFilePage);
 	}
-	void CDirectTransactions::saveFilePage(FilePagePtr pPage, size_t nSize,  bool bChandgeInCache)
+	void CDirectTransaction::saveFilePage(FilePagePtr pPage, size_t nSize,  bool bChandgeInCache)
 	{
 		m_pDBStorage->saveFilePage(pPage, nSize,  bChandgeInCache);
 	}
-	size_t CDirectTransactions::getPageSize() const
+	size_t CDirectTransaction::getPageSize() const
 	{
 		return m_pDBStorage->getPageSize();
 	}
 
-	bool CDirectTransactions::commit()
+	bool CDirectTransaction::commit()
 	{
 		m_pDBStorage->lockWrite(this);
 

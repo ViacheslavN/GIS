@@ -7,11 +7,12 @@
 #include "DBTranManager.h"
 namespace embDB
 {
-	CDatabase::CDatabase() : m_schema(this), m_bOpen(false)
+	CDatabase::CDatabase() :  m_bOpen(false)
 	{
 		m_pAlloc.reset(new CommonLib::simple_alloc_t());
 		m_pStorage.reset(new CStorage(m_pAlloc.get()));
 		m_pTranManager.reset(new CDBTranManager(m_pAlloc.get(), this));
+		m_pSchema = (IDBShema*)new CSchema(this);
 	}
 	CDatabase::~CDatabase()
 	{
@@ -80,7 +81,7 @@ namespace embDB
 		m_pStorage->initStorage(m_dbHeader.nStoragePage);
 		m_pStorage->saveFilePage(pDBHeaderPage);
 
-		if(!m_schema.open(m_pStorage.get(), m_dbHeader.nShemaPage, true))
+		if(!m_pSchema->open(m_pStorage.get(), m_dbHeader.nShemaPage, true))
 			return false;
 		m_pStorage->saveStorageInfo();
 		m_pStorage->commit();
@@ -95,7 +96,7 @@ namespace embDB
 		m_bOpen = false;
 		bool bRet = m_pStorage->close();
 		bRet = m_pTranManager->close();
-		bRet = m_schema.close();
+		bRet = m_pSchema->close();
 		return bRet;
 	}
 	bool CDatabase::readRootPage(CFilePage* pFilePage)
@@ -126,20 +127,13 @@ namespace embDB
 			return false;
 		if(m_dbHeader.nShemaPage <= 0 )
 			return false;
-		if(!m_schema.open(m_pStorage.get(), m_dbHeader.nShemaPage))
+		if(!m_pSchema->open(m_pStorage.get(), m_dbHeader.nShemaPage))
 			return false;
 
 		
 		return true;
 	}
-	CSchema* CDatabase::getSchema()
-	{
-		return &m_schema;
-	}
-	CStorage* CDatabase::getMainStorage()
-	{
-		return m_pStorage.get();
-	}
+	 
 	CommonLib::alloc_t* CDatabase::getBTreeAlloc()
 	{
 		return m_pAlloc.get();
@@ -168,7 +162,7 @@ namespace embDB
 		return tran.restore();
 		
 	}
-	CStorage* CDatabase::getTableStorage(const CommonLib::CString& sFileName, bool bCreate)
+	/*CStorage* CDatabase::getTableStorage(const CommonLib::CString& sFileName, bool bCreate)
 	{
 		TTableStorages::iterator it = m_TableStorages.find(sFileName);
 		if(it.isNull())
@@ -204,5 +198,5 @@ namespace embDB
 			return pStorage;
 		}
 		return it.value();
-	}
+	}*/
 }

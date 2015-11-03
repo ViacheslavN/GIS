@@ -732,5 +732,5 @@ void TestBRteeSet()
 	//nCount = 200;
 	//	size_t nPageSize = 100;
 	size_t nPageSize = 8192;
-	testBPTreeSetImpl<TBDoubleSet, embDB::CDirectTransactions, int64>(nCount, nPageSize, 10000, 10, 10000);
+	testBPTreeSetImpl<TBDoubleSet, embDB::CDirectTransaction, int64>(nCount, nPageSize, 10000, 10, 10000);
 }

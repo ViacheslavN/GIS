@@ -394,5 +394,5 @@ void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, 
 void TestBPStringTree()
 {
 		CommonLib::simple_alloc_t alloc;
-		TestBPStringTreeImpl<embDB::CDirectTransactions>(&alloc, 0, 3000000, 10, embDB::scUTF8);
+		TestBPStringTreeImpl<embDB::CDirectTransaction>(&alloc, 0, 3000000, 10, embDB::scUTF8);
 };

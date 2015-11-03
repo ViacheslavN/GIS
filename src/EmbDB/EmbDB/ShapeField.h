@@ -101,7 +101,7 @@ namespace embDB
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		TShapeValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
+		TShapeValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, const sFieldInfo* pFieldInfo) : TBase(pTransactions, pAlloc, pFieldInfo) 
 		{
 
 		}
@@ -154,18 +154,18 @@ namespace embDB
 			return true;
 
 		}
-		virtual IValueFiledPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
+		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
-			TField * pField = new  TField(pTransactions, m_pAlloc);
+			TField * pField = new  TField(pTransactions, m_pAlloc, (sFieldInfo*)&m_SpatialFi);
 			pField->load(m_SpatialFi.m_nFieldPage, pTransactions->getType());
 			if(m_pIndexHandler.get())
 			{
 				IndexFiledPtr pIndex = m_pIndexHandler->getIndex(pTransactions, pStorage);
 				pField->SetIndex(pIndex.get());
 			}
-			return IValueFiledPtr(pField);	
+			return IValueFieldPtr(pField);	
 		}
-		virtual bool release(IValueFiled* pField)
+		virtual bool release(IValueField* pField)
 		{
 			/*TField* pOIDField = (TField*)pField;
 

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CreateFields.h"
 
-
+/*
 void CreateField(const CommonLib::CString& sName, const CommonLib::CString& sAlias,  uint32 nFieldType,
 	embDB::CTable *pTable)
 {
@@ -25,10 +25,10 @@ void CreateTables(embDB::CDatabase* pDb)
 	CommonLib::CString sTableName; 
 	embDB::ITransactionPtr pTableTran = pDb->startTransaction(embDB::eTT_DDL);
 	pTableTran->begin();
-	pSchema->addTable("Table", "", 	(embDB::IDBTransaction*)pTableTran.get());
+	pSchema->addTable(L"Table",	(embDB::IDBTransaction*)pTableTran.get());
 	pTableTran->commit();
 	pDb->closeTransaction(pTableTran.get());
-	embDB::CTable *pTable = pSchema->getTable("Table");
+	embDB::CTable *pTable = pSchema->getTable(L"Table");
 
 
 	CreateField("Field64", "AliasField64", embDB::dtInteger64, pTable);
@@ -42,7 +42,7 @@ void CreateTables(embDB::CDatabase* pDb)
 	CreateField("FieldDouble", "AliasDouble", embDB::dtDouble, pTable);
 	CreateField("FieldFloat", "AliasFloat", embDB::dtFloat, pTable);
 
-/*	for (int i = 0; i < 1000; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{				
 		sTableName.format(_T("table_%d"), i);
 		pSchema->addTable(sTableName, "", 	(embDB::IDBTransactions*)pTableTran);
@@ -71,8 +71,8 @@ void CreateTables(embDB::CDatabase* pDb)
 		pTable->createIndex(sFieldName, indexProp);
 	}
 	pFieldTran->commit();
-	pDb->closeTransaction(pFieldTran);*/
-}
+	pDb->closeTransaction(pFieldTran);
+}*/
  
 void CreateFields(embDB::CTable *pTable)
 {

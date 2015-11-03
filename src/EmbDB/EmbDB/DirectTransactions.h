@@ -2,20 +2,25 @@
 #define _EMBEDDED_DATABASE_C_DIRECT_TRANSACTIONS_H_
 
 #include "embDBInternal.h"
-
+#include "CommonLibrary/alloc_t.h"
 #include <set>
 #include <iostream>
+#include "TransactionBase.h"
 namespace embDB
 {
-	class CDirectTransactions : public IDBTransaction
+	class CDatabase;
+	class CDirectTransaction :  public ITransactionBase<IDBTransaction>
 	{
 	public:
-
-		CDirectTransactions(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache = 10000);
+		typedef ITransactionBase<IDBTransaction> TBase;
+		CDirectTransaction(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache = 10000);
 		//for compatible tests
-		CDirectTransactions(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
+		CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
 			eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
-		~CDirectTransactions();
+
+		CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
+			eTransactionsType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache = 10000);
+		~CDirectTransaction();
 
 		//ITransactions
 		virtual bool begin(){return true;}
@@ -29,7 +34,7 @@ namespace embDB
 		virtual ICursorPtr executeQuery(IStatement* pStatement) {return  ICursorPtr();}
 		virtual ICursorPtr executeQuery(const wchar_t* pszQuery = NULL) {return  ICursorPtr();}
 
-		virtual IInsertCursorPtr createInsertCursor(ITable *pTable, IFieldSet *pFileds = 0) {return  IInsertCursorPtr();}
+ 
 		virtual IUpdateCursorPtr createUpdateCursor() {return  IUpdateCursorPtr();}
 		virtual IDeleteCursorPtr createDeleteCursor() {return  IDeleteCursorPtr();}
 

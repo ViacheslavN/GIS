@@ -25,6 +25,10 @@ namespace embDB
 		{
 			return m_fi.m_sFieldName;
 		}
+		virtual const CommonLib::CString& getAlias() const
+		{
+			return m_fi.m_sFieldAlias;
+		}
 
 		virtual sFieldInfo* getFieldInfoType()
 		{

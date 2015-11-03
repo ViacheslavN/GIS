@@ -199,7 +199,7 @@ namespace embDB
 	struct IUpdateCursor;
 	struct IDeleteCursor;
 	struct ITable;
-	struct IShema;
+	struct ISchema;
 	struct IStatement;
 	struct ITransaction;
 
@@ -212,7 +212,7 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(IUpdateCursor);
 	COMMON_LIB_REFPTR_TYPEDEF(IDeleteCursor);
 	COMMON_LIB_REFPTR_TYPEDEF(ITable);
-	COMMON_LIB_REFPTR_TYPEDEF(IShema);
+	COMMON_LIB_REFPTR_TYPEDEF(ISchema);
 	COMMON_LIB_REFPTR_TYPEDEF(IStatement); 
 	COMMON_LIB_REFPTR_TYPEDEF(ITransaction); 
 
@@ -223,7 +223,7 @@ namespace embDB
 		virtual ~IField(){}
 		virtual eDataTypes getType() const = 0;
 		virtual const CommonLib::CString& getName() const = 0;
-
+		virtual const CommonLib::CString& getAlias() const = 0;
 	};
 
 
@@ -242,7 +242,6 @@ namespace embDB
 		virtual int       FindField(const CommonLib::CString& name) const = 0;
 		virtual bool      FieldExists(const CommonLib::CString& name) const = 0;
 		virtual void	  Clear() = 0;
-		virtual IFieldsPtr		clone() const = 0;
 	};
 
 
@@ -266,9 +265,12 @@ namespace embDB
 		IRow(){}
 		virtual ~IRow(){};
 		virtual int32 count() const = 0;
-
+		virtual bool IsFieldSelected(int index) const = 0;
 		virtual CommonLib::CVariant* value(int32 nNum) = 0;
-		virtual bool set(CommonLib::CVariant* pValue, int32 nNum) = 0;
+		virtual const CommonLib::CVariant* value(int32 nNum) const = 0;
+		virtual bool set(CommonLib::CVariant& pValue, int32 nNum) = 0;
+		virtual IFieldSetPtr		   GetFieldSet() const = 0;
+		virtual IFieldsPtr             GetSourceFields() const = 0;
 	};
 
 	struct INameRow : public IRow
@@ -305,8 +307,8 @@ namespace embDB
 	{
 		IInsertCursor(){}
 		virtual ~IInsertCursor(){}
-		//virtual IRowPtr createRow() = 0;
-		virtual int64 insert(IRow* pRow) = 0;
+		virtual IRowPtr createRow() = 0;
+		virtual uint64 insert(IRow* pRow) = 0;
 		virtual IFieldSetPtr GetFieldSet() const = 0;
 		virtual IFieldsPtr   GetSourceFields() const = 0;
 	};
@@ -332,20 +334,28 @@ namespace embDB
 		virtual bool getOIDFieldName(CommonLib::CString& sOIDName) = 0;
 		virtual bool setOIDFieldName(const CommonLib::CString& sOIDName) = 0;
 		virtual const CommonLib::CString& getName() const  = 0;
-		virtual IFieldPtr getField(const CommonLib::CString& sName) const = 0;
-		virtual size_t getFieldCnt() const = 0;
+		virtual IFieldPtr getField(const CommonLib::CString& sName) const= 0 ;
+		virtual size_t getFieldCnt() const= 0;
 		virtual IFieldPtr getField(size_t nIdx) const = 0;
 		virtual IFieldsPtr getFields() const = 0;
 	};
 
-	struct IShema : public CommonLib::AutoRefCounter
+	struct ISchema : public CommonLib::AutoRefCounter
 	{
 	public:
-		IShema(){}
-		virtual ~IShema(){}
+		ISchema(){}
+		virtual ~ISchema(){}
 		virtual size_t getTableCnt() const = 0;
 		virtual ITablePtr getTable(size_t nIndex) const = 0;
+		virtual ITablePtr getTableByID(int64 nID) const = 0;
 		virtual ITablePtr getTableByName(const wchar_t* pszTableName) const = 0;
+
+		virtual bool addTable(const  wchar_t*  sTableName, ITransaction *Tran = NULL)= 0;
+		virtual bool dropTable(const CommonLib::CString& sTableName, ITransaction *Tran = NULL)= 0;
+		virtual bool dropTable(int64 nID, ITransaction *Tran = NULL)= 0;
+		virtual bool dropTable(ITable *pTable, ITransaction *Tran = NULL)= 0;
+
+
 	};
 
 	struct IRecordset
@@ -415,7 +425,7 @@ namespace embDB
 		virtual ICursorPtr executeQuery(IStatement* pStatement) = 0;
 		virtual ICursorPtr executeQuery(const wchar_t* pszQuery = NULL) = 0;
 
-		virtual IInsertCursorPtr createInsertCursor(ITable *pTable, IFieldSet *pFileds = 0) = 0;
+		virtual IInsertCursorPtr createInsertCursor(const wchar_t *pszTable, IFieldSet *pFileds = 0) = 0;
 		virtual IUpdateCursorPtr createUpdateCursor() = 0;
 		virtual IDeleteCursorPtr createDeleteCursor() = 0;
 
@@ -433,7 +443,8 @@ namespace embDB
 		virtual bool close()  = 0;
 		virtual ITransactionPtr startTransaction(eTransactionsType trType) = 0;
 		virtual bool closeTransaction(ITransaction* ) = 0;
-		virtual IShema* getShema() = 0;
+		virtual ISchemaPtr getSchema() const = 0;
+		
 
 	};
 }

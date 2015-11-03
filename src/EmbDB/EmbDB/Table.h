@@ -13,6 +13,7 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "PageVector.h"
 #include "Index.h"
+#include "Counter.h"
 namespace embDB
 {
 	class CDatabase;
@@ -35,27 +36,29 @@ namespace embDB
 
 		};
 		public:
-			CTable(CDatabase* pDB, CFilePage* pFilePage, const CommonLib::CString& sTableName, CStorage* pTableStorage/*, int64 nTableID*/);
-			CTable(CDatabase* pDB, int64 m_nPageAddr,  const CommonLib::CString& sTableName, CStorage* pTableStorage);
-			CTable(CDatabase* pDB, int64 m_nPageAddr, CStorage* pTableStorage);
+			CTable(CDatabase* pDB, CFilePage* pFilePage, const CommonLib::CString& sTableName);
+			CTable(CDatabase* pDB, int64 m_nPageAddr,  const CommonLib::CString& sTableName);
+			CTable(CDatabase* pDB, int64 m_nPageAddr);
 			~CTable();
 
-			virtual IFieldsPtr getFields() const {return IFieldsPtr(); }
+	 
 
 
 			virtual bool getOIDFieldName(CommonLib::CString& sOIDName);
 			virtual bool setOIDFieldName(const CommonLib::CString& sOIDName) ;
 			virtual const CommonLib::CString& getName() const ;
-			virtual IFieldPtr getField(const CommonLib::CString& sName) const ;
-			virtual size_t getFieldCnt() const;
-			virtual IFieldPtr getField(size_t nIdx) const;
+			
 			virtual IFieldPtr createField(SFieldProp& sFP);
 			virtual bool deleteField(IField* pField);
 			virtual bool createIndex(const CommonLib::CString& , SIndexProp& ip);
 			virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip);
 			virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true);
-
-
+			
+			virtual IFieldPtr getField(const CommonLib::CString& sName) const ;
+			virtual size_t getFieldCnt() const;
+			virtual IFieldPtr getField(size_t nIdx) const;
+			virtual IFieldsPtr getFields() const {return m_pFields;}
+			
 
 			bool addIndex(const CommonLib::CString& , SIndexProp& ip, bool bNew);
 			bool addIndex(sFieldInfo* fi, IDBTransaction *pTran, bool bNew);
@@ -65,11 +68,11 @@ namespace embDB
 			int64 getAddr();
 			//int64 getID() const {return m_nTableID;}
 			bool save(IDBTransaction *pTran);
-			IDBFieldHandlerPtr getFieldHandler(const CommonLib::CString& name);
+			//IDBFieldHandlerPtr getFieldHandler(const CommonLib::CString& name);
 
-			bool delField(IDBFieldHandler *pField, IDBTransaction *Tran = NULL);
+			bool delField(IField *pField, IDBTransaction *Tran = NULL);
 			bool delField(const CommonLib::CString& sFieldName, IDBTransaction *Tran = NULL);
-			bool delField(int64 nID, IDBTransaction *Tran = NULL);
+			//bool delField(int64 nID, IDBTransaction *Tran = NULL);
 		
 
 
@@ -83,9 +86,9 @@ namespace embDB
 			virtual bool try_lock(){return true;}
 			virtual bool unlock(){return true;}
 			bool isCanBeRemoving();
-			
-			bool commit();
 
+			virtual uint64 GetNextOID();
+			virtual bool commit(IDBTransaction *pTran);
 		private:
 			bool ReadField(int64 nAddr, IDBTransaction *pTran);
 			bool ReadIndex(int64 nAddr, IDBTransaction *pTran);
@@ -95,7 +98,7 @@ namespace embDB
 			bool createIndexField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew);
 
 	
-			bool loadTableStorage(int64 nAddr);
+			//bool loadTableStorage(int64 nAddr);
 			bool ReadIndices(int64 nAddr, IDBTransaction *pTran);
 			bool BuildIndex(IDBIndexHandler* pIndexHandler, IDBFieldHandler *pFieldHandler, IDBTransaction* pTran);
 			eDataTypes GetType(uint64 nMaxVal, bool isPoint);
@@ -112,25 +115,25 @@ namespace embDB
 
 			typedef TPageVector<int64> TFieldPages;
  
-			TFieldByName m_FieldByName;
-			TFieldByID m_FieldByID;
+			//TFieldByName m_FieldByName;
+			//TFieldByID m_FieldByID;
 
-			TIndexByName m_IndexByName;
-			TIndexByID m_IndexByID;
+			//TIndexByName m_IndexByName;
+			//TIndexByID m_IndexByID;
 
 
 			int64 m_nTablePage;
-			int64 m_nStoragePageID;
 			int64 m_nFieldsPage;
 			int64 m_nIndexsPage;
-			int64 m_nRowIDPage;
-			CStorage* m_pMainDBStorage;
+			IDBStoragePtr m_pDBStorage;
 			CommonLib::CString m_sTableName;
 			CDatabase* m_pDB;
-			CStorage* m_pTableStorage;
 			TFieldPages m_nFieldsAddr;
 			TFieldPages m_nIndexAddr;
-			//int64 m_nTableID;
+			typedef TCounter<uint64> TOIDCounter;
+			TOIDCounter m_OIDCounter;
+			IFieldsPtr m_pFields;
+			IFieldsPtr m_pIndexs;
 
 	};
 

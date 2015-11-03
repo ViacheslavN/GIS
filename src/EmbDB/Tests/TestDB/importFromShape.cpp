@@ -200,16 +200,18 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 	}
 
 
-	embDB::CSchema* pSchema = db.getSchema();
-	embDB::IDBTable *pTable = pSchema->getTable(sFileName);
-	if(pTable)
+	embDB::ISchemaPtr pSchema = db.getSchema();
+	embDB::ITablePtr pTable = pSchema->getTableByName(sFileName.cwstr());
+	if(pTable.get())
 		return;
 	
-	pSchema->addTable(sFileName, L"");
-	pTable = pSchema->getTable(sFileName);
+	pSchema->addTable(sFileName.wstr());
+	pTable = pSchema->getTableByName(sFileName.wstr());
 
-	if(!pTable)
+	if(!pTable.get())
 		return;
+
+	embDB::IDBTable *pDBTable = dynamic_cast<embDB::IDBTable*>(pTable.get());
 
 	shp.file = ShapeLib::SHPOpen(shpFilePath.cstr(), "rb");
 	if(!shp.file)
@@ -252,8 +254,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 		units = pSpatialReference->GetUnits();
 	}
 
-	pTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), true );
-
+	
 	int fieldCount = ShapeLib::DBFGetFieldCount(dbf.file);
 	for(int fieldNum = 0; fieldNum < fieldCount; ++fieldNum)
 	{
@@ -284,8 +285,16 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 			break;
 		}
 
-		pTable->createField(fp);
+		pDBTable->createField(fp);
 	}
+
+	pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), true );
+
+
+	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_INSERT);
+	embDB::IInsertCursorPtr pInsertCursor = pTran->createInsertCursor(pDBTable->getName().cwstr());
+	embDB::IRowPtr pRow = pInsertCursor->createRow();
+
 
 
 }

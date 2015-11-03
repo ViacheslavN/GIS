@@ -13,9 +13,12 @@
 #include "TranLogStateManager.h"
 #include "RBSet.h"
 #include "TranPerfCounter.h"
+#include "TransactionBase.h"
 namespace embDB
 {
 	//class CTransactionsCache;
+
+	class CDatabase;
 	struct sTransactionHeader
 	{
 		sTransactionHeader() :
@@ -41,13 +44,22 @@ namespace embDB
 		int32 nTime;
 		int32 nState;
 	};
-	class CTransaction : public IDBTransaction
+	class CTransaction : public ITransactionBase<IDBTransaction>
 	{
 	public:
+		typedef ITransactionBase<IDBTransaction> TBase;
+
 		CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
 			eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
 
+		CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
+			eTransactionsType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache = 10000);
+
+
 		CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache = 10000);
+
+
+		
 
 		~CTransaction();
 
@@ -62,7 +74,7 @@ namespace embDB
 		virtual ICursorPtr executeQuery(IStatement* pStatement) {return  ICursorPtr();}
 		virtual ICursorPtr executeQuery(const wchar_t* pszQuery = NULL) {return  ICursorPtr();}
 
-		virtual IInsertCursorPtr createInsertCursor(ITable *pTable, IFieldSet *pFileds = 0) {return  IInsertCursorPtr();}
+ 
 		virtual IUpdateCursorPtr createUpdateCursor() {return  IUpdateCursorPtr();}
 		virtual IDeleteCursorPtr createDeleteCursor() {return  IDeleteCursorPtr();}
 
@@ -132,7 +144,7 @@ namespace embDB
 		typedef  std::vector<IDBTransaction*> TInnerTransactions;
 		CTranStorage m_TranStorage;
 		CTransactionsCache m_PageChache;
-		IDBStorage* m_pDBStorage;
+	
 		CTranUndoPageManager m_TranUndoManager;
 		CTranRedoPageManager m_TranRedoManager;
 		CTranLogStateManager m_LogStateManager;

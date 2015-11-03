@@ -16,7 +16,7 @@ namespace embDB
 	{
 
 	}
-	bool CSchema::open(CStorage* pStorage, __int64 nFileAddr, bool bNew)
+	bool CSchema::open(IDBStorage* pStorage, __int64 nFileAddr, bool bNew)
 	{
 		m_pStorage = pStorage;
 		m_nAddr = nFileAddr;
@@ -32,30 +32,22 @@ namespace embDB
 	{
 		return true;
 	}
-	bool CSchema::addTable(const CommonLib::CString& sTableName, const CommonLib::CString& sStorageName, IDBTransaction *pTran )
+	bool CSchema::addTable(const wchar_t*  pszTableName, ITransaction *pTran )
 	{
-		TTablesByName::iterator it = m_TablesByName.find(sTableName);
-		if(!it.isNull())
+		TTablesByName::iterator it = m_TablesByName.find(pszTableName);
+		if(it != m_TablesByName.end())
 			return false;
 
+
+		IDBTransaction *pDBTran = (IDBTransaction *)pTran;
+
 		IDBTransaction *pInnerTran = 0;
-		if(!pTran)
+		if(!pDBTran)
 		{
 			 pInnerTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();
-			 pTran = pInnerTran;
+			 pDBTran = pInnerTran;
 		}
 	
-		CStorage *pTradeStorage = NULL;
-		if(!sStorageName.isEmpty())
-		{
-			pTradeStorage = m_pDB->getTableStorage(sStorageName, true);
-			if(!pTradeStorage)
-			{
-				//TO DO Loggin
-				return false;
-			}
-			//pTran->setDBStorage(pTradeStorage);
-		}
 		if(pInnerTran)
 		{
 			if(!pInnerTran->begin())
@@ -65,20 +57,19 @@ namespace embDB
 			}
 		}
 		
-		FilePagePtr pPage = pTran->getNewPage();
+		FilePagePtr pPage = pDBTran->getNewPage();
 		if(!pPage.get())
 			return false;
-		CTable* pTable = new CTable(m_pDB, pPage.get(), sTableName, pTradeStorage/*, m_nLastTableID++*/);
-		if(!pTable->save(pTran))
+		CTable* pTable = new CTable(m_pDB, pPage.get(), pszTableName/*, m_nLastTableID++*/);
+		ITablePtr pTablePtr(pTable);
+
+		if(!pTable->save(pDBTran))
 			return false;
-		m_TablesByName.insert(sTableName, pTable);
-		bool bRet = !m_TablesByID.isNull( m_TablesByID.insert(pTable->getAddr(), pTable));
-		assert(bRet);
-		if(!bRet)
-		{
-			return false;
-		}
-		if(!m_nTablesAddr.push(pPage->getAddr(), pTran))
+		m_TablesByName.insert(std::make_pair(pszTableName, pTablePtr));
+		m_TablesByID.insert(std::make_pair(pTable->getAddr(), pTablePtr));
+		m_vecTables.push_back(pTablePtr);
+		 
+		if(!m_nTablesAddr.push(pPage->getAddr(), pDBTran))
 		{
 			if(pInnerTran)
 			{
@@ -94,20 +85,7 @@ namespace embDB
 		}
 		return true;
 	}
-	CTable* CSchema::getTable(const CommonLib::CString& sTableName)
-	{
-		TTablesByName::iterator it = m_TablesByName.find(sTableName);
-		if(!it.isNull())
-			return it.value();
-		return NULL;
-	}
-	CTable* CSchema::getTable(int64 nID)
-	{
-		TTablesByID::iterator it = m_TablesByID.find(nID);
-		if(!it.isNull())
-			return it.value();
-		return NULL;
-	}
+	
 	bool CSchema::LoadSchema()
 	{
 
@@ -142,19 +120,15 @@ namespace embDB
 		TTablePages::iterator it = m_nTablesAddr.begin();
 		while(!it.isNull())
 		{
-			CTable* pTable = new CTable(m_pDB, it.value(), NULL);
+			CTable* pTable = new CTable(m_pDB, it.value());
 			if(!pTable->load())
 			{
 				delete pTable;
 				return false;
 			}
-			m_TablesByName.insert(pTable->getName(), pTable);
-			bool bRet = !m_TablesByID.isNull(m_TablesByID.insert(pTable->getAddr(), pTable));
-			assert(bRet);
-			if(!bRet)
-			{
-				return false;
-			}
+			m_TablesByName.insert(std::make_pair(pTable->getName(), ITablePtr(pTable)));
+			m_TablesByID.insert(std::make_pair(pTable->getAddr(), ITablePtr(pTable)));
+			m_vecTables.push_back(ITablePtr(pTable));
 			it.next();
 		}
 
@@ -235,41 +209,81 @@ namespace embDB
 			return m_nTablesAddr.save(m_pStorage);
 	}
 
-	bool CSchema::dropTable(CTable *pTable, IDBTransaction *pTran)
+	bool CSchema::dropTable(ITable *pTable, ITransaction *pTran)
 	{
 		assert(pTable);
 		if(!pTable)
 			return false;
 
-		pTable->lock(); //TO DO add in wait graf
-		if(!pTable->isCanBeRemoving())
+		IDBTransaction* pDBTran = (IDBTransaction*)pTran;
+
+		TTables::iterator it = std::find(m_vecTables.begin(), m_vecTables.end(), ITablePtr(pTable));
+		assert(it == m_vecTables.end());
+		if(it == m_vecTables.end())
+			return false;
+	 
+
+	    CTable *pDBTable = (CTable*)pTable;
+
+		pDBTable->lock(); //TO DO add in wait graf
+		if(!pDBTable->isCanBeRemoving())
 		{
-			pTable->unlock();
-			pTran->error(L""); //TO DO Error msg
+			pDBTable->unlock();
+			pDBTran->error(L""); //TO DO Error msg
 			return false;
 		}
-		if(!m_nTablesAddr.remove(pTable->getAddr(), pTran))
+		if(!m_nTablesAddr.remove(pDBTable->getAddr(), pDBTran))
 			return false;
 
-		m_TablesByName.remove(pTable->getName());
-		m_TablesByID.remove(pTable->getAddr());
-		//TO DO add free pages from tables and fields
-		delete pTable;
+		m_TablesByName.erase(pDBTable->getName());
+		m_TablesByID.erase(pDBTable->getAddr());
+		m_vecTables.erase(it);
+
+ 
 		return true;
 	}
 
-	bool CSchema::dropTable(const CommonLib::CString& sTableName, IDBTransaction *Tran)
+	bool CSchema::dropTable(const CommonLib::CString& sTableName, ITransaction *Tran)
 	{
 		TTablesByName::iterator it = m_TablesByName.find(sTableName);
-		if(it.isNull())
+		if(it == m_TablesByName.end())
 			return false;
-		return dropTable(it.value(), Tran);
+		return dropTable(it->second.get(), Tran);
 	}
-	bool CSchema::dropTable(int64 nID, IDBTransaction *Tran)
+	bool CSchema::dropTable(int64 nID, ITransaction *Tran)
 	{
 		TTablesByID::iterator it = m_TablesByID.find(nID);
-		if(it.isNull())
+		if(it == m_TablesByID.end())
 			return false;
-		return dropTable(it.value(), Tran);
+		return dropTable(it->second.get(), Tran);
 	}
+
+	size_t CSchema::getTableCnt() const
+	{
+		return m_vecTables.size();
+	}
+	ITablePtr CSchema::getTable(size_t nIndex) const
+	{
+		if(nIndex < m_vecTables.size())
+			return m_vecTables[nIndex];
+		return ITablePtr();
+	}
+	ITablePtr CSchema::getTableByName(const wchar_t* pszTableName) const
+	{
+
+		TTablesByName::const_iterator it = m_TablesByName.find(pszTableName);
+		if(it != m_TablesByName.end())
+			return it->second;
+		return ITablePtr();
+	}
+	ITablePtr CSchema::getTableByID(int64 nID) const
+	{
+		TTablesByID::const_iterator it = m_TablesByID.find(nID);
+		if(it != m_TablesByID.end())
+			return it->second;
+		return ITablePtr();
+	}
+
+ 
+
 }

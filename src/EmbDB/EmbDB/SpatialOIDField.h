@@ -203,11 +203,11 @@ namespace embDB
 			{
 				return true;
 			}
-			IValueFiled* getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage) 
+			IValueField* getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage) 
 			{
 				return NULL;
 			}
-			bool release(IValueFiled* pField)
+			bool release(IValueField* pField)
 			{
 				return true;
 			}

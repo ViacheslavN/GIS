@@ -1,20 +1,21 @@
 #include "stdafx.h"
 #include "Transactions.h"
+#include "CommonLibrary/alloc_t.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/String.h"
 #include "TransactionCache.h"
+#include "Database.h"
 namespace embDB
 {
 
 	
-
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) :
-		m_TranStorage(pAlloc, &m_TranPerfCounter)
+		eTransactionsType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache) :
+		TBase(pDatabase)
+		, m_TranStorage(pAlloc, &m_TranPerfCounter)
 		, m_nRestoreType(nRestoreType)
 		, m_nTranType(nTranType)
 		, m_sFileName(sFileName)
-		, m_pDBStorage(pDBStorage)
 		, m_PageChache(pAlloc, &m_TranStorage, this, &m_TranPerfCounter, nTranCache)
 		, m_pAlloc(pAlloc)
 		, m_bError(false)
@@ -26,14 +27,35 @@ namespace embDB
 		, m_bDeleteStorage(true)
 		, m_TranRedoManager(this, &m_TranStorage)
 	{
-		
+
+	}
+
+	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
+		eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) :
+		TBase(NULL)
+		, m_TranStorage(pAlloc, &m_TranPerfCounter)
+		, m_nRestoreType(nRestoreType)
+		, m_nTranType(nTranType)
+		, m_sFileName(sFileName)
+		, m_PageChache(pAlloc, &m_TranStorage, this, &m_TranPerfCounter, nTranCache)
+		, m_pAlloc(pAlloc)
+		, m_bError(false)
+		, m_TranUndoManager(this, &m_TranStorage)
+		, m_LogStateManager(&m_TranStorage)
+		, m_nID(nID)
+		, m_bIsCompleted(true)
+		, m_bIsBegin(false)
+		, m_bDeleteStorage(true)
+		, m_TranRedoManager(this, &m_TranStorage)
+	{
+		m_pDBStorage = pDBStorage;
 	}
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache) :
-	m_TranStorage(pAlloc, &m_TranPerfCounter)
+		TBase(NULL)
+		,m_TranStorage(pAlloc, &m_TranPerfCounter)
 		,m_nRestoreType(rtUndefined)
 		,m_nTranType(eTT_UNDEFINED)
 		,m_sFileName(sFileName)
-		,m_pDBStorage(pDBStorage)
 		,m_PageChache(pAlloc, &m_TranStorage, this, &m_TranPerfCounter, nTranCache)
 		,m_pAlloc(pAlloc)
 		,m_bError(false)
@@ -45,7 +67,7 @@ namespace embDB
 		, m_bDeleteStorage(true)
 		, m_TranRedoManager(this, &m_TranStorage)
 	{
-
+		m_pDBStorage = pDBStorage;
 	}
 	CTransaction::~CTransaction()
 	{
@@ -181,7 +203,7 @@ namespace embDB
 
 			if(m_Header.nRestoreType == rtUndo)
 			{
-				bRet = m_TranUndoManager.undo(&m_TranStorage, m_pDBStorage);
+				bRet = m_TranUndoManager.undo(&m_TranStorage, m_pDBStorage.get());
 				m_pDBStorage->setFileSize(nDBSize);
 			}
 
@@ -415,7 +437,7 @@ namespace embDB
 			m_pDBStorage->dropFilePage(m_vecRemovePages[i]);
 		}
 		
-		m_PageChache.saveChange(m_pDBStorage);
+		m_PageChache.saveChange(m_pDBStorage.get());
 		m_pDBStorage->commit();
 		m_LogStateManager.setState(eTS_FINISH_COPY_TO_DB);
 		m_LogStateManager.save();
@@ -466,7 +488,7 @@ namespace embDB
 			m_pDBStorage->dropFilePage(m_vecRemovePages[i]);
 		}
 
-		m_PageChache.saveChange(m_pDBStorage);
+		m_PageChache.saveChange(m_pDBStorage.get());
 		m_pDBStorage->commit();
 		m_LogStateManager.setState(eTS_FINISH_COPY_TO_DB);
 		m_LogStateManager.save();

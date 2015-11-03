@@ -501,6 +501,8 @@
     <ClInclude Include="embDB.h" />
     <ClInclude Include="embDBInternal.h" />
     <ClInclude Include="embDBLib.h" />
+    <ClInclude Include="Fields.h" />
+    <ClInclude Include="FieldSet.h" />
     <ClInclude Include="FixedStringField.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="InsertCursor.h" />
@@ -511,6 +513,7 @@
     <ClInclude Include="MultiIndex.h" />
     <ClInclude Include="MultiIndexBase.h" />
     <ClInclude Include="MultiIndexBPTree.h" />
+    <ClInclude Include="Counter.h" />
     <ClInclude Include="PageCrypto.h" />
     <ClInclude Include="PageVectorLazySave.h" />
     <ClInclude Include="PoinMapInnerCompressor64.h" />
@@ -648,9 +651,12 @@
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="DBTranManager.cpp" />
     <ClCompile Include="DirectTransactions.cpp" />
+    <ClCompile Include="Fields.cpp" />
+    <ClCompile Include="FieldSet.cpp" />
     <ClCompile Include="FreePageManage.cpp" />
     <ClCompile Include="InsertCursor.cpp" />
     <ClCompile Include="PageAlloc.cpp" />
+    <ClCompile Include="Row.cpp" />
     <ClCompile Include="Statement.cpp" />
     <ClCompile Include="ValueField.cpp" />
     <ClCompile Include="FilePage.cpp" />

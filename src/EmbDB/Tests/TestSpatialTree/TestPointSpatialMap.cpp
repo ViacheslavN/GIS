@@ -346,5 +346,5 @@ void TestPointSpatialTree()
 //	TestPointSpatial<TBPMapPOint32, uint32, embDB::CDirectTransactions, embDB::ZOrderPoint2DU32>("d:\\db\\dbspatialpoint32.data", 50, 8192, 0, 10000, 1, 100, 0, 1000, 1000, true);
 
 //	TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransactions, embDB::ZOrderPoint2DU64>("d:\\db\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 0, 0, 100, 100, false);
-    TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransactions, embDB::ZOrderPoint2DU64>("d:\\db\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-500, 0xFFFFFFFFFFFFFFFF-500, true);
+    TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransaction, embDB::ZOrderPoint2DU64>("d:\\db\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-500, 0xFFFFFFFFFFFFFFFF-500, true);
 }

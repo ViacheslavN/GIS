@@ -101,7 +101,7 @@ namespace embDB
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		TBlobValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions,pAlloc) 
+		TBlobValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, const sFieldInfo* pFieldInfo) : TBase(pTransactions, pAlloc, pFieldInfo) 
 		{
 
 		}
@@ -141,11 +141,11 @@ namespace embDB
 		{
 			return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE);
 		}
-		virtual IValueFiledPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
+		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 			return CDBFieldHandlerBase::getValueField<TField>(pTransactions, pStorage);
 		}
-		virtual bool release(IValueFiled* pField)
+		virtual bool release(IValueField* pField)
 		{
 		/*	TField* pOIDField = (TField*)pField;
 

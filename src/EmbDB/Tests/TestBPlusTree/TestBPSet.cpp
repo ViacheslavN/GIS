@@ -346,7 +346,7 @@ void testBPTreeSet ()
 	//testBPTreeSetImpl<TBTreePlusString, TBTreePlusROString, embDB::CTransactions, sStringStrustTest, int64>(nCount, nPageSize, strTest);
 
 	nCount = 1000000000;
-	testBPTreeSetImpl<TBTreeSet, TBTreeSetRO, embDB::CDirectTransactions, int64>(nCount, nPageSize, 500, 20);
+	testBPTreeSetImpl<TBTreeSet, TBTreeSetRO, embDB::CDirectTransaction, int64>(nCount, nPageSize, 500, 20);
 	//testBPTreeSetImpl<TBTreePlus, TBTreePlusRO, embDB::CTransactions, int64, int64>(nCount, nPageSize, nVal);
 
 

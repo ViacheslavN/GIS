@@ -46,6 +46,9 @@
     <Filter Include="time">
       <UniqueIdentifier>{6927862c-551b-488a-a3d5-6301b6ed1e88}</UniqueIdentifier>
     </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{e2979666-3b03-48e2-b0f8-46ca43d10e16}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -188,6 +191,9 @@
     </ClInclude>
     <ClInclude Include="crc.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HashKey.h">
+      <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
