@@ -100,14 +100,15 @@ namespace embDB
 
 				m_nBTreeRootPage = nBTreeRootPage;
 				m_tree.setRootPage(m_nBTreeRootPage);
+				m_tree.setCompPageInfo(nInnerCompPage, nLeafCompPage);
 				if(! m_tree.init())
 					return false;
 
-				if(nInnerCompPage != -1 || nLeafCompPage != -1)
+				/*if(nInnerCompPage != -1 || nLeafCompPage != -1)
 				{
 					m_tree.setCompPageInfo(nInnerCompPage, nLeafCompPage);
 					m_tree.saveBTreeInfo(); 
-				}
+				}*/
 			
 				return true;
 			}

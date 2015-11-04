@@ -191,6 +191,9 @@ namespace embDB
 			 SpatialIndexIterator *pSpIndexIterator = new SpatialIndexIterator(it);
 			 return IIndexIteratorPtr(pSpIndexIterator);
 		  }
+
+
+		  virtual void GetSpatialObj(TSpatialObj& zVal, CommonLib::CVariant* pValue) = 0;
 		  virtual bool insert(CommonLib::CVariant* pValue, uint64 nOID)
 		  {
 			  if(!pValue)
@@ -221,9 +224,9 @@ namespace embDB
 				  pFromIterator = &pFieldIterator->m_ParentIt;
 			  }
 
-			  TSpatialObj val;
-			  pIndexKey->getVal(val);
-			  bool bRet =  m_tree.insert(val, nOID, pFromIterator, pRetIter ? &RetIterator : NULL);
+			  TSpatialObj rect;
+			  GetSpatialObj(rect, pIndexKey);
+			  bool bRet =  m_tree.insert(rect, nOID, pFromIterator, pRetIter ? &RetIterator : NULL);
 
 
 			  if(pRetIter)
@@ -319,6 +322,18 @@ namespace embDB
 		~TStatialIndexRect()
 		{}
 
+
+		virtual void GetSpatialObj(TSpatialObj& Obj, CommonLib::CVariant* pValue)
+		{
+			CommonLib::IGeoShapePtr& pShape = pValue->Get<CommonLib::IGeoShapePtr>();
+			CommonLib::bbox bbox = pShape->getBB();
+			Obj.m_minX = TPointType((bbox.xMin + m_dOffsetX) / m_dScaleX);
+			Obj.m_maxX = TPointType((bbox.xMax + m_dOffsetX) / m_dScaleX);
+			Obj.m_minY = TPointType((bbox.yMin + m_dOffsetY) / m_dScaleY);
+			Obj.m_maxY = TPointType((bbox.yMax + m_dOffsetY) / m_dScaleY);
+		}
+ 
+
 		virtual bool insert(const CommonLib::bbox& bbox, uint64 nOID)
 		{
 			if(bbox.xMin < m_extent.xMin)
@@ -352,6 +367,10 @@ namespace embDB
 
 		~TStatialIndexPoint()
 		{}
+		 virtual void GetSpatialObj(TSpatialObj& zVal, CommonLib::CVariant* pValue)
+		 {
+
+		 }
 
 		virtual bool insert(double dX, double dY, uint64 nOID)
 		{

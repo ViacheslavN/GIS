@@ -214,6 +214,8 @@ namespace CommonLib
 	{
 		if(shp.m_pAlloc != &shp.m_alloc)
 			m_pAlloc = shp.m_pAlloc;
+		else
+			m_pAlloc = &m_alloc;
 
 		m_vecParts = shp.m_vecParts;
 		m_vecPoints = shp.m_vecPoints;
@@ -230,6 +232,8 @@ namespace CommonLib
 		{
 			m_pAlloc = shp.m_pAlloc;
 		}
+		else
+			m_pAlloc = &m_alloc;
 
 		m_vecParts = shp.m_vecParts;
 		m_vecPoints = shp.m_vecPoints;

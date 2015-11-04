@@ -38,58 +38,62 @@ namespace embDB
 			pNode->m_LeafNode.SetPageAlloc(&m_PageAlloc);
 			return pNode;
 		}
-		void convert(const CommonLib::CGeoShape& shape, sBlobVal& sValue)
+		void convert(const CommonLib::IGeoShapePtr& shape, sBlobVal& sValue)
 		{
+			CommonLib::MemoryStream stream;
+			shape->write(&stream);
 
-			/*sValue.m_nPage = -1;
+			sValue.m_nPage = -1;
 			sValue.m_nBeginPos = 0;
-			if(blob.size())
+			if(stream.size())
 			{
-				sValue.m_nSize = blob.size();
-				sValue.m_pBuf = (byte*)m_pAlloc->alloc(blob.size());
-				memcpy(sValue.m_pBuf, blob.buffer(), blob.size());
+				sValue.m_nSize = stream.size();
+				sValue.m_pBuf = (byte*)m_pAlloc->alloc(stream.size());
+				memcpy(sValue.m_pBuf, stream.buffer(), stream.size());
 			}
 			else
 			{
 				sValue.m_nSize = 0;
 				sValue.m_pBuf = NULL;
-			}*/
+			}
 		}
-		void convert(const sBlobVal& blobVal, CommonLib::CGeoShape& shape) 
+		void convert(const sBlobVal& blobVal, CommonLib::IGeoShapePtr& shape) 
 		{
+ 
 
-			/*blob.resize(blobVal.m_nSize);
+			CommonLib::FxMemoryReadStream stream;
 			if(!blobVal.m_nSize)
 				return;
 
 			if(blobVal.m_nSize < m_LeafCompParams->GetMaxPageBlobSize())
 			{
-				blob.copy(blobVal.m_pBuf, blobVal.m_nSize);
+				 stream.attach(blobVal.m_pBuf, blobVal.m_nSize);
 			}
 			else
 			{
+				m_CacheBlob.resize(blobVal.m_nSize);
 				embDB::ReadStreamPagePtr pReadStream = m_LeafCompParams->GetReadStream(m_pTransaction, blobVal.m_nPage, blobVal.m_nBeginPos);
-				pReadStream->read(blob.buffer(), blobVal.m_nSize);
-
-			}*/
-
+				pReadStream->read(m_CacheBlob.buffer(), blobVal.m_nSize);
+				stream.attach(m_CacheBlob.buffer(), m_CacheBlob.size());
+			}
+			shape->read(&stream);
 		}
 
-		bool insert(int64 nValue, const CommonLib::CGeoShape& shape, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
+		bool insert(int64 nValue, const CommonLib::IGeoShapePtr& shape, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
 		{
 			sBlobVal sValue;
 			convert(shape, sValue);
 			return TSubBase::insert(nValue, sValue, pFromIterator, pRetItertor);
 
 		}
-		bool update(const TKey& key, const CommonLib::CGeoShape& shape)
+		bool update(const TKey& key, const CommonLib::IGeoShapePtr& shape)
 		{
 			sBlobVal sValue;
 			convert(shape, sValue);
 			return TSubBase::update(key, sValue);
 		}
 		template<class TKeyFunctor>
-		bool insertLast(TKeyFunctor& keyFunctor, const CommonLib::CGeoShape& shape, TKey* pKey = NULL,  iterator* pFromIterator = NULL,  iterator* pRetIterator = NULL)
+		bool insertLast(TKeyFunctor& keyFunctor, const CommonLib::IGeoShapePtr& shape, TKey* pKey = NULL,  iterator* pFromIterator = NULL,  iterator* pRetIterator = NULL)
 		{
 			sBlobVal sValue;
 			convert(shape, sValue);
@@ -98,6 +102,7 @@ namespace embDB
 
 	private:
 		CPageAlloc m_PageAlloc;
+		CommonLib::CBlob m_CacheBlob; //
 
 	};
 

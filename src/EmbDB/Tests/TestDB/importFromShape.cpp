@@ -172,7 +172,61 @@ embDB::eSpatialCoordinatesUnits GetGeometryUnits(GisEngine::GisCommon::Units uni
 
 	return embDB::scuUnknown;
 }
+void SHPObjectToGeometry(ShapeLib::SHPObject* obj, CommonLib::CGeoShape& result)
+{
+	result.create(SHPTypeToGeometryType(obj->nSHPType, NULL, NULL), obj->nVertices, obj->nParts);
 
+	GisXYPoint* pPt = result.getPoints();
+	double* zs = result.getZs();
+	double* ms = result.getMs();
+	int i;
+	for(i = 0; i < obj->nVertices; ++i, ++pPt, zs += zs ? 1 : 0, ms += ms ? 1 : 0)
+	{
+		pPt->x = obj->padfX[i];
+		pPt->y = obj->padfY[i];
+		if(obj->padfZ && zs)
+			*zs = obj->padfZ[i];
+		if(obj->padfM && ms)
+			*ms = obj->padfM[i];
+	}
+
+	uint32* parts = result.getParts();
+	CommonLib::patch_type* partTypes = result.getPartsTypes();
+	if ( obj->nParts != 0 )
+	{
+		for(i = 0; i < obj->nParts; ++i, ++parts, partTypes += partTypes ? 1 : 0)
+		{
+			*parts = (long)obj->panPartStart[i];
+			if(obj->panPartType && partTypes)
+			{
+				switch(obj->panPartType[i])
+				{
+				case SHPP_TRISTRIP:
+					*partTypes = CommonLib::patch_type_triangle_strip;
+					break;
+				case SHPP_TRIFAN:
+					*partTypes = CommonLib::patch_type_triangle_fan;
+					break;
+				case SHPP_OUTERRING:
+					*partTypes = CommonLib::patch_type_outer_ring;
+					break;
+				case SHPP_INNERRING:
+					*partTypes = CommonLib::patch_type_inner_ring;
+					break;
+				case SHPP_FIRSTRING:
+					*partTypes = CommonLib::patch_type_first_ring;
+					break;
+				case SHPP_RING:
+					*partTypes = CommonLib::patch_type_ring;
+					break;
+				}
+			}
+		}
+	}
+
+	result.calcBB();
+}
+		
 
 void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 {
@@ -292,15 +346,87 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 
 
 	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_INSERT);
+	pTran->begin();
 	embDB::IInsertCursorPtr pInsertCursor = pTran->createInsertCursor(pDBTable->getName().cwstr());
 	embDB::IRowPtr pRow = pInsertCursor->createRow();
+	embDB::IFieldsPtr pFields = pDBTable->getFields();
+
+	ShapeLib::SHPObject*   pCacheObject = NULL;
 
 
+	CommonLib::CString strVal;
+	double dblVal;
+	int intVal;
+	CommonLib::CGeoShape shape;
+	shape.AddRef();
+	for(size_t row = 0; row < objectCount; ++row)
+	{
+		for (size_t i = 0; i < pFields->GetFieldCount(); ++i)
+		{
+			embDB::IFieldPtr pField = pFields->GetField(i);
+			CommonLib::CVariant value;
+			
+			switch(pField->getType())
+			{
+			case embDB::dtString:
+				strVal = ShapeLib::DBFReadStringAttribute(dbf.file, row, i);
+				value  = strVal;
+				break;
+			case embDB::dtUInteger32:
+				intVal = ShapeLib::DBFReadIntegerAttribute(dbf.file, row, i);
+				value  = intVal;
+				break;
+			case embDB::dtDouble:
+				dblVal = ShapeLib::DBFReadDoubleAttribute(dbf.file, row, i);
+				value  = dblVal;
+				break;
+			case embDB::dtPoint16:
+			case embDB::dtPoint32:
+			case embDB::dtPoint64:
+			case embDB::dtRect16:
+			case embDB::dtRect32:
+			case embDB::dtRect64:
+						{
+							pCacheObject = ShapeLib::SHPReadObject(shp.file, row);
+							SHPObjectToGeometry(pCacheObject, shape);
+							if(pCacheObject)
+							{
+								ShapeLib::SHPDestroyObject(pCacheObject);
+								pCacheObject = 0;
+							}
+							value  = CommonLib::IGeoShapePtr(&shape);
+						}
+				break;
+			}
 
+			pRow->set(value, i);
+
+		}
+
+		pInsertCursor->insert(pRow.get());
+	}
+
+	pTran->commit();
 }
 
 
+void SearchShapeFile(const wchar_t* pszDBName)
+{
+	embDB::CDatabase db;
+	CommonLib::CString sFilePath = CommonLib::FileSystem::FindFilePath(pszDBName);
+	if(!db.open(pszDBName, embDB::eTMSingleTransactions, sFilePath.wstr()))
+	{
+		return;
+	}
+	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_SELECT);
+	pTran->begin();
+
+
+	 
+}
+
 void testDBFromShape()
 {
-
+	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
+	SearchShapeFile(L"d:\\db\\importShapeFile.embDB");
 }

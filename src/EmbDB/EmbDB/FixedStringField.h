@@ -140,7 +140,14 @@ namespace embDB
 
 		virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
-			return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE);
+			FilePagePtr pLeafCompRootPage = pTran->getNewPage();
+			TBTree::TLeafCompressorParams compParams;
+			compParams.setRootPage(pLeafCompRootPage->getAddr());
+			compParams.SetMaxPageStringSize(pTran->getPageSize()/15);
+			compParams.SetStringLen(m_fi.m_nLenField);
+			compParams.save(pTran);
+
+			return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE, -1, pLeafCompRootPage->getAddr());
 		}
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{

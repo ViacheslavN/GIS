@@ -48,7 +48,7 @@ namespace embDB
 		uint32   m_nLenField;
 
 
-		bool Read(CommonLib::FxMemoryReadStream* pStream)
+		virtual bool Read(CommonLib::FxMemoryReadStream* pStream)
 		{
 			size_t nlenStr = pStream->readInt32();
 			if(nlenStr == 0 || nlenStr > size_t(pStream->size() - pStream->pos()))
@@ -81,7 +81,7 @@ namespace embDB
 			m_nLenField= pStream->readIntu32(); 
 			return true;
 		}
-		void Write(CommonLib::FxMemoryWriteStream* pStream)
+		virtual void Write(CommonLib::FxMemoryWriteStream* pStream)
 		{
 			pStream->write((uint32)m_sFieldName.length());
 			pStream->write((byte*)m_sFieldName.cwstr(), m_sFieldName.length() * 2);
@@ -121,7 +121,7 @@ namespace embDB
 		CommonLib::eShapeType m_ShapeType;
 		CommonLib::bbox m_extent;
 
-		bool Read(CommonLib::FxMemoryReadStream* pStream)
+		virtual bool Read(CommonLib::FxMemoryReadStream* pStream)
 		{
 			if(!sFieldInfo::Read(pStream))
 				return false;
@@ -142,7 +142,7 @@ namespace embDB
 			return true;
 		}
 
-		void Write(CommonLib::FxMemoryWriteStream* pStream)
+		virtual void Write(CommonLib::FxMemoryWriteStream* pStream)
 		{
 			sFieldInfo::Write(pStream);
 

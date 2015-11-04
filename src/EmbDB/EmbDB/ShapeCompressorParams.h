@@ -13,7 +13,7 @@ namespace embDB
 	{
 	public:
 
-		ShapeFieldCompressorParams(int64 nRootPage = -1) : m_nRootPage(nRootPage), m_nMaxPageBlobSize(0), 
+		ShapeFieldCompressorParams(int64 nRootPage = -1) : m_nRootPage(nRootPage), m_nMaxPageBlobSize(400), 
 			m_nStreamPageInfo(-1), m_dOffsetX(0.), m_dOffsetY(0.), m_dScaleX(1.), m_dScaleY(1.),
 				m_CoordTypes(dtUnknown), m_ShapeType(CommonLib::shape_type_null)
 		{}

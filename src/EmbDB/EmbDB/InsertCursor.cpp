@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "InsertCursor.h"
 #include "Row.h"
-
+#include "FieldSet.h"
 namespace embDB
 {
 	CInsertCursor::CInsertCursor(IDBTransaction* pTran, ITable* pTable,  IFieldSet *pFileds)
@@ -35,10 +35,15 @@ namespace embDB
 		}
 		else
 		{
+			if(!m_pFieldSet.get())
+				m_pFieldSet = new CFieldSet();
+
 			IFieldsPtr pFields = m_pTable->getFields();
 			for (size_t i = 0, sz = pFields->GetFieldCount(); i < sz; ++i)
 			{
 				IFieldPtr pField = pFields->GetField(i);
+				m_pFieldSet->Add(pField->getName());
+
 				IValueFieldPtr pValueField = m_pTran->GetField(m_pTable->getName().cwstr(), pField->getName().cwstr());
 				m_vecInsertFields.push_back(pValueField);
 			}
@@ -60,7 +65,7 @@ namespace embDB
 			IValueFieldPtr pValueField = m_vecInsertFields[i];
 			if(!pValue)
 			{
-				if(pValueField->getFieldInfoType()->m_nFieldType == dteIsNotEmpty)
+				if(pValueField->getFieldInfoType()->m_nFieldDataType & dteIsNotEmpty)
 				{
 					m_pTran->error(L"field %s is not null ", pValueField->getFieldInfoType()->m_sFieldName.cwstr());
 					return 0;

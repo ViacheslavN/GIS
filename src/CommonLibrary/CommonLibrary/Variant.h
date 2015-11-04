@@ -66,6 +66,7 @@ namespace CommonLib
 		virtual void Visit(const IRefObjectPtr     & val) = 0;
 		virtual void Visit(const CBlob     & val) = 0;
 		virtual void Visit(const CGeoShape     & val) = 0;
+		virtual void Visit(const IGeoShapePtr     & val) = 0;
 
 		virtual void Visit(const TPoint2D16		& val) = 0;
 		virtual void Visit(const TPoint2D32     & val) = 0;
@@ -161,7 +162,9 @@ namespace CommonLib
 		union{
 			char buffer[MAX_GV_SIZE];
 #include "VartTypeList.h"
-			std::string *val_str_t;
+			CString *val_str_t;
+			CBlob *val_blob;
+			CGeoShape *val_shape;
 		}m_DataBuffer;
 #undef DECLARE_SIMPLE_TYPE
 #undef DECLARE_TYPE
@@ -391,6 +394,11 @@ public:
 	{ m_val = CString();}
 	virtual void Visit(const CGeoShape     &)
 	{ m_val = CString();}
+
+	virtual void Visit(const IGeoShapePtr     & val) 
+	{
+		{ m_val = CString();}
+	}
 
 	virtual void Visit(const TPoint2D16	& val)
 	{

@@ -28,9 +28,10 @@ namespace embDB
 		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE),
 		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE)
 	{
+		m_pDBStorage = pDB->getDBStorage();
 		m_nFieldsAddr.setPageSize(m_pDBStorage->getPageSize());
 		m_nIndexAddr.setPageSize(m_pDBStorage->getPageSize());
-		m_pDBStorage = pDB->getDBStorage();
+		
 		m_pFields = new CFields();
 		m_pIndexs = new CFields();
 	}
@@ -44,9 +45,10 @@ namespace embDB
 		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE),
 		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE)
 	{
+		m_pDBStorage = pDB->getDBStorage();
 		m_nFieldsAddr.setPageSize(m_pDBStorage->getPageSize());
 		m_nIndexAddr.setPageSize(m_pDBStorage->getPageSize());
-		m_pDBStorage = pDB->getDBStorage();
+		
 		m_pFields = new CFields();
 		m_pIndexs = new CFields();
 	}
@@ -60,9 +62,10 @@ namespace embDB
 		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE),
 		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE)
 	{
+		m_pDBStorage = pDB->getDBStorage();
 		m_nFieldsAddr.setPageSize(m_pDBStorage->getPageSize());
 		m_nIndexAddr.setPageSize(m_pDBStorage->getPageSize());
-		m_pDBStorage = pDB->getDBStorage();
+		
 		m_pFields = new CFields();
 		m_pIndexs = new CFields();
 	}
@@ -219,6 +222,7 @@ namespace embDB
 		}
 		stream.write(m_nFieldsPage);
 		stream.write(m_nIndexsPage);
+		stream.write(m_OIDCounter.GetPage());
 		header.writeCRC32(stream);
 		pTran->saveFilePage(pFPage);
 		return m_nFieldsAddr.save(pTran) && m_nIndexAddr.save(pTran);
@@ -435,9 +439,13 @@ namespace embDB
 		if(!pSPFi)
 			return false;
 
+		sSpatialFieldInfo spIndex =  *pSPFi;
+		spIndex.m_nFieldPage = fi->m_nFieldPage;
+		spIndex.m_nFIPage = fi->m_nFIPage;
+		
 		IDBIndexHandler *pSpatialIndex = NULL;
 
-		switch(pSPFi->m_nFieldDataType)
+		switch(spIndex.m_nFieldType)
 		{
 			case dtPoint16:
 				pSpatialIndex = new THandlerIndexPoint16(m_pDB->getBTreeAlloc());
@@ -466,7 +474,7 @@ namespace embDB
 		if(!pSpatialIndex)
 			return false;
 
-		if(fi->m_nFieldPage == -1)
+		if(spIndex.m_nFieldPage == -1)
 		{
 			assert(pTran);
 			FilePagePtr pFieldInfoPage = pTran->getNewPage();
@@ -475,25 +483,25 @@ namespace embDB
 			FilePagePtr pFieldPage = pTran->getNewPage();
 			if(!pFieldPage.get())
 				return false;
-			fi->m_nFieldPage = pFieldPage->getAddr();
-			fi->m_nFIPage = pFieldInfoPage->getAddr();
+			spIndex.m_nFieldPage = pFieldPage->getAddr();
+			spIndex.m_nFIPage = pFieldInfoPage->getAddr();
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attach(pFieldInfoPage->getRowData(), pFieldInfoPage->getPageSize());
 			//stream.write((int64)DB_FIELD_INFO_SYMBOL);
 			sFilePageHeader header (stream, TABLE_PAGE, TABLE_FIELD_PAGE);
-			fi->Write(&stream);
+			spIndex.Write(&stream);
 			pFieldInfoPage->setFlag(eFP_CHANGE, true);
 			header.writeCRC32(stream);
 			pTran->saveFilePage(pFieldInfoPage);
-			pSpatialIndex->setFieldInfoType(fi);
+			pSpatialIndex->setFieldInfoType(&spIndex);
 			pSpatialIndex->save(pFieldPage->getAddr(), pTran);
-			if(!m_nFieldsAddr.push(fi->m_nFIPage, pTran))
+			if(!m_nIndexAddr.push(spIndex.m_nFIPage, pTran))
 				return false;
 		}
 		else
 		{
-			pSpatialIndex->setFieldInfoType(fi);
-			bool bRet = pSpatialIndex->load(fi->m_nFieldPage, m_pDBStorage.get());
+			pSpatialIndex->setFieldInfoType(&spIndex);
+			bool bRet = pSpatialIndex->load(spIndex.m_nFieldPage, m_pDBStorage.get());
 
 			if(!bRet)
 				delete pSpatialIndex;
@@ -859,6 +867,7 @@ namespace embDB
 		fi.m_dScaleX = dScaleX;
 		fi.m_dScaleY = dScaleY;
 		fi.m_nFieldType = DataType;
+		fi.m_nCoordType = CoordUnits;
 
 
 		IDBTransaction* pTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();

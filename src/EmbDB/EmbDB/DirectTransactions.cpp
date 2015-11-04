@@ -71,6 +71,8 @@ namespace embDB
 
 	bool CDirectTransaction::commit()
 	{
+		CommitTemp();
+
 		m_pDBStorage->lockWrite(this);
 
 		{

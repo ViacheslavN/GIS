@@ -19,8 +19,8 @@ namespace embDB
 			for(int i = 0; i < fieldCount; ++i)
 				m_pFieldsSet->Add(m_pFields->GetField(i)->getName());
 		}
- 
-		m_vecValues.resize(m_pFieldsSet->GetCount());
+		int nFieldsSet = m_pFieldsSet->GetCount();
+		m_vecValues.resize(nFieldsSet);
 		m_pFieldsSet->Reset();
 		CommonLib::CString fieldName;
 		int i = 0;

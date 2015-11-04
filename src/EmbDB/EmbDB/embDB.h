@@ -80,11 +80,11 @@ namespace embDB
 
 	enum eDataTypesExt
 	{
-		dteSimple = 0,
-		dteIsNotEmpty = 1,
-		dteIsUNIQUE = 2,
-		dteIsCounter = 4,
-		dteIsLink = 8
+		dteSimple = 1,
+		dteIsNotEmpty = 2,
+		dteIsUNIQUE = 4,
+		dteIsCounter = 8,
+		dteIsLink = 16
 	};
 	enum indexTypes
 	{
@@ -288,17 +288,10 @@ namespace embDB
 	public:
 		ICursor(){}
 		virtual ~ICursor(){}
-		virtual bool begin() = 0;
-		virtual bool next(IRow * pRow) = 0;
-		virtual IField* getField(uint32 nCount) = 0;
-		virtual uint32 getFieldCount() const = 0;
-		virtual  CommonLib::CVariant*  value(const wchar_t* pszName) = 0;
-		virtual bool set(const CommonLib::CString& sName, CommonLib::CVariant* pValue) = 0;
-		virtual  CommonLib::CVariant*  value(uint32 nIdx) = 0;
-		virtual bool set(uint32 nIdx, CommonLib::CVariant* pValue) = 0;
-
-
-		virtual IRowPtr createRow() = 0;
+		virtual IFieldSetPtr GetFieldSet() const = 0;
+		virtual IFieldsPtr   GetSourceFields() const = 0;
+		virtual bool         IsFieldSelected(int index) const = 0;
+		virtual bool NextRow(IRowPtr* row) = 0;
 
 
 	};
@@ -424,6 +417,7 @@ namespace embDB
 		virtual IStatementPtr createStatement(const wchar_t *pszSQLQuery) = 0;
 		virtual ICursorPtr executeQuery(IStatement* pStatement) = 0;
 		virtual ICursorPtr executeQuery(const wchar_t* pszQuery = NULL) = 0;
+		virtual ICursorPtr executeSpatialQuery(const CommonLib::bbox& extent, const wchar_t *pszTable, const wchar_t* pszSpatialField, SpatialQueryMode mode = sqmIntersect,  IFieldSet *pFileds = 0) = 0; // For test
 
 		virtual IInsertCursorPtr createInsertCursor(const wchar_t *pszTable, IFieldSet *pFileds = 0) = 0;
 		virtual IUpdateCursorPtr createUpdateCursor() = 0;

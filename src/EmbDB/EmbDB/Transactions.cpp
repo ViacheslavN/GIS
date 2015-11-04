@@ -128,6 +128,7 @@ namespace embDB
 	}
 	bool CTransaction::commit()
 	{
+		CommitTemp();
 		m_bIsBegin = false;
 		if(m_nTranType == eTT_SELECT)
 			return true;

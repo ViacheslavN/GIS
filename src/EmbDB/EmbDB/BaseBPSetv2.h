@@ -435,6 +435,11 @@ namespace embDB
 			return false;
 		if(m_nPageBTreeInfo == -1)
 			return false;
+		if(m_nPageInnerCompInfo != -1)
+			m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(m_nPageInnerCompInfo, m_pTransaction));
+		if(m_nPageLeafPageCompInfo != -1)
+			m_LeafCompParams.reset(TLeafCompess::LoadCompressorParams(m_nPageLeafPageCompInfo, m_pTransaction));
+
 		return createRootPage();
 	}
 	bool createRootPage()

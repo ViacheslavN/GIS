@@ -3,7 +3,7 @@
 namespace embDB
 {
 	CTranStorage::CTranStorage(CommonLib::alloc_t *pAlloc, CTranPerfCounter *pCounter) : m_pAlloc(pAlloc), m_nLastAddr(-1),
-		m_pCounter(pCounter)
+		m_pCounter(pCounter), m_pPageCrypto(NULL), m_nPageSize(8192)
 	{
 
 	}
@@ -42,7 +42,7 @@ namespace embDB
 			nAddr = m_nLastAddr;
 			m_nLastAddr += 1;
 		}
-		bool bRet = m_pFile.setFilePos64(nAddr * m_nPageSize, CommonLib::soFromBegin);
+		bool bRet = m_pFile.setFilePos64(nAddr * pPage->getPageSize(), CommonLib::soFromBegin);
 		assert(bRet);
 		uint32 nCnt = 0;
 		if(m_pPageCrypto && pPage->isNeedEncrypt())
@@ -51,7 +51,7 @@ namespace embDB
 			nCnt = m_pFile.writeFile((void*)m_pBufPageCrypto->getRowData(),  (uint32)m_pBufPageCrypto->getPageSize() );
 		}
 		else
-			nCnt = m_pFile.writeFile((void*)pPage->getRowData(),  (uint32)m_nPageSize );
+			nCnt = m_pFile.writeFile((void*)pPage->getRowData(),  pPage->getPageSize() );
 		assert(nCnt != 0);
 		m_pCounter->WriteTranPage();
 		return nAddr;

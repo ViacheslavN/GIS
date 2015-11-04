@@ -42,7 +42,7 @@ namespace embDB
 		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
 			const sBlobVal& sBlob = m_ParentIt.value();
-			CommonLib::CGeoShape shape;
+			CommonLib::IGeoShapePtr shape(new CommonLib::CGeoShape());
 
 			((TBTree*)m_ParentIt.m_pTree)->convert(sBlob, shape);
 
@@ -51,7 +51,7 @@ namespace embDB
 			return true;
 		}
 
-		virtual bool getVal(CommonLib::CGeoShape& shape)
+		virtual bool getVal(CommonLib::IGeoShapePtr& shape)
 		{
 			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), shape);
 			return true;
@@ -90,11 +90,11 @@ namespace embDB
 
 
 	template<class _TBTree>
-	class TShapeValueField : public ValueFieldBase<CommonLib::CGeoShape, _TBTree, ShapeFieldIterator<_TBTree> >
+	class TShapeValueField : public ValueFieldBase<CommonLib::IGeoShapePtr, _TBTree, ShapeFieldIterator<_TBTree> >
 	{
 	public:
 		typedef  ShapeFieldIterator<_TBTree> TFieldIterator;
-		typedef ValueFieldBase<CommonLib::CGeoShape,_TBTree, TFieldIterator> TBase;
+		typedef ValueFieldBase<CommonLib::IGeoShapePtr,_TBTree, TFieldIterator> TBase;
 		typedef typename TBase::TBTree TBTree;
 		typedef typename TBTree::iterator  iterator;
 
@@ -113,7 +113,7 @@ namespace embDB
 			if(it.isNull())
 				return false;
 
-			CommonLib::CGeoShape shape(m_pAlloc);
+			CommonLib::IGeoShapePtr shape( new CommonLib::CGeoShape(m_pAlloc));
 			m_tree.convert(it.value(), shape);
 
 			pFieldVal->setVal(shape);
@@ -144,9 +144,10 @@ namespace embDB
 			TBTree::TLeafCompressorParams compParams;
 			compParams.setRootPage(pLeafCompRootPage->getAddr());
 			compParams.SetParams(m_SpatialFi);
+			compParams.SetMaxPageBlobSize(pTran->getPageSize()/15);
 			compParams.save(pTran);
 
-			if(!CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE))
+			if(!CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE, -1, pLeafCompRootPage->getAddr()))
 				return false;
 
 			
@@ -186,6 +187,18 @@ namespace embDB
 			assert(pSpFi);
 			if(pSpFi)
 				m_SpatialFi = *pSpFi;
+		}
+		virtual eDataTypes getType() const
+		{
+			return (eDataTypes)m_SpatialFi.m_nFieldType;
+		}
+		virtual const CommonLib::CString& getName() const
+		{
+			return m_SpatialFi.m_sFieldName;
+		}
+		virtual const CommonLib::CString& getAlias() const
+		{
+			return m_SpatialFi.m_sFieldAlias;
 		}
 	private:
 		sSpatialFieldInfo m_SpatialFi;

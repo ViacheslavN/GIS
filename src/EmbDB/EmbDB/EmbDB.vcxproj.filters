@@ -810,6 +810,12 @@
     <ClInclude Include="Row.h">
       <Filter>SDK</Filter>
     </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleSearchCursor.h">
+      <Filter>DB\transactions\Cursors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -922,6 +928,9 @@
     </ClCompile>
     <ClCompile Include="Row.cpp">
       <Filter>SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleSearchCursor.cpp">
+      <Filter>DB\transactions\Cursors</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -559,6 +559,7 @@
     <ClInclude Include="ShapeCompressorParams.h" />
     <ClInclude Include="ShapeField.h" />
     <ClInclude Include="ShapeTree.h" />
+    <ClInclude Include="SimpleSearchCursor.h" />
     <ClInclude Include="SpatialIndexBase.h" />
     <ClInclude Include="SpatialIndexHandler.h" />
     <ClInclude Include="Statement.h" />
@@ -657,6 +658,7 @@
     <ClCompile Include="InsertCursor.cpp" />
     <ClCompile Include="PageAlloc.cpp" />
     <ClCompile Include="Row.cpp" />
+    <ClCompile Include="SimpleSearchCursor.cpp" />
     <ClCompile Include="Statement.cpp" />
     <ClCompile Include="ValueField.cpp" />
     <ClCompile Include="FilePage.cpp" />

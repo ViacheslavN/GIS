@@ -10,7 +10,7 @@ namespace embDB
 	CDatabase::CDatabase() :  m_bOpen(false)
 	{
 		m_pAlloc.reset(new CommonLib::simple_alloc_t());
-		m_pStorage.reset(new CStorage(m_pAlloc.get()));
+		m_pStorage = (IDBStorage*)new CStorage(m_pAlloc.get());
 		m_pTranManager.reset(new CDBTranManager(m_pAlloc.get(), this));
 		m_pSchema = (IDBShema*)new CSchema(this);
 	}

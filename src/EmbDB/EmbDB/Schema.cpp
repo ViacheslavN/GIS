@@ -39,20 +39,20 @@ namespace embDB
 			return false;
 
 
-		IDBTransaction *pDBTran = (IDBTransaction *)pTran;
+		IDBTransactionPtr pDBTran((IDBTransaction *)pTran);
 
-		IDBTransaction *pInnerTran = 0;
-		if(!pDBTran)
+		IDBTransactionPtr pInnerTran;;
+		if(!pDBTran.get())
 		{
 			 pInnerTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();
 			 pDBTran = pInnerTran;
 		}
 	
-		if(pInnerTran)
+		if(pInnerTran.get())
 		{
 			if(!pInnerTran->begin())
 			{
-				m_pDB->closeTransaction(pInnerTran);
+				m_pDB->closeTransaction(pInnerTran.get());
 				return false;
 			}
 		}
@@ -63,25 +63,27 @@ namespace embDB
 		CTable* pTable = new CTable(m_pDB, pPage.get(), pszTableName/*, m_nLastTableID++*/);
 		ITablePtr pTablePtr(pTable);
 
-		if(!pTable->save(pDBTran))
+		int64 nPageAddr = pPage->getAddr();
+		pPage.release();
+		if(!pTable->save(pDBTran.get()))
 			return false;
 		m_TablesByName.insert(std::make_pair(pszTableName, pTablePtr));
 		m_TablesByID.insert(std::make_pair(pTable->getAddr(), pTablePtr));
 		m_vecTables.push_back(pTablePtr);
 		 
-		if(!m_nTablesAddr.push(pPage->getAddr(), pDBTran))
+		if(!m_nTablesAddr.push(nPageAddr, pDBTran.get()))
 		{
-			if(pInnerTran)
+			if(pInnerTran.get())
 			{
 				pInnerTran->rollback();
-				m_pDB->closeTransaction(pInnerTran);
+				m_pDB->closeTransaction(pInnerTran.get());
 			}
 			return false;
 		}
-		if(pInnerTran)
+		if(pInnerTran.get())
 		{
 			pInnerTran->commit();
-			m_pDB->closeTransaction(pInnerTran);
+			m_pDB->closeTransaction(pInnerTran.get());
 		}
 		return true;
 	}

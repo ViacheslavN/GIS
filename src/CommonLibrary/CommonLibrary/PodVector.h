@@ -43,8 +43,8 @@ namespace CommonLib
 					free();
 					m_pAlloc = vec.m_pAlloc;
 				}
-				m_nSize = vec.size();
-				if(m_nSize != 0)
+				vec.size();
+				if(vec.size() != 0)
 				{
 					resize(vec.size());
 					memcpy(m_pData, vec.m_pData, sizeof(TValue) * m_nSize);

@@ -81,15 +81,18 @@ namespace embDB
 			return true;
 		}
 
-		eDataTypes getType() const
+		virtual eDataTypes getType() const
 		{
-			return (eDataTypes)m_fi.m_nFieldDataType;
+			return (eDataTypes)m_fi.m_nFieldType;
 		}
-		const CommonLib::CString& getName() const
+		virtual const CommonLib::CString& getName() const
 		{
 			return m_fi.m_sFieldName;
 		}
-
+		virtual const CommonLib::CString& getAlias() const
+		{
+			return m_fi.m_sFieldAlias;
+		}
 		virtual sFieldInfo* getFieldInfoType()
 		{
 			return &m_fi;
@@ -99,10 +102,7 @@ namespace embDB
 			assert(fi);
 			m_fi = *fi;
 		}
-		virtual const CommonLib::CString& getAlias() const
-		{
-			return m_fi.m_sFieldAlias;
-		}
+		
 		virtual bool load(int64 nAddr, IDBStorage *pStorage)
 		{
 			return true;

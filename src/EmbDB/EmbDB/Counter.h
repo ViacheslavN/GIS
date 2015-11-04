@@ -23,6 +23,7 @@ namespace embDB
 			{
 				m_nPage = nPage;
 			}
+			int64 GetPage() const{ return m_nPage;}
 			void SetValue(TValue val)
 			{
 				m_nVal = val;
