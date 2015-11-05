@@ -17,38 +17,34 @@ namespace embDB
 	{
 		//TO DO check not null fields
 		m_vecInsertFields.clear();
-		if(m_pFieldSet.get() && m_pFieldSet->GetCount() != 0)
-		{
-			m_pFieldSet->Reset();
-			CommonLib::CString fieldName;
-			while(m_pFieldSet->Next(&fieldName))
-			{
-				IFieldPtr pField = m_pTable->getField(fieldName);
-				if(!pField.get())
-				{
-					m_pTran->error(L"not exist field %s", pField->getName().cwstr());
-					return false;
-				}
-				IValueFieldPtr pValueField = m_pTran->GetField(m_pTable->getName().cwstr(), pField->getName().cwstr());
-				m_vecInsertFields.push_back(pValueField);
-			}
-		}
-		else
-		{
-			if(!m_pFieldSet.get())
-				m_pFieldSet = new CFieldSet();
 
+		if(!m_pFieldSet.get())
+			m_pFieldSet = new CFieldSet();
+		if(m_pFieldSet->GetCount() == 0)
+		{
 			IFieldsPtr pFields = m_pTable->getFields();
 			for (size_t i = 0, sz = pFields->GetFieldCount(); i < sz; ++i)
 			{
 				IFieldPtr pField = pFields->GetField(i);
 				m_pFieldSet->Add(pField->getName());
-
-				IValueFieldPtr pValueField = m_pTran->GetField(m_pTable->getName().cwstr(), pField->getName().cwstr());
-				m_vecInsertFields.push_back(pValueField);
 			}
-		
 		}
+
+
+		m_pFieldSet->Reset();
+		CommonLib::CString fieldName;
+		while(m_pFieldSet->Next(&fieldName))
+		{
+			IFieldPtr pField = m_pTable->getField(fieldName);
+			if(!pField.get())
+			{
+				m_pTran->error(L"not exist field %s", pField->getName().cwstr());
+				return false;
+			}
+			IValueFieldPtr pValueField = m_pTran->GetField(m_pTable->getName().cwstr(), pField->getName().cwstr());
+			m_vecInsertFields.push_back(pValueField);
+		}
+
 		return true;
 	}
 	 

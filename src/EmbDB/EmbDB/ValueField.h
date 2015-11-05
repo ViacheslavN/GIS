@@ -57,7 +57,7 @@ namespace embDB
 
 			typedef _TBTree TBTree;
 			typedef typename TBTree::iterator iterator;
-
+			typedef typename TBTree::TComp TComp;
 
 
 			virtual const sFieldInfo* getFieldInfoType() const 
@@ -216,12 +216,52 @@ namespace embDB
 					m_pIndex->commit();
 				return m_tree.commit();
 			}
-			IFieldIteratorPtr find(uint64 nOID)
+			IFieldIteratorPtr find(uint64 nOID,  IFieldIterator* pFromIter = NULL)
 			{
-				TBTree::iterator it = m_tree.find(nOID);
+
+				iterator *pFromIterator = NULL;
+				if(pFromIter)
+				{
+					TFieldIterator *pFieldIterator = dynamic_cast<TFieldIterator*>(pFromIter);
+					assert(pFieldIterator);
+					pFromIterator = &pFieldIterator->m_ParentIt;
+				}
+
+				TBTree::iterator it = m_tree.find(nOID, pFromIterator, true);
 				TFieldIterator *pFiledIterator = new TFieldIterator(it);
 				return IFieldIteratorPtr(pFiledIterator);
 			}
+	
+			virtual IFieldIteratorPtr upper_bound(uint64 nRowID,  IFieldIterator* pFromIter = NULL)
+			{
+
+				iterator *pFromIterator = NULL;
+				if(pFromIter)
+				{
+					TFieldIterator *pFieldIterator = dynamic_cast<TFieldIterator*>(pFromIter);
+					assert(pFieldIterator);
+					pFromIterator = &pFieldIterator->m_ParentIt;
+				}
+
+				TBTree::iterator it = m_tree.upper_bound(nRowID, pFromIterator, true);
+				TFieldIterator *pFiledIterator = new TFieldIterator(it);
+				return IFieldIteratorPtr(pFiledIterator);
+			}
+			virtual IFieldIteratorPtr lower_bound(uint64 nRowID,  IFieldIterator* pFromIter = NULL)
+			{
+				iterator *pFromIterator = NULL;
+				if(pFromIter)
+				{
+					TFieldIterator *pFieldIterator = dynamic_cast<TFieldIterator*>(pFromIter);
+					assert(pFieldIterator);
+					pFromIterator = &pFieldIterator->m_ParentIt;
+				}
+
+				TBTree::iterator it = m_tree.lower_bound(nRowID, pFromIterator, true);
+				TFieldIterator *pFiledIterator = new TFieldIterator(it);
+				return IFieldIteratorPtr(pFiledIterator);
+			}
+
 			IFieldIteratorPtr begin()
 			{
 				TBTree::iterator it = m_tree.begin();

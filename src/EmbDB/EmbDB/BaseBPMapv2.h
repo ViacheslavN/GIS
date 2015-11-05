@@ -98,16 +98,16 @@ public:
 		return TBase::last<iterator>();
 	}
 
-	iterator find(const TKey& key)  
+	iterator find(const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)  
 	{
-		return TBase::find<iterator>(m_comp, key);
+		return TBase::find<iterator>(m_comp, key, pFromIterator, bFindNext);
 	}
 	template<class TComp>
-	iterator find(const TComp& comp, const TKey& key)  
+	iterator find(const TComp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)  
 	{
-		return TBase::find<iterator, TComp>(comp, key);
+		return TBase::find<iterator, TComp>(comp, key, pFromIterator, bFindNext);
 	}
-	iterator find(iterator& itFrom, const TKey& key, bool bFoundNext = true)
+	/*iterator find(iterator& itFrom, const TKey& key, bool bFoundNext = true)
 	{
 		return TBase::find<iterator, TComp>(itFrom, m_comp, key, bFoundNext);
 	}
@@ -115,29 +115,29 @@ public:
 	iterator find(iterator& itFrom, const TKey& key, bool bFoundNext = true)
 	{
 		return TBase::find<iterator, TComp>(itFrom, m_comp, key, bFoundNext);
-	}
+	}*/
 
 	template<class TComp>
-	iterator upper_bound(const TComp& comp, const TKey& key)
+	iterator upper_bound(const TComp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 	{
-		return TBase::upper_bound<iterator>(comp, key);
+		return TBase::upper_bound<iterator>(comp, key, pFromIterator, bFindNext);
 	}
 	template<class TComp>
-	iterator lower_bound(const TComp& comp, const TKey& key)
+	iterator lower_bound(const TComp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 	{
-		return TBase::lower_bound<iterator>(comp, key);
+		return TBase::lower_bound<iterator>(comp, key, pFromIterator, bFindNext);
 	}
 	
 
 	
 
-	iterator upper_bound( const TKey& key)
+	iterator upper_bound( const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 	{
-		return TBase::upper_bound<iterator>(m_comp, key);
+		return TBase::upper_bound<iterator>(m_comp, key, pFromIterator, bFindNext);
 	}
-	iterator lower_bound(const TKey& key)
+	iterator lower_bound(const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 	{
-		return TBase::lower_bound<iterator>(m_comp, key);
+		return TBase::lower_bound<iterator>(m_comp, key, pFromIterator, bFindNext);
 	}
 
 

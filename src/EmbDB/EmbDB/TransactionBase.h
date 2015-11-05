@@ -3,6 +3,8 @@
 #include "embDBInternal.h"
 #include "CommonLibrary/HashKey.h"
 #include "InsertCursor.h"
+#include "SpatialIndexBase.h"
+#include "SimpleSearchCursor.h"
 namespace embDB
 {
 	class CDatabase;
@@ -96,8 +98,10 @@ namespace embDB
 
 					IIndexIteratorPtr pIndexIterator = pSpatialIndex->find(extent);
 
-
-
+					SimpleSearchCursor *pCursor = new SimpleSearchCursor(pIndexIterator.get(), this, pTable.get(), pFileds);
+					if(!pCursor->Init())
+						return ICursorPtr(); //TO DO Error
+					return  ICursorPtr(pCursor);
 
 
 				}

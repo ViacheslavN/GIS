@@ -420,13 +420,28 @@ void SearchShapeFile(const wchar_t* pszDBName)
 	}
 	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_SELECT);
 	pTran->begin();
+	CommonLib::bbox bbox;
+	bbox.type =CommonLib::bbox_type_normal;
+	bbox.xMin = 597461.43000000005;
+	bbox.yMin =	6072242.5499999998;
+	bbox.xMax =  652299.90000000002;
+	bbox.yMax = 6123549.2000000002;
+	embDB::ICursorPtr pCursor = pTran->executeSpatialQuery(bbox, L"building", L"building");
+	embDB::IRowPtr pRow;
+	int nObj = 0;
+	while(pCursor->NextRow(&pRow))
+	{
+		++nObj;
+	}
 
-
+	int  i = 0;
+	i++;
 	 
 }
 
 void testDBFromShape()
 {
 	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
+	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
 	SearchShapeFile(L"d:\\db\\importShapeFile.embDB");
 }

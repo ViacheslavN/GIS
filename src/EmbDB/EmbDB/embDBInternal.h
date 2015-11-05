@@ -10,8 +10,8 @@ namespace embDB
 	struct sFieldInfo
 	{
 		sFieldInfo() : 
-			m_nFieldType(0)
-			,m_nFieldDataType(dtUnknown)
+			m_nFieldType(dtUnknown)
+			,m_nFieldDataType(dteSimple)
 			,m_nBaseFieldProp(0)
 			,m_nIndexType(0)
 			,m_bPrimeryKey(false)
@@ -301,7 +301,9 @@ namespace embDB
 		virtual bool update (uint64 nRowID, CommonLib::CVariant* pFieldVal) = 0;
 		virtual bool remove (uint64 nRowID, IFieldIterator **pRetIter = NULL) = 0;
 		virtual bool find(uint64 nOID, CommonLib::CVariant* pFieldVal) = 0;
-		virtual IFieldIteratorPtr find(uint64 nRowID) = 0;
+		virtual IFieldIteratorPtr find(uint64 nRowID,  IFieldIterator* pFrom = NULL) = 0;
+		virtual IFieldIteratorPtr upper_bound(uint64 nRowID,  IFieldIterator* pFrom = NULL) = 0;
+		virtual IFieldIteratorPtr lower_bound(uint64 nRowID,  IFieldIterator* pFrom = NULL) = 0;
 		virtual IFieldIteratorPtr begin() = 0;
 		virtual IFieldIteratorPtr last() = 0;
 		virtual bool commit() = 0;

@@ -814,8 +814,17 @@ namespace embDB
 
 	
 	template<class TIterator, class TComp>
-	TIterator find(const TComp& comp, const TKey& key)
+	TIterator find(const TComp& comp, const TKey& key, TIterator *pFromIterator = NULL, bool bFindNext = true)
 	{
+		if(pFromIterator)
+		{
+			TIterator it(this, pFromIterator->m_pCurNode.get(), pFromIterator->m_pCurNode->binary_search(comp, key));
+			if(!it.isNull() || !bFindNext)
+				return it;
+		}
+
+	
+
 		if(m_nRootAddr == -1)
 			return TIterator(this, NULL, -1);
 
@@ -870,7 +879,7 @@ namespace embDB
 
 
 
-	template<class TIterator, class TComp>
+	/*template<class TIterator, class TComp>
 	TIterator find(TIterator& itFrom, TComp& comp, const TKey& key, bool bFoundNext = true)
 	{
 		TIterator it(this, itFrom.m_pCurNode.get(), itFrom.m_pCurNode->binary_search(comp, key));
@@ -878,7 +887,7 @@ namespace embDB
 			return it;
 		return find<TIterator, TComp>(comp, key);
 		
-	}
+	}*/
 
 	template<class TIterator>
 	TIterator begin()
@@ -968,7 +977,7 @@ namespace embDB
 		return TIterator(this, pFindBTNode.get(), pFindBTNode.get() ? pFindBTNode->count() - 1 : -1);
 	}
 	template<class TIterator, class TComp>
-	TIterator upper_bound(const TComp& comp, const TKey& key)
+	TIterator upper_bound(const TComp& comp, const TKey& key, TIterator *pFromIterator = NULL, bool bFindNext = true)
 	{
 		 
 		int32 nIndex = 0;
@@ -1016,8 +1025,17 @@ namespace embDB
 		return TIterator(this, NULL,-1);
 	}
 	template<class TIterator, class TComp>
-	TIterator lower_bound(const TComp& comp, const TKey& key)
+	TIterator lower_bound(const TComp& comp, const TKey& key, TIterator *pFromIterator = NULL, bool bFindNext = true)
 	{
+
+		if(pFromIterator)
+		{
+			if(pFromIterator->isNull() && !bFindNext)
+				return TIterator(this, NULL, 0);
+
+			 
+		}
+
 		int32 nIndex = 0;
 		if(m_nRootAddr == -1)
 			loadBTreeInfo();
@@ -1982,20 +2000,20 @@ namespace embDB
 
 			}
 
-			iterator find(const TKey& key)  
+			iterator find(const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)  
 			{
-				return TBase::find<iterator, TComp>(m_comp, key);
+				return TBase::find<iterator, TComp>(m_comp, key, pFromIterator, bFindNext);
 			}
 			template<class _TComp>
-			iterator find(_TComp& comp, const TKey& key)  
+			iterator find(_TComp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)  
 			{
-				return TBase::find<iterator, _TComp>(comp, key);
+				return TBase::find<iterator, _TComp>(comp, key, pFromIterator, bFindNext);
 			}
 		 
-			iterator find(iterator& itFrom, const TKey& key, bool bFoundNext = true)
+			/*iterator find(iterator& itFrom, const TKey& key, bool bFoundNext = true)
 			{
 				return TBase::find<iterator, TComp>(itFrom, m_comp, key, bFoundNext);
-			}
+			}*/
 
 
 			iterator begin()
@@ -2009,24 +2027,24 @@ namespace embDB
 			}
 
 
-			iterator upper_bound(const TKey& key)
+			iterator upper_bound(const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 			{
-				return TBase::upper_bound<iterator, TComp>(m_comp, key);
+				return TBase::upper_bound<iterator, TComp>(m_comp, key, pFromIterator, bFindNext);
 			}
-			iterator lower_bound(const TKey& key)
+			iterator lower_bound(const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 			{
-				return TBase::lower_bound<iterator, TComp>(m_comp, key);
+				return TBase::lower_bound<iterator, TComp>(m_comp, key, pFromIterator, bFindNext);
 			}
 
 			template<class _Comp>
-			iterator upper_bound(const _Comp& comp, const TKey& key)
+			iterator upper_bound(const _Comp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 			{
-				return TBase::upper_bound<iterator, _Comp>(comp, key);
+				return TBase::upper_bound<iterator, _Comp>(comp, key, pFromIterator, bFindNext);
 			}
 			template<class _Comp>
-			iterator lower_bound(const _Comp& comp, const TKey& key)
+			iterator lower_bound(const _Comp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 			{
-				return TBase::lower_bound<iterator, _Comp>(comp, key);
+				return TBase::lower_bound<iterator, _Comp>(comp, key, pFromIterator, bFindNext);
 			}
 
 

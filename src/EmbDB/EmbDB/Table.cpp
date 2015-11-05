@@ -259,8 +259,25 @@ namespace embDB
 	 
 		if(!fi.Read(&stream))
 			return false;
-		fi.m_nFIPage = nAddr;
-		return addField(&fi, pTran, false);
+
+		if(fi.m_nFieldType == dtPoint16 || fi.m_nFieldType == dtPoint32 || fi.m_nFieldType == dtPoint64 || 
+			fi.m_nFieldType == dtRect16 || fi.m_nFieldType == dtRect32 ||fi.m_nFieldType == dtRect64)
+		{
+			stream.seek(0, CommonLib::soFromBegin);
+			sFilePageHeader spheader (stream); //TO DO temporary
+			sSpatialFieldInfo sfi;
+
+			if(!sfi.Read(&stream))
+				return false;
+			sfi.m_nFIPage = nAddr;
+			return addField(&sfi, pTran, false);
+		}
+		else
+		{
+			fi.m_nFIPage = nAddr;
+			return addField(&fi, pTran, false);
+		}
+		
 	}
 
 	bool CTable::ReadIndex(int64 nAddr, IDBTransaction *pTran)
@@ -286,11 +303,27 @@ namespace embDB
 			pTran->error(_T("TABLE: Page %I64d is not field info"), nAddr);
 			return false;
 		}
-
 		if(!fi.Read(&stream))
 			return false;
-		fi.m_nFIPage = nAddr;
-		return addIndex(&fi, pTran, false);
+
+		if(fi.m_nFieldType == dtPoint16 || fi.m_nFieldType == dtPoint32 || fi.m_nFieldType == dtPoint64 || 
+			fi.m_nFieldType == dtRect16 || fi.m_nFieldType == dtRect32 ||fi.m_nFieldType == dtRect64)
+		{
+			stream.seek(0, CommonLib::soFromBegin);
+			sFilePageHeader spheader (stream); //TO DO temporary
+			sSpatialFieldInfo sfi;
+
+			if(!sfi.Read(&stream))
+				return false;
+			sfi.m_nFIPage = nAddr;
+			return addIndex(&sfi, pTran, false);
+		}
+		else
+		{
+			
+			fi.m_nFIPage = nAddr;
+			return addIndex(&fi, pTran, false);
+		}
 	}
 	bool CTable::readHeader(CommonLib::FxMemoryReadStream& stream)
 	{
@@ -442,6 +475,7 @@ namespace embDB
 		sSpatialFieldInfo spIndex =  *pSPFi;
 		spIndex.m_nFieldPage = fi->m_nFieldPage;
 		spIndex.m_nFIPage = fi->m_nFIPage;
+		spIndex.m_nIndexType = itSpatial;
 		
 		IDBIndexHandler *pSpatialIndex = NULL;
 
@@ -488,7 +522,7 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attach(pFieldInfoPage->getRowData(), pFieldInfoPage->getPageSize());
 			//stream.write((int64)DB_FIELD_INFO_SYMBOL);
-			sFilePageHeader header (stream, TABLE_PAGE, TABLE_FIELD_PAGE);
+			sFilePageHeader header (stream, TABLE_PAGE, TABLE_INDEX_PAGE);
 			spIndex.Write(&stream);
 			pFieldInfoPage->setFlag(eFP_CHANGE, true);
 			header.writeCRC32(stream);
