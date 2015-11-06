@@ -8,32 +8,24 @@
 #include "RectSpatialBPMapTree.h"
 #include "PoinMapLeafCompressor64.h"
 #include "PoinMapInnerCompressor64.h"
+#include "IndexIteratorBase.h"
 namespace embDB
 {
 
 
 	template<class TBTree, class TIterator, class _TSpObj>
-	class TSpatialIndexIterator: public IIndexIterator
+	class TSpatialIndexIterator: public TIndexIteratorBase<TIterator, IIndexIterator>
 	{
 	public:
 		typedef TIterator iterator;
 		typedef _TSpObj TSpObj;
 		typedef typename TBTree::TPointKey  TPointKey;
-		TSpatialIndexIterator(iterator& it) : m_ParentIt(it){}
+		typedef TIndexIteratorBase<iterator, IIndexIterator> TBase;
+		TSpatialIndexIterator(iterator& it, IndexFiled *pIndex) : TBase(it, pIndex)
+		{
+		}
 		virtual ~TSpatialIndexIterator(){}
 
-		virtual bool next()
-		{
-			return m_ParentIt.next();
-		}
-		virtual bool isNull()
-		{
-			return m_ParentIt.isNull();
-		}
-		virtual bool isValid()
-		{
-			return !m_ParentIt.isNull();
-		}
 		virtual bool getKey(CommonLib::CVariant* pVal)
 		{
 			TPointKey& zKey = m_ParentIt.key();
@@ -46,25 +38,6 @@ namespace embDB
 		{
 			return m_ParentIt.value();
 		}
-		virtual int64 addr() const
-		{
-			return m_ParentIt.addr();
-		}
-		virtual int32 pos() const
-		{
-			return m_ParentIt.pos();
-		}
-		virtual bool copy(IIndexIterator *pIter)
-		{
-			return m_ParentIt.setAddr(pIter->addr(), pIter->pos());
-		}
-		void set(iterator it)
-		{
-			m_ParentIt = it;
-		}
-	public:
-		iterator m_ParentIt;
-
 	};
 
 	class ISpatialIndex : public IndexFiled
@@ -188,7 +161,7 @@ namespace embDB
 			  TPointType yMax = TPointType((bb.yMax + m_dOffsetY) / m_dScaleY);
 			   
 			 TSpatialIterator it =  m_tree.spatialQuery(xMin, yMin, xMax, yMax, mode);
-			 SpatialIndexIterator *pSpIndexIterator = new SpatialIndexIterator(it);
+			 SpatialIndexIterator *pSpIndexIterator = new SpatialIndexIterator(it, this);
 			 return IIndexIteratorPtr(pSpIndexIterator);
 		  }
 
@@ -234,7 +207,7 @@ namespace embDB
 				  if(*pRetIter) 
 					  ((TIndexIterator*)(*pRetIter))->set(RetIterator);
 				  else
-					  *pRetIter = new TIndexIterator(RetIterator); 
+					  *pRetIter = new TIndexIterator(RetIterator, this); 
 			  }
 			  return bRet;
 		  }
@@ -261,7 +234,7 @@ namespace embDB
 			  pIndexKey->getVal(val);
 			  TZCoordType zVal(val);
 			  iterator it = m_tree.find(zVal);
-			  TIndexIterator *pIndexIterator = new TIndexIterator(it);
+			  TIndexIterator *pIndexIterator = new TIndexIterator(it, this);
 			  return IIndexIteratorPtr(pIndexIterator);
 		  }
 		  virtual IIndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
@@ -270,7 +243,7 @@ namespace embDB
 			  pIndexKey->getVal(val);
 			  TZCoordType zVal(val);
 			  iterator it = m_tree.lower_bound(zVal);
-			  TIndexIterator *pIndexIterator = new TIndexIterator(it);
+			  TIndexIterator *pIndexIterator = new TIndexIterator(it, this);
 			  return IIndexIteratorPtr(pIndexIterator);
 		  }
 		  virtual IIndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
@@ -279,7 +252,7 @@ namespace embDB
 			  pIndexKey->getVal(val);
 			   TZCoordType zVal(val);
 			  iterator it = m_tree.upper_bound(zVal);
-			  TIndexIterator *pIndexIterator = new TIndexIterator(it);
+			  TIndexIterator *pIndexIterator = new TIndexIterator(it, this);
 			  return IIndexIteratorPtr(pIndexIterator);
 		  }
 

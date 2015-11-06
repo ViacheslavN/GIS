@@ -7,28 +7,18 @@
 #include "MultiIndex.h"
 namespace embDB
 {
-	template<class TBTree>
-	class MultiIndexIterator : public IIndexIterator
+	template<class TIterator>
+	class MultiIndexIterator : public TIndexIteratorBase<TIterator, IIndexIterator>
 	{
 	public:
-		typedef typename TBTree::iterator  iterator;
+		typedef TIndexIteratorBase<TIterator, IIndexIterator> TBase;
+		typedef typename TBase::iterator  iterator;
 
-		MultiIndexIterator(iterator& it) : m_ParentIt(it){}
+		MultiIndexIterator(iterator& it, IndexFiled *pIndex) : TBase(it, pIndex)
+		{
+		}
 		MultiIndexIterator() {}
-		virtual ~MultiIndexIterator(){}
-
-		virtual bool next()
-		{
-			return m_ParentIt.next();
-		}
-		virtual bool isNull()
-		{
-			return m_ParentIt.isNull();
-		}
-		virtual bool isValid()
-		{
-			return !m_ParentIt.isNull();
-		}
+	
 		virtual bool getKey(CommonLib::CVariant* pVal)
 		{
 			pVal->setVal(m_ParentIt.key().m_key);
@@ -38,26 +28,6 @@ namespace embDB
 		{
 			return m_ParentIt.key().m_nObjectID;
 		}
-		virtual int64 addr() const
-		{
-			return m_ParentIt.addr();
-		}
-		virtual int32 pos() const
-		{
-			return m_ParentIt.pos();
-		}
-		virtual bool copy(IIndexIterator *pIter)
-		{
-			return m_ParentIt.setAddr(pIter->addr(), pIter->pos());
-		}
-		void set(iterator it)
-		{
-			m_ParentIt = it;
-		}
-
-	public:
-		iterator m_ParentIt;
-
 	};
 
 	template<class _TIndexType, class _TBTree, int FieldDataType,
@@ -72,7 +42,8 @@ namespace embDB
 		typedef _TIndexType FType;
 		typedef IndexTuple<FType> TIndexTuple;
 		typedef typename TBTree::iterator  iterator;
-		typedef MultiIndexIterator<TBTree> TMultiIndexIterator;
+		typedef MultiIndexIterator<iterator> TMultiIndexIterator;
+		//typedef TIndexIteratorBase<TBTree, IIndexIterator> TMultiIndexIterator;
 		typedef _TKeyComp TKeyComp;
 		TKeyComp m_CompKeyOnly;
 
@@ -110,7 +81,7 @@ namespace embDB
 				if(*pRetIter) 
 					((TMultiIndexIterator*)(*pRetIter))->set(RetIterator);
 				else
-					*pRetIter = new TMultiIndexIterator(RetIterator); 
+					*pRetIter = new TMultiIndexIterator(RetIterator, this); 
 			}
 			return bRet;
 		}
@@ -137,7 +108,7 @@ namespace embDB
 			TIndexTuple index(val, 0);
 
 			TBTree::iterator it = m_tree.find(m_CompKeyOnly, index);
-			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
+			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 		virtual IIndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
@@ -147,7 +118,7 @@ namespace embDB
 			TIndexTuple index(val, 0);
 
 			TBTree::iterator it = m_tree.lower_bound(m_CompKeyOnly, index);
-			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
+			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 		virtual IIndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
@@ -157,7 +128,7 @@ namespace embDB
 			TIndexTuple index(val, 0);
 
 			TBTree::iterator it = m_tree.upper_bound(m_CompKeyOnly, index);
-			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
+			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 
@@ -169,7 +140,7 @@ namespace embDB
 			TIndexTuple index(val,nOID);
 
 			TBTree::iterator it = m_tree.find(index);
-			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
+			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 		IIndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey, uint64 nOID)
@@ -179,7 +150,7 @@ namespace embDB
 			TIndexTuple index(val,nOID);
 
 			TBTree::iterator it = m_tree.lower_bound(index);
-			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
+			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 		IIndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey, uint64 nOID)
@@ -189,7 +160,7 @@ namespace embDB
 			TIndexTuple index(val,nOID);
 
 			TBTree::iterator it = m_tree.upper_bound(index);
-			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it);
+			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 		bool remove (CommonLib::CVariant* pIndexKey, uint64 nOID)

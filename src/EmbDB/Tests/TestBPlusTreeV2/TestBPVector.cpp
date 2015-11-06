@@ -7,7 +7,7 @@
 #include <set>
 #include "CommonLibrary/DebugTime.h"
 #include "../../EmbDB/CompositeIndexKey.h"
-#include "../../EmbDB/VariantField.h"
+//#include "../../EmbDB/VariantField.h"
 template<class _Ty>
 	struct comp
 	{	

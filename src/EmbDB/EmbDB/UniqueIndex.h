@@ -19,7 +19,7 @@ namespace embDB
 		typedef typename TBase::TBTree TBTree;
 		typedef _TIndexType FType;
 		typedef typename TBTree::iterator  iterator;
-		typedef TIndexIterator<TBTree> TIndexIterator;
+		typedef TIndexIterator<iterator> TIndexIterator;
 
 
 		CUniqueIndex( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
@@ -50,7 +50,7 @@ namespace embDB
 				if(*pRetIter) 
 					((TIndexIterator*)(*pRetIter))->set(RetIterator);
 				else
-					*pRetIter = new TIndexIterator(RetIterator); 
+					*pRetIter = new TIndexIterator(RetIterator, this); 
 			}
 			return bRet;
 		}
@@ -75,7 +75,7 @@ namespace embDB
 			FType val;
 			pIndexKey->getVal(val);
 			TBTree::iterator it = m_tree.find(val);
-			TIndexIterator *pIndexIterator = new TIndexIterator(it);
+			TIndexIterator *pIndexIterator = new TIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 		virtual IIndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
@@ -84,7 +84,7 @@ namespace embDB
 			pIndexKey->getVal(val);
 
 			TBTree::iterator it = m_tree.lower_bound(val);
-			TIndexIterator *pIndexIterator = new TIndexIterator(it);
+			TIndexIterator *pIndexIterator = new TIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 		virtual IIndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
@@ -92,7 +92,7 @@ namespace embDB
 			FType val;
 			pIndexKey->getVal(val);
 			TBTree::iterator it = m_tree.upper_bound(val);
-			TIndexIterator *pIndexIterator = new TIndexIterator(it);
+			TIndexIterator *pIndexIterator = new TIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 

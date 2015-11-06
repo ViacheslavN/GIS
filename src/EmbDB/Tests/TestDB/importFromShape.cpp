@@ -252,7 +252,8 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 			return;
 		}
 	}
-
+	else
+		return;
 
 	embDB::ISchemaPtr pSchema = db.getSchema();
 	embDB::ITablePtr pTable = pSchema->getTableByName(sFileName.cwstr());
@@ -442,6 +443,6 @@ void SearchShapeFile(const wchar_t* pszDBName)
 void testDBFromShape()
 {
 	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
-	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
+	ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
 	SearchShapeFile(L"d:\\db\\importShapeFile.embDB");
 }

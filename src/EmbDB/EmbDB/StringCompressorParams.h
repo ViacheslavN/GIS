@@ -91,8 +91,10 @@ namespace embDB
 			if(m_StreamPageInfo.GetRootPage() == -1)
 			{
 				FilePagePtr pPage = pTran->getNewPage();
+				m_nStreamPageInfo = pPage->getAddr();
 				m_StreamPageInfo.SetRootPage(pPage->getAddr());
 				m_StreamPageInfo.Init(pTran);
+				save(pTran);
 			}
 			return &m_StreamPageInfo;
 		}

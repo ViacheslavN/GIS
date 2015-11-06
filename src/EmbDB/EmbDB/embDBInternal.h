@@ -195,6 +195,7 @@ namespace embDB
 	struct IDBStorage;
 	struct IDBDatabase;
 	struct IDBTable;
+	struct IIndexIterator;
 
 	COMMON_LIB_REFPTR_TYPEDEF(IFieldIterator); 
 	COMMON_LIB_REFPTR_TYPEDEF(IIndexPageIterator); 
@@ -206,6 +207,7 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(ILink);
 	COMMON_LIB_REFPTR_TYPEDEF(IDBStorage);
 	COMMON_LIB_REFPTR_TYPEDEF(IDBTable);
+	COMMON_LIB_REFPTR_TYPEDEF(IIndexIterator); 
 
 	struct IFieldIterator : public CommonLib::AutoRefCounter
 	{
@@ -225,30 +227,18 @@ namespace embDB
 		virtual bool copy(IFieldIterator *pIter) = 0;
 	};
 
-	 
-
-	template<class TKeyType>
-	class TIIndexIterator : public CommonLib::RefCounter
-	{
-	public:
-		TIIndexIterator(){};
-		virtual ~TIIndexIterator(){};
-		virtual bool isValid() = 0;
-		virtual bool next() = 0;
-		virtual bool isNull() = 0;
-		virtual bool getKey(TKeyType* pIndexKey) = 0;
-		virtual uint64 getRowID() = 0;
+	template<class TKeyType, class TIterator, class TIteratorPtr>
+	struct  TIndexFiled;
 
 
-		virtual int64 addr() const = 0;
-		virtual int32 pos() const = 0;
-
-		virtual bool copy(TIIndexIterator *pIter) = 0;
-	};
-
-	typedef TIIndexIterator<CommonLib::CVariant> IIndexIterator;
-	COMMON_LIB_REFPTR_TYPEDEF(IIndexIterator); 
  
+
+ 
+	
+
+	//typedef TIIndexIterator<CommonLib::CVariant> IIndexIterator;
+	//COMMON_LIB_REFPTR_TYPEDEF(IIndexIterator); 
+
 
 	struct IIndexPageIterator  : public CommonLib::RefCounter
 	{
@@ -284,6 +274,28 @@ namespace embDB
 	typedef TIndexFiled<CommonLib::CVariant, IIndexIterator, IIndexIteratorPtr> IndexFiled;
 
 	COMMON_LIB_REFPTR_TYPEDEF(IndexFiled); 
+
+
+	struct IIndexIterator : public CommonLib::RefCounter
+	{
+	public:
+		IIndexIterator(){};
+		virtual ~IIndexIterator(){};
+		virtual bool isValid() = 0;
+		virtual bool next() = 0;
+		virtual bool isNull() = 0;
+		virtual bool getKey(CommonLib::CVariant* pIndexKey) = 0;
+		virtual uint64 getRowID() = 0;
+
+
+		virtual int64 addr() const = 0;
+		virtual int32 pos() const = 0;
+
+		virtual bool copy(IIndexIterator *pIter) = 0;
+		virtual IndexFiledPtr GetIndex() = 0;
+
+	};
+
 
 	struct IValueField: public CommonLib::RefCounter
 	{

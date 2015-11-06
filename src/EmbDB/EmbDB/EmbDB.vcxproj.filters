@@ -816,6 +816,12 @@
     <ClInclude Include="SimpleSearchCursor.h">
       <Filter>DB\transactions\Cursors</Filter>
     </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexIteratorBase.h">
+      <Filter>DB\Fields\Index</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

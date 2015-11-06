@@ -8,6 +8,7 @@ namespace embDB
 	SimpleSearchCursor::SimpleSearchCursor(IIndexIterator* pIndexIterator,  IDBTransaction* pTran, ITable* pTable, 
 		IFieldSet *pFieldSet) : m_nCacheCount(10000), m_nCurrObj(0)
 	{
+		//m_pIndex = pIndex;
 		m_pTran = pTran;
 		m_pIndexIterator = pIndexIterator;
 		m_pTable = (IDBTable*)pTable;
@@ -94,6 +95,8 @@ namespace embDB
 			SetCacheObj();
 			if(m_vecOIDs.empty())
 				return false;
+
+			m_nCurrObj = 0;
 		}
 
 

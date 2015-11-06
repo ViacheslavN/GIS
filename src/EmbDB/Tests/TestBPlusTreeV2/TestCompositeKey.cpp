@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CommonLibrary/general.h"
+/*#include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "../../EmbDB/BaseBPMapv2.h"
 #include "../../EmbDB/Transactions.h"
@@ -9,10 +9,10 @@
 #include "../../EmbDB/CompIndexInnerCompressor.h"
 #include "../../EmbDB/CompIndexLeafCompressor.h"
 #include "../../EmbDB/CompressCompIndexParams.h"
-#include "../../EmbDB/VariantField.h"
-#include "CommonLibrary/DebugTime.h"
+//#include "../../EmbDB/VariantField.h"
+#include "CommonLibrary/DebugTime.h"*/
 
- 
+ /*
 typedef embDB::BPTreeLeafNodeMapv2<embDB::CompositeIndexKey, uint64, embDB::IDBTransaction,
 	embDB::BPLeafCompIndexCompressor<uint64>, embDB::TBPVectorNoPOD<embDB::CompositeIndexKey> > TLeafNode;
 
@@ -22,8 +22,8 @@ typedef embDB::BPTreeInnerNodeSetv2<embDB::CompositeIndexKey, embDB::IDBTransact
 typedef embDB::TBPMapV2<embDB::CompositeIndexKey, uint64, embDB::comp<embDB::CompositeIndexKey>, embDB::IDBTransaction,
 	embDB::BPInnerCompIndexCompressor, embDB::BPLeafCompIndexCompressor<uint64>, TInnerNode, TLeafNode> TBPTree;
 
-
-
+	*/
+/*
 int64 CreateCompParams(embDB::IDBTransaction* pTran)
 {
 	embDB::CompIndexParams compParmas;
@@ -272,11 +272,7 @@ void removeFromBTreeCompKey  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndSt
 				std::cout << "Error remove,  found " << i << std::endl;
  
 			}
-			/*else if( i != it.key())
-			{
-				std::cout << "Key not EQ " << i << std::endl;
-				nNotFound++;
-			}*/
+	
 
 			if(i%nStep == 0)
 			{
@@ -420,11 +416,11 @@ void testCompIndex (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 
 
 }
-
+*/
 
 void testCompKey()
 {
-	int64 nCount = 100000;
-	size_t nPageSize = 65536;
-	testCompIndex<embDB::CDirectTransaction>(nCount, nPageSize, 10, 10, 10, eCREATE|eINSERT|eFIND|eDELETE);
+	//int64 nCount = 100000;
+	//size_t nPageSize = 65536;
+	//testCompIndex<embDB::CDirectTransaction>(nCount, nPageSize, 10, 10, 10, eCREATE|eINSERT|eFIND|eDELETE);
 }

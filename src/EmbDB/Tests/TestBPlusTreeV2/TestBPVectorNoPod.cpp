@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CommonLibrary/general.h"
+/*#include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "../../EmbDB/BPVectorNoPod.h"
 #include <vector>
@@ -7,10 +7,10 @@
 #include <set>
 #include "CommonLibrary/DebugTime.h"
 #include "../../EmbDB/CompositeIndexKey.h"
-#include "../../EmbDB/VariantField.h"
+#include "../../EmbDB/VariantField.h"*/
 
 
-
+/*
 
 class Test
 {
@@ -59,7 +59,7 @@ void TestPODTypeVector()
 {
 	CommonLib::simple_alloc_t alloc;
 
-	/*Test Testt(&alloc);
+	Test Testt(&alloc);
 	{
 		std::vector<Test> stdvec;
 		stdvec.reserve(150);
@@ -68,7 +68,7 @@ void TestPODTypeVector()
 		int i = 0;
 		i++;
 	}
-	*/
+	
  
 	
 	embDB::TVarINT32 valint32;
@@ -131,13 +131,11 @@ void TestPODTypeVector()
 
 		vec2.copy(vec1, 1, 2, 5);
 		std::cout << "vec2 copy 1 3 5 " << std::endl;
-		ShowNoPodVector(vec2);*/
-		/*vec1.copy(vec, 0, 0, 5);
-		vec.movel(3, 3);
-		vec.push_back(key);*/
+		ShowNoPodVector(vec2);
+
 	}
 	int i = 0;
 	i++;
 	//vec.movel(4, 5);
 
-}
+}*/

@@ -3,30 +3,21 @@
 #include "BaseBPMapv2.h"
 #include "embDBInternal.h"
 #include "DBFieldInfo.h"
+#include "IndexIteratorBase.h"
 namespace embDB
 
 {
 
-template<class TBTree>
-class TIndexIterator: public IIndexIterator
+template<class Iterator>
+class TIndexIterator: public TIndexIteratorBase<Iterator, IIndexIterator>
 {
 public:
-	typedef typename TBTree::iterator  iterator;
+	typedef TIndexIteratorBase<Iterator, IIndexIterator> TBase;
+	typedef typename TBase::iterator  iterator;
 
-	TIndexIterator(iterator& it) : m_ParentIt(it){}
-	virtual ~TIndexIterator(){}
-
-	virtual bool next()
+	TIndexIterator(iterator& it, IndexFiled *pIndex) : TBase(it, pIndex)
 	{
-		return m_ParentIt.next();
-	}
-	virtual bool isNull()
-	{
-		return m_ParentIt.isNull();
-	}
-	virtual bool isValid()
-	{
-		return !m_ParentIt.isNull();
+		
 	}
 	virtual bool getKey(CommonLib::CVariant* pVal)
 	{
@@ -37,25 +28,6 @@ public:
 	{
 		return m_ParentIt.value();
 	}
-	virtual int64 addr() const
-	{
-		return m_ParentIt.addr();
-	}
-	virtual int32 pos() const
-	{
-		return m_ParentIt.pos();
-	}
-	virtual bool copy(IIndexIterator *pIter)
-	{
-		return m_ParentIt.setAddr(pIter->addr(), pIter->pos());
-	}
-	void set(iterator it)
-	{
-		m_ParentIt = it;
-	}
-	public:
-	iterator m_ParentIt;
-
 };
 
 

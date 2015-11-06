@@ -25,6 +25,7 @@ namespace embDB
 	private:
 		void SetCacheObj();
 	private:
+		IndexFiledPtr m_pIndex;
 		IRowPtr m_pCacheRow;
 		IDBTransactionPtr m_pTran;
 		IIndexIteratorPtr m_pIndexIterator;

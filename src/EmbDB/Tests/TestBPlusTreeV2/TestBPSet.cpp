@@ -202,7 +202,7 @@ void searchINBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 				int i = 0;
 				i++;
 			}
-			it = tree.find(it, TKey(i), true);
+			it = tree.find(TKey(i), &it,  true);
 			if(it.isNull())
 			{
 				std::cout << "Not found " << i << std::endl;

@@ -12,7 +12,7 @@ namespace embDB
 {
 
 
-	template<class _TKey = int64,	class _Transaction = IDBTransactions>
+	template<class _TKey = int64,	class _Transaction = IDBTransaction>
 	class BPFixedStringLeafNodeCompressor  
 	{
 	public:
