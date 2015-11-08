@@ -103,6 +103,7 @@ namespace GisEngine
 			 m_ShapeType = ShapefileUtils::SHPTypeToGeometryType(shapeType, &hasZ, &hasM);
 			 IGeometryDefPtr pGeometryDef(new  CGeometryDef(m_ShapeType, hasZ, hasM));
 			 pGeometryDef->SetSpatialReference(m_pSpatialReference.get());
+			 pGeometryDef->SetBaseExtent(bounds);
 
 			 int fieldCount = ShapeLib::DBFGetFieldCount(m_dbf.file);
 			 for(int fieldNum = 0; fieldNum < fieldCount; ++fieldNum)

@@ -19,11 +19,14 @@ namespace embDB
 			virtual IFieldSetPtr		   GetFieldSet() const {return m_pFieldsSet;}
 			virtual IFieldsPtr             GetSourceFields() const {return m_pFields;}
 			virtual bool IsFieldSelected(int index) const;
+			virtual uint64				GetRowID() const;
+			virtual void				SetRow(uint64 nRowID);
 	private:
 		std::vector<CommonLib::CVariant>	m_vecValues;
 		IFieldSetPtr m_pFieldsSet;
 		IFieldsPtr m_pFields;
 		std::vector<int>                    m_vecFieldMap;
+		uint64								m_nRowID;
 	};
 }
 #endif

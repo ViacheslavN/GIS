@@ -5,6 +5,8 @@
 #include "InsertCursor.h"
 #include "SpatialIndexBase.h"
 #include "SimpleSearchCursor.h"
+#include "SimpleSelectCursor.h"
+#include "DeleteCursor.h"
 namespace embDB
 {
 	class CDatabase;
@@ -77,8 +79,7 @@ namespace embDB
 					return ICursorPtr(); //TO DO Error
 
 
-				if(pField->getType() != dtPoint16 && pField->getType() != dtPoint32 && pField->getType() != dtPoint64
-					&& pField->getType() != dtRect16 && pField->getType() != dtRect32 && pField->getType() != dtRect64)
+				if(pField->getType() != dtGeometry)
 				{
 					return ICursorPtr(); //TO DO Error
 				}
@@ -109,7 +110,40 @@ namespace embDB
 				return ICursorPtr();
 
 			}
+			virtual ICursorPtr executeSelectQuery(const wchar_t *pszTable, IFieldSet *pFileds = 0, const wchar_t *pszSQLQuery = NULL)
+			{
+				ITablePtr pTable = m_pSchema->getTableByName(pszTable);
+				if(!pTable.get())
+					return ICursorPtr(); //TO DO Error
 
+
+				if(pszSQLQuery == NULL)
+				{
+					SimpleSelectCursor* pCursor = new SimpleSelectCursor(this, pTable.get(), pFileds); 
+					if(!pCursor->Init())
+					{
+						delete pCursor;
+						return ICursorPtr(); //TO DO Error
+					}
+					return ICursorPtr(pCursor);
+				}
+			 
+				return ICursorPtr();
+			}
+			virtual IDeleteCursorPtr createDeleteCursor(const wchar_t *pszTable) 
+			{
+				ITablePtr pTable = m_pSchema->getTableByName(pszTable);
+				if(!pTable.get())
+					return IDeleteCursorPtr(); //TO DO Error
+
+				CDeleteCursor* pCursor = new CDeleteCursor(this, pTable.get());
+				if(!pCursor->Init())
+				{
+					delete pCursor;
+					return IDeleteCursorPtr(); //TO DO Error
+				}
+				return IDeleteCursorPtr(pCursor);
+			}		
 
 			bool CommitTemp()
 			{

@@ -260,8 +260,7 @@ namespace embDB
 		if(!fi.Read(&stream))
 			return false;
 
-		if(fi.m_nFieldType == dtPoint16 || fi.m_nFieldType == dtPoint32 || fi.m_nFieldType == dtPoint64 || 
-			fi.m_nFieldType == dtRect16 || fi.m_nFieldType == dtRect32 ||fi.m_nFieldType == dtRect64)
+		if(fi.m_nFieldType == dtGeometry)
 		{
 			stream.seek(0, CommonLib::soFromBegin);
 			sFilePageHeader spheader (stream); //TO DO temporary
@@ -306,8 +305,7 @@ namespace embDB
 		if(!fi.Read(&stream))
 			return false;
 
-		if(fi.m_nFieldType == dtPoint16 || fi.m_nFieldType == dtPoint32 || fi.m_nFieldType == dtPoint64 || 
-			fi.m_nFieldType == dtRect16 || fi.m_nFieldType == dtRect32 ||fi.m_nFieldType == dtRect64)
+		if(fi.m_nFieldType == dtGeometry)
 		{
 			stream.seek(0, CommonLib::soFromBegin);
 			sFilePageHeader spheader (stream); //TO DO temporary
@@ -479,27 +477,24 @@ namespace embDB
 		
 		IDBIndexHandler *pSpatialIndex = NULL;
 
-		switch(spIndex.m_nFieldType)
+		switch(spIndex.m_nSpatialType)
 		{
-			case dtPoint16:
+			case stPoint16:
 				pSpatialIndex = new THandlerIndexPoint16(m_pDB->getBTreeAlloc());
 				break;
-			case dtPoint32:
+			case stPoint32:
 				pSpatialIndex = new THandlerIndexPoint32(m_pDB->getBTreeAlloc());
 				break;
-			case dtPoint64:
+			case stPoint64:
 				pSpatialIndex = new THandlerIndexPoint64(m_pDB->getBTreeAlloc());
 				break;
-			case dtShape16:
-			case dtRect16:
+			case stRect16:
 				pSpatialIndex = new THandlerIndexRect16(m_pDB->getBTreeAlloc());
 				break;
-			case dtShape32:
-			case dtRect32:
+			case stRect32:
 				pSpatialIndex = new THandlerIndexRect32(m_pDB->getBTreeAlloc());
 				break;
-			case dtShape64:
-			case dtRect64:
+			case stRect64:
 				pSpatialIndex = new THandlerIndexRect64(m_pDB->getBTreeAlloc());
 					break;
 		
@@ -812,14 +807,14 @@ namespace embDB
 		return true;
 	}
 
-	eDataTypes CTable::GetType(uint64 nMaxVal, bool isPoint)
+	eSpatialType CTable::GetSpatialType(uint64 nMaxVal, bool isPoint)
 	{
 		if(nMaxVal < 0xFFFF)
-			return  isPoint ? dtPoint16 : dtRect16;
+			return  isPoint ? stPoint16 : stRect16;
 		else if(nMaxVal < 0xFFFFFFFF)
-			return  isPoint ? dtPoint32 : dtRect32;
+			return  isPoint ? stPoint32 : stRect32;
 
-		return  isPoint ? dtPoint64 : dtRect64;
+		return  isPoint ? stPoint64 : stRect64;
 	}
 
 	IFieldPtr CTable::createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias,  CommonLib::eShapeType shapeType,
@@ -847,7 +842,7 @@ namespace embDB
 			dOffsetY = -1 *extent.yMin;
 
 		
-		eDataTypes DataType = dtUnknown; 			 
+		eSpatialType SpatialDataType = stUnknown; 			 
 
 		bool isPoint = false;
 		if(shapeType == CommonLib::shape_type_point || shapeType == CommonLib::shape_type_point_m || shapeType == CommonLib::shape_type_point_zm /* || 
@@ -888,7 +883,7 @@ namespace embDB
 		}
 		
 		int64 nMaxVal = int64(dMaxCoord/dScaleX);
-		DataType = GetType(nMaxVal, isPoint);
+		SpatialDataType = GetSpatialType(nMaxVal, isPoint);
 	
 		sSpatialFieldInfo fi;
 		fi.m_extent = extent;
@@ -900,8 +895,9 @@ namespace embDB
 		fi.m_dOffsetY = dOffsetY;
 		fi.m_dScaleX = dScaleX;
 		fi.m_dScaleY = dScaleY;
-		fi.m_nFieldType = DataType;
+		fi.m_nFieldType = dtGeometry;
 		fi.m_nCoordType = CoordUnits;
+		fi.m_nSpatialType = SpatialDataType;
 
 
 		IDBTransaction* pTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();

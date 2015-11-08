@@ -3,7 +3,7 @@
 #include "FieldSet.h"
 namespace embDB
 {
-	CRow::CRow(IFields* pFields, IFieldSet* pFieldSet)
+	CRow::CRow(IFields* pFields, IFieldSet* pFieldSet) : m_nRowID(0)
 	{
 		m_pFields = pFields;
 		m_pFieldsSet = pFieldSet;
@@ -60,5 +60,13 @@ namespace embDB
 	 bool CRow::IsFieldSelected(int index) const
 	 {
 		 return m_vecFieldMap[index] >= 0;
+	 }
+	 uint64	CRow::GetRowID() const
+	 {
+		 return m_nRowID;
+	 }
+	 void	CRow::SetRow(uint64 nRowID)
+	 {
+		 m_nRowID = nRowID;
 	 }
 }

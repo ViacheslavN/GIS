@@ -8,6 +8,7 @@
 #include "Database.h"
 #include "DBMagicSymbol.h"
 #include "BaseBPTreeRO.h"
+#include "FieldIteratorBase.h"
 namespace embDB
 {
 
@@ -132,9 +133,9 @@ namespace embDB
 				if(pRetIter)
 				{
 					if(*pRetIter) 
-						((TFieldIterator*)(*pRetIter))->set(RetIterator);
+						((TFieldIterator*)(*pRetIter))->set(RetIterator, this);
 					else
-						*pRetIter = (IFieldIterator*)new TFieldIterator(RetIterator); 
+						*pRetIter = (IFieldIterator*)new TFieldIterator(RetIterator, this); 
 				}
 				return bRet;
 			}
@@ -158,9 +159,9 @@ namespace embDB
 				if(pRetIter)
 				{
 					if(*pRetIter) 
-						((TFieldIterator*)(*pRetIter))->set(RetIterator);
+						((TFieldIterator*)(*pRetIter))->set(RetIterator, this);
 					else
-						*pRetIter = new TFieldIterator(RetIterator); 
+						*pRetIter = new TFieldIterator(RetIterator, this); 
 				}
 				return nOID;
 			}
@@ -228,7 +229,7 @@ namespace embDB
 				}
 
 				TBTree::iterator it = m_tree.find(nOID, pFromIterator, true);
-				TFieldIterator *pFiledIterator = new TFieldIterator(it);
+				TFieldIterator *pFiledIterator = new TFieldIterator(it, this);
 				return IFieldIteratorPtr(pFiledIterator);
 			}
 	
@@ -244,7 +245,7 @@ namespace embDB
 				}
 
 				TBTree::iterator it = m_tree.upper_bound(nRowID, pFromIterator, true);
-				TFieldIterator *pFiledIterator = new TFieldIterator(it);
+				TFieldIterator *pFiledIterator = new TFieldIterator(it, this);
 				return IFieldIteratorPtr(pFiledIterator);
 			}
 			virtual IFieldIteratorPtr lower_bound(uint64 nRowID,  IFieldIterator* pFromIter = NULL)
@@ -258,20 +259,20 @@ namespace embDB
 				}
 
 				TBTree::iterator it = m_tree.lower_bound(nRowID, pFromIterator, true);
-				TFieldIterator *pFiledIterator = new TFieldIterator(it);
+				TFieldIterator *pFiledIterator = new TFieldIterator(it, this);
 				return IFieldIteratorPtr(pFiledIterator);
 			}
 
 			IFieldIteratorPtr begin()
 			{
 				TBTree::iterator it = m_tree.begin();
-				TFieldIterator *pFiledIterator = new TFieldIterator(it);
+				TFieldIterator *pFiledIterator = new TFieldIterator(it, this);
 				return IFieldIteratorPtr(pFiledIterator);
 			}
 			virtual IFieldIteratorPtr last()
 			{
 				TBTree::iterator it = m_tree.last();
-				TFieldIterator *pFiledIterator = new TFieldIterator(it);
+				TFieldIterator *pFiledIterator = new TFieldIterator(it, this);
 				return IFieldIteratorPtr(pFiledIterator);
 			}
 			virtual IndexFiledPtr GetIndex()
@@ -281,6 +282,10 @@ namespace embDB
 			virtual void SetIndex(IndexFiled *pIndex)
 			{
 				m_pIndex = pIndex;
+			}
+			virtual uint64 GetRowsCount()
+			{
+				return m_tree.m_BTreeInfo.m_nKeyCounts;
 			}
 	 protected:
 		IDBTransaction* m_pDBTransactions;
@@ -295,63 +300,23 @@ namespace embDB
 
 
 	template<class TBTree>
-	class FieldIterator: public IFieldIterator
+	class FieldIterator: public TFieldIteratorBase<TBTree, IFieldIterator>
 	{
 	public:
-		typedef typename TBTree::iterator  iterator;
+	 
+		typedef TFieldIteratorBase<TBTree, IFieldIterator> TBase;
 
-		FieldIterator(iterator& it) : m_ParentIt(it){}
+		FieldIterator(iterator& it,  IValueField* pField) : TBase(it, pField)
+		{
+		}
 		FieldIterator() {}
 		virtual ~FieldIterator(){}
-	
-		virtual bool isValid()
-		{
-			return !m_ParentIt.isNull();
-		}
-		virtual bool next() 
-		{
-			return m_ParentIt.next();
-		}
-		virtual bool back() 
-		{
-			return m_ParentIt.back();
-		}
-		virtual bool isNull()
-		{
-			return m_ParentIt.isNull();
-		}
+
 		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
 			pVal->setVal(m_ParentIt.value());
 			return true;
 		}
-		virtual uint64 getRowID()
-		{
-			return m_ParentIt.key();
-		}
-
-
-		virtual int64 addr() const
-		{
-			return m_ParentIt.addr();
-		}
-		virtual int32 pos() const
-		{
-			return m_ParentIt.pos();
-		}
-
-		virtual bool copy(IFieldIterator *pIter)
-		{
-			return m_ParentIt.setAddr(pIter->addr(), pIter->pos());
-		}
-
-		void set(iterator it)
-		{
-			m_ParentIt = it;
-		}
-	public:
-		iterator m_ParentIt;
-
 	};
 	
 	
@@ -404,6 +369,7 @@ namespace embDB
 			typedef embDB::TBPMapV2<uint64, FType, embDB::comp<uint64>, 
 				embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
  
+			typedef typename TBTree::iterator  iterator;
 			typedef FieldIterator<TBTree> TFieldIterator;
 			typedef ValueField<FType, TBTree, TFieldIterator> TField;
 	

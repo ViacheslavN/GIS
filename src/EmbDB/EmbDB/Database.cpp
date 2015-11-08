@@ -7,6 +7,13 @@
 #include "DBTranManager.h"
 namespace embDB
 {
+
+	IDatabasePtr IDatabase::CreateDatabase()
+	{
+		return IDatabasePtr(new CDatabase());
+	}
+	
+
 	CDatabase::CDatabase() :  m_bOpen(false)
 	{
 		m_pAlloc.reset(new CommonLib::simple_alloc_t());
@@ -18,6 +25,9 @@ namespace embDB
 	{
 
 	}
+
+	
+
 	bool CDatabase::open(const wchar_t* pszName, DBTransactionMode mode, const wchar_t* pszWorkingPath, const  wchar_t* pszPassword)
 	{
 		close();

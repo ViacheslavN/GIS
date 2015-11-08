@@ -5,10 +5,8 @@
 #include "Common/SimpleEnum.h"
 #include "Common/GisEngineCommon.h"
 #include "CommonLibrary/CSSection.h"
-namespace embDB
-{
-	class CDatabase;
-}
+#include "../../EmbDB/EmbDB/embDB.h"
+
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -54,18 +52,19 @@ namespace GisEngine
 
 
 
-			embDB::CDatabase *GetDB(){return m_pDB.get();}
+			embDB::IDatabasePtr GetDB(){return m_pDB;}
 		private:
  
 			virtual const CommonLib::CString& GetHash() const{return m_sHash;};
 
 			void close();
 			bool create(const CommonLib::CString& sFullName);
+			bool load(const CommonLib::CString& sFullName, bool bWrite, bool bOpenAll = true);
 		private:
 
 			CommonLib::CString m_sPath;
 			CommonLib::CString m_sHash;
-			std::auto_ptr<embDB::CDatabase> m_pDB;
+			embDB::IDatabasePtr m_pDB;
 		};
 	
 	}

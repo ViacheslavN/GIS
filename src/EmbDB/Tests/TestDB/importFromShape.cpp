@@ -381,12 +381,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 				dblVal = ShapeLib::DBFReadDoubleAttribute(dbf.file, row, i);
 				value  = dblVal;
 				break;
-			case embDB::dtPoint16:
-			case embDB::dtPoint32:
-			case embDB::dtPoint64:
-			case embDB::dtRect16:
-			case embDB::dtRect32:
-			case embDB::dtRect64:
+			case embDB::dtGeometry:
 						{
 							pCacheObject = ShapeLib::SHPReadObject(shp.file, row);
 							SHPObjectToGeometry(pCacheObject, shape);
@@ -437,12 +432,22 @@ void SearchShapeFile(const wchar_t* pszDBName)
 
 	int  i = 0;
 	i++;
+
+	pCursor = pTran->executeSelectQuery( L"building");
+	int nObj2 = 0;
+	while(pCursor->NextRow(&pRow))
+	{
+		++nObj2;
+	}
+
+	i = 0;
+	i++;
 	 
 }
 
 void testDBFromShape()
 {
-	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
-	ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
+	ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
+	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
 	SearchShapeFile(L"d:\\db\\importShapeFile.embDB");
 }

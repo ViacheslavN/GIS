@@ -3,18 +3,19 @@
 
 #include "ValueField.h"
 #include "ShapeTree.h"
-
+#include "FieldIteratorBase.h"
 namespace embDB
 {
 
 	template<class TBTree>
-	class ShapeFieldIterator: public IFieldIterator
+	class ShapeFieldIterator: public TFieldIteratorBase<TBTree, IFieldIterator>
 	{
 	public:
-		typedef typename TBTree::iterator  iterator;
+		typedef typename TBTree::iterator iterator;
+		typedef TFieldIteratorBase<TBTree, IFieldIterator> TBase;
 
-		ShapeFieldIterator(iterator& it) 
-			: m_ParentIt(it)
+		ShapeFieldIterator(iterator& it, IValueField* pField) 
+			: TBase(it, pField)
 
 		{
 
@@ -23,22 +24,6 @@ namespace embDB
 		{}
 		virtual ~ShapeFieldIterator(){}
 
-		virtual bool isValid()
-		{
-			return !m_ParentIt.isNull();
-		}
-		virtual bool next() 
-		{
-			return m_ParentIt.next();
-		}
-		virtual bool back() 
-		{
-			return m_ParentIt.back();
-		}
-		virtual bool isNull()
-		{
-			return m_ParentIt.isNull();
-		}
 		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
 			const sBlobVal& sBlob = m_ParentIt.value();
@@ -56,36 +41,7 @@ namespace embDB
 			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), shape);
 			return true;
 		}
-		virtual uint64 getRowID()
-		{
-			return m_ParentIt.key();
-		}
-
-
-		virtual int64 addr() const
-		{
-			return m_ParentIt.addr();
-		}
-		virtual int32 pos() const
-		{
-			return m_ParentIt.pos();
-		}
-
-		virtual bool copy(IFieldIterator *pIter)
-		{
-			return m_ParentIt.setAddr(pIter->addr(), pIter->pos());
-		}
-
-		void set(iterator it)
-		{
-			m_ParentIt = it;
-		}
-
-
-	public:
-		iterator m_ParentIt;
-		CommonLib::alloc_t *m_pAlloc;
-
+		
 	};
 
 
@@ -93,10 +49,11 @@ namespace embDB
 	class TShapeValueField : public ValueFieldBase<CommonLib::IGeoShapePtr, _TBTree, ShapeFieldIterator<_TBTree> >
 	{
 	public:
+		typedef typename TBTree::iterator  iterator;
 		typedef  ShapeFieldIterator<_TBTree> TFieldIterator;
 		typedef ValueFieldBase<CommonLib::IGeoShapePtr,_TBTree, TFieldIterator> TBase;
 		typedef typename TBase::TBTree TBTree;
-		typedef typename TBTree::iterator  iterator;
+	
 
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
@@ -199,6 +156,14 @@ namespace embDB
 		virtual const CommonLib::CString& getAlias() const
 		{
 			return m_SpatialFi.m_sFieldAlias;
+		}
+		virtual uint32 GetLength()	const
+		{
+			return m_SpatialFi.m_nLenField;
+		}
+		virtual bool GetIsNotEmpty() const
+		{
+			return (m_SpatialFi.m_nFieldDataType&dteIsNotEmpty) != 0;
 		}
 	private:
 		sSpatialFieldInfo m_SpatialFi;

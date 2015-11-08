@@ -271,6 +271,8 @@ namespace GisEngine
 		};
 
 
+	 
+
 		struct IFields: public CommonLib::AutoRefCounter
 		{
 

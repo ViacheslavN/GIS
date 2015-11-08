@@ -26,20 +26,15 @@ namespace embDB
 		dtDouble,
 		dtString,
 		dtBlob ,
-		dtPoint16,
-		dtPoint32,
-		dtPoint64,
-		dtShape16,
-		dtShape32,
-		dtShape64,
+		dtGeometry , 
 		dtRaster,
-		dtRect16,
-		dtRect32,
-		dtRect64,
 		dtDate,
 		dtSerializedObject
 	};
 
+
+
+		
 
 	struct STypeSize
 	{
@@ -63,16 +58,7 @@ namespace embDB
 		{dtDouble,			 8},
 		{dtString,			 0},
 		{dtBlob,			 8},
-		{dtPoint16,			 4},
-		{dtPoint32,			 8},
-		{dtPoint64,		    16},
-		{dtShape16,			 8},
-		{dtShape32,		     8},
-		{dtShape64,			 8},
 		{dtRaster,	 		 8},
-		{dtRect16,			 8},
-		{dtRect32,			16},
-		{dtRect64,			32},
 		{dtDate,	         4},
 		{dtSerializedObject, 8}
 
@@ -169,8 +155,9 @@ namespace embDB
 		CommonLib::CString sFieldName;
 		CommonLib::CString sFieldAlias;
 		eDataTypes dataType;
-		eDataTypesExt dateTypeExt;
+		uint32 dateTypeExt;
 		uint32 nLenField;
+		CommonLib::CVariant devaultValue;
 
 		SFieldProp() : nLenField(0), dataType(dtUnknown), dateTypeExt(dteSimple)
 		{}
@@ -202,6 +189,7 @@ namespace embDB
 	struct ISchema;
 	struct IStatement;
 	struct ITransaction;
+	struct IDatabase;
 
 	COMMON_LIB_REFPTR_TYPEDEF(IField);
 	COMMON_LIB_REFPTR_TYPEDEF(IFields);
@@ -215,7 +203,7 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(ISchema);
 	COMMON_LIB_REFPTR_TYPEDEF(IStatement); 
 	COMMON_LIB_REFPTR_TYPEDEF(ITransaction); 
-
+	COMMON_LIB_REFPTR_TYPEDEF(IDatabase); 
 	struct IField: public CommonLib::AutoRefCounter
 	{
 	public:
@@ -224,6 +212,9 @@ namespace embDB
 		virtual eDataTypes getType() const = 0;
 		virtual const CommonLib::CString& getName() const = 0;
 		virtual const CommonLib::CString& getAlias() const = 0;
+		virtual uint32 GetLength()	const = 0;
+		virtual bool GetIsNotEmpty() const = 0;
+
 	};
 
 
@@ -271,6 +262,8 @@ namespace embDB
 		virtual bool set(CommonLib::CVariant& pValue, int32 nNum) = 0;
 		virtual IFieldSetPtr		   GetFieldSet() const = 0;
 		virtual IFieldsPtr             GetSourceFields() const = 0;
+		virtual uint64				GetRowID() const = 0;
+		virtual void				SetRow(uint64 nRowID) = 0;
 	};
 
 	struct INameRow : public IRow
@@ -311,11 +304,12 @@ namespace embDB
 		virtual ~IUpdateCursor(){}
 		virtual bool update(IRow* pRow) = 0;
 	};
-	struct IDeleteCursor : public ICursor
+	struct IDeleteCursor : public CommonLib::AutoRefCounter
 	{
 		IDeleteCursor(){}
 		virtual ~IDeleteCursor(){}
 		virtual bool remove(IRow* pRow) = 0;
+		virtual bool remove(uint64 nRowID) = 0;
 	};
 
 	
@@ -418,16 +412,18 @@ namespace embDB
 		virtual ICursorPtr executeQuery(IStatement* pStatement) = 0;
 		virtual ICursorPtr executeQuery(const wchar_t* pszQuery = NULL) = 0;
 		virtual ICursorPtr executeSpatialQuery(const CommonLib::bbox& extent, const wchar_t *pszTable, const wchar_t* pszSpatialField, SpatialQueryMode mode = sqmIntersect,  IFieldSet *pFileds = 0) = 0; // For test
+		virtual ICursorPtr executeSelectQuery(const wchar_t *pszTable, IFieldSet *pFileds = 0, const wchar_t *pszSQLQuery = NULL) = 0; // For test
+
 
 		virtual IInsertCursorPtr createInsertCursor(const wchar_t *pszTable, IFieldSet *pFileds = 0) = 0;
 		virtual IUpdateCursorPtr createUpdateCursor() = 0;
-		virtual IDeleteCursorPtr createDeleteCursor() = 0;
+		virtual IDeleteCursorPtr createDeleteCursor(const wchar_t *pszTable) = 0;
 
 	};
 	
 
 	
-	struct  IDatabase
+	struct  IDatabase: public CommonLib::AutoRefCounter
 	{
 	public:
 		IDatabase(){}
@@ -439,8 +435,10 @@ namespace embDB
 		virtual bool closeTransaction(ITransaction* ) = 0;
 		virtual ISchemaPtr getSchema() const = 0;
 		
-
+		static IDatabasePtr CreateDatabase();
 	};
+
+
 }
 
 

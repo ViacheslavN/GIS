@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "EmbDBWorkspace.h"
-#include "../../EmbDB/EmbDB/Database.h"
 #include "CommonLibrary/File.h"
 
 namespace GisEngine
@@ -25,7 +24,18 @@ namespace GisEngine
 			if(m_pDB.get())
 				m_pDB->close();
 		}
+		bool CEmbDBWorkspace::IsError() const
+		{
+			return false;
+		}
+		uint32 CEmbDBWorkspace::GetErrorCode() const
+		{
+			return 0;
+		}
+		void CEmbDBWorkspace::GetErrorText( CommonLib::CString& sStr, uint32 nCode)
+		{
 
+		}
 
 
 		IWorkspacePtr CEmbDBWorkspace::Create(const wchar_t *pszName, const wchar_t *pszPath)
@@ -74,7 +84,7 @@ namespace GisEngine
 		{
 			if(m_pDB.get())
 				m_pDB->close();
-			m_pDB.reset(new embDB::CDatabase());
+			m_pDB = embDB::IDatabase::CreateDatabase();
 			if(!m_pDB->create(sFullName.cwstr(),  8192))
 			{
 				//TO DO Error
@@ -83,5 +93,92 @@ namespace GisEngine
 
 			return true;
 		}
+
+		bool CEmbDBWorkspace::load(const CommonLib::CString& sFullName, bool bWrite, bool bOpenAll)
+		{
+
+			m_pDB =  embDB::IDatabase::CreateDatabase();
+			if(m_pDB.get())
+			{
+				return false;
+			}
+
+			if(!bOpenAll)
+				return true;
+
+
+			embDB::ISchemaPtr pShema = m_pDB->getSchema();
+			if(!pShema.get())
+				return false;
+
+			for (size_t i = 0, sz = pShema->getTableCnt(); i < sz; ++i)
+			{
+				embDB::ITablePtr pTable = pShema->getTable(i);
+				
+			}
+			 
+			while(pRS->StepNext())
+			{
+				CommonLib::CString tableName = pRS->ColumnText(1);
+				CommonLib::CString sCreateSQL = pRS->ColumnText(4);
+
+				//if(sCreateSQL.find(m_sRTreePrefix) == -1)
+				tableNames.push_back(tableName);
+			}
+
+
+
+			for (size_t i = 0, sz = tableNames.size(); i < sz; ++i)
+			{
+				if(CSQLiteFeatureClass::IsFeatureClass(tableNames[i], m_pDB.get()))
+				{
+					if(!OpenFeatureClass(tableNames[i]))
+					{
+						return false;
+					}
+				}
+				else
+				{
+
+					if(!OpenTable(tableNames[i]))
+					{
+						return false;
+					}
+				}
+
+			}
+
+			return true;
+		}
+
+		bool CEmbDBWorkspace::save(CommonLib::IWriteStream *pWriteStream) const
+		{
+			TBase::save(pWriteStream);
+			CommonLib::MemoryStream steram;
+			steram.write(m_sPath);
+
+			pWriteStream->write(&steram);
+			return true;
+		}
+		bool CEmbDBWorkspace::load(CommonLib::IReadStream* pReadStream)
+		{
+			TBase::load(pReadStream);
+			CommonLib::FxMemoryReadStream stream;
+			pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+			stream.read(m_sPath);
+
+			const CommonLib::CString sFullName = m_sPath + m_sName;
+			return load(sFullName, true, false);
+		}
+
+		bool CEmbDBWorkspace::saveXML(GisCommon::IXMLNode* pXmlNode) const
+		{
+
+		}
+		bool CEmbDBWorkspace::load(const GisCommon::IXMLNode* pXmlNode)
+		{
+
+		}
+
 	}
 }

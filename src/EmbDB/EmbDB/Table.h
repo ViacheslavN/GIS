@@ -101,7 +101,7 @@ namespace embDB
 			//bool loadTableStorage(int64 nAddr);
 			bool ReadIndices(int64 nAddr, IDBTransaction *pTran);
 			bool BuildIndex(IDBIndexHandler* pIndexHandler, IDBFieldHandler *pFieldHandler, IDBTransaction* pTran);
-			eDataTypes GetType(uint64 nMaxVal, bool isPoint);
+			eSpatialType GetSpatialType(uint64 nMaxVal, bool isPoint);
 			
 
 			

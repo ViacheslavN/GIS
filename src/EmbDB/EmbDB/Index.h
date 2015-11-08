@@ -154,7 +154,14 @@ public:
 	{
 		return &m_fi;
 	}
-
+	virtual uint32 GetLength()	const
+	{
+		return m_fi.m_nLenField;
+	}
+	virtual bool GetIsNotEmpty() const
+	{
+		return (m_fi.m_nFieldDataType&dteIsNotEmpty) != 0;
+	}
 	virtual void setFieldInfoType(sFieldInfo* fi)
 	{
 		m_fi = *fi;

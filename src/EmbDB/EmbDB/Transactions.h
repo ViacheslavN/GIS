@@ -76,7 +76,7 @@ namespace embDB
 
  
 		virtual IUpdateCursorPtr createUpdateCursor() {return  IUpdateCursorPtr();}
-		virtual IDeleteCursorPtr createDeleteCursor() {return  IDeleteCursorPtr();}
+
 
 
 		virtual bool restore(bool bForce = false);

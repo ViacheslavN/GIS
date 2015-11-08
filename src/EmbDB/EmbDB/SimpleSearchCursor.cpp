@@ -148,6 +148,7 @@ namespace embDB
 				m_pCacheRow->set(CommonLib::CVariant(), i);
 
 		}
+		m_pCacheRow->SetRow(m_nCurrObj);
 		*row = m_pCacheRow.get();
 
 		m_nCurrObj++;

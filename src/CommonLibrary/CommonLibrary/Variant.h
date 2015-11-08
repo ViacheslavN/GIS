@@ -7,6 +7,7 @@
 #include "blob.h"
 #include "SpatialKey.h"
 #include "GeoShape.h"
+#include "stream.h"
 namespace CommonLib
 {
 	struct CNullVariant
@@ -453,6 +454,83 @@ private:
 
 
 };
+
+
+
+class ToStreamVisitor : public IVisitor
+{
+public:
+	ToStreamVisitor (IWriteStream *pStream) : m_pStream(pStream)
+	{}
+ 
+
+
+	virtual void Visit(const CNullVariant&){}
+	virtual void Visit(const bool           & val)
+	{ m_pStream->write(val);}
+	virtual void Visit(const byte     & val)
+	{ m_pStream->write(val);}
+	virtual void Visit(const int8     & val)
+	{ m_pStream->write(val);}
+	virtual void Visit(const int16    & val)
+	{ m_pStream->write(val);}
+	virtual void Visit(const uint16    & val)
+	{ m_pStream->write(val);}
+	virtual void Visit(const int32    & val)
+	{ m_pStream->write(val);}
+	virtual void Visit(const uint32   & val)
+	{ m_pStream->write(val);}
+	virtual void Visit(const uint64   & val)
+	{ m_pStream->write(val);}
+	virtual void Visit(const int64    & val)
+	{ m_pStream->write(val);}
+	virtual void Visit(const float    & val)
+	{ m_pStream->write(val);}
+	virtual void Visit(const double     & val)
+	{ m_pStream->write(val);}
+	virtual void Visit(const CString      & val)
+	{ m_pStream->write(val);}
+	virtual void Visit(const IRefObjectPtr     &)
+	{ }
+	virtual void Visit(const CBlob &val)
+	{ m_pStream->write(val.buffer(), val.size());}
+	virtual void Visit(const CGeoShape     &val)
+	{ val.write(m_pStream);}
+
+	virtual void Visit(const IGeoShapePtr     & val) 
+	{
+		{ val->write(m_pStream);}
+	}
+
+	virtual void Visit(const TPoint2D16	& val)
+	{}
+	virtual void Visit(const TPoint2D32   & val)
+	{}
+	virtual void Visit(const TPoint2D64   & val)
+	{}
+	virtual void Visit(const TPoint2Du16  & val)
+	{}
+	virtual void Visit(const TPoint2Du32  & val)
+	{}
+	virtual void Visit(const TPoint2Du64   & val)
+	{}
+	virtual void Visit(const TRect2D16    & val)
+	{}
+	virtual void Visit(const TRect2D32   & val)
+	{}
+	virtual void Visit(const TRect2D64  & val)
+	{}
+	virtual void Visit(const TRect2Du16    & val)
+	{}
+	virtual void Visit(const TRect2Du32   & val)
+	{}
+	virtual void Visit(const TRect2Du64   & val)
+	{}
+private:
+	IWriteStream* m_pStream;
+};
+
+
 
 template <class TVisitor>
 TVisitor apply_visitor (const CVariant& variant, TVisitor &visitor)

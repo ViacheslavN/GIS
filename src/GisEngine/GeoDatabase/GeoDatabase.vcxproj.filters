@@ -138,6 +138,12 @@
     <ClInclude Include="EmbDBWorkspace.h">
       <Filter>GeoDatabaseEmbDB</Filter>
     </ClInclude>
+    <ClInclude Include="EmbDBFeatureClass.h">
+      <Filter>GeoDatabaseEmbDB</Filter>
+    </ClInclude>
+    <ClInclude Include="embDBUtils.h">
+      <Filter>GeoDatabaseEmbDB</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -216,6 +222,12 @@
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="EmbDBWorkspace.cpp">
+      <Filter>GeoDatabaseEmbDB</Filter>
+    </ClCompile>
+    <ClCompile Include="EmbDBFeatureClass.cpp">
+      <Filter>GeoDatabaseEmbDB</Filter>
+    </ClCompile>
+    <ClCompile Include="embDBUtils.cpp">
       <Filter>GeoDatabaseEmbDB</Filter>
     </ClCompile>
   </ItemGroup>

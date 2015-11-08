@@ -3,18 +3,18 @@
 
 #include "ValueField.h"
 #include "BlobTree.h"
-
+#include "FieldIteratorBase.h"
 namespace embDB
 {
 
 	template<class TBTree>
-	class BlobFieldIterator: public IFieldIterator
+	class BlobFieldIterator: public TFieldIteratorBase<TBTree, IFieldIterator>
 	{
 	public:
 		typedef typename TBTree::iterator  iterator;
-
-		BlobFieldIterator(iterator& it) 
-			: m_ParentIt(it)
+		typedef TFieldIteratorBase<TBTree, IFieldIterator> TBase;
+		BlobFieldIterator(iterator& it, IValueField* pField) 
+			: TBase(it, pField)
 
 		{
 
@@ -23,22 +23,6 @@ namespace embDB
 		{}
 		virtual ~BlobFieldIterator(){}
 
-		virtual bool isValid()
-		{
-			return !m_ParentIt.isNull();
-		}
-		virtual bool next() 
-		{
-			return m_ParentIt.next();
-		}
-		virtual bool back() 
-		{
-			return m_ParentIt.back();
-		}
-		virtual bool isNull()
-		{
-			return m_ParentIt.isNull();
-		}
 		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
 			const sBlobVal& sBlob = m_ParentIt.value();
@@ -56,36 +40,6 @@ namespace embDB
 			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), blob);
 			return true;
 		}
-		virtual uint64 getRowID()
-		{
-			return m_ParentIt.key();
-		}
-
-
-		virtual int64 addr() const
-		{
-			return m_ParentIt.addr();
-		}
-		virtual int32 pos() const
-		{
-			return m_ParentIt.pos();
-		}
-
-		virtual bool copy(IFieldIterator *pIter)
-		{
-			return m_ParentIt.setAddr(pIter->addr(), pIter->pos());
-		}
-
-		void set(iterator it)
-		{
-			m_ParentIt = it;
-		}
-
-
-	public:
-		iterator m_ParentIt;
-		CommonLib::alloc_t *m_pAlloc;
-
 	};
 
 

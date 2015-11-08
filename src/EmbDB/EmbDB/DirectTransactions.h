@@ -36,7 +36,7 @@ namespace embDB
 
  
 		virtual IUpdateCursorPtr createUpdateCursor() {return  IUpdateCursorPtr();}
-		virtual IDeleteCursorPtr createDeleteCursor() {return  IDeleteCursorPtr();}
+
 
 		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0);
 		virtual void dropFilePage(FilePagePtr pPage);

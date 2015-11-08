@@ -14,7 +14,7 @@ namespace DatasetLite
 	{
 		public:
 			TShapeIndexBase(CommonLib::alloc_t* pAlloc, uint32 nPageSize, const CommonLib::bbox& bbox, double dOffsetX, double dOffsetY, double dScaleX, 
-				double dScaleY, GisEngine::GisCommon::Units units, embDB::eDataTypes type, int nShapeType ) : 
+				double dScaleY, GisEngine::GisCommon::Units units, embDB::eSpatialType type, int nShapeType ) : 
 					m_pAlloc(pAlloc),m_nPageSize(nPageSize), m_bbox(bbox), m_dOffsetX(dOffsetX),  m_dOffsetY(dOffsetY),  m_dScaleX(dScaleX),  m_dScaleY(dScaleY), m_Units(units),
 					m_Type(type), m_ShapeType(nShapeType), m_nRootTreePage(1)
 			{
@@ -25,7 +25,7 @@ namespace DatasetLite
 
 			TShapeIndexBase(CommonLib::alloc_t* pAlloc) : 
 				m_pAlloc(pAlloc),m_nPageSize(8192), m_dOffsetX(0),  m_dOffsetY(0),  m_dScaleX(0),  m_dScaleY(0), m_Units(GisEngine::GisCommon::UnitsUnknown),
-					m_Type(embDB::dtUnknown), m_ShapeType(0), m_nRootTreePage(1)
+					m_Type(embDB::stUnknown), m_ShapeType(0), m_nRootTreePage(1)
 			{
 					if(!m_pAlloc)
 						m_pAlloc = &m_alloc;
@@ -121,7 +121,7 @@ namespace DatasetLite
 				stream.read(m_dOffsetY);
 				stream.read(m_dScaleX);
 				stream.read(m_dScaleY);
-				m_Type = (embDB::eDataTypes)stream.readIntu32();
+				m_Type = (embDB::eSpatialType)stream.readIntu32();
 				stream.read(m_nPageSize);
 				stream.read(m_nRootTreePage); 
 
@@ -133,7 +133,7 @@ namespace DatasetLite
 			double m_dOffsetY;
 			double m_dScaleX;
 			double m_dScaleY;
-			embDB::eDataTypes m_Type;
+			embDB::eSpatialType m_Type;
 			int m_ShapeType;
 			uint32 m_nPageSize;
 			CommonLib::bbox m_bbox;

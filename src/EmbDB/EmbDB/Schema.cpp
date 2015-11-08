@@ -41,7 +41,7 @@ namespace embDB
 
 		IDBTransactionPtr pDBTran((IDBTransaction *)pTran);
 
-		IDBTransactionPtr pInnerTran;;
+		IDBTransactionPtr pInnerTran;
 		if(!pDBTran.get())
 		{
 			 pInnerTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();

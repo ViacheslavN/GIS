@@ -498,9 +498,11 @@
     <ClInclude Include="CRC.h" />
     <ClInclude Include="CreateFields.h" />
     <ClInclude Include="ACIntegerDiffComp.h" />
+    <ClInclude Include="DeleteCursor.h" />
     <ClInclude Include="embDB.h" />
     <ClInclude Include="embDBInternal.h" />
     <ClInclude Include="embDBLib.h" />
+    <ClInclude Include="FieldIteratorBase.h" />
     <ClInclude Include="Fields.h" />
     <ClInclude Include="FieldSet.h" />
     <ClInclude Include="FixedStringField.h" />
@@ -561,6 +563,7 @@
     <ClInclude Include="ShapeField.h" />
     <ClInclude Include="ShapeTree.h" />
     <ClInclude Include="SimpleSearchCursor.h" />
+    <ClInclude Include="SimpleSelectCursor.h" />
     <ClInclude Include="SpatialIndexBase.h" />
     <ClInclude Include="SpatialIndexHandler.h" />
     <ClInclude Include="Statement.h" />
@@ -652,6 +655,7 @@
     <ClCompile Include="CRC.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="DBTranManager.cpp" />
+    <ClCompile Include="DeleteCursor.cpp" />
     <ClCompile Include="DirectTransactions.cpp" />
     <ClCompile Include="Fields.cpp" />
     <ClCompile Include="FieldSet.cpp" />
@@ -660,6 +664,7 @@
     <ClCompile Include="PageAlloc.cpp" />
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="SimpleSearchCursor.cpp" />
+    <ClCompile Include="SimpleSelectCursor.cpp" />
     <ClCompile Include="Statement.cpp" />
     <ClCompile Include="ValueField.cpp" />
     <ClCompile Include="FilePage.cpp" />

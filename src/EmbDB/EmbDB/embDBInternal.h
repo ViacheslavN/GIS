@@ -6,6 +6,16 @@
 namespace embDB
 {
 
+	enum eSpatialType
+	{
+		stUnknown = 0,
+		stPoint16,
+		stPoint32,
+		stPoint64,
+		stRect16,
+		stRect32,
+		stRect64
+	};
 	
 	struct sFieldInfo
 	{
@@ -104,7 +114,8 @@ namespace embDB
 
 	struct sSpatialFieldInfo : public sFieldInfo
 	{
-		sSpatialFieldInfo() :  m_nCoordType(scuUnknown), m_dScaleX(1.), m_dScaleY(1.), m_dOffsetX(0.), m_dOffsetY(0.), m_ShapeType(CommonLib::shape_type_null)
+		sSpatialFieldInfo() :  m_nCoordType(scuUnknown), m_dScaleX(1.), m_dScaleY(1.), m_dOffsetX(0.), m_dOffsetY(0.), m_ShapeType(CommonLib::shape_type_null),
+								m_nSpatialType(stUnknown)
 		{
 
 		}
@@ -118,6 +129,7 @@ namespace embDB
 		double m_dOffsetY;
 
 		eSpatialCoordinatesUnits m_nCoordType;
+		eSpatialType			m_nSpatialType;
 		CommonLib::eShapeType m_ShapeType;
 		CommonLib::bbox m_extent;
 
@@ -132,7 +144,7 @@ namespace embDB
 			m_dOffsetY = pStream->readDouble();
 
 			m_nCoordType = (eSpatialCoordinatesUnits)pStream->readIntu32();
-			m_nIndexType = (eDataTypes)pStream->readIntu32();
+			m_nSpatialType = (eSpatialType)pStream->readIntu32();
 			pStream->read(m_extent.xMin);
 			pStream->read(m_extent.yMin);
 			pStream->read(m_extent.xMax);
@@ -152,7 +164,7 @@ namespace embDB
 			  pStream->write(m_dOffsetY);
 
 			  pStream->write((uint32)m_nCoordType);
-			  pStream->write((uint32)m_nIndexType);
+			  pStream->write((uint32)m_nSpatialType);
 
 			  pStream->write(m_extent.xMin);
 			  pStream->write(m_extent.yMin);
@@ -225,6 +237,7 @@ namespace embDB
 		virtual int32 pos() const = 0;
 
 		virtual bool copy(IFieldIterator *pIter) = 0;
+		virtual IValueFieldPtr getField() = 0;
 	};
 
 	template<class TKeyType, class TIterator, class TIteratorPtr>
@@ -322,6 +335,8 @@ namespace embDB
 
 		virtual IndexFiledPtr GetIndex() = 0;
 		virtual void SetIndex(IndexFiled *pIndex) = 0;
+
+		virtual uint64 GetRowsCount() = 0; 
 	};
 
 	

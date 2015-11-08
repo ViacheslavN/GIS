@@ -12,7 +12,7 @@ namespace DatasetLite
 	public:
 		typedef TShapeIndexBase<IShapeFileIndexPoint> TBase;
 		CShapeFileIndexPoint(CommonLib::alloc_t* pAlloc, uint32 nPageSize, const CommonLib::bbox& bbox, double dOffsetX, double dOffsetY, double dScaleX, 
-			double dScaleY, GisEngine::GisCommon::Units units, embDB::eDataTypes type, int nShapeType );
+			double dScaleY, GisEngine::GisCommon::Units units, embDB::eSpatialType type, int nShapeType );
 		CShapeFileIndexPoint(CommonLib::alloc_t* pAlloc = NULL);
 		~CShapeFileIndexPoint();
 		bool Open(const CommonLib::CString& sDbName);

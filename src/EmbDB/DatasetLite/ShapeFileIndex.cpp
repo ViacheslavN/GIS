@@ -57,14 +57,14 @@ namespace DatasetLite
 	};
 
 
-	embDB::eDataTypes GetType(uint64 nMaxVal, bool isPoint)
+	embDB::eSpatialType GetType(uint64 nMaxVal, bool isPoint)
 	{
 		if(nMaxVal < 0xFFFF)
-				return  isPoint ? embDB::dtPoint16 : embDB::dtRect16;
+				return  isPoint ? embDB::stPoint16 : embDB::stRect16;
 		else if(nMaxVal < 0xFFFFFFFF)
-			return  isPoint ? embDB::dtPoint32 : embDB::dtRect32;
+			return  isPoint ? embDB::stPoint32 : embDB::stRect32;
 	 
-		return  isPoint ? embDB::dtPoint64 : embDB::dtRect64;
+		return  isPoint ? embDB::stPoint64 : embDB::stRect64;
 	}
 
 	IShapeFileIndexPtr IShapeFileIndex::create(const CommonLib::CString& sDbName, size_t nPageSize,
@@ -132,7 +132,7 @@ namespace DatasetLite
 				dOffsetY = -1 *bbox.yMin;
 		}
 
-		embDB::eDataTypes DataType = embDB::dtUnknown; 
+		embDB::eSpatialType DataType = embDB::stUnknown; 
 
 		bool isPoint = false;
 		if(shapeType == SHPT_POINT || shapeType == SHPT_POINTZ || shapeType == SHPT_POINTM /*|| 
@@ -183,9 +183,9 @@ namespace DatasetLite
 
 		switch(DataType)
 		{
-			case embDB::dtPoint16:
-			case embDB::dtPoint32:
-			case embDB::dtPoint64:
+			case embDB::stPoint16:
+			case embDB::stPoint32:
+			case embDB::stPoint64:
 				{
 					CShapeFileIndexPoint *pShapeFileIndexPoint =
 						new CShapeFileIndexPoint(NULL, nPageSize, bbox, dOffsetX, dOffsetY, dScaleX, dScaleY, units, DataType, shapeType);
@@ -199,9 +199,9 @@ namespace DatasetLite
 			
 				break;
 
-			case embDB::dtRect16:
-			case embDB::dtRect32:
-			case embDB::dtRect64:
+			case embDB::stRect16:
+			case embDB::stRect32:
+			case embDB::stRect64:
 				{
 					{
 						CShapeFileIndexRect *pShapeFileIndexRect =

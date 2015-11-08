@@ -672,12 +672,6 @@
     <ClInclude Include="FixedStringField.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
-    <ClInclude Include="ReadStreamPage.h">
-      <Filter>DB\Fields\blob</Filter>
-    </ClInclude>
-    <ClInclude Include="WriteStreamPage.h">
-      <Filter>DB\Fields\blob</Filter>
-    </ClInclude>
     <ClInclude Include="BlobVal.h">
       <Filter>DB\Fields\blob</Filter>
     </ClInclude>
@@ -822,6 +816,24 @@
     <ClInclude Include="IndexIteratorBase.h">
       <Filter>DB\Fields\Index</Filter>
     </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WriteStreamPage.h">
+      <Filter>utils\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadStreamPage.h">
+      <Filter>utils\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleSelectCursor.h">
+      <Filter>DB\transactions\Cursors</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldIteratorBase.h">
+      <Filter>DB\Fields</Filter>
+    </ClInclude>
+    <ClInclude Include="DeleteCursor.h">
+      <Filter>DB\transactions\Cursors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -936,6 +948,12 @@
       <Filter>SDK</Filter>
     </ClCompile>
     <ClCompile Include="SimpleSearchCursor.cpp">
+      <Filter>DB\transactions\Cursors</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleSelectCursor.cpp">
+      <Filter>DB\transactions\Cursors</Filter>
+    </ClCompile>
+    <ClCompile Include="DeleteCursor.cpp">
       <Filter>DB\transactions\Cursors</Filter>
     </ClCompile>
   </ItemGroup>

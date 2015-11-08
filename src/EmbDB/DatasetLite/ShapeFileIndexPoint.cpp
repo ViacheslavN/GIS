@@ -115,12 +115,12 @@ namespace DatasetLite
 
 
 	};
-	typedef TStatialTreePoint<uint16, TBPMapPoint16, embDB::dtPoint16> TPointSpatialTreeU16;
-	typedef TStatialTreePoint<uint32, TBPMapPoint32, embDB::dtPoint32> TPointSpatialTreeU32;
-	typedef TStatialTreePoint<uint64, TBPMapPoint64, embDB::dtPoint64> TPointSpatialTreeU64;
+	typedef TStatialTreePoint<uint16, TBPMapPoint16, embDB::stPoint16> TPointSpatialTreeU16;
+	typedef TStatialTreePoint<uint32, TBPMapPoint32, embDB::stPoint32> TPointSpatialTreeU32;
+	typedef TStatialTreePoint<uint64, TBPMapPoint64, embDB::stPoint64> TPointSpatialTreeU64;
 
 	CShapeFileIndexPoint::CShapeFileIndexPoint(CommonLib::alloc_t* pAlloc, uint32 nPageSize, const CommonLib::bbox& bbox, double dOffsetX, double dOffsetY, double dScaleX, 
-		double dScaleY, GisEngine::GisCommon::Units units, embDB::eDataTypes type, int nShapeType ) : 
+		double dScaleY, GisEngine::GisCommon::Units units, embDB::eSpatialType type, int nShapeType ) : 
 	TBase(pAlloc, nPageSize, bbox, dOffsetX, dOffsetY, dScaleX, dScaleY, units, type, nShapeType)
 	{
 
@@ -141,15 +141,15 @@ namespace DatasetLite
 
 		switch(m_Type)
 		{
-		case embDB::dtPoint16:
+		case embDB::stPoint16:
 			m_SpTree.reset(new TPointSpatialTreeU16(m_pAlloc, m_pStorage.get(), m_nRootTreePage,
 				m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 			break;
-		case embDB::dtPoint32:
+		case embDB::stPoint32:
 			m_SpTree.reset(new TPointSpatialTreeU32(m_pAlloc, m_pStorage.get(), m_nRootTreePage,
 				m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 			break;
-		case embDB::dtPoint64:
+		case embDB::stPoint64:
 			m_SpTree.reset(new TPointSpatialTreeU64(m_pAlloc, m_pStorage.get(), m_nRootTreePage,
 				m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 			break;
@@ -164,13 +164,13 @@ namespace DatasetLite
 		bool bBaseCreate =  TBase::Create(sDbName);
 		switch(m_Type)
 		{
-		case embDB::dtRect16:
+		case embDB::stRect16:
 			m_SpTree.reset(new TPointSpatialTreeU16(m_pAlloc, m_pStorage.get(), m_nRootTreePage, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 			break;
-		case embDB::dtRect32:
+		case embDB::stRect32:
 			m_SpTree.reset(new TPointSpatialTreeU32(m_pAlloc, m_pStorage.get(), m_nRootTreePage, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 			break;
-		case embDB::dtRect64:
+		case embDB::stRect64:
 			m_SpTree.reset(new TPointSpatialTreeU64(m_pAlloc, m_pStorage.get(), m_nRootTreePage, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 			break;
 		}

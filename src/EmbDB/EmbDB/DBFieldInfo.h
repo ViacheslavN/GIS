@@ -93,6 +93,14 @@ namespace embDB
 		{
 			return m_fi.m_sFieldAlias;
 		}
+		virtual uint32 GetLength()	const
+		{
+			return m_fi.m_nLenField;
+		}
+		virtual bool GetIsNotEmpty() const
+		{
+			return (m_fi.m_nFieldDataType&dteIsNotEmpty) != 0;
+		}
 		virtual sFieldInfo* getFieldInfoType()
 		{
 			return &m_fi;

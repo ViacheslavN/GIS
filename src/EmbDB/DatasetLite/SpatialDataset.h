@@ -5,9 +5,7 @@
 #include "CommonLibrary/IRefCnt.h"
 #include "CommonLibrary/Variant.h"
 
-#include "../EmbDB/ITransactions.h"
-#include "../EmbDB/ICursor.h"
-#include "../EmbDB/ISpatialQuery.h"
+#include "../EmbDB/embDB.h"
 #include "ShapeLib/shapefil.h"
 
 #include "../GisEngine/GisGeometry/Geometry.h"
@@ -30,14 +28,14 @@ namespace DatasetLite
 		ISpatialLiteDataset(){}
 		virtual ~ISpatialLiteDataset(){}
 		virtual bool close()  = 0;
-		virtual embDB::ITransactions* startTransaction(embDB::eTransactionsType trType) = 0;
-		virtual bool closeTransaction(embDB::ITransactions* ) = 0;
+		virtual embDB::ITransaction* startTransaction(embDB::eTransactionsType trType) = 0;
+		virtual bool closeTransaction(embDB::ITransaction* ) = 0;
 		virtual embDB::ICursor * spatialQuery();
 
 
 
 		static ISpatialLiteDatasetPtr open(const CommonLib::CString& sDbName);
-		static ISpatialLiteDatasetPtr create(const CommonLib::CString& sDbName, size_t nPageSize, embDB::eSpatialCoordinatesType, CommonLib::bbox& extent,
+		static ISpatialLiteDatasetPtr create(const CommonLib::CString& sDbName, size_t nPageSize, embDB::eSpatialCoordinatesUnits uints, CommonLib::bbox& extent,
 			embDB::eDataTypes spatialType, embDB::eDataTypes valueType);
 
 	};
