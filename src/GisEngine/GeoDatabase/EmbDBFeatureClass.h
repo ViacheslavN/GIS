@@ -32,7 +32,7 @@ namespace GisEngine
 			bool open();
 			bool saveFeatureInfo();
 			bool CreateFeatureClass(IFields* pFields);
-			static bool IsFeatureClass(embDB::ITable* pTable, embDB::ISchema* pSchema);
+			static bool IsFeatureClass(embDB::ITable* pTable);
 
 
 		private:

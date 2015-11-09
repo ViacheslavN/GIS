@@ -458,6 +458,7 @@
     <ClInclude Include="CursorBase.h" />
     <ClInclude Include="DatasetBase.h" />
     <ClInclude Include="EmbDBFeatureClass.h" />
+    <ClInclude Include="EmbDBRowCursor.h" />
     <ClInclude Include="embDBUtils.h" />
     <ClInclude Include="EmbDBWorkspace.h" />
     <ClInclude Include="Feature.h" />
@@ -495,6 +496,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EmbDBFeatureClass.cpp" />
+    <ClCompile Include="EmbDBRowCursor.cpp" />
     <ClCompile Include="embDBUtils.cpp" />
     <ClCompile Include="EmbDBWorkspace.cpp" />
     <ClCompile Include="Feature.cpp" />

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "EmbDBWorkspace.h"
 #include "CommonLibrary/File.h"
-
+#include "EmbDBFeatureClass.h"
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -114,25 +114,9 @@ namespace GisEngine
 			for (size_t i = 0, sz = pShema->getTableCnt(); i < sz; ++i)
 			{
 				embDB::ITablePtr pTable = pShema->getTable(i);
-				
-			}
-			 
-			while(pRS->StepNext())
-			{
-				CommonLib::CString tableName = pRS->ColumnText(1);
-				CommonLib::CString sCreateSQL = pRS->ColumnText(4);
-
-				//if(sCreateSQL.find(m_sRTreePrefix) == -1)
-				tableNames.push_back(tableName);
-			}
-
-
-
-			for (size_t i = 0, sz = tableNames.size(); i < sz; ++i)
-			{
-				if(CSQLiteFeatureClass::IsFeatureClass(tableNames[i], m_pDB.get()))
+				if(CEmbDBFeatureClass::IsFeatureClass(pTable.get()))
 				{
-					if(!OpenFeatureClass(tableNames[i]))
+					if(!OpenFeatureClass(pTable->getName()))
 					{
 						return false;
 					}
@@ -140,12 +124,12 @@ namespace GisEngine
 				else
 				{
 
-					if(!OpenTable(tableNames[i]))
+					if(!OpenTable(pTable->getName()))
 					{
 						return false;
 					}
 				}
-
+				
 			}
 
 			return true;

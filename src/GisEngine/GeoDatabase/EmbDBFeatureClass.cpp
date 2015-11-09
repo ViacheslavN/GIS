@@ -307,12 +307,19 @@ namespace GisEngine
 
 		return true;
 	}
-	bool CEmbDBFeatureClass::IsFeatureClass(CommonLib::CString& sName, SQLiteUtils::CSQLiteDB *pDB)
+	bool CEmbDBFeatureClass::IsFeatureClass(embDB::ITable* pTable)
 	{
-		if(!pDB)
+		if(!pTable)
 			return false;
+		
+		for (size_t i = 0, sz = pTable->getFieldCnt(); i < sz; ++i)
+		{
+			embDB::IFieldPtr pField = pTable->getField(i);
+			if(pField->getType() == embDB::dtGeometry)
+				return true;
 
-		return pDB->IsTableExist(sName + "_SpatialIndex");
+		}
+		return false;
 	}
 	IRowPtr	CEmbDBFeatureClass::GetRow(int64 id)
 	{

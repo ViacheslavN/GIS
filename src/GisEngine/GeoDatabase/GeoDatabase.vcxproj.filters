@@ -144,6 +144,9 @@
     <ClInclude Include="embDBUtils.h">
       <Filter>GeoDatabaseEmbDB</Filter>
     </ClInclude>
+    <ClInclude Include="EmbDBRowCursor.h">
+      <Filter>GeoDatabaseEmbDB</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -228,6 +231,9 @@
       <Filter>GeoDatabaseEmbDB</Filter>
     </ClCompile>
     <ClCompile Include="embDBUtils.cpp">
+      <Filter>GeoDatabaseEmbDB</Filter>
+    </ClCompile>
+    <ClCompile Include="EmbDBRowCursor.cpp">
       <Filter>GeoDatabaseEmbDB</Filter>
     </ClCompile>
   </ItemGroup>
