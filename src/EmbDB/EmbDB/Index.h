@@ -24,7 +24,7 @@ public:
 		pVal->setVal(m_ParentIt.key());
 		return true;
 	}
-	virtual uint64 getRowID()
+	virtual int64 getRowID()
 	{
 		return m_ParentIt.value();
 	}

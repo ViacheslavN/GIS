@@ -63,7 +63,7 @@ namespace embDB
 		}
 
 
-		virtual bool find(uint64 nOID, CommonLib::CVariant* pFieldVal)
+		virtual bool find(int64 nOID, CommonLib::CVariant* pFieldVal)
 		{
 			TBTree::iterator it = m_tree.find(nOID);
 			if(it.isNull())
@@ -85,7 +85,7 @@ namespace embDB
 	{
 	public:
 
-		typedef TBPStringTree<uint64, IDBTransaction> TBTree;
+		typedef TBPStringTree<int64, IDBTransaction> TBTree;
 		typedef TStringValueField<TBTree> TField;
 
 		StringValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)

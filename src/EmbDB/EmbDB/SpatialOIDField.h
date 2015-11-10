@@ -226,7 +226,7 @@ namespace embDB
 			CommonLib::alloc_t* m_pAlloc;
 			IDBIndexHandler* m_pIndexHandler;
 	};
-
+	/*
 
 	typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU16, uint64,
 		embDB::ZPointComp<embDB::ZOrderPoint2DU16> > TBPMapPoint16;	
@@ -259,7 +259,7 @@ namespace embDB
 
 	typedef OIDSpatialFieldHandler<TBPMapRect16, uint16, CommonLib::TRect2Du16> TRect16Field;
 	typedef OIDSpatialFieldHandler<TBPMapRect32, uint32, CommonLib::TRect2Du32> TRect32Field;
-	typedef OIDSpatialFieldHandler<TBPMapRect64, uint64, CommonLib::TRect2Du64> TRect64Field;
+	typedef OIDSpatialFieldHandler<TBPMapRect64, uint64, CommonLib::TRect2Du64> TRect64Field;*/
 }
 
 

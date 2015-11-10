@@ -61,11 +61,11 @@ namespace embDB
 	 {
 		 return m_vecFieldMap[index] >= 0;
 	 }
-	 uint64	CRow::GetRowID() const
+	 int64	CRow::GetRowID() const
 	 {
 		 return m_nRowID;
 	 }
-	 void	CRow::SetRow(uint64 nRowID)
+	 void	CRow::SetRow(int64 nRowID)
 	 {
 		 m_nRowID = nRowID;
 	 }

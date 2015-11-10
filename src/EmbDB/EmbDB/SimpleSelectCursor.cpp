@@ -7,7 +7,7 @@
 namespace embDB
 {
 	SimpleSelectCursor::SimpleSelectCursor(IDBTransaction* pTran, ITable* pTable, 
-		IFieldSet *pFieldSet): m_bAllNext(true), m_nIterIndex(-1), m_pIterField(NULL)
+		IFieldSet *pFieldSet): m_bAllNext(true), m_nIterIndex(-1), m_pIterField(NULL), m_bEnd(false)
 	{
 		m_pTran = pTran;
 		m_pTable = (IDBTable*)pTable;
@@ -78,6 +78,22 @@ namespace embDB
 	{
 		return false;
 	}
+	bool  SimpleSelectCursor::value(CommonLib::CVariant* pValue, int32 nNum)
+	{
+		if(m_bEnd)
+			return false;
+
+		if(nNum < (int)m_vecFields.size())
+		{
+			IFieldIteratorPtr& iter = m_vecFields[nNum];
+			if(!iter->isNull())
+				return iter->getVal(pValue);
+			*pValue = CommonLib::CVariant();
+			return true;
+
+		}
+		return false;
+	}
 	bool SimpleSelectCursor::NextRow(IRowPtr* pRow)
 	{
 		if(m_bAllNext)
@@ -102,8 +118,12 @@ namespace embDB
 
 		}
 		if(nMinOID == 0)
+		{
+			m_bEnd = true;
 			return false;
-		m_pCacheRow->SetRow(nMinOID);
+		}
+		if(pRow)
+			m_pCacheRow->SetRow(nMinOID);
 		for (size_t i = 0, sz = m_vecFields.size(); i < sz; ++i)
 		{
 			IFieldIteratorPtr& iter = m_vecFields[i];
@@ -111,53 +131,64 @@ namespace embDB
 			uint64 nRowID = iter->isNull() ? 0 : iter->getRowID();
 			if(nRowID == nMinOID)
 			{
-				iter->getVal(m_pCacheRow->value(i));
+				if(pRow)
+					iter->getVal(m_pCacheRow->value(i));
 				iter->next();
 			}
 			else
 			{
-				m_pCacheRow->set(CommonLib::CVariant(), i);
+				if(pRow)
+					m_pCacheRow->set(CommonLib::CVariant(), i);
 			}
 		}
-
+		if(pRow)
+			*pRow = m_pCacheRow;
 		return true;
 	}
 
 	bool SimpleSelectCursor::AllNext(IRowPtr* pRow)
 	{
 		if(m_vecFields[0]->isNull())
+		{
+			m_bEnd = true;
 			return false;
-
+		}
 
 		m_pCacheRow->SetRow(m_vecFields[0]->getRowID());
 		for (size_t i = 0, sz = m_vecFields.size(); i < sz; ++i)
 		{
 			IFieldIteratorPtr& iter = m_vecFields[i];
-
-			iter->getVal(m_pCacheRow->value(i));
+			if(pRow)
+				iter->getVal(m_pCacheRow->value(i));
 			iter->next();
 		}
 		return true;
 	}
-	bool SimpleSelectCursor::NextByIter(IRowPtr* row)
+	bool SimpleSelectCursor::NextByIter(IRowPtr* pRow)
 	{
 		if(m_pIterField->isNull())
+		{
+			m_bEnd = true;
 			return false;
+		}
 
 		uint64 nCurrRowID = m_pIterField->getRowID();
-		m_pCacheRow->SetRow(nCurrRowID);
+		if(pRow)
+			m_pCacheRow->SetRow(nCurrRowID);
 		for (size_t i = 0, sz = m_vecFields.size(); i < sz; ++i)
 		{
 			IFieldIteratorPtr& iter = m_vecFields[i];
 			uint64 nRowID = iter->isNull() ? 0 : iter->getRowID();
 			if(nRowID == nCurrRowID)
 			{
-				iter->getVal(m_pCacheRow->value(i));
+				if(pRow)
+					iter->getVal(m_pCacheRow->value(i));
 				iter->next();
 			}
 			else
 			{
-				m_pCacheRow->set(CommonLib::CVariant(), i);
+				if(pRow)
+					m_pCacheRow->set(CommonLib::CVariant(), i);
 			}
 		
 		}

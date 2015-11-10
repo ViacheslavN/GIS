@@ -87,7 +87,7 @@ namespace embDB
 			virtual bool unlock(){return true;}
 			bool isCanBeRemoving();
 
-			virtual uint64 GetNextOID();
+			virtual int64 GetNextOID();
 			virtual bool commit(IDBTransaction *pTran);
 		private:
 			bool ReadField(int64 nAddr, IDBTransaction *pTran);
@@ -130,7 +130,7 @@ namespace embDB
 			CDatabase* m_pDB;
 			TFieldPages m_nFieldsAddr;
 			TFieldPages m_nIndexAddr;
-			typedef TCounter<uint64> TOIDCounter;
+			typedef TCounter<int64> TOIDCounter;
 			TOIDCounter m_OIDCounter;
 			IFieldsPtr m_pFields;
 			IFieldsPtr m_pIndexs;

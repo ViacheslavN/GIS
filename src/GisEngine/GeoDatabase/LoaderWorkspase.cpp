@@ -2,7 +2,7 @@
 #include "LoaderWorkspase.h"
 #include "ShapefileWorkspace.h"
 #include "SQLiteWorkspace.h"
- 
+#include "EmbDBWorkspace.h"
 
 namespace GisEngine
 {
@@ -46,6 +46,11 @@ namespace GisEngine
 			case wtSqlLite:
 				{
 					pWorkspace = CSQLiteWorkspace::Open(pSerealizer);
+				}
+				break;
+			case wtEmbDB:
+				{
+					pWorkspace = CEmbDBWorkspace::Open(pSerealizer);
 				}
 				break;
 			}

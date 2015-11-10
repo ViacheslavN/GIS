@@ -12,7 +12,7 @@ namespace embDB
 		public:
 			CInsertCursor(IDBTransaction* pTran, ITable* pTable,  IFieldSet *pFileds = 0);
 			~CInsertCursor();
-			virtual uint64 insert(IRow* pRow);
+			virtual int64 insert(IRow* pRow);
 			virtual IFieldSetPtr GetFieldSet() const;
 			virtual IFieldsPtr   GetSourceFields() const;
 			virtual IRowPtr createRow();

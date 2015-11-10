@@ -48,12 +48,12 @@ namespace embDB
 		return true;
 	}
 	 
-	uint64 CInsertCursor::insert(IRow* pRow)
+	int64 CInsertCursor::insert(IRow* pRow)
 	{
 
 		if(pRow->count() < m_vecInsertFields.size())
-			return 0;
-		uint64 nRowID = m_pTable->GetNextOID();
+			return -1;
+		int64 nRowID = m_pTable->GetNextOID();
 
 		for (size_t i = 0, sz = m_vecInsertFields.size(); i < sz; ++i)
 		{
@@ -64,14 +64,14 @@ namespace embDB
 				if(pValueField->getFieldInfoType()->m_nFieldDataType & dteIsNotEmpty)
 				{
 					m_pTran->error(L"field %s is not null ", pValueField->getFieldInfoType()->m_sFieldName.cwstr());
-					return 0;
+					return -1;
 				}
 				continue;
 			}
 
 			bool bRet = pValueField->insert(nRowID, pValue);
 			if(!bRet) 
-				return 0;
+				return -1;
 		}
 		return nRowID;
 	}

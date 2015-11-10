@@ -28,7 +28,7 @@ namespace embDB
 		~CUniqueIndex(){}
 		virtual indexTypes GetType() const  {return itUnique;}
 
-		virtual bool insert (CommonLib::CVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		virtual bool insert (CommonLib::CVariant* pIndexKey, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
 
 			iterator *pFromIterator = NULL;
@@ -54,7 +54,7 @@ namespace embDB
 			}
 			return bRet;
 		}
-		virtual bool update (CommonLib::CVariant* pOldIndexKey, CommonLib::CVariant* pNewIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		virtual bool update (CommonLib::CVariant* pOldIndexKey, CommonLib::CVariant* pNewIndexKey, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
 			//FType val;
 			//pIndexKey->getVal(val);
@@ -111,7 +111,7 @@ namespace embDB
 
 	template<class _FType, int FieldDataType,
 	class _TInnerCompressor = embDB::BPInnerNodeSimpleCompressorV2<_FType> ,
-	class _TLeafCompressor = embDB::BPLeafNodeMapSimpleCompressorV2<_FType, uint64 >,
+	class _TLeafCompressor = embDB::BPLeafNodeMapSimpleCompressorV2<_FType, int64 >,
 	class _TComp = embDB::comp<_FType> >
 	class UniqueIndexFieldHandler : public CIndexHandlerBase 
 	{
@@ -123,7 +123,7 @@ namespace embDB
 		typedef _TLeafCompressor TLeafCompressor;
 
 
-		typedef embDB::TBPMapV2<FType, uint64, TComp, 
+		typedef embDB::TBPMapV2<FType, int64, TComp, 
 			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
 
 		typedef CUniqueIndex<FType, TBTree, FieldDataType> TIndex;

@@ -61,7 +61,7 @@ namespace embDB
 		}
 
 
-		virtual bool find(uint64 nOID, CommonLib::CVariant* pFieldVal)
+		virtual bool find(int64 nOID, CommonLib::CVariant* pFieldVal)
 		{
 			TBTree::iterator it = m_tree.find(nOID);
 			if(it.isNull())
@@ -83,7 +83,7 @@ namespace embDB
 	{
 	public:
 
-		typedef TBPBlobTree<uint64, IDBTransaction> TBTree;
+		typedef TBPBlobTree<int64, IDBTransaction> TBTree;
 		typedef TBlobValueField<TBTree> TField;
 
 		BlobValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)

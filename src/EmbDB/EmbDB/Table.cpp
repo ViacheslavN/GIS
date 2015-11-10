@@ -666,7 +666,7 @@ namespace embDB
 		m_OIDCounter.save(pTran);
 		return true;
 	}
-	 uint64 CTable::GetNextOID()
+	 int64 CTable::GetNextOID()
 	{
 		return m_OIDCounter.GetNext();
 	}

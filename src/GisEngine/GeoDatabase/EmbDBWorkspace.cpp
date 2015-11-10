@@ -157,12 +157,15 @@ namespace GisEngine
 
 		bool CEmbDBWorkspace::saveXML(GisCommon::IXMLNode* pXmlNode) const
 		{
-
+				return true;
 		}
 		bool CEmbDBWorkspace::load(const GisCommon::IXMLNode* pXmlNode)
 		{
+			return true;
+		}
+		ITransactionPtr CEmbDBWorkspace::startTransaction()
+		{
 
 		}
-
 	}
 }

@@ -9,14 +9,14 @@ class IndexTuple
 {
 public: 
 	typedef _TKey TKey;
-	IndexTuple() : m_nObjectID(0)
+	IndexTuple() : m_nObjectID(-1)
 	{}
 	IndexTuple(TKey _key, uint64  _nObjectID) : m_key(_key), m_nObjectID(_nObjectID)
 	{}
 	~IndexTuple(){};
 
 	TKey m_key;
-	uint64  m_nObjectID;
+	int64  m_nObjectID;
 };
 
 template <class _TKey>

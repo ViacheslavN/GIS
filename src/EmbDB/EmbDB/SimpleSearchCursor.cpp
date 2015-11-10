@@ -6,7 +6,7 @@
 namespace embDB
 {
 	SimpleSearchCursor::SimpleSearchCursor(IIndexIterator* pIndexIterator,  IDBTransaction* pTran, ITable* pTable, 
-		IFieldSet *pFieldSet) : m_nCacheCount(10000), m_nCurrObj(0)
+		IFieldSet *pFieldSet) : m_nCacheCount(10000), m_nCurrObj(0), m_bEnd(false)
 	{
 		//m_pIndex = pIndex;
 		m_pTran = pTran;
@@ -88,13 +88,35 @@ namespace embDB
 	{
 		return false;
 	}
-	bool SimpleSearchCursor::NextRow(IRowPtr* row)
+
+	bool  SimpleSearchCursor::value(CommonLib::CVariant* pValue, int32 nNum)
+	{
+		if(m_bEnd)
+			return false;
+
+		if(nNum < (int32)m_vecFields.size())
+		{
+			const SField& field = m_vecFields[nNum];
+			if(!field.m_pFieldIterator->isNull())
+				return field.m_pFieldIterator->getVal(pValue);
+
+			*pValue = CommonLib::CVariant();
+			return true;
+		}
+		return false;
+	
+
+	}
+	bool SimpleSearchCursor::NextRow(IRowPtr* pRow)
 	{
 		if(m_vecOIDs.size() == m_nCurrObj)
 		{
 			SetCacheObj();
 			if(m_vecOIDs.empty())
+			{
+				m_bEnd = true;
 				return false;
+			}
 
 			m_nCurrObj = 0;
 		}
@@ -103,10 +125,10 @@ namespace embDB
 		bool bNext = false;
 	
 
-		uint64 nCurrID = m_vecOIDs[m_nCurrObj];
+		int64 nCurrID = m_vecOIDs[m_nCurrObj];
 		if(m_nCurrObj != 0)
 		{
-			uint64 nPrevOID = m_vecOIDs[m_nCurrObj - 1];
+			int64 nPrevOID = m_vecOIDs[m_nCurrObj - 1];
 			if((nCurrID - nPrevOID) == 1)
 				bNext = true;
 		}
@@ -126,7 +148,7 @@ namespace embDB
 						field.m_pFieldIterator = field.m_pValueField->find(nCurrID, field.m_pFieldIterator.get());
 					else
 					{
-						uint64 nOID = field.m_pFieldIterator->getRowID();
+						int64 nOID = field.m_pFieldIterator->getRowID();
 						if(nOID != nCurrID)
 							field.m_pFieldIterator = field.m_pValueField->find(nCurrID, field.m_pFieldIterator.get());
 					}
@@ -142,14 +164,19 @@ namespace embDB
 			else
 				field.m_pFieldIterator = field.m_pValueField->find(nCurrID, field.m_pFieldIterator.get());
 		
-			if(!field.m_pFieldIterator->isNull())
-				field.m_pFieldIterator->getVal(m_pCacheRow->value(i));
-			else
-				m_pCacheRow->set(CommonLib::CVariant(), i);
+			if(pRow)
+			{
+				if(!field.m_pFieldIterator->isNull())
+					field.m_pFieldIterator->getVal(m_pCacheRow->value(i));
+				else
+					m_pCacheRow->set(CommonLib::CVariant(), i);
+
+				m_pCacheRow->SetRow(m_nCurrObj);
+				*pRow = m_pCacheRow.get();
+			}
 
 		}
-		m_pCacheRow->SetRow(m_nCurrObj);
-		*row = m_pCacheRow.get();
+	
 
 		m_nCurrObj++;
 		return true;

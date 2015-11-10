@@ -458,7 +458,9 @@
     <ClInclude Include="CursorBase.h" />
     <ClInclude Include="DatasetBase.h" />
     <ClInclude Include="EmbDBFeatureClass.h" />
+    <ClInclude Include="EmbDBInsertCursor.h" />
     <ClInclude Include="EmbDBRowCursor.h" />
+    <ClInclude Include="EmbDBTransaction.h" />
     <ClInclude Include="embDBUtils.h" />
     <ClInclude Include="EmbDBWorkspace.h" />
     <ClInclude Include="Feature.h" />
@@ -496,7 +498,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EmbDBFeatureClass.cpp" />
+    <ClCompile Include="EmbDBInsertCursor.cpp" />
     <ClCompile Include="EmbDBRowCursor.cpp" />
+    <ClCompile Include="EmbDBTransaction.cpp" />
     <ClCompile Include="embDBUtils.cpp" />
     <ClCompile Include="EmbDBWorkspace.cpp" />
     <ClCompile Include="Feature.cpp" />

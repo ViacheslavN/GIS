@@ -15,7 +15,7 @@ namespace embDB
 			bool Init();
 
 			virtual bool remove(IRow* pRow);
-			virtual bool remove(uint64 nRowID);
+			virtual bool remove(int64 nRowID);
 		private:
 			IDBTransactionPtr m_pTran;
 			IDBTablePtr		  m_pTable;

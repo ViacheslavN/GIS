@@ -288,7 +288,7 @@ namespace GisEngine
 					const CommonLib::CVariant& defVal = pField->GetDefaultValue();
 					embDB::eDataTypes dt = FieldType2EmbDBType(pField->GetType(), NULL);
 
-					if(pField->GetType() == dtOid)
+					if(pField->GetType() == dtOid32 ||pField->GetType() == dtOid64 )
 					{
 						if(pOIDField)
 							*pOIDField = pField->GetName();
@@ -341,10 +341,10 @@ namespace GisEngine
 							return false;
 					}
 
-					return true;
+					
 
 				}
- 
+				return true;
 			}
 		}
 	}

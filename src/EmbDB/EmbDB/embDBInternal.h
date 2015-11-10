@@ -231,7 +231,7 @@ namespace embDB
 		virtual bool back() = 0;
 		virtual bool isNull() = 0;
 		virtual bool getVal(CommonLib::CVariant* pVal) = 0;
-		virtual uint64 getRowID() = 0;
+		virtual int64 getRowID() = 0;
 
 		virtual int64 addr() const = 0;
 		virtual int32 pos() const = 0;
@@ -263,7 +263,7 @@ namespace embDB
 		virtual bool back() = 0;
 		virtual bool isNull() = 0;
 		virtual bool getKey(CommonLib::CVariant* pIndexKey) = 0;
-		virtual uint64 getPage() = 0;
+		virtual int64 getPage() = 0;
 		virtual uint32 getPos() = 0;
 	};
 
@@ -274,8 +274,8 @@ namespace embDB
 		TIndexFiled() {}
 		virtual ~TIndexFiled() {}
 		virtual indexTypes GetType() const = 0;
-		virtual bool insert (TKeyType* pIndexKey, uint64 nOID, TIterator* pFromIter = NULL, TIterator** pRetIter = NULL) = 0;
-		virtual bool update (TKeyType* pOldIndexKey, TKeyType* pNewIndexKey, uint64 nOID, TIterator* pFromIter = NULL, TIterator** pRetIter = NULL) = 0;
+		virtual bool insert (TKeyType* pIndexKey, int64 nOID, TIterator* pFromIter = NULL, TIterator** pRetIter = NULL) = 0;
+		virtual bool update (TKeyType* pOldIndexKey, TKeyType* pNewIndexKey, int64 nOID, TIterator* pFromIter = NULL, TIterator** pRetIter = NULL) = 0;
 		virtual bool remove (TKeyType* pIndexKey, TIterator** pRetIter = NULL) = 0;
 		virtual bool remove (IIndexIterator* pIter ) = 0;
 		virtual TIteratorPtr find(TKeyType* pIndexKey) = 0;
@@ -298,7 +298,7 @@ namespace embDB
 		virtual bool next() = 0;
 		virtual bool isNull() = 0;
 		virtual bool getKey(CommonLib::CVariant* pIndexKey) = 0;
-		virtual uint64 getRowID() = 0;
+		virtual int64 getRowID() = 0;
 
 
 		virtual int64 addr() const = 0;
@@ -319,16 +319,16 @@ namespace embDB
 		//virtual bool insert (uint64 nOID, IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
 		//virtual uint64 insert (IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
 
-		virtual bool insert (uint64 nOID, CommonLib::CVariant* pVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
-		virtual uint64 insert ( CommonLib::CVariant* pVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
+		virtual bool insert (int64 nOID, CommonLib::CVariant* pVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
+		virtual int64 insert ( CommonLib::CVariant* pVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
 
 
-		virtual bool update (uint64 nRowID, CommonLib::CVariant* pFieldVal) = 0;
-		virtual bool remove (uint64 nRowID, IFieldIterator **pRetIter = NULL) = 0;
-		virtual bool find(uint64 nOID, CommonLib::CVariant* pFieldVal) = 0;
-		virtual IFieldIteratorPtr find(uint64 nRowID,  IFieldIterator* pFrom = NULL) = 0;
-		virtual IFieldIteratorPtr upper_bound(uint64 nRowID,  IFieldIterator* pFrom = NULL) = 0;
-		virtual IFieldIteratorPtr lower_bound(uint64 nRowID,  IFieldIterator* pFrom = NULL) = 0;
+		virtual bool update (int64 nRowID, CommonLib::CVariant* pFieldVal) = 0;
+		virtual bool remove (int64 nRowID, IFieldIterator **pRetIter = NULL) = 0;
+		virtual bool find(int64 nOID, CommonLib::CVariant* pFieldVal) = 0;
+		virtual IFieldIteratorPtr find(int64 nRowID,  IFieldIterator* pFrom = NULL) = 0;
+		virtual IFieldIteratorPtr upper_bound(int64 nRowID,  IFieldIterator* pFrom = NULL) = 0;
+		virtual IFieldIteratorPtr lower_bound(int64 nRowID,  IFieldIterator* pFrom = NULL) = 0;
 		virtual IFieldIteratorPtr begin() = 0;
 		virtual IFieldIteratorPtr last() = 0;
 		virtual bool commit() = 0;
@@ -507,7 +507,7 @@ namespace embDB
 		virtual bool createIndex(const CommonLib::CString& sName, SIndexProp& ip) = 0;
 		virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip) = 0;
 
-		virtual uint64 GetNextOID() = 0;
+		virtual int64 GetNextOID() = 0;
 		virtual bool commit(IDBTransaction *pTran) = 0;
 	};
 

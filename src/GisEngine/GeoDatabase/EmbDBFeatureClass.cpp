@@ -8,6 +8,7 @@
 #include "OIDSet.h"
 #include "embDBUtils.h"
 #include "../../EmbDB/EmbDB/embDBInternal.h"
+#include "EmbDBRowCursor.h"
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -185,12 +186,12 @@ namespace GisEngine
 		embDB::IRowPtr pRow = pCursor->createRow();
 
 
-		pRow->set(CommonLib::CVariant(m_pSpatialReference.get() ? m_pSpatialReference->GetProjectionString().cwstr() : L""), 0);
+		pRow->set(CommonLib::CVariant(m_pSpatialReference.get() ? m_pSpatialReference->GetProjectionString() : L""), 0);
 		pRow->set(CommonLib::CVariant(m_sShapeFieldName), 1);
 		pRow->set(CommonLib::CVariant((int)m_ShapeType), 2);
 		pRow->set(CommonLib::CVariant(m_sAnnotationName), 3);
 		pRow->set(CommonLib::CVariant(m_bUseRowID ? L"" : m_sOIDFieldName), 4);
-		pRow->set(CommonLib::CVariant(m_nOIDType), 5);
+		pRow->set(CommonLib::CVariant((int32)m_nOIDType), 5);
 		pCursor->insert(pRow.get());
 		return pTran->commit();
 	}
@@ -324,14 +325,14 @@ namespace GisEngine
 	IRowPtr	CEmbDBFeatureClass::GetRow(int64 id)
 	{
 
-		CSQLiteRowCursor cursor(id,  NULL, this, m_pSQLiteWorkspace->GetDB());
+		CEmbDBRowCursor cursor(id,  NULL, this, m_pEmbDBWorkspace->GetDB().get());
 		IRowPtr pRow;
 		cursor.NextRow(&pRow);
 		return pRow;
 	}
 	ICursorPtr	CEmbDBFeatureClass::Search(IQueryFilter* filter, bool recycling)
 	{
-		return  ICursorPtr(new CSQLiteRowCursor(filter, recycling, this, m_pSQLiteWorkspace->GetDB()));
+		return  ICursorPtr(new CEmbDBRowCursor(filter, recycling, this, m_pEmbDBWorkspace->GetDB().get()));
 	}
 
 

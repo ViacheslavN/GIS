@@ -34,7 +34,7 @@ namespace embDB
 			pVal->setVal(spObj);
 			return true;
 		}
-		virtual uint64 getRowID()
+		virtual int64 getRowID()
 		{
 			return m_ParentIt.value();
 		}
@@ -52,12 +52,12 @@ namespace embDB
 
 	class ISpatialIndexRect : public ISpatialIndex
 	{
-		virtual bool insert(const CommonLib::bbox& bbox, uint64 nOID) = 0;
+		virtual bool insert(const CommonLib::bbox& bbox, int64 nOID) = 0;
 	};
 
 	class ISpatialIndexPoint : public ISpatialIndex
 	{
-		virtual bool insert(double dX, double dY, uint64 nOID) = 0;
+		virtual bool insert(double dX, double dY, int64 nOID) = 0;
 	};
 
 
@@ -185,7 +185,7 @@ namespace embDB
 		  }
 
 
-		  virtual bool insert (CommonLib::CVariant* pIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		  virtual bool insert (CommonLib::CVariant* pIndexKey, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		  {
 
 			  iterator *pFromIterator = NULL;
@@ -211,7 +211,7 @@ namespace embDB
 			  }
 			  return bRet;
 		  }
-		  virtual bool update (CommonLib::CVariant* pOldIndexKey, CommonLib::CVariant* pNewIndexKey, uint64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		  virtual bool update (CommonLib::CVariant* pOldIndexKey, CommonLib::CVariant* pNewIndexKey, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		  {
 			  //FType val;
 			  //pIndexKey->getVal(val);
@@ -307,7 +307,7 @@ namespace embDB
 		}
  
 
-		virtual bool insert(const CommonLib::bbox& bbox, uint64 nOID)
+		virtual bool insert(const CommonLib::bbox& bbox, int64 nOID)
 		{
 			if(bbox.xMin < m_extent.xMin)
 				return false;
@@ -345,7 +345,7 @@ namespace embDB
 
 		 }
 
-		virtual bool insert(double dX, double dY, uint64 nOID)
+		virtual bool insert(double dX, double dY, int64 nOID)
 		{
 			if(dX < m_extent.xMin || dX > m_extent.xMax )
 				return false;
@@ -361,28 +361,28 @@ namespace embDB
 	};
 
 
-	typedef TBPPointSpatialMap<ZOrderPoint2DU16, uint64,
+	typedef TBPPointSpatialMap<ZOrderPoint2DU16, int64,
 		ZPointComp<ZOrderPoint2DU16> > TBPMapPoint16;	
-	typedef TBPPointSpatialMap<ZOrderPoint2DU32, uint64,
+	typedef TBPPointSpatialMap<ZOrderPoint2DU32, int64,
 		ZPointComp<ZOrderPoint2DU32> > TBPMapPoint32;
 
-	typedef TBPPointSpatialMap<ZOrderPoint2DU64, 	uint64,	ZPointComp64, IDBTransaction,
+	typedef TBPPointSpatialMap<ZOrderPoint2DU64, 	int64,	ZPointComp64, IDBTransaction,
 		BPSpatialPointInnerNodeSimpleCompressor64,
-		BPSpatialPointLeafNodeMapSimpleCompressor64<uint64> > TBPMapPoint64;
+		BPSpatialPointLeafNodeMapSimpleCompressor64<int64> > TBPMapPoint64;
 
 
-	typedef TBPRectSpatialMap<ZOrderRect2DU16, uint64,
+	typedef TBPRectSpatialMap<ZOrderRect2DU16, int64,
 		ZPointComp<ZOrderRect2DU16> 	> TBPMapRect16;
 
-	typedef TBPRectSpatialMap<ZOrderRect2DU32, uint64,
+	typedef TBPRectSpatialMap<ZOrderRect2DU32, int64,
 		ZRect32Comp, IDBTransaction,
 		BPSpatialRectInnerNodeSimpleCompressor< ZOrderRect2DU32>,	
-		 BPSpatialRectLeafNodeMapSimpleCompressor<ZOrderRect2DU32, uint64> > TBPMapRect32;
+		 BPSpatialRectLeafNodeMapSimpleCompressor<ZOrderRect2DU32, int64> > TBPMapRect32;
 
-	typedef TBPRectSpatialMap<ZOrderRect2DU64, uint64,
+	typedef TBPRectSpatialMap<ZOrderRect2DU64, int64,
 		ZRect64Comp, IDBTransaction,
 		BPSpatialRectInnerNodeSimpleCompressor<ZOrderRect2DU64 >,	
-		 BPSpatialRectLeafNodeMapSimpleCompressor<ZOrderRect2DU64, uint64 > > TBPMapRect64;
+		 BPSpatialRectLeafNodeMapSimpleCompressor<ZOrderRect2DU64, int64 > > TBPMapRect64;
 
 
 	typedef TStatialIndexPoint<TBPMapPoint16, ZOrderPoint2DU16, CommonLib::TPoint2Du16> TIndexPoint16;

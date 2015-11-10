@@ -34,7 +34,7 @@ namespace embDB
 		{
 			return m_ParentIt.isNull();
 		}
-		virtual uint64 getRowID()
+		virtual int64 getRowID()
 		{
 			return m_ParentIt.key();
 		}

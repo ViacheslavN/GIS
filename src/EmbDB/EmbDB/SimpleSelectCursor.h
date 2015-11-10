@@ -19,8 +19,8 @@ namespace embDB
 		virtual IFieldSetPtr GetFieldSet() const;
 		virtual IFieldsPtr   GetSourceFields() const;
 		virtual bool         IsFieldSelected(int index) const;
-		virtual bool NextRow(IRowPtr* row);
-
+		virtual bool NextRow(IRowPtr* pRow = NULL);
+		virtual bool  value(CommonLib::CVariant* pValue, int32 nNum);
 
 	private:
 		void SetCacheObj();
@@ -39,6 +39,7 @@ namespace embDB
 		typedef std::vector<IFieldIteratorPtr> TVecValueField;
 		TVecValueField m_vecFields;
 		bool m_bAllNext;
+		bool m_bEnd;
 		
 	};
 }

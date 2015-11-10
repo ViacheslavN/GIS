@@ -262,8 +262,8 @@ namespace embDB
 		virtual bool set(CommonLib::CVariant& pValue, int32 nNum) = 0;
 		virtual IFieldSetPtr		   GetFieldSet() const = 0;
 		virtual IFieldsPtr             GetSourceFields() const = 0;
-		virtual uint64				GetRowID() const = 0;
-		virtual void				SetRow(uint64 nRowID) = 0;
+		virtual int64				GetRowID() const = 0;
+		virtual void				SetRow(int64 nRowID) = 0;
 	};
 
 	struct INameRow : public IRow
@@ -284,7 +284,8 @@ namespace embDB
 		virtual IFieldSetPtr GetFieldSet() const = 0;
 		virtual IFieldsPtr   GetSourceFields() const = 0;
 		virtual bool         IsFieldSelected(int index) const = 0;
-		virtual bool NextRow(IRowPtr* row) = 0;
+		virtual bool NextRow(IRowPtr* pRow = NULL) = 0;
+		virtual bool  value(CommonLib::CVariant* pValue, int32 nNum) = 0;
 
 
 	};
@@ -294,7 +295,7 @@ namespace embDB
 		IInsertCursor(){}
 		virtual ~IInsertCursor(){}
 		virtual IRowPtr createRow() = 0;
-		virtual uint64 insert(IRow* pRow) = 0;
+		virtual int64 insert(IRow* pRow) = 0;
 		virtual IFieldSetPtr GetFieldSet() const = 0;
 		virtual IFieldsPtr   GetSourceFields() const = 0;
 	};
@@ -309,7 +310,7 @@ namespace embDB
 		IDeleteCursor(){}
 		virtual ~IDeleteCursor(){}
 		virtual bool remove(IRow* pRow) = 0;
-		virtual bool remove(uint64 nRowID) = 0;
+		virtual bool remove(int64 nRowID) = 0;
 	};
 
 	

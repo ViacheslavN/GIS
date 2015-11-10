@@ -38,11 +38,11 @@ namespace embDB
 		class TOIDIncFunctor
 		{
 		public:
-			uint64 inc(uint64 nKey)
+			int64 inc(uint64 nKey)
 			{
 				return  nKey + 1;
 			}
-			uint64 begin()
+			int64 begin()
 			{
 				return 1;
 			}
@@ -117,7 +117,7 @@ namespace embDB
 			TBTree* getBTree() {return &m_tree;}
 
 			template<class TValue>
-			bool insertImpl (uint64 nOID, const TValue& value, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
+			bool insertImpl (int64 nOID, const TValue& value, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
 				iterator *pFromIterator = NULL;
 				iterator RetIterator;
@@ -141,7 +141,7 @@ namespace embDB
 			}
 
 			template<class TValue>
-			uint64 insertImpl (const TValue& value, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
+			int64 insertImpl (const TValue& value, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
 
 				iterator *pFromIterator = NULL;
@@ -152,7 +152,7 @@ namespace embDB
 					assert(pFieldIterator);
 					pFromIterator = &pFieldIterator->m_ParentIt;
 				}
-				uint64 nOID;
+				int64 nOID;
 				if(!m_tree.insertLast(TOIDIncFunctor(), value, &nOID, pFromIterator, pRetIter ? &RetIterator : NULL))
 					return  0;
 
@@ -167,19 +167,19 @@ namespace embDB
 			}
 
 			template<class TValue>
-			bool updateImpl (uint64 nOID, const TValue& value)
+			bool updateImpl (int64 nOID, const TValue& value)
 			{
 				//TO DO Update  Index
 				return  m_tree.update(nOID, value);
 			}
-			virtual bool remove(uint64 nOID)
+			virtual bool remove(int64 nOID)
 			{
 				//TO DO Delete from Index
 				return m_tree.remove(nOID);
 
 				 
 			}
-			virtual bool remove (uint64 nOID, IFieldIterator **pRetIter) 
+			virtual bool remove (int64 nOID, IFieldIterator **pRetIter) 
 			{
 				if(pRetIter)
 				{
@@ -189,7 +189,7 @@ namespace embDB
 				else
 					return m_tree.remove(nOID);
 			}
-			virtual bool insert (uint64 nOID, CommonLib::CVariant* pVariant, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
+			virtual bool insert (int64 nOID, CommonLib::CVariant* pVariant, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
 				bool bRet = insertImpl(nOID, pVariant->Get<FType>(), pFromIter, pRetIter);
 				if(bRet && m_pIndex.get())
@@ -198,16 +198,16 @@ namespace embDB
 				}
 				return bRet;
 			}
-			virtual uint64 insert (CommonLib::CVariant* pVariant, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
+			virtual int64 insert (CommonLib::CVariant* pVariant, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
-				uint64 nOID =  insertImpl(pVariant->Get<FType>(), pFromIter, pRetIter);
+				int64 nOID =  insertImpl(pVariant->Get<FType>(), pFromIter, pRetIter);
 				if(nOID != 0 && m_pIndex.get())
 				{
 					m_pIndex->insert(pVariant, nOID);
 				}
 				return nOID;
 			}
-			virtual bool update (uint64 nOID, CommonLib::CVariant* pVariant)
+			virtual bool update (int64 nOID, CommonLib::CVariant* pVariant)
 			{
 				return updateImpl(nOID, pVariant->Get<FType>()); 
 			}
@@ -217,7 +217,7 @@ namespace embDB
 					m_pIndex->commit();
 				return m_tree.commit();
 			}
-			IFieldIteratorPtr find(uint64 nOID,  IFieldIterator* pFromIter = NULL)
+			IFieldIteratorPtr find(int64 nOID,  IFieldIterator* pFromIter = NULL)
 			{
 
 				iterator *pFromIterator = NULL;
@@ -233,7 +233,7 @@ namespace embDB
 				return IFieldIteratorPtr(pFiledIterator);
 			}
 	
-			virtual IFieldIteratorPtr upper_bound(uint64 nRowID,  IFieldIterator* pFromIter = NULL)
+			virtual IFieldIteratorPtr upper_bound(int64 nRowID,  IFieldIterator* pFromIter = NULL)
 			{
 
 				iterator *pFromIterator = NULL;
@@ -248,7 +248,7 @@ namespace embDB
 				TFieldIterator *pFiledIterator = new TFieldIterator(it, this);
 				return IFieldIteratorPtr(pFiledIterator);
 			}
-			virtual IFieldIteratorPtr lower_bound(uint64 nRowID,  IFieldIterator* pFromIter = NULL)
+			virtual IFieldIteratorPtr lower_bound(int64 nRowID,  IFieldIterator* pFromIter = NULL)
 			{
 				iterator *pFromIterator = NULL;
 				if(pFromIter)
@@ -342,7 +342,7 @@ namespace embDB
 			typedef _FType FType;
 
 
-			virtual bool find(uint64 nOID, CommonLib::CVariant* pFieldVal)
+			virtual bool find(int64 nOID, CommonLib::CVariant* pFieldVal)
 			{
 				TBTree::iterator it = m_tree.find(nOID);
 				if(it.isNull())
@@ -356,17 +356,17 @@ namespace embDB
 	};
 	
 	template<class _FType, int FieldDataType,
-		class _TLeafCompressor = embDB::BPLeafNodeMapSimpleCompressorV2<uint64, _FType > 	
+		class _TLeafCompressor = embDB::BPLeafNodeMapSimpleCompressorV2<int64, _FType > 	
 	>
 	class ValueFieldHandler :  CDBFieldHandlerBase
 	{
 		public:
 
 			typedef _FType FType;
-			typedef embDB::BPInnerNodeSimpleCompressorV2<uint64> TInnerCompressor;
+			typedef embDB::BPInnerNodeSimpleCompressorV2<int64> TInnerCompressor;
 			typedef _TLeafCompressor TLeafCompressor;
 
-			typedef embDB::TBPMapV2<uint64, FType, embDB::comp<uint64>, 
+			typedef embDB::TBPMapV2<int64, FType, embDB::comp<int64>, 
 				embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
  
 			typedef typename TBTree::iterator  iterator;

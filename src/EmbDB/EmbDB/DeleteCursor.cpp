@@ -31,7 +31,7 @@ namespace embDB
 	{
 		return remove(pRow->GetRowID());
 	}
-	bool CDeleteCursor::remove(uint64 nRowID)
+	bool CDeleteCursor::remove(int64 nRowID)
 	{
 		for (size_t i = 0, sz = m_vecFields.size(); i < sz; ++i)
 		{

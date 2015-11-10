@@ -27,6 +27,8 @@ namespace GisEngine
 			std::map<int, CommonLib::IBlobPtr> m_mapCacheBlob;
 			embDB::IDatabasePtr				m_pDB;
 			embDB::ICursorPtr				m_pCursor;
+			embDB::ITransactionPtr			m_pTran;
+			//embDB::IRowPtr					m_pEmbDbRow;
 			int m_nRecordCount;
 			bool m_bInvalidCursor;
 
