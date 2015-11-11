@@ -30,6 +30,7 @@ public:
 		COMMAND_ID_HANDLER(ID_FULL_ZOOM, OnFullZoom)
 		COMMAND_ID_HANDLER(ID_ADD_SHAPE_FILE, OnOpenShapeFile)
 		COMMAND_ID_HANDLER(ID_ADD_SQLITE_DB, OnSQLiteShapeFile)
+		COMMAND_ID_HANDLER(ID_ADD_EMB_DB, OnEmbDBShapeFile)
 	END_MSG_MAP()
 
 	
@@ -53,6 +54,7 @@ public:
 
 	LRESULT OnOpenShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnSQLiteShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	LRESULT OnEmbDBShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
 	void open(const wchar_t *pszFile);
 	void save(const wchar_t *pszFile);
@@ -60,6 +62,7 @@ public:
 
 	void AddSQLite(const wchar_t *pszFile);
 	void AddShapeFile(const wchar_t *pszFile);
+	void AddEmbDB(const wchar_t *pszFile);
 	
 private:
 	void Update(const GisEngine::Display::GPoint* ,const GisEngine::Display::GRect*, bool bforce);

@@ -33,7 +33,8 @@ namespace GisEngine
 				m_pCursor =  m_pTran->executeSpatialQuery(m_pExtentSource->GetBoundingBox(), m_pTable->GetDatasetName().cwstr(), pShapeField->GetName().cwstr(), embDB::sqmIntersect, pEmbFieldSet.get());
 				m_bInvalidCursor = false;
 			 }
-			 m_bInvalidCursor = true;
+			 else
+				 m_bInvalidCursor = true;
 		}
 			CEmbDBRowCursor::CEmbDBRowCursor(int64 nOId, IFieldSet *pFieldSet, ITable* pTable, embDB::IDatabase *pDB):
 					TBase(nOId, pFieldSet, pTable), m_pDB(pDB)
@@ -72,14 +73,27 @@ namespace GisEngine
 			{
 				const sFieldInfo& fi = m_vecFieldInfo[i];
 
+				if(fi.m_nType == dtGeometry) 
+				{
+					IFeature* pFeature = (IFeature*)(m_pCurrentRow.get());
+					CommonLib::CVariant varian;
+					m_pCursor->value(&varian, fi.m_nRowIndex);
+				
+					CommonLib::IGeoShapePtr pShape =  varian.Get<CommonLib::IGeoShapePtr >();
+					pFeature->SetShape(pShape.get());
 
-				CommonLib::CVariant* pValue = m_pCurrentRow->GetValue(fi.m_nRowIndex);
+				}
+				else
+				{
+					CommonLib::CVariant* pValue = m_pCurrentRow->GetValue(fi.m_nRowIndex);
+					m_pCursor->value(pValue, fi.m_nRowIndex);
+				}
 
-				m_pCursor->value(pValue, fi.m_nRowIndex);
+			
 			}
-
-			m_bInvalidCursor = m_pCursor->NextRow();
-			return false;
+			*row = m_pCurrentRow;
+			m_bInvalidCursor = !m_pCursor->NextRow();
+			return true;
 		}
 	}
 }

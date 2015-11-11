@@ -198,7 +198,7 @@ namespace GisEngine
 				}
 				else
 				{
-
+					continue;
 					if(!OpenTable(pTable->getName()))
 					{
 						return false;

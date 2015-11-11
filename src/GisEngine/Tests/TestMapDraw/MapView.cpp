@@ -23,6 +23,7 @@
 #include "../../Common/XMLDoc.h"
 #include "CommonLibrary/FileStream.h"
 #include "../../GeoDatabase/ShapefileFeatureClass.h"
+#include "../../GeoDatabase/EmbDBWorkspace.h"
 class CTrackCancel : public GisEngine::GisCommon::ITrackCancel
 {
 public:
@@ -341,7 +342,27 @@ void CMapView::AddShapeFile(const wchar_t *pszFile)
 
 	AddFeatureClass(pFC.get());
 }
+void CMapView::AddEmbDB(const wchar_t *pszFile)
+{
+	CommonLib::CString sPath = CommonLib::FileSystem::FindFilePath(pszFile);
+	CommonLib::CString sFileName = CommonLib::FileSystem::FindFileName(pszFile);
 
+
+	GisEngine::GeoDatabase::IWorkspacePtr pWks = GisEngine::GeoDatabase::CEmbDBWorkspace::Open(sFileName.cwstr(), sPath.cwstr(), true, true);
+
+	if(!pWks.get())
+		return;
+
+	for (size_t i = 0, sz =pWks->GetDatasetCount(); i < sz; ++i)
+	{
+		GisEngine::GeoDatabase::IDatasetPtr pDataset = pWks->GetDataset(i);
+		if(pDataset->GetDatasetType() ==  GisEngine::GeoDatabase::dtFeatureClass)
+		{
+			AddFeatureClass((GisEngine::GeoDatabase::IFeatureClass*)pDataset.get());
+		}
+	}
+
+}
 void CMapView::AddFeatureClass(GisEngine::GeoDatabase::IFeatureClass *pFC)
 {
 	if(!pFC)
@@ -419,6 +440,16 @@ LRESULT CMapView::OnSQLiteShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*h
 	if ( fileDlg.DoModal() != IDOK )
 		return 0;
 	AddSQLite(fileDlg.m_szFileName);
+
+	return 1;
+}
+
+LRESULT CMapView::OnEmbDBShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	CFileDialog fileDlg(TRUE, _T("embDB"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("EmbDB (*.embdb)\0*.embdb\0All Files (*.*)\0*.*\0"), m_hWnd);
+	if ( fileDlg.DoModal() != IDOK )
+		return 0;
+	AddEmbDB(fileDlg.m_szFileName);
 
 	return 1;
 }

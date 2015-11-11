@@ -258,9 +258,9 @@ namespace GisEngine
 		const embDB::sSpatialFieldInfo *pSpatInfo  = dynamic_cast<const embDB::sSpatialFieldInfo *>(pShapeValueField->getFieldInfoType());
 		if(!pSpatInfo)
 			return false;
-
+		
 		bounds = pSpatInfo->m_extent;
-			
+		bounds.type = CommonLib::bbox_type_normal; //TO DO fix in embDB to save type	
 
 		if(!m_pSpatialReference.get())
 		{

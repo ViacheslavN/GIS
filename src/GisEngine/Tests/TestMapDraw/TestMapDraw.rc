@@ -114,6 +114,7 @@ BEGIN
     BEGIN
         MENUITEM "Add Shape File",              32777
         MENUITEM "Add SQLite DB",               32778
+        MENUITEM "Add EmbDB",                   ID_ADD_EMB_DB
     END
 END
 

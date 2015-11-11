@@ -24,6 +24,7 @@ namespace embDB
 
 	private:
 		void SetCacheObj();
+		void SetNext(int64 nOID, bool bNext);
 	private:
 		IndexFiledPtr m_pIndex;
 		IRowPtr m_pCacheRow;
