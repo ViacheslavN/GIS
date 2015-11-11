@@ -1,14 +1,14 @@
 #include "stdafx.h"
 #include "TestSQLiteWks.h"
-#include "../../GeoDatabase/SQLiteWorkspace.h"
+#include "../../GeoDatabase/EmbDBWorkspace.h"
 #include "../../GeoDatabase/ShapefileWorkspace.h"
 #include "../../GeoDatabase/QueryFilter.h"
-#include "../../GeoDatabase/SQLiteInsertCursor.h"
-#include "../../GeoDatabase/SQLiteFeatureClass.h"
+#include "../../GeoDatabase/EmbDBInsertCursor.h"
+#include "../../GeoDatabase/EmbDBFeatureClass.h"
 #include "CommonLibrary/MemoryStream.h"
-void TestSQLiteWks()
+void TestEmbDBWks()
 {
-																													 
+
 	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData");
 	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
 	
@@ -19,22 +19,20 @@ void TestSQLiteWks()
 	
 	//GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CSQLiteWorkspace::Open( L"TestSpatialDB.sqlite", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData", true, false);
 		
-	GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CSQLiteWorkspace::Open( L"building.sqlite", L"d:\\db", true, true);
+	GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CEmbDBWorkspace::Open( L"building.embdb", L"d:\\db", true, true);
 
 	if(!pWks.get())
 	{
 		//pWks = GisEngine::GeoDatabase::CSQLiteWorkspace::Create( L"TestSpatialDB.sqlite", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
-		pWks = GisEngine::GeoDatabase::CSQLiteWorkspace::Create( L"building.sqlite", L"d:\\db");
+		pWks = GisEngine::GeoDatabase::CEmbDBWorkspace::Create( L"building.embdb", L"d:\\db");
 	}
 
-	GisEngine::GeoDatabase::IFeatureClassPtr pSQLFC = pWks->OpenFeatureClass(L"building");
-	if(!pSQLFC.get())
+	GisEngine::GeoDatabase::IFeatureClassPtr pEmbDBFC = pWks->OpenFeatureClass(L"building");
+	if(!pEmbDBFC.get())
 	{
-		GisEngine::GeoDatabase::ITransactionPtr pTran = pWks->startTransaction();
-		if(!pTran.get())
-			return;
 
-		pSQLFC = pWks->CreateFeatureClass(L"building", pShapeFC->GetFields().get()/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
+
+		pEmbDBFC = pWks->CreateFeatureClass(L"building", pShapeFC->GetFields().get()/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
 
 
 
@@ -67,8 +65,12 @@ void TestSQLiteWks()
 		GisEngine::GeoDatabase::ICursorPtr pCursor = pShapeFC->Search(&filter, true);
 		GisEngine::GeoDatabase::IRowPtr pRow;
 
+		GisEngine::GeoDatabase::ITransactionPtr pTran = pWks->startTransaction();
+		if(!pTran.get())
+			return;
+ 
 
-		GisEngine::GeoDatabase::IInsertCursorPtr pInsertCursor = pTran->CreateInsertCusor((GisEngine::GeoDatabase::ITable*)pSQLFC.get());
+		GisEngine::GeoDatabase::IInsertCursorPtr pInsertCursor = pTran->CreateInsertCusor((GisEngine::GeoDatabase::ITable*)pEmbDBFC.get());
 
 		//GisEngine::GeoDatabase::CSQLiteWorkspace *pSQLWke = (GisEngine::GeoDatabase::CSQLiteWorkspace *)pWks.get();
 		//GisEngine::GeoDatabase::SQLiteInsertCursor SQLiteCusor((GisEngine::GeoDatabase::ITable*)pSQLFC.get(), NULL, pSQLWke->GetDB());
@@ -95,13 +97,13 @@ void TestSQLiteWks()
 		CommonLib::bbox ShapeBB, SQLiteBB; 
 		{
 
-			SQLiteBB = pSQLFC->GetExtent()->GetBoundingBox();
+			SQLiteBB = pEmbDBFC->GetExtent()->GetBoundingBox();
 			GisEngine::GeoDatabase::CQueryFilter filter;
 			filter.AddRef();
-			filter.SetOutputSpatialReference(pSQLFC->GetSpatialReference().get());
+			filter.SetOutputSpatialReference(pEmbDBFC->GetSpatialReference().get());
 			filter.SetSpatialRel(GisEngine::GeoDatabase::srlIntersects);
 		
-			filter.SetShapeField(pSQLFC->GetShapeFieldName());
+			filter.SetShapeField(pEmbDBFC->GetShapeFieldName());
 
 			SQLiteBB.xMin -= 1;
 			SQLiteBB.xMax += 1;
@@ -112,13 +114,13 @@ void TestSQLiteWks()
 			filter.SetBB(SQLiteBB);
 
 			GisEngine::GeoDatabase::IFieldSetPtr pFieldSet = filter.GetFieldSet();
-			for (size_t i = 0, sz = pSQLFC->GetFields()->GetFieldCount(); i < sz; ++i)
+			for (size_t i = 0, sz = pEmbDBFC->GetFields()->GetFieldCount(); i < sz; ++i)
 			{
-				pFieldSet->Add(pSQLFC->GetFields()->GetField(i)->GetName());
+				pFieldSet->Add(pEmbDBFC->GetFields()->GetField(i)->GetName());
 			}
 			int nRow = 0;
 			int nError = 0;
-			GisEngine::GeoDatabase::ICursorPtr pCursor = pSQLFC->Search(&filter, true);
+			GisEngine::GeoDatabase::ICursorPtr pCursor = pEmbDBFC->Search(&filter, true);
 			GisEngine::GeoDatabase::IRowPtr pRow;
 			while(pCursor->NextRow(&pRow))
 			{
@@ -158,7 +160,7 @@ void TestSQLiteWks()
 
 		for (auto it = setShapeRow.begin(); it != setShapeRow.end(); ++it)
 		{
-			GisEngine::GeoDatabase::IRowPtr pRow = pSQLFC->GetRow(*it);
+			GisEngine::GeoDatabase::IRowPtr pRow = pEmbDBFC->GetRow(*it);
 			GisEngine::GeoDatabase::IFeature* pFeature = (GisEngine::GeoDatabase::IFeature*)pRow.get();
 			CommonLib::IGeoShapePtr pShape = pFeature->GetShape();
 			CommonLib::bbox bb = pShape->getBB();

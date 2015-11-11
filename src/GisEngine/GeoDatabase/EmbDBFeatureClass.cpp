@@ -219,7 +219,7 @@ namespace GisEngine
 
 		embDB::ITransactionPtr pTran =  pDB->startTransaction(embDB::eTT_SELECT);
 		pTran->begin();
-		embDB::ICursorPtr pCursor = pTran->executeSelectQuery(m_sDatasetName.cwstr());
+		embDB::ICursorPtr pCursor = pTran->executeSelectQuery(m_sPropTableName.cwstr());
 		embDB::IRowPtr pRow;
 		pCursor->NextRow(&pRow);
 
@@ -230,7 +230,7 @@ namespace GisEngine
 			m_ShapeType =  (CommonLib::eShapeType )pRow->value(2)->Get<int32>();
 			m_sAnnotationName = pRow->value(3)->Get<CommonLib::CString>();
 			m_sOIDFieldName = pRow->value(4)->Get<CommonLib::CString>();
-			m_nOIDType   = (eDataTypes)pRow->value(4)->Get<int32>();
+			m_nOIDType   = (eDataTypes)pRow->value(5)->Get<int32>();
 			m_pSpatialReference = new GisGeometry::CSpatialReferenceProj4(sProjStr);
 			if(!m_pSpatialReference->IsValid())
 				m_pSpatialReference = NULL;
@@ -251,7 +251,7 @@ namespace GisEngine
 		if(!pEmbDBShapeField.get())
 			return false;
 
-		embDB::IValueField *pShapeValueField = dynamic_cast<embDB::IValueField *>(pEmbDBShapeField.get());
+		embDB::IDBFieldHandler *pShapeValueField = dynamic_cast<embDB::IDBFieldHandler *>(pEmbDBShapeField.get());
 		if(!pShapeValueField)
 			return false;
 

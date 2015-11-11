@@ -175,11 +175,10 @@ namespace GisEngine
 				return;
 
 			m_pShape = pShape;
-			return;
 
-			CommonLib::IRefObjectPtr ptr((IRefCnt*)pShape);
+			//CommonLib::IRefObjectPtr ptr((IRefCnt*)pShape);
 
-			m_vecValues[m_nShapeFieldIndex] = ptr;
+			m_vecValues[m_nShapeFieldIndex] = m_pShape;
 		}
 	}
 }

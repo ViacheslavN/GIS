@@ -2,6 +2,7 @@
 #include "EmbDBWorkspace.h"
 #include "CommonLibrary/File.h"
 #include "EmbDBFeatureClass.h"
+#include "EmbDBTransaction.h"
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -80,6 +81,75 @@ namespace GisEngine
 			return IWorkspacePtr((IWorkspace*)pEmbDBWks);
 		}
 
+		IWorkspacePtr CEmbDBWorkspace::Open(const wchar_t *pszName, const wchar_t *pszPath, bool bWrite, bool bOpenAll)
+		{
+
+			CommonLib::CString sFullName = pszPath;
+
+			if(!sFullName.isEmpty())
+			{
+				if(sFullName[sFullName.length() - 1] != _T('/') || sFullName[sFullName.length() - 1] != _T('\\'))
+				{
+					sFullName += _T('\\');
+				}
+			}
+
+			sFullName += pszName;
+			if(sFullName.isEmpty())
+			{
+				//TO DO Error
+				return IWorkspacePtr();
+			}
+			IWorkspacePtr pWks = CWorkspaceHolder::GetWorkspace(wtSqlLite, sFullName);
+			if(pWks.get())
+			{
+				//TO DO Error
+				return pWks;
+			}
+
+			CEmbDBWorkspace *pEmbDBWks = new  CEmbDBWorkspace(pszName, pszPath, CWorkspaceHolder::GetIDWorkspace());
+			if(!pEmbDBWks->load(sFullName, bWrite, bOpenAll))
+			{
+				//TO DO Error
+				delete pEmbDBWks;
+				return IWorkspacePtr();
+			}
+
+			CWorkspaceHolder::AddWorkspace((IWorkspace*)pEmbDBWks);
+			return IWorkspacePtr((IWorkspace*)pEmbDBWks);
+		}
+		IWorkspacePtr CEmbDBWorkspace::Open(CommonLib::IReadStream* pSteram, bool bOpenAll)
+		{
+
+			CEmbDBWorkspace *pEmbDBWks = new  CEmbDBWorkspace(-1);
+			if(!pEmbDBWks->load(pSteram)) // TO FIX use name, path
+			{
+				//TO DO Error
+				delete pEmbDBWks;
+				return IWorkspacePtr();
+			}
+
+			return IWorkspacePtr((IWorkspace*)pEmbDBWks);
+		}
+		IWorkspacePtr CEmbDBWorkspace::Open(GisCommon::IXMLNode *pNode, bool bOpenAll)
+		{
+			int nWksID = pNode->GetPropertyInt32(L"ID", -1);
+			if(nWksID == -1)
+				return  IWorkspacePtr();
+			CommonLib::CString sName = pNode->GetPropertyString(L"Name", "");
+			CommonLib::CString sPath = pNode->GetPropertyString(L"Path", "");
+			CEmbDBWorkspace *pEmbDBWks = new  CEmbDBWorkspace(sName.cwstr(), sPath.cwstr(), nWksID);
+			if(!pEmbDBWks->load(sPath + sName, true, bOpenAll)) // TO FIX use name, path
+			{
+				//TO DO Error
+				delete pEmbDBWks;
+				return IWorkspacePtr();
+			}
+
+			return IWorkspacePtr((IWorkspace*)pEmbDBWks);
+		}
+
+
 		bool CEmbDBWorkspace::create(const CommonLib::CString& sFullName)
 		{
 			if(m_pDB.get())
@@ -98,10 +168,15 @@ namespace GisEngine
 		{
 
 			m_pDB =  embDB::IDatabase::CreateDatabase();
-			if(m_pDB.get())
+			if(!m_pDB.get())
 			{
 				return false;
 			}
+			if(!m_pDB->open(sFullName.cwstr()))
+			{
+				return false;
+			}
+			
 
 			if(!bOpenAll)
 				return true;
@@ -165,7 +240,77 @@ namespace GisEngine
 		}
 		ITransactionPtr CEmbDBWorkspace::startTransaction()
 		{
+			CEmbDBTransaction* pTran = new CEmbDBTransaction(m_pDB.get());
+			pTran->begin();
+			return ITransactionPtr(pTran);
+		}
 
+
+		ITablePtr  CEmbDBWorkspace::CreateTable(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& sOIDName)
+		{
+			return ITablePtr();
+		}
+
+		IFeatureClassPtr CEmbDBWorkspace::CreateFeatureClass(const CommonLib::CString& sName,
+			IFields* pFields, const CommonLib::CString& sOIDName,  
+			const CommonLib::CString& shapeFieldName,
+			const CommonLib::CString& sAnnotationName)
+		{
+			if(!m_pDB.get())
+				return IFeatureClassPtr();
+			
+			if(sName.isEmpty())
+			{
+				//m_pDB->SetErrorText(L"empty FeatureClass name");
+				return IFeatureClassPtr();
+			}
+
+			IFeatureClassPtr pFC = GetFeatureClass(sName);
+			if(pFC.get())
+			{
+				//m_pDB->SetErrorText("FeatureClass " + sName + L" is exist");
+				return  IFeatureClassPtr();
+			}
+			CEmbDBFeatureClass* pEmbDBFC = new CEmbDBFeatureClass(this, sName, sName);
+			if(!pEmbDBFC->CreateFeatureClass(pFields))
+			{
+				delete pEmbDBFC;
+				return  IFeatureClassPtr();
+			}
+			AddDataset(pEmbDBFC);
+			return  IFeatureClassPtr(pEmbDBFC);
+		}
+
+		ITablePtr CEmbDBWorkspace::OpenTable(const CommonLib::CString& name)
+		{
+			return ITablePtr();
+		}
+		IFeatureClassPtr CEmbDBWorkspace::OpenFeatureClass(const CommonLib::CString& sName)
+		{
+			 
+			if(!m_pDB.get())
+				return IFeatureClassPtr();
+
+			if(sName.isEmpty())
+			{
+				//m_pDB->SetErrorText(L"Empty table Name");
+				return IFeatureClassPtr();
+			}
+
+			IFeatureClassPtr pFC = GetFeatureClass(sName);
+			if(pFC.get())
+				return pFC;
+
+
+			CEmbDBFeatureClass *pEmbDBFC = new CEmbDBFeatureClass(this, sName, sName);
+			if(!pEmbDBFC->open())
+			{
+				delete pEmbDBFC;
+				return IFeatureClassPtr();
+			}			
+
+			AddDataset(pEmbDBFC);
+			return IFeatureClassPtr(pEmbDBFC);
 		}
 	}
 }

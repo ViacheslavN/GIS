@@ -38,7 +38,7 @@ namespace GisEngine
 
 			return bRet;
 		}
-		bool CSQLiteTransaction::rolback()
+		bool CSQLiteTransaction::rollback()
 		{
 			if(!m_bBegin)
 				return false;

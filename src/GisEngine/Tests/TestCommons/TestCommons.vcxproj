@@ -88,6 +88,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TestCommons.cpp" />
+    <ClCompile Include="TestEmbWks.cpp" />
     <ClCompile Include="TestShapeIndex.cpp" />
     <ClCompile Include="TestSQLiteWks.cpp" />
     <ClCompile Include="TestXML.cpp" />

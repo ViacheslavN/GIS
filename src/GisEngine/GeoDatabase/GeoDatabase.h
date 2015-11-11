@@ -171,7 +171,7 @@ namespace GisEngine
 				 ITransaction(){}
 				virtual ~ ITransaction(){}
 				virtual bool commit() = 0;
-				virtual bool rolback() = 0;
+				virtual bool rollback() = 0;
 				virtual void GetError(CommonLib::CString& sText) = 0;
 
 				virtual IInsertCursorPtr CreateInsertCusor(ITable *pTable, IFieldSet *pFileds = 0) = 0;

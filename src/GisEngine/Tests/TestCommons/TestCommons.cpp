@@ -7,7 +7,8 @@
 void testLoadXML();
 void TestXML();
 void TestShapeIndex();
-
+void TestSQLiteWks();
+void TestEmbDBWks();
 class ITest : public CommonLib::AutoRefCounter
 {
 public:
@@ -27,7 +28,8 @@ typedef std::map<ITestPtr, int> TtestMap;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-
+	//TestShapeIndex();
+	TestEmbDBWks();
 
 	/*CommonLib::CString s1(L"vfdgggf");
 	CommonLib::CString s2(s1);

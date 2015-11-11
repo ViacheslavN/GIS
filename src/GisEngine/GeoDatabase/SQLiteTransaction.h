@@ -23,7 +23,7 @@ namespace GisEngine
 			bool begin();
 
 			virtual bool commit();
-			virtual bool rolback();
+			virtual bool rollback();
 			virtual void GetError(CommonLib::CString& sText);
 
 			virtual IInsertCursorPtr CreateInsertCusor(ITable *pTable, IFieldSet *pFileds = 0);

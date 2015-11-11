@@ -131,17 +131,6 @@ namespace GisEngine
 		IWorkspacePtr CSQLiteWorkspace::Open(CommonLib::IReadStream* pSteram, bool bOpenAll)
 		{
 			
-			//CommonLib::FxMemoryReadStream stream;
-			/*pSteram->AttachStream(&stream, pSteram->readIntu32());
-			int nWksID = stream.readInt32();
-			if(nWksID == -1)
-				return  IWorkspacePtr();
-
-			CommonLib::CString sName;
-			CommonLib::CString sPath;
-			stream.read(sName);
-			stream.read(sPath);*/
-			
 			CSQLiteWorkspace *pSQLiteWks = new  CSQLiteWorkspace(-1);
 			if(!pSQLiteWks->load(pSteram)) // TO FIX use name, path
 			{

@@ -162,6 +162,8 @@ namespace embDB
 				iter->getVal(m_pCacheRow->value(i));
 			iter->next();
 		}
+		if(pRow)
+			*pRow = m_pCacheRow;
 		return true;
 	}
 	bool SimpleSelectCursor::NextByIter(IRowPtr* pRow)
@@ -192,7 +194,8 @@ namespace embDB
 			}
 		
 		}
-
+		if(pRow)
+			*pRow = m_pCacheRow;
 		return true;
 	}
 }

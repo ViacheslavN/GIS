@@ -11,7 +11,8 @@ namespace GisEngine
 			embDB::ITransaction* pTran) :
 				TBase(pTable, pFileds), m_pDB(pDB), m_bValidCursor(true), m_bInit(false)
 		{
-
+			m_pDB = pDB;
+			m_pTran = pTran;
 		}
 		CEmbDBInsertCursor::~CEmbDBInsertCursor()
 		{
@@ -57,7 +58,7 @@ namespace GisEngine
 				init();
 				m_bInit = true;
 			}
-			if(!m_bValidCursor || m_pCursor.get())
+			if(!m_bValidCursor || !m_pCursor.get())
 				return -1;
 
 
