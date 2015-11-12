@@ -269,6 +269,34 @@ namespace embDB
 			
 			return true;
 		}
+
+		bool SplitIn(BPTreeInnerNodeSetv2 *pLeftNode, BPTreeInnerNodeSetv2 *pRightNode, TKey* pSplitKey)
+		{
+
+			TKeyMemSet& LeftKeySet = pLeftNode->m_innerKeyMemSet;
+			TLinkMemSet& LeftLinkSet = pLeftNode->m_innerLinkMemSet;
+			TCompressor* pLeftNodeComp = pLeftNode->m_pCompressor;
+
+			TKeyMemSet& RightKeySet = pRightNode->m_innerKeyMemSet;
+			TLinkMemSet& RightLinkSet = pRightNode->m_innerLinkMemSet;
+			TCompressor* pRightNodeComp = pRightNode->m_pCompressor;
+
+			int nSize = m_innerKeyMemSet.size()/2;
+
+			LeftKeySet.copy(m_innerKeyMemSet, 0,  0,  nSize);
+			LeftLinkSet.copy(m_innerLinkMemSet, 0,  0,  nSize);
+			pLeftNode->m_nLess = m_nLess;
+		 
+
+			*pSplitKey = m_innerKeyMemSet[nSize];
+			pRightNode->m_nLess = m_innerLinkMemSet[nSize];
+
+
+			RightKeySet.copy(m_innerKeyMemSet, 0,  nSize + 1,  m_innerKeyMemSet.size());
+			RightLinkSet.copy(m_innerLinkMemSet, 0,  nSize + 1,  m_innerKeyMemSet.size());
+
+			return true;
+		}
 		size_t count() const
 		{
 			return m_innerLinkMemSet.size();
@@ -401,6 +429,14 @@ namespace embDB
 		void SetOneSplit(bool bOneSplit )
 		{
 			m_bOneSplit = bOneSplit;
+		}
+		virtual void clear()
+		{
+			m_innerKeyMemSet.clear();
+			m_innerLinkMemSet.clear();
+			delete m_pCompressor;
+			m_pCompressor = NULL;
+
 		}
 	public:
 		TLink m_nLess;

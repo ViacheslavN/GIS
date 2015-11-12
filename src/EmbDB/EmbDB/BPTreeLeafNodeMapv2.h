@@ -87,6 +87,38 @@ namespace embDB
 
 	
 		}
+
+
+		int  SplitIn(BPTreeLeafNodeMapv2 *pLeftNode, BPTreeLeafNodeMapv2 *pRightNode, TKey* pSplitKey)
+		{
+
+			TLeafMemSet& leftKeyMemSet = pLeftNode->m_leafKeyMemSet;
+			TValueMemSet& leftValueMemSet = pLeftNode->m_leafValueMemSet;
+			TCompressor* pleftNodeComp = pLeftNode->m_pCompressor;
+
+			TLeafMemSet& rightKeyMemSet = pRightNode->m_leafKeyMemSet;
+			TValueMemSet& rightValueMemSet = pRightNode->m_leafValueMemSet;
+			TCompressor* pRightNodeComp = pRightNode->m_pCompressor;
+
+
+			uint32 nSize = m_leafKeyMemSet.size()/2;
+
+			if(pSplitKey)
+				*pSplitKey = m_leafKeyMemSet[nSize];
+
+			SplitInVec(m_leafKeyMemSet, leftKeyMemSet, 0, nSize);
+			SplitInVec(m_leafValueMemSet, leftValueMemSet, 0, nSize);
+
+			SplitInVec(m_leafKeyMemSet, rightKeyMemSet, nSize, m_leafKeyMemSet.size());
+			SplitInVec(m_leafValueMemSet, rightValueMemSet, nSize, m_leafValueMemSet.size());
+
+			pleftNodeComp->recalc(leftKeyMemSet, leftValueMemSet);
+			pRightNodeComp->recalc(rightKeyMemSet, rightValueMemSet);
+			return nSize;
+
+
+
+		}
 		
 		const TValue& value(uint32 nIndex) const
 		{
@@ -137,6 +169,14 @@ namespace embDB
 				return false;
 			}
 			return true;
+		}
+		virtual void clear()
+		{
+			m_leafKeyMemSet.clear();
+			m_leafValueMemSet.clear();
+			delete m_pCompressor;
+			m_pCompressor = NULL;
+
 		}
 	public:
 		TValueMemSet m_leafValueMemSet;

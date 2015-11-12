@@ -155,6 +155,17 @@ namespace embDB
 
 
 		}
+
+		bool TransformToInner(Transaction* pTransactions)
+		{
+			assert(m_bIsLeaf);
+			m_bIsLeaf = false;
+			m_pBaseNode = &m_InnerNode;
+			if(!m_InnerNode.init(m_pInnerCompParams, pTransactions))
+				return false;
+
+			return true;
+		}
 		bool IsFree()
 		{
 			return RefCounter::isRemovable();
@@ -296,6 +307,15 @@ namespace embDB
 				return m_LeafNode.SplitIn(&pNewNode->m_LeafNode, pSplitKey);
 			return m_InnerNode.SplitIn(&pNewNode->m_InnerNode, pSplitKey);
 		}
+
+		int splitIn(BPTreeNodeSetv2 *pLeftNode, BPTreeNodeSetv2 *pRightNode, TKey* pSplitKey)
+		{
+			if(m_bIsLeaf)
+				return m_LeafNode.SplitIn(&pLeftNode->m_LeafNode, &pRightNode->m_LeafNode, pSplitKey);
+			return m_InnerNode.SplitIn(&pLeftNode->m_InnerNode, &pRightNode->m_InnerNode, pSplitKey);
+		}
+
+
 		int32 search(const TKey& key)
 		{
 			assert(m_bIsLeaf);
@@ -418,6 +438,14 @@ namespace embDB
 		{
 			m_LeafNode.SetOneSplit(bOneSplit);
 			m_InnerNode.SetOneSplit(bOneSplit);
+		}
+
+		virtual void clear()
+		{
+			if(m_bIsLeaf)
+				m_LeafNode.clear();
+			else
+				m_InnerNode.clear();
 		}
 
 	public:

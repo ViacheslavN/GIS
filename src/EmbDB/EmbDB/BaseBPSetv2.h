@@ -143,7 +143,7 @@ namespace embDB
 			m_pTransaction  = pTransaction;
 		}
 
-		void setOneSplit(bool bOneSplit)
+		void SetMinSplit(bool bOneSplit)
 		{
 			m_bOneSplit = bOneSplit;
 			
@@ -619,22 +619,22 @@ namespace embDB
 				bool bNewRoot = false;
 				if(!pParentNode.get())
 				{
-					//тут все просто создаеться новый рутовый элеинт
-					pParentNode  = newNode(true, false);
+				 
+					pParentNode  = newNode(false, true);
 					if(!pParentNode.get())
 					{
 						m_pTransaction->error(_T("BTREE: Error create new root node"));
 						return TBTreeNodePtr(NULL);
 					}
-					bNewRoot = true;
+					//bNewRoot = true;
 				}
 
-				m_nStateTree |= eBPTNewLeafNode;
+				//m_nStateTree |= eBPTNewLeafNode;
 
 				TBTreeNodePtr pNewLeafNode = newNode(false, true);
 
 
-				int nSplitIndex = splitLeafNode(pNode, pNewLeafNode.get(), pParentNode.get());
+				/*int nSplitIndex = splitLeafNode(pNode, pNewLeafNode.get(), pParentNode.get());
 				if(pInIndex)
 				{
 					if(*pInIndex >= nSplitIndex)
@@ -642,7 +642,8 @@ namespace embDB
 						*pInIndex = *pInIndex - nSplitIndex;
 						pRetNode = pNewLeafNode.get();
 					}
-				}
+				}*/
+				pRetNode = splitLeafNode(pNode, pNewLeafNode.get(), pParentNode.get(), pInIndex);
 
 				pNewLeafNode->setFlags(CHANGE_NODE, true);
 				pParentNode->setFlags(CHANGE_NODE, true);
@@ -674,12 +675,48 @@ namespace embDB
 			}
 			return pRetNode;
 		}
-		int splitLeafNode(TBTreeNode *pNode, TBTreeNode *pNewNode, TBTreeNode *pParentNode)
+		TBTreeNodePtr splitLeafNode(TBTreeNode *pNode, TBTreeNode *pNewNode, TBTreeNode *pParentNode, int *pInIndex = NULL)
 		{
 			assert(pNewNode->isLeaf());
 			assert(pNode->isLeaf());
+			TBTreeNodePtr pRetNode(pNode);
+
+			if(pNode->parentAddr() == -1)
+			{
+				//transform root
+
+				TKey splitKey;
+				assert(pParentNode->isLeaf());
+
+				pNewNode->setParent(pNode, -1);
+				
+
+				int nSplitIndex = pNode->splitIn(pNewNode, pParentNode, &splitKey);
+				pNode->clear();
+				pNode->TransformToInner(m_pTransaction);
+
+				pNode->setLess(pNewNode->addr());
+				int nInsertIndex =  pNode->insertInInnerNode(m_comp, splitKey, pParentNode->addr());
+				pParentNode->setParent(pNode, nInsertIndex);
+				pNewNode->setNext(pParentNode->addr());
+				pParentNode->setPrev(pNewNode->addr());
+				if(pInIndex)
+				{
+					if(*pInIndex >= nSplitIndex)
+					{
+						*pInIndex = *pInIndex - nSplitIndex;
+						pRetNode = pParentNode;
+					}
+					else
+						pRetNode = pNewNode;
+				}
+
+				return   pRetNode; 
+			}
+
+
 			TKey splitKey;
-			int nIndex = pNode->splitIn(pNewNode, &splitKey);
+			int nSplitIndex = pNode->splitIn(pNewNode, &splitKey);
 			if(pNode->parentAddr() == -1)
 			{
 
@@ -704,7 +741,18 @@ namespace embDB
 			int nInsertIndex = pParentNode->insertInInnerNode(m_comp, splitKey, pNewNode->m_nPageAddr);
 			pNewNode->setParent(pParentNode, nInsertIndex);
 		
-			return nIndex;
+
+			if(pInIndex)
+			{
+				if(*pInIndex >= nSplitIndex)
+				{
+					*pInIndex = *pInIndex - nSplitIndex;
+					pRetNode = pNewNode;
+				}
+			}
+
+
+			return pRetNode;
 		}
 
 	bool splitInnerNode(TBTreeNode *pInNode)

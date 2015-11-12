@@ -191,6 +191,12 @@ namespace embDB
 		}
 
 
+		template<class TVector>
+		void SplitInVec(TVector& src, TVector& dst, uint32 nBegin, uint32 nCount)
+		{		 
+			dst.copy(src, 0, nBegin, nCount);
+		}
+
 		template<class TVector, class TVecVal>
 		int SplitOne(TVector& src, TVector& dst, TVecVal* pSplitVal)
 		{
@@ -228,6 +234,35 @@ namespace embDB
 
 
 		}
+
+
+
+		int  SplitIn(BPTreeLeafNodeSetv2Base *pLeftNode, BPTreeLeafNodeSetv2Base *pRightNode, TKey* pSplitKey)
+		{
+
+			TLeafMemSet& leftNodeMemSet = pLeftNode->m_leafKeyMemSet;
+			TCompressor* pleftNodeComp = pLeftNode->m_pCompressor;
+
+			TLeafMemSet& rightNodeMemSet = pRightNode->m_leafKeyMemSet;
+			TCompressor* pRightNodeComp = pRightNode->m_pCompressor;
+
+
+			uint32 nSize = m_leafKeyMemSet.size()/2;
+			
+			if(pSplitKey)
+				*pSplitKey = m_leafKeyMemSet[nSize];
+
+			SplitInVec(m_leafKeyMemSet, leftNodeMemSet, 0, nSize);
+			SplitInVec(m_leafKeyMemSet, rightNodeMemSet, nSize, m_leafKeyMemSet.size());
+		
+			pleftNodeComp->recalc(leftNodeMemSet);
+			pRightNodeComp->recalc(rightNodeMemSet);
+			return nSize;
+			
+
+
+		}
+
 		size_t count() const 
 		{
 			return m_leafKeyMemSet.size();
@@ -327,7 +362,13 @@ namespace embDB
 		{
 			m_bOneSplit = bOneSplit;
 		}
+		virtual void clear()
+		{
+			m_leafKeyMemSet.clear();
+			delete m_pCompressor;
+			m_pCompressor = NULL;
 
+		}
 	public:
 		TCompressor * m_pCompressor;
 		TLeafMemSet m_leafKeyMemSet;

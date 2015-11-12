@@ -91,7 +91,7 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 	double treeCom = 0;
 	double tranCom  = 0;
 	TBPString tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
-	tree.setOneSplit(true);
+	tree.SetMinSplit(true);
 	tree.loadBTreeInfo(); 
 	time.start();
 	int64 n = 0;

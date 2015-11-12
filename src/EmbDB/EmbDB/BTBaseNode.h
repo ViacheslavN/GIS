@@ -46,6 +46,7 @@ namespace embDB
 			else
 				m_nFlag &= ~nFlag;
 		}
+		virtual void clear() = 0;
 	public:
 		int m_nFlag;
 	};

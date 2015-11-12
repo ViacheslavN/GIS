@@ -596,6 +596,17 @@ void testBPTreeSetImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			storage.close();
 		}
 
+		{
+			embDB::CStorage storage( alloc, nCacheStorageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.setStoragePageInfo(nStorageInfoPage);
+			storage.loadStorageInfo();
+			TTran tran5(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran9.data", &storage, 1, nTranCache);
+			tran5.begin();
+			testOrderINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize,  nStep, &tran5, alloc, nTreeRootPage, true);
+			storage.close();
+		}
+
 	//	nTreeRootPage = 6;
 	
 		{

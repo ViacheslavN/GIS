@@ -20,7 +20,7 @@ void insertINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 	double tranCom  = 0;
 	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
 	tree.loadBTreeInfo(); 
-	tree.setOneSplit(true);
+	tree.SetMinSplit(true);
 	time.start();
 	int64 n = 0;
 	if(nStart < nEndStart)
