@@ -73,21 +73,17 @@ namespace embDB
 				if(val.m_pBuf)
 					m_pAlloc->free(val.m_pBuf);
 			}
+			m_pValueMemset->clear();
 		}
 		virtual bool Load(TLeafKeyMemSet& keySet, TLeafValueMemSet& valueSet, CommonLib::FxMemoryReadStream& stream)
 		{
-		
-
 			CommonLib::FxMemoryReadStream KeyStream;
-			CommonLib::FxMemoryReadStream ValueStream;
-			
-		
+			CommonLib::FxMemoryReadStream ValueStream;	
  
 			m_nSize = stream.readInt32();
 			if(!m_nSize)
 				return true;
-
-		
+					
 			keySet.reserve(m_nSize);
 			valueSet.reserve(m_nSize);
 
@@ -97,15 +93,13 @@ namespace embDB
 			ValueStream.attach(stream.buffer() + stream.pos() + nKeySize, stream.size() -  stream.pos() -  nKeySize);
 
 			TKey nKey;
-
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
 				KeyStream.read(nKey);
 
 				sBlobVal blob;
 				blob.m_bChange = false;
-
-			 
+							 
 				blob.m_nSize = ValueStream.readIntu32();
 	 			m_nBlobDataSize += sizeof(uint32);
 				if(blob.m_nSize  < m_nMaxPageLen)

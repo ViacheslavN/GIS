@@ -54,6 +54,8 @@ namespace embDB
 			  m_nBTreeRootPage(-1), m_pAlloc(pAlloc), m_pFieldInfo(pFieldInfo)
 			  {
 
+
+				  m_tree.SetMinSplit(true);
 			  }
 
 			typedef _TBTree TBTree;

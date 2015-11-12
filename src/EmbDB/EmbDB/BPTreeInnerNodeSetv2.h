@@ -287,6 +287,7 @@ namespace embDB
 			LeftLinkSet.copy(m_innerLinkMemSet, 0,  0,  nSize);
 			pLeftNode->m_nLess = m_nLess;
 		 
+			pLeftNodeComp->recalc(LeftKeySet, LeftLinkSet);
 
 			*pSplitKey = m_innerKeyMemSet[nSize];
 			pRightNode->m_nLess = m_innerLinkMemSet[nSize];
@@ -294,7 +295,12 @@ namespace embDB
 
 			RightKeySet.copy(m_innerKeyMemSet, 0,  nSize + 1,  m_innerKeyMemSet.size());
 			RightLinkSet.copy(m_innerLinkMemSet, 0,  nSize + 1,  m_innerKeyMemSet.size());
+			pRightNodeComp->recalc(RightKeySet, RightLinkSet);
 
+
+			m_innerKeyMemSet.clear();
+			m_innerLinkMemSet.clear();
+			m_pCompressor->clear();
 			return true;
 		}
 		size_t count() const
@@ -331,14 +337,18 @@ namespace embDB
 			
 		}
 
-		bool UnionWith(BPTreeInnerNodeSetv2* pNode,  const TKey& LessMin, bool bLeft)
+		bool UnionWith(BPTreeInnerNodeSetv2* pNode,  const TKey* pLessMin, bool bLeft)
 		{
 		
 
 			if(bLeft)
 			{
-				pNode->m_innerKeyMemSet.push_back(LessMin);
-				pNode->m_innerLinkMemSet.push_back(m_nLess);
+				if(pLessMin) //can be if root is empty
+				{
+					pNode->m_innerKeyMemSet.push_back(*pLessMin);
+					pNode->m_innerLinkMemSet.push_back(m_nLess);
+				}
+	
 		
 
 				pNode->m_innerKeyMemSet.push_back(m_innerKeyMemSet);
@@ -354,8 +364,12 @@ namespace embDB
 			}
 			else
 			{
-				m_innerKeyMemSet.push_back(LessMin);
-				m_innerLinkMemSet.push_back(pNode->m_nLess);
+				if(pLessMin)
+				{
+					m_innerKeyMemSet.push_back(*pLessMin);
+					m_innerLinkMemSet.push_back(pNode->m_nLess);
+				}
+		
 
 
 

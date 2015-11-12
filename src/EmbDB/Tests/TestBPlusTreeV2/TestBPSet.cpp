@@ -100,6 +100,7 @@ void insertINBTreeSetByIT (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart
 	double tranCom  = 0;
 	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
 	tree.loadBTreeInfo(); 
+	tree.SetMinSplit(true);
 	time.start();
 	int64 n = 0;
 	bool bFind = false;
@@ -443,6 +444,11 @@ void removeFromBTreeSetByIT  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndSt
 	{	
 
 			//it.m_nIndex =  it.m_pCurNode->count() - 1;
+			if(i == 509)
+			{
+				int d = 0;
+				d++;
+			}
 			bRet = tree.remove(TKey(i));
 
 
@@ -739,7 +745,8 @@ void TestBRteeSet()
 {
 	//__int64 nCount = 1531;
 	//3130
-	__int64 nCount = 1000000;
+	//__int64 nCount = 520201;
+	__int64 nCount = 10000000;
 	//nCount = 200;
 	//	size_t nPageSize = 100;
 	size_t nPageSize = 8192;

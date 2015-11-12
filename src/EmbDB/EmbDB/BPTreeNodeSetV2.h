@@ -166,6 +166,17 @@ namespace embDB
 
 			return true;
 		}
+
+		bool TransformToLeaf(Transaction* pTransactions)
+		{
+			assert(!m_bIsLeaf);
+			m_bIsLeaf = true;
+			m_pBaseNode = &m_LeafNode;
+			if(!m_LeafNode.init(m_pLeafCompParams, pTransactions))
+				return false;
+
+			return true;
+		}
 		bool IsFree()
 		{
 			return RefCounter::isRemovable();
@@ -267,7 +278,7 @@ namespace embDB
 		void setLess(TLink nLess)
 		{
 			assert(!m_bIsLeaf);
-			assert(nLess != -1);
+			//assert(nLess != -1);
 			m_InnerNode.m_nLess = nLess;
 		}
 		TLink next()
@@ -315,6 +326,7 @@ namespace embDB
 			return m_InnerNode.SplitIn(&pLeftNode->m_InnerNode, &pRightNode->m_InnerNode, pSplitKey);
 		}
 
+		 
 
 		int32 search(const TKey& key)
 		{
@@ -382,7 +394,7 @@ namespace embDB
 			return m_LeafNode.UnionWith(&pNode->m_LeafNode, bLeft, nCheckIndex);
 		 
 		}
-		bool UnioInnerWith(BPTreeNodeSetv2* pNode, const TKey& lessMin, bool bLeft)
+		bool UnionInnerWith(BPTreeNodeSetv2* pNode, const TKey* lessMin, bool bLeft)
 		{
 			assert(!m_bIsLeaf);
 			return m_InnerNode.UnionWith(&pNode->m_InnerNode, lessMin, bLeft);
