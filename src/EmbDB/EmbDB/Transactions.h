@@ -50,10 +50,10 @@ namespace embDB
 		typedef ITransactionBase<IDBTransaction> TBase;
 
 		CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
+			eTransactionType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
 
 		CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionsType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache = 10000);
+			eTransactionType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache = 10000);
 
 
 		CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache = 10000);
@@ -91,7 +91,7 @@ namespace embDB
 		virtual FilePagePtr getNewPage(uint32 nSize = 0);
 		virtual void saveFilePage(FilePagePtr pPage,  size_t nSize = 0, bool bChangeInCache = false);
 		virtual size_t getPageSize() const;
-		virtual eTransactionsType getType() const {return (eTransactionsType)m_nTranType;}
+		virtual eTransactionType getType() const {return (eTransactionType)m_nTranType;}
 
 		virtual FilePagePtr getTranNewPage(uint32 nSize = 0);
 		virtual FilePagePtr getTranFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0);

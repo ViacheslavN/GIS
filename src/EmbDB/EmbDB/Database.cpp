@@ -149,7 +149,7 @@ namespace embDB
 		return m_pAlloc.get();
 	}
 	
-	ITransactionPtr CDatabase::startTransaction(eTransactionsType trType)
+	ITransactionPtr CDatabase::startTransaction(eTransactionType trType)
 	{
 		if(!m_bOpen)
 			return ITransactionPtr();

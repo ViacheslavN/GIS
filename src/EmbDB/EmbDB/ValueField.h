@@ -71,7 +71,7 @@ namespace embDB
 			{
 				return m_tree.saveBTreeInfo();
 			}
-			virtual bool load(int64 nAddr, eTransactionsType type)
+			virtual bool load(int64 nAddr, eTransactionType type)
 			{
 
 				int64 m_nFieldInfoPage = nAddr;
@@ -285,10 +285,7 @@ namespace embDB
 			{
 				m_pIndex = pIndex;
 			}
-			virtual uint64 GetRowsCount()
-			{
-				return m_tree.m_BTreeInfo.m_nKeyCounts;
-			}
+		
 	 protected:
 		IDBTransaction* m_pDBTransactions;
 		TBTree m_tree;

@@ -48,7 +48,7 @@ public:
 	  {
 		  return m_tree.saveBTreeInfo();
 	  }
-	  virtual bool load(int64 nAddr, eTransactionsType type)
+	  virtual bool load(int64 nAddr, eTransactionType type)
 	  {
 
 		  int64 m_nFieldInfoPage = nAddr;

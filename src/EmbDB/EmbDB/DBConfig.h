@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_DB_CONFIG_H_
 
 
-
+#define MIN_PAGE_SIZE	  512
 #define DEFAULT_PAGE_SIZE 8192
 
 

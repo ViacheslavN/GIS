@@ -62,8 +62,8 @@ public:
 		
 		
 		ClearChache();
-		if(bRet)
-			m_BTreeInfo.AddKey(1);
+	//	if(bRet)
+	//		m_BTreeInfo.AddKey(1);
 
 
 		if(pRetItertor)
@@ -173,8 +173,8 @@ public:
 		TBTreeNodePtr pNode = InsertInLeafNode(it.m_pCurNode.get(), key, value, nIndex, pFromIterator ? pFromIterator->m_nIndex + 1 : -1);
 		ClearChache();
 		bool bRet = pNode.get() ? true : false;
-		if(bRet)
-			m_BTreeInfo.AddKey(1);
+	//	if(bRet)
+		//	m_BTreeInfo.AddKey(1);
 
 
 		if(pRetIterator)

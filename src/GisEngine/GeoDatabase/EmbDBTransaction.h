@@ -12,7 +12,7 @@ namespace GisEngine
 		class CEmbDBTransaction : public ITransaction
 		{
 		public:
-			CEmbDBTransaction(embDB::IDatabase* pDB);
+			CEmbDBTransaction(embDB::IDatabase* pDB, eTransactionType type);
 			~CEmbDBTransaction();
 
 

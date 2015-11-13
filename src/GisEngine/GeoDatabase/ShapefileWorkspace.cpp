@@ -326,7 +326,7 @@ namespace GisEngine
 			return true;
 		}
 
-		ITransactionPtr CShapefileWorkspace::startTransaction()
+		ITransactionPtr CShapefileWorkspace::startTransaction(eTransactionType type)
 		{
 			return ITransactionPtr();
 		}

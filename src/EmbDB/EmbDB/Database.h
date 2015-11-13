@@ -56,7 +56,7 @@ namespace embDB
 			virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL);
 			virtual bool create(const wchar_t* pszDbName, size_t nPageSize, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL) ;
 			virtual bool close();
-			virtual ITransactionPtr startTransaction(eTransactionsType trType);
+			virtual ITransactionPtr startTransaction(eTransactionType trType);
 			virtual bool closeTransaction(ITransaction* );
 			virtual ISchemaPtr getSchema() const {return ISchemaPtr(m_pSchema.get());}
 			virtual IDBStoragePtr getDBStorage() const  {return m_pStorage;}

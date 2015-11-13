@@ -10,8 +10,9 @@ namespace embDB
 	class ReadStreamPage : public CommonLib::IReadStreamBase, public CommonLib::AutoRefCounter
 	{
 	public:
-		ReadStreamPage(embDB::IDBTransaction* pTran, uint32 nPageSize) :
-		  m_pTran(pTran), m_nPageHeader(-1), m_nEndPage(-1), m_nEndPos(0), m_nPageSize(nPageSize)
+		ReadStreamPage(embDB::IDBTransaction* pTran, uint32 nPageSize, uint16 nObjectPage = -1, uint16 nSubObjectPage = -1) :
+		  m_pTran(pTran), m_nPageHeader(-1), m_nEndPage(-1), m_nEndPos(0), m_nPageSize(nPageSize), 
+			  m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage)
 		  {									  
 			
 
@@ -38,11 +39,30 @@ namespace embDB
 				  if(!m_pPage.get())
 					  return false; //TO DO Log;
 			  }
-
-			
+			  
 			  assert(m_nBeginPos < m_pPage->getPageSize());
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
-			  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
+
+			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+			  {
+				  sFilePageHeader header(m_stream, !m_pPage->isCheck());
+				  if(!header.isValid())
+				  {
+					  //TO DO Logs
+					  return false;
+				  }
+				  if(header.m_nObjectPageType != m_nObjectPage || header.m_nSubObjectPageType != m_nSubObjectPage)
+				  {
+					  //TO DO Logs
+					  return false;
+				  }
+
+				  m_pPage->setCheck(true);
+			  }
+			
+
+
+			  m_stream.seek(m_nBeginPos, CommonLib::soFromCurrent);
 			 
 				return true;
 
@@ -134,6 +154,26 @@ namespace embDB
 				  return false;  // TO DO Log
 
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
+
+			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+			  {
+				  sFilePageHeader header(m_stream, !m_pPage->isCheck());
+				  if(!header.isValid())
+				  {
+					  //TO DO Logs
+					  return false;
+				  }
+				  if(header.m_nObjectPageType != m_nObjectPage || header.m_nSubObjectPageType != m_nSubObjectPage)
+				  {
+					  //TO DO Logs
+					  return false;
+				  }
+
+				  m_pPage->setCheck(true);
+			  }
+
+
+
 			return true;
 		  }
 
@@ -145,8 +185,9 @@ namespace embDB
 		int64 m_nEndPage;
 		uint32 m_nEndPos;
 		uint32 m_nPageSize;
-    	 CommonLib::FxMemoryReadStream m_stream;
-	
+    	CommonLib::FxMemoryReadStream m_stream;
+		uint16 m_nObjectPage;
+		uint16 m_nSubObjectPage; 
  
 	};
 	COMMON_LIB_REFPTR_TYPEDEF(ReadStreamPage);

@@ -30,7 +30,7 @@ void TestSQLiteWks()
 	GisEngine::GeoDatabase::IFeatureClassPtr pSQLFC = pWks->OpenFeatureClass(L"building");
 	if(!pSQLFC.get())
 	{
-		GisEngine::GeoDatabase::ITransactionPtr pTran = pWks->startTransaction();
+		GisEngine::GeoDatabase::ITransactionPtr pTran = pWks->startTransaction(GisEngine::GeoDatabase::ttModify);
 		if(!pTran.get())
 			return;
 

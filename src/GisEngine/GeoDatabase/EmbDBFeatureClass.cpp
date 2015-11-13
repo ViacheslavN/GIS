@@ -114,7 +114,7 @@ namespace GisEngine
 
 		if(pTable.get())
 		{
-			embDB::ITransactionPtr pTran = pDB->startTransaction(embDB::eTT_DELETE);
+			embDB::ITransactionPtr pTran = pDB->startTransaction(embDB::eTT_MODIFY);
 			pTran->begin();
 			embDB::IDeleteCursorPtr pDeleteCursor = pTran->createDeleteCursor(pTable->getName().cwstr());
 			embDB::IRowPtr pRow;
@@ -179,7 +179,7 @@ namespace GisEngine
 			
 		}
 
-		embDB::ITransactionPtr pTran = pDB->startTransaction(embDB::eTT_INSERT);
+		embDB::ITransactionPtr pTran = pDB->startTransaction(embDB::eTT_MODIFY);
 		pTran->begin();
 		embDB::IInsertCursorPtr pCursor = pTran->createInsertCursor(pTable->getName().cwstr());
 

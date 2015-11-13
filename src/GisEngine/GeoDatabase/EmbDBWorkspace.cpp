@@ -238,9 +238,9 @@ namespace GisEngine
 		{
 			return true;
 		}
-		ITransactionPtr CEmbDBWorkspace::startTransaction()
+		ITransactionPtr CEmbDBWorkspace::startTransaction(eTransactionType type)
 		{
-			CEmbDBTransaction* pTran = new CEmbDBTransaction(m_pDB.get());
+			CEmbDBTransaction* pTran = new CEmbDBTransaction(m_pDB.get(), type);
 			pTran->begin();
 			return ITransactionPtr(pTran);
 		}

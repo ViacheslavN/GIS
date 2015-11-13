@@ -396,7 +396,7 @@ namespace GisEngine
 				m_pDB.reset();
 			}
 		}
-		ITransactionPtr CSQLiteWorkspace::startTransaction()
+		ITransactionPtr CSQLiteWorkspace::startTransaction(eTransactionType type)
 		{
 			if(!m_pDB.get())
 			{

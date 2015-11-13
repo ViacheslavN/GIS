@@ -55,7 +55,7 @@ namespace GisEngine
 				virtual bool IsError() const {return false;}
 				virtual uint32 GetErrorCode() const {return 0;}
 				virtual void GetErrorText( CommonLib::CString& sStr, uint32 nCode) {}
-				virtual ITransactionPtr startTransaction();
+				virtual ITransactionPtr startTransaction(eTransactionType type);
 				virtual const CommonLib::CString& GetHash() const {return m_sPath;};
  			private:
 				void load();

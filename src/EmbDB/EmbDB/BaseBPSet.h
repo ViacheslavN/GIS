@@ -56,7 +56,7 @@ namespace embDB
 		 ,m_Chache(pAlloc)
 		 ,m_ChangeNode(pAlloc)
 		 ,m_pRoot(NULL)
-		 ,m_nRTreeStaticAddr(-1)
+		// ,m_nRTreeStaticAddr(-1)
 		 ,m_nPageInnerCompInfo(-1)
 		 ,m_nPageLeafPageCompInfo(-1)
 		 ,m_bCheckCRC32(bCheckCRC32)
@@ -130,8 +130,8 @@ namespace embDB
 				m_pRoot->m_nParent = -1;
 				m_pRoot->setFlags(ROOT_NODE, true);
 				m_pRoot->Save(m_pTransaction);
-				m_BTreeInfo.clear();
-				m_BTreeInfo.Save(m_pTransaction);
+				//m_BTreeInfo.clear();
+				//m_BTreeInfo.Save(m_pTransaction);
 				saveBTreeInfo();
 			}
 			m_nStateTree |=(eBPTDeleteLeafNode | eBPTDeleteInnerNode |  eBPTNewRootNode);
@@ -177,15 +177,15 @@ namespace embDB
 				return false;
 			}
 			m_nRootAddr = stream.readInt64();
-			m_nRTreeStaticAddr = stream.readInt64();
+		//	m_nRTreeStaticAddr = stream.readInt64();
 			m_bMulti = stream.readBool();
 			m_nPageInnerCompInfo = stream.readInt64();
 			m_nPageLeafPageCompInfo = stream.readInt64();
-			if(m_nRTreeStaticAddr != -1)
+		/*	if(m_nRTreeStaticAddr != -1)
 			{
 				m_BTreeInfo.setPage(m_nRTreeStaticAddr);
 				m_BTreeInfo.Load(m_pTransaction);
-			}
+			}*/
 
 
 			m_InnerCompParams.reset(TInnerCompess::LoadCompressor(m_nPageInnerCompInfo, m_pTransaction));
@@ -194,6 +194,33 @@ namespace embDB
 			return !m_pTransaction->isError();
 		}
 
+
+		void save(CommonLib::IWriteStream *pStream)
+		{
+			pStream->write(m_nRootAddr);
+			pStream->write(m_bMulti);
+			if(m_InnerCompParams.get())
+				m_InnerCompParams->save(pStream);
+			if(m_LeafCompParams.get())
+				m_LeafCompParams->save(pStream);
+
+		}
+
+
+		void load(CommonLib::IReadStream *pStream)
+		{
+			m_nRootAddr = pStream->readInt64();
+			m_bMulti = pStream->readInt64();
+
+			if(!m_InnerCompParams.get())
+				m_InnerCompParams.reset(TInnerCompess::LoadCompressor(-1, m_pTransaction));
+			m_InnerCompParams->load(pStream);
+			if(!m_LeafCompParams.get())
+				m_LeafCompParams.reset(TLeafCompess::LoadCompressor(-1, m_pTransaction));
+
+			m_LeafCompParams->load(pStream);
+
+		}
 
 		bool saveBTreeInfo()
 		{
@@ -226,9 +253,8 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attach(pPage->getRowData(), pPage->getPageSize());
 			sFilePageHeader header(stream, BTREE_PAGE, BTREE_INFO_PAGE);
-			//stream.write((int64)DB_BTREE_INFO_PAGE); 
 			stream.write(m_nRootAddr);
-			stream.write(m_nRTreeStaticAddr);
+			//stream.write(m_nRTreeStaticAddr);
 			stream.write(m_bMulti);
 			stream.write(m_nPageInnerCompInfo);
 			stream.write(m_nPageLeafPageCompInfo);
@@ -272,7 +298,7 @@ namespace embDB
 				m_pRoot->Save(m_pTransaction);
 				m_pRoot->setFlags(CHANGE_NODE, false);
 			}
-			m_BTreeInfo.Save(m_pTransaction);
+			//m_BTreeInfo.Save(m_pTransaction);
 			m_nStateTree = eBPTNoChange;
 			return true;
 		}
@@ -282,7 +308,7 @@ namespace embDB
 				TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, -1, m_bMulti, bIsLeaf, m_bCheckCRC32, (ICompressorParams *)m_InnerCompParams.get(),
 					(ICompressorParams *)m_LeafCompParams.get() );
 				pNode->Load(m_pTransaction);
-				m_BTreeInfo.AddNode(1, bIsLeaf);
+				//m_BTreeInfo.AddNode(1, bIsLeaf);
 				if(bIsRoot)
 					pNode->setFlags(ROOT_NODE, true);
 				else
@@ -331,7 +357,7 @@ namespace embDB
 	}
 	bool deleteNode(TBTreeNode* pNode)
 	{
-		m_BTreeInfo.AddNode(-1, pNode->isLeaf());
+		//m_BTreeInfo.AddNode(-1, pNode->isLeaf());
 		m_Chache.remove(pNode->m_nPageAddr);
 		m_pTransaction->dropFilePage(pNode->m_nPageAddr);
 		m_ChangeNode.remove(pNode);
@@ -366,7 +392,7 @@ namespace embDB
 	{
 		m_pRoot = newNode(true, true);
 		m_nRootAddr = m_pRoot->m_nPageAddr; 
-		FilePagePtr pFilePage = m_pTransaction->getNewPage();
+		/*FilePagePtr pFilePage = m_pTransaction->getNewPage();
 		if(!pFilePage.get())
 		{
 			CommonLib::CString sMsg;
@@ -374,12 +400,12 @@ namespace embDB
 			m_pTransaction->error(sMsg);
 			return false;
 		}
-		m_nRTreeStaticAddr = pFilePage->getAddr();
-		m_BTreeInfo.setPage(m_nRTreeStaticAddr);
+		//m_nRTreeStaticAddr = pFilePage->getAddr();*/
+		//m_BTreeInfo.setPage(m_nRTreeStaticAddr);
 		if(!saveBTreeInfo())
 			return false;
 		m_pRoot->Save(m_pTransaction);
-		m_BTreeInfo.Save(m_pTransaction);
+		//m_BTreeInfo.Save(m_pTransaction);
 		return true;
 	}
 	bool checkRoot()
@@ -448,8 +474,8 @@ namespace embDB
 			}
 			m_ChangeNode.clear();
  			ClearChache();
-			if(bRet)
-				m_BTreeInfo.AddKey(1);
+			//if(bRet)
+			//	m_BTreeInfo.AddKey(1);
 			return bRet;	
 		}
 		template<class TKeyFunctor>
@@ -477,8 +503,8 @@ namespace embDB
 			}
 			m_ChangeNode.clear();
 			ClearChache();
-			if(bRet)
-				m_BTreeInfo.AddKey(1);
+			//if(bRet)
+			//	m_BTreeInfo.AddKey(1);
 			return bRet;	
 		}
 		TBTreeNode *getLastLeafNode()
@@ -982,7 +1008,7 @@ namespace embDB
 						//pFindRBNode = pRBNode;
 						if(removeFromLeafNode(key, pNode, pRBNode, pInnerParentNode))
 						{
-							m_BTreeInfo.AddKey(-1);
+							//m_BTreeInfo.AddKey(-1);
 							bRet = true;
 						}
 					}
@@ -1777,11 +1803,11 @@ namespace embDB
 		return true;
 	}
 
-		BPTreeStatisticsInfo m_BTreeInfo;
+		//BPTreeStatisticsInfo m_BTreeInfo;
 	protected:
 		TBTreeNode *m_pRoot; 
 		TLink m_nRootAddr;
-		TLink m_nRTreeStaticAddr;
+		//TLink m_nRTreeStaticAddr;
 		TLink m_nPageBTreeInfo;
 
 		TLink m_nPageInnerCompInfo;

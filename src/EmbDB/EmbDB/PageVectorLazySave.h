@@ -15,7 +15,7 @@ namespace embDB
 		typedef std::vector<TValue> TVecValues;
 	public:
 
-		TPageVectorLazySave(int64 nPage, uint32 nPageSize, short nObjectPage, short nSubObjectPage) :
+		TPageVectorLazySave(int64 nPage, uint32 nPageSize, uint16 nObjectPage, uint16 nSubObjectPage) :
 		  m_nRootPage(nPage), m_nPageSize(nPageSize), m_nObjectPage(nObjectPage), 
 			  m_nSubObjectPage(nSubObjectPage), m_nPageAddr(nPage)
 		{}

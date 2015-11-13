@@ -1,19 +1,20 @@
 #include "stdafx.h"
 #include "EmbDBTransaction.h"
 #include "EmbDBInsertCursor.h"
+#include "embDBUtils.h"
 
 namespace GisEngine
 {
 	namespace GeoDatabase
 	{
 
-		CEmbDBTransaction::CEmbDBTransaction(embDB::IDatabase* pDB) :
+		CEmbDBTransaction::CEmbDBTransaction(embDB::IDatabase* pDB, eTransactionType type) :
 			m_bCommit(false)
 			,m_bEnd(false)
 			,m_bBegin(false)
 		{
 			m_pDB = pDB;
-			m_pTran = m_pDB->startTransaction(embDB::eTT_UNDEFINED);
+			m_pTran = m_pDB->startTransaction(embDBUtils::TranType2EmbDbTranType(type));
 		}
 		CEmbDBTransaction::~CEmbDBTransaction()
 		{

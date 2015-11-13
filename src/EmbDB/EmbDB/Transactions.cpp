@@ -10,7 +10,7 @@ namespace embDB
 
 	
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionsType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache) :
+		eTransactionType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache) :
 		TBase(pDatabase)
 		, m_TranStorage(pAlloc, &m_TranPerfCounter)
 		, m_nRestoreType(nRestoreType)
@@ -31,7 +31,7 @@ namespace embDB
 	}
 
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) :
+		eTransactionType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) :
 		TBase(NULL)
 		, m_TranStorage(pAlloc, &m_TranPerfCounter)
 		, m_nRestoreType(nRestoreType)

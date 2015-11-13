@@ -9,7 +9,7 @@ namespace embDB
 		m_pAlloc(pAlloc)
 		,m_nMaxPageBuf(nCacheSize) 
 		,m_Chache(pAlloc)
-		,m_nPageSize(DEFAULT_PAGE_SIZE)
+		,m_nPageSize(MIN_PAGE_SIZE)
 #ifdef USE_FREE_PAGES
 		,m_FreePageManager(this, pAlloc)
 #endif

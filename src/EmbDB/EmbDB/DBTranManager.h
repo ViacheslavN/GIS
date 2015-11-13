@@ -145,7 +145,7 @@ namespace embDB
 		~CDBTranManager();
 		bool open(const CommonLib::CString &sFileName, const CommonLib::CString& sWorkingPath);
 		bool close();
-		ITransactionPtr CreateTransaction(eTransactionsType trType);
+		ITransactionPtr CreateTransaction(eTransactionType trType);
 		bool releaseTransaction(ITransaction* pTran);
 	private:
 		bool SaveHeader(CFilePage *pPage);

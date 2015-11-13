@@ -16,10 +16,10 @@ namespace embDB
 		CDirectTransaction(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache = 10000);
 		//for compatible tests
 		CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionsType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
+			eTransactionType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
 
 		CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionsType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache = 10000);
+			eTransactionType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache = 10000);
 		~CDirectTransaction();
 
 		//ITransactions
@@ -44,7 +44,7 @@ namespace embDB
 		virtual FilePagePtr getNewPage(uint32 nSize = 0);
 		virtual void saveFilePage(FilePagePtr pPage,  size_t nSize = 0, bool bChandgeInCache = false);
 		virtual size_t getPageSize() const;
-		virtual eTransactionsType getType() const {return eTT_UNDEFINED;}
+		virtual eTransactionType getType() const {return eTT_UNDEFINED;}
 
 		virtual void addInnerTransactions(IDBTransaction *pTran){}
 

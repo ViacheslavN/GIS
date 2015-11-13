@@ -74,7 +74,14 @@ namespace GisEngine
 		};
 
 
-	 
+		enum eTransactionType
+		{
+			ttUndefined  = 1,
+			ttSelect = 2,
+			ttModify = 4,
+			ttDDL	=  8
+
+		};
 
 		struct IField;
 		struct IRow;
@@ -151,7 +158,7 @@ namespace GisEngine
 				virtual uint32 GetErrorCode() const = 0;
 				virtual void GetErrorText( CommonLib::CString& sStr, uint32 nCode) = 0;
 
-				virtual ITransactionPtr startTransaction() = 0;
+				virtual ITransactionPtr startTransaction(eTransactionType type) = 0;
 			
 
 				static IWorkspacePtr GetWorkspaceByID(uint32 nID);

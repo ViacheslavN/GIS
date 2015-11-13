@@ -50,7 +50,7 @@ namespace GisEngine
 			virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
 			virtual bool load(const GisCommon::IXMLNode* pXmlNode);
 
-			virtual	ITransactionPtr startTransaction();
+			virtual	ITransactionPtr startTransaction(eTransactionType type);
 
 	
 

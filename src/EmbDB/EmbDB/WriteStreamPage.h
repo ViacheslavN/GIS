@@ -10,8 +10,9 @@ namespace embDB
 	class WriteStreamPage : public CommonLib::IWriteStreamBase, public CommonLib::AutoRefCounter
 	{
 	public:
-		WriteStreamPage(embDB::IDBTransaction* pTran, uint32 nPageSize) :
-		  m_pTran(pTran), m_nPageHeader(-1), m_nBeginPos(0), m_nPageSize(nPageSize)
+		WriteStreamPage(embDB::IDBTransaction* pTran, uint32 nPageSize, uint16 nObjectPage = -1, uint16 nSubObjectPage = -1) :
+		  m_pTran(pTran), m_nPageHeader(-1), m_nBeginPos(0), m_nPageSize(nPageSize), 
+			  m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage)
 		  {
 			
 
@@ -41,9 +42,13 @@ namespace embDB
 
 			
 			  assert(m_nBeginPos < m_pPage->getPageSize());
-			  uint32 nSize = m_pPage->getPageSize() - m_nBeginPos;
+			 
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
-			  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
+			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+			  {
+				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage);
+			  }
+			   m_stream.seek(m_nBeginPos, CommonLib::soFromCurrent);
 			  return true;
 			 
 		  }
@@ -57,6 +62,10 @@ namespace embDB
 			  while(size)
 			  {
 				  int32 nFreeSize = m_stream.size() - m_stream.pos();
+				  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+				  {
+					  nFreeSize -= sFilePageHeader::size();  
+				  }
 
 				  if(size <= nFreeSize)
 				  {
@@ -136,6 +145,13 @@ namespace embDB
 
 		  void NextPage()
 		  {
+			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+			  {
+				  sFilePageHeader header(m_nObjectPage, m_nSubObjectPage);
+				  header.writeCRC32(m_stream);
+			
+			  }
+
 			  m_pTran->saveFilePage(m_pPage);
 			  FilePagePtr pPage = m_pTran->getNewPage(m_nPageSize);
 			  if(!pPage.get())
@@ -144,6 +160,10 @@ namespace embDB
 			  }
 			  m_pPage = pPage;
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
+			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+			  {
+				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage);
+			  }
 		  }
  
 		  void Save()
@@ -159,6 +179,8 @@ namespace embDB
 		int64 m_nPageHeader;
 		uint32 m_nPageSize;
     	CommonLib::FxMemoryWriteStream m_stream;
+		uint16 m_nObjectPage;
+		uint16 m_nSubObjectPage; 
 	
  
 	};

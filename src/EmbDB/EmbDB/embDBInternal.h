@@ -335,8 +335,6 @@ namespace embDB
 
 		virtual IndexFiledPtr GetIndex() = 0;
 		virtual void SetIndex(IndexFiled *pIndex) = 0;
-
-		virtual uint64 GetRowsCount() = 0; 
 	};
 
 	

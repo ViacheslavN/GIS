@@ -167,13 +167,12 @@ namespace embDB
 	{
 		indexTypes indexType;
 	};
-	enum eTransactionsType
+	enum eTransactionType
 	{
 		eTT_UNDEFINED=1,  //предпологатеься что тип может быть любой
-		eTT_INSERT = 2,
-		eTT_DELETE = 4,
-		eTT_SELECT = 8,
-		eTT_DDL = 16  
+		eTT_MODIFY = 2,
+		eTT_SELECT = 4,
+		eTT_DDL = 8  
 	};
 
 
@@ -401,7 +400,7 @@ namespace embDB
 		virtual ~ITransaction(){}
 
 
-		virtual eTransactionsType getType() const = 0;
+		virtual eTransactionType getType() const = 0;
 		virtual bool begin() = 0;
 		virtual bool commit() = 0;
 		virtual bool rollback() = 0;
@@ -432,7 +431,7 @@ namespace embDB
 		virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL)  = 0;
 		virtual bool create(const wchar_t* pszDbName, size_t nPageSize, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL)  = 0;
 		virtual bool close()  = 0;
-		virtual ITransactionPtr startTransaction(eTransactionsType trType) = 0;
+		virtual ITransactionPtr startTransaction(eTransactionType trType) = 0;
 		virtual bool closeTransaction(ITransaction* ) = 0;
 		virtual ISchemaPtr getSchema() const = 0;
 		

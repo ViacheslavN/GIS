@@ -65,7 +65,7 @@ void TestEmbDBWks()
 		GisEngine::GeoDatabase::ICursorPtr pCursor = pShapeFC->Search(&filter, true);
 		GisEngine::GeoDatabase::IRowPtr pRow;
 
-		GisEngine::GeoDatabase::ITransactionPtr pTran = pWks->startTransaction();
+		GisEngine::GeoDatabase::ITransactionPtr pTran = pWks->startTransaction(GisEngine::GeoDatabase::ttModify);
 		if(!pTran.get())
 			return;
  

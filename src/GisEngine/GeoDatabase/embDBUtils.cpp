@@ -346,6 +346,27 @@ namespace GisEngine
 				}
 				return true;
 			}
+
+			embDB::eTransactionType  TranType2EmbDbTranType(eTransactionType type)
+			{
+				switch(type)
+				{
+					case ttUndefined:
+						return embDB::eTT_UNDEFINED;
+						break;
+					case ttSelect:
+						return embDB::eTT_SELECT;
+						break;
+					case ttModify:
+						return embDB::eTT_MODIFY;
+						break;
+					case ttDDL:
+						return embDB::eTT_DDL;
+						break;
+				}
+
+				return embDB::eTT_UNDEFINED;
+			}
 		}
 	}
 }

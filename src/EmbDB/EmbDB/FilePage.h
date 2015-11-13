@@ -49,6 +49,11 @@ struct sFilePageHeader
 	}
 
 
+	sFilePageHeader(uint16 nObjectPageType, uint16 nSubObjectPageType) :
+	m_nObjectPageType(nObjectPageType), m_nSubObjectPageType(nSubObjectPageType), m_nCRC32(0), m_nCalcCRC32(0)
+	{}
+
+
 	static uint32 size() 
 	{
 		return 2* (sizeof(uint16) )+ 2 * sizeof(uint32);

@@ -18,7 +18,9 @@ namespace GisEngine
 
 			bool CreateTable(const wchar_t* pszTableName, IFields* pFields, embDB::IDatabase *pDatabase, CommonLib::CString* pOIDField = NULL, CommonLib::CString* pShapeField = NULL, 
 				CommonLib::CString* pAnno = NULL, CommonLib::eShapeType *pSPType = NULL, GisGeometry::ISpatialReferencePtr* pSPref = NULL);
-			
+		
+			embDB::eTransactionType  TranType2EmbDbTranType(eTransactionType type);
+
 		}
 	}
 }

@@ -108,7 +108,7 @@ namespace embDB
 		return m_Storage.close();
 	}
 
-	ITransactionPtr CDBTranManager::CreateTransaction(eTransactionsType trType)
+	ITransactionPtr CDBTranManager::CreateTransaction(eTransactionType trType)
 	{
 		CommonLib::CString sFileName;
 		long nDate = 0;
