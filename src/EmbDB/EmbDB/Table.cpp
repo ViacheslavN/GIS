@@ -18,6 +18,9 @@
 #include "SpatialIndexHandler.h"
 #include "CreateFields.h"
 #include "Fields.h"
+#include "ReadStreamPage.h"
+#include "WriteStreamPage.h"
+
 namespace embDB
 {
 	CTable::CTable(CDatabase* pDB, int64 nPageAddr) : m_pDB(pDB), 
@@ -348,23 +351,19 @@ namespace embDB
 			FilePagePtr pFieldInfoPage = pTran->getNewPage(nFieldInfoPageSize);
 			if(!pFieldInfoPage.get())
 				return false;
-			FilePagePtr pFieldPage = pTran->getNewPage(nFieldInfoPageSize);
-			if(!pFieldPage.get())
-				return false;
-			fi->m_nFieldPage = pFieldPage->getAddr();
-			fi->m_nFIPage = pFieldInfoPage->getAddr();
-			CommonLib::FxMemoryWriteStream stream;
-			stream.attach(pFieldInfoPage->getRowData(), pFieldInfoPage->getPageSize());
-			//stream.write((int64)DB_FIELD_INFO_SYMBOL);
-			sFilePageHeader header (stream, TABLE_PAGE, TABLE_FIELD_PAGE);
-			fi->Write(&stream);
-			pFieldInfoPage->setFlag(eFP_CHANGE, true);
-			header.writeCRC32(stream);
-			pTran->saveFilePage(pFieldInfoPage);
+ 
+			WriteStreamPage stream(pTran, nFieldInfoPageSize, TABLE_PAGE, TABLE_FIELD_PAGE);
+			stream.open(pFieldInfoPage->getAddr(), 0);
+			stream.write(fi->m_nFieldType);
+			stream.write(fi->m_nFieldDataType);
+			stream.write(fi->m_sFieldName); //TO DO write utf8
+			stream.write(fi->m_sFieldAlias);
 			pField->setFieldInfoType(fi);
-			bRet = pField->save(pFieldPage->getAddr(), pTran);
+			bRet = pField->save(&stream, pTran);
 			if(!m_nFieldsAddr.push(fi->m_nFIPage, pTran))
 				return false;
+
+			stream.Save();
 		}
 		else
 		{

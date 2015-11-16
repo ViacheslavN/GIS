@@ -169,7 +169,15 @@ namespace embDB
 		  void Save()
 		  {
 			  if(m_pPage.get())
+			  {
+				  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+				  {
+					  sFilePageHeader header(m_nObjectPage, m_nSubObjectPage);
+					  header.writeCRC32(m_stream);
+
+				  }
 				  m_pTran->saveFilePage(m_pPage);
+			  }
 		  }
 
 	public:

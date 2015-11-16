@@ -41,6 +41,13 @@ namespace embDB
 			,m_nOffsetY(0)
 			,m_nLenField(0)
 			,m_nBPTreeNodePageSize(COMMON_PAGE_SIZE)
+			,m_nCoordType(scuUnknown)
+			,m_dScaleX(1.)
+			,m_dScaleY(1.)
+			,m_dOffsetX(0.)
+			,m_dOffsetY(0.)
+			,m_ShapeType(CommonLib::shape_type_null)
+			,m_nSpatialType(stUnknown)
 		{
 
 		}
@@ -65,8 +72,18 @@ namespace embDB
 		uint32   m_nLenField;
 		uint32 m_nBPTreeNodePageSize;
 
+		double m_dScaleX;
+		double m_dScaleY;
+		double m_dOffsetX;
+		double m_dOffsetY;
 
-		virtual bool Read(CommonLib::FxMemoryReadStream* pStream)
+		eSpatialCoordinatesUnits m_nCoordType;
+		eSpatialType			m_nSpatialType;
+		CommonLib::eShapeType m_ShapeType;
+		CommonLib::bbox m_extent;
+
+
+	/*	virtual bool Read(CommonLib::FxMemoryReadStream* pStream)
 		{
 			size_t nlenStr = pStream->readInt32();
 			if(nlenStr == 0 || nlenStr > size_t(pStream->size() - pStream->pos()))
@@ -116,10 +133,10 @@ namespace embDB
 			pStream->write(m_nFieldPage);
 			pStream->write(m_bCheckCRC32);
 			pStream->write(m_nLenField);
-		}
+		}*/
 	};
 
-
+	/*
 	struct sSpatialFieldInfo : public sFieldInfo
 	{
 		sSpatialFieldInfo() :  m_nCoordType(scuUnknown), m_dScaleX(1.), m_dScaleY(1.), m_dOffsetX(0.), m_dOffsetY(0.), m_ShapeType(CommonLib::shape_type_null),
@@ -199,9 +216,9 @@ namespace embDB
 			pStream->write((TPoint)m_nExtent.m_minY);
 			pStream->write((TPoint)m_nExtent.m_maxX);
 			pStream->write((TPoint)m_nExtent.m_maxY);
-		}*/
+		}
 
-	};
+	};*/
 
 	struct IFieldIterator;
 	struct IIndexPageIterator;
