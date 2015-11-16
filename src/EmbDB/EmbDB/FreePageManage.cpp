@@ -10,6 +10,7 @@ namespace embDB
 		,m_pStorage(pStorage)
 		,m_pAlloc(pAlloc)
 		,m_ListFreeMaps(-1, 0, STORAGE_PAGE, STORAGE_LIST_FREEMAP_PAGE)
+		, m_nPageSize(8192)
  
 	{
 		
@@ -20,15 +21,15 @@ namespace embDB
 	}
 	bool CFreePageManager::init(int64 nRootAddr, bool bNew)
 	{
-		m_nAddrLen = (m_pStorage->getPageSize() - sFilePageHeader::size() - sizeof(uint64)) * 8;
+		m_nAddrLen = (m_nPageSize - sFilePageHeader::size() - sizeof(uint64)) * 8;
 		//m_nAddrLen = 100;
 		m_nRootPage = nRootAddr;
-		m_ListFreeMaps.setPageSize(m_pStorage->getPageSize());
+		m_ListFreeMaps.setPageSize(m_nPageSize);
 		m_FreeMaps.clear();
 		if(!bNew)
 			return load();
 	
-		FilePagePtr pListFreeBitMapsPage(m_pStorage->getNewPage());
+		FilePagePtr pListFreeBitMapsPage(m_pStorage->getNewPage(m_nPageSize));
 		
 		if(!pListFreeBitMapsPage.get())
 		{
@@ -44,7 +45,7 @@ namespace embDB
 			return false;
 		}*/
 		m_ListFreeMaps.setFirstPage(m_nFreeMapLists);
-		if(!AddFreeMap(m_pStorage->getNewPageAddr(), 0,  true))
+		if(!AddFreeMap(m_pStorage->getNewPageAddr(m_nPageSize), 0,  true))
 			return false;
 
 		{
@@ -63,7 +64,7 @@ namespace embDB
 	
 
 
-		FilePagePtr pRootPage(m_pStorage->getFilePage(m_nRootPage));
+		FilePagePtr pRootPage(m_pStorage->getFilePage(m_nRootPage, m_nPageSize));
 		if(!pRootPage.get())
 		{
 			//TO DO Logs
@@ -115,7 +116,7 @@ namespace embDB
 		else
 		{
 			FileFreeMap* pFreeMap =  new FileFreeMap(m_nAddrLen);
-			FilePagePtr pPage(m_pStorage->getFilePage(nAddr));
+			FilePagePtr pPage(m_pStorage->getFilePage(nAddr, m_nPageSize));
 			if(!pPage.get())
 			{
 				//TO DO Logs
@@ -131,7 +132,7 @@ namespace embDB
 	}
 	bool CFreePageManager::load()
 	{
-		FilePagePtr pRootPage(m_pStorage->getFilePage(m_nRootPage));
+		FilePagePtr pRootPage(m_pStorage->getFilePage(m_nRootPage, m_nPageSize));
 		if(!pRootPage.get())
 		{
 			//TO DO Logs
@@ -164,7 +165,7 @@ namespace embDB
 		while(!it.isNull())
 		{
 			FileFreeMap* pFreeMap =  new FileFreeMap(m_nAddrLen);
-			FilePagePtr pPage(m_pStorage->getFilePage(it.value()));
+			FilePagePtr pPage(m_pStorage->getFilePage(it.value(), m_nPageSize));
 			if(!pPage.get())
 			{
 				//TO DO Logs
@@ -231,7 +232,7 @@ namespace embDB
 			FileFreeMap* pFreeMap = it->second;
 			if(pFreeMap->m_bChange)
 			{
-				FilePagePtr pPage(m_pStorage->getFilePage(pFreeMap->m_nAddr, false));
+				FilePagePtr pPage(m_pStorage->getFilePage(pFreeMap->m_nAddr, m_nPageSize, false));
 				if(!pPage.get())
 				{
 					//TO DO Logs
@@ -279,7 +280,7 @@ namespace embDB
 		TMapFreeMaps::iterator it = m_FreeMaps.find(nBlocNum);
 		if(it == m_FreeMaps.end())
 		{
-			if(!AddFreeMap(m_pStorage->getNewPageAddr(), nBlocNum, true))
+			if(!AddFreeMap(m_pStorage->getNewPageAddr(m_nPageSize), nBlocNum, true))
 			{
 				//TO DO Log
 				return false;
@@ -310,7 +311,7 @@ namespace embDB
 
 		if(it == m_FreeMaps.end())
 		{
-			AddFreeMap(m_pStorage->getNewPageAddr(), nBlocNum, true);
+			AddFreeMap(m_pStorage->getNewPageAddr(m_nPageSize), nBlocNum, true);
 			it = m_FreeMaps.find(nBlocNum);
 			if(it == m_FreeMaps.end())
 			{
@@ -358,11 +359,11 @@ namespace embDB
 
 		TMapFreeMaps::iterator it =  m_FreeMaps.begin();
 		TMapFreeMaps::iterator end =  m_FreeMaps.end();
-		pTran->addUndoPage(m_pStorage->getFilePage(m_nFreeMapLists));
+		pTran->addUndoPage(m_pStorage->getFilePage(m_nFreeMapLists, m_nPageSize));
 		for (; it != end; ++it)
 		{
 			FileFreeMap* pFreeMap = it->second;
-			pTran->addUndoPage(m_pStorage->getFilePage(pFreeMap->m_nAddr));
+			pTran->addUndoPage(m_pStorage->getFilePage(pFreeMap->m_nAddr, m_nPageSize));
 
 		}
 		return true;
@@ -392,12 +393,12 @@ namespace embDB
 
 		int64 nPageList = stream.readInt64();
 		
-		TUndoVector UndoVector(nPageList, pTran->getPageSize(), TRANSACTION_PAGE, UNDO_FREEMAP_PAGES_LIST);
+		TUndoVector UndoVector(nPageList, m_nPageSize/*pTran->getPageSize()*/, TRANSACTION_PAGE, UNDO_FREEMAP_PAGES_LIST);
 		TUndoVector::iterator<IDBTransaction> it = UndoVector.begin(pTran);
 		while(!it.isNull())
 		{
 			const sUndoPageInfo& undoPageInfo = it.value();
-			FilePagePtr pTranPage = pTran->getFilePage(undoPageInfo.m_nBitMapAddInTran);
+			FilePagePtr pTranPage = pTran->getFilePage(undoPageInfo.m_nBitMapAddInTran, m_nPageSize);
 			pTranPage->setAddr(undoPageInfo.m_BitMapAddr);
 			m_pStorage->saveFilePage(pTranPage);
 		}
@@ -409,8 +410,8 @@ namespace embDB
 	{
 		sUndoPageInfo undoPageInfo;
 		undoPageInfo.m_BitMapAddr = nPageAddr;
-		FilePagePtr pTranPage = pTran->getTranNewPage();
-		FilePagePtr pStoragePage = m_pStorage->getFilePage(nPageAddr);
+		FilePagePtr pTranPage = pTran->getTranNewPage(m_nPageSize);
+		FilePagePtr pStoragePage = m_pStorage->getFilePage(nPageAddr, m_nPageSize);
 
 		if(!pTranPage.get())
 		{

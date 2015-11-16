@@ -33,7 +33,7 @@ namespace embDB
 			  {
 				  m_nPageHeader = nPageHeader;
 				  m_nBeginPos = nBeginPos;
-				  m_pPage = m_pTran->getFilePage(m_nPageHeader, false,  m_nPageSize);
+				  m_pPage = m_pTran->getFilePage(m_nPageHeader,  m_nPageSize, false);
 				  if(!m_pPage.get())
 					  return false; //TO DO Log;
 			  }
@@ -67,7 +67,7 @@ namespace embDB
 					  nFreeSize -= sFilePageHeader::size();  
 				  }
 
-				  if(size <= nFreeSize)
+				  if((int32)size <= nFreeSize)
 				  {
 					  m_stream.write_bytes(buffer + nPos, size);
 					  size = 0;
@@ -108,7 +108,7 @@ namespace embDB
 			  {
 				  int32 nFreeSize = m_stream.size() - m_stream.pos();
 
-				  if(size < nFreeSize)
+				  if((int32)size < nFreeSize)
 				  {
 					  m_stream.write_inverse(buffer + nPos, size);
 					  size = 0;
@@ -124,7 +124,7 @@ namespace embDB
 
 
 					  m_stream.write_inverse(buffer, nWriteSize);
-					  FilePagePtr pPage = m_pTran->getNewPage();
+					  FilePagePtr pPage = m_pTran->getNewPage(m_nPageSize);
 					  if(!pPage.get())
 					  {
 						  return; //TO DO Log

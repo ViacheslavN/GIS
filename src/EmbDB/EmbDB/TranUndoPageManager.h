@@ -26,9 +26,10 @@ namespace embDB
 			int64 nDBAddr;
 			int64 nTranAddr;
 			uint32 nFlags;
+			uint32 nPageSize;
 
-			sUndoPageInfo(int64 _nDBAddr = -1, int64 _nTranAddr = -1, uint32 _nFlags = 0) :
-				nDBAddr(_nDBAddr), nTranAddr(_nTranAddr), nFlags(+nFlags)
+			sUndoPageInfo(int64 _nDBAddr = -1, int64 _nTranAddr = -1, uint32 _nFlags = 0, uint32 _nPageSize = 0) :
+				nDBAddr(_nDBAddr), nTranAddr(_nTranAddr), nFlags(_nFlags), nPageSize(_nPageSize)
 			{
 
 			}
@@ -39,7 +40,7 @@ namespace embDB
 		{
 			m_undoPages.setRoot(nPage);
 		}
-		bool add(int64 nDBAddr, int64 nTranAddr, uint32 nFlags);
+		bool add(int64 nDBAddr, int64 nTranAddr, uint32 nFlags, uint32 nPageSize);
 		bool undo(CTranStorage *pTranStorage, IDBStorage* pDBStorage);
 		bool save();
 

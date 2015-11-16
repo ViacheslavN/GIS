@@ -33,7 +33,7 @@ namespace embDB
 
 
 		BPTreeNodeSetv2(int64 nParentAddr, CommonLib::alloc_t *pAlloc, int64 nPageAddr, bool bMulti, bool  bIsLeaf, bool bCheckCRC32,
-			TInnerCompressorParams *pInnerCompParams = NULL, TLeafCompressorParams *pLeafCompParams = NULL) :
+			uint32 nPageSize,	TInnerCompressorParams *pInnerCompParams = NULL, TLeafCompressorParams *pLeafCompParams = NULL) :
 		m_bIsLeaf(bIsLeaf)
 			,m_nPageAddr(nPageAddr)
 			,m_pAlloc(pAlloc)
@@ -48,6 +48,7 @@ namespace embDB
 			,m_pInnerCompParams(pInnerCompParams)
 			,m_pLeafCompParams(pLeafCompParams)
 			,m_bCheckCRC32(bCheckCRC32)
+			,m_nPageSize(nPageSize)
 		{
 			
 		}
@@ -61,7 +62,7 @@ namespace embDB
 			if(m_nPageAddr == -1)
 			{
 
-				FilePagePtr pFilePage = pTransactions->getNewPage();
+				FilePagePtr pFilePage = pTransactions->getNewPage(m_nPageSize);
 				if(!pFilePage.get())
 					return false;
 
@@ -78,7 +79,7 @@ namespace embDB
 				}
 			
 			}
-			FilePagePtr pFilePage =  pTransactions->getFilePage(m_nPageAddr);
+			FilePagePtr pFilePage =  pTransactions->getFilePage(m_nPageAddr, m_nPageSize);
 			assert(pFilePage.get());
 			if(!pFilePage.get())
 				return false; 
@@ -90,9 +91,9 @@ namespace embDB
 		{
 			FilePagePtr pFilePage(NULL);
 			if(m_nPageAddr != -1)
-				pFilePage = pTransactions->getFilePage(m_nPageAddr, false);
+				pFilePage = pTransactions->getFilePage(m_nPageAddr, m_nPageSize, false);
 			else
-				pFilePage = pTransactions->getNewPage();
+				pFilePage = pTransactions->getNewPage(m_nPageSize);
 
 			if(!pFilePage.get())
 				return false;
@@ -488,7 +489,7 @@ namespace embDB
 		TParentNodePtr m_pParent;
 		int32 m_nFoundIndex;
 		int64 m_nParent;
-
+		uint32 m_nPageSize;
 	};
 }
 #endif

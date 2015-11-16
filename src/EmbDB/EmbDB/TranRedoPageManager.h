@@ -20,12 +20,13 @@ namespace embDB
 		struct sRedoPageInfo
 		{
 
-			sRedoPageInfo(int64 _nDBAddr = -1, int64 _nTranAddr = -1, uint32 _nFlags = 0) :
-				nDBAddr(_nDBAddr), nTranAddr(_nTranAddr), nFlags(_nFlags)
+			sRedoPageInfo(int64 _nDBAddr = -1, int64 _nTranAddr = -1, uint32 _nFlags = 0, uint32 _nPageSize = 0) :
+				nDBAddr(_nDBAddr), nTranAddr(_nTranAddr), nFlags(_nFlags), nPageSize(_nPageSize)
 			{}
 			int64 nDBAddr;
 			int64 nTranAddr;
 			uint32 nFlags;
+			uint32 nPageSize;
 		};
 
 
@@ -41,8 +42,8 @@ namespace embDB
 		~CTranRedoPageManager();
 
 		void setFirstPage(int64 nPage, bool bCreate);
-		bool add_undo(int64 nDBAddr, int64 nTranAddr, int32 nFlags);
-		bool add(int64 nDBAddr, int64 nTranAddr, int32 nFlags);
+		bool add_undo(int64 nDBAddr, int64 nTranAddr, uint32 nFlags, uint32 nPageSize);
+		bool add(int64 nDBAddr, int64 nTranAddr, uint32 nFlags, uint32 nPageSize);
 		bool redo(CTranStorage *pTranStorage, IDBStorage* pDBStorage);
 		bool save();
 

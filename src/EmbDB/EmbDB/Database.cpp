@@ -31,51 +31,51 @@ namespace embDB
 	bool CDatabase::open(const wchar_t* pszName, DBTransactionMode mode, const wchar_t* pszWorkingPath, const  wchar_t* pszPassword)
 	{
 		close();
-		bool bOpen =  m_pStorage->open(pszName, false, false, false, false, DEFAULT_PAGE_SIZE);
+		bool bOpen =  m_pStorage->open(pszName, false, false, false, false/*, DEFAULT_PAGE_SIZE*/);
 		if(!bOpen)
 			return false;
 		bOpen = m_pTranManager->open(pszName, pszWorkingPath);
 		if(!bOpen)
 			return false;
-		int64 nfSize = m_pStorage->getFileSzie();
-		if(nfSize < DEFAULT_PAGE_SIZE)
+		int64 nfSize = m_pStorage->getFileSize();
+		if(nfSize < MIN_PAGE_SIZE)
 			return false;
-		m_pStorage->setPageSize(DEFAULT_PAGE_SIZE);
-		FilePagePtr pFile(m_pStorage->getFilePage(0));
+		//m_pStorage->setPageSize(DEFAULT_PAGE_SIZE);
+		FilePagePtr pFile(m_pStorage->getFilePage(0, MIN_PAGE_SIZE));
 		if(!pFile.get())
 			return false;
 
 		m_bOpen =  readRootPage(pFile.get());
 		return m_bOpen;
 	}
-	bool CDatabase::create(const wchar_t* pszName, size_t nPageSize, DBTransactionMode mode, const wchar_t* pszWorkingPath, const wchar_t* pszPassword)
+	bool CDatabase::create(const wchar_t* pszName, /*size_t nPageSize,*/ DBTransactionMode mode, const wchar_t* pszWorkingPath, const wchar_t* pszPassword)
 	{
 		close();
-		if(nPageSize <= 0 )
-			return false;
+		/*if(nPageSize <= 0 )
+			return false;*/
 		m_dbHeader.nCRC = 10;
 		m_dbHeader.nVersion = 1;
-		m_dbHeader.nPageSize = nPageSize;
+	//	m_dbHeader.nPageSize = nPageSize;
 		m_dbHeader.nMagicSymbol = DB_SYMBOL;
 		
 	 
-		bool bOpen = m_pStorage->open(pszName, false, false, true, false,  nPageSize);
+		bool bOpen = m_pStorage->open(pszName, false, false, true, false/*,  nPageSize*/);
 		if(!bOpen)
 			return false;
 		bOpen = m_pTranManager->open(pszName, pszWorkingPath);
 		if(!bOpen)
 			return false;
 
-		FilePagePtr pDBHeaderPage(m_pStorage->getNewPage(true));
+		FilePagePtr pDBHeaderPage(m_pStorage->getNewPage(MIN_PAGE_SIZE, true));
 		if(!pDBHeaderPage.get())
 			return false;
-		FilePagePtr pDBStoragePage(m_pStorage->getNewPage(true));
+		FilePagePtr pDBStoragePage(m_pStorage->getNewPage(MIN_PAGE_SIZE, true));
 		if(!pDBStoragePage.get())
 			return false;
-		FilePagePtr pDBShemaPage(m_pStorage->getNewPage(true));
+		FilePagePtr pDBShemaPage(m_pStorage->getNewPage(MIN_PAGE_SIZE, true));
 		if(!pDBShemaPage.get())
 			return false;
-		FilePagePtr pDBUserPage(m_pStorage->getNewPage(true));
+		FilePagePtr pDBUserPage(m_pStorage->getNewPage(MIN_PAGE_SIZE, true));
 		if(!pDBUserPage.get())
 			return false;
 
@@ -127,9 +127,9 @@ namespace embDB
 		m_dbHeader.Read(&stream);
 		if(m_dbHeader.nMagicSymbol != DB_SYMBOL)
 			return false;
-		if(m_dbHeader.nPageSize <= 0 )
-			return false;
-		m_pStorage->setPageSize(m_dbHeader.nPageSize);
+		//if(m_dbHeader.nPageSize <= 0 )
+		//	return false;
+		//m_pStorage->setPageSize(m_dbHeader.nPageSize);
 		m_pStorage->setStoragePageInfo(m_dbHeader.nStoragePage);
 		if(!m_pStorage->loadStorageInfo())
 			return false;

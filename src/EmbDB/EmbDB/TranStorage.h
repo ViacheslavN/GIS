@@ -14,11 +14,11 @@ namespace embDB
 	public:
 		CTranStorage(CommonLib::alloc_t *pAlloc, CTranPerfCounter *pCounter);
 		~CTranStorage();
-		bool open(const CommonLib::CString& sTranName, size_t nPageSize, bool bNew);
+		bool open(const CommonLib::CString& sTranName, /*size_t nPageSize,*/ bool bNew);
 		int64 saveFilePage(CFilePage* pPage, int64 nAddr = -1); //если nAddr = -1, то возвращаеться новый адрес
-		CFilePage* getFilePage(int64 nAddr, bool bRead = true, bool bDecrypt = true, uint32 nSize = 0);
-		CFilePage* getNewPage(uint32 nSize = 0);
-		int64 getNewPageAddr(uint32 nSize = 0);
+		CFilePage* getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bDecrypt = true);
+		CFilePage* getNewPage(uint32 nSize);
+		int64 getNewPageAddr(uint32 nSize);
 		bool close(bool bDelete = true);
 		size_t getPageSize(){return m_nPageSize;}
 		bool Flush();

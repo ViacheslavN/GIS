@@ -10,7 +10,7 @@ namespace embDB
 		,m_pStorage(pStorage)
 		,m_nCurPage(-1)
 		,m_nLastPos(0)
-		,m_undoPages(-1, pTran->getPageSize(), TRANSACTION_PAGE, UNDO_PAGES)
+		,m_undoPages(-1, 8192, TRANSACTION_PAGE, UNDO_PAGES)
 	{
 
 	}
@@ -18,9 +18,9 @@ namespace embDB
 	{
 
 	}
-	bool CTranUndoPageManager::add(int64 nDBAddr, int64 nTranAddr, uint32 nFlags)
+	bool CTranUndoPageManager::add(int64 nDBAddr, int64 nTranAddr, uint32 nFlags, uint32 nPageSize)
 	{
-		return m_undoPages.push<CTranStorage, CFilePage*>(sUndoPageInfo(nDBAddr, nTranAddr, nFlags), m_pStorage);
+		return m_undoPages.push<CTranStorage, CFilePage*>(sUndoPageInfo(nDBAddr, nTranAddr, nFlags, nPageSize), m_pStorage);
 	}
 
 	bool CTranUndoPageManager::save()
@@ -36,7 +36,7 @@ namespace embDB
 		while(!it.isNull())
 		{			
 			sUndoPageInfo& pageInfo = it.value();
-			CFilePage *pFilePage = pTranStorage->getFilePage(pageInfo.nTranAddr);
+			CFilePage *pFilePage = pTranStorage->getFilePage(pageInfo.nTranAddr, pageInfo.nPageSize);
 			if(!pFilePage)
 			{
 				m_pTran->error(L"TRAN: Can't get page from Tran");

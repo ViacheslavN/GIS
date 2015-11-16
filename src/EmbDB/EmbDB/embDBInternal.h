@@ -3,6 +3,12 @@
 
 #include "embDB.h"
 #include "FilePage.h"
+
+
+#define MIN_PAGE_SIZE	  512
+#define COMMON_PAGE_SIZE  8192
+#define MAX_PAGE_SIZE	  1048576
+
 namespace embDB
 {
 
@@ -34,6 +40,7 @@ namespace embDB
 			,m_nOffsetX(0)
 			,m_nOffsetY(0)
 			,m_nLenField(0)
+			,m_nBPTreeNodePageSize(COMMON_PAGE_SIZE)
 		{
 
 		}
@@ -56,6 +63,7 @@ namespace embDB
 		uint64	  m_nOffsetX;
 		uint64	  m_nOffsetY;
 		uint32   m_nLenField;
+		uint32 m_nBPTreeNodePageSize;
 
 
 		virtual bool Read(CommonLib::FxMemoryReadStream* pStream)
@@ -436,21 +444,20 @@ namespace embDB
 		IDBStorage(){}
 		virtual ~IDBStorage(){};
 
-		virtual bool open(const wchar_t* pszName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways, size_t nPageSize) = 0;
+		virtual bool open(const wchar_t* pszName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways/*, size_t nPageSize*/) = 0;
 		virtual bool close() = 0;
-		virtual void setPageSize(size_t nPageSize) = 0;
- 		virtual int64 getFileSzie() = 0;
+		//virtual void setPageSize(size_t nPageSize) = 0;
  
 
-		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0) = 0;
+		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true) = 0;
 		virtual bool dropFilePage(FilePagePtr pPage) = 0;
 		virtual bool dropFilePage(int64 nAddr) = 0;
-		virtual FilePagePtr getNewPage(bool bWrite = false, uint32 nSize = 0) = 0;
+		virtual FilePagePtr getNewPage(uint32 nSize, bool bWrite = false) = 0;
 		virtual bool saveFilePage(CFilePage* pPage, size_t nDataSize = 0,  bool ChandgeInCache = false) = 0;
 		virtual bool saveFilePage(FilePagePtr pPage, size_t nDataSize = 0,  bool ChandgeInCache = false) = 0;
 		virtual bool saveNewPage(FilePagePtr pPage) = 0;
-		virtual size_t getPageSize() const = 0;
-		virtual int64 getNewPageAddr(uint32* nType = NULL, uint32 nSize = 0) = 0;
+		//virtual size_t getPageSize() const = 0;
+		virtual int64 getNewPageAddr(uint32 nSize/*, uint32* nType = NULL*/) = 0;
 		//virtual FilePagePtr createPage(int64 nAddr) = 0;
 		virtual bool commit() = 0;
 		virtual bool removeFromFreePage(int64 nAddr) = 0;
@@ -532,16 +539,16 @@ namespace embDB
 		virtual bool restore(bool Force = false) = 0;
 
 
-		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0) = 0;
+		virtual FilePagePtr getFilePage(int64 nAddr,  uint32 nSize, bool bRead = true) = 0;
 		virtual void dropFilePage(FilePagePtr pPage) = 0;
-		virtual void dropFilePage(int64 nAddr) = 0;
-		virtual FilePagePtr getNewPage(uint32 nSize = 0) = 0;
+		virtual void dropFilePage(int64 nAddr, uint32 nSize) = 0;
+		virtual FilePagePtr getNewPage(uint32 nSize) = 0;
 		virtual void saveFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false) = 0;
-		virtual size_t getPageSize() const = 0;
+		//virtual size_t getPageSize() const = 0;
 
 
 		virtual FilePagePtr getTranNewPage(uint32 nSize = 0)= 0;
-		virtual FilePagePtr getTranFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0) = 0;
+		virtual FilePagePtr getTranFilePage(int64 nAddr, uint32 nSize, bool bRead = true) = 0;
 		virtual void saveTranFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false) = 0;
 		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false) = 0;
 

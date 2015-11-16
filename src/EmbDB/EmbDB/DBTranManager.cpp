@@ -29,15 +29,15 @@ namespace embDB
 		m_nTranID = 1;
 		CommonLib::CString sTranLogFileName = sFileName;
 		sTranLogFileName += L".tran_log";
-		bool bOpen = m_Storage.open(sTranLogFileName.cwstr(), false, false, false, true, 8192);
+		bool bOpen = m_Storage.open(sTranLogFileName.cwstr(), false, false, false, true);
 		if(!bOpen)
 			return false;
 
-		int64 nSize = m_Storage.getFileSzie();
+		int64 nSize = m_Storage.getFileSize();
 		if(nSize != 0)
 		{
 
-			FilePagePtr pInfoPage (m_Storage.getFilePage(0));
+			FilePagePtr pInfoPage (m_Storage.getFilePage(0, 8192)); //TO DO fix
 			if(!pInfoPage.get())
 				return false;
 			if(!LoadHeader(pInfoPage.get()))
@@ -57,8 +57,8 @@ namespace embDB
 		}
 		else
 		{
-			FilePagePtr pInfoPage(m_Storage.getNewPage());
-			int64 nBPRoot = m_Storage.getNewPageAddr();
+			FilePagePtr pInfoPage(m_Storage.getNewPage(8192));
+			int64 nBPRoot = m_Storage.getNewPageAddr(8192);
 			m_Info.nRootPageTree = nBPRoot;
 			SaveHeader(pInfoPage.get());
 			//m_pBPtree.reset(new TBTreePlus(nBPRoot, &m_Storage, m_pAlloc, 50));

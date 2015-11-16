@@ -97,11 +97,11 @@ namespace embDB
 		virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
 
-			FilePagePtr pLeafCompRootPage = pTran->getNewPage();
+			FilePagePtr pLeafCompRootPage = pTran->getNewPage(MIN_PAGE_SIZE);
 			TBTree::TLeafCompressorParams compParams;
 			compParams.setRootPage(pLeafCompRootPage->getAddr());
 			compParams.SetParams(m_SpatialFi);
-			compParams.SetMaxPageBlobSize(pTran->getPageSize()/15);
+			compParams.SetMaxPageBlobSize(/*pTran->getPageSize()/15*/100);//TO DO FIX
 			compParams.save(pTran);
 
 			if(!CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE, -1, pLeafCompRootPage->getAddr()))

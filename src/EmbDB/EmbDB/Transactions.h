@@ -59,6 +59,8 @@ namespace embDB
 		CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache = 10000);
 
 
+		static const uint32 nCommonPageSize = 8192;
+
 		
 
 		~CTransaction();
@@ -85,16 +87,16 @@ namespace embDB
 		bool close();
 		
 
-		virtual FilePagePtr getFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0);
+		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true);
 		virtual void dropFilePage(FilePagePtr pPage);
-		virtual void dropFilePage(int64 nAddr);
-		virtual FilePagePtr getNewPage(uint32 nSize = 0);
+		virtual void dropFilePage(int64 nAddr, uint32 nSize);
+		virtual FilePagePtr getNewPage(uint32 nSize);
 		virtual void saveFilePage(FilePagePtr pPage,  size_t nSize = 0, bool bChangeInCache = false);
-		virtual size_t getPageSize() const;
+		//virtual size_t getPageSize() const;
 		virtual eTransactionType getType() const {return (eTransactionType)m_nTranType;}
 
-		virtual FilePagePtr getTranNewPage(uint32 nSize = 0);
-		virtual FilePagePtr getTranFilePage(int64 nAddr, bool bRead = true, uint32 nSize = 0);
+		virtual FilePagePtr getTranNewPage(uint32 nSize);
+		virtual FilePagePtr getTranFilePage(int64 nAddr, uint32 nSize, bool bRead = true);
 		virtual void saveTranFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false);
 
 		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false);
@@ -126,7 +128,7 @@ namespace embDB
 
 		void setDeleteStorage(bool bDel){m_bDeleteStorage = bDel;}
 
-		FilePagePtr getFileDBPage(int64 nAddr, bool bRead = true);
+		FilePagePtr getFileDBPage(int64 nAddr, uint32 nPageSize, bool bRead = true);
 	private:
 		bool SaveDBPage(CFilePage* pPage);
 		bool SaveDBPage(int64 nAddr);
@@ -156,6 +158,8 @@ namespace embDB
 		bool m_bIsCompleted;
 		bool m_bIsBegin;
 		bool m_bDeleteStorage;
+
+		uint32 m_nPageSize;
 
 		TInnerTransactions m_InnerTran;
 

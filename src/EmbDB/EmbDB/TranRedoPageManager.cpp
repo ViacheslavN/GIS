@@ -11,8 +11,8 @@ namespace embDB
 	,m_pStorage(pStorage)
 	,m_nRootPage(-1)
 	,m_nLastPos(0)
-	,m_RedoPages(-1, pTran->getPageSize(), TRANSACTION_PAGE, REDO_PAGES)
-	,m_UndoPages(-1, pTran->getPageSize(), TRANSACTION_PAGE, REDO_PAGES)
+	,m_RedoPages(-1, COMMON_PAGE_SIZE, TRANSACTION_PAGE, REDO_PAGES)
+	,m_UndoPages(-1, COMMON_PAGE_SIZE, TRANSACTION_PAGE, REDO_PAGES)
 {
 
 }
@@ -20,14 +20,14 @@ CTranRedoPageManager::~CTranRedoPageManager()
 {
 
 }
-bool CTranRedoPageManager::add(int64 nDBAddr, int64 nTranAddr, int32 nFlags)
+bool CTranRedoPageManager::add(int64 nDBAddr, int64 nTranAddr, uint32 nFlags, uint32 nPageSize)
 {
-	sRedoPageInfo PageInfo(nDBAddr, nTranAddr, nFlags);
+	sRedoPageInfo PageInfo(nDBAddr, nTranAddr, nFlags, nPageSize);
 	return m_RedoPages.push<CTranStorage, CFilePage*>(PageInfo, m_pStorage);
 }
-bool CTranRedoPageManager::add_undo(int64 nDBAddr, int64 nTranAddr, int32 nFlags)
+bool CTranRedoPageManager::add_undo(int64 nDBAddr, int64 nTranAddr, uint32 nFlags, uint32 nPageSize)
 {
-	sRedoPageInfo PageInfo(nDBAddr, nTranAddr, nFlags);
+	sRedoPageInfo PageInfo(nDBAddr, nTranAddr, nFlags, nPageSize);
 	return m_UndoPages.push<CTranStorage, CFilePage*>(PageInfo, m_pStorage);
 }
 bool CTranRedoPageManager::save()
@@ -39,7 +39,7 @@ bool CTranRedoPageManager::save()
 	if(!bRet)
 		return false;
 
-	CFilePage *pPage = m_pStorage->getFilePage(m_nRootPage);
+	CFilePage *pPage = m_pStorage->getFilePage(m_nRootPage, COMMON_PAGE_SIZE);
 	if(!pPage)
 		return false; //TO DO Logs
 	CommonLib::FxMemoryWriteStream stream;	
@@ -81,7 +81,7 @@ bool  CTranRedoPageManager::redo(CTranStorage *pTranStorage, IDBStorage* pDBStor
 		while(!it.isNull())
 		{			
 			sRedoPageInfo& pageInfo = it.value();
-			FilePagePtr pPage(pTranStorage->getFilePage(pageInfo.nTranAddr));
+			FilePagePtr pPage(pTranStorage->getFilePage(pageInfo.nTranAddr, pageInfo.nPageSize));
 			if(!pPage.get())
 			{
 				m_pTran->error(L"TRAN: Can't get page from Tran");
@@ -128,12 +128,12 @@ void CTranRedoPageManager::setFirstPage(int64 nPage, bool bCreate)
 	m_nRootPage = nPage;
 	if(bCreate)
 	{
-		m_Header.nRedoBlock = m_pStorage->getNewPageAddr();
-		m_Header.nUndoBlock = m_pStorage->getNewPageAddr();
+		m_Header.nRedoBlock = m_pStorage->getNewPageAddr(COMMON_PAGE_SIZE);
+		m_Header.nUndoBlock = m_pStorage->getNewPageAddr(COMMON_PAGE_SIZE);
 	}
 	else
 	{
-		CFilePage *pPage = m_pStorage->getFilePage(m_nRootPage);
+		CFilePage *pPage = m_pStorage->getFilePage(m_nRootPage, COMMON_PAGE_SIZE);
 		if(!pPage)
 			return; //TO DO Logs
 		CommonLib::FxMemoryReadStream stream;	

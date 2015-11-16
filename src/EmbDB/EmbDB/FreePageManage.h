@@ -181,6 +181,7 @@ namespace embDB
 
 			TMapFreeMaps m_FreeMaps;
 			uint32 m_nAddrLen;
+			uint32 m_nPageSize;
 
 	
 	};

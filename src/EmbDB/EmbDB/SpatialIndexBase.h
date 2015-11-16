@@ -94,7 +94,7 @@ namespace embDB
 		  {
 
 			  int64 m_nFieldInfoPage = nAddr;
-			  FilePagePtr pPage = m_pDBTransactions->getFilePage(nAddr);
+			  FilePagePtr pPage = m_pDBTransactions->getFilePage(nAddr, MIN_PAGE_SIZE); //TO DO FIX
 			  if(!pPage.get())
 				  return false;
 			  CommonLib::FxMemoryReadStream stream;

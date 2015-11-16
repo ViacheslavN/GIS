@@ -12,7 +12,7 @@ namespace embDB
 	bool CompIndexParams::read(IDBTransaction *pTran)
 	{
 
-		FilePagePtr pPage = pTran->getFilePage(getRootPage());
+		FilePagePtr pPage = pTran->getFilePage(getRootPage(), 8192);
 		if(!pPage.get())
 			return false;//TO DO log error
 		CommonLib::FxMemoryReadStream stream;
@@ -42,7 +42,7 @@ namespace embDB
 	}
 	bool CompIndexParams::save(IDBTransaction *pTran)
 	{
-		FilePagePtr pPage = pTran->getFilePage(getRootPage());
+		FilePagePtr pPage = pTran->getFilePage(getRootPage(), 8192);
 		if(!pPage.get())
 			return false;//TO DO log error
 		CommonLib::FxMemoryWriteStream stream;

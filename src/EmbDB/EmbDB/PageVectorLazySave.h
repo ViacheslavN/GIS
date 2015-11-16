@@ -57,7 +57,7 @@ namespace embDB
 			_FilePage pNextPage(NULL);
 			if(!checkSize())
 			{
-				pNextPage = pStorage->getNewPage();
+				pNextPage = pStorage->getNewPage(m_nPageSize);
 				if(pNextPage == NULL)
 				{
 					//TO DO Logs
@@ -88,8 +88,8 @@ namespace embDB
 		struct iterator
 		{
 		public:
-			iterator(int64 nPage, _TStorage *pStorage, TReaderWriter *pRW, short nObjectPage, short nSubObjectPage)
-				: m_nPage(nPage), pStorage(pStorage), pRW(pRW), m_nObjectPage(nObjectPage),  m_nSubObjectPage(nSubObjectPage),  m_nNextPage(-1), m_nPageIDx(0)
+			iterator(int64 nPage, _TStorage *pStorage, TReaderWriter *pRW, uint32 nPageSize, short nObjectPage, short nSubObjectPage)
+				: m_nPage(nPage), pStorage(pStorage), pRW(pRW), m_nPageSize(nPageSize), m_nObjectPage(nObjectPage),  m_nSubObjectPage(nSubObjectPage),  m_nNextPage(-1), m_nPageIDx(0)
 			{
 
 			}
@@ -127,7 +127,7 @@ namespace embDB
 			{
 				if(m_nPage == -1 )
 					return false;
-				CFilePage *pPage = pStorage->getFilePage(m_nPage);
+				CFilePage *pPage = pStorage->getFilePage(m_nPage, m_nPageSize);
 				if(!pPage)
 				{
 					//TO DO Logs
@@ -170,11 +170,12 @@ namespace embDB
 			short m_nSubObjectPage;
 			int32 m_nPageIDx;
 			TVecValues m_vecCurValues;
+			uint32 m_nPageSize;
 		};
 		template <typename _TStorage>
 		iterator<_TStorage> begin(_TStorage *pStorage)
 		{
-			return iterator<_TStorage> (m_nRootPage, pStorage, &m_rw, m_nObjectPage, m_nSubObjectPage);
+			return iterator<_TStorage> (m_nRootPage, pStorage, &m_rw, m_nPageSize, m_nObjectPage, m_nSubObjectPage);
 		}
 	private:
 		int64 m_nRootPage;

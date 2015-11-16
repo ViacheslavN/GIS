@@ -35,7 +35,7 @@ namespace embDB
 			  {
 				  m_nPageHeader = nPageHeader;
 				  m_nBeginPos = nBeginPos;
-				  m_pPage = m_pTran->getFilePage(m_nPageHeader, true, m_nPageSize);
+				  m_pPage = m_pTran->getFilePage(m_nPageHeader, m_nPageSize, true);
 				  if(!m_pPage.get())
 					  return false; //TO DO Log;
 			  }
@@ -149,7 +149,7 @@ namespace embDB
 			  if(nNextPage == -1)
 				  return false; // TO DO Log
 
-			 m_pPage = m_pTran->getFilePage(nNextPage, true, m_nPageSize);
+			 m_pPage = m_pTran->getFilePage(nNextPage, m_nPageSize, true);
 			  if(!m_pPage.get())
 				  return false;  // TO DO Log
 

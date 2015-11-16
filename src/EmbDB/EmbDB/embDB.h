@@ -429,7 +429,7 @@ namespace embDB
 		IDatabase(){}
 		virtual ~IDatabase(){}
 		virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL)  = 0;
-		virtual bool create(const wchar_t* pszDbName, size_t nPageSize, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL)  = 0;
+		virtual bool create(const wchar_t* pszDbName,/* size_t nPageSize, */DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL)  = 0;
 		virtual bool close()  = 0;
 		virtual ITransactionPtr startTransaction(eTransactionType trType) = 0;
 		virtual bool closeTransaction(ITransaction* ) = 0;

@@ -50,7 +50,7 @@ namespace embDB
 
 		ValueFieldBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, const sFieldInfo *pFieldInfo) :
 			  m_pDBTransactions(pTransactions),
-			  m_tree(-1, pTransactions, pAlloc, 100), 
+			  m_tree(-1, pTransactions, pAlloc, 100, pFieldInfo->m_nBPTreeNodePageSize), 
 			  m_nBTreeRootPage(-1), m_pAlloc(pAlloc), m_pFieldInfo(pFieldInfo)
 			  {
 
@@ -75,7 +75,7 @@ namespace embDB
 			{
 
 				int64 m_nFieldInfoPage = nAddr;
-				FilePagePtr pPage = m_pDBTransactions->getFilePage(nAddr);
+				FilePagePtr pPage = m_pDBTransactions->getFilePage(nAddr, MIN_PAGE_SIZE);
 				if(!pPage.get())
 					return false;
 				CommonLib::FxMemoryReadStream stream;

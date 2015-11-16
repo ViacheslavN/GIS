@@ -41,7 +41,7 @@ namespace embDB
 			break;
 		case dtString:
 			{
-				if(fi->m_nLenField != 0 && fi->m_nLenField < pDB->getDBStorage()->getPageSize()/25)
+				if(fi->m_nLenField != 0 && fi->m_nLenField < /*pDB->getDBStorage()->getPageSize()/25*/100) //TO DO FIX
 					pField = (IDBFieldHandler*)new FixedStringValueFieldHandler(pDB->getBTreeAlloc());
 				else
 					pField = (IDBFieldHandler*)new StringValueFieldHandler(pDB->getBTreeAlloc());

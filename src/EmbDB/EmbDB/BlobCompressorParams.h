@@ -26,7 +26,7 @@ namespace embDB
 		}
 		virtual bool read(IDBTransaction *pTran)
 		{
-			FilePagePtr pPage = pTran->getFilePage(m_nRootPage);
+			FilePagePtr pPage = pTran->getFilePage(m_nRootPage, MIN_PAGE_SIZE);
 			if(!pPage.get())
 				return false; //TO DO Error
 			CommonLib::FxMemoryReadStream stream;
@@ -38,7 +38,7 @@ namespace embDB
 				return false;
 			}
 
-			m_nMaxPageBlobSize = (eStringCoding)stream.readIntu32();
+			m_nMaxPageBlobSize = stream.readIntu32();
 			m_nStreamPageInfo = stream.readInt64();
 
 			if(m_nStreamPageInfo != -1)
@@ -50,7 +50,7 @@ namespace embDB
 		}
 		virtual bool save(IDBTransaction *pTran)
 		{
-			FilePagePtr pPage = pTran->getFilePage(m_nRootPage);
+			FilePagePtr pPage = pTran->getFilePage(m_nRootPage, MIN_PAGE_SIZE);
 			if(!pPage.get())
 				return false; //TO DO Error
 
@@ -78,7 +78,7 @@ namespace embDB
 		{
 			if(m_StreamPageInfo.GetRootPage() == -1)
 			{
-				FilePagePtr pPage = pTran->getNewPage();
+				FilePagePtr pPage = pTran->getNewPage(MIN_PAGE_SIZE);
 				m_StreamPageInfo.SetRootPage(pPage->getAddr());
 				m_StreamPageInfo.Init(pTran);
 				m_nStreamPageInfo = pPage->getAddr();

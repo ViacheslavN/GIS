@@ -155,7 +155,7 @@ public:
 				SPageValues* pNext =  pNode->m_pNext;
 				int64 nNextPageAddr = pNext->m_nPageAddr;
 				pNext->m_nPageAddr = m_nFirstPage;
-				pStorage->dropFilePage(nNextPageAddr);
+				pStorage->dropFilePage(nNextPageAddr, m_nPageSize);
 				delete pNode;
 				m_pBeginNode = pNext;
 				return SavePage(m_pBeginNode, pStorage);
@@ -166,7 +166,7 @@ public:
 			assert(pNode->m_pPrev);
 			SPageValues* pPrev = pNode->m_pPrev;
 			pPrev = pNode->m_pNext;
-			pStorage->dropFilePage(pNode->m_nPageAddr);
+			pStorage->dropFilePage(pNode->m_nPageAddr, m_nPageSize);
 			delete pNode;
 			return SavePage(pPrev, pStorage);
 		}
@@ -213,7 +213,7 @@ public:
 		while(nPage != -1)
 		{
 		//	m_nLastPage = nPage;
-			FilePagePtr pPage(pStorage->getFilePage(nPage));
+			FilePagePtr pPage(pStorage->getFilePage(nPage, m_nPageSize));
 			if(!pPage.get())
 				return false;
 			CommonLib::FxMemoryReadStream stream;
@@ -251,13 +251,13 @@ public:
 		FilePagePtr pPage(NULL);
 		if(pNode->m_nPageAddr == -1)
 		{
-			pPage = pStorage->getNewPage();
+			pPage = pStorage->getNewPage(m_nPageSize);
 			if(!pPage.get())
 				return false;
 			pNode->m_nPageAddr = pPage->getAddr();
 		}
 		else
-			pPage = pStorage->getFilePage(pNode->m_nPageAddr);
+			pPage = pStorage->getFilePage(pNode->m_nPageAddr, m_nPageSize);
 		if(!pPage.get())
 			return false;
 		CommonLib::FxMemoryWriteStream stream;

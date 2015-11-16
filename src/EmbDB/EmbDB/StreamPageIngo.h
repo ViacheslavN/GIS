@@ -6,6 +6,7 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "WriteStreamPage.h"
 #include "ReadStreamPage.h"
+#include "DBConfig.h"
 namespace embDB
 {
 
@@ -42,7 +43,7 @@ namespace embDB
 			bool Save(embDB::IDBTransaction* pTran)
 			{
 
-				FilePagePtr pPage = pTran->getFilePage(m_nRootPage);
+				FilePagePtr pPage = pTran->getFilePage(m_nRootPage, MIN_PAGE_SIZE);
 				if(!pPage.get())
 					return false; //TO DO Error
 
@@ -69,7 +70,7 @@ namespace embDB
 
 			bool Load(IDBTransaction* pTran)
 			{
-				FilePagePtr pPage = pTran->getFilePage(m_nRootPage);
+				FilePagePtr pPage = pTran->getFilePage(m_nRootPage, MIN_PAGE_SIZE);
 				if(!pPage.get())
 					return false; //TO DO Error
 				CommonLib::FxMemoryReadStream stream;

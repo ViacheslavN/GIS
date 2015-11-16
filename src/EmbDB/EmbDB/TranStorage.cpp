@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "TranStorage.h"
+#include "embDBInternal.h"
 namespace embDB
 {
 	CTranStorage::CTranStorage(CommonLib::alloc_t *pAlloc, CTranPerfCounter *pCounter) : m_pAlloc(pAlloc), m_nLastAddr(-1),
-		m_pCounter(pCounter), m_pPageCrypto(NULL), m_nPageSize(8192)
+		m_pCounter(pCounter), m_pPageCrypto(NULL), m_nPageSize(MIN_PAGE_SIZE)
 	{
 
 	}
@@ -11,11 +12,11 @@ namespace embDB
 	{
 
 	}
-	bool CTranStorage::open(const CommonLib::CString& sTranName, size_t nPageSize, bool bNew)
+	bool CTranStorage::open(const CommonLib::CString& sTranName,/* size_t nPageSize,*/ bool bNew)
 	{
 		CommonLib::enOpenFileMode nOpenMode = bNew ? CommonLib::ofmCreateAlways : CommonLib::ofmOpenExisting ;
 		CommonLib::enAccesRights nReadWrite = CommonLib::aeReadWrite;;
-		m_nPageSize = nPageSize;
+		//m_nPageSize = nPageSize;
 		bool bRet =  m_pFile.openFile(sTranName.cwstr(), nOpenMode, nReadWrite, CommonLib::smNoMode);
 		m_sTranName = sTranName;
 		if(bRet)
@@ -56,7 +57,7 @@ namespace embDB
 		m_pCounter->WriteTranPage();
 		return nAddr;
 	}
-	CFilePage* CTranStorage::getFilePage(int64 nAddr, bool bRead, bool bDecrypt, uint32 nSize)
+	CFilePage* CTranStorage::getFilePage(int64 nAddr, uint32 nSize, bool bRead, bool bDecrypt)
 	{
 		if(nSize%m_nPageSize != 0)
 			return NULL;

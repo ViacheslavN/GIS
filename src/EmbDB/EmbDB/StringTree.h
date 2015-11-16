@@ -25,8 +25,8 @@ namespace embDB
 			TStringLeafNode<_TKey, _Transaction>,
 			BPStringTreeNodeMapv2<_TKey, _Transaction>	> TBase;
 
-		TBPStringTree(int64 nPageBTreeInfo, embDB::IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
-		TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, bMulti, bCheckCRC32), m_PageAlloc(pAlloc, 1024*1024, 2)
+		TBPStringTree(int64 nPageBTreeInfo, embDB::IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, uint32 nNodesPageSize,  bool bMulti = false, bool bCheckCRC32 = true) :
+		TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nNodesPageSize, bMulti, bCheckCRC32), m_PageAlloc(pAlloc, 1024*1024, 2)
 		{
 
 		}
@@ -38,7 +38,7 @@ namespace embDB
 
 		virtual TBTreeNode* CreateNode(int64 nAdd, bool bIsLeaf)
 		{
-			TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, nAdd, m_bMulti, bIsLeaf, m_bCheckCRC32,  m_InnerCompParams.get(),
+			TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, nAdd, m_bMulti, bIsLeaf, m_bCheckCRC32, m_nNodesPageSize,  m_InnerCompParams.get(),
 				m_LeafCompParams.get());
 			pNode->m_LeafNode.SetPageAlloc(&m_PageAlloc);
 			return pNode;

@@ -7,6 +7,7 @@
 #include "PageVector.h"
 #include "embDBInternal.h"
 #include <map>
+#include "DBConfig.h"
 namespace embDB
 {
 	class CDatabase;
@@ -60,6 +61,9 @@ namespace embDB
 
 
 		private:
+			static const uint32 nTableListPageSize = MIN_PAGE_SIZE;
+			static const uint32 nTableInfoPageSize = MIN_PAGE_SIZE;
+
 			bool LoadSchema();
 			bool saveHead(IDBTransaction *Tran);
 			bool readTablePage(CommonLib::IReadStream* pStream);
@@ -80,6 +84,7 @@ namespace embDB
 			int64 m_nTablesPage;
 			CDatabase* m_pDB;
 			TTablePages m_nTablesAddr;
+			uint32 m_nPageSize;
 			//int64 m_nLastTableID;
 
 

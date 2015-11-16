@@ -37,8 +37,8 @@ public:
 	typedef TBPMapIteratorV2<TKey, TValue, TComp,Transaction, TInnerCompess, TLeafCompess,
 		TInnerNode, TLeafNode, TBTreeNode> iterator;
 
-	TBPMapV2(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
-		TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, bMulti, bCheckCRC32 )
+	TBPMapV2(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, uint32 nNodesPageSize, bool bMulti = false, bool bCheckCRC32 = true) :
+		TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nNodesPageSize, bMulti, bCheckCRC32 )
 		{}
 
 

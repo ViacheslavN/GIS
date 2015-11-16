@@ -18,7 +18,7 @@ void insertINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 	double tmInsert = 0;
 	double treeCom = 0;
 	double tranCom  = 0;
-	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo(); 
 	tree.SetMinSplit(true);
 	time.start();
@@ -78,7 +78,7 @@ void searchINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 {
 	std::cout << "Search Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
-	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo();
 	int64 nNotFound = 0;
 	double searchTm  = 0;
@@ -157,7 +157,7 @@ void removeFromBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart,
 	double tmRemove = 0;
 	double treeCom = 0;
 	double tranCom  = 0;
-	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo();
 	time.start();
 	int64 i = nStart;
@@ -260,8 +260,8 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		int64 nStep = nCount/100;
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open(L"d:\\dbplus.data", false, false,  true, false, nPageSize);
-			embDB::FilePagePtr pPage = storage.getNewPage();
+			storage.open(L"d:\\dbplus.data", false, false,  true, false);
+			embDB::FilePagePtr pPage = storage.getNewPage(nPageSize);
 			nStorageInfoPage = pPage->getAddr();
 			storage.initStorage(pPage->getAddr());
 			pPage.release();
@@ -275,7 +275,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		}
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran tran1(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1);
@@ -303,7 +303,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		int64 mRemConst =nCount/2;
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran remtran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran5.data", &storage, 1);

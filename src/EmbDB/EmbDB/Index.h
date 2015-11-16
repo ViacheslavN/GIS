@@ -37,7 +37,7 @@ class CIndexBase
 public:
 	CIndexBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
 	  m_pDBTransactions(pTransactions),
-		  m_tree(-1, pTransactions, pAlloc, 100), 
+		  m_tree(-1, pTransactions, pAlloc, 100, 8192), //Temorary
 		  m_nBTreeRootPage(-1)
 	  {
 
@@ -52,7 +52,7 @@ public:
 	  {
 
 		  int64 m_nFieldInfoPage = nAddr;
-		  FilePagePtr pPage = m_pDBTransactions->getFilePage(nAddr);
+		  FilePagePtr pPage = m_pDBTransactions->getFilePage(nAddr, MIN_PAGE_SIZE); //TO DO fix
 		  if(!pPage.get())
 			  return false;
 		  CommonLib::FxMemoryReadStream stream;
@@ -104,14 +104,14 @@ public:
 	bool save(int64 nAddr, IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,  uint16 nObjectPageType, uint16 nSubObjectPageType  )
 	{
 		//m_nFieldInfoPage = nAddr;
-		FilePagePtr pPage(pTran->getFilePage(nAddr));
+		FilePagePtr pPage(pTran->getFilePage(nAddr, MIN_PAGE_SIZE));
 		if(!pPage.get())
 			return false;
 		CommonLib::FxMemoryWriteStream stream;
 		stream.attach(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream, nObjectPageType, nSubObjectPageType);
 		int64 m_nBTreeRootPage = -1;
-		FilePagePtr pRootPage(pTran->getNewPage());
+		FilePagePtr pRootPage(pTran->getNewPage(8192));
 		if(!pRootPage.get())
 			return false;
 		m_nBTreeRootPage = pRootPage->getAddr();

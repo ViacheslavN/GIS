@@ -90,7 +90,7 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 	double tmInsert = 0;
 	double treeCom = 0;
 	double tranCom  = 0;
-	TBPString tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	TBPString tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.SetMinSplit(true);
 	tree.loadBTreeInfo(); 
 	time.start();
@@ -180,7 +180,7 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 	double treeCom = 0;
 	double tranCom  = 0;
 	typedef embDB::TBPStringTree<int64, Tran> TBPString;
-	TBPString tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	TBPString tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo(); 
 	time.start();
 	int64 n = 0;
@@ -321,9 +321,9 @@ template<class TTransaction>
 int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPageSize, embDB::eStringCoding sc, uint32 nLen)
 {
 	embDB::CStorage storage( pAlloc, 10000);
-	if(!storage.open(pszName, false, false,  true, false, nPageSize))
+	if(!storage.open(pszName, false, false,  true, false))
 		return -1;
-	embDB::FilePagePtr pPage = storage.getNewPage();
+	embDB::FilePagePtr pPage = storage.getNewPage(nPageSize);
 	int64 intnStorageInfoPage = pPage->getAddr();
 	storage.initStorage(pPage->getAddr());
 	storage.saveStorageInfo();
@@ -344,7 +344,7 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 
 
 
-	TBMapString tree(pTreeRootPage->getAddr(), &tran, pAlloc, 100);
+	TBMapString tree(pTreeRootPage->getAddr(), &tran, pAlloc, 100, 8192);
 	tree.setCompPageInfo(-1, pLeafCompRootPage->getAddr());
 	tree.saveBTreeInfo(); 
 	tree.commit();
@@ -362,7 +362,7 @@ void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, 
 
 	{
 		embDB::CStorage storage( pAlloc, 10000);
-		if(!storage.open(L"d:\\db\\BPTreeString.data", false, false,  false, false, 8192))
+		if(!storage.open(L"d:\\db\\BPTreeString.data", false, false,  false, false))
 			return;
 		storage.setStoragePageInfo(0);
 		storage.loadStorageInfo();
@@ -374,7 +374,7 @@ void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, 
 
 	{
 		embDB::CStorage storage(pAlloc, 10000);
-		if(!storage.open(L"d:\\db\\BPTreeString.data", false, false,  false, false, 8192))
+		if(!storage.open(L"d:\\db\\BPTreeString.data", false, false,  false, false))
 			return;
 		storage.setStoragePageInfo(0);
 		storage.loadStorageInfo();

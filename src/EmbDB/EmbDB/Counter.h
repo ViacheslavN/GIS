@@ -10,8 +10,8 @@ namespace embDB
 	class TCounter
 	{
 		public:
-			TCounter(short nObjectPage, short nSubObjectPage, TValue val = 1, int64 nPage = -1) : m_nVal(val), m_nPage(-1),
-					m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage)
+			TCounter(short nObjectPage, short nSubObjectPage, uint32 nPageSize, TValue val = 1, int64 nPage = -1) : m_nVal(val), m_nPage(-1),
+					m_nPageSize(nPageSize), m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage)
 			{
 
 			}
@@ -31,7 +31,7 @@ namespace embDB
 			template<class TStorage>
 			bool load(TStorage *pStorage)
 			{
-				FilePagePtr pPage = pStorage->getFilePage(m_nPage);
+				FilePagePtr pPage = pStorage->getFilePage(m_nPage, m_nPageSize);
 				if(!pPage.get())
 					return false; //TO DO Log;
 
@@ -56,7 +56,7 @@ namespace embDB
 			template<class TStorage>
 			bool save(TStorage *pStorage)
 			{
-				FilePagePtr pPage = pStorage->getFilePage(m_nPage);
+				FilePagePtr pPage = pStorage->getFilePage(m_nPage, m_nPageSize);
 				if(!pPage.get())
 					return false; //TO DO Log;
 				CommonLib::FxMemoryWriteStream stream;
@@ -71,6 +71,7 @@ namespace embDB
 		private:
 			TValue m_nVal;
 			int64 m_nPage;
+			uint32 m_nPageSize;
 			short m_nObjectPage;
 			short m_nSubObjectPage;
 	};

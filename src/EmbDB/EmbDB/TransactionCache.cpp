@@ -87,7 +87,7 @@ namespace embDB
 				 if(!pPage.get())
 				 {
 					 assert(pi.m_nFileAddr != -1);
-					 pPage = m_pFileStorage->getFilePage(pi.m_nFileAddr);
+					 pPage = m_pFileStorage->getFilePage(pi.m_nFileAddr, pi.m_nPageSize);
 					 pPage->setFlag(pi.m_nFlags, true);
 					 pPage->setAddr(it->first);
 					 bRemPage = true;
@@ -140,7 +140,7 @@ namespace embDB
 						 assert(pi.m_nFileAddr != -1);
 					 }
 				 }
-				 pRepoPageManager->add(it->first, pi.m_nFileAddr, pi.m_nFlags);
+				 pRepoPageManager->add(it->first, pi.m_nFileAddr, pi.m_nFlags, pi.m_nPageSize);
 			 }
 				 
 		 }
@@ -201,7 +201,7 @@ namespace embDB
 	void  CTransactionsCache::AddPage(int64 nAddr, int64 nTranAddr, CFilePage* pPage, bool bAddBack)
 	{
 
-		m_pages.insert(std::make_pair(nAddr, sFileTranPageInfo(nTranAddr, pPage->getFlags())));
+		m_pages.insert(std::make_pair(nAddr, sFileTranPageInfo(nTranAddr, pPage->getFlags(), pPage->getPageSize())));
 		CheckCache();
 		m_Chache.AddElem(nAddr, pPage);
 	}
@@ -223,7 +223,7 @@ namespace embDB
 			m_Chache.AddElem(nAddr, pPage);
 			return pPage;
 		}
-		pPage = m_pFileStorage->getFilePage(PageInfo.m_nFileAddr, bRead, false, nSize);
+		pPage = m_pFileStorage->getFilePage(PageInfo.m_nFileAddr, nSize, bRead, false);
 		assert(pPage);
 		pPage->setAddr(nAddr);
 		pPage->setFlag(PageInfo.m_nFlags, true);

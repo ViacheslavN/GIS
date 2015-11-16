@@ -54,14 +54,14 @@ namespace embDB
 		}
 		virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
-			FilePagePtr pPage = pTran->getFilePage(nAddr);
+			FilePagePtr pPage = pTran->getFilePage(nAddr, MIN_PAGE_SIZE);
 			if(!pPage.get())
 				return false;
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attach(pPage->getRowData(), pPage->getPageSize());
 			sFilePageHeader header(stream, FIELD_PAGE, TABLE_INDEX_PAGE);
 			int64 m_nBTreeRootPage = -1;
-			FilePagePtr pRootPage(pTran->getNewPage());
+			FilePagePtr pRootPage(pTran->getNewPage(MIN_PAGE_SIZE));
 			if(!pRootPage.get())
 				return false;
 			m_nBTreeRootPage = pRootPage->getAddr();

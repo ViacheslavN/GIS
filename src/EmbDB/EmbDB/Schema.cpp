@@ -8,7 +8,7 @@ namespace embDB
 {
 	CSchema::CSchema(CDatabase *pDB) : m_pDB(pDB), m_pStorage(NULL), 
 		m_nAddr(-1), m_nTablesPage(-1), 
-		m_nTablesAddr(-1, 0, SCHEMA_PAGE, SCHEMA_TABLE_LIST_PAGE)
+		m_nTablesAddr(-1, 0, SCHEMA_PAGE, SCHEMA_TABLE_LIST_PAGE), m_nPageSize(MIN_PAGE_SIZE)
 	{
 
 	}
@@ -57,7 +57,7 @@ namespace embDB
 			}
 		}
 		
-		FilePagePtr pPage = pDBTran->getNewPage();
+		FilePagePtr pPage = pDBTran->getNewPage(nTableInfoPageSize);
 		if(!pPage.get())
 			return false;
 		CTable* pTable = new CTable(m_pDB, pPage.get(), pszTableName/*, m_nLastTableID++*/);
@@ -91,7 +91,7 @@ namespace embDB
 	bool CSchema::LoadSchema()
 	{
 
-		FilePagePtr pPage(m_pStorage->getFilePage(m_nAddr));
+		FilePagePtr pPage(m_pStorage->getFilePage(m_nAddr, m_nPageSize));
 		if(!pPage.get())
 			return false;
 
@@ -117,7 +117,7 @@ namespace embDB
 		if(m_nTablesPage == -1)
 			return true;
 		m_nTablesAddr.setFirstPage(m_nTablesPage);
-		m_nTablesAddr.setPageSize(m_pStorage->getPageSize());
+		m_nTablesAddr.setPageSize(nTableListPageSize/*m_pStorage->getPageSize()*/);
 		m_nTablesAddr.load(m_pStorage);
 		TTablePages::iterator it = m_nTablesAddr.begin();
 		while(!it.isNull())
@@ -151,9 +151,9 @@ namespace embDB
 		size_t nSize = pStream->readInt32();
 		if(nSize == 0)
 			return true;
-		int nPageSize = m_pStorage->getPageSize();
-		if(nSize > (nPageSize/sizeof(int64)) - 2)
-			return false;
+		//int nPageSize = m_pStorage->getPageSize();
+		//if(nSize > (nPageSize/sizeof(int64)) - 2)
+		//	return false;
 
 		for(size_t i = 0; i < nSize; ++i)
 		{
@@ -164,7 +164,7 @@ namespace embDB
 	}
 	bool CSchema::saveHead(IDBTransaction *pTran)
 	{
-		FilePagePtr pPage(pTran ? pTran->getFilePage(m_nAddr) : m_pStorage->getFilePage(m_nAddr));
+		FilePagePtr pPage(pTran ? pTran->getFilePage(m_nAddr, m_nPageSize) : m_pStorage->getFilePage(m_nAddr, m_nPageSize));
 		if(!pPage.get())
 			return false;
 
@@ -196,7 +196,7 @@ namespace embDB
 
 		if(m_nTablesPage == -1)
 		{
-			FilePagePtr pPage (pTran ?  pTran->getNewPage() : m_pStorage->getNewPage());
+			FilePagePtr pPage (pTran ?  pTran->getNewPage(m_nPageSize) : m_pStorage->getNewPage(m_nPageSize));
 			if(!pPage.get())
 				return false;
 			 m_nTablesPage = pPage->getAddr();

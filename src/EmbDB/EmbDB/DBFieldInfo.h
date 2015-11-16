@@ -25,14 +25,14 @@ namespace embDB
 			int64 nInnerCompParams = -1, int64 nLeafCompParams = -1)
 		{
 			//m_nFieldInfoPage = nAddr;
-			FilePagePtr pPage(pTran->getFilePage(nAddr));
+			FilePagePtr pPage(pTran->getFilePage(nAddr, MIN_PAGE_SIZE));
 			if(!pPage.get())
 				return false;
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attach(pPage->getRowData(), pPage->getPageSize());
 			sFilePageHeader header(stream, nObjectPageType, nSubObjectPageType);
 			int64 m_nBTreeRootPage = -1;
-			FilePagePtr pRootPage(pTran->getNewPage());
+			FilePagePtr pRootPage(pTran->getNewPage(8192)); // TO DO FIX
 			if(!pRootPage.get())
 				return false;
 			m_nBTreeRootPage = pRootPage->getAddr();

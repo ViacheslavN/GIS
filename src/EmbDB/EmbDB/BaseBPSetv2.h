@@ -16,6 +16,7 @@
 #include "BPIteratorSetV2.h"
 #include "CommonLibrary/delegate.h"
 #include "CacheLRU.h"
+#include "DBConfig.h"
 namespace embDB
 {
 
@@ -63,7 +64,7 @@ namespace embDB
 		};
 
 
-		TBPlusTreeSetV2(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
+		TBPlusTreeSetV2(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, uint32 nNodesPageSize, bool bMulti = false, bool bCheckCRC32 = true) :
 		  m_nPageBTreeInfo(nPageBTreeInfo), m_pTransaction(pTransaction), m_pAlloc(pAlloc), m_nChacheSize(nChacheSize)
 		 ,m_bChangeRoot(false), m_nRootAddr(-1), m_bMulti(bMulti)
 		 ,m_Cache(pAlloc)
@@ -75,6 +76,7 @@ namespace embDB
 	//	 ,m_BTreeInfo(bCheckCRC32)
 		 ,m_nStateTree(eBPTNoChange)
 		 ,m_bOneSplit(false)
+		 ,m_nNodesPageSize(nNodesPageSize)
 		{
 
 			m_NodeRemove.reset(new TRemoveNodeDelegate(this, &TBPlusTreeSetV2::deleteNodeRef));
@@ -190,7 +192,7 @@ namespace embDB
 				m_pTransaction->error(_T("BTREE: Error Load  BTreeInfoPage: -1"));
 				return false;
 			}
-			FilePagePtr pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo);
+			FilePagePtr pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo, MIN_PAGE_SIZE);
 			if(!pPage.get())
 			{
 				m_pTransaction->error(_T("BTREE: Error load BTreeInfoPage: %I64d"), (int64)m_nPageBTreeInfo);
@@ -235,7 +237,7 @@ namespace embDB
 			FilePagePtr pPage (NULL);
 			if(m_nPageBTreeInfo == -1)
 			{
-				pPage = m_pTransaction->getNewPage();
+				pPage = m_pTransaction->getNewPage(MIN_PAGE_SIZE);
 				if(pPage.get())
 					m_nPageBTreeInfo = pPage->getAddr();
 				if(m_nPageBTreeInfo == -1)
@@ -246,7 +248,7 @@ namespace embDB
 			}
 			else
 			{
-				pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo, false);
+				pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo, MIN_PAGE_SIZE, false);
 				if(!pPage.get())
 				{
 					m_pTransaction->error(_T("BTREE: Error save BTreeInfoPage: %I64d is not load"), (int64)m_nPageBTreeInfo);
@@ -322,7 +324,7 @@ namespace embDB
 	virtual TBTreeNode* CreateNode(int64 nAddr, bool bIsLeaf)
 	{
 							 
-			TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, nAddr, m_bMulti, bIsLeaf, m_bCheckCRC32,  m_InnerCompParams.get(),
+			TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, nAddr, m_bMulti, bIsLeaf, m_bCheckCRC32,  m_nNodesPageSize, m_InnerCompParams.get(),
 				m_LeafCompParams.get());
 		return pNode;
 	}
@@ -352,7 +354,7 @@ namespace embDB
 			TBTreeNode *pBNode = m_Cache.GetElem(nAddr, bNotMove);
 			if(!pBNode)
 			{
-				FilePagePtr pFilePage = m_pTransaction->getFilePage(nAddr);
+				FilePagePtr pFilePage = m_pTransaction->getFilePage(nAddr, m_nNodesPageSize);
 				assert(pFilePage.get());
 				if(!pFilePage.get())
 				{
@@ -388,7 +390,7 @@ namespace embDB
 	bool deleteNode(TBTreeNode* pNode)
 	{
 		//m_BTreeInfo.AddNode(-1, pNode->isLeaf());
-		m_pTransaction->dropFilePage(pNode->m_nPageAddr);
+		m_pTransaction->dropFilePage(pNode->m_nPageAddr, m_nNodesPageSize);
 		pNode->setFlags(REMOVE_NODE, true);
 		m_Cache.remove(pNode->m_nPageAddr);
 		//delete pNode;
@@ -432,6 +434,8 @@ namespace embDB
 	{
 		pStream->write(m_nRootAddr);
 		pStream->write(m_bMulti);
+		pStream->write(m_nNodesPageSize)
+
 		if(m_InnerCompParams.get())
 			m_InnerCompParams->save(pStream);
 		if(m_LeafCompParams.get())
@@ -444,6 +448,7 @@ namespace embDB
 	{
 		m_nRootAddr = pStream->readInt64();
 		m_bMulti = pStream->readBool();
+		m_nNodesPageSize = pStream->readIntu32();
 
 		if(!m_InnerCompParams.get())
 			m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(-1, m_pTransaction));
@@ -640,7 +645,7 @@ namespace embDB
 		TBTreeNodePtr CheckLeafNode(TBTreeNode *pNode, int *pInIndex = NULL)
 		{
 			TBTreeNodePtr pRetNode(pNode);
-			if(pNode->size() > m_pTransaction->getPageSize())
+			if(pNode->size() > m_nNodesPageSize)
 			{
 
 				TBTreeNodePtr pParentNode = getNode(pNode->parentAddr());
@@ -692,7 +697,7 @@ namespace embDB
 					return pRetNode;
 				}
 
-				if(pParentNode->size() > m_pTransaction->getPageSize())
+				if(pParentNode->size() > m_nNodesPageSize)
 				{
 					if(!splitInnerNode(pParentNode.get()))
 					{
@@ -813,7 +818,7 @@ namespace embDB
 			// Add median to the parent
 			int nIndex = pNodeParent->insertInInnerNode(m_comp, nMedianKey, pNodeNewRight->m_nPageAddr);
 			pNodeNewRight->setParent(pNodeParent.get(), nIndex);
-			if (pNodeParent->size() > m_pTransaction->getPageSize())
+			if (pNodeParent->size() > m_nNodesPageSize)
 			{
 				pNodeParent->setFlags(CHANGE_NODE, true);
 
@@ -1307,7 +1312,7 @@ namespace embDB
 		TBTreeNodePtr pParentNode = getNode(pNode->parentAddr());
 		if(!pParentNode.get())
 			return true;
-		if(pLeafNode->size() >  m_pTransaction->getPageSize()/2)
+		if(pLeafNode->size() >  m_nNodesPageSize/2)
 		{
 
 			if(pNode->foundIndex() != -1 && pParentNode->isKey(m_comp, key, pNode->foundIndex()))
@@ -1400,13 +1405,13 @@ namespace embDB
 		bool bUnion = false;
 		bool bAlignment = false;
 
-		if(nSumSize <  m_pTransaction->getPageSize())	
+		if(nSumSize <  m_nNodesPageSize)	
 			bUnion = true;
 		else if(nCnt > 0)
 			bAlignment = true;
 		else
 		{
-			if(nSumSize < m_pTransaction->getPageSize())
+			if(nSumSize < m_nNodesPageSize)
 			{
 				bUnion = true;
 			}
@@ -1819,7 +1824,7 @@ namespace embDB
 				continue;
 			}
 			pCheckNode->setFlags(CHECK_REM_NODE, false);
-			if(pCheckNode->size() >  m_pTransaction->getPageSize()/2)
+			if(pCheckNode->size() >  m_nNodesPageSize/2)
 			{
 				pCheckNode = getNode(pCheckNode->parentAddr());
 				continue;
@@ -1921,13 +1926,13 @@ namespace embDB
 			bool bAlignment = false;
 			int nCnt = ((pCheckNode->count() + pDonorNode->count()))/2 - pCheckNode->count();
 
-			if(nSumSize <   m_pTransaction->getPageSize())	
+			if(nSumSize <   m_nNodesPageSize)	
 				bUnion = true;
 			else if(nCnt > 0)
 				bAlignment = true;
 			else
 			{
-				if(nSumSize < m_pTransaction->getPageSize())
+				if(nSumSize < m_nNodesPageSize)
 				{
 					bUnion = true;
 				}
@@ -2066,6 +2071,9 @@ namespace embDB
 		TLink m_nRootAddr;
 		//TLink m_nRTreeStaticAddr;
 		TLink m_nPageBTreeInfo;
+
+
+		uint32 m_nNodesPageSize;
 
 		TLink m_nPageInnerCompInfo;
 		TLink m_nPageLeafPageCompInfo;

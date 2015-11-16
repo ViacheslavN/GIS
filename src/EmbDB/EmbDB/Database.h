@@ -14,13 +14,13 @@ namespace embDB
 	class CDBTranManager;
 	struct sDBHeader
 	{
-		sDBHeader() : nMagicSymbol(-1), nCRC(-1), nVersion(-1), nPageSize(DEFAULT_PAGE_SIZE), nShemaPage(-1), nStoragePage(-1), nUserPage(-1)
+		sDBHeader() : nMagicSymbol(-1), nCRC(-1), nVersion(-1), /*nPageSize(DEFAULT_PAGE_SIZE),*/ nShemaPage(-1), nStoragePage(-1), nUserPage(-1)
 		{}
 		~sDBHeader(){}
 		int64  nMagicSymbol;
 		int nCRC;
 		int nVersion;
-		int nPageSize;
+		//int nPageSize;
 		int64  nShemaPage;
 		int64  nStoragePage;
 		int64  nUserPage;
@@ -31,7 +31,7 @@ namespace embDB
 			nMagicSymbol = pStream->readInt64();
 			nCRC = pStream->readInt32();
 			nVersion= pStream->readInt32();
-			nPageSize = pStream->readInt32();
+			//nPageSize = pStream->readInt32();
 			nShemaPage = pStream->readInt64();
 			nStoragePage = pStream->readInt64();
 			nUserPage = pStream->readInt64();
@@ -41,7 +41,7 @@ namespace embDB
 			pStream->write(nMagicSymbol);
 			pStream->write(nCRC);
 			pStream->write(nVersion);
-			pStream->write(nPageSize);
+			//pStream->write(nPageSize);
 			pStream->write(nShemaPage);
 			pStream->write(nStoragePage);
 			pStream->write(nUserPage);
@@ -54,7 +54,7 @@ namespace embDB
 			CDatabase();
 			~CDatabase();
 			virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL);
-			virtual bool create(const wchar_t* pszDbName, size_t nPageSize, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL) ;
+			virtual bool create(const wchar_t* pszDbName, /*size_t nPageSize,*/ DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL) ;
 			virtual bool close();
 			virtual ITransactionPtr startTransaction(eTransactionType trType);
 			virtual bool closeTransaction(ITransaction* );

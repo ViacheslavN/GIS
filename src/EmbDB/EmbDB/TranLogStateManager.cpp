@@ -2,6 +2,7 @@
 #include "TranLogStateManager.h"
 #include "TranStorage.h"
 #include "CommonLibrary/FixedMemoryStream.h"
+#include "embDBInternal.h"
 namespace embDB
 {
 	CTranLogStateManager::CTranLogStateManager(CTranStorage *pStorage) : 
@@ -19,7 +20,7 @@ namespace embDB
 		m_nPageAddr = nPageAddr;
 		if(bRead)
 		{
-			CFilePage* pPage = m_pStorage->getFilePage(m_nPageAddr);
+			CFilePage* pPage = m_pStorage->getFilePage(m_nPageAddr, COMMON_PAGE_SIZE);
 			assert(pPage);
 			if(!pPage)
 				return false;

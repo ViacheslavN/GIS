@@ -9,7 +9,7 @@ namespace embDB
 		m_pAlloc(pAlloc)
 		,m_nMaxPageBuf(nCacheSize) 
 		,m_Chache(pAlloc)
-		,m_nPageSize(MIN_PAGE_SIZE)
+		,m_nBasePageSize(MIN_PAGE_SIZE)
 #ifdef USE_FREE_PAGES
 		,m_FreePageManager(this, pAlloc)
 #endif
@@ -20,13 +20,13 @@ namespace embDB
 		, m_nStorageInfo(-1)
 		, m_bCommitState(false)
 		, m_nCalcFileSize(0)
-		, m_MemCache(pAlloc)
+		//, m_MemCache(pAlloc)
 		, m_pPageCrypto(NULL)
 	 
 	{
 		
 	}
-	bool CStorage::open(const wchar_t* pszName, bool bReadOnly, bool bNew, bool bCreate, bool bOpenAlways, size_t nPageSize)
+	bool CStorage::open(const wchar_t* pszName, bool bReadOnly, bool bNew, bool bCreate, bool bOpenAlways/*, size_t nPageSize*/)
 	{
 		CommonLib::enOpenFileMode nOpenMode;
 		CommonLib::enAccesRights nReadWrite;
@@ -48,7 +48,7 @@ namespace embDB
 		}
 
 		nReadWrite = bReadOnly ? CommonLib::arRead : CommonLib::aeReadWrite;
-		m_nPageSize = nPageSize;
+		//m_nPageSize = nPageSize;
 		bool bRet =  m_pFile.openFile(pszName , nOpenMode, nReadWrite, CommonLib::smNoMode);
 		if(bRet)
 		{
@@ -58,21 +58,22 @@ namespace embDB
 			//m_nCalcFileSize = m_pFile.getFileSize();
 			//assert(m_pFile.getFileSize() % m_nPageSize == 0);
 			//m_nLastAddr = m_nCalcFileSize/m_nPageSize;
-			m_MemCache.init(m_nPageSize, m_nMaxPageBuf);
+
+		//	m_MemCache.init(m_nBasePageSize, m_nMaxPageBuf);
 		}
 
-		m_pBufPageCrypto.reset( new CFilePage(m_pAlloc, m_nPageSize, -1));
+		m_pBufPageCrypto.reset( new CFilePage(m_pAlloc, m_nBasePageSize, -1));
 		return bRet;
 	}
-	void CStorage::setPageSize(size_t nPageSize)
+	/*void CStorage::setPageSize(size_t nPageSize)
 	{
-		m_nPageSize = nPageSize;
+		m_nBasePageSize = nPageSize;
 		//m_nLastAddr = m_pFile.getFileSize();
 	}
 	size_t CStorage::getPageSize() const
 	{
-		return m_nPageSize;
-	}
+		return m_nBasePageSize;
+	}*/
 	bool CStorage::close()
 	{
 
@@ -112,33 +113,34 @@ namespace embDB
 			delete pPage;
 			it.next();
 		}
-		m_MemCache.clear();
+		//m_MemCache.clear();
 	}
-	int64 CStorage::getFileSzie()
+	int64 CStorage::getFileSize()
 	{
 		if(m_pFile.isValid())
 			return m_pFile.getFileSize();
 		return -1;
 	}
-	FilePagePtr CStorage::getFilePage(int64 nAddr, bool bRead, uint32 nSize){
+	FilePagePtr CStorage::getFilePage(int64 nAddr, uint32 nSize, bool bRead)
+	{
 		CFilePage* pPage = m_Chache.GetElem(nAddr);
 		if(pPage)
 			return FilePagePtr(pPage);
 
 
-		if((nSize % m_nPageSize) != 0 )
+		if((nSize % m_nBasePageSize) != 0 )
 			return FilePagePtr();
 		if(nSize == 0)
-			nSize = m_nPageSize;
+			nSize = m_nBasePageSize;
 
-		uint32 nCount = nSize/m_nPageSize;
+		uint32 nCount = nSize/m_nBasePageSize;
 
 
 		
-		pPage = new CFilePage(&m_MemCache, nSize, nAddr);
+		pPage = new CFilePage(/*&m_MemCache*/m_pAlloc, nSize, nAddr);
 		if(bRead)
 		{
-			bool bRet = m_pFile.setFilePos64(nAddr * m_nPageSize, CommonLib::soFromBegin);
+			bool bRet = m_pFile.setFilePos64(nAddr * m_nBasePageSize, CommonLib::soFromBegin);
 			assert(bRet);
 			uint32 nWCnt = m_pFile.readFile((void*)pPage->getRowData(),  nSize );
 			assert(nWCnt != 0);
@@ -223,15 +225,15 @@ namespace embDB
 	bool CStorage::isValid() const{
 		return m_pFile.isValid();
 	}
-	FilePagePtr CStorage::getNewPage(bool bWrite, uint32 nSize)
+	FilePagePtr CStorage::getNewPage(uint32 nSize, bool bWrite)
 	{
 
-		if((nSize % m_nPageSize) != 0 )
+		if((nSize % m_nBasePageSize) != 0 )
 			return FilePagePtr();
 		if(nSize == 0)
-			nSize = m_nPageSize;
+			nSize = m_nBasePageSize;
 
-		uint32 nCount = nSize/m_nPageSize;
+		uint32 nCount = nSize/m_nBasePageSize;
 
 #ifdef USE_FREE_PAGES
 		int64 nAddr = m_FreePageManager.getFreePage(m_bCommitState);
@@ -250,7 +252,7 @@ namespace embDB
 		m_nLastAddr += nCount;
 #endif
 		
-		CFilePage* pPage = new CFilePage(&m_MemCache, nSize, nAddr);
+		CFilePage* pPage = new CFilePage(/*&m_MemCache*/m_pAlloc, nSize, nAddr);
 #ifdef USE_FREE_PAGES
 		pPage->setFlag(eFP_FROM_FREE_PAGES, bFree);
 #endif
@@ -286,12 +288,12 @@ namespace embDB
 		m_Chache.AddElem(pPage->getAddr(), pPage);
 		return FilePagePtr(pPage);
 	}
-	int64 CStorage::getNewPageAddr(uint32* nType, uint32 nSize)
+	int64 CStorage::getNewPageAddr(uint32 nSize /*,uint32* nType*/)
 	{
-		if((nSize % m_nPageSize) != 0 )
+		if((nSize % m_nBasePageSize) != 0 )
 			return -1;
 
-		uint32 nCount = nSize != 0 ? nSize/m_nPageSize : 1;
+		uint32 nCount = nSize != 0 ? nSize/m_nBasePageSize : 1;
 		 
 #ifdef USE_FREE_PAGES
 		int64 nAddr = m_FreePageManager.getFreePage(m_bCommitState);
@@ -325,14 +327,14 @@ namespace embDB
 				pCachePage->copyFrom(pPage);
 			}
 		}
-		uint64 nFileAddr = pPage->getAddr() * m_nPageSize;
+		uint64 nFileAddr = pPage->getAddr() * m_nBasePageSize;
 		bool bRet = m_pFile.setFilePos64(nFileAddr, CommonLib::soFromBegin);
 		assert(bRet);
 		if(!bRet)
 			return false;
 
 		uint32 nWriteSize = 0;
-		if(m_nCalcFileSize < (nFileAddr + m_nPageSize) || nDataSize == 0)
+		if(m_nCalcFileSize < (nFileAddr + m_nBasePageSize) || nDataSize == 0)
 			nWriteSize = (uint32)pPage->getPageSize();
 		else
 			nWriteSize = nDataSize;
@@ -358,7 +360,7 @@ namespace embDB
 	bool CStorage::saveNewPage(FilePagePtr pPage)
 	{
 	//	assert(m_nPageSize == pPage->getPageSize());
-		uint64 nFileAddr = pPage->getAddr() * m_nPageSize;
+		uint64 nFileAddr = pPage->getAddr() * m_nBasePageSize;
 		bool bRet = m_pFile.setFilePos64(nFileAddr, CommonLib::soFromBegin);
 		assert(bRet);
 		if(!bRet)
@@ -394,7 +396,7 @@ namespace embDB
 	}
 	bool CStorage::saveStorageInfo()
 	{
-		FilePagePtr pPage = getFilePage(m_nStorageInfo);
+		FilePagePtr pPage = getFilePage(m_nStorageInfo, m_nBasePageSize);
 		if(!pPage.get())
 			return false;
 #ifdef USE_FREE_PAGES
@@ -419,7 +421,7 @@ namespace embDB
 	}
 	bool  CStorage::loadStorageInfo()
 	{
-		FilePagePtr pPage = getFilePage(m_nStorageInfo);
+		FilePagePtr pPage = getFilePage(m_nStorageInfo, m_nBasePageSize);
 		if(!pPage.get())
 			return false;
 		CommonLib::FxMemoryReadStream stream;
@@ -449,7 +451,7 @@ namespace embDB
 			stream.read((byte*)&buf[0], nlenStr * 2);
 			m_sTranName = CommonLib::CString(&buf[0]);
 		}
-		m_MemCache.init(m_nPageSize, m_nMaxPageBuf);
+		//m_MemCache.init(m_nBasePageSize, m_nMaxPageBuf);
 #ifdef USE_FREE_PAGES
 		return m_FreePageManager.init(nFreeRootPage, false);
 #else
@@ -463,24 +465,19 @@ namespace embDB
 #endif
 		return m_pFile.Flush();
 	}
-
-	int64 CStorage::getFileSize()  
-	{
-		return m_pFile.getFileSize();
-	}
 	bool CStorage::setFileSize(int64 nSize)
 	{
 		if(nSize == -1)
 		{
 			int64 nSize = m_pFile.getFileSize();
-			assert(nSize % m_nPageSize == 0);
-			m_nLastAddr = nSize/m_nPageSize;
+			assert(nSize % m_nBasePageSize == 0);
+			m_nLastAddr = nSize/m_nBasePageSize;
 			m_nCalcFileSize = m_nLastAddr;
 		}
 		else
 		{
-			assert(nSize % m_nPageSize == 0);
-			m_nLastAddr = (nSize / m_nPageSize) + 1;
+			assert(nSize % m_nBasePageSize == 0);
+			m_nLastAddr = (nSize / m_nBasePageSize) + 1;
 			
 		}
 		return true;

@@ -95,10 +95,10 @@ namespace embDB
 
 		virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
-			FilePagePtr pLeafCompRootPage = pTran->getNewPage();
+			FilePagePtr pLeafCompRootPage = pTran->getNewPage(MIN_PAGE_SIZE);
 			TBTree::TLeafCompressorParams compParams;
 			compParams.setRootPage(pLeafCompRootPage->getAddr());
-			compParams.SetMaxPageStringSize(pTran->getPageSize()/15);
+			compParams.SetMaxPageStringSize(/*pTran->getPageSize()/15*/100); //TO FO FIX 
 			compParams.SetStringLen(m_fi.m_nLenField);
 			compParams.save(pTran);
 
