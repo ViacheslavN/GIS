@@ -83,7 +83,7 @@ namespace embDB
 		CommonLib::bbox m_extent;
 
 
-	/*	virtual bool Read(CommonLib::FxMemoryReadStream* pStream)
+		virtual bool Read(CommonLib::FxMemoryReadStream* pStream)
 		{
 			size_t nlenStr = pStream->readInt32();
 			if(nlenStr == 0 || nlenStr > size_t(pStream->size() - pStream->pos()))
@@ -133,10 +133,10 @@ namespace embDB
 			pStream->write(m_nFieldPage);
 			pStream->write(m_bCheckCRC32);
 			pStream->write(m_nLenField);
-		}*/
+		}
 	};
 
-	/*
+	
 	struct sSpatialFieldInfo : public sFieldInfo
 	{
 		sSpatialFieldInfo() :  m_nCoordType(scuUnknown), m_dScaleX(1.), m_dScaleY(1.), m_dOffsetX(0.), m_dOffsetY(0.), m_ShapeType(CommonLib::shape_type_null),
@@ -216,9 +216,9 @@ namespace embDB
 			pStream->write((TPoint)m_nExtent.m_minY);
 			pStream->write((TPoint)m_nExtent.m_maxX);
 			pStream->write((TPoint)m_nExtent.m_maxY);
-		}
+		}*/
 
-	};*/
+	};
 
 	struct IFieldIterator;
 	struct IIndexPageIterator;
@@ -393,6 +393,10 @@ namespace embDB
 		virtual void setFieldInfoType(sFieldInfo* fi) = 0;
 		virtual bool save(int64 nAddr, IDBTransaction *pTran) = 0;
 		virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
+
+		virtual bool save(CommonLib::IWriteStream* pStream, const SFieldProp& fi, IDBTransaction *pTran) = 0;
+		virtual bool load(CommonLib::IReadStream* pStream, IDBTransaction *pTran) = 0;
+
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
 		virtual bool release(IValueField* pField) = 0;
 
@@ -523,7 +527,7 @@ namespace embDB
 		//	virtual bool insert(IRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
 		//	virtual bool insert(INameRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
 
-		virtual IFieldPtr createField(SFieldProp& sFP) = 0;
+		virtual IFieldPtr createField(SFieldProp& sFP, ITransaction *pTran = NULL) = 0;
 		virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true) = 0;
 		virtual bool deleteField(IField* pField) = 0;
 		virtual bool createIndex(const CommonLib::CString& sName, SIndexProp& ip) = 0;

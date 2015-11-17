@@ -683,29 +683,69 @@ namespace embDB
 	{
 		return m_sTableName;
 	}
-	IFieldPtr CTable::createField(SFieldProp& sFP)
+	IFieldPtr CTable::createField(SFieldProp& sFP, ITransaction *pTran )
 	{
 
-		sFieldInfo fi;
+		if(sFP.m_sFieldName.length() > nMaxFieldNameLen || sFP.m_sFieldAlias.length() > nMaxFieldAliasLen)
+			return IFieldPtr(); // TO DO Error
 
-		fi.m_nFieldType  = sFP.dataType;
-		fi.m_nFieldDataType = sFP.dateTypeExt;
-		fi.m_sFieldName = sFP.sFieldName;
-		fi.m_sFieldAlias = sFP.sFieldAlias;
-		fi.m_nLenField = sFP.nLenField;
-		IDBTransactionPtr pTran ((IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get());
-		pTran->begin();
+		if(m_pFields->FieldExists(sFP.m_sFieldName))
+			return IFieldPtr(); // TO DO Error
 
-		if(!addField(&fi, pTran.get(), true))
+		IDBTransactionPtr pDBTran;
+		if(pTran)
+		{
+			if(pTran->getType() != eTT_DDL)
+				return IFieldPtr(); // TO DO Error
+
+			pDBTran =  (IDBTransaction*)pTran;
+
+		}
+		else
+		{
+
+			pDBTran =  ((IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get());
+			pDBTran->begin();
+		}
+
+		FilePagePtr pFieldInfoPage = pDBTran->getNewPage(nFieldInfoPageSize);
+		if(!pFieldInfoPage.get())
+			return IFieldPtr(); // TO DO Error
+
+		WriteStreamPage stream(pDBTran.get(), nFieldInfoPageSize, TABLE_PAGE, TABLE_FIELD_PAGE);
+		stream.open(pFieldInfoPage->getAddr(), 0);
+		stream.write(sFP.m_dataType);
+
+
+		IDBFieldHandler* pField =  CreateValueField(sFP.m_dataType, m_pDB, pDBTran.get(), sFP.m_nLenField);
+		if(!pField)
+			return IFieldPtr(); // TO DO Error
+
+
+		if(pField->save(&stream, sFP, pDBTran.get()))
+		{
+			return IFieldPtr(); // TO DO Error
+		}
+
+		if(!m_nFieldsAddr.push(pFieldInfoPage->getAddr(), pTran))
+			return IFieldPtr(); // TO DO Error
+
+		stream.Save();
+
+		/*if(!addField(&fi, pTran.get(), true))
 		{	
 			pTran->rollback();
 			m_pDB->closeTransaction(pTran.get());
 			return IFieldPtr();
+		}*/
+
+		if(!pTran)
+		{
+			pDBTran->commit();
+			m_pDB->closeTransaction(pDBTran.get());
 		}
 
-		pTran->commit();
-		m_pDB->closeTransaction(pTran.get());
-		return getField(sFP.sFieldName);
+		return getField(sFP.m_sFieldName);
 	}
 	bool CTable::deleteField(IField* pField)
 	{

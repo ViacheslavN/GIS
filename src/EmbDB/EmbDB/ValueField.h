@@ -381,6 +381,18 @@ namespace embDB
 			{
 				return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE);
 			}
+
+			virtual bool save(CommonLib::IWriteStream* pStream,   const SFieldProp& sFP, IDBTransaction *pTran)
+			{
+				return CDBFieldHandlerBase::save<TField>(pStream, sFP, pTran, m_pAlloc);
+			}
+
+			virtual bool load(CommonLib::IReadStream* pStream,  IDBTransaction *pTran)
+			{
+				return true;
+			}
+
+
 			virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 			{
 				TField * pField = new  TField(pTransactions, m_pAlloc, &m_fi);

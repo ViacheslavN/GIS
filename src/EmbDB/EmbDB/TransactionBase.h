@@ -7,6 +7,7 @@
 #include "SimpleSearchCursor.h"
 #include "SimpleSelectCursor.h"
 #include "DeleteCursor.h"
+#include <set>
 namespace embDB
 {
 	class CDatabase;

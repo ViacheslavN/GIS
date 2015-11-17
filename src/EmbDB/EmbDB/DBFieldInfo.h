@@ -46,6 +46,35 @@ namespace embDB
 			return field.save();
 		}
 
+
+		template<class TField>
+		bool save(CommonLib::IWriteStream* pStream,   SFieldProp& sFP, IDBTransaction *pTran, CommonLib::alloc_t *pAlloc)
+		{
+
+			int nNameUtf8Len = sFP.m_sFieldName.calcUTF8Length();
+			int nAliasUtf8Len = sFP.m_sFieldAlias.calcUTF8Length();
+			std::vector<char> vecBufName(nNameUtf8Len + 1);
+			std::vector<char> vecAliasName(nAliasUtf8Len + 1);
+
+			sFP.m_sFieldName.exportToUTF8(&vecBufName[0], vecBufName.size());
+			sFP.m_sFieldAlias.exportToUTF8(&vecAliasName[0], vecAliasName.size());
+
+			pStream->write((byte*)&vecBufName[0], vecBufName.size());
+			pStream->write((byte*)&vecAliasName[0], vecAliasName.size());
+			pStream->write(sFP.m_nPageSize);
+			FilePagePtr pRootPage(pTran->getNewPage(sFP.m_nPageSize)); 
+			if(!pRootPage.get())
+				return false;
+			int64 nTreeRoot = pRootPage->getAddr();
+			TField field(pTran, pAlloc, NULL);
+			field.init(m_nBTreeRootPage, nInnerCompParams, nLeafCompParams);
+			return field.save();
+		}
+
+
+
+
+
 		template<class TField>
 		IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{

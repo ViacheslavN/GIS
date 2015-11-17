@@ -39,7 +39,10 @@ namespace embDB
 		static const uint32 nTableHeaderPageSize  = MIN_PAGE_SIZE;
 		static const uint32 nTableFieldsPageSize = MIN_PAGE_SIZE;
 		static const uint32 nTableIndexPageSize = MIN_PAGE_SIZE;
-		static const uint32 nFieldInfoPageSize = MIN_PAGE_SIZE;
+		static const uint32 nFieldInfoPageSize = 8192;
+
+		static const uint32 nMaxFieldNameLen = 128;
+		static const uint32 nMaxFieldAliasLen = 128;
 
 		public:
 			CTable(CDatabase* pDB, CFilePage* pFilePage, const CommonLib::CString& sTableName);
@@ -54,7 +57,7 @@ namespace embDB
 			virtual bool setOIDFieldName(const CommonLib::CString& sOIDName) ;
 			virtual const CommonLib::CString& getName() const ;
 			
-			virtual IFieldPtr createField(SFieldProp& sFP);
+			virtual IFieldPtr createField(SFieldProp& sFP, ITransaction *pTran = NULL);
 			virtual bool deleteField(IField* pField);
 			virtual bool createIndex(const CommonLib::CString& , SIndexProp& ip);
 			virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip);

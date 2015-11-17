@@ -152,14 +152,22 @@ namespace embDB
 
 	struct SFieldProp
 	{
-		CommonLib::CString sFieldName;
-		CommonLib::CString sFieldAlias;
-		eDataTypes dataType;
-		uint32 dateTypeExt;
-		uint32 nLenField;
-		CommonLib::CVariant devaultValue;
+		CommonLib::CString m_sFieldName;
+		CommonLib::CString m_sFieldAlias;
+		eDataTypes m_dataType;
+		uint32 m_nLenField;
+		CommonLib::CVariant m_devaultValue;
+		double m_dScale;
+		int m_nPrecision;
+		bool m_bNotNull;
+		bool m_bUNIQUE;
+		bool m_bCounter;
+		uint32 m_nPageSize;
 
-		SFieldProp() : nLenField(0), dataType(dtUnknown), dateTypeExt(dteSimple)
+
+
+		SFieldProp() : m_nLenField(0), m_dataType(dtUnknown), m_dScale(0), m_nPrecision(0),
+			m_bNotNull(false), m_bUNIQUE(false), m_bCounter(false), m_nPageSize(8192)
 		{}
 	};
 
