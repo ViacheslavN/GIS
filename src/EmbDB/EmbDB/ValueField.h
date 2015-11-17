@@ -48,10 +48,10 @@ namespace embDB
 			}
 		};
 
-		ValueFieldBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, const sFieldInfo *pFieldInfo) :
+		ValueFieldBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize) :
 			  m_pDBTransactions(pTransactions),
-			  m_tree(-1, pTransactions, pAlloc, 100, pFieldInfo->m_nBPTreeNodePageSize), 
-			  m_nBTreeRootPage(-1), m_pAlloc(pAlloc), m_pFieldInfo(pFieldInfo)
+			  m_tree(-1, pTransactions, pAlloc, 100, nPageSize), 
+			  m_nBTreeRootPage(-1), m_pAlloc(pAlloc)
 			  {
 
 
@@ -61,16 +61,11 @@ namespace embDB
 			typedef _TBTree TBTree;
 			typedef typename TBTree::iterator iterator;
 			typedef typename TBTree::TComp TComp;
+			typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
+			typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-
-			virtual const sFieldInfo* getFieldInfoType() const 
-			{
-				return m_pFieldInfo;
-			}
-			virtual bool save()
-			{
-				return m_tree.saveBTreeInfo();
-			}
+			
+			
 			virtual bool load(int64 nAddr, eTransactionType type)
 			{
 
@@ -98,21 +93,15 @@ namespace embDB
 			}
 
 
-			virtual bool init(int64 nBTreeRootPage, int64 nInnerCompPage = -1, int64 nLeafCompPage = -1)
+			virtual bool init(int64 nBTreeRootPage, TInnerCompressorParams *pInnerCompressorParams = NULL,
+				TLeafCompressorParams *pLeafCompressorParams = NULL)
 			{
 
 				m_nBTreeRootPage = nBTreeRootPage;
-				m_tree.setRootPage(m_nBTreeRootPage);
-				m_tree.setCompPageInfo(nInnerCompPage, nLeafCompPage);
-				if(! m_tree.init())
+				
+				if(!m_tree.init(m_nBTreeRootPage, pInnerCompressorParams, pLeafCompressorParams))
 					return false;
 
-				/*if(nInnerCompPage != -1 || nLeafCompPage != -1)
-				{
-					m_tree.setCompPageInfo(nInnerCompPage, nLeafCompPage);
-					m_tree.saveBTreeInfo(); 
-				}*/
-			
 				return true;
 			}
 
@@ -372,7 +361,7 @@ namespace embDB
 			typedef FieldIterator<TBTree> TFieldIterator;
 			typedef ValueField<FType, TBTree, TFieldIterator> TField;
 	
-			ValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
+			ValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp) : CDBFieldHandlerBase(pAlloc, pFieldProp)
 			{}
 			~ValueFieldHandler()
 			{}

@@ -17,10 +17,22 @@ namespace embDB
 	{
 	public:
 
-		CDBFieldHandlerBase(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc), m_pIndexHandler(0)
-		{}
+		CDBFieldHandlerBase(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp) : m_pAlloc(pAlloc), 
+			m_pIndexHandler(0), m_nBTreeRootPage(-1)
+		{
+			assert(pFieldProp);
+
+			m_FieldType = pFieldProp->m_dataType;
+			m_nLenField = pFieldProp->m_nLenField;
+			m_bNoNull = pFieldProp->m_bNotNull;
+			m_dScale = pFieldProp->m_dScale;
+			m_nPrecision = pFieldProp->m_nPrecision;
+			m_defValue  = pFieldProp->m_devaultValue;
+			m_nPageSize = pFieldProp->m_nPageSize;
+
+		}
 		~CDBFieldHandlerBase(){}
-		template<class TField>
+	/*	template<class TField>
 		bool save(int64 nAddr, IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,  uint16 nObjectPageType, uint16 nSubObjectPageType,
 			int64 nInnerCompParams = -1, int64 nLeafCompParams = -1)
 		{
@@ -44,31 +56,63 @@ namespace embDB
 			TField field(pTran, pAlloc, NULL);
 			field.init(m_nBTreeRootPage, nInnerCompParams, nLeafCompParams);
 			return field.save();
-		}
+
+			return true;
+		}*/
 
 
-		template<class TField>
-		bool save(CommonLib::IWriteStream* pStream,   SFieldProp& sFP, IDBTransaction *pTran, CommonLib::alloc_t *pAlloc)
+		template<class TField, class TInnerCompParams, class TLeafCompParams>
+		bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,
+			TInnerCompParams *pInnerCompParams = NULL, TLeafCompParams* pLeafCompParams = NULL)
 		{
 
-			int nNameUtf8Len = sFP.m_sFieldName.calcUTF8Length();
-			int nAliasUtf8Len = sFP.m_sFieldAlias.calcUTF8Length();
+			int nNameUtf8Len = m_sFieldName.calcUTF8Length();
+			int nAliasUtf8Len = m_sFieldAlias.calcUTF8Length();
 			std::vector<char> vecBufName(nNameUtf8Len + 1);
 			std::vector<char> vecAliasName(nAliasUtf8Len + 1);
 
 			sFP.m_sFieldName.exportToUTF8(&vecBufName[0], vecBufName.size());
 			sFP.m_sFieldAlias.exportToUTF8(&vecAliasName[0], vecAliasName.size());
 
+			pStream->write(nNameUtf8Len);
 			pStream->write((byte*)&vecBufName[0], vecBufName.size());
+			pStream->write(nAliasUtf8Len);
 			pStream->write((byte*)&vecAliasName[0], vecAliasName.size());
-			pStream->write(sFP.m_nPageSize);
-			FilePagePtr pRootPage(pTran->getNewPage(sFP.m_nPageSize)); 
-			if(!pRootPage.get())
+			pStream->write(m_nPageSize);
+			pStream->write(m_nPrecision);
+			pStream->write(m_dScale);
+
+
+			FilePagePtr pBPRootPage(pTran->getNewPage(MIN_PAGE_SIZE)); 
+			if(!pBPRootPage.get())
 				return false;
-			int64 nTreeRoot = pRootPage->getAddr();
-			TField field(pTran, pAlloc, NULL);
-			field.init(m_nBTreeRootPage, nInnerCompParams, nLeafCompParams);
-			return field.save();
+			int64 m_nBTreeRootPage = pBPRootPage->getAddr();
+			pStream->write(m_nBTreeRootPage);
+
+			TField field(pTran, pAlloc, m_nPageSize);
+			field.init(m_nBTreeRootPage, pInnerCompParams, pLeafCompParams);
+		}
+		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage)
+		{
+			int nNameUtf8Len = pStream->readIntu32();
+			int nAliasUtf8Len = pStream->readIntu32();
+			if(nNameUtf8Len != 0)
+			{
+				std::vector<char> vecBufName(nNameUtf8Len + 1);
+				pStream->read((byte*)&vecBufName[0], vecBufName.size());
+				m_sFieldName.loadFromUTF8(&vecBufName[0]);
+			}
+			if(nAliasUtf8Len != 0)
+			{
+				std::vector<char> vecAliasName(nAliasUtf8Len + 1);
+				pStream->read((byte*)&vecAliasName[0], vecAliasName.size());
+				m_sFieldName.loadFromUTF8(&vecAliasName[0]);
+			}
+			m_nPageSize = pStream->readIntu32();
+			m_nPrecision = pStream->readInt32();
+			m_dScale = pStream->readDouble();
+
+			return true;
 		}
 
 
@@ -78,8 +122,8 @@ namespace embDB
 		template<class TField>
 		IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
-			TField * pField = new  TField(pTransactions, m_pAlloc, &m_fi);
-			pField->load(m_fi.m_nFieldPage, pTransactions->getType());
+			TField * pField = new  TField(pTransactions, m_pAlloc, m_nPageSize);
+			pField->load(m_nRootBPTreePage, pTransactions->getType());
 			if(m_pIndexHandler.get())
 			{
 				IndexFiledPtr pIndex = m_pIndexHandler->getIndex(pTransactions, pStorage);
@@ -112,43 +156,52 @@ namespace embDB
 
 		virtual eDataTypes getType() const
 		{
-			return (eDataTypes)m_fi.m_nFieldType;
+			return m_FieldType;
 		}
 		virtual const CommonLib::CString& getName() const
 		{
-			return m_fi.m_sFieldName;
+			return m_sFieldName;
 		}
 		virtual const CommonLib::CString& getAlias() const
 		{
-			return m_fi.m_sFieldAlias;
+			return m_sFieldAlias;
 		}
 		virtual uint32 GetLength()	const
 		{
-			return m_fi.m_nLenField;
+			return m_nLenField;
 		}
-		virtual bool GetIsNotEmpty() const
+		virtual bool GetIsNotNull() const
 		{
-			return (m_fi.m_nFieldDataType&dteIsNotEmpty) != 0;
+			return m_bNoNull;
 		}
-		virtual sFieldInfo* getFieldInfoType()
+	
+		virtual double GetScale() const
 		{
-			return &m_fi;
+			return m_dScale;
 		}
-		virtual void setFieldInfoType(sFieldInfo* fi)
+		virtual const CommonLib::CVariant& 	GetDefaultValue() const
 		{
-			assert(fi);
-			m_fi = *fi;
+			return m_defValue;
+		}
+		virtual int  GetPrecision() const
+		{
+			return m_nPrecision;
 		}
 		
-		virtual bool load(int64 nAddr, IDBStorage *pStorage)
-		{
-			return true;
-		}
-
+		
 	protected:
-		sFieldInfo m_fi;
+		CommonLib::CString m_sFieldName;
+		CommonLib::CString m_sFieldAlias;
+		eDataTypes			m_FieldType;
+		uint32				m_nLenField;
+		bool				m_bNoNull;
+		double				m_dScale;
+		int32				m_nPrecision;
+		uint32				m_nPageSize;
+		CommonLib::CVariant m_defValue;
 		CommonLib::alloc_t* m_pAlloc;
 		IDBIndexHandlerPtr m_pIndexHandler;
+		uint64				m_nBTreeRootPage;
 	};
 
  

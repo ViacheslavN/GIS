@@ -39,7 +39,7 @@ namespace embDB
 		static const uint32 nTableHeaderPageSize  = MIN_PAGE_SIZE;
 		static const uint32 nTableFieldsPageSize = MIN_PAGE_SIZE;
 		static const uint32 nTableIndexPageSize = MIN_PAGE_SIZE;
-		static const uint32 nFieldInfoPageSize = 8192;
+		static const uint32 nFieldInfoPageSize = MIN_PAGE_SIZE;
 
 		static const uint32 nMaxFieldNameLen = 128;
 		static const uint32 nMaxFieldAliasLen = 128;

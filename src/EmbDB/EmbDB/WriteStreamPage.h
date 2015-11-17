@@ -21,6 +21,21 @@ namespace embDB
 
 		  }
 
+		  bool open(FilePagePtr pPage,  uint32 nBeginPos = 0)
+		  {
+			    m_nBeginPos = nBeginPos;
+			  assert(m_nBeginPos < m_pPage->getPageSize());
+
+			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
+			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+			  {
+				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage);
+			  }
+			  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
+			  return true;
+		  }
+
+
 		  bool open(int64 nPageHeader, uint32 nBeginPos, bool bReopen = false)
 		  {
 			  if(nPageHeader == -1)
@@ -47,7 +62,7 @@ namespace embDB
 			  {
 				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage);
 			  }
-			   m_stream.seek(m_nBeginPos, CommonLib::soFromCurrent);
+			   m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
 			  return true;
 			 
 		  }

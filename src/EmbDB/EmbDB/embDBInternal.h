@@ -12,16 +12,7 @@
 namespace embDB
 {
 
-	enum eSpatialType
-	{
-		stUnknown = 0,
-		stPoint16,
-		stPoint32,
-		stPoint64,
-		stRect16,
-		stRect32,
-		stRect64
-	};
+	
 	
 	struct sFieldInfo
 	{
@@ -340,7 +331,7 @@ namespace embDB
 	public:
 		IValueField() {}
 		virtual ~IValueField() {}
-		virtual const sFieldInfo* getFieldInfoType() const = 0;
+ 
 		//virtual bool insert (uint64 nOID, IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
 		//virtual uint64 insert (IVariant* pFieldVal, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL) = 0;
 
@@ -389,13 +380,10 @@ namespace embDB
 	public:
 		IDBFieldHandler(){}
 		~IDBFieldHandler(){}
-		virtual sFieldInfo* getFieldInfoType() = 0;
-		virtual void setFieldInfoType(sFieldInfo* fi) = 0;
-		virtual bool save(int64 nAddr, IDBTransaction *pTran) = 0;
-		virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
+
 
 		virtual bool save(CommonLib::IWriteStream* pStream, const SFieldProp& fi, IDBTransaction *pTran) = 0;
-		virtual bool load(CommonLib::IReadStream* pStream, IDBTransaction *pTran) = 0;
+		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage) = 0;
 
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
 		virtual bool release(IValueField* pField) = 0;
@@ -408,6 +396,22 @@ namespace embDB
 
 		virtual bool isCanBeRemoving() = 0;
 
+	};
+
+	struct IDBShapeFieldHandler : public IDBFieldHandler
+	{
+		IDBShapeFieldHandler(){}
+		~IDBShapeFieldHandler(){}
+
+
+		virtual eShapeType GetShapeType() const = 0;
+		virtual eSpatialType GetPointType() const = 0;
+		virtual eSpatialCoordinatesUnits GetUnits() const = 0;
+		virtual const CommonLib::bbox& GetBoundingBox() const = 0;
+		virtual double GetOffsetX()  const = 0;
+		virtual double GetOffsetY()  const = 0;
+		virtual double GetScaleX()  const = 0;
+		virtual double GetScaleY()  const = 0;
 	};
 	
 	/*struct ICounterFiled: public CommonLib::RefCounter

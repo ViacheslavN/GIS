@@ -6,7 +6,7 @@
 #include "CommonLibrary/MemoryStream.h"
 #include "CommonLibrary/IRefCnt.h"
 #include "CommonLibrary/Variant.h"
-
+#include "CommonLibrary/BoundaryBox.h"
 namespace embDB
 {
 	enum eDataTypes
@@ -33,7 +33,16 @@ namespace embDB
 	};
 
 
-
+	enum eSpatialType
+	{
+		stUnknown = 0,
+		stPoint16,
+		stPoint32,
+		stPoint64,
+		stRect16,
+		stRect32,
+		stRect64
+	};
 		
 
 	struct STypeSize
@@ -211,6 +220,7 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(IStatement); 
 	COMMON_LIB_REFPTR_TYPEDEF(ITransaction); 
 	COMMON_LIB_REFPTR_TYPEDEF(IDatabase); 
+
 	struct IField: public CommonLib::AutoRefCounter
 	{
 	public:
@@ -220,10 +230,28 @@ namespace embDB
 		virtual const CommonLib::CString& getName() const = 0;
 		virtual const CommonLib::CString& getAlias() const = 0;
 		virtual uint32 GetLength()	const = 0;
-		virtual bool GetIsNotEmpty() const = 0;
-
+		virtual bool GetIsNotNull() const = 0;
+		virtual double GetScale() const = 0;
+		virtual const CommonLib::CVariant& 	GetDefaultValue() const  = 0;
+		virtual int  GetPrecision() const  = 0;
 	};
 
+
+	struct IShapeField
+	{
+		IShapeField(){}
+		virtual ~IShapeField(){}
+
+		virtual eShapeType GetShapeType() const = 0;
+		virtual eSpatialType GetPointType() const = 0;
+		virtual eSpatialCoordinatesUnits GetUnits() const = 0;
+		virtual const CommonLib::bbox& GetBoundingBox() const = 0;
+		virtual double GetOffsetX()  const = 0;
+		virtual double GetOffsetY()  const = 0;
+		virtual double GetScaleX()  const = 0;
+		virtual double GetScaleY()  const = 0;
+
+	};
 
 	struct IFields: public CommonLib::AutoRefCounter
 	{

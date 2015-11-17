@@ -4,55 +4,55 @@
 namespace embDB
 {
 
-	static IDBFieldHandler* CreateValueField(eDataTypes nFieldType, CDatabase* pDB, IDBTransaction *pTran, uint32 nFieldLen)
+	static IDBFieldHandler* CreateValueField(const SFieldProp* pFieldProp, CDatabase* pDB, IDBTransaction *pTran)
 	{
 		IDBFieldHandler* pField = NULL;
-		switch(nFieldType)
+		switch(pFieldProp->m_dataType)
 		{
 		case dtInteger8:
-			pField = (IDBFieldHandler*)new TValFieldINT8(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldINT8(pDB->getBTreeAlloc(), pFieldProp);
 			break;
 		case dtUInteger8:
-			pField = (IDBFieldHandler*)new TValFieldUINT8(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldUINT8(pDB->getBTreeAlloc(), pFieldProp);
 			break;
 		case dtInteger16:
-			pField = (IDBFieldHandler*)new TValFieldINT16(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldINT16(pDB->getBTreeAlloc(), pFieldProp);
 			break;
 		case dtUInteger16:
-			pField = (IDBFieldHandler*)new TValFieldUINT16(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldUINT16(pDB->getBTreeAlloc(), pFieldProp);
 			break;
 		case dtInteger32:
-			pField = (IDBFieldHandler*)new TValFieldINT32(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldINT32(pDB->getBTreeAlloc(), pFieldProp);
 			break;
 		case dtUInteger32:
-			pField = (IDBFieldHandler*)new TValFieldUINT32(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldUINT32(pDB->getBTreeAlloc(), pFieldProp);
 			break;
 		case dtInteger64:
-			pField =(IDBFieldHandler*) new TValFieldINT64(pDB->getBTreeAlloc());
+			pField =(IDBFieldHandler*) new TValFieldINT64(pDB->getBTreeAlloc(), pFieldProp);
 			break;
 		case dtUInteger64:
-			pField = (IDBFieldHandler*)new TValFieldUINT64(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldUINT64(pDB->getBTreeAlloc(), pFieldProp);
 			break;
 		case dtFloat:
-			pField = (IDBFieldHandler*)new TValFieldFloat(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldFloat(pDB->getBTreeAlloc(), pFieldProp);
 			break;
 		case dtDouble:
-			pField = (IDBFieldHandler*)new TValFieldDouble(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new TValFieldDouble(pDB->getBTreeAlloc(), pFieldProp);
 			break;
 		case dtString:
 			{
-				if(nFieldLen != 0 && nFieldLen < /*pDB->getDBStorage()->getPageSize()/25*/100) //TO DO FIX
-					pField = (IDBFieldHandler*)new FixedStringValueFieldHandler(pDB->getBTreeAlloc());
+				if(pFieldProp->m_nLenField != 0 && pFieldProp->m_nLenField < pFieldProp->m_nPageSize/25) //TO DO FIX
+					pField = (IDBFieldHandler*)new FixedStringValueFieldHandler(pDB->getBTreeAlloc(), pFieldProp);
 				else
-					pField = (IDBFieldHandler*)new StringValueFieldHandler(pDB->getBTreeAlloc());
+					pField = (IDBFieldHandler*)new StringValueFieldHandler(pDB->getBTreeAlloc(), pFieldProp);
 			}
 		
 			break;
 		case dtBlob:
-			pField = (IDBFieldHandler*)new BlobValueFieldHandler(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new BlobValueFieldHandler(pDB->getBTreeAlloc(), pFieldProp);
 			break;
 		case dtGeometry:
-			pField = (IDBFieldHandler*)new ShapeValueFieldHandler(pDB->getBTreeAlloc());
+			pField = (IDBFieldHandler*)new ShapeValueFieldHandler(pDB->getBTreeAlloc(), pFieldProp);
 			break;
 
 			

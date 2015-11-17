@@ -17,6 +17,8 @@
 #include "CommonLibrary/delegate.h"
 #include "CacheLRU.h"
 #include "DBConfig.h"
+#include "WriteStreamPage.h"
+#include "ReadStreamPage.h"
 namespace embDB
 {
 
@@ -198,78 +200,25 @@ namespace embDB
 				m_pTransaction->error(_T("BTREE: Error load BTreeInfoPage: %I64d"), (int64)m_nPageBTreeInfo);
 				return false;
 			}
-
-			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
-
-			sFilePageHeader header(stream, m_bCheckCRC32 && !pPage->isCheck());
-			if(m_bCheckCRC32 && !pPage->isCheck() && !header.isValid())
+			ReadStreamPage stream(m_pTransaction, MIN_PAGE_SIZE,  BTREE_PAGE, BTREE_INFO_PAGE);
+		 	if(!stream.open(pPage))
 			{
-				m_pTransaction->error(_T("BTREE: Page %I64d Error CRC for info page"), (int64)m_nPageBTreeInfo);
 				return false;
 			}
-			pPage->setCheck(true);
-			if(header.m_nObjectPageType != BTREE_PAGE || header.m_nSubObjectPageType != BTREE_INFO_PAGE)
-			{
-				m_pTransaction->error(_T("BTREE: Page %I64d is not BTreeInfoPage"), (int64)m_nPageBTreeInfo);
-				return false;
-			}
+
 			m_nRootAddr = stream.readInt64();
-		//	m_nRTreeStaticAddr = stream.readInt64();
 			m_bMulti = stream.readBool();
-			m_nPageInnerCompInfo = stream.readInt64();
-			m_nPageLeafPageCompInfo = stream.readInt64();
-		/*	if(m_nRTreeStaticAddr != -1)
-			{
-				m_BTreeInfo.setPage(m_nRTreeStaticAddr);
-				m_BTreeInfo.Load(m_pTransaction);
-			}*/
-
-			m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(m_nPageInnerCompInfo, m_pTransaction));
-			m_LeafCompParams.reset(TLeafCompess::LoadCompressorParams(m_nPageLeafPageCompInfo, m_pTransaction));
+		
+			m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(-1, m_pTransaction));
+			m_LeafCompParams.reset(TLeafCompess::LoadCompressorParams(-1, m_pTransaction));
+			m_InnerCompParams->load(&stream);
+			m_LeafCompParams->load(&stream);
 
 			return !m_pTransaction->isError();
 		}
 
 
-		bool saveBTreeInfo()
-		{
-			FilePagePtr pPage (NULL);
-			if(m_nPageBTreeInfo == -1)
-			{
-				pPage = m_pTransaction->getNewPage(MIN_PAGE_SIZE);
-				if(pPage.get())
-					m_nPageBTreeInfo = pPage->getAddr();
-				if(m_nPageBTreeInfo == -1)
-				{
-					m_pTransaction->error(_T("BTREE: Error save BTreeInfoPage: -1"), (int64)m_nPageBTreeInfo);
-					return false;
-				}
-			}
-			else
-			{
-				pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo, MIN_PAGE_SIZE, false);
-				if(!pPage.get())
-				{
-					m_pTransaction->error(_T("BTREE: Error save BTreeInfoPage: %I64d is not load"), (int64)m_nPageBTreeInfo);
-					return false;
-				}
-			}
-					
-			CommonLib::FxMemoryWriteStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
-			sFilePageHeader header(stream, BTREE_PAGE, BTREE_INFO_PAGE);
-			stream.write(m_nRootAddr);
-			//stream.write(m_nRTreeStaticAddr);
-			stream.write(m_bMulti);
-			stream.write(m_nPageInnerCompInfo);
-			stream.write(m_nPageLeafPageCompInfo);
-			if(m_bCheckCRC32)
-				header.writeCRC32(stream);
-			m_pTransaction->saveFilePage(pPage);
-			pPage->setCheck(true);
-			return true;
-		}
+	
 		TLink getPageBTreeInfo() const 
 		{
 			return m_nPageBTreeInfo;
@@ -462,35 +411,64 @@ namespace embDB
 
 
 
-	bool init()
+	bool init(int64 nBPTreePage, TInnerCompressorParams* pInnerCompParams = NULL, TLeafCompressorParams* pLeafCompParams = NULL)
 	{
-		if(m_pRoot.get() || m_nRootAddr != -1)
+		if(m_pRoot.get() || m_nRootAddr != -1 || m_nPageBTreeInfo != -1)
 			return false;
-		if(m_nPageBTreeInfo == -1)
-			return false;
-		if(m_nPageInnerCompInfo != -1)
-			m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(m_nPageInnerCompInfo, m_pTransaction));
-		if(m_nPageLeafPageCompInfo != -1)
-			m_LeafCompParams.reset(TLeafCompess::LoadCompressorParams(m_nPageLeafPageCompInfo, m_pTransaction));
 
-		return createRootPage();
+		m_nPageBTreeInfo = nBPTreePage;
+		FilePagePtr pPage (NULL);
+		if(m_nPageBTreeInfo == -1)
+		{
+			pPage = m_pTransaction->getNewPage(MIN_PAGE_SIZE);
+			if(pPage.get())
+				m_nPageBTreeInfo = pPage->getAddr();
+			if(m_nPageBTreeInfo == -1)
+			{
+				m_pTransaction->error(_T("BTREE: Error save BTreeInfoPage: -1"), (int64)m_nPageBTreeInfo);
+				return false;
+			}
+		}
+		else
+		{
+			pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo, MIN_PAGE_SIZE, false);
+			if(!pPage.get())
+			{
+				m_pTransaction->error(_T("BTREE: Error save BTreeInfoPage: %I64d is not load"), (int64)m_nPageBTreeInfo);
+				return false;
+			}
+		}
+
+		if(!createRootPage())
+			return false;
+
+		if(!pPage.get())
+		{
+			m_pTransaction->error(_T("BTREE: Error save BTreeInfoPage: %I64d is not load"), (int64)m_nPageBTreeInfo);
+			return false;
+		}
+		
+		WriteStreamPage stream(m_pTransaction, MIN_PAGE_SIZE,  BTREE_PAGE, BTREE_INFO_PAGE);
+		stream.open()
+		stream.write(m_nRootAddr);
+		stream.write(m_bMulti);
+		if(pInnerCompParams)
+			pInnerCompParams->save(&stream);
+		if(pLeafCompParams)
+			pLeafCompParams->save(&stream);
+
+		stream.Save();
+		return true;
+
+		 
+
+		return 
 	}
 	bool createRootPage()
 	{
 		m_pRoot = newNode(true, true);
 		m_nRootAddr = m_pRoot->m_nPageAddr; 
-	/*	FilePagePtr pFilePage = m_pTransaction->getNewPage();
-		if(!pFilePage.get())
-		{
-			m_pTransaction->error(_T("BTREE: Error create new static page"));
-			return false;
-		}
-		m_nRTreeStaticAddr = pFilePage->getAddr();
-		m_BTreeInfo.setPage(m_nRTreeStaticAddr);*/
-		if(!saveBTreeInfo())
-			return false;
 		m_pRoot->Save(m_pTransaction);
-		//m_BTreeInfo.Save(m_pTransaction);
 		return true;
 	}
 	bool checkRoot()
@@ -693,7 +671,7 @@ namespace embDB
 					m_pRoot->setFlags(ROOT_NODE, true);
 					m_pRoot->setFlags(CHANGE_NODE, true);
 					//m_Chache.remove(m_pRoot);
-					saveBTreeInfo();
+					//saveBTreeInfo();
 					return pRetNode;
 				}
 
@@ -879,7 +857,7 @@ namespace embDB
 			m_pRoot->setFlags(ROOT_NODE, true);
 			m_pRoot->setFlags(CHANGE_NODE, true);
 			//m_ChangeNode.insert(pNodeNewRoot);
-			saveBTreeInfo();
+			//saveBTreeInfo();
 		}
 		return true;
 	}
