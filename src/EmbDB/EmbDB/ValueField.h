@@ -66,10 +66,9 @@ namespace embDB
 
 			
 			
-			virtual bool load(int64 nAddr, eTransactionType type)
+			virtual bool load(int64 nRootBPTreeField, eTransactionType type)
 			{
-
-				int64 m_nFieldInfoPage = nAddr;
+ 
 				FilePagePtr pPage = m_pDBTransactions->getFilePage(nAddr, MIN_PAGE_SIZE);
 				if(!pPage.get())
 					return false;

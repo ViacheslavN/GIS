@@ -18,7 +18,7 @@ namespace embDB
 	public:
 
 		CDBFieldHandlerBase(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp) : m_pAlloc(pAlloc), 
-			m_pIndexHandler(0), m_nBTreeRootPage(-1)
+			m_pIndexHandler(0), m_nFieldInfoPage(-1)
 		{
 			assert(pFieldProp);
 
@@ -83,14 +83,14 @@ namespace embDB
 			pStream->write(m_dScale);
 
 
-			FilePagePtr pBPRootPage(pTran->getNewPage(MIN_PAGE_SIZE)); 
-			if(!pBPRootPage.get())
+			FilePagePtr pFieldInfoPage(pTran->getNewPage(MIN_PAGE_SIZE)); 
+			if(!pFieldInfoPage.get())
 				return false;
-			int64 m_nBTreeRootPage = pBPRootPage->getAddr();
+			m_nFieldInfoPage = pFieldInfoPage->getAddr();
 			pStream->write(m_nBTreeRootPage);
 
 			TField field(pTran, pAlloc, m_nPageSize);
-			field.init(m_nBTreeRootPage, pInnerCompParams, pLeafCompParams);
+			field.init(m_nFieldInfoPage, pInnerCompParams, pLeafCompParams);
 		}
 		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage)
 		{
@@ -111,7 +111,7 @@ namespace embDB
 			m_nPageSize = pStream->readIntu32();
 			m_nPrecision = pStream->readInt32();
 			m_dScale = pStream->readDouble();
-
+			m_nFieldInfoPage = pStream->readInt64();
 			return true;
 		}
 
@@ -123,7 +123,7 @@ namespace embDB
 		IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 			TField * pField = new  TField(pTransactions, m_pAlloc, m_nPageSize);
-			pField->load(m_nRootBPTreePage, pTransactions->getType());
+			pField->load(m_nBTreeRootPage, pTransactions->getType());
 			if(m_pIndexHandler.get())
 			{
 				IndexFiledPtr pIndex = m_pIndexHandler->getIndex(pTransactions, pStorage);
@@ -201,7 +201,7 @@ namespace embDB
 		CommonLib::CVariant m_defValue;
 		CommonLib::alloc_t* m_pAlloc;
 		IDBIndexHandlerPtr m_pIndexHandler;
-		uint64				m_nBTreeRootPage;
+		uint64				m_nFieldInfoPage;
 	};
 
  
