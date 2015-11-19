@@ -17,8 +17,8 @@ namespace embDB
 	{
 	public:
 
-		CDBFieldHandlerBase(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp) : m_pAlloc(pAlloc), 
-			m_pIndexHandler(0), m_nFieldInfoPage(-1)
+		CDBFieldHandlerBase(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp, int64 nPageAdd) : m_pAlloc(pAlloc), 
+			m_pIndexHandler(0), m_nFieldInfoPage(-1), m_nPageAdd(nPageAdd)
 		{
 			assert(pFieldProp);
 
@@ -71,8 +71,8 @@ namespace embDB
 			std::vector<char> vecBufName(nNameUtf8Len + 1);
 			std::vector<char> vecAliasName(nAliasUtf8Len + 1);
 
-			sFP.m_sFieldName.exportToUTF8(&vecBufName[0], vecBufName.size());
-			sFP.m_sFieldAlias.exportToUTF8(&vecAliasName[0], vecAliasName.size());
+			m_sFieldName.exportToUTF8(&vecBufName[0], vecBufName.size());
+			m_sFieldAlias.exportToUTF8(&vecAliasName[0], vecAliasName.size());
 
 			pStream->write(nNameUtf8Len);
 			pStream->write((byte*)&vecBufName[0], vecBufName.size());
@@ -87,7 +87,7 @@ namespace embDB
 			if(!pFieldInfoPage.get())
 				return false;
 			m_nFieldInfoPage = pFieldInfoPage->getAddr();
-			pStream->write(m_nBTreeRootPage);
+			pStream->write(m_nFieldInfoPage);
 
 			TField field(pTran, pAlloc, m_nPageSize);
 			field.init(m_nFieldInfoPage, pInnerCompParams, pLeafCompParams);
@@ -188,7 +188,7 @@ namespace embDB
 			return m_nPrecision;
 		}
 		
-		
+		virtual int64 GetPageAddr() const {return m_nPageAdd;}
 	protected:
 		CommonLib::CString m_sFieldName;
 		CommonLib::CString m_sFieldAlias;
@@ -202,6 +202,7 @@ namespace embDB
 		CommonLib::alloc_t* m_pAlloc;
 		IDBIndexHandlerPtr m_pIndexHandler;
 		uint64				m_nFieldInfoPage;
+		int64				m_nPageAdd;
 	};
 
  

@@ -86,14 +86,21 @@ namespace embDB
 		typedef TBPBlobTree<int64, IDBTransaction> TBTree;
 		typedef TBlobValueField<TBTree> TField;
 
-		BlobValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
+		typedef TBTree::TInnerCompressorParams TInnerCompressorParams;
+		typedef TBTree::TLeafCompressorParams TLeafCompressorParams;
+
+		BlobValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFP, int64 nPageAdd) : CDBFieldHandlerBase(pAlloc, pFP, nPageAdd)
 		{}
 		~BlobValueFieldHandler()
 		{}
 
-		virtual bool save(int64 nAddr, IDBTransaction *pTran)
+		/*virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
 			return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE);
+		}*/
+		virtual bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran)
+		{
+			return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc);
 		}
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{

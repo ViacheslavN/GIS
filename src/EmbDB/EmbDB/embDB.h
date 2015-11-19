@@ -88,8 +88,7 @@ namespace embDB
 		itMultiRegular,
 		itSpatial,
 		itFreeText,
-		itRouting,
-		itOID
+		itRouting
 	};
 	enum SpatialQueryMode
 	{
@@ -206,6 +205,7 @@ namespace embDB
 	struct IStatement;
 	struct ITransaction;
 	struct IDatabase;
+	struct IIndex;
 
 	COMMON_LIB_REFPTR_TYPEDEF(IField);
 	COMMON_LIB_REFPTR_TYPEDEF(IFields);
@@ -220,6 +220,7 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(IStatement); 
 	COMMON_LIB_REFPTR_TYPEDEF(ITransaction); 
 	COMMON_LIB_REFPTR_TYPEDEF(IDatabase); 
+	COMMON_LIB_REFPTR_TYPEDEF(IIndex);
 
 	struct IField: public CommonLib::AutoRefCounter
 	{
@@ -270,6 +271,16 @@ namespace embDB
 		virtual void	  Clear() = 0;
 	};
 
+
+	struct IIndex : public CommonLib::AutoRefCounter
+	{
+		IIndex(){}
+		virtual ~IIndex(){}
+		virtual indexTypes GetType() const = 0;
+		virtual  IFieldPtr GetField() const = 0;
+
+
+	};
 
 	struct IFieldSet: public CommonLib::AutoRefCounter
 	{

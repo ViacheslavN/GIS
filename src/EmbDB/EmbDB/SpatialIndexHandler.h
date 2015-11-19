@@ -112,13 +112,22 @@ namespace embDB
 		{
 			return true;
 		}
-
+		virtual indexTypes GetType() const
+		{
+			return itSpatial;
+		}
+		virtual  IFieldPtr GetField() const 
+		{
+			return m_pField;
+		}
 	 
 	
 	private:
 		sSpatialFieldInfo m_fi;
 		CommonLib::alloc_t* m_pAlloc;
 		IDBIndexHandler* m_pIndexHandler;
+		IFieldPtr m_pField;
+
 	};
 
 

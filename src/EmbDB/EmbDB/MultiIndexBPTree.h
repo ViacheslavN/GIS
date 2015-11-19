@@ -200,7 +200,7 @@ namespace embDB
 
 		typedef MultiIndex<FType, TBTree, FieldDataType, TBaseComp, TKeyComp> TMultiIndex;
 
-		MultiIndexFieldHandler(CommonLib::alloc_t* pAlloc) : CIndexHandlerBase(pAlloc)
+		MultiIndexFieldHandler(CommonLib::alloc_t* pAlloc) : CIndexHandlerBase(pAlloc, itMultiRegular)
 		{
 
 		}

@@ -96,8 +96,9 @@ class CIndexHandlerBase : public IDBIndexHandler
 {
 public:
 
-	CIndexHandlerBase(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc)
-	{}
+	CIndexHandlerBase(CommonLib::alloc_t* pAlloc,  indexTypes type) : m_pAlloc(pAlloc), m_IndexType(type)
+	{
+	}
 	~CIndexHandlerBase(){}
 
 	template<class TField>
@@ -137,42 +138,25 @@ public:
 	{
 		return true;
 	}
-
-	eDataTypes getType() const
-	{
-		return (eDataTypes)m_fi.m_nFieldDataType;
-	}
-	const CommonLib::CString& getName() const
-	{
-		return m_fi.m_sFieldName;
-	}
-	virtual const CommonLib::CString& getAlias() const
-	{
-		return m_fi.m_sFieldAlias;
-	}
-	virtual sFieldInfo* getFieldInfoType()
-	{
-		return &m_fi;
-	}
-	virtual uint32 GetLength()	const
-	{
-		return m_fi.m_nLenField;
-	}
-	virtual bool GetIsNotEmpty() const
-	{
-		return (m_fi.m_nFieldDataType&dteIsNotEmpty) != 0;
-	}
-	virtual void setFieldInfoType(sFieldInfo* fi)
-	{
-		m_fi = *fi;
-	}
 	bool isCanBeRemoving()
 	{
 		return true;
 	}
+
+	virtual indexTypes GetType() const
+	{
+		return  m_IndexType;
+	}
+
+	virtual IFieldPtr GetField() const 
+	{
+		return m_pField;
+	}
+
 protected:
-	sFieldInfo m_fi;
+	indexTypes m_IndexType;
 	CommonLib::alloc_t* m_pAlloc;
+	IFieldPtr m_pField;
 
 
 };

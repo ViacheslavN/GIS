@@ -31,7 +31,8 @@ public:
 	typedef typename TBase::TLeafNode	TLeafNode;
 	typedef typename TBase::TBTreeNode TBTreeNode;
 	typedef _TValue  TValue;
-
+	typedef typename TBase::TInnerCompressorParams TInnerCompressorParams;
+	typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
 
 
 	typedef TBPMapIteratorV2<TKey, TValue, TComp,Transaction, TInnerCompess, TLeafCompess,

@@ -69,7 +69,7 @@ namespace embDB
 			virtual bool load(int64 nRootBPTreeField, eTransactionType type)
 			{
  
-				FilePagePtr pPage = m_pDBTransactions->getFilePage(nAddr, MIN_PAGE_SIZE);
+				FilePagePtr pPage = m_pDBTransactions->getFilePage(nRootBPTreeField, MIN_PAGE_SIZE);
 				if(!pPage.get())
 					return false;
 				CommonLib::FxMemoryReadStream stream;
@@ -354,25 +354,23 @@ namespace embDB
 			typedef _TLeafCompressor TLeafCompressor;
 
 			typedef embDB::TBPMapV2<int64, FType, embDB::comp<int64>, 
-				embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
+			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
  
 			typedef typename TBTree::iterator  iterator;
 			typedef FieldIterator<TBTree> TFieldIterator;
 			typedef ValueField<FType, TBTree, TFieldIterator> TField;
+
+			typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
+			typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 	
-			ValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp) : CDBFieldHandlerBase(pAlloc, pFieldProp)
+			ValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp, int64 nPageAdd) : CDBFieldHandlerBase(pAlloc, pFieldProp, nPageAdd)
 			{}
 			~ValueFieldHandler()
 			{}
 			
-			virtual bool save(int64 nAddr, IDBTransaction *pTran)
+			virtual bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran)
 			{
-				return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE);
-			}
-
-			virtual bool save(CommonLib::IWriteStream* pStream,   const SFieldProp& sFP, IDBTransaction *pTran)
-			{
-				return CDBFieldHandlerBase::save<TField>(pStream, sFP, pTran, m_pAlloc);
+				return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc);
 			}
 
 			virtual bool load(CommonLib::IReadStream* pStream,  IDBTransaction *pTran)
@@ -386,6 +384,7 @@ namespace embDB
 				TField * pField = new  TField(pTransactions, m_pAlloc, &m_fi);
 				pField->load(m_fi.m_nFieldPage, pTransactions->getType());
 				return IValueFieldPtr(pField);	
+				return 
 			}
 			virtual bool release(IValueField* pField)
 			{

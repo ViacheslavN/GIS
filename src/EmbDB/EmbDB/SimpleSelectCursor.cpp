@@ -49,15 +49,15 @@ namespace embDB
 		 
 			IFieldIteratorPtr pFieldIterator = pValueField->begin();
 
-			if(!m_pIterField && pValueField->getFieldInfoType()->m_nFieldDataType&embDB::dteIsNotEmpty)
+			/*if(!m_pIterField && pValueField->getFieldInfoType()->m_nFieldDataType&embDB::dteIsNotEmpty)
 			{
 				m_pIterField = pFieldIterator.get();
 				m_nIterIndex = m_vecFields.size();
-			}
+			}*/
 
 
-			if(!(pValueField->getFieldInfoType()->m_nFieldDataType&embDB::dteIsNotEmpty))
-				m_bAllNext = false;
+			/*if(!(pValueField->getFieldInfoType()->m_nFieldDataType&embDB::dteIsNotEmpty))
+				m_bAllNext = false;*/
 			 
 
 			m_vecFields.push_back(pFieldIterator);

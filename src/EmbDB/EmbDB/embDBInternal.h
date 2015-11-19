@@ -284,7 +284,7 @@ namespace embDB
 	};
 
 	template<class TKeyType, class TIterator, class TIteratorPtr>
-	struct  TIndexFiled  : public CommonLib::AutoRefCounter
+	struct  TIndexFiled  : public IIndex
 	{
 	public:
 		TIndexFiled() {}
@@ -356,13 +356,12 @@ namespace embDB
 	
 
 	
-	struct IDBIndexHandler : public IField
+	struct IDBIndexHandler : public IIndex
 	{
 	public:
 		IDBIndexHandler(){}
 		~IDBIndexHandler(){}
-		virtual sFieldInfo* getFieldInfoType() = 0;
-		virtual void setFieldInfoType(sFieldInfo* fi) = 0;
+ 
 		virtual bool save(int64 nAddr, IDBTransaction *pTran) = 0;
 		virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
 		virtual IndexFiledPtr getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
@@ -382,7 +381,7 @@ namespace embDB
 		~IDBFieldHandler(){}
 
 
-		virtual bool save(CommonLib::IWriteStream* pStream, const SFieldProp& fi, IDBTransaction *pTran) = 0;
+		virtual bool save(CommonLib::IWriteStream* pStream, IDBTransaction *pTran) = 0;
 		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage) = 0;
 
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
@@ -396,6 +395,7 @@ namespace embDB
 
 		virtual bool isCanBeRemoving() = 0;
 
+		virtual int64 GetPageAddr() const = 0;
 	};
 
 	struct IDBShapeFieldHandler : public IDBFieldHandler

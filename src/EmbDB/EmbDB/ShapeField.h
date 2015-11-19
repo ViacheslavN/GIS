@@ -58,7 +58,12 @@ namespace embDB
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		TShapeValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, const sFieldInfo* pFieldInfo) : TBase(pTransactions, pAlloc, pFieldInfo) 
+		TShapeValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, const sFieldInfo* pFieldInfo) : TBase(pTransactions, pAlloc, 8192) 
+		{
+
+		}
+
+		TShapeValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize) : TBase(pTransactions, pAlloc, nPageSize) 
 		{
 
 		}
@@ -88,28 +93,25 @@ namespace embDB
 
 		typedef TBPShapeTree<int64, IDBTransaction> TBTree;
 		typedef TShapeValueField<TBTree> TField;
-
-		ShapeValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
+		typedef TBTree::TInnerCompressorParams TInnerCompressorParams;
+		typedef TBTree::TLeafCompressorParams TLeafCompressorParams;
+		ShapeValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp *pFP, int64 nPageAdd) : CDBFieldHandlerBase(pAlloc, pFP, nPageAdd)
 		{}
 		~ShapeValueFieldHandler()
 		{}
 
-		virtual bool save(int64 nAddr, IDBTransaction *pTran)
+		virtual bool save(CommonLib::IWriteStream* pStream,   IDBTransaction *pTran)
 		{
 
-			FilePagePtr pLeafCompRootPage = pTran->getNewPage(MIN_PAGE_SIZE);
+			//FilePagePtr pLeafCompRootPage = pTran->getNewPage(MIN_PAGE_SIZE);
 			TBTree::TLeafCompressorParams compParams;
-			compParams.setRootPage(pLeafCompRootPage->getAddr());
+		//	compParams.setRootPage(pLeafCompRootPage->getAddr());
 			compParams.SetParams(m_SpatialFi);
 			compParams.SetMaxPageBlobSize(/*pTran->getPageSize()/15*/100);//TO DO FIX
-			compParams.save(pTran);
-
-			if(!CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE, -1, pLeafCompRootPage->getAddr()))
-				return false;
-
+			//compParams.save(pTran);
 			
-
-			return true;
+			
+			return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, NULL, &compParams);
 
 		}
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)

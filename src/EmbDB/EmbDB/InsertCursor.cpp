@@ -59,15 +59,15 @@ namespace embDB
 		{
 			CommonLib::CVariant *pValue = pRow->value(i);
 			IValueFieldPtr pValueField = m_vecInsertFields[i];
-			if(!pValue)
+			/*if(!pValue)
 			{
 				if(pValueField->getFieldInfoType()->m_nFieldDataType & dteIsNotEmpty)
 				{
-					m_pTran->error(L"field %s is not null ", pValueField->getFieldInfoType()->m_sFieldName.cwstr());
+					m_pTran->error(L"field %s is not null ", pValueField->GetName().cwstr());
 					return -1;
 				}
 				continue;
-			}
+			}*/
 
 			bool bRet = pValueField->insert(nRowID, pValue);
 			if(!bRet) 

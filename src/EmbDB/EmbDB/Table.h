@@ -127,7 +127,7 @@ namespace embDB
 			//TFieldByName m_FieldByName;
 			//TFieldByID m_FieldByID;
 
-			//TIndexByName m_IndexByName;
+			TIndexByName m_IndexByName;
 			//TIndexByID m_IndexByID;
 
 
@@ -142,7 +142,7 @@ namespace embDB
 			typedef TCounter<int64> TOIDCounter;
 			TOIDCounter m_OIDCounter;
 			IFieldsPtr m_pFields;
-			IFieldsPtr m_pIndexs;
+			//IFieldsPtr m_pIndexs;
 
 	};
 

@@ -87,22 +87,36 @@ namespace embDB
  
 		typedef TBPFixedString<int64, IDBTransaction> TBTree;
 		typedef TFixedStringValueField<TBTree> TField;
+		typedef TBTree::TInnerCompressorParams TInnerCompressorParams;
+		typedef TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		FixedStringValueFieldHandler(CommonLib::alloc_t* pAlloc) : CDBFieldHandlerBase(pAlloc)
+		FixedStringValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFP, int64 nPageAdd) : CDBFieldHandlerBase(pAlloc, pFP, nPageAdd)
 		{}
 		~FixedStringValueFieldHandler()
 		{}
 
-		virtual bool save(int64 nAddr, IDBTransaction *pTran)
+		/*virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
 			FilePagePtr pLeafCompRootPage = pTran->getNewPage(MIN_PAGE_SIZE);
 			TBTree::TLeafCompressorParams compParams;
 			compParams.setRootPage(pLeafCompRootPage->getAddr());
-			compParams.SetMaxPageStringSize(/*pTran->getPageSize()/15*/100); //TO FO FIX 
+			compParams.SetMaxPageStringSize(/*pTran->getPageSize()/15); //TO FO FIX 
 			compParams.SetStringLen(m_fi.m_nLenField);
 			compParams.save(pTran);
 
 			return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE, -1, pLeafCompRootPage->getAddr());
+		}*/
+		virtual bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran)
+		{
+
+			//FilePagePtr pLeafCompRootPage = pTran->getNewPage(MIN_PAGE_SIZE);
+			TLeafCompressorParams compParams;
+			//compParams.setRootPage(pLeafCompRootPage->getAddr());
+			compParams.SetMaxPageStringSize(m_nPageSize/15); //TO FO FIX 
+			compParams.SetStringLen(m_nLenField);
+			//compParams.save(pTran);
+
+			return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, NULL, &compParams);
 		}
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
