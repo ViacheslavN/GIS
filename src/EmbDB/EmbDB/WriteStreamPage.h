@@ -24,6 +24,9 @@ namespace embDB
 		  bool open(FilePagePtr pPage,  uint32 nBeginPos = 0)
 		  {
 			    m_nBeginPos = nBeginPos;
+				m_pPage = pPage;
+				if(!m_pPage.get())
+					return false;
 			  assert(m_nBeginPos < m_pPage->getPageSize());
 
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
@@ -61,8 +64,11 @@ namespace embDB
 			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
 			  {
 				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage);
+				  if(m_nBeginPos != 0)
+					  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
 			  }
-			   m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
+			  else
+				   m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
 			  return true;
 			 
 		  }

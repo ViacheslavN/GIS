@@ -29,6 +29,8 @@ namespace embDB
 			m_nPrecision = pFieldProp->m_nPrecision;
 			m_defValue  = pFieldProp->m_devaultValue;
 			m_nPageSize = pFieldProp->m_nPageSize;
+			m_sFieldName = pFieldProp->m_sFieldName;
+			m_sFieldAlias = pFieldProp->m_sFieldAlias;
 
 		}
 		~CDBFieldHandlerBase(){}
@@ -91,6 +93,7 @@ namespace embDB
 
 			TField field(pTran, pAlloc, m_nPageSize);
 			field.init(m_nFieldInfoPage, pInnerCompParams, pLeafCompParams);
+			return true;
 		}
 		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage)
 		{
@@ -123,7 +126,7 @@ namespace embDB
 		IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 			TField * pField = new  TField(pTransactions, m_pAlloc, m_nPageSize);
-			pField->load(m_nBTreeRootPage, pTransactions->getType());
+			pField->load(m_nFieldInfoPage);
 			if(m_pIndexHandler.get())
 			{
 				IndexFiledPtr pIndex = m_pIndexHandler->getIndex(pTransactions, pStorage);

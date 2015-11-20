@@ -30,7 +30,7 @@ namespace embDB
 		static TLeafCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
 		{
 			TLeafCompressorParams *pInnerComp = new TLeafCompressorParams(nPage);
-			pInnerComp->read(pTran);
+			pInnerComp->load(NULL, pTran);
 			return pInnerComp;
 		}
 

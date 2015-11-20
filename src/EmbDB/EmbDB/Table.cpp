@@ -730,7 +730,7 @@ namespace embDB
 			return IFieldPtr(); // TO DO Error
 		}
 
-		if(!m_nFieldsAddr.push(pFieldInfoPage->getAddr(), pTran))
+		if(!m_nFieldsAddr.push(pFieldInfoPage->getAddr(), pDBTran.get()))
 			return IFieldPtr(); // TO DO Error
 
 		stream.Save();

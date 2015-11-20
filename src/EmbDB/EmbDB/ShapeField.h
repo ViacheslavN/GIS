@@ -117,7 +117,7 @@ namespace embDB
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 			TField * pField = new  TField(pTransactions, m_pAlloc, (sFieldInfo*)&m_SpatialFi);
-			pField->load(m_SpatialFi.m_nFieldPage, pTransactions->getType());
+			pField->load(m_SpatialFi.m_nFieldPage);
 			if(m_pIndexHandler.get())
 			{
 				IndexFiledPtr pIndex = m_pIndexHandler->getIndex(pTransactions, pStorage);

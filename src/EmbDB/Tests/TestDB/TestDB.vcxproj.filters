@@ -33,6 +33,9 @@
     <ClInclude Include="importFromShape.h">
       <Filter>exportFromShape</Filter>
     </ClInclude>
+    <ClInclude Include="testDB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -49,6 +52,9 @@
     </ClCompile>
     <ClCompile Include="importFromShape.cpp">
       <Filter>exportFromShape</Filter>
+    </ClCompile>
+    <ClCompile Include="testAddFieldDB.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

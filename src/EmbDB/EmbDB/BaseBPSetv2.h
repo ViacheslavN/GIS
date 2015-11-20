@@ -211,8 +211,8 @@ namespace embDB
 		
 			m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(-1, m_pTransaction));
 			m_LeafCompParams.reset(TLeafCompess::LoadCompressorParams(-1, m_pTransaction));
-			m_InnerCompParams->load(&stream);
-			m_LeafCompParams->load(&stream);
+			m_InnerCompParams->load(&stream, m_pTransaction);
+			m_LeafCompParams->load(&stream, m_pTransaction);
 
 			return !m_pTransaction->isError();
 		}
@@ -449,20 +449,17 @@ namespace embDB
 		}
 		
 		WriteStreamPage stream(m_pTransaction, MIN_PAGE_SIZE,  BTREE_PAGE, BTREE_INFO_PAGE);
-		stream.open()
+		stream.open(pPage);
 		stream.write(m_nRootAddr);
 		stream.write(m_bMulti);
 		if(pInnerCompParams)
-			pInnerCompParams->save(&stream);
+			pInnerCompParams->save(&stream, m_pTransaction);
 		if(pLeafCompParams)
-			pLeafCompParams->save(&stream);
+			pLeafCompParams->save(&stream, m_pTransaction);
 
 		stream.Save();
 		return true;
 
-		 
-
-		return 
 	}
 	bool createRootPage()
 	{

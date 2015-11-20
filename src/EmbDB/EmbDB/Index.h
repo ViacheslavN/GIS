@@ -46,7 +46,7 @@ public:
 	  typedef _TBTree TBTree;
 	  virtual bool save()
 	  {
-		  return m_tree.saveBTreeInfo();
+		 return true;// return m_tree.saveBTreeInfo();
 	  }
 	  virtual bool load(int64 nAddr, eTransactionType type)
 	  {
@@ -78,8 +78,8 @@ public:
 	  {
 
 		  m_nBTreeRootPage = nBTreeRootPage;
-		  m_tree.setRootPage(m_nBTreeRootPage);
-		  return m_tree.init();
+		 // m_tree.setRootPage(m_nBTreeRootPage);
+		  return m_tree.init(m_nBTreeRootPage);
 	  }
 
 	  TBTree* getBTree() {return &m_tree;}

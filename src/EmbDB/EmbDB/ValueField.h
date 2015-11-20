@@ -51,7 +51,7 @@ namespace embDB
 		ValueFieldBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize) :
 			  m_pDBTransactions(pTransactions),
 			  m_tree(-1, pTransactions, pAlloc, 100, nPageSize), 
-			  m_nBTreeRootPage(-1), m_pAlloc(pAlloc)
+			  m_nBTreeInfoPage(-1), m_pAlloc(pAlloc)
 			  {
 
 
@@ -66,10 +66,10 @@ namespace embDB
 
 			
 			
-			virtual bool load(int64 nRootBPTreeField, eTransactionType type)
+			virtual bool load(int64 nRootBPTreeField)
 			{
  
-				FilePagePtr pPage = m_pDBTransactions->getFilePage(nRootBPTreeField, MIN_PAGE_SIZE);
+			/*	FilePagePtr pPage = m_pDBTransactions->getFilePage(nRootBPTreeField, MIN_PAGE_SIZE);
 				if(!pPage.get())
 					return false;
 				CommonLib::FxMemoryReadStream stream;
@@ -85,8 +85,8 @@ namespace embDB
 					m_pDBTransactions->error(_T("OIDField: Page %I64d Not field info page"), pPage->getAddr()); //TO DO log error
 					return false;
 				}
-				stream.read(m_nBTreeRootPage);
-				m_tree.setRootPage(m_nBTreeRootPage);
+				stream.read(m_nBTreeInfoPage);*/
+				m_tree.setRootPage(m_nBTreeInfoPage);
 				return m_tree.loadBTreeInfo(); 
 			 
 			}
@@ -96,9 +96,9 @@ namespace embDB
 				TLeafCompressorParams *pLeafCompressorParams = NULL)
 			{
 
-				m_nBTreeRootPage = nBTreeRootPage;
+				m_nBTreeInfoPage = nBTreeRootPage;
 				
-				if(!m_tree.init(m_nBTreeRootPage, pInnerCompressorParams, pLeafCompressorParams))
+				if(!m_tree.init(m_nBTreeInfoPage, pInnerCompressorParams, pLeafCompressorParams))
 					return false;
 
 				return true;
@@ -277,7 +277,7 @@ namespace embDB
 	 protected:
 		IDBTransaction* m_pDBTransactions;
 		TBTree m_tree;
-		int64 m_nBTreeRootPage;
+		int64 m_nBTreeInfoPage;
 		CommonLib::alloc_t* m_pAlloc;
 		IndexFiledPtr m_pIndex;
 		const sFieldInfo *m_pFieldInfo;
@@ -317,11 +317,13 @@ namespace embDB
 			typedef _FieldIterator TFieldIterator;
 
 
-			ValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, const sFieldInfo* pFieldInfo) :
-			  ValueFieldBase(pTransactions, pAlloc, pFieldInfo)
+			ValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize) :
+			  ValueFieldBase(pTransactions, pAlloc, nPageSize)
 			{
 
 			}
+
+		 
 			~ValueField(){}
 			typedef ValueFieldBase<_FType, _TBTree, TFieldIterator> TBase;
 			typedef typename TBase::TBTree TBTree;
@@ -381,10 +383,9 @@ namespace embDB
 
 			virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 			{
-				TField * pField = new  TField(pTransactions, m_pAlloc, &m_fi);
-				pField->load(m_fi.m_nFieldPage, pTransactions->getType());
+				TField * pField = new  TField(pTransactions, m_pAlloc,m_nPageSize);
+				pField->load(m_nFieldInfoPage);
 				return IValueFieldPtr(pField);	
-				return 
 			}
 			virtual bool release(IValueField* pField)
 			{

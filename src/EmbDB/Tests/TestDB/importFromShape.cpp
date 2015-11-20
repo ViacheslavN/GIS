@@ -246,7 +246,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 	embDB::CDatabase db;
 	if(!db.open(pszDBName, embDB::eTMSingleTransactions, sDBPath.wstr()))
 	{
-		if(!db.create(pszDBName, 8192, embDB::eTMSingleTransactions,  sDBPath.wstr()))
+		if(!db.create(pszDBName, embDB::eTMSingleTransactions,  sDBPath.wstr()))
 		{
 			std::cout << "Error create db";
 			return;
@@ -321,20 +321,20 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 
 		embDB::SFieldProp fp;
 	
-		fp.dateTypeExt = embDB::dteSimple;
-		fp.sFieldName = name;
+		fp.m_bNotNull = false;
+		fp.m_sFieldName = name;
 
 		switch(shpFieldType)
 		{
 		case ShapeLib::FTString:
-			fp.dataType =  embDB::dtString;
-			fp.nLenField = width;
+			fp.m_dataType =  embDB::dtString;
+			fp.m_nLenField = width;
 			break;
 		case ShapeLib::FTInteger:
-			fp.dataType =  embDB::dtInteger32;
+			fp.m_dataType =  embDB::dtInteger32;
 			break;
 		case ShapeLib::FTDouble:
-			fp.dataType =  embDB::dtDouble;
+			fp.m_dataType =  embDB::dtDouble;
 			break;			 
 		case ShapeLib::FTDate:
 			break;

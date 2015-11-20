@@ -88,7 +88,7 @@ namespace embDB
 		  typedef TSpatialIndexIterator<TSpatialTree, iterator, TSpatialObj> TIndexIterator;
  		  virtual bool save()
 		  {
-			  return m_tree.saveBTreeInfo();
+			 return true;// return m_tree.saveBTreeInfo();
 		  }
 		  virtual bool load(int64 nAddr, eTransactionType type)
 		  {
@@ -131,8 +131,8 @@ namespace embDB
 		  {
 
 			  m_nBTreeRootPage = nBTreeRootPage;
-			  m_tree.setRootPage(m_nBTreeRootPage);
-			  return m_tree.init();
+			//  m_tree.setRootPage(m_nBTreeRootPage);
+			  return m_tree.init(m_nBTreeRootPage);
 		  }
 
 		  TSpatialTree* getBTree() {return &m_tree;}

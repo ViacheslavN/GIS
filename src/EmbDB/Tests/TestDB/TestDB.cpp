@@ -8,11 +8,13 @@
 #include "importFromShape.h"
 
 void TestSpatialField(embDB::CDatabase& db);
+void TestAddFieldDB();
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+	TestAddFieldDB();
 
-
-	testDBFromShape();
+	//testDBFromShape();
 	return 0;
 	
 /*	embDB::TVarINT32 int32key;

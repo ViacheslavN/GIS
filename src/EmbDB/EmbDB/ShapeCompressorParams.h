@@ -20,15 +20,17 @@ namespace embDB
 		virtual ~ShapeFieldCompressorParams(){}
 
 
-		virtual int64 getRootPage() const 
+		/*virtual int64 getRootPage() const 
 		{
 			return m_nRootPage;
 		}
 		virtual void setRootPage(int64 nPageID)
 		{
 			m_nRootPage = nPageID;
-		}
-		virtual bool read(IDBTransaction *pTran)
+		}*/
+
+ 
+		virtual bool load(CommonLib::IReadStream *pStream, IDBTransaction* pTran)
 		{
 			FilePagePtr pPage = pTran->getFilePage(m_nRootPage, MIN_PAGE_SIZE);
 			if(!pPage.get())
@@ -57,7 +59,7 @@ namespace embDB
 			}
 			return true;
 		}
-		virtual bool save(IDBTransaction *pTran)
+		virtual bool save(CommonLib::IWriteStream *pStream, IDBTransaction* pTran)
 		{
 			FilePagePtr pPage = pTran->getFilePage(m_nRootPage, MIN_PAGE_SIZE);
 			if(!pPage.get())
@@ -122,7 +124,7 @@ namespace embDB
 				m_nStreamPageInfo = pPage->getAddr();
 				m_StreamPageInfo.SetRootPage(pPage->getAddr());
 				m_StreamPageInfo.Init(pTran);
-				save(pTran);
+				save(NULL, pTran);
 			}
 			return &m_StreamPageInfo;
 		}

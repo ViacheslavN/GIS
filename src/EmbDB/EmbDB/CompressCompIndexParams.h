@@ -13,8 +13,8 @@ class CompIndexParams : public CompressorParamsBaseImp
 		CompIndexParams();
 		~CompIndexParams();
 
-		virtual bool read(IDBTransaction *pTran);
-		virtual bool save(IDBTransaction *pTran);
+		virtual bool load(CommonLib::IReadStream* pStream, IDBTransaction *pTran);
+		virtual bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran);
 		const std::vector<uint16>& getScheme() const {return m_vecScheme;}
 		uint32 getRowSize() const{ return m_nRowSize;}
 		void addParams(eDataTypes type, uint32 nSize = 0);

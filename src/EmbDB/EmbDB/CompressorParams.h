@@ -44,19 +44,19 @@ namespace embDB
 		virtual ~CompressorParamsBaseImp(){}
 
 			 
-		virtual int64 getRootPage() const 
+	/*	virtual int64 getRootPage() const 
 		{
 			return m_nRootPage;
 		}
 		virtual void setRootPage(int64 nPageID)
 		{
 			m_nRootPage = nPageID;
-		}
-		virtual bool read(IDBTransaction *pTran)
+		}*/
+		virtual bool load(CommonLib::IReadStream *pStream, IDBTransaction* pTran)
 		{
 			return true;
 		}
-		virtual bool save(IDBTransaction *pTran)
+		virtual bool save(CommonLib::IWriteStream *pStream, IDBTransaction* pTran)
 		{
 			return true;
 		}

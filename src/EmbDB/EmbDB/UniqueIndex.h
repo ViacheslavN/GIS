@@ -128,7 +128,7 @@ namespace embDB
 
 		typedef CUniqueIndex<FType, TBTree, FieldDataType> TIndex;
 
-		UniqueIndexFieldHandler(CommonLib::alloc_t* pAlloc) : CIndexHandlerBase(pAlloc)
+		UniqueIndexFieldHandler(CommonLib::alloc_t* pAlloc) : CIndexHandlerBase(pAlloc, itUnique)
 		{
 
 		}
@@ -170,9 +170,11 @@ namespace embDB
 		virtual IndexFiledPtr getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 
-			TIndex * pIndex = new  TIndex(pTransactions, m_pAlloc);
+			/*TIndex * pIndex = new  TIndex(pTransactions, m_pAlloc);
 			pIndex->load(m_fi.m_nFieldPage, pTransactions->getType());
-			return IndexFiledPtr(pIndex);	
+			return IndexFiledPtr(pIndex);	*/
+
+			return IndexFiledPtr();
 		}
 
 

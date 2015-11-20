@@ -210,15 +210,17 @@ namespace embDB
 		}
 		virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
-			return CIndexHandlerBase::save<TMultiIndex>(nAddr, pTran, m_pAlloc, INDEX_PAGE, MULTI_INDEX_INFO_PAGE);
+			return true;//CIndexHandlerBase::save<TMultiIndex>(nAddr, pTran, m_pAlloc, INDEX_PAGE, MULTI_INDEX_INFO_PAGE);
 		}
 		
 		virtual IndexFiledPtr getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 
-			TMultiIndex * pIndex = new  TMultiIndex(pTransactions, m_pAlloc);
+		/*	TMultiIndex * pIndex = new  TMultiIndex(pTransactions, m_pAlloc);
 			pIndex->load(m_fi.m_nFieldPage, pTransactions->getType());
-			return IndexFiledPtr(pIndex);	
+			return IndexFiledPtr(pIndex);	*/
+
+			return IndexFiledPtr();
 		}
 
 

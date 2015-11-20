@@ -5,7 +5,7 @@
 #include "FilePage.h"
 
 
-#define MIN_PAGE_SIZE	  512
+#define MIN_PAGE_SIZE	  256
 #define COMMON_PAGE_SIZE  8192
 #define MAX_PAGE_SIZE	  1048576
 
@@ -284,7 +284,7 @@ namespace embDB
 	};
 
 	template<class TKeyType, class TIterator, class TIteratorPtr>
-	struct  TIndexFiled  : public IIndex
+	struct  TIndexFiled  : public CommonLib::RefCounter
 	{
 	public:
 		TIndexFiled() {}
