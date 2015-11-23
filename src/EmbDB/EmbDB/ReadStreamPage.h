@@ -10,7 +10,7 @@ namespace embDB
 	class ReadStreamPage : public CommonLib::IReadStreamBase, public CommonLib::AutoRefCounter
 	{
 	public:
-		ReadStreamPage(embDB::IDBTransaction* pTran, uint32 nPageSize, uint16 nObjectPage = -1, uint16 nSubObjectPage = -1) :
+		ReadStreamPage(IFilePage* pTran, uint32 nPageSize, uint16 nObjectPage = -1, uint16 nSubObjectPage = -1) :
 		  m_pTran(pTran), m_nPageHeader(-1), m_nEndPage(-1), m_nEndPos(0), m_nPageSize(nPageSize), 
 			  m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage)
 		  {									  
@@ -87,11 +87,16 @@ namespace embDB
 				  }
 
 				  m_pPage->setCheck(true);
+
+				  if(m_nBeginPos != 0)
+					 m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
 			  }
+			  else
+				  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
+
 			
 
 
-			  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
 			 
 				return true;
 
@@ -208,7 +213,7 @@ namespace embDB
 
 	public:
 		FilePagePtr m_pPage;
-		embDB::IDBTransaction* m_pTran;
+		IFilePage* m_pTran;
 		uint32 m_nBeginPos;
 		int64 m_nPageHeader;
 		int64 m_nEndPage;

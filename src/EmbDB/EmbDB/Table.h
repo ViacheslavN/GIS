@@ -57,7 +57,7 @@ namespace embDB
 			virtual bool setOIDFieldName(const CommonLib::CString& sOIDName) ;
 			virtual const CommonLib::CString& getName() const ;
 			
-			virtual IFieldPtr createField(SFieldProp& sFP, ITransaction *pTran = NULL);
+			virtual IFieldPtr createField(const SFieldProp& sFP, ITransaction *pTran = NULL);
 			virtual bool deleteField(IField* pField);
 			virtual bool createIndex(const CommonLib::CString& , SIndexProp& ip);
 			virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip);
@@ -99,7 +99,7 @@ namespace embDB
 			virtual int64 GetNextOID();
 			virtual bool commit(IDBTransaction *pTran);
 		private:
-			bool ReadField(int64 nAddr, IDBTransaction *pTran);
+			bool ReadField(int64 nAddr);
 			bool ReadIndex(int64 nAddr, IDBTransaction *pTran);
 			bool readHeader(CommonLib::FxMemoryReadStream& stream);
 			bool createValueField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew);

@@ -33,8 +33,11 @@ namespace embDB
 			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
 			  {
 				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage);
+				  if(m_nBeginPos != 0)
+					  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
 			  }
-			  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
+			  else
+				  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
 			  return true;
 		  }
 

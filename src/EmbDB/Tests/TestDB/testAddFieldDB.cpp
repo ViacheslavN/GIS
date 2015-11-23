@@ -32,6 +32,13 @@ void CreateDB(const wchar_t *pszDBName)
 
 	pDBTable->createField(fp);
 
+
+	embDB::SFieldProp  blobfp;
+	blobfp.m_sFieldName = L"Blob field dddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr";
+	blobfp.m_sFieldAlias = L"ddddddddddddddddddddddddddddddddddddddddddddddddddddaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafffffffffffffffffffffèèèèèèèèèèèèèèèèèèèè";
+	blobfp.m_dataType = embDB::dtBlob;
+	
+	pDBTable->createField(blobfp);
 }
 
 

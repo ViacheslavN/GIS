@@ -32,8 +32,8 @@ namespace embDB
 		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE)
 	{
 		m_pDBStorage = pDB->getDBStorage();
-		m_nFieldsAddr.setPageSize(8192/*m_pDBStorage->getPageSize()*/);
-		m_nIndexAddr.setPageSize(8192/*m_pDBStorage->getPageSize()*/);
+		m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
+		m_nIndexAddr.setPageSize(MIN_PAGE_SIZE);
 		
 		m_pFields = new CFields();
 		//m_pIndexs = new CFields();
@@ -49,8 +49,8 @@ namespace embDB
 		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE)
 	{
 		m_pDBStorage = pDB->getDBStorage();
-		m_nFieldsAddr.setPageSize(8192/*m_pDBStorage->getPageSize()*/);
-		m_nIndexAddr.setPageSize(8192/*m_pDBStorage->getPageSize()*/);
+		m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
+		m_nIndexAddr.setPageSize(MIN_PAGE_SIZE);
 		
 		m_pFields = new CFields();
 		//m_pIndexs = new CFields();
@@ -66,8 +66,8 @@ namespace embDB
 		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE)
 	{
 		m_pDBStorage = pDB->getDBStorage();
-		m_nFieldsAddr.setPageSize(8192/*m_pDBStorage->getPageSize()*/);
-		m_nIndexAddr.setPageSize(8192/*m_pDBStorage->getPageSize()*/);
+		m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
+		m_nIndexAddr.setPageSize(MIN_PAGE_SIZE);
 		
 		m_pFields = new CFields();
 		//m_pIndexs = new CFields();
@@ -153,12 +153,12 @@ namespace embDB
 			return true;
 		{
 			m_nFieldsAddr.setFirstPage(m_nFieldsPage);
-			m_nFieldsAddr.setPageSize(/*m_pDBStorage->getPageSize()*/COMMON_PAGE_SIZE);
+			m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
 			m_nFieldsAddr.load(m_pDBStorage.get());
 			TFieldPages::iterator it = m_nFieldsAddr.begin();
 			while(!it.isNull())
 			{
-				if(!ReadField(it.value(), NULL))
+				if(!ReadField(it.value()))
 					return false;
 				it.next();
 			}
@@ -170,7 +170,7 @@ namespace embDB
 
 
 		m_nIndexAddr.setFirstPage(m_nIndexsPage);
-		m_nIndexAddr.setPageSize(/*m_pDBStorage->getPageSize()*/COMMON_PAGE_SIZE);
+		m_nIndexAddr.setPageSize(MIN_PAGE_SIZE);
 		m_nIndexAddr.load(m_pDBStorage.get());
 		TFieldPages::iterator it = m_nIndexAddr.begin();
 		while(!it.isNull())
@@ -236,51 +236,7 @@ namespace embDB
 		return m_nTablePage;
 	}
 	 
-	bool CTable::ReadField(int64 nAddr, IDBTransaction *pTran)
-	{
-		CommonLib::FxMemoryReadStream stream;
-		FilePagePtr pPage = m_pDBStorage->getFilePage(nAddr, nFieldInfoPageSize);
-		if(!pPage.get())
-			return false;
-		stream.attach(pPage->getRowData(), pPage->getPageSize());
-		sFieldInfo fi;
-		sFilePageHeader header (stream);
-		 if(!header.isValid())
-		 {
-			 if(!pTran)
-				 return false;
-			 pTran->error(_T("TABLE: Page %I64d Error CRC for field header page"), nAddr);
-			  return false;
-		 }
-		 if(header.m_nObjectPageType != TABLE_PAGE || header.m_nSubObjectPageType != TABLE_FIELD_PAGE )
-		 {
-			 if(!pTran)
-				 return false;
-			 pTran->error(_T("TABLE: Page %I64d is not field info"), nAddr);
-			  return false;
-		 }
-	 
-		if(!fi.Read(&stream))
-			return false;
-
-		if(fi.m_nFieldType == dtGeometry)
-		{
-			stream.seek(0, CommonLib::soFromBegin);
-			sFilePageHeader spheader (stream); //TO DO temporary
-			sSpatialFieldInfo sfi;
-
-			if(!sfi.Read(&stream))
-				return false;
-			sfi.m_nFIPage = nAddr;
-			return addField(&sfi, pTran, false);
-		}
-		else
-		{
-			fi.m_nFIPage = nAddr;
-			return addField(&fi, pTran, false);
-		}
-		
-	}
+	
 
 	bool CTable::ReadIndex(int64 nAddr, IDBTransaction *pTran)
 	{
@@ -686,7 +642,7 @@ namespace embDB
 	{
 		return m_sTableName;
 	}
-	IFieldPtr CTable::createField(SFieldProp& sFP, ITransaction *pTran )
+	IFieldPtr CTable::createField(const  SFieldProp& sFP, ITransaction *pTran )
 	{
 
 		if(sFP.m_sFieldName.length() > nMaxFieldNameLen || sFP.m_sFieldAlias.length() > nMaxFieldAliasLen)
@@ -710,46 +666,69 @@ namespace embDB
 			pDBTran =  ((IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get());
 			pDBTran->begin();
 		}
-
-		FilePagePtr pFieldInfoPage = pDBTran->getNewPage(nFieldInfoPageSize);
-		if(!pFieldInfoPage.get())
-			return IFieldPtr(); // TO DO Error
-
-		WriteStreamPage stream(pDBTran.get(), nFieldInfoPageSize, TABLE_PAGE, TABLE_FIELD_PAGE);
-		stream.open(pFieldInfoPage->getAddr(), 0);
-		stream.write(sFP.m_dataType);
-
-
-		IDBFieldHandler* pField =  CreateValueField(&sFP, m_pDB, pDBTran.get(), pFieldInfoPage->getAddr());
-		if(!pField)
-			return IFieldPtr(); // TO DO Error
-
-
-		if(pField->save(&stream, pDBTran.get()))
 		{
-			return IFieldPtr(); // TO DO Error
+
+			FilePagePtr pFieldInfoPage = pDBTran->getNewPage(nFieldInfoPageSize);
+			if(!pFieldInfoPage.get())
+				return IFieldPtr(); // TO DO Error
+
+			WriteStreamPage stream(pDBTran.get(), nFieldInfoPageSize, TABLE_PAGE, TABLE_FIELD_PAGE);
+			stream.open(pFieldInfoPage);
+			stream.write((uint32)sFP.m_dataType);
+			stream.write(sFP.m_nPageSize);
+			stream.write(sFP.m_nLenField);
+
+			IDBFieldHandlerPtr pField =  CreateValueField(&sFP, m_pDB, pFieldInfoPage->getAddr());
+			if(!pField.get())
+				return IFieldPtr(); // TO DO Error
+
+
+			if(!pField->save(&stream, pDBTran.get()))
+			{
+				return IFieldPtr(); // TO DO Error
+			}
+
+			if(!m_nFieldsAddr.push(pFieldInfoPage->getAddr(), pDBTran.get()))
+				return IFieldPtr(); // TO DO Error
+
+			stream.Save();
+			m_pFields->AddField(pField.get());
 		}
-
-		if(!m_nFieldsAddr.push(pFieldInfoPage->getAddr(), pDBTran.get()))
-			return IFieldPtr(); // TO DO Error
-
-		stream.Save();
-
-		/*if(!addField(&fi, pTran.get(), true))
-		{	
-			pTran->rollback();
-			m_pDB->closeTransaction(pTran.get());
-			return IFieldPtr();
-		}*/
-
+		
 		if(!pTran)
 		{
 			pDBTran->commit();
 			m_pDB->closeTransaction(pDBTran.get());
 		}
-
 		return getField(sFP.m_sFieldName);
 	}
+
+	bool CTable::ReadField(int64 nAddr)
+	{
+		ReadStreamPage stream(m_pDBStorage.get(), MIN_PAGE_SIZE, TABLE_PAGE, TABLE_FIELD_PAGE);
+		FilePagePtr pPage = m_pDBStorage->getFilePage(nAddr, nFieldInfoPageSize);
+
+		if(!stream.open(nAddr, 0))
+			return false;
+		SFieldProp sFP;
+		sFP.m_dataType = (eDataTypes)stream.readIntu32();
+		stream.read(sFP.m_nPageSize);
+		stream.read(sFP.m_nLenField);
+
+	
+		IDBFieldHandlerPtr pField =  CreateValueField(&sFP, m_pDB, nAddr);
+		if(!pField.get())
+			return false;
+
+		if(!pField->load(&stream, m_pDBStorage.get()))
+		{
+			return false;
+		}
+		m_pFields->AddField(pField.get());
+		return true;
+
+	}
+
 	bool CTable::deleteField(IField* pField)
 	{
 		return delField(pField);

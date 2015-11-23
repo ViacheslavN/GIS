@@ -4,9 +4,9 @@
 namespace embDB
 {
 
-	static IDBFieldHandler* CreateValueField(const SFieldProp* pFieldProp, CDatabase* pDB, IDBTransaction *pTran, int64 nPageAdd)
+	static IDBFieldHandlerPtr CreateValueField(const SFieldProp* pFieldProp, CDatabase* pDB, int64 nPageAdd)
 	{
-		IDBFieldHandler* pField = NULL;
+		IDBFieldHandlerPtr pField;
 		switch(pFieldProp->m_dataType)
 		{
 		case dtInteger8:

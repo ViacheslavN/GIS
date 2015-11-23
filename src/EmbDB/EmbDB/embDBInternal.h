@@ -463,7 +463,21 @@ namespace embDB
 		virtual bool save(IDBTransaction *pTran) = 0;
 	};
 
-	struct IDBStorage : CommonLib::AutoRefCounter
+
+	struct IFilePage
+	{
+		public:
+			IFilePage(){}
+			virtual ~IFilePage(){}
+
+			virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true) = 0;
+			virtual FilePagePtr getNewPage(uint32 nSize, bool bWrite = false) = 0;
+			virtual bool saveFilePage(CFilePage* pPage, size_t nDataSize = 0,  bool ChandgeInCache = false) = 0;
+			virtual bool saveFilePage(FilePagePtr pPage, size_t nDataSize = 0,  bool ChandgeInCache = false) = 0;
+
+	};
+
+	struct IDBStorage : public IFilePage, public CommonLib::AutoRefCounter
 	{
 	public:
 		IDBStorage(){}
@@ -471,19 +485,14 @@ namespace embDB
 
 		virtual bool open(const wchar_t* pszName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways/*, size_t nPageSize*/) = 0;
 		virtual bool close() = 0;
-		//virtual void setPageSize(size_t nPageSize) = 0;
- 
 
-		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true) = 0;
+ 
+		virtual bool saveNewPage(FilePagePtr pPage) = 0;
+		virtual int64 getNewPageAddr(uint32 nSize) = 0;
+		
 		virtual bool dropFilePage(FilePagePtr pPage) = 0;
 		virtual bool dropFilePage(int64 nAddr) = 0;
-		virtual FilePagePtr getNewPage(uint32 nSize, bool bWrite = false) = 0;
-		virtual bool saveFilePage(CFilePage* pPage, size_t nDataSize = 0,  bool ChandgeInCache = false) = 0;
-		virtual bool saveFilePage(FilePagePtr pPage, size_t nDataSize = 0,  bool ChandgeInCache = false) = 0;
-		virtual bool saveNewPage(FilePagePtr pPage) = 0;
-		//virtual size_t getPageSize() const = 0;
-		virtual int64 getNewPageAddr(uint32 nSize/*, uint32* nType = NULL*/) = 0;
-		//virtual FilePagePtr createPage(int64 nAddr) = 0;
+
 		virtual bool commit() = 0;
 		virtual bool removeFromFreePage(int64 nAddr) = 0;
 		//virtual bool saveChache() = 0;
@@ -531,7 +540,7 @@ namespace embDB
 		//	virtual bool insert(IRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
 		//	virtual bool insert(INameRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
 
-		virtual IFieldPtr createField(SFieldProp& sFP, ITransaction *pTran = NULL) = 0;
+		virtual IFieldPtr createField(const  SFieldProp& sFP, ITransaction *pTran = NULL) = 0;
 		virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true) = 0;
 		virtual bool deleteField(IField* pField) = 0;
 		virtual bool createIndex(const CommonLib::CString& sName, SIndexProp& ip) = 0;
@@ -554,7 +563,7 @@ namespace embDB
 	public:
 		virtual bool commit() = 0;
 	};
-	struct  IDBTransaction : public ITransaction
+	struct  IDBTransaction : public IFilePage, public ITransaction
 	{
 	public:
 		IDBTransaction(){}
@@ -564,11 +573,8 @@ namespace embDB
 		virtual bool restore(bool Force = false) = 0;
 
 
-		virtual FilePagePtr getFilePage(int64 nAddr,  uint32 nSize, bool bRead = true) = 0;
 		virtual void dropFilePage(FilePagePtr pPage) = 0;
 		virtual void dropFilePage(int64 nAddr, uint32 nSize) = 0;
-		virtual FilePagePtr getNewPage(uint32 nSize) = 0;
-		virtual void saveFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false) = 0;
 		//virtual size_t getPageSize() const = 0;
 
 

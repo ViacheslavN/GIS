@@ -311,7 +311,7 @@ namespace embDB
 		addUndoPage(pRemPage);
 		m_vecRemovePages.push_back(nAddr);
 	}
-	FilePagePtr CTransaction::getNewPage(uint32 nSize)
+	FilePagePtr CTransaction::getNewPage(uint32 nSize, bool bWrite)
 	{
 		if((nSize%m_nPageSize) != 0)
 			return FilePagePtr();
@@ -336,10 +336,17 @@ namespace embDB
 		m_PageChache.AddPage(nAddr, nTranAddr, pFilePage);
 		return FilePagePtr(pFilePage);
 	}
-	void CTransaction::saveFilePage(FilePagePtr pPage,  size_t nSize, bool bChangeInCache )
+	bool CTransaction::saveFilePage(FilePagePtr pPage,  size_t nSize, bool bChangeInCache )
 	{
 		m_PageChache.savePage(pPage.get());
+		return true;
 	}
+	bool CTransaction::saveFilePage(CFilePage* pPage, size_t nDataSize,  bool ChandgeInCache)
+	{
+		m_PageChache.savePage(pPage);
+		return true;
+	}
+
 	/*size_t CTransaction::getPageSize() const
 	{
 		return m_pDBStorage->getPageSize();
