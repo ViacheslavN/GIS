@@ -100,7 +100,10 @@ namespace embDB
 		}*/
 		virtual bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran)
 		{
-			return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc);
+			BlobFieldCompressorParams leafCompParams;
+			leafCompParams.SetMaxPageBlobSize(m_nPageSize/20);
+	
+			return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, NULL, &leafCompParams);
 		}
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
@@ -109,6 +112,7 @@ namespace embDB
 		virtual bool release(IValueField* pField)
 		{
 		/*	TField* pOIDField = (TField*)pField;
+
 
 			TField::TBTree *pBTree = pOIDField->getBTree();
 

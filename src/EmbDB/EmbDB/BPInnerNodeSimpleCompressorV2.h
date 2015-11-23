@@ -22,8 +22,9 @@ namespace embDB
 		typedef CompressorParamsBaseImp TInnerCompressorParams;
 
 
+
 		template<typename _Transactions  >
-		static TInnerCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		static TInnerCompressorParams *LoadCompressorParams(_Transactions *pTran)
 		{
 			return NULL;
 		}

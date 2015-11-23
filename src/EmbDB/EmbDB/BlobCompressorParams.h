@@ -11,35 +11,15 @@ namespace embDB
 	class BlobFieldCompressorParams
 	{
 	public:
-		BlobFieldCompressorParams(int64 nRootPage = -1) : m_nRootPage(nRootPage), m_nMaxPageBlobSize(0), m_nStreamPageInfo(-1)
+		BlobFieldCompressorParams() :  m_nMaxPageBlobSize(0), m_nStreamPageInfo(-1)
 		{}
 		virtual ~BlobFieldCompressorParams(){}
 
-
-/*		virtual int64 getRootPage() const 
-		{
-			return m_nRootPage;
-		}
-		virtual void setRootPage(int64 nPageID)
-		{
-			m_nRootPage = nPageID;
-		}*/
 		virtual bool load(CommonLib::IReadStream *pSteram,  IDBTransaction *pTran)
 		{
-			FilePagePtr pPage = pTran->getFilePage(m_nRootPage, MIN_PAGE_SIZE);
-			if(!pPage.get())
-				return false; //TO DO Error
-			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
-			sFilePageHeader header(stream);
-			if(header.m_nObjectPageType != BTREE_PAGE || header.m_nSubObjectPageType != BTREE_BLOB_PARAMS_COMPRESS_PAGE)
-			{
-				pTran->error(_T("BTREE: Page %I64d is not blob params compress page"), m_nRootPage);
-				return false;
-			}
 
-			m_nMaxPageBlobSize = stream.readIntu32();
-			m_nStreamPageInfo = stream.readInt64();
+			m_nMaxPageBlobSize = pSteram->readIntu32();
+			m_nStreamPageInfo = pSteram->readInt64();
 
 			if(m_nStreamPageInfo != -1)
 			{
@@ -50,23 +30,21 @@ namespace embDB
 		}
 		virtual bool save(CommonLib::IWriteStream *pSteram,IDBTransaction *pTran)
 		{
-			FilePagePtr pPage = pTran->getFilePage(m_nRootPage, MIN_PAGE_SIZE);
-			if(!pPage.get())
-				return false; //TO DO Error
-
-
-			CommonLib::FxMemoryWriteStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
-			sFilePageHeader header(stream, BTREE_PAGE, BTREE_BLOB_PARAMS_COMPRESS_PAGE);
-			stream.write((uint32)m_nMaxPageBlobSize);
-			stream.write(m_nStreamPageInfo);
-
-			header.writeCRC32(stream);
-			pTran->saveFilePage(pPage);
-			if(m_nStreamPageInfo != -1)
+			 
+			if(m_nStreamPageInfo == -1)
 			{			 
+				FilePagePtr pPage = pTran->getNewPage(MIN_PAGE_SIZE);
+				m_StreamPageInfo.SetRootPage(pPage->getAddr());
+				m_StreamPageInfo.Init(pTran);
+				m_nStreamPageInfo = pPage->getAddr();
 				return m_StreamPageInfo.Save(pTran);
 			}
+
+			pSteram->write((uint32)m_nMaxPageBlobSize);
+			pSteram->write(m_nStreamPageInfo);
+
+			 
+			
 			return !pTran->isError();
 		}
 
@@ -107,10 +85,9 @@ namespace embDB
 				m_StreamPageInfo.Save(pTransaction);
 		}
 	private:
-		int64 m_nRootPage;
 		uint32 m_nMaxPageBlobSize;
 		int64 m_nStreamPageInfo;
-			CStreamPageInfo m_StreamPageInfo;
+		CStreamPageInfo m_StreamPageInfo;
 
 	};
 }

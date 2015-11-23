@@ -18,8 +18,9 @@ namespace embDB
 		typedef CompressorParamsBaseImp TLeafCompressorParams;
 
 
+	
 		template<typename _Transactions  >
-		static TLeafCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		static TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
 		{
 			return NULL;
 		}

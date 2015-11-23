@@ -20,8 +20,9 @@ namespace embDB
 		BPLeafNodeSetSimpleCompressorV2(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL) : m_nSize(0)
 		{}
 
+	
 		template<typename _Transactions  >
-		static TLeafCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		static TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
 		{
 			return NULL;
 		}

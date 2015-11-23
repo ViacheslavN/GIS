@@ -209,8 +209,8 @@ namespace embDB
 			m_nRootAddr = stream.readInt64();
 			m_bMulti = stream.readBool();
 		
-			m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(-1, m_pTransaction));
-			m_LeafCompParams.reset(TLeafCompess::LoadCompressorParams(-1, m_pTransaction));
+			m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(m_pTransaction));
+			m_LeafCompParams.reset(TLeafCompess::LoadCompressorParams(m_pTransaction));
 			m_InnerCompParams->load(&stream, m_pTransaction);
 			m_LeafCompParams->load(&stream, m_pTransaction);
 
@@ -400,10 +400,10 @@ namespace embDB
 		m_nNodesPageSize = pStream->readIntu32();
 
 		if(!m_InnerCompParams.get())
-			m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(-1, m_pTransaction));
+			m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(m_pTransaction));
 		m_InnerCompParams->load(pStream);
 		if(!m_LeafCompParams.get())
-			m_LeafCompParams.reset(TLeafCompess::LoadCompressorParams(-1, m_pTransaction));
+			m_LeafCompParams.reset(TLeafCompess::LoadCompressorParams(m_pTransaction));
 
 		m_LeafCompParams->load(pStream);
 

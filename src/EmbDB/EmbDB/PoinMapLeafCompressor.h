@@ -24,8 +24,9 @@ namespace embDB
 			TLeafKeyMemSet *pKeyMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nSize(0)
 		{}
 
+
 		template<typename _Transactions  >
-		static TLeafCompressorParams *LoadCompressorParams(int64 nPage, _Transactions *pTran)
+		static TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
 		{
 			return NULL;
 		}
