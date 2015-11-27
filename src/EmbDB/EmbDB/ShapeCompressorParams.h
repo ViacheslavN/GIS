@@ -97,16 +97,7 @@ namespace embDB
 		void SetScaleY(double dScaleY)   { m_dScaleY = dScaleY; } 
 		void SetCoordType(embDB::eDataTypes CoordTypes)   { m_CoordTypes = CoordTypes; } 
 		void SetShapeType(CommonLib::eShapeType ShapeType)   { m_ShapeType = ShapeType; } 
-		void SetParams(const sSpatialFieldInfo& spInfo)
-		{
-			SetOffsetX(spInfo.m_dOffsetX);
-			SetOffsetY(spInfo.m_dOffsetY);
-			SetScaleX(spInfo.m_dScaleX);
-			SetScaleY(spInfo.m_dScaleY);
-			SetCoordType((embDB::eDataTypes)spInfo.m_nFieldType);
-			SetShapeType(spInfo.m_ShapeType);
-		}
-
+	
 
 
 		double GetOffsetX() const   { return m_dOffsetX;}

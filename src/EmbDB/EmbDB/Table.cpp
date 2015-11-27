@@ -702,7 +702,129 @@ namespace embDB
 		}
 		return getField(sFP.m_sFieldName);
 	}
+		IFieldPtr CTable::createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias,  CommonLib::eShapeType shapeType,
+		const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex, ITransaction *pTran)
+	{
 
+		if(shapeType == CommonLib::shape_type_null || extent.type == CommonLib::bbox_type_invalid)
+			return IFieldPtr(); //TO DO Log
+
+		if(sFP.m_sFieldName.length() > nMaxFieldNameLen || sFP.m_sFieldAlias.length() > nMaxFieldAliasLen)
+			return IFieldPtr(); // TO DO Error
+
+		if(m_pFields->FieldExists(sFP.m_sFieldName))
+			return IFieldPtr(); // TO DO Error
+
+		IDBTransactionPtr pDBTran;
+		if(pTran)
+		{
+			if(pTran->getType() != eTT_DDL)
+				return IFieldPtr(); // TO DO Error
+
+			pDBTran =  (IDBTransaction*)pTran;
+
+		}
+		else
+		{
+
+			pDBTran =  ((IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get());
+			pDBTran->begin();
+		}
+
+	
+
+		double dOffsetX = 0., dOffsetY = 0., dScaleX = 1., dScaleY = 1.;
+		if(extent.xMin < 0)
+			dOffsetX = fabs(extent.xMin);
+		else
+			dOffsetX = -1 *extent.xMin;
+	
+		if(extent.yMin < 0)
+			dOffsetY = fabs(extent.yMin);
+		else
+			dOffsetY = -1 *extent.yMin;
+
+		
+		eSpatialType SpatialDataType = stUnknown; 			 
+
+		bool isPoint = false;
+		if(shapeType == CommonLib::shape_type_point || shapeType == CommonLib::shape_type_point_m || shapeType == CommonLib::shape_type_point_zm /* || 
+			shapeType == CommonLib::shape_type_multipoint || shapeType == CommonLib::shape_type_multipoint_m || shapeType == CommonLib::shape_type_multipoint_zm || shapeType == CommonLib::shape_type_multipoint_z*/)
+		{
+			isPoint = true;
+		}
+		double dMaxX = fabs(extent.xMax + dOffsetX);
+		double dMaxY = fabs(extent.yMax + dOffsetY);
+		double dMaxCoord = max(dMaxX, dMaxY);
+		switch(CoordUnits)
+		{
+			case scuDecimalDegrees:
+				dScaleX = 0.0000001;
+				dScaleY = 0.0000001;
+				break;
+			case scuKilometers:
+			case scuMiles:
+				dScaleX = 0.001;
+				dScaleY = 0.001;
+				break;
+			case scuMeters:
+			case scuYards:
+			case scuFeet:
+			case scuDecimeters:
+			case scuInches:
+				dScaleX = 0.01;
+				dScaleY = 0.01;
+				break;
+			case scuMillimeters:
+				dScaleX = 1;
+				dScaleY = 1;
+				break;
+			default:
+				dScaleX = 0.0001;
+				dScaleY = 0.0001;
+				break;
+		}
+		
+		int64 nMaxVal = int64(dMaxCoord/dScaleX);
+		SpatialDataType = GetSpatialType(nMaxVal, isPoint);
+	
+		/*sSpatialFieldInfo fi;
+		fi.m_extent = extent;
+		fi.m_bCheckCRC32 = true;
+		fi.m_ShapeType = shapeType;
+		fi.m_sFieldName = pszFieldName;
+		fi.m_sFieldAlias = pszAlias;
+		fi.m_dOffsetX = dOffsetX;
+		fi.m_dOffsetY = dOffsetY;
+		fi.m_dScaleX = dScaleX;
+		fi.m_dScaleY = dScaleY;
+		fi.m_nFieldType = dtGeometry;
+		fi.m_nCoordType = CoordUnits;
+		fi.m_nSpatialType = SpatialDataType;*/
+
+
+		IDBTransaction* pTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();
+		pTran->begin();
+		
+		SFieldProp FP;
+
+		ShapeValueFieldHandler *pShape = new  ShapeValueFieldHandler(m_pDB->getBTreeAlloc(), FP, nPageAdd);
+
+		pTran->commit();
+		m_pDB->closeTransaction(pTran);		
+
+		if(bCreateIndex)
+		{
+
+			//addIndex(const CommonLib::CString& sFieldName, SIndexProp& ip, bool bNew)
+			
+			SIndexProp ip;
+			ip.indexType = itSpatial;
+			addIndex(pszFieldName, ip, true);
+		}
+		return getField(fi.m_sFieldName);
+
+	}
 	bool CTable::ReadField(int64 nAddr)
 	{
 		ReadStreamPage stream(m_pDBStorage.get(), MIN_PAGE_SIZE, TABLE_PAGE, TABLE_FIELD_PAGE);
@@ -835,110 +957,5 @@ namespace embDB
 		return  isPoint ? stPoint64 : stRect64;
 	}
 
-	IFieldPtr CTable::createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias,  CommonLib::eShapeType shapeType,
-		const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex)
-	{
 
-		/*TFieldByName::iterator it = m_FieldByName.find(pszFieldName);
-		if(it != m_FieldByName.end())
-			return IFieldPtr();*/
-		if(m_pFields->FieldExists(pszFieldName))
-			return IFieldPtr();
-
-		if(shapeType == CommonLib::shape_type_null || extent.type == CommonLib::bbox_type_invalid)
-			return IFieldPtr(); //TO DO Log
-
-		double dOffsetX = 0., dOffsetY = 0., dScaleX = 1., dScaleY = 1.;
-		if(extent.xMin < 0)
-			dOffsetX = fabs(extent.xMin);
-		else
-			dOffsetX = -1 *extent.xMin;
-	
-		if(extent.yMin < 0)
-			dOffsetY = fabs(extent.yMin);
-		else
-			dOffsetY = -1 *extent.yMin;
-
-		
-		eSpatialType SpatialDataType = stUnknown; 			 
-
-		bool isPoint = false;
-		if(shapeType == CommonLib::shape_type_point || shapeType == CommonLib::shape_type_point_m || shapeType == CommonLib::shape_type_point_zm /* || 
-			shapeType == CommonLib::shape_type_multipoint || shapeType == CommonLib::shape_type_multipoint_m || shapeType == CommonLib::shape_type_multipoint_zm || shapeType == CommonLib::shape_type_multipoint_z*/)
-		{
-			isPoint = true;
-		}
-		double dMaxX = fabs(extent.xMax + dOffsetX);
-		double dMaxY = fabs(extent.yMax + dOffsetY);
-		double dMaxCoord = max(dMaxX, dMaxY);
-		switch(CoordUnits)
-		{
-			case scuDecimalDegrees:
-				dScaleX = 0.0000001;
-				dScaleY = 0.0000001;
-				break;
-			case scuKilometers:
-			case scuMiles:
-				dScaleX = 0.001;
-				dScaleY = 0.001;
-				break;
-			case scuMeters:
-			case scuYards:
-			case scuFeet:
-			case scuDecimeters:
-			case scuInches:
-				dScaleX = 0.01;
-				dScaleY = 0.01;
-				break;
-			case scuMillimeters:
-				dScaleX = 1;
-				dScaleY = 1;
-				break;
-			default:
-				dScaleX = 0.0001;
-				dScaleY = 0.0001;
-				break;
-		}
-		
-		int64 nMaxVal = int64(dMaxCoord/dScaleX);
-		SpatialDataType = GetSpatialType(nMaxVal, isPoint);
-	
-		sSpatialFieldInfo fi;
-		fi.m_extent = extent;
-		fi.m_bCheckCRC32 = true;
-		fi.m_ShapeType = shapeType;
-		fi.m_sFieldName = pszFieldName;
-		fi.m_sFieldAlias = pszAlias;
-		fi.m_dOffsetX = dOffsetX;
-		fi.m_dOffsetY = dOffsetY;
-		fi.m_dScaleX = dScaleX;
-		fi.m_dScaleY = dScaleY;
-		fi.m_nFieldType = dtGeometry;
-		fi.m_nCoordType = CoordUnits;
-		fi.m_nSpatialType = SpatialDataType;
-
-
-		IDBTransaction* pTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();
-		pTran->begin();
-		if(!createValueField(&fi, pTran, true))
-		{	
-			pTran->rollback();
-			m_pDB->closeTransaction(pTran);
-			return IFieldPtr();
-		}
-		pTran->commit();
-		m_pDB->closeTransaction(pTran);		
-
-		if(bCreateIndex)
-		{
-
-			//addIndex(const CommonLib::CString& sFieldName, SIndexProp& ip, bool bNew)
-			
-			SIndexProp ip;
-			ip.indexType = itSpatial;
-			addIndex(pszFieldName, ip, true);
-		}
-		return getField(fi.m_sFieldName);
-
-	}
 }

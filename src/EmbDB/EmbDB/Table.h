@@ -58,10 +58,12 @@ namespace embDB
 			virtual const CommonLib::CString& getName() const ;
 			
 			virtual IFieldPtr createField(const SFieldProp& sFP, ITransaction *pTran = NULL);
+			virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, 
+					const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true, ITransaction *pTran = NULL);
 			virtual bool deleteField(IField* pField);
 			virtual bool createIndex(const CommonLib::CString& , SIndexProp& ip);
 			virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip);
-			virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true);
+		
 			
 			virtual IFieldPtr getField(const CommonLib::CString& sName) const ;
 			virtual size_t getFieldCnt() const;
