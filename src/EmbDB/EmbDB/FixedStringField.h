@@ -81,7 +81,7 @@ namespace embDB
 	};
 
 
-	class FixedStringValueFieldHandler : public CDBFieldHandlerBase
+	class FixedStringValueFieldHandler : public CDBFieldHandlerBase<IDBFieldHandler>
 	{
 	public:
  
@@ -90,7 +90,7 @@ namespace embDB
 		typedef TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		FixedStringValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFP, int64 nPageAdd) : CDBFieldHandlerBase(pAlloc, pFP, nPageAdd)
+		FixedStringValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFP, int64 nPageAdd) : CDBFieldHandlerBase<IDBFieldHandler>(pAlloc, pFP, nPageAdd)
 		{}
 		~FixedStringValueFieldHandler()
 		{}

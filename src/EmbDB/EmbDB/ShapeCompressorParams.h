@@ -13,45 +13,28 @@ namespace embDB
 	{
 	public:
 
-		ShapeFieldCompressorParams(int64 nRootPage = -1) : m_nRootPage(nRootPage), m_nMaxPageBlobSize(400), 
+		ShapeFieldCompressorParams() :   m_nMaxPageBlobSize(400), 
 			m_nStreamPageInfo(-1), m_dOffsetX(0.), m_dOffsetY(0.), m_dScaleX(1.), m_dScaleY(1.),
-				m_CoordTypes(dtUnknown), m_ShapeType(CommonLib::shape_type_null)
+				m_CoordTypes(stUnknown), m_ShapeType(CommonLib::shape_type_null)
 		{}
 		virtual ~ShapeFieldCompressorParams(){}
 
 
-		/*virtual int64 getRootPage() const 
-		{
-			return m_nRootPage;
-		}
-		virtual void setRootPage(int64 nPageID)
-		{
-			m_nRootPage = nPageID;
-		}*/
+	 
 
  
 		virtual bool load(CommonLib::IReadStream *pStream, IDBTransaction* pTran)
 		{
-			FilePagePtr pPage = pTran->getFilePage(m_nRootPage, MIN_PAGE_SIZE);
-			if(!pPage.get())
-				return false; //TO DO Error
-			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
-			sFilePageHeader header(stream);
-			if(header.m_nObjectPageType != BTREE_PAGE || header.m_nSubObjectPageType != BTREE_SHAPE_PARAMS_COMPRESS_PAGE)
-			{
-				pTran->error(_T("BTREE: Page %I64d is not shape params compress page"), m_nRootPage);
-				return false;
-			}
+			 
 
-			m_nMaxPageBlobSize = (eStringCoding)stream.readIntu32();
-			m_nStreamPageInfo = stream.readInt64();
-			stream.read(m_dOffsetX);
-			stream.read(m_dOffsetY);
-			stream.read(m_dScaleX);
-			stream.read(m_dScaleY);
-			m_CoordTypes = (embDB::eDataTypes)stream.readIntu32();
-			m_ShapeType = (CommonLib::eShapeType)stream.readIntu32();
+			m_nMaxPageBlobSize =  pStream->readIntu32();
+			m_nStreamPageInfo = pStream->readInt64();
+			pStream->read(m_dOffsetX);
+			pStream->read(m_dOffsetY);
+			pStream->read(m_dScaleX);
+			pStream->read(m_dScaleY);
+			m_CoordTypes = (embDB::eSpatialType)pStream->readIntu32();
+			m_ShapeType = (CommonLib::eShapeType)pStream->readIntu32();
 			if(m_nStreamPageInfo != -1)
 			{
 				m_StreamPageInfo.SetRootPage(m_nStreamPageInfo);
@@ -61,30 +44,26 @@ namespace embDB
 		}
 		virtual bool save(CommonLib::IWriteStream *pStream, IDBTransaction* pTran)
 		{
-			FilePagePtr pPage = pTran->getFilePage(m_nRootPage, MIN_PAGE_SIZE);
-			if(!pPage.get())
-				return false; //TO DO Error
-
-
-			CommonLib::FxMemoryWriteStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
-			sFilePageHeader header(stream, BTREE_PAGE, BTREE_SHAPE_PARAMS_COMPRESS_PAGE);
-			stream.write((uint32)m_nMaxPageBlobSize);
-			stream.write(m_nStreamPageInfo);
-			stream.write(m_dOffsetX);
-			stream.write(m_dOffsetY);
-			stream.write(m_dScaleX);
-			stream.write(m_dScaleY);
-			stream.write((uint32)m_CoordTypes);
-			stream.write((uint32)m_ShapeType);
-
-			header.writeCRC32(stream);
-			pTran->saveFilePage(pPage);
-			if(m_nStreamPageInfo != -1)
+			if(m_nStreamPageInfo == -1)
 			{			 
-				return m_StreamPageInfo.Save(pTran);
+				FilePagePtr pPage = pTran->getNewPage(MIN_PAGE_SIZE);
+				m_StreamPageInfo.SetRootPage(pPage->getAddr());
+				m_StreamPageInfo.Init(pTran);
+				m_nStreamPageInfo = pPage->getAddr();
+				m_StreamPageInfo.Save(pTran);
 			}
-			return !pTran->isError();
+
+
+		 
+			pStream->write((uint32)m_nMaxPageBlobSize);
+			pStream->write(m_nStreamPageInfo);
+			pStream->write(m_dOffsetX);
+			pStream->write(m_dOffsetY);
+			pStream->write(m_dScaleX);
+			pStream->write(m_dScaleY);
+			pStream->write((uint32)m_CoordTypes);
+			pStream->write((uint32)m_ShapeType);
+			return true;
 		}
 
 		uint32 GetMaxPageBlobSize() const {return m_nMaxPageBlobSize;}
@@ -95,7 +74,7 @@ namespace embDB
 		void SetOffsetY(double dOffsetY)   { m_dOffsetY = dOffsetY; } 
 		void SetScaleX(double dScaleX)   { m_dScaleX = dScaleX; } 
 		void SetScaleY(double dScaleY)   { m_dScaleY = dScaleY; } 
-		void SetCoordType(embDB::eDataTypes CoordTypes)   { m_CoordTypes = CoordTypes; } 
+		void SetCoordType(embDB::eSpatialType CoordTypes)   { m_CoordTypes = CoordTypes; } 
 		void SetShapeType(CommonLib::eShapeType ShapeType)   { m_ShapeType = ShapeType; } 
 	
 
@@ -104,19 +83,11 @@ namespace embDB
 		double GetOffsetY()  const { return m_dOffsetY;} 
 		double GetScaleX()  const { return m_dScaleX; } 
 		double GetScaleY() const  { return m_dScaleY;} 
-		embDB::eDataTypes GetCoordType() const  {return  m_CoordTypes;} 
+		embDB::eSpatialType GetCoordType() const  {return  m_CoordTypes;} 
 		CommonLib::eShapeType GetShapeType() const  { return m_ShapeType;} 
 
 		CStreamPageInfo* GetStreamInfo(IDBTransaction *pTran)
 		{
-			if(m_StreamPageInfo.GetRootPage() == -1)
-			{
-				FilePagePtr pPage = pTran->getNewPage(MIN_PAGE_SIZE);
-				m_nStreamPageInfo = pPage->getAddr();
-				m_StreamPageInfo.SetRootPage(pPage->getAddr());
-				m_StreamPageInfo.Init(pTran);
-				save(NULL, pTran);
-			}
 			return &m_StreamPageInfo;
 		}
 		ReadStreamPagePtr GetReadStream(IDBTransaction *pTran, int64 nPage = -1, int32 nPos = -1)
@@ -140,13 +111,13 @@ namespace embDB
 				m_StreamPageInfo.Save(pTransaction);
 		}
 	private:
-		int64 m_nRootPage;
+ 
 		uint32 m_nMaxPageBlobSize;
 		double m_dOffsetX;
 		double m_dOffsetY;
 		double m_dScaleX;
 		double m_dScaleY;
-		embDB::eDataTypes m_CoordTypes;
+		embDB::eSpatialType m_CoordTypes;
 		CommonLib::eShapeType m_ShapeType;
 		int64 m_nStreamPageInfo;
 		CStreamPageInfo m_StreamPageInfo;

@@ -217,6 +217,7 @@ namespace embDB
 	struct IDBTransaction;
 	struct IDBIndexHandler;
 	struct IDBFieldHandler;
+	struct IDBShapeFieldHandler;
 	struct IDBStorage;
 	struct IDBShema;
 	struct ILink;
@@ -231,6 +232,7 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(IDBTransaction);
 	COMMON_LIB_REFPTR_TYPEDEF(IDBIndexHandler);
 	COMMON_LIB_REFPTR_TYPEDEF(IDBFieldHandler);
+	COMMON_LIB_REFPTR_TYPEDEF(IDBShapeFieldHandler);
 	COMMON_LIB_REFPTR_TYPEDEF(IDBShema);
 	COMMON_LIB_REFPTR_TYPEDEF(ILink);
 	COMMON_LIB_REFPTR_TYPEDEF(IDBStorage);
@@ -404,7 +406,7 @@ namespace embDB
 		~IDBShapeFieldHandler(){}
 
 
-		virtual eShapeType GetShapeType() const = 0;
+		virtual  CommonLib::eShapeType GetShapeType() const = 0;
 		virtual eSpatialType GetPointType() const = 0;
 		virtual eSpatialCoordinatesUnits GetUnits() const = 0;
 		virtual const CommonLib::bbox& GetBoundingBox() const = 0;
@@ -541,7 +543,7 @@ namespace embDB
 		//	virtual bool insert(INameRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
 
 		virtual IFieldPtr createField(const  SFieldProp& sFP, ITransaction *pTran = NULL) = 0;
-		virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true) = 0;
+		virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true, uint32 nPageSize = 8192,  ITransaction *pTran = NULL) = 0;
 		virtual bool deleteField(IField* pField) = 0;
 		virtual bool createIndex(const CommonLib::CString& sName, SIndexProp& ip) = 0;
 		virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip) = 0;

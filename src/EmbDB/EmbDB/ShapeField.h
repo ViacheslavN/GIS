@@ -87,15 +87,16 @@ namespace embDB
 	};
 
 
-	class ShapeValueFieldHandler : public CDBFieldHandlerBase
+	class ShapeValueFieldHandler : public CDBFieldHandlerBase<IDBShapeFieldHandler>
 	{
 	public:
 
+		typedef CDBFieldHandlerBase<IDBShapeFieldHandler> TBase;
 		typedef TBPShapeTree<int64, IDBTransaction> TBTree;
 		typedef TShapeValueField<TBTree> TField;
 		typedef TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef TBTree::TLeafCompressorParams TLeafCompressorParams;
-		ShapeValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp *pFP, int64 nPageAdd) : CDBFieldHandlerBase(pAlloc, pFP, nPageAdd)
+		ShapeValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp *pFP, int64 nPageAdd) : TBase(pAlloc, pFP, nPageAdd)
 		{}
 		~ShapeValueFieldHandler()
 		{}
@@ -103,26 +104,56 @@ namespace embDB
 		virtual bool save(CommonLib::IWriteStream* pStream,   IDBTransaction *pTran)
 		{
 
-			//FilePagePtr pLeafCompRootPage = pTran->getNewPage(MIN_PAGE_SIZE);
-			TBTree::TLeafCompressorParams compParams;
-		//	compParams.setRootPage(pLeafCompRootPage->getAddr());
-			compParams.SetMaxPageBlobSize(m_nPageSize/100);//TO DO FIX
-			//compParams.save(pTran);
-			
-			
-			return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, NULL, &compParams);
 
+			TBTree::TLeafCompressorParams compParams;
+			compParams.SetMaxPageBlobSize(m_nPageSize/25); 
+			compParams.SetCoordType(m_PointType);
+			compParams.SetShapeType(m_ShapeType);
+			compParams.SetScaleX(m_dScaleX);
+			compParams.SetScaleY(m_dScaleY);
+			compParams.SetOffsetX(m_dOffsetX);
+			compParams.SetOffsetY(m_dOffsetY);
+			TBase::base_save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, NULL, &compParams);
+
+			pStream->write((uint32)m_PointType);
+			pStream->write((uint32)m_ShapeType);
+			pStream->write((uint32)m_Units);
+			pStream->write(m_dOffsetX);
+			pStream->write(m_dOffsetY);
+			pStream->write(m_dScaleX);
+			pStream->write(m_dScaleY);
+			pStream->write(m_extent.xMin);
+			pStream->write(m_extent.xMax);
+			pStream->write(m_extent.yMin);
+			pStream->write(m_extent.yMax);
+			TBase::initField<TField, TInnerCompressorParams, TLeafCompressorParams>(pTran, m_pAlloc, NULL, &compParams);
+			
+		
+			return true;
+
+		}
+
+		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage)
+		{
+			TBase::load(pStream, pStorage);
+		 
+			m_PointType = (eSpatialType)pStream->readIntu32();
+			m_ShapeType = (CommonLib::eShapeType)pStream->readIntu32();
+			m_Units = (eSpatialCoordinatesUnits)pStream->readIntu32();
+			pStream->read(m_dOffsetX);
+			pStream->read(m_dOffsetY);
+			pStream->read(m_dScaleX);
+			pStream->read(m_dScaleY);
+			pStream->read(m_extent.xMin);
+			pStream->read(m_extent.xMax);
+			pStream->read(m_extent.yMin);
+			pStream->read(m_extent.yMax);
+
+			return true;
 		}
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
-			TField * pField = new  TField(pTransactions, m_pAlloc, (sFieldInfo*)&m_SpatialFi);
-			pField->load(m_SpatialFi.m_nFieldPage);
-			if(m_pIndexHandler.get())
-			{
-				IndexFiledPtr pIndex = m_pIndexHandler->getIndex(pTransactions, pStorage);
-				pField->SetIndex(pIndex.get());
-			}
-			return IValueFieldPtr(pField);	
+			return CDBFieldHandlerBase::getValueField<TField>(pTransactions, pStorage);
 		}
 		virtual bool release(IValueField* pField)
 		{
@@ -134,42 +165,85 @@ namespace embDB
 			return true;
 		}
 
-		virtual sFieldInfo* getFieldInfoType()
+
+		virtual  CommonLib::eShapeType GetShapeType() const
 		{
-			return (sFieldInfo*)&m_SpatialFi;
+			return m_ShapeType;
 		}
-		virtual void setFieldInfoType(sFieldInfo* fi)
+		virtual eSpatialType GetPointType() const 
 		{
-			assert(fi);
-			sSpatialFieldInfo *pSpFi = dynamic_cast<sSpatialFieldInfo *>(fi);
-			assert(pSpFi);
-			if(pSpFi)
-				m_SpatialFi = *pSpFi;
+			return m_PointType;
 		}
-		virtual eDataTypes getType() const
+		virtual eSpatialCoordinatesUnits GetUnits() const
 		{
-			return (eDataTypes)m_SpatialFi.m_nFieldType;
+			return m_Units;
 		}
-		virtual const CommonLib::CString& getName() const
+		virtual const CommonLib::bbox& GetBoundingBox() const
 		{
-			return m_SpatialFi.m_sFieldName;
+			return m_extent;
 		}
-		virtual const CommonLib::CString& getAlias() const
+		virtual double GetOffsetX()  const 
 		{
-			return m_SpatialFi.m_sFieldAlias;
+			return m_dOffsetX;
 		}
-		virtual uint32 GetLength()	const
+		virtual double GetOffsetY()  const
 		{
-			return m_SpatialFi.m_nLenField;
+			return m_dOffsetY;
 		}
-		virtual bool GetIsNotEmpty() const
+		virtual double GetScaleX()  const 
 		{
-			return (m_SpatialFi.m_nFieldDataType&dteIsNotEmpty) != 0;
+			return m_dScaleX;
+		}
+		virtual double GetScaleY()  const 
+		{
+			return m_dScaleY;
+		}
+
+
+
+		void SetShapeType( CommonLib::eShapeType ShapeType) 
+		{
+			m_ShapeType = ShapeType;
+		}
+		void SetPointType( eSpatialType SpatialType)  
+		{
+			m_PointType = SpatialType;
+		}
+		void SetUnits(eSpatialCoordinatesUnits Units) 
+		{
+			m_Units = Units;
+		}
+		void SetBoundingBox(const CommonLib::bbox& bb) 
+		{
+			m_extent = bb;
+		}
+		void SetOffsetX(double dOffsetX)   
+		{
+			m_dOffsetX = dOffsetX;
+		}
+		void SetOffsetY(double dOffsetY)  
+		{
+			m_dOffsetY = dOffsetY;
+		}
+		void SetScaleX(double dScaleX)   
+		{
+			m_dScaleX = dScaleX;
+		}
+		void SetScaleY(double dScaleY)   
+		{
+			m_dScaleY = dScaleY;
 		}
 	private:
-		sSpatialFieldInfo m_SpatialFi;
+ 
+		 CommonLib::eShapeType m_ShapeType;
+		eSpatialType m_PointType;
+		CommonLib::bbox  m_extent;
+		eSpatialCoordinatesUnits m_Units;
 
-
+		double m_dOffsetX;
+		double m_dOffsetY;
+		double m_dScaleX;
+		double m_dScaleY;
 	};
 
 }

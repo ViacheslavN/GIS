@@ -65,10 +65,10 @@ namespace embDB
 
 
 
-	static IDBIndexHandler* CreateMultiIndex(sFieldInfo* fi, CDatabase* pDB)
+	static IDBIndexHandler* CreateMultiIndex(eDataTypes FieldType, CDatabase* pDB)
 	{
 		IDBIndexHandler* pIndex = NULL;
-		switch(fi->m_nFieldType)
+		switch(FieldType)
 		{
 		case dtInteger8:
 			pIndex = new TMultiIndexINT8(pDB->getBTreeAlloc());
@@ -107,10 +107,10 @@ namespace embDB
 
 
 
-	static IDBIndexHandler* CreateUniqueIndex(sFieldInfo* fi, CDatabase* pDB)
+	static IDBIndexHandler* CreateUniqueIndex(eDataTypes FieldType, CDatabase* pDB)
 	{
 		IDBIndexHandler* pIndex = NULL;
-		switch(fi->m_nFieldType)
+		switch(FieldType)
 		{
 		case dtInteger8:
 			pIndex = new TUniqueIndexINT8(pDB->getBTreeAlloc());

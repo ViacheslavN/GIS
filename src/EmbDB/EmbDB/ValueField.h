@@ -347,7 +347,7 @@ namespace embDB
 	template<class _FType, int FieldDataType,
 		class _TLeafCompressor = embDB::BPLeafNodeMapSimpleCompressorV2<int64, _FType > 	
 	>
-	class ValueFieldHandler :  CDBFieldHandlerBase
+	class ValueFieldHandler :  CDBFieldHandlerBase<IDBFieldHandler>
 	{
 		public:
 
@@ -365,7 +365,7 @@ namespace embDB
 			typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 			typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 	
-			ValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp, int64 nPageAdd) : CDBFieldHandlerBase(pAlloc, pFieldProp, nPageAdd)
+			ValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp, int64 nPageAdd) : CDBFieldHandlerBase<IDBFieldHandler>(pAlloc, pFieldProp, nPageAdd)
 			{}
 			~ValueFieldHandler()
 			{}

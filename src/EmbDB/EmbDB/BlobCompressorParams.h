@@ -54,14 +54,6 @@ namespace embDB
 
 		CStreamPageInfo* GetStreamInfo(IDBTransaction *pTran)
 		{
-			if(m_StreamPageInfo.GetRootPage() == -1)
-			{
-				FilePagePtr pPage = pTran->getNewPage(MIN_PAGE_SIZE);
-				m_StreamPageInfo.SetRootPage(pPage->getAddr());
-				m_StreamPageInfo.Init(pTran);
-				m_nStreamPageInfo = pPage->getAddr();
-				save(NULL, pTran);
-			}
 			return &m_StreamPageInfo;
 		}
 		ReadStreamPagePtr GetReadStream(IDBTransaction *pTran, int64 nPage = -1, int32 nPos = -1)

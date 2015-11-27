@@ -79,17 +79,18 @@ namespace embDB
 	};
 
 
-	class BlobValueFieldHandler : public CDBFieldHandlerBase
+	class BlobValueFieldHandler : public CDBFieldHandlerBase<IDBFieldHandler>
 	{
 	public:
-
+		typedef CDBFieldHandlerBase<IDBFieldHandler> TBase;
 		typedef TBPBlobTree<int64, IDBTransaction> TBTree;
 		typedef TBlobValueField<TBTree> TField;
 
 		typedef TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		BlobValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFP, int64 nPageAdd) : CDBFieldHandlerBase(pAlloc, pFP, nPageAdd)
+		BlobValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFP, int64 nPageAdd) : 
+			TBase(pAlloc, pFP, nPageAdd)
 		{}
 		~BlobValueFieldHandler()
 		{}

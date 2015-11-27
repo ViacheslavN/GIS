@@ -81,7 +81,7 @@ namespace embDB
 	};
 
 
-	class StringValueFieldHandler : public CDBFieldHandlerBase
+	class StringValueFieldHandler : public CDBFieldHandlerBase<IDBFieldHandler>
 	{
 	public:
 

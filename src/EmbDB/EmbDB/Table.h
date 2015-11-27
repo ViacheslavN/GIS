@@ -59,9 +59,12 @@ namespace embDB
 			
 			virtual IFieldPtr createField(const SFieldProp& sFP, ITransaction *pTran = NULL);
 			virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, 
-					const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true, ITransaction *pTran = NULL);
+					const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true, uint32 nPageSize = 8192, ITransaction *pTran = NULL);
+			virtual bool createIndex(const CommonLib::CString& sFieldName, SIndexProp& ip, ITransaction *pTran = NULL);
+			
+			
 			virtual bool deleteField(IField* pField);
-			virtual bool createIndex(const CommonLib::CString& , SIndexProp& ip);
+	 
 			virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip);
 		
 			
@@ -71,8 +74,8 @@ namespace embDB
 			virtual IFieldsPtr getFields() const {return m_pFields;}
 			
 
-			bool addIndex(const CommonLib::CString& , SIndexProp& ip, bool bNew);
-			bool addIndex(sFieldInfo* fi, IDBTransaction *pTran, bool bNew);
+		
+	 
 			bool addField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew);
 			 
 			bool load();
@@ -105,9 +108,9 @@ namespace embDB
 			bool ReadIndex(int64 nAddr, IDBTransaction *pTran);
 			bool readHeader(CommonLib::FxMemoryReadStream& stream);
 			bool createValueField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew);
-			bool createSpatialIndexField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew);
-			bool createIndexField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew);
-
+			
+			IDBIndexHandlerPtr createIndexHandler(SIndexProp* ip, IDBFieldHandler *pField);
+			IDBIndexHandlerPtr createSpatialIndexField(eSpatialType spType);
 	
 			//bool loadTableStorage(int64 nAddr);
 			bool ReadIndices(int64 nAddr, IDBTransaction *pTran);

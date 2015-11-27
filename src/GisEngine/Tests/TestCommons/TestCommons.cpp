@@ -6,6 +6,7 @@
 #include "TestSQLiteWks.h"
 void testLoadXML();
 void TestXML();
+void testLoadXML1();
 void TestShapeIndex();
 void TestSQLiteWks();
 void TestEmbDBWks();
@@ -28,6 +29,8 @@ typedef std::map<ITestPtr, int> TtestMap;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	testLoadXML1();
+	return 1;
 	//TestShapeIndex();
 	TestEmbDBWks();
 

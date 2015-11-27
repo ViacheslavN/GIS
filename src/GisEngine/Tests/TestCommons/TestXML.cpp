@@ -56,6 +56,15 @@ void testWriteXML()
 	}
 	xmlDoc.Save(L"D:\\xml\\test.xml");
 }
+
+void testLoadXML1()
+{
+		GisEngine::GisCommon::CXMLDoc xmlDoc;
+		if(xmlDoc.Open(L"D:\\Servers\\WorkFolder_Uralsib\\XML\\table.xml"))
+		{
+			xmlDoc.Save(L"D:\\Servers\\WorkFolder_Uralsib\\XML\\table2.xml");
+		}
+}
 void testLoadXML()
 {
 

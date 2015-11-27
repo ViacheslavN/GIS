@@ -13,7 +13,8 @@ namespace embDB
 {
 	class CStorage;
 
-	class CDBFieldHandlerBase  : IDBFieldHandler
+	template<class I>
+	class CDBFieldHandlerBase  : public I
 	{
 	public:
 
@@ -34,40 +35,13 @@ namespace embDB
 
 		}
 		~CDBFieldHandlerBase(){}
-	/*	template<class TField>
-		bool save(int64 nAddr, IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,  uint16 nObjectPageType, uint16 nSubObjectPageType,
-			int64 nInnerCompParams = -1, int64 nLeafCompParams = -1)
-		{
-			//m_nFieldInfoPage = nAddr;
-			FilePagePtr pPage(pTran->getFilePage(nAddr, MIN_PAGE_SIZE));
-			if(!pPage.get())
-				return false;
-			CommonLib::FxMemoryWriteStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
-			sFilePageHeader header(stream, nObjectPageType, nSubObjectPageType);
-			int64 m_nBTreeRootPage = -1;
-			FilePagePtr pRootPage(pTran->getNewPage(8192)); // TO DO FIX
-			if(!pRootPage.get())
-				return false;
-			m_nBTreeRootPage = pRootPage->getAddr();
-			stream.write(m_nBTreeRootPage);
-			header.writeCRC32(stream);
-			pPage->setFlag(eFP_CHANGE, true);
-			pTran->saveFilePage(pPage);
 
-			TField field(pTran, pAlloc, NULL);
-			field.init(m_nBTreeRootPage, nInnerCompParams, nLeafCompParams);
-			return field.save();
-
-			return true;
-		}*/
 
 
 		template<class TField, class TInnerCompParams, class TLeafCompParams>
-		bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,
+		bool base_save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,
 			TInnerCompParams *pInnerCompParams = NULL, TLeafCompParams* pLeafCompParams = NULL)
 		{
-
 			uint32 nNameUtf8Len = m_sFieldName.calcUTF8Length();
 			uint32 nAliasUtf8Len = m_sFieldAlias.calcUTF8Length();
 			std::vector<char> vecBufName(nNameUtf8Len + 1);
@@ -83,18 +57,39 @@ namespace embDB
 			pStream->write(m_nPrecision);
 			pStream->write(m_dScale);
 
-
 			FilePagePtr pFieldInfoPage(pTran->getNewPage(MIN_PAGE_SIZE)); 
 			if(!pFieldInfoPage.get())
 				return false;
 			m_nFieldInfoPage = pFieldInfoPage->getAddr();
 			pStream->write(m_nFieldInfoPage);
+			return true;
+		}
+
+		template<class TField, class TInnerCompParams, class TLeafCompParams>
+		bool initField(IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,
+			TInnerCompParams *pInnerCompParams = NULL, TLeafCompParams* pLeafCompParams = NULL)
+		{
+
+		
 
 			TField field(pTran, pAlloc, m_nPageSize);
 			field.init(m_nFieldInfoPage, pInnerCompParams, pLeafCompParams);
+
 			return true;
 		}
-		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage)
+
+		template<class TField, class TInnerCompParams, class TLeafCompParams>
+		bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,
+			TInnerCompParams *pInnerCompParams = NULL, TLeafCompParams* pLeafCompParams = NULL)
+		{
+
+			base_save<TField, TInnerCompParams, TLeafCompParams>(pStream, pTran, pAlloc, pInnerCompParams, pLeafCompParams);
+			initField<TField, TInnerCompParams, TLeafCompParams>(pTran, pAlloc, pInnerCompParams, pLeafCompParams);
+			pStream->write(m_nFieldInfoPage); 
+			return true;
+		}
+
+		void base_load(CommonLib::IReadStream* pStream, IDBStorage *pStorage)
 		{
 			uint32 nNameUtf8Len = pStream->readIntu32();
 			if(nNameUtf8Len != 0)
@@ -112,6 +107,11 @@ namespace embDB
 			}
 			m_nPrecision = pStream->readInt32();
 			m_dScale = pStream->readDouble();
+		}
+
+		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage)
+		{
+			base_load(pStream, pStorage);
 			m_nFieldInfoPage = pStream->readInt64();
 			return true;
 		}

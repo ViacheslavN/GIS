@@ -120,6 +120,7 @@ namespace embDB
 	{
 		stNotDef =0,
 		stPoint,
+		stMultiPoint,
 		stLine,
 		stPolyLine,
 		stRect,
@@ -238,7 +239,7 @@ namespace embDB
 	};
 
 
-	struct IShapeField
+	struct IShapeField : public IField
 	{
 		IShapeField(){}
 		virtual ~IShapeField(){}
