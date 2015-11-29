@@ -85,7 +85,6 @@ public:
 	virtual void write(float value) = 0;
 	virtual void write(double value) = 0;
 	virtual void write(const CommonLib::CString& str) = 0;
-
 	virtual void write(const char* pszStr) = 0;
 	virtual void write(const wchar_t* pszStr) = 0;
 	virtual void write(const IStream *pSteram) = 0;

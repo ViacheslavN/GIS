@@ -110,12 +110,12 @@ void IReadStreamBase::read(double& value)
 }
 void IReadStreamBase::read(CommonLib::CString& str)
 {
-	uint32 nlen = readIntu32();
-	if(nlen)
+	uint32 nUtf8Len = readIntu32();
+	if(nUtf8Len)
 	{
-		str.reserve(nlen + 1);
-		read((byte*)str.wstr(), 2 *nlen);
-		str[nlen] = L'\0';
+		std::vector<char> buf(nUtf8Len + 1);
+		read((byte*)&buf[0], buf.size());
+		str.loadFromUTF8(&buf[0]);
 	}
 
 }
@@ -180,10 +180,14 @@ void IWriteStreamBase::write(double value)
 }
 void IWriteStreamBase::write(const CommonLib::CString& str)
 {
-	writeT<uint32>(str.length());
-	if(str.length())
+
+	uint32 nUtf8Len =  str.calcUTF8Length();
+	writeT<uint32>(nUtf8Len);
+	if(nUtf8Len)
 	{
-		write((byte*)str.cwstr(), str.length() *2);
+		std::vector<char> buf(nUtf8Len + 1);
+		str.exportToUTF8(&buf[0], buf.size());
+		write((byte*)&buf[0], buf.size());
 	
 	}
 }

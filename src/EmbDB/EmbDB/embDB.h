@@ -182,7 +182,13 @@ namespace embDB
 
 	struct SIndexProp
 	{
-		indexTypes indexType;
+		indexTypes m_indexType;
+		uint32 m_nNodePageSize;
+
+		SIndexProp() : m_indexType(itUnknown), m_nNodePageSize(8192)
+		{
+
+		}
 	};
 	enum eTransactionType
 	{

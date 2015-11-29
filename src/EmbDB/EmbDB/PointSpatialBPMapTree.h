@@ -24,8 +24,8 @@ namespace embDB
 	public:
 		typedef TBPMapV2<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode, _TBTreeNode > TBase;
 
-			TBPPointSpatialMap(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize):
-			TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, true)/*,
+			TBPPointSpatialMap(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, size_t nNodePageSize):
+			TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nNodePageSize, true)/*,
 				m_shiftX(0), m_shiftY(0)*/
 			{}
 

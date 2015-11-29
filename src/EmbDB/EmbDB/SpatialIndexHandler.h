@@ -11,87 +11,39 @@ namespace embDB
 		 
 		typedef _TSpatialIndex TSpatialIndex;
 
-		TSpatialIndexHandler(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc)
-		{}
+		TSpatialIndexHandler(IDBShapeFieldHandler* pField, CommonLib::alloc_t* pAlloc, int64 nPageAddr, uint32 nPageNodeSize) : m_pAlloc(pAlloc),m_nPageAddr(nPageAddr), m_nBTreeRootPage(-1), m_nPageNodeSize(nPageNodeSize)
+		{
+
+			m_pField = pField;
+		}
 		~TSpatialIndexHandler()
 		{}
 
 
-		eDataTypes getType() const
+		
+
+		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage)
 		{
-			return (eDataTypes)m_fi.m_nFieldDataType;
-		}
-		const CommonLib::CString& getName() const
-		{
-			return m_fi.m_sFieldName;
-		}
-		virtual const CommonLib::CString& getAlias() const
-		{
-			return m_fi.m_sFieldAlias;
-		}
-		virtual uint32 GetLength()	const
-		{
-			return m_fi.m_nLenField;
-		}
-		virtual bool GetIsNotEmpty() const
-		{
-			return (m_fi.m_nFieldDataType&dteIsNotEmpty) != 0;
-		}
-		virtual sFieldInfo* getFieldInfoType()
-		{
-			return (sFieldInfo*)&m_fi;
-		}
-		virtual void setFieldInfoType(sFieldInfo* fi)
-		{
-			 sSpatialFieldInfo *pSpFi = dynamic_cast<sSpatialFieldInfo *>(fi);
-			 assert(pSpFi);
-			 if(pSpFi)
-				 m_fi = *pSpFi;
-		}
-		virtual bool load(int64 nAddr, IDBStorage *pStorage)
-		{
+			m_nBTreeRootPage = pStream->readInt64();
 			return true;
 		}
-		virtual bool save(int64 nAddr, IDBTransaction *pTran)
+		virtual bool save(CommonLib::IWriteStream* pStream, IDBTransaction *pTran)
 		{
-			FilePagePtr pPage = pTran->getFilePage(nAddr, MIN_PAGE_SIZE);
-			if(!pPage.get())
-				return false;
-			CommonLib::FxMemoryWriteStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
-			sFilePageHeader header(stream, FIELD_PAGE, TABLE_INDEX_PAGE);
-			int64 m_nBTreeRootPage = -1;
 			FilePagePtr pRootPage(pTran->getNewPage(MIN_PAGE_SIZE));
 			if(!pRootPage.get())
 				return false;
 			m_nBTreeRootPage = pRootPage->getAddr();
+			pStream->write(m_nBTreeRootPage);
 
-			stream.write(m_nBTreeRootPage);
-			stream.write(m_fi.m_dOffsetX);
-			stream.write(m_fi.m_dOffsetY);
-			stream.write(m_fi.m_dScaleX);
-			stream.write(m_fi.m_dScaleY);
-			stream.write(m_fi.m_extent.xMin);
-			stream.write(m_fi.m_extent.yMin);
-			stream.write(m_fi.m_extent.xMax);
-			stream.write(m_fi.m_extent.yMax);
-
-			stream.write((uint32)m_fi.m_nFieldType);
-			stream.write((uint32)m_fi.m_ShapeType);
-
-			header.writeCRC32(stream);
-			pPage->setFlag(eFP_CHANGE, true);
-			pTran->saveFilePage(pPage);
-
-			TSpatialIndex index(pTran, m_pAlloc);
-			index.init(m_nBTreeRootPage, &m_fi);
-			return index.save();
+			TSpatialIndex index(pTran, m_pAlloc, m_nPageNodeSize);
+			index.init(m_nBTreeRootPage);
+			return true;
 		}
 
 		virtual IndexFiledPtr getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
-			TSpatialIndex * pIndex = new  TSpatialIndex(pTransactions, m_pAlloc);
-			pIndex->load(m_fi.m_nFieldPage, pTransactions->getType());
+			TSpatialIndex * pIndex = new  TSpatialIndex(pTransactions, m_pAlloc, m_nPageNodeSize);
+			pIndex->load(m_nBTreeRootPage, m_pField.get());
 			return IndexFiledPtr(pIndex);
 		}
 		virtual bool release(IndexFiled* pIndex)
@@ -118,15 +70,16 @@ namespace embDB
 		}
 		virtual  IFieldPtr GetField() const 
 		{
-			return m_pField;
+			return IFieldPtr(m_pField.get());
 		}
 	 
 	
 	private:
-		sSpatialFieldInfo m_fi;
+		int64 m_nBTreeRootPage;
+		int64 m_nPageAddr;
+		uint32 m_nPageNodeSize;
 		CommonLib::alloc_t* m_pAlloc;
-		IDBIndexHandler* m_pIndexHandler;
-		IFieldPtr m_pField;
+		IDBShapeFieldHandlerPtr m_pField;
 
 	};
 

@@ -47,7 +47,7 @@ namespace embDB
 		template <typename _TStorage, typename _FilePage>
 		bool save(_TStorage *pStorage)
 		{
-			_FilePage pPage = pStorage->getFilePage(m_nPageAddr, false);
+			_FilePage pPage = pStorage->getFilePage(m_nPageAddr, m_nPageSize, false);
 			if(pPage == NULL)
 			{
 				//TO DO Logs

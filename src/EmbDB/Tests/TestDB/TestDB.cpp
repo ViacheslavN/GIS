@@ -12,9 +12,9 @@ void TestAddFieldDB();
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	TestAddFieldDB();
+	//TestAddFieldDB();
 
-	//testDBFromShape();
+	testDBFromShape();
 	return 0;
 	
 /*	embDB::TVarINT32 int32key;

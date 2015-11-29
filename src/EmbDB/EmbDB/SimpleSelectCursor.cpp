@@ -48,16 +48,17 @@ namespace embDB
 			IValueFieldPtr pValueField = m_pTran->GetField(m_pTable->getName().cwstr(), pField->getName().cwstr());
 		 
 			IFieldIteratorPtr pFieldIterator = pValueField->begin();
+			IDBFieldHandlerPtr pFieldHandler = pValueField->GetFieldHandler();
 
-			/*if(!m_pIterField && pValueField->getFieldInfoType()->m_nFieldDataType&embDB::dteIsNotEmpty)
+			if(!m_pIterField && pFieldHandler->GetIsNotNull())
 			{
 				m_pIterField = pFieldIterator.get();
 				m_nIterIndex = m_vecFields.size();
-			}*/
+			}
 
 
-			/*if(!(pValueField->getFieldInfoType()->m_nFieldDataType&embDB::dteIsNotEmpty))
-				m_bAllNext = false;*/
+			if(!pFieldHandler->GetIsNotNull())
+				m_bAllNext = false;
 			 
 
 			m_vecFields.push_back(pFieldIterator);

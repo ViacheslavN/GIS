@@ -65,9 +65,9 @@ namespace embDB
 	class TStatialIndexBase : public _TIndex
 	{
 	public:
-		TStatialIndexBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
+		TStatialIndexBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageNodeSize) :
 		  m_pDBTransactions(pTransactions),
-			  m_tree(-1, pTransactions, pAlloc, 100), 
+			  m_tree(-1, pTransactions, pAlloc, 100, nPageNodeSize), 
 			  m_nBTreeRootPage(-1)
 		  {
 
@@ -90,10 +90,28 @@ namespace embDB
 		  {
 			 return true;// return m_tree.saveBTreeInfo();
 		  }
-		  virtual bool load(int64 nAddr, eTransactionType type)
+		  virtual bool load(int64 nBTreeRootPage, IDBShapeFieldHandler* pHandlerField)
 		  {
+			  m_nBTreeRootPage = nBTreeRootPage;
 
-			  int64 m_nFieldInfoPage = nAddr;
+
+			  m_dOffsetX = pHandlerField->GetOffsetX();
+			  m_dOffsetY = pHandlerField->GetOffsetY();
+			  m_dScaleX = pHandlerField->GetScaleX();
+			  m_dScaleY = pHandlerField->GetScaleY();
+
+			  m_extent = pHandlerField->GetBoundingBox();
+			  m_Type = pHandlerField->GetPointType();
+			  m_ShapeType = pHandlerField->GetShapeType();
+
+
+
+
+
+			  m_tree.setRootPage(m_nBTreeRootPage);
+			  return m_tree.loadBTreeInfo(); 
+
+			/*  int64 m_nFieldInfoPage = nAddr;
 			  FilePagePtr pPage = m_pDBTransactions->getFilePage(nAddr, MIN_PAGE_SIZE); //TO DO FIX
 			  if(!pPage.get())
 				  return false;
@@ -121,13 +139,12 @@ namespace embDB
 			  stream.read(m_extent.yMax);
  
 			  m_Type = (eDataTypes)stream.readIntu32();
-			  m_ShapeType = (CommonLib::eShapeType)stream.readIntu32();
-			  m_tree.setRootPage(m_nBTreeRootPage);
-			  return m_tree.loadBTreeInfo(); 
+			  m_ShapeType = (CommonLib::eShapeType)stream.readIntu32();*/
+			
 		  }
 
 
-		  virtual bool init(int64 nBTreeRootPage, sSpatialFieldInfo* pSPFi)
+		  virtual bool init(int64 nBTreeRootPage)
 		  {
 
 			  m_nBTreeRootPage = nBTreeRootPage;
@@ -275,7 +292,7 @@ namespace embDB
 		double m_dOffsetY;
 		double m_dScaleX;
 		double m_dScaleY;
-		eDataTypes m_Type;
+		eSpatialType m_Type;
 		CommonLib::eShapeType m_ShapeType;
 		CommonLib::bbox m_extent;
 	};
@@ -289,7 +306,7 @@ namespace embDB
 
 
 
-		TStatialIndexRect( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions, pAlloc)
+		TStatialIndexRect( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageNodeSize) : TBase(pTransactions, pAlloc, nPageNodeSize)
 		{}
 
 		~TStatialIndexRect()
@@ -335,7 +352,7 @@ namespace embDB
 	public:
 		typedef TStatialIndexBase<_TSpatialTree, _TZCoordType,  _TSpObj, ISpatialIndexPoint> TBase;
 
-		TStatialIndexPoint( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) : TBase(pTransactions, pAlloc)
+		TStatialIndexPoint( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageNodeSize) : TBase(pTransactions, pAlloc, nPageNodeSize)
 		{}
 
 		~TStatialIndexPoint()

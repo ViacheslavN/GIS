@@ -156,7 +156,7 @@ namespace embDB
 		TFieldPages::iterator it = m_nIndexAddr.begin();
 		while(!it.isNull())
 		{
-			if(!ReadIndex(it.value(), NULL))
+			if(!ReadIndex(it.value()))
 				return false;
 			it.next();
 		}
@@ -219,50 +219,7 @@ namespace embDB
 	 
 	
 
-	bool CTable::ReadIndex(int64 nAddr, IDBTransaction *pTran)
-	{
-		CommonLib::FxMemoryReadStream stream;
-		FilePagePtr pPage = m_pDBStorage->getFilePage(nAddr, nFieldInfoPageSize);
-		if(!pPage.get())
-			return false;
-		stream.attach(pPage->getRowData(), pPage->getPageSize());
-		sFieldInfo fi;
-		sFilePageHeader header (stream);
-		if(!header.isValid())
-		{
-			if(!pTran)
-				return false;
-			pTran->error(_T("TABLE: Page %I64d Error CRC for field header page"), nAddr);
-			return false;
-		}
-		if(header.m_nObjectPageType != TABLE_PAGE || header.m_nSubObjectPageType != TABLE_INDEX_PAGE )
-		{
-			if(!pTran)
-				return false;
-			pTran->error(_T("TABLE: Page %I64d is not field info"), nAddr);
-			return false;
-		}
-		if(!fi.Read(&stream))
-			return false;
-
-		if(fi.m_nFieldType == dtGeometry)
-		{
-			stream.seek(0, CommonLib::soFromBegin);
-			sFilePageHeader spheader (stream); //TO DO temporary
-			sSpatialFieldInfo sfi;
-
-			if(!sfi.Read(&stream))
-				return false;
-			sfi.m_nFIPage = nAddr;
-			return addIndex(&sfi, pTran, false);
-		}
-		else
-		{
-			
-			fi.m_nFIPage = nAddr;
-			return addIndex(&fi, pTran, false);
-		}
-	}
+	
 	bool CTable::readHeader(CommonLib::FxMemoryReadStream& stream)
 	{
 		size_t nlenStr = stream.readInt32();
@@ -325,15 +282,15 @@ namespace embDB
 
 		return true;
 	}
-	IDBIndexHandlerPtr CTable::createIndexHandler(SIndexProp* ip, IDBFieldHandler *pField)
+	IDBIndexHandlerPtr CTable::createIndexHandler(IDBFieldHandler *pField, SIndexProp* ip, int64 nPageAddr)
 	{
 		IDBIndexHandlerPtr pIndex;
  
-		if(ip->indexType == itUnique)
-			pIndex = CreateUniqueIndex(pField->getType(), m_pDB);
-		else if(ip->indexType  == itMultiRegular)
-			pIndex = CreateMultiIndex(pField->getType(), m_pDB);
-		else if(ip->indexType == itSpatial)
+		if(ip->m_indexType == itUnique)
+			pIndex = CreateUniqueIndex(pField, m_pDB, nPageAddr,  ip->m_nNodePageSize);
+		else if(ip->m_indexType  == itMultiRegular)
+			pIndex = CreateMultiIndex(pField, m_pDB, nPageAddr,  ip->m_nNodePageSize);
+		else if(ip->m_indexType == itSpatial)
 		{
 			IDBShapeFieldHandler* pShapeField = dynamic_cast<IDBShapeFieldHandler*>(pField);
 			if(!pShapeField)
@@ -341,32 +298,32 @@ namespace embDB
 				//TO DO Log
 				return pIndex;
 			}
-			pIndex = createSpatialIndexField(pShapeField->GetPointType());
+			pIndex = createSpatialIndexField(pShapeField, nPageAddr,  ip->m_nNodePageSize);
 		}
 		return pIndex;
 	}
-	IDBIndexHandlerPtr  CTable::createSpatialIndexField(eSpatialType spType)
+	IDBIndexHandlerPtr  CTable::createSpatialIndexField(IDBShapeFieldHandler* pField,int64 nPageAddr, uint32 nPageNodeSize)
 	{
 		IDBIndexHandlerPtr pSpatialIndex;
-		switch(spType)
+		switch(pField->GetPointType())
 		{
 			case stPoint16:
-				pSpatialIndex = new THandlerIndexPoint16(m_pDB->getBTreeAlloc());
+				pSpatialIndex = new THandlerIndexPoint16(pField, m_pDB->getBTreeAlloc(), nPageAddr, nPageNodeSize);
 				break;
 			case stPoint32:
-				pSpatialIndex = new THandlerIndexPoint32(m_pDB->getBTreeAlloc());
+				pSpatialIndex = new THandlerIndexPoint32(pField, m_pDB->getBTreeAlloc(), nPageAddr, nPageNodeSize);
 				break;
 			case stPoint64:
-				pSpatialIndex = new THandlerIndexPoint64(m_pDB->getBTreeAlloc());
+				pSpatialIndex = new THandlerIndexPoint64(pField, m_pDB->getBTreeAlloc(), nPageAddr, nPageNodeSize);
 				break;
 			case stRect16:
-				pSpatialIndex = new THandlerIndexRect16(m_pDB->getBTreeAlloc());
+				pSpatialIndex = new THandlerIndexRect16(pField, m_pDB->getBTreeAlloc(), nPageAddr, nPageNodeSize);
 				break;
 			case stRect32:
-				pSpatialIndex = new THandlerIndexRect32(m_pDB->getBTreeAlloc());
+				pSpatialIndex = new THandlerIndexRect32(pField, m_pDB->getBTreeAlloc(), nPageAddr, nPageNodeSize);
 				break;
 			case stRect64:
-				pSpatialIndex = new THandlerIndexRect64(m_pDB->getBTreeAlloc());
+				pSpatialIndex = new THandlerIndexRect64(pField, m_pDB->getBTreeAlloc(), nPageAddr, nPageNodeSize);
 					break;
 		
 		}
@@ -668,7 +625,7 @@ namespace embDB
 		
 		int64 nMaxVal = int64(dMaxCoord/dScaleX);
 		SpatialDataType = GetSpatialType(nMaxVal, isPoint);
-			
+		IDBShapeFieldHandlerPtr pShapeFieldHandler; 
 		{
 
 			FilePagePtr pFieldInfoPage = pDBTran->getNewPage(nFieldInfoPageSize);
@@ -682,6 +639,7 @@ namespace embDB
 			stream.write(fp.m_nLenField);
 
 			ShapeValueFieldHandler *pShapeField = new  ShapeValueFieldHandler(m_pDB->getBTreeAlloc(), &fp, pFieldInfoPage->getAddr());
+			pShapeFieldHandler = pShapeField;
 			
 			pShapeField->SetBoundingBox(extent);
 			pShapeField->SetPointType(SpatialDataType);
@@ -700,14 +658,15 @@ namespace embDB
 				return IFieldPtr(); // TO DO Error
 
 			stream.Save();
-			m_pFields->AddField((IField*)pShapeField);
+	
 		}
- 
+		m_pFields->AddField((IField*)pShapeFieldHandler.get());
 		if(bCreateIndex)
 		{
 	
 			SIndexProp ip;
-			ip.indexType = itSpatial;
+			ip.m_indexType = itSpatial;
+			ip.m_nNodePageSize = nPageSize;
 			createIndex(pszFieldName, ip, pDBTran.get());
 		}
 		if(!pTran)
@@ -720,10 +679,10 @@ namespace embDB
 	}
 
 	
-	bool  CTable::createIndex(const CommonLib::CString& sFieldName, SIndexProp& ip, ITransaction *pTran = NULL)
+	bool  CTable::createIndex(const CommonLib::CString& sFieldName, SIndexProp& ip, ITransaction *pTran)
 	{
 		TIndexByName::iterator it = m_IndexByName.find(sFieldName);
-		if(it == m_IndexByName.end())
+		if(it != m_IndexByName.end())
 			return false;
 	
 		IFieldPtr pField  = m_pFields->GetField(sFieldName);
@@ -733,10 +692,7 @@ namespace embDB
 		IDBFieldHandler* pFieldHandler = (IDBFieldHandler*)pField.get();
 
 
-		IDBIndexHandlerPtr pIndex = createIndexHandler(&ip, pFieldHandler);
-		if(!pIndex.get())
-			return false;
-
+	
 		IDBTransactionPtr pDBTran;
 		if(pTran)
 		{
@@ -752,8 +708,43 @@ namespace embDB
 			pDBTran =  ((IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get());
 			pDBTran->begin();
 		}
+		{
 
-		pIndex->save();
+			FilePagePtr pFieldInfoPage = pDBTran->getNewPage(nFieldInfoPageSize);
+			if(!pFieldInfoPage.get())
+			{
+				if(!pTran)
+				{
+					pDBTran->commit();
+					m_pDB->closeTransaction(pDBTran.get());
+				}
+				return false; // TO DO Error
+			}
+
+			IDBIndexHandlerPtr pIndex = createIndexHandler(pFieldHandler, &ip, pFieldInfoPage->getAddr());
+			if(!pIndex.get())
+			{
+				if(!pTran)
+				{
+					pDBTran->commit();
+					m_pDB->closeTransaction(pDBTran.get());
+				}
+				return false; // TO DO Error
+			}
+
+			WriteStreamPage stream(pDBTran.get(), nFieldInfoPageSize, TABLE_PAGE, TABLE_INDEX_PAGE);
+			stream.open(pFieldInfoPage);
+			stream.write((uint32)ip.m_indexType);
+			stream.write(sFieldName);
+			stream.write(ip.m_nNodePageSize);
+			pIndex->save(&stream, pDBTran.get());
+
+			stream.Save();
+
+			pFieldHandler->setIndexHandler(pIndex.get());
+			m_IndexByName.insert(std::make_pair(sFieldName, pIndex));
+			m_nIndexAddr.push(pFieldInfoPage->getAddr(), pDBTran.get());
+		}
 
 
 		TIndexByName::iterator idx_it = m_IndexByName.find(sFieldName);
@@ -770,6 +761,51 @@ namespace embDB
 		}
 
 		return true;
+	}
+	bool CTable::ReadIndex(int64 nAddr)
+	{
+		CommonLib::FxMemoryReadStream stream;
+		FilePagePtr pPage = m_pDBStorage->getFilePage(nAddr, nFieldInfoPageSize);
+		if(!pPage.get())
+			return false;
+		stream.attach(pPage->getRowData(), pPage->getPageSize());
+		SIndexProp ip;
+		sFilePageHeader header (stream);
+		if(!header.isValid())
+		{
+			//TO DO log
+			return false;
+		}
+		if(header.m_nObjectPageType != TABLE_PAGE || header.m_nSubObjectPageType != TABLE_INDEX_PAGE )
+		{
+			return false;
+		}
+	 
+		ip.m_indexType = (indexTypes)stream.readIntu32();
+		CommonLib::CString sFieldName;
+		stream.read(sFieldName);
+
+		IFieldPtr pField  = m_pFields->GetField(sFieldName);
+		if(!pField.get())
+			return false;
+
+		ip.m_nNodePageSize = stream.readIntu32();
+
+		IDBFieldHandler* pFieldHandler = (IDBFieldHandler*)pField.get();
+
+		IDBIndexHandlerPtr pIndex = createIndexHandler(pFieldHandler, &ip, pPage->getAddr());
+		if(!pIndex.get())
+		{
+			//TO DO Error
+			return false;
+		}
+
+		if(!pIndex->load(&stream, m_pDBStorage.get()))
+			return false;
+		pFieldHandler->setIndexHandler(pIndex.get());
+		m_IndexByName.insert(std::make_pair(sFieldName, pIndex));
+		return true;
+
 	}
 	bool CTable::ReadField(int64 nAddr)
 	{

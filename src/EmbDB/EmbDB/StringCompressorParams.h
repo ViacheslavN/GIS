@@ -11,7 +11,7 @@ namespace embDB
 	class StringFieldCompressorParams
 	{
 	public:
-		StringFieldCompressorParams(int64 nRootPage = -1) : m_nRootPage(nRootPage), m_StringCoding(scUTF8), m_nLen(0),
+		StringFieldCompressorParams(int64 nRootPage = -1) : m_StringCoding(scUTF8), m_nLen(0),
 			m_nMaxPageStringSize(400), m_nStreamPageInfo(-1)
 		{}
 		virtual ~StringFieldCompressorParams(){}
@@ -27,22 +27,12 @@ namespace embDB
 		}*/
 		virtual bool load(CommonLib::IReadStream* pStream,  IDBTransaction *pTran)
 		{
-			FilePagePtr pPage = pTran->getFilePage(m_nRootPage, MIN_PAGE_SIZE);
-			if(!pPage.get())
-				return false; //TO DO Error
-			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
-			sFilePageHeader header(stream);
-			if(header.m_nObjectPageType != BTREE_PAGE || header.m_nSubObjectPageType != BTREE_STRING_PARAMS_COMPRESS_PAGE)
-			{
-				pTran->error(_T("BTREE: Page %I64d is not string params compress page"), m_nRootPage);
-				return false;
-			}
 
-			m_StringCoding = (eStringCoding)stream.readIntu32();
-			m_nLen = stream.readIntu32();
-			m_nMaxPageStringSize= stream.readIntu32();
-			m_nStreamPageInfo = stream.readInt64();
+
+			m_StringCoding = (eStringCoding)pStream->readIntu32();
+			m_nLen = pStream->readIntu32();
+			m_nMaxPageStringSize= pStream->readIntu32();
+			m_nStreamPageInfo = pStream->readInt64();
 			if(m_nStreamPageInfo != -1)
 			{
 				m_StreamPageInfo.SetRootPage(m_nStreamPageInfo);
@@ -53,26 +43,23 @@ namespace embDB
 		}
 		virtual bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran)
 		{
-			FilePagePtr pPage = pTran->getFilePage(m_nRootPage, MIN_PAGE_SIZE);
-			if(!pPage.get())
-				return false; //TO DO Error
+
+			if(m_nStreamPageInfo == -1)
+			{			 
+				FilePagePtr pPage = pTran->getNewPage(MIN_PAGE_SIZE);
+				m_StreamPageInfo.SetRootPage(pPage->getAddr());
+				m_StreamPageInfo.Save(pTran);
+				m_nStreamPageInfo = pPage->getAddr();
+			}
 
 
-			CommonLib::FxMemoryWriteStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
-			sFilePageHeader header(stream, BTREE_PAGE, BTREE_STRING_PARAMS_COMPRESS_PAGE);
-			stream.write((uint32)m_StringCoding);
-			stream.write(m_nLen);
-			stream.write(m_nMaxPageStringSize);
-			stream.write(m_nStreamPageInfo);
+			pStream->write((uint32)m_StringCoding);
+			pStream->write(m_nLen);
+			pStream->write(m_nMaxPageStringSize);
+			pStream->write(m_nStreamPageInfo);
 
 			
-			header.writeCRC32(stream);
-			 pTran->saveFilePage(pPage);
-			 if(m_nStreamPageInfo != -1)
-			 {			 
-				 return m_StreamPageInfo.Save(pTran);
-			 }
+	
 
 			 return !pTran->isError();
 		}
@@ -121,7 +108,6 @@ namespace embDB
 	private:
 		uint32 m_nMaxPageStringSize;
 		uint32 m_nLen;
-		int64 m_nRootPage;
 		eStringCoding m_StringCoding;
 		int64 m_nStreamPageInfo;
 

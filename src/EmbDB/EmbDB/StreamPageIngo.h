@@ -92,13 +92,15 @@ namespace embDB
 			{
 				if(!m_pWriteStream.get())
 				{
-					m_pWriteStream = new WriteStreamPage(pTran, m_nSizePage);
+					
 					if(m_nEndStream == -1)
 					{ 
 						Init(pTran);
+						m_pWriteStream = new WriteStreamPage(pTran, m_nSizePage);
 						m_pWriteStream->open(m_nEndStream, m_nPos);
 						return m_pWriteStream;
 					}
+					m_pWriteStream = new WriteStreamPage(pTran, m_nSizePage);
 				}
 				m_pWriteStream->open(nPage, nPos);
 				return m_pWriteStream;

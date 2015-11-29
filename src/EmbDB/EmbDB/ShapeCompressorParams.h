@@ -48,9 +48,8 @@ namespace embDB
 			{			 
 				FilePagePtr pPage = pTran->getNewPage(MIN_PAGE_SIZE);
 				m_StreamPageInfo.SetRootPage(pPage->getAddr());
-				m_StreamPageInfo.Init(pTran);
-				m_nStreamPageInfo = pPage->getAddr();
 				m_StreamPageInfo.Save(pTran);
+				m_nStreamPageInfo = pPage->getAddr();
 			}
 
 

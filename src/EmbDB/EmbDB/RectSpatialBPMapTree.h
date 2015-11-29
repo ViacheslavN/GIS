@@ -18,8 +18,8 @@ namespace embDB
 		typedef TBPPointSpatialMap<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess > TBase;
 		typedef TBPMapV2<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess > TSubBase;
 
-			TBPRectSpatialMap(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize):
-			TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize)
+			TBPRectSpatialMap(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, size_t nNodePageSize):
+			TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nNodePageSize)
 			{}
 
 

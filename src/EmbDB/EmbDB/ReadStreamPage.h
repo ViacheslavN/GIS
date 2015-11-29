@@ -30,6 +30,7 @@ namespace embDB
 		  bool open(FilePagePtr pPage,  uint32 nBeginPos = 0)
 		  {
 			  m_nBeginPos = nBeginPos;
+			  m_pPage = pPage;
 			  assert(m_nBeginPos < m_pPage->getPageSize());
 
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());

@@ -58,12 +58,12 @@ namespace embDB
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		TShapeValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, const sFieldInfo* pFieldInfo) : TBase(pTransactions, pAlloc, 8192) 
+	/*	TShapeValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, const sFieldInfo* pFieldInfo) : TBase(pTransactions, pAlloc, 8192) 
 		{
 
-		}
+		}*/
 
-		TShapeValueField( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize) : TBase(pTransactions, pAlloc, nPageSize) 
+		TShapeValueField(IDBFieldHandler* pFieldHandler,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize) : TBase(pFieldHandler, pTransactions, pAlloc, nPageSize) 
 		{
 
 		}

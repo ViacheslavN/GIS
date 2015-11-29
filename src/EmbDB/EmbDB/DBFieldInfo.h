@@ -72,7 +72,7 @@ namespace embDB
 
 		
 
-			TField field(pTran, pAlloc, m_nPageSize);
+			TField field(this, pTran, pAlloc, m_nPageSize);
 			field.init(m_nFieldInfoPage, pInnerCompParams, pLeafCompParams);
 
 			return true;
@@ -123,7 +123,7 @@ namespace embDB
 		template<class TField>
 		IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
-			TField * pField = new  TField(pTransactions, m_pAlloc, m_nPageSize);
+			TField * pField = new  TField(this, pTransactions, m_pAlloc, m_nPageSize);
 			pField->load(m_nFieldInfoPage);
 			if(m_pIndexHandler.get())
 			{
@@ -190,6 +190,7 @@ namespace embDB
 		}
 		
 		virtual int64 GetPageAddr() const {return m_nPageAdd;}
+		virtual uint32 GetNodePageSize() const {return m_nPageSize;}
 	protected:
 		CommonLib::CString m_sFieldName;
 		CommonLib::CString m_sFieldAlias;

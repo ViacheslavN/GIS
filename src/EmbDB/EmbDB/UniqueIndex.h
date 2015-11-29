@@ -22,8 +22,8 @@ namespace embDB
 		typedef TIndexIterator<iterator> TIndexIterator;
 
 
-		CUniqueIndex( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
-			TBase(pTransactions, pAlloc)
+		CUniqueIndex( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize) :
+			TBase(pTransactions, pAlloc,  nPageSize)
 			{}
 		~CUniqueIndex(){}
 		virtual indexTypes GetType() const  {return itUnique;}
@@ -126,9 +126,12 @@ namespace embDB
 		typedef embDB::TBPMapV2<FType, int64, TComp, 
 			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
 
+		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
+		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
+
 		typedef CUniqueIndex<FType, TBTree, FieldDataType> TIndex;
 
-		UniqueIndexFieldHandler(CommonLib::alloc_t* pAlloc) : CIndexHandlerBase(pAlloc, itUnique)
+		UniqueIndexFieldHandler(IDBFieldHandler *pField, CommonLib::alloc_t* pAlloc, int64 nIndexPage, uint32 nNodePageSize) : CIndexHandlerBase(pField, pAlloc, itUnique, nIndexPage, nNodePageSize)
 		{
 
 		}
@@ -137,30 +140,9 @@ namespace embDB
 
 		}
 	
-		virtual bool save(int64 nAddr, IDBTransaction *pTran)
+		virtual bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran)
 		{
-			//m_nFieldInfoPage = nAddr;
-			return CIndexHandlerBase::save<TIndex>(nAddr, pTran, m_pAlloc, INDEX_PAGE, INDEX_INFO_PAGE);
-
-		/*	FilePagePtr pPage(pTran->getFilePage(nAddr));
-			if(!pPage.get())
-				return false;
-			CommonLib::FxMemoryWriteStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
-			sFilePageHeader header(stream, FIELD_PAGE, FIELD_INFO_PAGE);
-			int64 m_nBTreeRootPage = -1;
-			FilePagePtr pRootPage(pTran->getNewPage());
-			if(!pRootPage.get())
-				return false;
-			m_nBTreeRootPage = pRootPage->getAddr();
-			stream.write(m_nBTreeRootPage);
-			header.writeCRC32(stream);
-			pPage->setFlag(eFP_CHANGE, true);
-			pTran->saveFilePage(pPage);
-
-			TIndex field(pTran, m_pAlloc);
-			field.init(m_nBTreeRootPage);
-			return field.save();*/
+			return CIndexHandlerBase::save<TIndex, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc);
 		}
 		virtual bool load(int64 nAddr, IDBStorage *pStorage)
 		{
@@ -170,9 +152,9 @@ namespace embDB
 		virtual IndexFiledPtr getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 
-			/*TIndex * pIndex = new  TIndex(pTransactions, m_pAlloc);
-			pIndex->load(m_fi.m_nFieldPage, pTransactions->getType());
-			return IndexFiledPtr(pIndex);	*/
+			TIndex * pIndex = new  TIndex(pTransactions, m_pAlloc, m_nNodePageSize);
+			pIndex->load(m_nIndexPage, pTransactions->getType());
+			return IndexFiledPtr(pIndex);
 
 			return IndexFiledPtr();
 		}

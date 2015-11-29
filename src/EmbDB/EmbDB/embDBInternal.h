@@ -353,6 +353,8 @@ namespace embDB
 
 		virtual IndexFiledPtr GetIndex() = 0;
 		virtual void SetIndex(IndexFiled *pIndex) = 0;
+
+		virtual IDBFieldHandlerPtr GetFieldHandler() const= 0;
 	};
 
 	
@@ -364,11 +366,12 @@ namespace embDB
 		IDBIndexHandler(){}
 		~IDBIndexHandler(){}
  
-		virtual bool save(int64 nAddr, IDBTransaction *pTran) = 0;
-		virtual bool load(int64 nAddr, IDBStorage *pStorage) = 0;
+		virtual bool save(CommonLib::IWriteStream* pStream, IDBTransaction *pTran) = 0;
+		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage) = 0;
 		virtual IndexFiledPtr getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
 		virtual bool release(IndexFiled* pInxex) = 0;
 
+ 
 		virtual bool lock() =0;
 		virtual bool unlock() =0;
 		virtual bool isCanBeRemoving() = 0;
@@ -398,6 +401,7 @@ namespace embDB
 		virtual bool isCanBeRemoving() = 0;
 
 		virtual int64 GetPageAddr() const = 0;
+		virtual uint32 GetNodePageSize() const = 0;
 	};
 
 	struct IDBShapeFieldHandler : public IDBFieldHandler
@@ -545,7 +549,7 @@ namespace embDB
 		virtual IFieldPtr createField(const  SFieldProp& sFP, ITransaction *pTran = NULL) = 0;
 		virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true, uint32 nPageSize = 8192,  ITransaction *pTran = NULL) = 0;
 		virtual bool deleteField(IField* pField) = 0;
-		virtual bool createIndex(const CommonLib::CString& sName, SIndexProp& ip) = 0;
+		virtual bool createIndex(const CommonLib::CString& sName, SIndexProp& ip, ITransaction *pTran = NULL) = 0;
 		virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip) = 0;
 
 		virtual int64 GetNextOID() = 0;

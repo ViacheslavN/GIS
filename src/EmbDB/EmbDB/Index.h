@@ -35,15 +35,18 @@ template<class _TBTree>
 class CIndexBase 
 {
 public:
-	CIndexBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
+	CIndexBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize) :
 	  m_pDBTransactions(pTransactions),
-		  m_tree(-1, pTransactions, pAlloc, 100, 8192), //Temorary
+		  m_tree(-1, pTransactions, pAlloc, 100, nPageSize), //Temorary
 		  m_nBTreeRootPage(-1)
 	  {
 
 	  }
 
 	  typedef _TBTree TBTree;
+	  typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
+	  typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
+
 	  virtual bool save()
 	  {
 		 return true;// return m_tree.saveBTreeInfo();
@@ -74,12 +77,12 @@ public:
 	  }
 
 
-	  virtual bool init(int64 nBTreeRootPage)
+	  virtual bool init(int64 nBTreeRootPage, TInnerCompressorParams *pInnerComp = NULL, TLeafCompressorParams *pLeafComp = NULL)
 	  {
 
 		  m_nBTreeRootPage = nBTreeRootPage;
 		 // m_tree.setRootPage(m_nBTreeRootPage);
-		  return m_tree.init(m_nBTreeRootPage);
+		  return m_tree.init(m_nBTreeRootPage, pInnerComp, pLeafComp);
 	  }
 
 	  TBTree* getBTree() {return &m_tree;}
@@ -96,37 +99,31 @@ class CIndexHandlerBase : public IDBIndexHandler
 {
 public:
 
-	CIndexHandlerBase(CommonLib::alloc_t* pAlloc,  indexTypes type) : m_pAlloc(pAlloc), m_IndexType(type)
+	CIndexHandlerBase(IDBFieldHandler *pField, CommonLib::alloc_t* pAlloc,  indexTypes type, int64 nIndexPage, uint32 nNodePageSize) : m_pAlloc(pAlloc), m_IndexType(type),
+		m_nIndexPage(nIndexPage), m_nBTreeRootPage(-1), m_nNodePageSize(nNodePageSize)
 	{
+		m_pField = pField;
 	}
 	~CIndexHandlerBase(){}
 
-	template<class TField>
-	bool save(int64 nAddr, IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,  uint16 nObjectPageType, uint16 nSubObjectPageType  )
+	template<class TField, class TInnerCompParams, class TLeafCompParams>
+	bool save(CommonLib::IWriteStream* pStream, IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,  TInnerCompParams* pInnerParams = NULL, TLeafCompParams* pLeafParams = NULL  )
 	{
-		//m_nFieldInfoPage = nAddr;
-		FilePagePtr pPage(pTran->getFilePage(nAddr, MIN_PAGE_SIZE));
-		if(!pPage.get())
-			return false;
-		CommonLib::FxMemoryWriteStream stream;
-		stream.attach(pPage->getRowData(), pPage->getPageSize());
-		sFilePageHeader header(stream, nObjectPageType, nSubObjectPageType);
-		int64 m_nBTreeRootPage = -1;
-		FilePagePtr pRootPage(pTran->getNewPage(8192));
+		FilePagePtr pRootPage(pTran->getNewPage(MIN_PAGE_SIZE));
 		if(!pRootPage.get())
 			return false;
 		m_nBTreeRootPage = pRootPage->getAddr();
-		stream.write(m_nBTreeRootPage);
-		header.writeCRC32(stream);
-		pPage->setFlag(eFP_CHANGE, true);
-		pTran->saveFilePage(pPage);
+		pStream->write(m_nNodePageSize);
+		pStream->write(m_nBTreeRootPage) ;
 
-		TField field(pTran, pAlloc);
-		field.init(m_nBTreeRootPage);
-		return field.save();
+		TField field(pTran, pAlloc, m_nNodePageSize);
+		field.init(m_nBTreeRootPage, pInnerParams,  pLeafParams);
+		return true;
 	}
-	virtual bool load(int64 nAddr, IDBStorage *pStorage)
+	virtual bool load(CommonLib::IReadStream *pStream, IDBStorage *pStorage)
 	{
+		m_nNodePageSize = pStream->readInt32();
+		m_nBTreeRootPage = pStream->readInt64();
 		return true;
 	}
 
@@ -150,13 +147,16 @@ public:
 
 	virtual IFieldPtr GetField() const 
 	{
-		return m_pField;
+		return IFieldPtr(m_pField.get());
 	}
 
 protected:
 	indexTypes m_IndexType;
 	CommonLib::alloc_t* m_pAlloc;
-	IFieldPtr m_pField;
+	IDBFieldHandlerPtr m_pField;
+	int64 m_nIndexPage;
+	int64 m_nBTreeRootPage;
+	uint32 m_nNodePageSize;
 
 
 };

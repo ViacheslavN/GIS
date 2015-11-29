@@ -48,8 +48,8 @@ namespace embDB
 		TKeyComp m_CompKeyOnly;
 
 
-		MultiIndex( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc) :
-		TBase(pTransactions, pAlloc)
+		MultiIndex( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nNodePageSize) :
+		TBase(pTransactions, pAlloc, nNodePageSize)
 		{
 
 		}
@@ -197,10 +197,12 @@ namespace embDB
 
 		typedef embDB::TBPSetV2<TIndexTuple, TBaseComp, 
 			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
+		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
+		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
 		typedef MultiIndex<FType, TBTree, FieldDataType, TBaseComp, TKeyComp> TMultiIndex;
 
-		MultiIndexFieldHandler(CommonLib::alloc_t* pAlloc) : CIndexHandlerBase(pAlloc, itMultiRegular)
+		MultiIndexFieldHandler(IDBFieldHandler *pField, CommonLib::alloc_t* pAlloc, int64 nPageAddr, uint32 nNodePageSize) : CIndexHandlerBase(pField, pAlloc, itMultiRegular, nPageAddr, nNodePageSize)
 		{
 
 		}
@@ -208,19 +210,17 @@ namespace embDB
 		{
 
 		}
-		virtual bool save(int64 nAddr, IDBTransaction *pTran)
+		virtual bool save(CommonLib::IWriteStream * pStream, IDBTransaction *pTran)
 		{
-			return true;//CIndexHandlerBase::save<TMultiIndex>(nAddr, pTran, m_pAlloc, INDEX_PAGE, MULTI_INDEX_INFO_PAGE);
+			return CIndexHandlerBase::save<TMultiIndex, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc);
 		}
 		
 		virtual IndexFiledPtr getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 
-		/*	TMultiIndex * pIndex = new  TMultiIndex(pTransactions, m_pAlloc);
-			pIndex->load(m_fi.m_nFieldPage, pTransactions->getType());
-			return IndexFiledPtr(pIndex);	*/
-
-			return IndexFiledPtr();
+			TMultiIndex * pIndex = new  TMultiIndex(pTransactions, m_pAlloc, m_nNodePageSize);
+			pIndex->load(m_nBTreeRootPage, pTransactions->getType());
+			return IndexFiledPtr(pIndex);	
 		}
 
 

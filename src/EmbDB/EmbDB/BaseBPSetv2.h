@@ -211,8 +211,10 @@ namespace embDB
 		
 			m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(m_pTransaction));
 			m_LeafCompParams.reset(TLeafCompess::LoadCompressorParams(m_pTransaction));
-			m_InnerCompParams->load(&stream, m_pTransaction);
-			m_LeafCompParams->load(&stream, m_pTransaction);
+			if(m_InnerCompParams.get())
+				m_InnerCompParams->load(&stream, m_pTransaction);
+			if(m_LeafCompParams.get())
+				m_LeafCompParams->load(&stream, m_pTransaction);
 
 			return !m_pTransaction->isError();
 		}
@@ -416,6 +418,18 @@ namespace embDB
 		if(m_pRoot.get() || m_nRootAddr != -1 || m_nPageBTreeInfo != -1)
 			return false;
 
+
+		if(pInnerCompParams)
+		{
+			m_InnerCompParams.reset(pInnerCompParams);
+		}
+		if(pLeafCompParams)
+		{
+			m_LeafCompParams.reset(pLeafCompParams);
+		}
+
+
+
 		m_nPageBTreeInfo = nBPTreePage;
 		FilePagePtr pPage (NULL);
 		if(m_nPageBTreeInfo == -1)
@@ -458,6 +472,9 @@ namespace embDB
 			pLeafCompParams->save(&stream, m_pTransaction);
 
 		stream.Save();
+
+		m_InnerCompParams.release();
+		m_LeafCompParams.release();
 		return true;
 
 	}
@@ -2097,8 +2114,8 @@ namespace embDB
 		typedef TBPSetIteratorV2<TKey, TComp,Transaction, TInnerCompess, TLeafCompess,
 			TInnerNode, TLeafNode, TBTreeNode> iterator;
 
-		TBPSetV2(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
-			TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, bMulti, bCheckCRC32 )
+		TBPSetV2(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, size_t nNodePageSize, bool bMulti = false, bool bCheckCRC32 = true) :
+			TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nNodePageSize, bMulti, bCheckCRC32 )
 			{
 
 			}

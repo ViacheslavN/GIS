@@ -105,12 +105,12 @@ namespace embDB
 			virtual bool commit(IDBTransaction *pTran);
 		private:
 			bool ReadField(int64 nAddr);
-			bool ReadIndex(int64 nAddr, IDBTransaction *pTran);
+			bool ReadIndex(int64 nAddr);
 			bool readHeader(CommonLib::FxMemoryReadStream& stream);
 			bool createValueField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew);
 			
-			IDBIndexHandlerPtr createIndexHandler(SIndexProp* ip, IDBFieldHandler *pField);
-			IDBIndexHandlerPtr createSpatialIndexField(eSpatialType spType);
+			IDBIndexHandlerPtr createIndexHandler(IDBFieldHandler *pField,  SIndexProp* ip, int64 nPageAddr);
+			IDBIndexHandlerPtr createSpatialIndexField(IDBShapeFieldHandler* pField, int64 nPageAddr, uint32 nPageNodeSize);
 	
 			//bool loadTableStorage(int64 nAddr);
 			bool ReadIndices(int64 nAddr, IDBTransaction *pTran);
