@@ -75,24 +75,24 @@ namespace embDB
 				if(!pTable.get())
 					return ICursorPtr(); //TO DO Error
 
-				IFieldPtr pField = pTable->getField(pszSpatialField);
+
+
+				IValueFieldPtr pField = GetField(pTable->getName().cwstr(), pszSpatialField);
 				if(!pField.get())
 					return ICursorPtr(); //TO DO Error
 
+				IDBFieldHandlerPtr pFieldHandler(pField->GetFieldHandler());
 
-				if(pField->getType() != dtGeometry)
+
+				if(pFieldHandler->getType() != dtGeometry)
 				{
 					return ICursorPtr(); //TO DO Error
 				}
 
-				IDBFieldHandler *pDBFieldHandler =  dynamic_cast<IDBFieldHandler*>(pField.get());
-				if(!pDBFieldHandler)
-					return ICursorPtr(); //TO DO Error
-
-				IDBIndexHandlerPtr pIndexHandle =  pDBFieldHandler->getIndexIndexHandler();
-				if(pIndexHandle.get())
+				IndexFiledPtr pIndex(pField->GetIndex());
+				if(pIndex.get())
 				{
-					embDB::IndexFiledPtr pIndex =  pIndexHandle->getIndex(this, NULL);
+					
 
 					ISpatialIndex* pSpatialIndex = dynamic_cast<ISpatialIndex*>(pIndex.get());
 					if(!pSpatialIndex)

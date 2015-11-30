@@ -20,7 +20,7 @@ namespace GisEngine
 				pField->SetName(pEmbDBField->getName());
 				pField->SetAliasName(pEmbDBField->getAlias());
 				pField->SetLength(pEmbDBField->GetLength());
-				pField->SetIsNullable(!pEmbDBField->GetIsNotEmpty());
+				pField->SetIsNullable(!pEmbDBField->GetIsNotNull());
 				pField->SetType(EmbDBType2FieldType(pEmbDBField->getType()));
 
 				return IFieldPtr(pField);
@@ -327,16 +327,16 @@ namespace GisEngine
 					{
 						embDB::SFieldProp fp;
 
-						fp.dataType = dt;
-						fp.dateTypeExt = embDB::dteSimple;
+						fp.m_dataType = dt;
+						 
 						if(!pField->GetIsNullable())
-							fp.dateTypeExt |= embDB::dteIsNotEmpty;
+							fp.m_bNotNull = true;
 
 
-						fp.sFieldName = pField->GetName();
-						fp.sFieldAlias = pField->GetAliasName();
-						fp.devaultValue = pField->GetDefaultValue();
-						fp.nLenField = pField->GetLength();
+						fp.m_sFieldName = pField->GetName();
+						fp.m_sFieldAlias = pField->GetAliasName();
+						fp.m_devaultValue = pField->GetDefaultValue();
+						fp.m_nLenField = pField->GetLength();
 						if(!pDBTable->createField(fp))
 							return false;
 					}

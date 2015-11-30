@@ -42,18 +42,16 @@ namespace embDB
 		bool base_save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,
 			TInnerCompParams *pInnerCompParams = NULL, TLeafCompParams* pLeafCompParams = NULL)
 		{
-			uint32 nNameUtf8Len = m_sFieldName.calcUTF8Length();
+		/*	uint32 nNameUtf8Len = m_sFieldName.calcUTF8Length();
 			uint32 nAliasUtf8Len = m_sFieldAlias.calcUTF8Length();
 			std::vector<char> vecBufName(nNameUtf8Len + 1);
 			std::vector<char> vecAliasName(nAliasUtf8Len + 1);
 
 			m_sFieldName.exportToUTF8(&vecBufName[0], vecBufName.size());
-			m_sFieldAlias.exportToUTF8(&vecAliasName[0], vecAliasName.size());
+			m_sFieldAlias.exportToUTF8(&vecAliasName[0], vecAliasName.size());*/
 
-			pStream->write(nNameUtf8Len);
-			pStream->write((byte*)&vecBufName[0], vecBufName.size());
-			pStream->write(nAliasUtf8Len);
-			pStream->write((byte*)&vecAliasName[0], vecAliasName.size());
+			pStream->write(m_sFieldName);
+			pStream->write(m_sFieldAlias);
 			pStream->write(m_nPrecision);
 			pStream->write(m_dScale);
 
@@ -91,7 +89,7 @@ namespace embDB
 
 		void base_load(CommonLib::IReadStream* pStream, IDBStorage *pStorage)
 		{
-			uint32 nNameUtf8Len = pStream->readIntu32();
+			/*uint32 nNameUtf8Len = pStream->readIntu32();
 			if(nNameUtf8Len != 0)
 			{
 				std::vector<char> vecBufName(nNameUtf8Len + 1);
@@ -104,9 +102,12 @@ namespace embDB
 				std::vector<char> vecAliasName(nAliasUtf8Len + 1);
 				pStream->read((byte*)&vecAliasName[0], vecAliasName.size());
 				m_sFieldAlias.loadFromUTF8(&vecAliasName[0]);
-			}
+			}*/
+			pStream->read(m_sFieldName);
+			pStream->read(m_sFieldAlias);
 			m_nPrecision = pStream->readInt32();
 			m_dScale = pStream->readDouble();
+			m_nFieldInfoPage = pStream->readInt64();
 		}
 
 		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage)

@@ -8,14 +8,14 @@ namespace embDB
 	SimpleSearchCursor::SimpleSearchCursor(IIndexIterator* pIndexIterator,  IDBTransaction* pTran, ITable* pTable, 
 		IFieldSet *pFieldSet) : m_nCacheCount(10000), m_nCurrObj(0), m_bEnd(false)
 	{
-		//m_pIndex = pIndex;
+
 		m_pTran = pTran;
 		m_pIndexIterator = pIndexIterator;
 		m_pTable = (IDBTable*)pTable;
 		m_pFieldSet = pFieldSet;
 		m_pFields = m_pTable->getFields();
 
-		m_vecOIDs.reserve(m_nCacheCount); //TO DO set file vector
+		m_vecOIDs.reserve(m_nCacheCount);
 	}
 	SimpleSearchCursor::~SimpleSearchCursor()
 	{
@@ -93,7 +93,6 @@ namespace embDB
 	{
 		if(m_bEnd)
 			return false;
-
 		if(nNum < (int32)m_vecFields.size())
 		{
 			const SField& field = m_vecFields[nNum];

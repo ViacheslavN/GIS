@@ -644,6 +644,7 @@ namespace embDB
 			pShapeField->SetBoundingBox(extent);
 			pShapeField->SetPointType(SpatialDataType);
 			pShapeField->SetShapeType(shapeType);
+			pShapeField->SetUnits(CoordUnits);
 			pShapeField->SetOffsetX(dOffsetX);
 			pShapeField->SetOffsetY(dOffsetY);
 			pShapeField->SetScaleX(dScaleX);

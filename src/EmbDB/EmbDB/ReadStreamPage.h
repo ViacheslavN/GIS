@@ -38,7 +38,7 @@ namespace embDB
 			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
 			  {
 				  sFilePageHeader header(m_stream, !m_pPage->isCheck());
-				  if(!header.isValid())
+				  if(!m_pPage->isCheck() && !header.isValid())
 				  {
 					  //TO DO Logs
 					  return false;

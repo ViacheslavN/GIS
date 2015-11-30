@@ -750,9 +750,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShapeTree.h">
-      <Filter>DB\Fields\shape</Filter>
-    </ClInclude>
     <ClInclude Include="ShapeField.h">
       <Filter>DB\Fields\shape</Filter>
     </ClInclude>
@@ -833,6 +830,12 @@
     </ClInclude>
     <ClInclude Include="DeleteCursor.h">
       <Filter>DB\transactions\Cursors</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeTree.h">
+      <Filter>DB\Fields\shape</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

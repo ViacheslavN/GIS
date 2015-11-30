@@ -41,9 +41,12 @@ namespace embDB
 		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true);
 		virtual void dropFilePage(FilePagePtr pPage);
 		virtual void dropFilePage(int64 nAddr, uint32 nSize);
-		virtual FilePagePtr getNewPage(uint32 nSize = 0);
+		virtual FilePagePtr getNewPage(uint32 nSize, bool bWrite = false);
 		virtual bool saveFilePage(FilePagePtr pPage,  size_t nSize = 0, bool bChandgeInCache = false);
-	//	virtual size_t getPageSize() const;
+		virtual bool saveFilePage(CFilePage* pPage, size_t nDataSize = 0,  bool ChandgeInCache = false);
+ 
+
+ 
 		virtual eTransactionType getType() const {return eTT_UNDEFINED;}
 
 		virtual void addInnerTransactions(IDBTransaction *pTran){}

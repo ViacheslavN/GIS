@@ -29,8 +29,8 @@ typedef std::map<ITestPtr, int> TtestMap;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	testLoadXML1();
-	return 1;
+	//testLoadXML1();
+	//return 1;
 	//TestShapeIndex();
 	TestEmbDBWks();
 

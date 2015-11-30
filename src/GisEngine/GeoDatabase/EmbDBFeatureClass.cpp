@@ -136,44 +136,42 @@ namespace GisEngine
 
 			{
 				embDB::SFieldProp fp;
-				fp.dataType = embDB::dtString;
-				fp.sFieldName = L"PROJ";
+				fp.m_dataType = embDB::dtString;
+				fp.m_sFieldName = L"PROJ";
 				pDBTable->createField(fp);
 			}
 			{
 				embDB::SFieldProp fp;
-				fp.dataType = embDB::dtString;
-				fp.sFieldName = L"SHAPEFIELD";
-				fp.nLenField = 255;
-				fp.dateTypeExt |= embDB::dteIsNotEmpty;
+				fp.m_dataType = embDB::dtString;
+				fp.m_sFieldName = L"SHAPEFIELD";
+				fp.m_nLenField = 128;
+				fp.m_bNotNull = true;
 				pDBTable->createField(fp);
 			}
 			{
 				embDB::SFieldProp fp;
-				fp.dataType = embDB::dtInteger32;
-				fp.sFieldName = L"GEOMTYPE";
-				fp.nLenField = 255;
-				fp.dateTypeExt |= embDB::dteIsNotEmpty;
+				fp.m_dataType = embDB::dtInteger32;
+				fp.m_sFieldName = L"GEOMTYPE";
+				fp.m_bNotNull = true;
 				pDBTable->createField(fp);
 			}
 			{
 				embDB::SFieldProp fp;
-				fp.dataType = embDB::dtString;
-				fp.sFieldName = L"ANNO";
-				fp.nLenField = 255;
+				fp.m_dataType = embDB::dtString;
+				fp.m_sFieldName = L"ANNO";
+				fp.m_nLenField = 128;
 				pDBTable->createField(fp);
 			}
 			{
 				embDB::SFieldProp fp;
-				fp.dataType = embDB::dtString;
-				fp.sFieldName = L"OIDFIELD";
-				fp.nLenField = 255;
+				fp.m_dataType = embDB::dtString;
+				fp.m_sFieldName = L"OIDFIELD";
 				pDBTable->createField(fp);
 			}
 			{
 				embDB::SFieldProp fp;
-				fp.dataType = embDB::dtInteger32;
-				fp.sFieldName = L"OIDTYPE";
+				fp.m_dataType = embDB::dtInteger32;
+				fp.m_sFieldName = L"OIDTYPE";
 				pDBTable->createField(fp);
 			}
 			
@@ -251,15 +249,13 @@ namespace GisEngine
 		if(!pEmbDBShapeField.get())
 			return false;
 
-		embDB::IDBFieldHandler *pShapeValueField = dynamic_cast<embDB::IDBFieldHandler *>(pEmbDBShapeField.get());
+		embDB::IDBShapeFieldHandler *pShapeValueField = dynamic_cast<embDB::IDBShapeFieldHandler *>(pEmbDBShapeField.get());
 		if(!pShapeValueField)
 			return false;
 
-		const embDB::sSpatialFieldInfo *pSpatInfo  = dynamic_cast<const embDB::sSpatialFieldInfo *>(pShapeValueField->getFieldInfoType());
-		if(!pSpatInfo)
-			return false;
+	 
 		
-		bounds = pSpatInfo->m_extent;
+		bounds = pShapeValueField->GetBoundingBox();
 		bounds.type = CommonLib::bbox_type_normal; //TO DO fix in embDB to save type	
 
 		if(!m_pSpatialReference.get())

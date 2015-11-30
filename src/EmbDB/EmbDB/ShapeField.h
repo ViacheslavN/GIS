@@ -135,7 +135,7 @@ namespace embDB
 
 		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage)
 		{
-			TBase::load(pStream, pStorage);
+			TBase::base_load(pStream, pStorage);
 		 
 			m_PointType = (eSpatialType)pStream->readIntu32();
 			m_ShapeType = (CommonLib::eShapeType)pStream->readIntu32();

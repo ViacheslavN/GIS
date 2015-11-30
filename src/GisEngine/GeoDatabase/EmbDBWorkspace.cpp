@@ -155,7 +155,7 @@ namespace GisEngine
 			if(m_pDB.get())
 				m_pDB->close();
 			m_pDB = embDB::IDatabase::CreateDatabase();
-			if(!m_pDB->create(sFullName.cwstr(),  8192))
+			if(!m_pDB->create(sFullName.cwstr()))
 			{
 				//TO DO Error
 				return false;

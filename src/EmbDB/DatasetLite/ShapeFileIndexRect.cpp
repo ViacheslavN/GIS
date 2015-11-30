@@ -51,7 +51,7 @@ namespace DatasetLite
 			m_dScaleX(dScaleX), m_dScaleY(dScaleY)
 		{
 
-			m_SpatialTree.reset( new TSPTree(nTreeRootPageID, &m_DBTran, pAlloc, 50));
+			m_SpatialTree.reset( new TSPTree(nTreeRootPageID, &m_DBTran, pAlloc, 50, 8192));
 		}
 		~TStatialTreeRect()
 		{
@@ -69,7 +69,7 @@ namespace DatasetLite
 			if(!m_SpatialTree.get())
 				return false;
 
-			m_SpatialTree->saveBTreeInfo(); 
+			m_SpatialTree->init(-1); 
 			return m_SpatialTree->commit();
 		}
 		virtual embDB::eDataTypes GetType()
