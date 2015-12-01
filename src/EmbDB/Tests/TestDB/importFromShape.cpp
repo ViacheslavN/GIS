@@ -343,7 +343,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 		pDBTable->createField(fp);
 	}
 
-	pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), true );
+	pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), true, 65536 );
 
 
 	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_MODIFY);
@@ -360,6 +360,11 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 	int intVal;
 	CommonLib::CGeoShape shape;
 	shape.AddRef();
+
+
+	uint32 nShapeRowSize = 0;
+	uint32 nStringRowSize = 0;
+	uint32 nDigSize = 0;
 	for(size_t row = 0; row < objectCount; ++row)
 	{
 		for (size_t i = 0; i < pFields->GetFieldCount(); ++i)
@@ -372,19 +377,27 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 			case embDB::dtString:
 				strVal = ShapeLib::DBFReadStringAttribute(dbf.file, row, i);
 				value  = strVal;
+				nStringRowSize += strVal.calcUTF8Length();
 				break;
 			case embDB::dtUInteger32:
 				intVal = ShapeLib::DBFReadIntegerAttribute(dbf.file, row, i);
 				value  = intVal;
+				nDigSize +=4;
 				break;
 			case embDB::dtDouble:
 				dblVal = ShapeLib::DBFReadDoubleAttribute(dbf.file, row, i);
 				value  = dblVal;
+				nDigSize +=8;
 				break;
 			case embDB::dtGeometry:
 						{
 							pCacheObject = ShapeLib::SHPReadObject(shp.file, row);
 							SHPObjectToGeometry(pCacheObject, shape);
+
+
+							//CommonLib::MemoryStream steram;
+							// shape.write(&steram);
+							//nShapeRowSize += steram.pos();
 							if(pCacheObject)
 							{
 								ShapeLib::SHPDestroyObject(pCacheObject);
@@ -423,11 +436,16 @@ void SearchShapeFile(const wchar_t* pszDBName)
 	bbox.xMax =  652299.90000000002;
 	bbox.yMax = 6123549.2000000002;
 	embDB::ICursorPtr pCursor = pTran->executeSpatialQuery(bbox, L"building", L"building");
-	embDB::IRowPtr pRow;
 	int nObj = 0;
-	while(pCursor->NextRow(&pRow))
+	embDB::IRowPtr pRow;
+	if(pCursor.get())
 	{
-		++nObj;
+	
+		
+		while(pCursor->NextRow(&pRow))
+		{
+			++nObj;
+		}
 	}
 
 	int  i = 0;

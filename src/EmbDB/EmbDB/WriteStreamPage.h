@@ -9,7 +9,7 @@ namespace embDB
 	class WriteStreamPage : public CommonLib::IWriteStreamBase, public CommonLib::AutoRefCounter
 	{
 	public:
-		WriteStreamPage(IDBTransaction* pTran, uint32 nPageSize, uint16 nObjectPage = -1, uint16 nSubObjectPage = -1) :
+		WriteStreamPage(IDBTransaction* pTran, uint32 nPageSize, uint16 nObjectPage = 0, uint16 nSubObjectPage = 0) :
 		  m_pTran(pTran), m_nPageHeader(-1), m_nBeginPos(0), m_nPageSize(nPageSize), 
 			  m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage)
 		  {
@@ -30,7 +30,7 @@ namespace embDB
 			  assert(m_nBeginPos < m_pPage->getPageSize());
 
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
-			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
 				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage);
 				  if(m_nBeginPos != 0)
@@ -64,7 +64,7 @@ namespace embDB
 			  assert(m_nBeginPos < m_pPage->getPageSize());
 			 
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
-			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+			  if(m_nObjectPage !=0 && m_nSubObjectPage != 0)
 			  {
 				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage);
 				  if(m_nBeginPos != 0)
@@ -85,7 +85,7 @@ namespace embDB
 			  while(size)
 			  {
 				  int32 nFreeSize = m_stream.size() - m_stream.pos();
-				  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+				  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 				  {
 					  nFreeSize -= sFilePageHeader::size();  
 				  }
@@ -168,7 +168,7 @@ namespace embDB
 
 		  void NextPage()
 		  {
-			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
 				  sFilePageHeader header(m_nObjectPage, m_nSubObjectPage);
 				  header.writeCRC32(m_stream);
@@ -183,7 +183,7 @@ namespace embDB
 			  }
 			  m_pPage = pPage;
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
-			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
 				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage);
 			  }
@@ -193,7 +193,7 @@ namespace embDB
 		  {
 			  if(m_pPage.get())
 			  {
-				  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+				  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 				  {
 					  sFilePageHeader header(m_nObjectPage, m_nSubObjectPage);
 					  header.writeCRC32(m_stream);

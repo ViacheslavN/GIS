@@ -68,6 +68,11 @@ namespace embDB
 
 		}
 
+		~TShapeValueField()
+		{
+
+		}
+
 
 		virtual bool find(int64 nOID, CommonLib::CVariant* pFieldVal)
 		{
@@ -106,7 +111,7 @@ namespace embDB
 
 
 			TBTree::TLeafCompressorParams compParams;
-			compParams.SetMaxPageBlobSize(m_nPageSize/25); 
+			compParams.SetMaxPageBlobSize(m_nPageSize/10); 
 			compParams.SetCoordType(m_PointType);
 			compParams.SetShapeType(m_ShapeType);
 			compParams.SetScaleX(m_dScaleX);

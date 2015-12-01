@@ -64,6 +64,11 @@ namespace embDB
 			typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 			typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
+
+			~ValueFieldBase()
+			{
+
+			}
 			
 			
 			virtual bool load(int64 nRootBPTreeField)
@@ -329,7 +334,8 @@ namespace embDB
 			}
 
 		 
-			~ValueField(){}
+			~ValueField()
+			{}
 			typedef ValueFieldBase<_FType, _TBTree, TFieldIterator> TBase;
 			typedef typename TBase::TBTree TBTree;
 			typedef typename TBTree::iterator  iterator;

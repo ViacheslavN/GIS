@@ -24,6 +24,12 @@ namespace embDB
 					m_pDBStorage = m_pDatabase->getDBStorage();
 				}
 			}
+			~ITransactionBase()
+			{
+				m_mapValueField.clear();
+			}
+
+			
 
 			virtual IValueFieldPtr GetField(const wchar_t* pszTableName, const wchar_t* pszFieldName)
 			{

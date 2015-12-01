@@ -62,6 +62,10 @@ namespace embDB
 
 		}
 
+		~TFixedStringValueField()
+		{
+
+		}
 
 		virtual bool find(int64 nOID, CommonLib::CVariant* pFieldVal)
 		{

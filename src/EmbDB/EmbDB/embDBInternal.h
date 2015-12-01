@@ -271,7 +271,7 @@ namespace embDB
 	//COMMON_LIB_REFPTR_TYPEDEF(IIndexIterator); 
 
 
-	struct IIndexPageIterator  : public CommonLib::RefCounter
+	struct IIndexPageIterator  : public CommonLib::AutoRefCounter
 	{
 	public:
 		IIndexPageIterator();
@@ -286,7 +286,7 @@ namespace embDB
 	};
 
 	template<class TKeyType, class TIterator, class TIteratorPtr>
-	struct  TIndexFiled  : public CommonLib::RefCounter
+	struct  TIndexFiled  : public CommonLib::AutoRefCounter
 	{
 	public:
 		TIndexFiled() {}
@@ -307,7 +307,7 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(IndexFiled); 
 
 
-	struct IIndexIterator : public CommonLib::RefCounter
+	struct IIndexIterator : public CommonLib::AutoRefCounter
 	{
 	public:
 		IIndexIterator(){};
@@ -328,7 +328,7 @@ namespace embDB
 	};
 
 
-	struct IValueField: public CommonLib::RefCounter
+	struct IValueField: public CommonLib::AutoRefCounter
 	{
 	public:
 		IValueField() {}

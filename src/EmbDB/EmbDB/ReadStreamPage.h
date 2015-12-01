@@ -10,7 +10,7 @@ namespace embDB
 	class ReadStreamPage : public CommonLib::IReadStreamBase, public CommonLib::AutoRefCounter
 	{
 	public:
-		ReadStreamPage(IFilePage* pTran, uint32 nPageSize, uint16 nObjectPage = -1, uint16 nSubObjectPage = -1) :
+		ReadStreamPage(IFilePage* pTran, uint32 nPageSize, uint16 nObjectPage = 0, uint16 nSubObjectPage = 0) :
 		  m_pTran(pTran), m_nPageHeader(-1), m_nEndPage(-1), m_nEndPos(0), m_nPageSize(nPageSize), 
 			  m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage)
 		  {									  
@@ -35,7 +35,7 @@ namespace embDB
 
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
 
-			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
 				  sFilePageHeader header(m_stream, !m_pPage->isCheck());
 				  if(!m_pPage->isCheck() && !header.isValid())
@@ -73,7 +73,7 @@ namespace embDB
 			  assert(m_nBeginPos < m_pPage->getPageSize());
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
 
-			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
 				  sFilePageHeader header(m_stream, !m_pPage->isCheck());
 				  if(!header.isValid())
@@ -190,7 +190,7 @@ namespace embDB
 
 			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
 
-			  if(m_nObjectPage != -1 && m_nSubObjectPage != -1)
+			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
 				  sFilePageHeader header(m_stream, !m_pPage->isCheck());
 				  if(!header.isValid())

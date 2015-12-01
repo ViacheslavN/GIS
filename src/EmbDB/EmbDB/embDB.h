@@ -303,7 +303,7 @@ namespace embDB
 		virtual void Clear() = 0;
 	};
 
-	struct IRow : public CommonLib::RefCounter
+	struct IRow : public CommonLib::AutoRefCounter
 	{
 	public:
 		IRow(){}

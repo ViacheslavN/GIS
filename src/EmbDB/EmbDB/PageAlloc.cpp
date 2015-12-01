@@ -44,6 +44,7 @@ namespace embDB
  
 		if(size >= m_nMemPageSize)
 			return m_pAlloc->alloc(size);
+		
  
 		int32 nFreeMem = m_nMemPageSize - (m_pCurrPage->m_nPos /*+ sizeof(uint32)*/);
 		if((int32)size < nFreeMem && nFreeMem)
@@ -62,7 +63,7 @@ namespace embDB
 			else
 			{
 				m_pCurrPage= m_listFreePage.front();
-				m_listFreePage.pop_back();
+				m_listFreePage.pop_front();
 			}
  
 			return allocFromPage(m_pCurrPage, size);
@@ -134,7 +135,9 @@ namespace embDB
 		{
 			pPage->m_nPos = 0;
 			if(pPage != m_pCurrPage)
+			{
 				m_listFreePage.push_back(pPage);
+			}
 		}
 	}
 }

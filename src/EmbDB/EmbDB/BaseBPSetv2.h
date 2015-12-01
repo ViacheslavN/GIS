@@ -42,6 +42,8 @@ namespace embDB
 		eBPTNewRootNode =64
 	};*/
 
+	//static int nLeafCount = 0;
+	//static int nInnerCount = 0;
 
 	template <	class _TKey,  class _TComp,  class _Transaction,
 	class _TInnerCompess = BPInnerNodeSimpleCompressorV2<_TKey>,
@@ -281,6 +283,12 @@ namespace embDB
 	}
 	virtual TBTreeNodePtr newNode(bool bIsRoot, bool bIsLeaf)
 	{
+
+		/*if(bIsLeaf)
+			nLeafCount++;
+		else
+			nInnerCount ++;*/
+
 		TBTreeNode *pNode = CreateNode(-1, bIsLeaf);/*new TBTreeNode(-1, m_pAlloc, -1, m_bMulti, bIsLeaf, m_bCheckCRC32,  m_InnerCompParams.get(),
 				 m_LeafCompParams.get() );*/
 			pNode->Load(m_pTransaction);
@@ -640,6 +648,7 @@ namespace embDB
 			if(pNode->size() > m_nNodesPageSize)
 			{
 
+				uint32 nSize = pNode->size();
 				TBTreeNodePtr pParentNode = getNode(pNode->parentAddr());
 				bool bNewRoot = false;
 				if(!pParentNode.get())
