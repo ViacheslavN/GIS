@@ -26,6 +26,9 @@ namespace GisEngine
 				virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
 				virtual bool load(const GisCommon::IXMLNode* pXmlNode);
 
+				bool open();
+				bool CreateTable(IFields* pFields);
+
 			private:
 				 CSQLiteWorkspace *m_pSQLiteWorkspace;
 		};

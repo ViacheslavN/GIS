@@ -343,7 +343,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 		pDBTable->createField(fp);
 	}
 
-	pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), true, 65536 );
+	pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), false, 65536 );
 
 
 	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_MODIFY);

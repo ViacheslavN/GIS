@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "SQLiteTable.h"
 #include "SQLiteWorkspace.h"
-
+#include "SQLiteUtils.h"
+#include "SQLIteDB.h"
 
 namespace GisEngine
 {
@@ -51,6 +52,41 @@ namespace GisEngine
 			return false;
 		}
 
+		bool CSQLiteTable::CreateTable(IFields* pFields)
+		{
+			SQLiteUtils::CSQLiteDB* pDB = m_pSQLiteWorkspace->GetDB();
+			if(!pDB)
+				return false;
+
+
+			CommonLib::CString sSQL;
+			CommonLib::CString sOidField;
+			SQLiteUtils::CreateSQLCreateTable(pFields, m_sDatasetName, sSQL,
+				&sOidField);
+
+			m_pFields = pFields->clone();
+			m_sOIDFieldName = sOidField;
+
+
+			return pDB->execute(sSQL);
+		}
+
+		bool CSQLiteTable::open()
+		{
+
+			SQLiteUtils::CSQLiteDB *pDB = m_pSQLiteWorkspace->GetDB();
+			if(!pDB)
+				return false;
+
+			m_pFields = pDB->ReadFields(m_sDatasetName);
+			if(!m_pFields.get())
+				return false;
+
+			if(!m_pFields->GetFieldCount())
+				return false;
+
+			return true;
+		}
 
 	}
 }
