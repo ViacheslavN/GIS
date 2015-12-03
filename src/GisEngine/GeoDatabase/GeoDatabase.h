@@ -142,11 +142,9 @@ namespace GisEngine
 				virtual void RemoveDataset(uint32 nIdx) = 0;
 				virtual void RemoveDataset(IDataset *pDataset) = 0;
 
-				virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& sOIDName = L"") = 0;
+				virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields) = 0;
 				virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name,
-							IFields* fields, const CommonLib::CString& sOIDName = L"",  
-							const CommonLib::CString& shapeFieldName = L"",
-							const CommonLib::CString& sAnnotationName = L"") = 0;					
+							IFields* fields) = 0;					
 
 				virtual ITablePtr OpenTable(const CommonLib::CString& name) = 0;
 				virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::CString& name) = 0;

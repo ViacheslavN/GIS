@@ -12,6 +12,7 @@ extern "C" {
 #include "SQLiteFeatureClass.h"
 #include "SQLiteDB.h"
 #include "SQLiteTransaction.h"
+#include "SQLiteTable.h"
 
 namespace GisEngine
 {
@@ -160,7 +161,7 @@ namespace GisEngine
 		}
 
 		
-		ITablePtr  CSQLiteWorkspace::CreateTable(const CommonLib::CString& sName, IFields* pFields, const CommonLib::CString& sOIDName )
+		ITablePtr  CSQLiteWorkspace::CreateTable(const CommonLib::CString& sName, IFields* pFields )
 		{
 
 			if(!IsConnect())
@@ -181,8 +182,7 @@ namespace GisEngine
 			}
 
 			CommonLib::CString sSQL;
-			CommonLib::CString sOidField = sOIDName;
-			SQLiteUtils::CreateSQLCreateTable(pFields, sName, sSQL, sOidField.isEmpty() ? &sOidField : NULL);
+			SQLiteUtils::CreateSQLCreateTable(pFields, sName, sSQL);
 			
 
 			 if(!m_pDB->execute(sSQL))
@@ -190,17 +190,9 @@ namespace GisEngine
 			
 
 			pTable = OpenTable(sName);
-			if(pTable.get())
-			{
-				pTable->SetHasOIDField(true);
-				pTable->SetOIDFieldName(sOidField);
-			}
 			return pTable;
 		}
-		IFeatureClassPtr CSQLiteWorkspace::CreateFeatureClass(const CommonLib::CString& sName,
-			IFields* pFields, const CommonLib::CString& sOIDName,  
-			const CommonLib::CString& shapeFieldName,
-			const CommonLib::CString& sAnnotationName)
+		IFeatureClassPtr CSQLiteWorkspace::CreateFeatureClass(const CommonLib::CString& sName, IFields* pFields)
 		{
 	
 			if(!IsConnect())
@@ -261,6 +253,9 @@ namespace GisEngine
 
 			pTable = (ITable*)new  CSQLiteTable(this, sName, sName);
 			pTable->SetFields(pFields.get());
+
+		
+
 			AddDataset(pTable.get());
 	 
 			return pTable;

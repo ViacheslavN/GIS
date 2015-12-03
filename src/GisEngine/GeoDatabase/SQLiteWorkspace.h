@@ -28,12 +28,9 @@ namespace GisEngine
 			static IWorkspacePtr Open(GisCommon::IXMLNode *pNode, bool bOpenAll = false);
  
 
-			virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& sOIDName = L"");
+			virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* pFields);
 
-			virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name,
-				IFields* fields, const CommonLib::CString& sOIDName = L"",  
-				const CommonLib::CString& shapeFieldName = L"",
-				const CommonLib::CString& sAnnotationName = L"");
+			virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name, IFields* pFields);
 
 			virtual ITablePtr OpenTable(const CommonLib::CString& name);
 			virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::CString& name);

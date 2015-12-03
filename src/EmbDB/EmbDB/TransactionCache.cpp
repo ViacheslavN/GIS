@@ -166,7 +166,9 @@ namespace embDB
 				if(!pPage.get())
 				{
 					assert(pi.m_nFileAddr != -1);
-					pPage = m_pFileStorage->getFilePage(pi.m_nFileAddr, true, false);
+					pPage = m_pFileStorage->getFilePage(pi.m_nFileAddr, pi.m_nPageSize, true, false);
+
+					assert(pPage.get());
 					pPage->setFlag(pi.m_nFlags, true);
 					pPage->setAddr(it->first);
 					pPage->setNeedEncrypt(false);

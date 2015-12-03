@@ -16,7 +16,7 @@ namespace CommonLib
 	}
 	MemoryStream::~MemoryStream()
 	{
-		if(!m_bAttach)
+		if(!m_bAttach && m_pBuffer)
 		{
 			m_pAlloc->free(m_pBuffer);
 			m_pBuffer = 0;

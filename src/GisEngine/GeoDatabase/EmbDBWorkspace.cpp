@@ -3,6 +3,7 @@
 #include "CommonLibrary/File.h"
 #include "EmbDBFeatureClass.h"
 #include "EmbDBTransaction.h"
+#include "EmbDBTable.h"
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -198,7 +199,6 @@ namespace GisEngine
 				}
 				else
 				{
-					continue;
 					if(!OpenTable(pTable->getName()))
 					{
 						return false;
@@ -246,15 +246,36 @@ namespace GisEngine
 		}
 
 
-		ITablePtr  CEmbDBWorkspace::CreateTable(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& sOIDName)
+		ITablePtr  CEmbDBWorkspace::CreateTable(const CommonLib::CString& sName, IFields* pFields)
 		{
-			return ITablePtr();
+
+			if(!m_pDB.get())
+				return ITablePtr();
+
+			if(sName.isEmpty())
+			{
+			 
+				return ITablePtr();
+			}
+
+			IFeatureClassPtr pFC = GetFeatureClass(sName);
+			if(pFC.get())
+			{
+		 
+				return  ITablePtr();
+			}
+			CEmbDBTable* pEmbTable = new CEmbDBTable(this, sName, sName);
+			if(!pEmbTable->CreateTable(pFields))
+			{
+				delete pEmbTable;
+				return  ITablePtr();
+			}
+			AddDataset(pEmbTable);
+			return  ITablePtr(pEmbTable);
 		}
 
 		IFeatureClassPtr CEmbDBWorkspace::CreateFeatureClass(const CommonLib::CString& sName,
-			IFields* pFields, const CommonLib::CString& sOIDName,  
-			const CommonLib::CString& shapeFieldName,
-			const CommonLib::CString& sAnnotationName)
+			IFields* pFields)
 		{
 			if(!m_pDB.get())
 				return IFeatureClassPtr();
@@ -281,9 +302,32 @@ namespace GisEngine
 			return  IFeatureClassPtr(pEmbDBFC);
 		}
 
-		ITablePtr CEmbDBWorkspace::OpenTable(const CommonLib::CString& name)
+		ITablePtr CEmbDBWorkspace::OpenTable(const CommonLib::CString& sName)
 		{
-			return ITablePtr();
+			if(!m_pDB.get())
+				return ITablePtr();
+
+			if(sName.isEmpty())
+			{
+		 
+				return ITablePtr();
+			}
+
+			ITablePtr pTable = GetTable(sName);
+			if(pTable.get())
+				return pTable;
+
+			CEmbDBTable *pEmbDBTable = new CEmbDBTable(this, sName, sName);
+			if(!pEmbDBTable->open())
+			{
+				delete pEmbDBTable;
+				return ITablePtr();
+			}			
+
+		
+			AddDataset(pEmbDBTable);
+			return ITablePtr(pEmbDBTable);
+
 		}
 		IFeatureClassPtr CEmbDBWorkspace::OpenFeatureClass(const CommonLib::CString& sName)
 		{

@@ -91,6 +91,7 @@
     <ClCompile Include="TestEmbWks.cpp" />
     <ClCompile Include="TestShapeIndex.cpp" />
     <ClCompile Include="TestSQLiteWks.cpp" />
+    <ClCompile Include="TestTmpWKS.cpp" />
     <ClCompile Include="TestXML.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

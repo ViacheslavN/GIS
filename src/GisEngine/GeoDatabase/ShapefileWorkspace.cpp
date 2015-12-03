@@ -99,13 +99,12 @@ namespace GisEngine
 			return pFeaturePtr;
 		}
  
-		ITablePtr  CShapefileWorkspace::CreateTable(const CommonLib::CString& name, IFields* fields, const CommonLib::CString& sOIDName)
+		ITablePtr  CShapefileWorkspace::CreateTable(const CommonLib::CString& name, IFields* fields)
 		{
 			return ITablePtr();
 		}
 		IFeatureClassPtr CShapefileWorkspace::CreateFeatureClass(const CommonLib::CString& sName,
-			IFields* pFields, const CommonLib::CString& sOIDName,  	const CommonLib::CString& shapeFieldName,
-			const CommonLib::CString& sAnnotationName)
+			IFields* pFields)
 		{
 		
 
