@@ -2,6 +2,8 @@
 //
 
 #include "stdafx.h"
+#include "CommonLibrary/MemoryStream.h"
+#include "CommonLibrary/FixedBitStream.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
