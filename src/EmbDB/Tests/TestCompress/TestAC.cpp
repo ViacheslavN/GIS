@@ -51,13 +51,15 @@ struct SymbolInfo
 
 typedef std::map<char, SymbolInfo> TMapFreqInt;
 
-
+static int bitwrite = 0;
 void BitsPlusFollow(bool bBit, uint32& nBits_to_follow, CommonLib::FxBitWriteStream *pStream)
 {
 	pStream->writeBit(bBit);
+	bitwrite++;
 	for (; nBits_to_follow > 0; nBits_to_follow--)
 	{
 		pStream->writeBit(!bBit);
+		bitwrite++;
 	}
 }
 void  ACComp::compressInteger(const char *pszText, CommonLib::IWriteStream* pStream)
@@ -95,18 +97,22 @@ void  ACComp::compressInteger(const char *pszText, CommonLib::IWriteStream* pStr
 	pStream->write(mapFreq.size());
 
 	uint32 nSize = 0;
+	double dSize = 0;
 	for (TMapFreqInt::iterator it = mapFreq.begin(); it != mapFreq.end(); ++it)
 	{
 		SymbolInfo& info = it->second;
 		pStream->write(it->first);
 		pStream->write(info.m_nFreq);
 
-		nSize += info.m_nFreq * (int)(-1*Log2((double)info.m_nFreq/nLen));
+		dSize += info.m_nFreq * (-1*Log2((double)info.m_nFreq/nLen));
 
 	}
+
+
+	nSize = (int)dSize;
 	CommonLib::simple_alloc_t alloc;
 	CommonLib::FxBitWriteStream bitStream(&alloc);
-	bitStream.create(100);
+	bitStream.create(nSize/8 + 1);
 
 	pCh = pszText;
 	uint32 nBitsToFollow = 0;
@@ -147,24 +153,55 @@ void  ACComp::compressInteger(const char *pszText, CommonLib::IWriteStream* pStr
 		pCh++;
 
 	}
+
+	nBitsToFollow += 1;           /* опpедел€ющих чеpвеpть,*/
+	if (nLow < First_qtr) 
+			BitsPlusFollow(false, nBitsToFollow, &bitStream); /* лежащую в     */
+	
+	else BitsPlusFollow(true, nBitsToFollow, &bitStream);     
+
 	//bitStream.writeBits(nLow, 16);
 
+	uint32 nBitsSize = bitStream.sizeInBits();
+	uint32 nBitPos = bitStream.posInBits();
 	std::string sText;
 	CommonLib::FxBitReadStream bitReadStream(&alloc);
-	bitReadStream.attach(bitStream.buffer(), bitStream.size());
+	bitReadStream.attachBits(bitStream.buffer(), nBitPos);
+
+	uint32 nBitPo2s = bitReadStream.posInBits();
 	uint16 value = 0;
 	bitReadStream.readBits(value, 16);
+	bitReadStream.seek(0, CommonLib::soFromBegin);
+	
+	uint16 value1 = 0;
+	uint16 value2 = 0;
+	uint16 value3 = 0;
+	int nCnt = 0;
+	for (int i = 1; i<=nCode_value_bits; i++) { /* нени€ значе-  */
 
+				uint32 nBit = (bitReadStream.readBit() ? 1 : 0);
+		      value1 = 2*value1+ nBit;       /* ни€ кода      */
+			  value2 = ( value2 << 1 ) | nBit;
+
+			  if(nBit)
+				  value3 |= (0x01 << (i-1));
+
+			  nCnt++;
+	 }
+	value = value1;
 	int readSymbol = 0;
 	nLow = 0;
 	nHigh = Top_value;
 
+	int readBit = 16;
+	int readinCycle = 0;
+	int readinCycle2 = 0;
 	while(readSymbol < nLen)
 	{
 		int32 freq = ((value - nLow + 1) * nLen -1)/(nHigh - nLow + 1);
 
 		TMapFreqInt::iterator it = mapFreq.begin();
-		for (; it != mapFreq.end(); ++it)
+		for (; it != mapFreq.end();)
 		{
 			SymbolInfo& info = it->second;
 			if(info.m_nB <= freq)
@@ -182,6 +219,8 @@ void  ACComp::compressInteger(const char *pszText, CommonLib::IWriteStream* pStr
 
 		sText += it->first;
 		readSymbol++;
+		if(readSymbol == nLen)
+			break;
 		for (;;)
 		{
 			if(nHigh < Half)
@@ -201,12 +240,22 @@ void  ACComp::compressInteger(const char *pszText, CommonLib::IWriteStream* pStr
 			}
 			else
 				break;
-			nLow += nLow;
-			nHigh += (nHigh  +1);
+			nLow = 2 *nLow;
+			nHigh = (2 *nHigh)  +1;
 
-			bool bBit = bitReadStream.readBit();
-
-			value += (value + (bBit ? 1 : 0));
+			bool bBit = readBit < nBitPos ?  bitReadStream.readBit() : 0;
+			if(readBit < nBitPos)
+			{
+				readBit++;
+				readinCycle++;
+			}
+			else
+			{
+				int dd = 0;
+				dd++;
+				readinCycle2++;
+			}
+			value = ((2 * value) + (bBit ? 1 : 0));
 		}
 
 	}

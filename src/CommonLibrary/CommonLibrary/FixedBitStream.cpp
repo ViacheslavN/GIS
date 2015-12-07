@@ -35,6 +35,7 @@ namespace CommonLib
 		m_bAttach = false;
 		m_nCurrBit = 0;
 		m_pBuffer[m_nPos] = 0;
+		m_nEndBits = m_nBitBase;
 	}
 	void FxBitStreamBase::attach(byte* pBuffer, size_t nSize, bool bCopy)
 	{
@@ -54,7 +55,30 @@ namespace CommonLib
 		m_nCurrBit = 0;
 		m_nPos = 0;
 		m_nSize = nSize;
+		m_nEndBits = m_nBitBase;
 		
+	}
+	void FxBitStreamBase::attachBits(byte* pBuffer, size_t nSizeInBits, bool bCopy)
+	{
+
+		m_nSize = nSizeInBits/m_nBitBase + 1;
+		size_t nEndBit = nSizeInBits%m_nBitBase;
+		m_nEndBits = nEndBit ? nEndBit : m_nBitBase;
+		if(bCopy)
+		{
+			create(m_nSize);
+			memcpy(m_pBuffer, pBuffer, m_nSize);
+			m_bAttach = false;
+		}
+		else
+		{
+			m_pBuffer = pBuffer;
+			m_bAttach = true;
+
+		}
+		m_nCurrBit = 0;
+		m_nPos = 0;
+	 
 	}
 	byte* FxBitStreamBase::deattach()
 	{
@@ -72,6 +96,15 @@ namespace CommonLib
 	{
 		return m_nSize;
 	}
+	size_t FxBitStreamBase::sizeInBits() const
+	{
+		if(!m_nSize)
+			return 0;
+
+		return (m_nSize - 1) * m_nBitBase  + m_nEndBits;
+	}
+
+	
 	bool FxBitStreamBase::seek(size_t pos, enSeekOffset offset )
 	{
 		if(!m_pBuffer)
@@ -101,6 +134,11 @@ namespace CommonLib
 	size_t FxBitStreamBase::pos() const
 	{
 			return m_nPos;
+	}
+	size_t FxBitStreamBase::posInBits() const
+	{
+
+		return m_nPos* (m_nBitBase + 1) + m_nCurrBit;
 	}
 	void FxBitStreamBase::reset()
 	{

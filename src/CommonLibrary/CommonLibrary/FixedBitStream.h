@@ -18,12 +18,15 @@ namespace CommonLib
 
 		virtual void create(size_t nSize);
 		virtual void attach(byte* pBuffer, size_t nSize, bool bCopy = false);
+		virtual void attachBits(byte* pBuffer, size_t nsizeInBits, bool bCopy = false);
 		virtual byte* deattach();
 		virtual byte* buffer();
 		virtual const byte* buffer() const;
 		virtual size_t size() const;
+		virtual size_t sizeInBits() const;
 		virtual bool seek(size_t position, enSeekOffset offset );
 		virtual size_t pos() const;
+		virtual size_t posInBits() const;
 		virtual void reset();
 		virtual void close();
 
@@ -35,6 +38,8 @@ namespace CommonLib
 		alloc_t *m_pAlloc;
 		bool m_bAttach;
 		size_t m_nCurrBit;
+
+		size_t m_nEndBits;
 
 	};
 
@@ -83,7 +88,7 @@ namespace CommonLib
 		void _readBits(TVal& bits, size_t nCount)
 		{
 			bits = 0;
-			for (size_t i = 0; i < nCount; ++i)
+			for (int i = nCount - 1; i >= 0; --i)
 			{
 				bool bBit = readBit();
 				if(bBit)
