@@ -31,11 +31,11 @@ typedef std::map<ITestPtr, int> TtestMap;
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	TestTableWks();
+	//TestTableWks();
 	//testLoadXML1();
 	//return 1;
 	//TestShapeIndex();
-	//TestEmbDBWks();
+	TestEmbDBWks();
 
 	/*CommonLib::CString s1(L"vfdgggf");
 	CommonLib::CString s2(s1);
