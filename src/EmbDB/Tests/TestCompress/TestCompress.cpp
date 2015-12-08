@@ -12,11 +12,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	ACComp comp;
 	CommonLib::MemoryStream stream;
 	CommonLib::MemoryStream stream1;
-	comp.compress("йнб.йнпнбю", &stream);
+//	comp.compress("йнб.йнпнбю", &stream);
 	comp.compressInteger("йнб.йнпнбю", &stream1);
-	stream.seek(0, CommonLib::soFromBegin);
-	CommonLib::CString str;
-	comp.decompress(&stream, str);
+//	stream.seek(0, CommonLib::soFromBegin);
+//	CommonLib::CString str;
+//	comp.decompress(&stream, str);
+
+	TestCompressAC("йнб.йнпнбю");
 	return 0;
 }
 

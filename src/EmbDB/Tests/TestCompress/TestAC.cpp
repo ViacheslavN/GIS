@@ -4,6 +4,9 @@
 #include "CommonLibrary/FixedBitStream.h"
 #include <math.h>
 #include <cmath>
+
+#include "ArithmeticCoder.h"
+
 double Log2( double n )  
 {  
 	// log(n)/log(2) is log2.  
@@ -377,4 +380,100 @@ void ACComp::decompress(CommonLib::IReadStream* pStream, CommonLib::CString& str
 		}
 	}
 	str = sBuf.c_str();
+}
+
+
+
+void TestCompressAC(const std::string& sStr)
+{
+
+	TMapFreqInt mapFreq;
+	for (size_t i = 0, sz = sStr.size(); i < sz; ++i)
+	{
+		SymbolInfo& info = mapFreq[sStr[i]];
+		info.m_nFreq += 1;
+ 
+	}
+	int32 nPrevF = 0;
+	for (TMapFreqInt::iterator it = mapFreq.begin(); it != mapFreq.end(); ++it)
+	{
+		SymbolInfo& info = it->second;
+		info.m_nB = nPrevF + info.m_nFreq;
+		nPrevF = info.m_nB;
+	}
+
+
+	uint32 nSize = 0;
+	double dSize = 0;
+	for (TMapFreqInt::iterator it = mapFreq.begin(); it != mapFreq.end(); ++it)
+	{
+		SymbolInfo& info = it->second;
+		dSize += info.m_nFreq * (-1*Log2((double)info.m_nFreq/sStr.size()));
+
+	}
+
+	if(dSize < 32)
+		dSize = 32;
+	nSize = (int32)dSize;
+
+	CommonLib::simple_alloc_t alloc;
+	CommonLib::FxBitWriteStream bitWriteStream(&alloc);
+	bitWriteStream.create(nSize/8 + 1 + 100);
+
+
+	ArithmeticCoderC ac;
+//	ac.SetBitWriteStream(&bitWriteStream);
+
+	fstream source;
+	source.open("D:\\2\\test.txt.comp", ios::in|ios::out| ios::binary );
+	ac.SetFile(&source);
+	for (size_t i = 0, sz = sStr.size(); i < sz; ++i)
+	{
+		SymbolInfo& info = mapFreq[sStr[i]];
+		int32 nPrevB = info.m_nB - info.m_nFreq;
+		ac.Encode(nPrevB, info.m_nB, sz);
+	}
+	ac.EncodeFinish();
+
+	source.seekp(0);
+	size_t sizeInBits = bitWriteStream.posInBits();
+	CommonLib::FxBitReadStream bitReadStream(&alloc);
+	bitReadStream.attachBits(bitWriteStream.buffer(),sizeInBits);
+//	ac.SetBitReadStream(&bitReadStream);
+	int32 nLens = 0;
+
+	std::string sDecompStr;
+
+	ac.DecodeStart();
+	while (nLens < sStr.size())
+	{
+		
+
+		// read value
+		unsigned int freq = ac.DecodeTarget( sStr.size() );
+
+		TMapFreqInt::iterator it = mapFreq.begin();
+		for (; it != mapFreq.end();)
+		{
+			SymbolInfo& info = it->second;
+			if(info.m_nB <= freq)
+			{
+				it++;
+			}
+			else
+				break;
+		}
+		sDecompStr += it->first;
+
+		nLens++;
+		if(nLens == sStr.size())
+			break;
+
+		SymbolInfo& info = it->second;
+		int32 nPrevB = info.m_nB - info.m_nFreq;
+		ac.Decode( nPrevB, info.m_nB );
+	
+
+	} 
+
 }

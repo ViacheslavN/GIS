@@ -23,3 +23,6 @@ private:
 
 
 };
+
+
+void TestCompressAC(const std::string& sStr);

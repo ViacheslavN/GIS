@@ -30,6 +30,9 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ArithmeticCoder.h">
+      <Filter>AC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -39,6 +42,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestAC.cpp">
+      <Filter>AC</Filter>
+    </ClCompile>
+    <ClCompile Include="ArithmeticCoder.cpp">
       <Filter>AC</Filter>
     </ClCompile>
   </ItemGroup>
