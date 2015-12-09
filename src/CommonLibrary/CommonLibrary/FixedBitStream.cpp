@@ -2,7 +2,7 @@
 #include "FixedBitStream.h"
 namespace CommonLib
 {
-	FxBitStreamBase::FxBitStreamBase(alloc_t *pAlloc ):
+	BitStreamBase::BitStreamBase(alloc_t *pAlloc ):
 	m_pAlloc(pAlloc)
 	,m_pBuffer(0)
 	,m_nPos(0)
@@ -12,7 +12,7 @@ namespace CommonLib
 	{
 
 	}
-	FxBitStreamBase::~FxBitStreamBase()
+	BitStreamBase::~BitStreamBase()
 	{
 		if(!m_bAttach && m_pAlloc && m_pBuffer)
 		{
@@ -22,7 +22,7 @@ namespace CommonLib
 	}
 
 
-	void FxBitStreamBase::create(size_t nSize)
+	void BitStreamBase::create(size_t nSize)
 	{
 		assert(m_pAlloc);
 		if(m_pBuffer && !m_bAttach)
@@ -37,7 +37,7 @@ namespace CommonLib
 		m_pBuffer[m_nPos] = 0;
 		m_nEndBits = m_nBitBase;
 	}
-	void FxBitStreamBase::attach(byte* pBuffer, size_t nSize, bool bCopy)
+	void BitStreamBase::attach(byte* pBuffer, size_t nSize, bool bCopy)
 	{
 		
 		if(bCopy)
@@ -58,7 +58,7 @@ namespace CommonLib
 		m_nEndBits = m_nBitBase;
 		
 	}
-	void FxBitStreamBase::attachBits(byte* pBuffer, size_t nSizeInBits, bool bCopy)
+	void BitStreamBase::attachBits(byte* pBuffer, size_t nSizeInBits, bool bCopy)
 	{
 
 		m_nSize = nSizeInBits/m_nBitBase + 1;
@@ -80,23 +80,23 @@ namespace CommonLib
 		m_nPos = 0;
 	 
 	}
-	byte* FxBitStreamBase::deattach()
+	byte* BitStreamBase::deattach()
 	{
 		return m_pBuffer;
 	}
-	byte* FxBitStreamBase::buffer()
+	byte* BitStreamBase::buffer()
 	{
 		return m_pBuffer;
 	}
-	const byte* FxBitStreamBase::buffer() const
+	const byte* BitStreamBase::buffer() const
 	{
 		return m_pBuffer;
 	}
-	size_t FxBitStreamBase::size() const
+	size_t BitStreamBase::size() const
 	{
 		return m_nSize;
 	}
-	size_t FxBitStreamBase::sizeInBits() const
+	size_t BitStreamBase::sizeInBits() const
 	{
 		if(!m_nSize)
 			return 0;
@@ -105,7 +105,7 @@ namespace CommonLib
 	}
 
 	
-	bool FxBitStreamBase::seek(size_t pos, enSeekOffset offset )
+	bool BitStreamBase::seek(size_t pos, enSeekOffset offset )
 	{
 		if(!m_pBuffer)
 			return false;
@@ -131,21 +131,21 @@ namespace CommonLib
 		m_nPos = newpos;
 		return true;
 	}
-	size_t FxBitStreamBase::pos() const
+	size_t BitStreamBase::pos() const
 	{
 			return m_nPos;
 	}
-	size_t FxBitStreamBase::posInBits() const
+	size_t BitStreamBase::posInBits() const
 	{
 
 		return m_nPos* (m_nBitBase + 1) + m_nCurrBit;
 	}
-	void FxBitStreamBase::reset()
+	void BitStreamBase::reset()
 	{
 		m_nPos = 0;
 		m_nCurrBit = 0;
 	}
-	void FxBitStreamBase::close()
+	void BitStreamBase::close()
 	{
 		m_nPos = 0;
 		m_nSize = 0;
@@ -159,7 +159,7 @@ namespace CommonLib
 
 
 
-	FxBitWriteStream::FxBitWriteStream(alloc_t *pAlloc) : FxBitStreamBase(pAlloc)
+	FxBitWriteStream::FxBitWriteStream(alloc_t *pAlloc) : BitStreamBase(pAlloc)
 	{}
 
 	FxBitWriteStream::~FxBitWriteStream()
@@ -255,25 +255,5 @@ namespace CommonLib
 			m_nPos++;
 			m_nCurrBit = 0;
 		}
-	}
-	void FxBitReadStream::readBits(byte& nBits, size_t nCntBits)
-	{
-		assert(nCntBits < 9);
-		_readBits<byte>(nBits, nCntBits); 
-	}
-	void FxBitReadStream::readBits(uint16&  nBits, size_t nCntBits)
-	{
-		assert(nCntBits < 17);
-		_readBits<uint16>(nBits, nCntBits); 
-	}
-	void FxBitReadStream::readBits(uint32&  nBits, size_t nCntBits)
-	{
-		assert(nCntBits < 33);
-		_readBits<uint32>(nBits, nCntBits); 
-	}
-	void FxBitReadStream::readBits(uint64&  nBits, size_t nCntBits)
-	{
-		assert(nCntBits < 65);
-		_readBits<uint64>(nBits, nCntBits); 
 	}
 }

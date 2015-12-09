@@ -33,6 +33,9 @@
     <ClInclude Include="ArithmeticCoder.h">
       <Filter>AC</Filter>
     </ClInclude>
+    <ClInclude Include="ACCoder.h">
+      <Filter>AC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

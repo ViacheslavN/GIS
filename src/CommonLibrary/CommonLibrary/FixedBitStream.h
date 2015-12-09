@@ -7,13 +7,133 @@
 
 namespace CommonLib
 {
-	class FxBitStreamBase : public IStream
+
+	class IBitWriteStream
+	{
+		public:
+			IBitWriteStream(){}
+			virtual ~IBitWriteStream(){}
+			virtual void writeBit(bool bBit) = 0;
+			virtual void writeBit(byte nBit) = 0;
+			virtual void writeBits(byte nBits, size_t nCntBits) = 0;
+			virtual void writeBits(uint16 nBits, size_t nCntBits) = 0;
+			virtual void writeBits(uint32 nBits, size_t nCntBits) = 0;
+			virtual void writeBits(uint64 nBits, size_t nCntBits) = 0;
+	};
+
+
+	class IWriteBitStreamBase : public IBitWriteStream
+	{
+	public:
+
+
+		IBitReadStreamBase()  {}
+		virtual ~IBitReadStreamBase()  {}
+
+
+		virtual void readBits(byte& nBits, size_t nCntBits)
+		{
+			assert(nCntBits < 9);
+			_readBits<byte>(nBits, nCntBits); 
+		}
+		virtual void readBits(uint16&  nBits, size_t nCntBits)
+		{
+			assert(nCntBits < 17);
+			_readBits<uint16>(nBits, nCntBits);
+		}
+		virtual void readBits(uint32&  nBits, size_t nCntBits)
+		{
+			assert(nCntBits < 33);
+			_readBits<uint32>(nBits, nCntBits); 
+		}
+		virtual void readBits(uint64&  nBits, size_t nCntBits)
+		{
+			assert(nCntBits < 65);
+			_readBits<uint64>(nBits, nCntBits); 
+		}
+	protected:
+
+		template <class TVal>
+		void _readBits(TVal& bits, size_t nCount)
+		{
+			bits = 0;
+			for (int i = nCount - 1; i >= 0; --i)
+			{
+				bool bBit = readBit();
+				if(bBit)
+					bits |= ((TVal)0x01 << i);
+
+			}
+		}
+	};
+
+
+	class IBitReadStream
+	{
+	public:
+		IBitReadStream(){}
+		virtual ~IBitReadStream(){}
+		virtual bool readBit() = 0;
+		virtual void readBit(byte & nBit) = 0;
+		virtual void readBits(byte& nBits, size_t nCntBits) = 0;
+		virtual void readBits(uint16&  nBits, size_t nCntBits) = 0;
+		virtual void readBits(uint32&  nBits, size_t nCntBits) = 0;
+		virtual void readBits(uint64&  nBits, size_t nCntBits) = 0;
+	};
+
+
+	class IReadBitStreamBase : public IBitReadStream
+	{
+	public:
+
+
+		IReadBitStreamBase()  {}
+		virtual ~IReadBitStreamBase()  {}
+
+
+		virtual void readBits(byte& nBits, size_t nCntBits)
+		{
+			assert(nCntBits < 9);
+			_readBits<byte>(nBits, nCntBits); 
+		}
+		virtual void readBits(uint16&  nBits, size_t nCntBits)
+		{
+			assert(nCntBits < 17);
+			_readBits<uint16>(nBits, nCntBits);
+		}
+		virtual void readBits(uint32&  nBits, size_t nCntBits)
+		{
+			assert(nCntBits < 33);
+			_readBits<uint32>(nBits, nCntBits); 
+		}
+		virtual void readBits(uint64&  nBits, size_t nCntBits)
+		{
+			assert(nCntBits < 65);
+			_readBits<uint64>(nBits, nCntBits); 
+		}
+	protected:
+
+		template <class TVal>
+		void _readBits(TVal& bits, size_t nCount)
+		{
+			bits = 0;
+			for (int i = nCount - 1; i >= 0; --i)
+			{
+				bool bBit = readBit();
+				if(bBit)
+					bits |= ((TVal)0x01 << i);
+
+			}
+		}
+	};
+
+	class BitStreamBase : public IStream
 	{
 
 	public:
 
-		FxBitStreamBase(alloc_t *pAlloc = NULL);
-		~FxBitStreamBase();
+		BitStreamBase(alloc_t *pAlloc = NULL);
+		~BitStreamBase();
 
 
 		virtual void create(size_t nSize);
@@ -43,7 +163,7 @@ namespace CommonLib
 
 	};
 
-	class FxBitWriteStream : public FxBitStreamBase 
+	class FxBitWriteStream : public BitStreamBase, public 
 	{
 	public:
 		FxBitWriteStream(alloc_t *pAlloc = NULL);
@@ -71,7 +191,7 @@ namespace CommonLib
 
 
 
-	class FxBitReadStream : public FxBitStreamBase 
+	class FxBitReadStream : public BitStreamBase , public IReadBitStreamBase
 	{
 	public:
 		FxBitReadStream(alloc_t *pAlloc = NULL);
@@ -84,18 +204,7 @@ namespace CommonLib
 		void readBits(uint32&  nBits, size_t nCntBits);
 		void readBits(uint64&  nBits, size_t nCntBits);
 	private:
-		template <class TVal>
-		void _readBits(TVal& bits, size_t nCount)
-		{
-			bits = 0;
-			for (int i = nCount - 1; i >= 0; --i)
-			{
-				bool bBit = readBit();
-				if(bBit)
-					bits |= ((TVal)0x01 << i);
-				 
-			}
-		}
+		
 
 	};
 }
