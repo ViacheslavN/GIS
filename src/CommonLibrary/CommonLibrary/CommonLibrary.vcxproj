@@ -413,6 +413,7 @@
   <ItemGroup>
     <ClInclude Include="alloc_t.h" />
     <ClInclude Include="AutoPtr.h" />
+    <ClInclude Include="BitStream.h" />
     <ClInclude Include="blob.h" />
     <ClInclude Include="BoundaryBox.h" />
     <ClInclude Include="caseutils.h" />
@@ -459,6 +460,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="alloc_t.cpp" />
+    <ClCompile Include="BitStream.cpp" />
     <ClCompile Include="blob.cpp" />
     <ClCompile Include="BoundaryBox.cpp" />
     <ClCompile Include="caseutils.cpp" />

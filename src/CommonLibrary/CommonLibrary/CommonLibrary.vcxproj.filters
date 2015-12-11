@@ -195,6 +195,9 @@
     <ClInclude Include="HashKey.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="BitStream.h">
+      <Filter>stream\bits</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -277,6 +280,9 @@
     </ClCompile>
     <ClCompile Include="crc.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BitStream.cpp">
+      <Filter>stream\bits</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

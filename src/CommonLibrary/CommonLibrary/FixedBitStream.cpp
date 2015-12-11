@@ -167,7 +167,7 @@ namespace CommonLib
 
 	void FxBitWriteStream::attach(byte* pBuffer, size_t nSize)
 	{
-		FxBitStreamBase::attach(pBuffer, nSize);
+		BitStreamBase::attach(pBuffer, nSize);
 		if(m_nSize)
 			m_pBuffer[m_nPos] = 0;
 	}
@@ -186,46 +186,10 @@ namespace CommonLib
 		m_nCurrBit++;
 	 
 	}
-	void FxBitWriteStream::writeBit(byte nBit)
-	{
-		assert(m_nPos < m_nSize);
-		BYTE bitValue = (nBit & 0x01);
-		if (m_nCurrBit > m_nBitBase)
-		{
-			m_nPos++;
-			m_nCurrBit = 0;
-			m_pBuffer[m_nPos] = 0;
-		}
-
-		m_pBuffer[m_nPos] |= (bitValue << m_nCurrBit);
-		m_nCurrBit++;
-		 
-	}
-	void FxBitWriteStream::writeBits(byte nBits, size_t nCntBits)
-	{
-		assert(nCntBits < 9);
-		_writeBits<byte>(nBits, nCntBits); 
-	}
-	void FxBitWriteStream::writeBits(uint16 nBits, size_t nCntBits)
-	{
-		assert(nCntBits < 17);
-		_writeBits<uint16>(nBits, nCntBits); 
 	
-	}
-	void FxBitWriteStream::writeBits(uint32 nBits, size_t nCntBits)
-	{
-		assert(nCntBits < 33);
-		_writeBits<uint32>(nBits, nCntBits); 
-	}
-	void FxBitWriteStream::writeBits(uint64 nBits, size_t nCntBits)
-	{
-		assert(nCntBits < 65);
-		_writeBits<uint64>(nBits, nCntBits); 
-	}
 
 
-
-	FxBitReadStream::FxBitReadStream(alloc_t *pAlloc) : FxBitStreamBase(pAlloc)
+	FxBitReadStream::FxBitReadStream(alloc_t *pAlloc) : BitStreamBase(pAlloc)
 	{
 
 	}
@@ -245,15 +209,5 @@ namespace CommonLib
 
 		return bBit;
 	}
-	void  FxBitReadStream::readBit(byte & nBit)
-	{
-		assert(m_nPos < m_nSize);
-		nBit = (m_pBuffer[m_nPos] & (1 << m_nCurrBit)) ? 1 : 0;
-		m_nCurrBit++;
-		if(m_nCurrBit > m_nBitBase)
-		{
-			m_nPos++;
-			m_nCurrBit = 0;
-		}
-	}
+	
 }
