@@ -198,6 +198,9 @@
     <ClInclude Include="BitStream.h">
       <Filter>stream\bits</Filter>
     </ClInclude>
+    <ClInclude Include="WriteBitStream.h">
+      <Filter>stream\bits</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -282,6 +285,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BitStream.cpp">
+      <Filter>stream\bits</Filter>
+    </ClCompile>
+    <ClCompile Include="WriteBitStream.cpp">
       <Filter>stream\bits</Filter>
     </ClCompile>
   </ItemGroup>

@@ -123,11 +123,19 @@ namespace CommonLib
 			newSize = size_t(newSize * 1.5) + 1;
 		if(newSize > m_nSize)
 		{
+			assert(!m_bAttach);
 			m_nSize = newSize;
 			byte* buffer =  (byte*)m_pAlloc->alloc(sizeof(byte) * newSize);
 			if(m_pBuffer)
+			{
 				memcpy(buffer, m_pBuffer, m_nPos);
+				if(!m_bAttach)
+				{
+					m_pAlloc->free(m_pBuffer);
+				}
+			}
 			m_pBuffer = buffer;
+		 
 		}
 	}
 

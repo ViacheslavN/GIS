@@ -457,6 +457,7 @@
     <ClInclude Include="Variant.h" />
     <ClInclude Include="VartTypeList.h" />
     <ClInclude Include="WaitForGraph.h" />
+    <ClInclude Include="WriteBitStream.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="alloc_t.cpp" />
@@ -500,6 +501,7 @@
     <ClCompile Include="TimeUtils.cpp" />
     <ClCompile Include="Variant.cpp" />
     <ClCompile Include="WaitForGraph.cpp" />
+    <ClCompile Include="WriteBitStream.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

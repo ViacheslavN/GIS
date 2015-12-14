@@ -2,11 +2,20 @@
 #include "TestAC.h"
 #include <string>
 #include "CommonLibrary/FixedBitStream.h"
+#include "CommonLibrary/MemoryStream.h"
+#include "CommonLibrary/FixedMemoryStream.h"
 #include <math.h>
 #include <cmath>
 
 #include "ArithmeticCoder.h"
+#include "ACEncoder.h"
+#include "ACDecoder.h"
+#include "RangeCoder.h"
 
+typedef embDB::TACEncoder<int32, 16> TACEncoder;
+typedef embDB::TACDecoder<int32, 16> TACDecoder;
+typedef embDB::TRangeEncoder<uint32, 32> TRangeEncoder; 
+typedef embDB::TRangeDecoder<uint32, 32> TRangeDecoder; 
 double Log2( double n )  
 {  
 	// log(n)/log(2) is log2.  
@@ -418,10 +427,15 @@ void TestCompressAC(const std::string& sStr)
 
 	CommonLib::simple_alloc_t alloc;
 	CommonLib::FxBitWriteStream bitWriteStream(&alloc);
+	CommonLib::WriteBitStream  BitStream(&alloc);
+	CommonLib::MemoryStream  WriteStream(&alloc);
 	bitWriteStream.create(nSize/8 + 1 + 100);
+	BitStream.create(nSize/8 + 1); 
 
 
 	ArithmeticCoderC ac;
+	TACEncoder ac1(&BitStream);
+	TRangeEncoder rgEncode(&WriteStream);
 //	ac.SetBitWriteStream(&bitWriteStream);
 
 	fstream source;
@@ -432,25 +446,40 @@ void TestCompressAC(const std::string& sStr)
 		SymbolInfo& info = mapFreq[sStr[i]];
 		int32 nPrevB = info.m_nB - info.m_nFreq;
 		ac.Encode(nPrevB, info.m_nB, sz);
+		ac1.EncodeSymbol(nPrevB, info.m_nB, sz);
+		rgEncode.EncodeSymbol(nPrevB, info.m_nB, sz);
 	}
 	ac.EncodeFinish();
-
+	ac1.EncodeFinish();
+	rgEncode.EncodeFinish();
 	source.seekp(0);
-	size_t sizeInBits = bitWriteStream.posInBits();
+	size_t sizeInBits = BitStream.posInBits();
 	CommonLib::FxBitReadStream bitReadStream(&alloc);
-	bitReadStream.attachBits(bitWriteStream.buffer(),sizeInBits);
+	CommonLib::FxMemoryReadStream ReadStream(&alloc);
+
+	bitReadStream.attachBits(BitStream.buffer(),sizeInBits);
+	ReadStream.attach(WriteStream.buffer(), WriteStream.pos());
 //	ac.SetBitReadStream(&bitReadStream);
 	int32 nLens = 0;
-
+	int32 nLens1 = 0;
+	int32 nLens2 = 0;
 	std::string sDecompStr;
+	std::string sDecompStr1;
+	std::string sDecompStr2;
 
+	TACDecoder  ae(&bitReadStream);
+	TRangeDecoder rgDecode(&ReadStream);
+	ae.StartDecode();
 	ac.DecodeStart();
-	while (nLens < sStr.size())
+	rgDecode.StartDecode();
+/*	while (nLens < sStr.size())
 	{
 		
 
 		// read value
 		unsigned int freq = ac.DecodeTarget( sStr.size() );
+
+
 
 		TMapFreqInt::iterator it = mapFreq.begin();
 		for (; it != mapFreq.end();)
@@ -474,6 +503,65 @@ void TestCompressAC(const std::string& sStr)
 		ac.Decode( nPrevB, info.m_nB );
 	
 
+	} */
+
+	nLens = 0;
+
+
+	while (nLens1 < sStr.size())
+	{
+		unsigned int freq = ae.GetFreq( sStr.size() );
+
+		TMapFreqInt::iterator it = mapFreq.begin();
+		for (; it != mapFreq.end();)
+		{
+			SymbolInfo& info = it->second;
+			if(info.m_nB <= freq)
+			{
+				it++;
+			}
+			else
+				break;
+		}
+		sDecompStr1 += it->first;
+
+		nLens1++;
+		if(nLens1 == sStr.size())
+			break;
+
+		SymbolInfo& info = it->second;
+		int32 nPrevB = info.m_nB - info.m_nFreq;
+		ae.DecodeSymbol( nPrevB, info.m_nB, sStr.size());
+
+
 	} 
 
+
+	while (nLens2 < sStr.size())
+	{
+		unsigned int freq = rgDecode.GetFreq( sStr.size() );
+
+		TMapFreqInt::iterator it = mapFreq.begin();
+		for (; it != mapFreq.end();)
+		{
+			SymbolInfo& info = it->second;
+			if(info.m_nB <= freq)
+			{
+				it++;
+			}
+			else
+				break;
+		}
+		sDecompStr2 += it->first;
+
+		nLens2++;
+		if(nLens2 == sStr.size())
+			break;
+
+		SymbolInfo& info = it->second;
+		int32 nPrevB = info.m_nB - info.m_nFreq;
+		rgDecode.DecodeSymbol( nPrevB, info.m_nB, sStr.size());
+
+
+	} 
 }

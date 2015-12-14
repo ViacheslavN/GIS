@@ -79,13 +79,19 @@
     <None Include="TestAC.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ACCoder.h" />
+    <ClInclude Include="ACEncoder.h" />
+    <ClInclude Include="ACDecoder.h" />
     <ClInclude Include="ArithmeticCoder.h" />
+    <ClInclude Include="range.h" />
+    <ClInclude Include="RangeCoder.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArithmeticCoder.cpp" />
+    <ClCompile Include="range.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
