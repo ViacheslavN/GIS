@@ -331,22 +331,22 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 	TTransaction tran(pAlloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\db\\tran.data", &storage, 1);
 	tran.begin();
 
-	embDB::FilePagePtr pTreeRootPage = tran.getNewPage();
+	embDB::FilePagePtr pTreeRootPage = tran.getNewPage(256);
 
-	embDB::FilePagePtr pLeafCompRootPage = tran.getNewPage();
+	embDB::FilePagePtr pLeafCompRootPage = tran.getNewPage(256);
 	TLeafCompressor::TLeafCompressorParams compParams;
-	compParams.setRootPage(pLeafCompRootPage->getAddr());
+//	compParams.setRootPage(pLeafCompRootPage->getAddr());
 	compParams.SetStringLen(nLen);
 	compParams.setStringCoding(sc);
-	compParams.SetMaxPageStringSize(400);
-	compParams.save(&tran);
+	//compParams.SetMaxPageStringSize(400);
+//	compParams.save(&tran);
 
 
 
 
 	TBMapString tree(pTreeRootPage->getAddr(), &tran, pAlloc, 100, 8192);
 	tree.setCompPageInfo(-1, pLeafCompRootPage->getAddr());
-	tree.saveBTreeInfo(); 
+//	tree.saveBTreeInfo(); 
 	tree.commit();
 	tran.commit();
 

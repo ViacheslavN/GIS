@@ -414,13 +414,14 @@ void TestCompressAC(const std::string& sStr)
 
 	uint32 nSize = 0;
 	double dSize = 0;
+	double dRowSize = 0;
 	for (TMapFreqInt::iterator it = mapFreq.begin(); it != mapFreq.end(); ++it)
 	{
 		SymbolInfo& info = it->second;
-		dSize += info.m_nFreq * (-1*Log2((double)info.m_nFreq/sStr.size()));
+		dRowSize += info.m_nFreq * (-1*Log2((double)info.m_nFreq/sStr.size()));
 
 	}
-
+	dSize = dRowSize;
 	if(dSize < 32)
 		dSize = 32;
 	nSize = (int32)dSize;

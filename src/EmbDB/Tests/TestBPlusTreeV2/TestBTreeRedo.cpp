@@ -18,7 +18,7 @@ void searchINBTreeSet  (int32 nCacheBPTreeSize, int64 nStart,
 {
 	std::cout << "Search Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
-	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo();
 	int64 nNotFound = 0;
 	double searchTm  = 0;
@@ -73,7 +73,7 @@ void insertINBTreeSet  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 	double tmInsert = 0;
 	double treeCom = 0;
 	double tranCom  = 0;
-	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo(); 
 	time.start();
 	int64 n = 0;
@@ -127,7 +127,7 @@ void removeFromBTreeSet  (int32 nCacheBPTreeSize, int64 nStart,
 	double tmRemove = 0;
 	double treeCom = 0;
 	double tranCom  = 0;
-	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo();
 	time.start();
 	int64 n = 0;

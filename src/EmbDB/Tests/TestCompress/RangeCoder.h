@@ -23,12 +23,33 @@ namespace embDB
 					Low += SymbolLow*(Range/=TotalRange);
 					Range *= SymbolHigh-SymbolLow; 
 
-					while ((Low ^ (Low+Range))<Top || 
+				/*	while ((Low ^ (Low+Range))<Top || 
 						Range<Bottom && 
 						((Range= -Low & (Bottom-1)),1))
 					{
 						m_pStream->write(byte((Low>>nValueBits)& 0xFF)), 	Range<<=8,	Low<<=8; 
+					}*/
+					for (;;)
+					{
+						if ((Low ^ (Low + Range)) < Top)
+						{
+				
+						} 
+						else if (Range < Bottom)
+						{  
+							Range = -Low & (Bottom - 1);
+						} 
+						else
+						{
+							break;
+						}
+						m_pStream->write(byte((Low>>nValueBits)& 0xFF));
+						Range<<=8;
+						Low<<=8;  
 					}
+
+
+					 
 				}
 				void EncodeFinish()
 				{

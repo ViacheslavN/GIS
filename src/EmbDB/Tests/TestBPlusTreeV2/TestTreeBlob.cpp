@@ -250,20 +250,20 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 	TTransaction tran(pAlloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\db\\tran.data", &storage, 1);
 	tran.begin();
 
-	embDB::FilePagePtr pTreeRootPage = tran.getNewPage();
+	embDB::FilePagePtr pTreeRootPage = tran.getNewPage(256);
 
-	embDB::FilePagePtr pLeafCompRootPage = tran.getNewPage();
+	embDB::FilePagePtr pLeafCompRootPage = tran.getNewPage(256);
 	embDB::BlobLeafNodeCompressor<int64, TTransaction>::TLeafCompressorParams compParams;
-	compParams.setRootPage(pLeafCompRootPage->getAddr());
+	//compParams.setRootPage(pLeafCompRootPage->getAddr());
 	compParams.SetMaxPageBlobSize(400);
-	compParams.save(&tran);
+	//compParams.save(&tran);
 
 
 
 
 	TBlobTree tree(pTreeRootPage->getAddr(), ( embDB::IDBTransaction*)&tran, pAlloc, 100, nPageSize);
 	tree.setCompPageInfo(-1, pLeafCompRootPage->getAddr());
-	tree.saveBTreeInfo(); 
+	//tree.saveBTreeInfo(); 
 	tree.commit();
 	tran.commit();
 
