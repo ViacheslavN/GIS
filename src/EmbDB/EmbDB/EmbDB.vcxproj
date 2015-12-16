@@ -435,6 +435,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArithmeticCoder.h" />
     <ClInclude Include="BackTableZPoint16Bit.h" />
     <ClInclude Include="BaseBPMapRO.h" />
     <ClInclude Include="BaseBPMapv2.h" />
@@ -508,6 +509,7 @@
     <ClInclude Include="FixedStringField.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IndexIteratorBase.h" />
+    <ClInclude Include="InnerNodeCompress.h" />
     <ClInclude Include="InsertCursor.h" />
     <ClInclude Include="LeafCounterCompress.h" />
     <ClInclude Include="LeafSetCompBase.h" />
@@ -517,6 +519,7 @@
     <ClInclude Include="MultiIndexBase.h" />
     <ClInclude Include="MultiIndexBPTree.h" />
     <ClInclude Include="Counter.h" />
+    <ClInclude Include="OIDCompress.h" />
     <ClInclude Include="PageCrypto.h" />
     <ClInclude Include="PageVectorLazySave.h" />
     <ClInclude Include="PoinMapInnerCompressor64.h" />
@@ -557,6 +560,7 @@
     <ClInclude Include="HuffmanOIDComp.h" />
     <ClInclude Include="ListDBPage.h" />
     <ClInclude Include="PageAlloc.h" />
+    <ClInclude Include="RangeCode.h" />
     <ClInclude Include="RowIDCounter.h" />
     <ClInclude Include="ShapeComp.h" />
     <ClInclude Include="ShapeCompressorParams.h" />
@@ -660,7 +664,9 @@
     <ClCompile Include="Fields.cpp" />
     <ClCompile Include="FieldSet.cpp" />
     <ClCompile Include="FreePageManage.cpp" />
+    <ClCompile Include="InneNodeCompress.cpp" />
     <ClCompile Include="InsertCursor.cpp" />
+    <ClCompile Include="OIDCompress.cpp" />
     <ClCompile Include="PageAlloc.cpp" />
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="SimpleSearchCursor.cpp" />

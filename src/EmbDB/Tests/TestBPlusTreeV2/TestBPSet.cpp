@@ -4,11 +4,12 @@
 #include "../../EmbDB/BaseBPSetv2.h"
 #include "../../EmbDB/Transactions.h"
 #include "../../EmbDB/DirectTransactions.h"
+#include "../../EmbDB//InnerNodeCompress.h"
 #include "CommonLibrary/DebugTime.h"
 
 
 
-typedef embDB::TBPSetV2 <int64,  embDB::comp<int64>, embDB::IDBTransaction> TBDoubleSet;
+typedef embDB::TBPSetV2 <int64,  embDB::comp<int64>, embDB::IDBTransaction, embDB::BPInnerNodeFieldCompressor> TBDoubleSet;
  
 
 

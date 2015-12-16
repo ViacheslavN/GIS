@@ -196,6 +196,15 @@
     <Filter Include="DB\Fields\Index\spatial">
       <UniqueIdentifier>{a0a506b6-5750-4b96-bab7-a3a3f317054d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\Fields\compress">
+      <UniqueIdentifier>{bbd38a03-aabd-4438-89db-283f84891ca8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils\compress">
+      <UniqueIdentifier>{046c345b-17e3-41f1-98fb-47665bf81d58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils\compress\AC">
+      <UniqueIdentifier>{64b4f23b-d792-44cd-902a-3d88c72dc4be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -837,6 +846,21 @@
     <ClInclude Include="ShapeTree.h">
       <Filter>DB\Fields\shape</Filter>
     </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InnerNodeCompress.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="OIDCompress.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="RangeCode.h">
+      <Filter>utils\compress\AC</Filter>
+    </ClInclude>
+    <ClInclude Include="ArithmeticCoder.h">
+      <Filter>utils\compress\AC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -958,6 +982,12 @@
     </ClCompile>
     <ClCompile Include="DeleteCursor.cpp">
       <Filter>DB\transactions\Cursors</Filter>
+    </ClCompile>
+    <ClCompile Include="InneNodeCompress.cpp">
+      <Filter>DB\Fields\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="OIDCompress.cpp">
+      <Filter>DB\Fields\compress</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
