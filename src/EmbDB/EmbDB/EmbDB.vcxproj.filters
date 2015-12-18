@@ -855,10 +855,19 @@
     <ClInclude Include="OIDCompress.h">
       <Filter>DB\Fields\compress</Filter>
     </ClInclude>
-    <ClInclude Include="RangeCode.h">
+    <ClInclude Include="ArithmeticCoder.h">
       <Filter>utils\compress\AC</Filter>
     </ClInclude>
-    <ClInclude Include="ArithmeticCoder.h">
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NumLenCompress.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="LinkCompress.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="RangeCoder.h">
       <Filter>utils\compress\AC</Filter>
     </ClInclude>
   </ItemGroup>

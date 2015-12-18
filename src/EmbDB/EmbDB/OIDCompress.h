@@ -6,13 +6,16 @@
 #include <set>
 #include <vector>
 #include <map>
+#include "NumLenCompress.h"
+#include "ArithmeticCoder.h"
+#include "RangeCoder.h"
 namespace embDB
 {
 	class OIDCompress
 	{
-
-		 typedef std::map<int32, int32> TLenFreq;
+ 
 		 typedef std::map<int64, int32> TDiffFreq;
+		 typedef TUnsignedCalcNumLen<int64, >
 		public:
 
 			OIDCompress();
@@ -28,8 +31,7 @@ namespace embDB
 			}
 
 	private:
-
-		TLenFreq m_LenFreq;
+ 
 		TDiffFreq m_DiffFreq;
 
 	};
