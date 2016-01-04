@@ -15,7 +15,7 @@ namespace embDB
 	{
  
 		 typedef std::map<int64, int32> TDiffFreq;
-		 typedef TUnsignedCalcNumLen<int64, >
+		 typedef TUnsignedCalcNumLen<uint64, TFindMostSigBit> TCalcNumLen;
 		public:
 
 			OIDCompress();
@@ -23,6 +23,7 @@ namespace embDB
 
 			uint32 GetRowSize();
 			void AddSymbol(int64 nDiff);
+			void RemoveSymbol(int64 nDiff);
 
 			double Log2( double n )  
 			{  
@@ -33,6 +34,7 @@ namespace embDB
 	private:
  
 		TDiffFreq m_DiffFreq;
+		TCalcNumLen m_CalcNum;
 
 	};
 

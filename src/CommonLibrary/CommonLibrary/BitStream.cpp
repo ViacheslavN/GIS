@@ -90,7 +90,7 @@ namespace CommonLib
 	}
 
 
-	void BitStreamBase::create(size_t nSize)
+	void BitStreamBase::create(uint32 nSize)
 	{
 		assert(m_pAlloc);
 		if(m_pBuffer && !m_bAttach)
@@ -105,7 +105,7 @@ namespace CommonLib
 		m_pBuffer[m_nPos] = 0;
 		m_nEndBits = m_nBitBase;
 	}
-	void BitStreamBase::attach(byte* pBuffer, size_t nSize, bool bCopy)
+	void BitStreamBase::attach(byte* pBuffer, uint32 nSize, bool bCopy)
 	{
 
 		if(bCopy)
@@ -126,11 +126,11 @@ namespace CommonLib
 		m_nEndBits = m_nBitBase;
 
 	}
-	void BitStreamBase::attachBits(byte* pBuffer, size_t nSizeInBits, bool bCopy)
+	void BitStreamBase::attachBits(byte* pBuffer, uint32 nSizeInBits, bool bCopy)
 	{
 
 		m_nSize = nSizeInBits/m_nBitBase + 1;
-		size_t nEndBit = nSizeInBits%m_nBitBase;
+		uint32 nEndBit = nSizeInBits%m_nBitBase;
 		m_nEndBits = nEndBit ? nEndBit : m_nBitBase;
 		if(bCopy)
 		{
@@ -160,11 +160,11 @@ namespace CommonLib
 	{
 		return m_pBuffer;
 	}
-	size_t BitStreamBase::size() const
+	uint32 BitStreamBase::size() const
 	{
 		return m_nSize;
 	}
-	size_t BitStreamBase::sizeInBits() const
+	uint32 BitStreamBase::sizeInBits() const
 	{
 		if(!m_nSize)
 			return 0;
@@ -173,12 +173,12 @@ namespace CommonLib
 	}
 
 
-	bool BitStreamBase::seek(size_t pos, enSeekOffset offset )
+	bool BitStreamBase::seek(uint32 pos, enSeekOffset offset )
 	{
 		if(!m_pBuffer)
 			return false;
 
-		size_t newpos = 0;
+		uint32 newpos = 0;
 		switch(offset)
 		{
 		case soFromBegin:
@@ -199,11 +199,11 @@ namespace CommonLib
 		m_nPos = newpos;
 		return true;
 	}
-	size_t BitStreamBase::pos() const
+	uint32 BitStreamBase::pos() const
 	{
 		return m_nPos;
 	}
-	size_t BitStreamBase::posInBits() const
+	uint32 BitStreamBase::posInBits() const
 	{
 
 		return m_nPos* (m_nBitBase + 1) + m_nCurrBit;

@@ -103,7 +103,7 @@ namespace embDB
 
 		  }
 
-		  virtual void read_bytes(byte* buffer, size_t size)
+		  virtual void read_bytes(byte* buffer, uint32 size)
 		  {
 
 			
@@ -136,7 +136,7 @@ namespace embDB
 			 
 
 		  }
-		  virtual void read_inverse(byte* buffer, size_t size)
+		  virtual void read_inverse(byte* buffer, uint32 size)
 		  {
 			  uint32 nPos = 0;
 			  while(size)

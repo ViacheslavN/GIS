@@ -28,7 +28,7 @@ namespace GisEngine
 
 	}
 
-	bool CEmbDBFeatureClass::CreateFeatureClass(IFields* pFields)
+	bool CEmbDBFeatureClass::CreateFeatureClass(IFields* pFields, bool bSaveFCProp)
 	{
 
 		embDB::IDatabasePtr pDB = m_pEmbDBWorkspace->GetDB();
@@ -92,6 +92,9 @@ namespace GisEngine
 		IShapeField* pShapeField = (IShapeField*)m_pFields->GetField(m_sShapeFieldName).get();
 		assert(pShapeField);
 		m_pExtent = new GisGeometry::CEnvelope(pShapeField->GetGeometryDef()->GetBaseExtent(), m_pSpatialReference.get());
+		if(!bSaveFCProp)
+			return true;
+
 		return saveFeatureInfo();
 	}
 	bool CEmbDBFeatureClass::saveFeatureInfo()

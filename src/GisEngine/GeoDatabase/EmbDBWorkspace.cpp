@@ -258,8 +258,8 @@ namespace GisEngine
 				return ITablePtr();
 			}
 
-			IFeatureClassPtr pFC = GetFeatureClass(sName);
-			if(pFC.get())
+			ITablePtr pTable = GetTable(sName);
+			if(pTable.get())
 			{
 		 
 				return  ITablePtr();
@@ -275,7 +275,7 @@ namespace GisEngine
 		}
 
 		IFeatureClassPtr CEmbDBWorkspace::CreateFeatureClass(const CommonLib::CString& sName,
-			IFields* pFields)
+			IFields* pFields, bool bSaveFCProp)
 		{
 			if(!m_pDB.get())
 				return IFeatureClassPtr();
@@ -293,7 +293,7 @@ namespace GisEngine
 				return  IFeatureClassPtr();
 			}
 			CEmbDBFeatureClass* pEmbDBFC = new CEmbDBFeatureClass(this, sName, sName);
-			if(!pEmbDBFC->CreateFeatureClass(pFields))
+			if(!pEmbDBFC->CreateFeatureClass(pFields, bSaveFCProp))
 			{
 				delete pEmbDBFC;
 				return  IFeatureClassPtr();

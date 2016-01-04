@@ -78,7 +78,7 @@ namespace embDB
 
 		  int64 GetPage() const {return m_pPage.get() ? m_pPage->getAddr() : -1;}
 		  int32 GetPos() const {return m_stream.pos();}
-		  virtual void write_bytes(const byte* buffer, size_t size)
+		  virtual void write_bytes(const byte* buffer, uint32 size)
 		  {
 
 			  uint32 nPos = 0;
@@ -123,7 +123,7 @@ namespace embDB
 			  }
 			
 		  }
-		  virtual void write_inverse(const byte* buffer, size_t size)
+		  virtual void write_inverse(const byte* buffer, uint32 size)
 		  {
 
 			  uint32 nPos = 0;

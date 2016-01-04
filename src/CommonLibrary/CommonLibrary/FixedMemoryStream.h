@@ -16,14 +16,14 @@ namespace CommonLib
 			~FxStreamBase();
 
 
-			virtual void create(size_t nSize);
-			virtual void attach(byte* pBuffer, size_t nSize, bool bCopy = false);
+			virtual void create(uint32 nSize);
+			virtual void attach(byte* pBuffer, uint32 nSize, bool bCopy = false);
 			virtual byte* deattach();
 			virtual byte* buffer();
 			virtual const byte* buffer() const;
-			virtual size_t size() const;
-			virtual bool seek(size_t position, enSeekOffset offset );
-			virtual size_t pos() const;
+			virtual uint32 size() const;
+			virtual bool seek(uint32 position, enSeekOffset offset );
+			virtual uint32 pos() const;
 			virtual void reset();
 			virtual void close();
 
@@ -66,8 +66,8 @@ namespace CommonLib
 			void read_inverse(byte* buffer, size_t size);*/
 	    protected:
 			byte* m_pBuffer;
-			size_t  m_nPos;
-			size_t  m_nSize;
+			uint32  m_nPos;
+			uint32  m_nSize;
 			bool m_bIsBigEndian;
 			alloc_t *m_pAlloc;
 			bool m_bAttach;
@@ -82,8 +82,8 @@ namespace CommonLib
 		~FxMemoryReadStream();
 
 
-		virtual void read_bytes(byte* dst, size_t size);
-		virtual void read_inverse(byte* buffer, size_t size);
+		virtual void read_bytes(byte* dst, uint32 size);
+		virtual void read_inverse(byte* buffer, uint32 size);
 		virtual bool checkRead(uint32 nSize) const;
 		virtual bool IsEndOfStream() const;
 		virtual bool AttachStream(IStream *pStream, uint32 nSize, bool bSeek = true);
@@ -124,8 +124,8 @@ namespace CommonLib
 		FxMemoryWriteStream(alloc_t *pAlloc = NULL);
 		~FxMemoryWriteStream();
 
-		virtual void write_bytes(const byte* buffer, size_t size);
-		virtual void write_inverse(const byte* buffer, size_t size);
+		virtual void write_bytes(const byte* buffer, uint32 size);
+		virtual void write_inverse(const byte* buffer, uint32 size);
 		
 		/*virtual void write(const byte* pBuffer, size_t bufLen );
 		virtual void write(bool value);

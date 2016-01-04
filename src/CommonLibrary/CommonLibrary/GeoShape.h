@@ -57,7 +57,7 @@ namespace CommonLib
 		~CGeoShape();
 		
 		bool create(eShapeType shapeType);
-		bool create(eShapeType shapeType, size_t npoints, size_t nparts = 1, size_t ncurves = 0, size_t mpatchSpecificSize = 0);
+		bool create(eShapeType shapeType, uint32 npoints, uint32 nparts = 1, uint32 ncurves = 0, uint32 mpatchSpecificSize = 0);
 		
 		bool write(IWriteStream *pStream) const;
 		bool read(IReadStream *pStream);
@@ -79,8 +79,8 @@ namespace CommonLib
 		
 		patch_type*       getPartsTypes();
 		const patch_type* getPartsTypes() const;
-		patch_type&       partType(size_t idx);
-		const patch_type& partType(size_t idx) const;
+		patch_type&       partType(uint32 idx);
+		const patch_type& partType(uint32 idx) const;
 		
 		
 		GisXYPoint* getPoints();
@@ -88,23 +88,23 @@ namespace CommonLib
 		void setPoints(const double *pPoint);
 		uint32 getPointCnt() const;
 		
-		double&       ptX(size_t idx); 
-		const double& ptX(size_t idx) const; 
+		double&       ptX(uint32 idx); 
+		const double& ptX(uint32 idx) const; 
 		
-		double&       ptY(size_t idx); 
-		const double& ptY(size_t idx) const; 
+		double&       ptY(uint32 idx); 
+		const double& ptY(uint32 idx) const; 
 		
 		
 		double* getZs();
 		const double* getZs() const;
 		void setZs(const double *pZs);
-		double&       ptZ(size_t idx);
-		const double& ptZ(size_t idx) const;
+		double&       ptZ(uint32 idx);
+		const double& ptZ(uint32 idx) const;
 		
 		double* getMs();
 		const double* getMs() const;
-		double&       ptM(size_t idx);
-		const double& ptM(size_t idx) const;
+		double&       ptM(uint32 idx);
+		const double& ptM(uint32 idx) const;
 
 	private:
 		simple_alloc_t m_alloc;

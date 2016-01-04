@@ -104,7 +104,7 @@ namespace GisEngine
 			return ITablePtr();
 		}
 		IFeatureClassPtr CShapefileWorkspace::CreateFeatureClass(const CommonLib::CString& sName,
-			IFields* pFields)
+			IFields* pFields, bool bSaveFCProp )
 		{
 		
 

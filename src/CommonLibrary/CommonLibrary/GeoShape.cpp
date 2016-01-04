@@ -276,7 +276,7 @@ namespace CommonLib
 		return true;
 
 	}
-	bool CGeoShape::create(eShapeType shapeType, size_t npoints, size_t nparts, size_t ncurves , size_t mpatchSpecificSize)
+	bool CGeoShape::create(eShapeType shapeType, uint32 npoints, uint32 nparts, uint32 ncurves , uint32 mpatchSpecificSize)
 	{
 
 		eShapeType genType;
@@ -327,9 +327,9 @@ namespace CommonLib
 		
 		const uint32* partStarts = getParts();
 		if(idx == nparts - 1)
-			return getPointCnt() - (size_t)partStarts[idx];
+			return getPointCnt() - (uint32)partStarts[idx];
 		else
-			return (size_t)partStarts[idx + 1] - (size_t)partStarts[idx];
+			return (size_t)partStarts[idx + 1] - (uint32)partStarts[idx];
 
 	}
 /*	uint32&  CGeoShape::getPart(uint32 idx)
@@ -354,11 +354,11 @@ namespace CommonLib
 	{
 		return m_vecPartTypes.begin();
 	}
-	patch_type& CGeoShape::partType(size_t idx)
+	patch_type& CGeoShape::partType(uint32 idx)
 	{
 		return m_vecPartTypes[idx];
 	}
-	const patch_type& CGeoShape::partType(size_t idx) const
+	const patch_type& CGeoShape::partType(uint32 idx) const
 	{
 		return m_vecPartTypes[idx];
 	}
@@ -378,19 +378,19 @@ namespace CommonLib
 	 {
 		 return m_vecPoints.size();
 	 }
-	 double&  CGeoShape::ptX(size_t idx)
+	 double&  CGeoShape::ptX(uint32 idx)
 	 {
 		return m_vecPoints[idx].x;
 	 }
-	 const double& CGeoShape::ptX(size_t idx) const
+	 const double& CGeoShape::ptX(uint32 idx) const
 	 {
 		 return m_vecPoints[idx].x;
 	 }
-	 double&  CGeoShape::ptY(size_t idx)
+	 double&  CGeoShape::ptY(uint32 idx)
 	 {
 		 return m_vecPoints[idx].y;
 	 }
-	 const double& CGeoShape::ptY(size_t idx) const
+	 const double& CGeoShape::ptY(uint32 idx) const
 	 {
 		return m_vecPoints[idx].y;
 	 }
@@ -403,11 +403,11 @@ namespace CommonLib
 	 {
 		  return m_vecZs.begin();
 	 }
-	 double& CGeoShape::ptZ(size_t idx)
+	 double& CGeoShape::ptZ(uint32 idx)
 	 {
 		 return m_vecZs[idx];
 	 }
-	 const double& CGeoShape::ptZ(size_t idx) const
+	 const double& CGeoShape::ptZ(uint32 idx) const
 	 {
 		 return m_vecZs[idx];
 	 }
@@ -419,11 +419,11 @@ namespace CommonLib
 	 {
 		  return m_vecMs.begin();
 	 }
-	 double& CGeoShape::ptM(size_t idx)
+	 double& CGeoShape::ptM(uint32 idx)
 	 {
 		 return m_vecMs[idx];
 	 }
-	 const double& CGeoShape::ptM(size_t idx) const
+	 const double& CGeoShape::ptM(uint32 idx) const
 	 {
 		  return m_vecMs[idx];
 	 }
@@ -448,7 +448,7 @@ namespace CommonLib
 		 m_bbox.xMax = -DBL_MAX;
 		 m_bbox.yMax = -DBL_MAX;
 		 {
-			 for(size_t i = 0, sz = m_vecPoints.size(); i < sz; ++i)
+			 for(uint32 i = 0, sz = m_vecPoints.size(); i < sz; ++i)
 			 {
 				 m_bbox.xMin = min(m_bbox.xMin, m_vecPoints[i].x);
 				 m_bbox.yMin = min(m_bbox.yMin, m_vecPoints[i].y);
@@ -462,7 +462,7 @@ namespace CommonLib
 		 {
 			 m_bbox.zMin = DBL_MAX;
 			 m_bbox.zMax = -DBL_MAX;
-			 for (size_t i = 0, sz = m_vecZs.size(); i < sz; ++i)
+			 for (uint32 i = 0, sz = m_vecZs.size(); i < sz; ++i)
 			 {
 
 				 m_bbox.zMin = min(m_bbox.zMin, m_vecZs[i]);
@@ -474,7 +474,7 @@ namespace CommonLib
 		 {
 			 m_bbox.mMin = DBL_MAX;
 			 m_bbox.mMax = -DBL_MAX;
-			 for (size_t i = 0, sz = m_vecMs.size(); i < sz; ++i)
+			 for (uint32 i = 0, sz = m_vecMs.size(); i < sz; ++i)
 			 {
 
 				 m_bbox.mMin = min(m_bbox.mMin, m_vecMs[i]);
@@ -494,7 +494,7 @@ namespace CommonLib
 
 	 void CGeoShape::setPoints(const double *pPoint)
 	 {
-		 for(size_t i = 0, sz = m_vecPoints.size(); i < sz; ++i)
+		 for(uint32 i = 0, sz = m_vecPoints.size(); i < sz; ++i)
 		 {
 			 m_vecPoints[i].x = pPoint[i * 2 + 0];
 			 m_vecPoints[i].y = pPoint[i * 2 + 0];
@@ -503,7 +503,7 @@ namespace CommonLib
 
 	 void CGeoShape::setZs(const double *pZs)
 	 {
-		 for (size_t i = 0, sz = m_vecZs.size(); i < sz; ++i)
+		 for (uint32 i = 0, sz = m_vecZs.size(); i < sz; ++i)
 		 {
 			 m_vecZs[i] = pZs[i];
 		 }
@@ -514,28 +514,28 @@ namespace CommonLib
 	 {
 		 pStream->write((byte)m_type);
 		 pStream->write(m_vecParts.size());
-		 for (size_t i = 0, sz = m_vecParts.size(); i < sz; ++i)
+		 for (uint32 i = 0, sz = m_vecParts.size(); i < sz; ++i)
 		 {
 			 pStream->write(m_vecParts[i]);
 		 }
 		 pStream->write(m_vecPartTypes.size());
-		 for (size_t i = 0, sz = m_vecPartTypes.size(); i < sz; ++i)
+		 for (uint32 i = 0, sz = m_vecPartTypes.size(); i < sz; ++i)
 		 {
 			 pStream->write((byte)m_vecPartTypes[i]);
 		 }
 		 pStream->write(m_vecPoints.size());
-		 for (size_t i = 0, sz = m_vecPoints.size(); i < sz; ++i)
+		 for (uint32 i = 0, sz = m_vecPoints.size(); i < sz; ++i)
 		 {
 			 pStream->write(m_vecPoints[i].x);
 			 pStream->write(m_vecPoints[i].y);
 		 }
 		 pStream->write(m_vecZs.size());
-		 for (size_t i = 0, sz = m_vecZs.size(); i < sz; ++i)
+		 for (uint32 i = 0, sz = m_vecZs.size(); i < sz; ++i)
 		 {
 			 pStream->write(m_vecZs[i]);
 		 }
 		 pStream->write(m_vecMs.size());
-		 for (size_t i = 0, sz = m_vecZs.size(); i < sz; ++i)
+		 for (uint32 i = 0, sz = m_vecZs.size(); i < sz; ++i)
 		 {
 			 pStream->write(m_vecMs[i]);
 		 }
@@ -548,14 +548,14 @@ namespace CommonLib
 		 uint32 nSize = pStream->readIntu32();
 		 m_vecParts.reserve(nSize, true);
 	 
-		 for (size_t i = 0; i < nSize; ++i)
+		 for (uint32 i = 0; i < nSize; ++i)
 		 {
 			 m_vecParts.push_back(pStream->readIntu32());
 		 }
 
 		 nSize = pStream->readIntu32();
 		 m_vecPartTypes.reserve(nSize, true);
-		 for (size_t i = 0; i < nSize; ++i)
+		 for (uint32 i = 0; i < nSize; ++i)
 		 {
 			 m_vecPartTypes.push_back(pStream->readByte());
 		 }
@@ -564,7 +564,7 @@ namespace CommonLib
 		 m_vecPoints.reserve(nSize, true);
  
 		 GisXYPoint pt;
-		 for (size_t i = 0; i < nSize; ++i)
+		 for (uint32 i = 0; i < nSize; ++i)
 		 {
 			 pt.x = pStream->readDouble();
 			 pt.y = pStream->readDouble();
@@ -573,13 +573,13 @@ namespace CommonLib
 
 		nSize = pStream->readIntu32();
 		m_vecZs.reserve(nSize, true);
-		for (size_t i = 0; i < nSize; ++i)
+		for (uint32 i = 0; i < nSize; ++i)
 		{
 			m_vecZs.push_back(pStream->readDouble());
 		}
 		nSize = pStream->readIntu32();
 		m_vecMs.reserve(nSize, true);
-		for (size_t i = 0; i < nSize; ++i)
+		for (uint32 i = 0; i < nSize; ++i)
 		{
 			m_vecMs.push_back(pStream->readDouble());
 		}

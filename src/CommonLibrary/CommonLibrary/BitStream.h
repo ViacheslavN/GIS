@@ -99,30 +99,30 @@ namespace CommonLib
 		~BitStreamBase();
 
 
-		virtual void create(size_t nSize);
-		virtual void attach(byte* pBuffer, size_t nSize, bool bCopy = false);
-		virtual void attachBits(byte* pBuffer, size_t nsizeInBits, bool bCopy = false);
+		virtual void create(uint32 nSize);
+		virtual void attach(byte* pBuffer, uint32 nSize, bool bCopy = false);
+		virtual void attachBits(byte* pBuffer, uint32 nsizeInBits, bool bCopy = false);
 		virtual byte* deattach();
 		virtual byte* buffer();
 		virtual const byte* buffer() const;
-		virtual size_t size() const;
-		virtual size_t sizeInBits() const;
-		virtual bool seek(size_t position, enSeekOffset offset );
-		virtual size_t pos() const;
-		virtual size_t posInBits() const;
+		virtual uint32 size() const;
+		virtual uint32 sizeInBits() const;
+		virtual bool seek(uint32 position, enSeekOffset offset );
+		virtual uint32 pos() const;
+		virtual uint32 posInBits() const;
 		virtual void reset();
 		virtual void close();
 
 	protected:
 		static const uint32 m_nBitBase = 7;
 		byte* m_pBuffer;
-		size_t  m_nPos;
-		size_t  m_nSize;
+		uint32  m_nPos;
+		uint32  m_nSize;
 		alloc_t *m_pAlloc;
 		bool m_bAttach;
-		size_t m_nCurrBit;
+		uint32 m_nCurrBit;
 
-		size_t m_nEndBits;
+		uint32 m_nEndBits;
 
 	};
 

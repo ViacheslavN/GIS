@@ -15,14 +15,14 @@ enum enSeekOffset
 class IStream
 {
 public:
-	virtual void create(size_t nSize) = 0;
-	virtual void attach(byte* pBuffer, size_t nSize, bool bCopy = true)  = 0;
+	virtual void create(uint32 nSize) = 0;
+	virtual void attach(byte* pBuffer, uint32 nSize, bool bCopy = true)  = 0;
 	virtual byte* deattach()  = 0;
 	virtual byte* buffer()  = 0;
 	virtual const byte* buffer() const = 0;
-	virtual size_t size() const = 0;
-	virtual bool seek(size_t position, enSeekOffset offset ) = 0;
-	virtual size_t pos() const = 0;
+	virtual uint32 size() const = 0;
+	virtual bool seek(uint32 position, enSeekOffset offset ) = 0;
+	virtual uint32 pos() const = 0;
 	virtual void reset() = 0;
 	virtual void close() = 0;
 	static bool isBigEndian()
@@ -72,7 +72,7 @@ class IWriteStream
 {
 public:
 
-	virtual void write(const byte* pBuffer, size_t bufLen ) = 0;
+	virtual void write(const byte* pBuffer, uint32 bufLen ) = 0;
 	virtual void write(bool value) = 0;
 	virtual void write(char value) = 0;
 	virtual void write(byte value) = 0;
@@ -102,7 +102,7 @@ public:
 
 	virtual ~IReadStream()  {}
 	IReadStream(){}
-	virtual void read( byte* pBuffer, size_t bufLen ) = 0;
+	virtual void read( byte* pBuffer, uint32 bufLen ) = 0;
 	virtual void read(bool& value) = 0;
 	virtual void read(char& value) = 0;
 	virtual void read(byte& value) = 0;
@@ -167,10 +167,10 @@ public:
 		return ret;
 	}
 
-	virtual void read_bytes(byte* dst, size_t size) = 0;
-	virtual void read_inverse(byte* buffer, size_t size) = 0;
+	virtual void read_bytes(byte* dst, uint32 size) = 0;
+	virtual void read_inverse(byte* buffer, uint32 size) = 0;
 
-	virtual void read( byte* pBuffer, size_t bufLen );
+	virtual void read( byte* pBuffer, uint32 bufLen );
 	virtual void read(bool& value); 
 	virtual void read(char& value); 
 	virtual void read(byte& value); 
@@ -221,10 +221,10 @@ public:
 	}
 
 
-	virtual void write_bytes(const byte* buffer, size_t size) = 0;
-	virtual void write_inverse(const byte* buffer, size_t size) = 0;
+	virtual void write_bytes(const byte* buffer, uint32 size) = 0;
+	virtual void write_inverse(const byte* buffer, uint32 size) = 0;
 
-	virtual void write(const byte* pBuffer, size_t bufLen );
+	virtual void write(const byte* pBuffer, uint32 bufLen );
 	virtual void write(bool value);
 	virtual void write(byte value);
 	virtual void write(char value);

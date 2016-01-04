@@ -23,7 +23,7 @@ namespace CommonLib
 	}
 
 
-	void FxStreamBase::create(size_t nSize)
+	void FxStreamBase::create(uint32 nSize)
 	{
 		assert(m_pAlloc);
 		if(m_pBuffer && !m_bAttach)
@@ -35,7 +35,7 @@ namespace CommonLib
 		m_nSize = nSize;
 		m_bAttach = false;
 	}
-	void FxStreamBase::attach(byte* pBuffer, size_t nSize, bool bCopy)
+	void FxStreamBase::attach(byte* pBuffer, uint32 nSize, bool bCopy)
 	{
 		if(bCopy)
 		{
@@ -69,16 +69,16 @@ namespace CommonLib
 	{
 		return m_pBuffer;
 	}
-	size_t FxStreamBase::size() const
+	uint32 FxStreamBase::size() const
 	{
 		return m_nSize;
 	}
-	bool FxStreamBase::seek(size_t pos, enSeekOffset offset )
+	bool FxStreamBase::seek(uint32 pos, enSeekOffset offset )
 	{
 		if(!m_pBuffer)
 			return false;
 
-		size_t newpos = 0;
+		uint32 newpos = 0;
 		switch(offset)
 		{
 		case soFromBegin:
@@ -99,7 +99,7 @@ namespace CommonLib
 		m_nPos = newpos;
 		return true;
 	}
-	size_t FxStreamBase::pos() const
+	uint32 FxStreamBase::pos() const
 	{
 		return m_nPos;
 	}
@@ -119,16 +119,16 @@ namespace CommonLib
 	}
 	
 	
-	void FxMemoryReadStream::read_bytes(byte* dst, size_t size)
+	void FxMemoryReadStream::read_bytes(byte* dst, uint32 size)
 	{
 		::memcpy(dst, m_pBuffer + m_nPos, size);
 		m_nPos += size;
 		assert(m_nPos <= m_nSize);
 	}
 
-	void FxMemoryReadStream::read_inverse(byte* buffer, size_t size)
+	void FxMemoryReadStream::read_inverse(byte* buffer, uint32 size)
 	{
-		for(size_t i = 0; i < size; m_nPos++, i++)
+		for(uint32 i = 0; i < size; m_nPos++, i++)
 			buffer[i] = m_pBuffer[m_nPos + size - i - 1];
 		m_nPos += size;
 		assert(m_nPos <= m_nSize);
@@ -189,7 +189,7 @@ namespace CommonLib
 	}
 
 
-	void FxMemoryWriteStream::write_bytes(const byte* buffer, size_t size)
+	void FxMemoryWriteStream::write_bytes(const byte* buffer, uint32 size)
 	{
 		if(size > 0)
 		{
@@ -198,7 +198,7 @@ namespace CommonLib
 		}
 		assert(m_nPos <= m_nSize);
 	}
-	void FxMemoryWriteStream::write_inverse(const byte* buffer, size_t size)
+	void FxMemoryWriteStream::write_inverse(const byte* buffer, uint32 size)
 	{
 		for(size_t i = 0; i < size; m_nPos++, i++)
 			m_pBuffer[m_nPos + size - i - 1] = buffer[i];

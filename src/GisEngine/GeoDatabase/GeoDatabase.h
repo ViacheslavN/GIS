@@ -144,7 +144,7 @@ namespace GisEngine
 
 				virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields) = 0;
 				virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name,
-							IFields* fields) = 0;					
+							IFields* fields, bool bSaveFCProp = false) = 0;					
 
 				virtual ITablePtr OpenTable(const CommonLib::CString& name) = 0;
 				virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::CString& name) = 0;

@@ -19,14 +19,14 @@ namespace CommonLib
 
 		//IStream
 		
-		virtual void attach(byte* pBuffer, size_t nSize, bool bCopy = false);
+		virtual void attach(byte* pBuffer, uint32 nSize, bool bCopy = false);
 		virtual byte* deattach() ;
-		virtual size_t size() const;
-		virtual bool seek(size_t position, enSeekOffset offset );
-		virtual size_t pos() const;
+		virtual uint32 size() const;
+		virtual bool seek(uint32 position, enSeekOffset offset );
+		virtual uint32 pos() const;
 		virtual void reset();
 		virtual void close();
-		virtual void create(size_t nSize);
+		virtual void create(uint32 nSize);
 		virtual byte* buffer();
 		virtual const byte* buffer() const;
 
@@ -38,14 +38,14 @@ namespace CommonLib
 		
 
 		
-		virtual void read_bytes(byte* dst, size_t size);
-		virtual void read_inverse(byte* buffer, size_t size);
-		virtual void write_bytes(const byte* buffer, size_t size);
-		virtual void write_inverse(const byte* buffer, size_t size);
+		virtual void read_bytes(byte* dst, uint32 size);
+		virtual void read_inverse(byte* buffer, uint32 size);
+		virtual void write_bytes(const byte* buffer, uint32 size);
+		virtual void write_inverse(const byte* buffer, uint32 size);
 	
 	
 
-		void resize(size_t nSize);
+		void resize(uint32 nSize);
 
 		byte* m_pBuffer;
 		uint32  m_nPos;

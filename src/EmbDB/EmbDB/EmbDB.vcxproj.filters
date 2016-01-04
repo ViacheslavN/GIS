@@ -870,6 +870,9 @@
     <ClInclude Include="RangeCoder.h">
       <Filter>utils\compress\AC</Filter>
     </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

@@ -5,7 +5,7 @@ namespace CommonLib
 {
 
 
-void IReadStreamBase::read( byte* pBuffer, size_t bufLen)
+void IReadStreamBase::read( byte* pBuffer, uint32 bufLen)
 {
 	if(IStream::isBigEndian())
 		read_inverse(pBuffer, bufLen);
@@ -122,7 +122,7 @@ void IReadStreamBase::read(CommonLib::CString& str)
 
  
 
-void  IWriteStreamBase::write(const byte* pBuffer, size_t bufLen )
+void  IWriteStreamBase::write(const byte* pBuffer, uint32 bufLen )
 {
 	if(IStream::isBigEndian())
 		write_inverse(pBuffer, bufLen);
@@ -186,8 +186,8 @@ void IWriteStreamBase::write(const CommonLib::CString& str)
 	if(nUtf8Len)
 	{
 		std::vector<char> buf(nUtf8Len + 1);
-		str.exportToUTF8(&buf[0], buf.size());
-		write((byte*)&buf[0], buf.size());
+		str.exportToUTF8(&buf[0], (int)buf.size());
+		write((byte*)&buf[0], (uint32)buf.size());
 	
 	}
 }

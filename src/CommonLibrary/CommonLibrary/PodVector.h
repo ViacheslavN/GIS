@@ -191,7 +191,7 @@ namespace CommonLib
 
 			void push_back(const TSelfType& vec)
 			{
-				size_t nNewSize = m_nSize + vec.size();
+				uint32 nNewSize = m_nSize + vec.size();
 				 if(nNewSize >= m_nCapacity)
 					 reserve(2 * m_nCapacity > nNewSize ? 2* m_nCapacity : nNewSize);
 
@@ -200,7 +200,7 @@ namespace CommonLib
 				 m_nSize += vec.size();
 			}
 
-			bool remove(size_t idx)
+			bool remove(uint32 idx)
 			{
 				if(idx > m_nSize)
 					return false;

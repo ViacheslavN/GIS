@@ -192,7 +192,7 @@ namespace GisEngine
 			pTable = OpenTable(sName);
 			return pTable;
 		}
-		IFeatureClassPtr CSQLiteWorkspace::CreateFeatureClass(const CommonLib::CString& sName, IFields* pFields)
+		IFeatureClassPtr CSQLiteWorkspace::CreateFeatureClass(const CommonLib::CString& sName, IFields* pFields, bool bSaveFCProp)
 		{
 	
 			if(!IsConnect())
@@ -213,7 +213,7 @@ namespace GisEngine
 				return  IFeatureClassPtr();
 			}
 			CSQLiteFeatureClass* pSQLiteFC = new CSQLiteFeatureClass(this, sName, sName);
-			if(!pSQLiteFC->CreateFeatureClass(pFields))
+			if(!pSQLiteFC->CreateFeatureClass(pFields, bSaveFCProp))
 			{
 				delete pSQLiteFC;
 				return  IFeatureClassPtr();

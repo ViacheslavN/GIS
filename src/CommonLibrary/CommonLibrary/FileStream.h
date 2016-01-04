@@ -43,8 +43,8 @@ namespace CommonLib
 		CReadFileStream();
 		~CReadFileStream();
 
-		virtual void  read_bytes(byte* dst, size_t size);
-		virtual void  read_inverse(byte* buffer, size_t size);
+		virtual void  read_bytes(byte* dst, uint32 size);
+		virtual void  read_inverse(byte* buffer, uint32 size);
 		virtual bool checkRead(uint32 nSize) const;
 		virtual bool IsEndOfStream() const;
 		virtual bool AttachStream(IStream *pStream, uint32 nSize, bool bSeek);
@@ -58,8 +58,8 @@ namespace CommonLib
 		CWriteFileStream();
 		~CWriteFileStream();
 		
-		virtual void write_bytes(const byte* buffer, size_t size);
-		virtual void write_inverse(const byte* buffer, size_t size);
+		virtual void write_bytes(const byte* buffer, uint32 size);
+		virtual void write_inverse(const byte* buffer, uint32 size);
 
 	};
 }

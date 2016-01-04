@@ -16,7 +16,7 @@ namespace embDB
 
 	uint32 OIDCompress::GetRowSize()
 	{
-
+		return 0;
 	}
 	void OIDCompress::AddSymbol(int64 nDiff)
 	{
@@ -29,6 +29,17 @@ namespace embDB
 		{
 			it->second++;
 		}
-		
+
+		m_CalcNum.AddSymbol(nDiff);
+	}
+	void OIDCompress::RemoveSymbol(int64 nDiff)
+	{
+		TDiffFreq::iterator it =  m_DiffFreq.find(nDiff);
+		if(it != m_DiffFreq.end())
+		{
+			it->second--;
+		}
+
+		m_CalcNum.RemoveSymbol(nDiff);
 	}
 }

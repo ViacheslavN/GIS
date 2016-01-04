@@ -6,9 +6,13 @@
 namespace embDB
 {
 
-	struct TUint32Log2
+	static int bits_lens[] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3};
+	struct TFindMostSigBit
 	{
-		uint16 log2(uint32 x)
+
+		
+/*#ifdef _WIN32
+		uint16 FMSB(uint32 x)
 		{
 			int32 y;
 			__asm
@@ -18,15 +22,71 @@ namespace embDB
 			}
 			return (uint16)y;
 		}
+#endif*/
+		int FMSB(uint16 val16)
+		{
+			int bits = 0;
+			if(val16 > 0xff){
+				bits += 8;
+				val16 >>= 8;
+			}
+			if(val16 > 0xf){
+				bits += 4;
+				val16 >>= 4;
+			}
+			bits += bits_lens[val16];
+			return bits;
+		}
+
+
+		int FMSB(uint32 val32)
+		{
+			int bits = 0;
+		 
+			if(val32 > 0xffff){
+				bits = 16;
+				val32 >>= 16;
+			}
+			if(val32 > 0xff){
+				bits += 8;
+				val32 >>= 8;
+			}
+			if(val32 > 0xf){
+				bits += 4;
+				val32 >>= 4;
+			}
+			bits += bits_lens[val32];
+			return bits;
+		}
+
+
+		int FMSB(uint64 val64)
+		{
+			int bits = 0;
+			uint32 val32;
+
+			if(val64 > 0xffffffff)
+			{
+				val32 = (uint32)(val64 >> 32);
+				bits = 32;
+			}
+			else
+				val32 = (unsigned int)val64;
+			bits += FMSB(val32);
+			return bits;
+		}
+
+
+
 	};
 
-	template<class _TValue, class _TLog2>
+	template<class _TValue, class _TFindMostSigBit>
 	class TUnsignedCalcNumLen
 	{
 		public:
 
 			typedef _TValue TValue;
-			typedef _TLog2 TLog2;
+			typedef _TFindMostSigBit TFindBit;
 
 			typedef std::map<uint16, uint32> TLenFreq;
 
@@ -35,14 +95,25 @@ namespace embDB
 
 			}
 
-			uint16 addSymbol(TValue symbol)
+			uint16 AddSymbol(TValue symbol)
 			{
-				uint16 nBitLen =  m_Log2.log2(symbol);
+				uint16 nBitLen =  m_FindBit.FMSB(symbol);
 
 				m_nLenBitSize += nBitLen;
 				m_nCount++;
 
+				m_MapFreq[nBitLen] += 1;
+
 				return nBitLen;
+			}
+
+			void RemoveSymbol(TValue symbol)
+			{
+				uint16 nBitLen =  m_FindBit.FMSB(symbol);
+				m_nLenBitSize -= nBitLen;
+				m_nCount--;
+
+				m_MapFreq[nBitLen] -= 1;
 			}
 
 			const TLenFreq& GetLenFreq() const
@@ -55,7 +126,7 @@ namespace embDB
 
 		private:	
 
-			TLog2    m_Log2;
+			TFindBit    m_FindBit;
 			TLenFreq m_MapFreq;
 			uint32 m_nLenBitSize;
 			uint32 m_nCount;

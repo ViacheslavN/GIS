@@ -30,7 +30,7 @@ namespace GisEngine
 
 			virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* pFields);
 
-			virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name, IFields* pFields);
+			virtual IFeatureClassPtr CreateFeatureClass(const CommonLib::CString& name, IFields* pFields, bool bSaveFCProp = false);
 
 			virtual ITablePtr OpenTable(const CommonLib::CString& name);
 			virtual IFeatureClassPtr OpenFeatureClass(const CommonLib::CString& name);

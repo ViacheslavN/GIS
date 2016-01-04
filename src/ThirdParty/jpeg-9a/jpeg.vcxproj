@@ -51,6 +51,7 @@
     <ClInclude Include="jmorecfg.h" />
     <ClInclude Include="jpegint.h" />
     <ClInclude Include="jpeglib.h" />
+    <ClInclude Include="jpeglib_lib.h" />
     <ClInclude Include="jversion.h" />
   </ItemGroup>
   <ItemGroup>

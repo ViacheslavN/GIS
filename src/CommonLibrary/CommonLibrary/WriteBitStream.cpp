@@ -21,7 +21,7 @@ namespace CommonLib
 			if(m_nPos == m_nSize)
 			{
 				assert(!m_bAttach);
-				size_t newSize = size_t(m_nSize * 1.5) + 1;
+				uint32 newSize = uint32(m_nSize * 1.5) + 1;
 				m_nSize = newSize;
 				byte* buffer =  (byte*)m_pAlloc->alloc(sizeof(byte) * newSize);
 				if(m_pBuffer)

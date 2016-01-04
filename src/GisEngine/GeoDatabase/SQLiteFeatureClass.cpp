@@ -28,7 +28,7 @@ namespace GisEngine
 
 		}
 
-		bool CSQLiteFeatureClass::CreateFeatureClass(IFields* pFields)
+		bool CSQLiteFeatureClass::CreateFeatureClass(IFields* pFields, bool bSaveFCProp)
 		{
 
 			SQLiteUtils::CSQLiteDB* pDB = m_pSQLiteWorkspace->GetDB();
@@ -97,6 +97,8 @@ namespace GisEngine
 			if(!pDB->execute(sRTreeSQL))
 				return  false;
 
+			if(!bSaveFCProp)
+				return true;
 
 			return saveFeatureInfo();
 

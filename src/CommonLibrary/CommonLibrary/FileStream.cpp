@@ -57,13 +57,13 @@ namespace CommonLib
 	{
 
 	}
-	void CReadFileStream::read_bytes(byte* pDst, size_t size)
+	void CReadFileStream::read_bytes(byte* pDst, uint32 size)
 	{
 		uint32 nRead = m_File.readFile(pDst, size);
 		assert(nRead == size);
 	}
 
-	void CReadFileStream::read_inverse(byte* pDst, size_t size)
+	void CReadFileStream::read_inverse(byte* pDst, uint32 size)
 	{
 		uint32 nRead = m_File.readFile(pDst, size); //To do inverse
 		assert(nRead == size);
@@ -93,12 +93,12 @@ namespace CommonLib
 
 	}
 
-	void CWriteFileStream::write_bytes(const byte* buffer, size_t size)
+	void CWriteFileStream::write_bytes(const byte* buffer, uint32 size)
 	{
 		uint32 nWrite = m_File.writeFile(buffer, size);
 		assert(nWrite == size);
 	}
-	void CWriteFileStream::write_inverse(const byte* buffer, size_t size)
+	void CWriteFileStream::write_inverse(const byte* buffer, uint32 size)
 	{
 		uint32 nWrite = m_File.writeFile(buffer, size); //To do inverse
 		assert(nWrite == size);

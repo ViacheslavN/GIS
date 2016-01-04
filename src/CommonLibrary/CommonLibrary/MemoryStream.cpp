@@ -24,7 +24,7 @@ namespace CommonLib
 	}
 
 	//IStream
-	void MemoryStream::create(size_t nSize)
+	void MemoryStream::create(uint32 nSize)
 	{
 		if(m_pBuffer && !m_bAttach)
 		{
@@ -35,7 +35,7 @@ namespace CommonLib
 		m_nSize = nSize;
 		m_bAttach = false;
 	}
-	void MemoryStream::attach(byte* pBuffer, size_t nSize, bool bCopy)
+	void MemoryStream::attach(byte* pBuffer, uint32 nSize, bool bCopy)
 	{
 
 		if(bCopy)
@@ -70,17 +70,17 @@ namespace CommonLib
 	{
 		return m_pBuffer;
 	}
-	size_t MemoryStream::size() const
+	uint32 MemoryStream::size() const
 	{
 		return m_nSize;
 	}
 
-	bool MemoryStream::seek(size_t pos, enSeekOffset offset  )
+	bool MemoryStream::seek(uint32 pos, enSeekOffset offset  )
 	{
 		if(!m_pBuffer)
 			return false;
 
-		size_t newpos = 0;
+		uint32 newpos = 0;
 		switch(offset)
 		{
 		case soFromBegin:
@@ -101,7 +101,7 @@ namespace CommonLib
 		return true;
 
 	}
-	size_t MemoryStream::pos() const
+	uint32 MemoryStream::pos() const
 	{
 		return m_nPos;
 	}
@@ -115,12 +115,12 @@ namespace CommonLib
 		m_nSize = 0;
 		m_pBuffer = 0;
 	}
-	void  MemoryStream::resize(size_t nSize)
+	void  MemoryStream::resize(uint32 nSize)
 	{
-		size_t newSize = m_nSize;
+		uint32 newSize = m_nSize;
 
 		while(m_nPos + nSize > newSize)
-			newSize = size_t(newSize * 1.5) + 1;
+			newSize = uint32(newSize * 1.5) + 1;
 		if(newSize > m_nSize)
 		{
 			assert(!m_bAttach);
@@ -140,21 +140,21 @@ namespace CommonLib
 	}
 
 
-	void MemoryStream::read_bytes(byte* dst, size_t size)
+	void MemoryStream::read_bytes(byte* dst, uint32 size)
 	{
 		::memcpy(dst, m_pBuffer + m_nPos, size);
 		m_nPos += size;
 		assert(m_nPos <= m_nSize);
 	}
 
-	void MemoryStream::read_inverse(byte* buffer, size_t size)
+	void MemoryStream::read_inverse(byte* buffer, uint32 size)
 	{
 		for(int64 i = 0; i < size; m_nPos++, i++)
 			buffer[i] = m_pBuffer[m_nPos + size - i - 1];
 		m_nPos += size;
 		assert(m_nPos <= m_nSize);
 	}
-	void MemoryStream::write_bytes(const byte* buffer, size_t size)
+	void MemoryStream::write_bytes(const byte* buffer, uint32 size)
 	{
 		if(size > 0)
 		{
@@ -164,7 +164,7 @@ namespace CommonLib
 		}
 		assert(m_nPos <= m_nSize);
 	}
-	void MemoryStream::write_inverse(const byte* buffer, size_t size)
+	void MemoryStream::write_inverse(const byte* buffer, uint32 size)
 	{
 		resize(size);
 		for(size_t i = 0; i < size; m_nPos++, i++)
