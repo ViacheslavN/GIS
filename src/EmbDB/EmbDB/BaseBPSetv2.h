@@ -645,10 +645,10 @@ namespace embDB
 		TBTreeNodePtr CheckLeafNode(TBTreeNode *pNode, int *pInIndex = NULL)
 		{
 			TBTreeNodePtr pRetNode(pNode);
-			if(pNode->size() > m_nNodesPageSize)
+			if(pNode->isNeedSplit(m_nNodesPageSize))
 			{
 
-				uint32 nSize = pNode->size();
+				//uint32 nSize = pNode->size();
 				TBTreeNodePtr pParentNode = getNode(pNode->parentAddr());
 				bool bNewRoot = false;
 				if(!pParentNode.get())
@@ -698,7 +698,7 @@ namespace embDB
 					return pRetNode;
 				}
 
-				if(pParentNode->size() > m_nNodesPageSize)
+				if(pParentNode->isNeedSplit(m_nNodesPageSize))
 				{
 					if(!splitInnerNode(pParentNode.get()))
 					{
@@ -819,7 +819,7 @@ namespace embDB
 			// Add median to the parent
 			int nIndex = pNodeParent->insertInInnerNode(m_comp, nMedianKey, pNodeNewRight->m_nPageAddr);
 			pNodeNewRight->setParent(pNodeParent.get(), nIndex);
-			if (pNodeParent->size() > m_nNodesPageSize)
+			if (pNodeParent->isNeedSplit(m_nNodesPageSize))
 			{
 				pNodeParent->setFlags(CHANGE_NODE, true);
 

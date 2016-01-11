@@ -34,6 +34,7 @@ namespace embDB
 		virtual size_t rowSize() const = 0;
 		virtual	size_t tupleSize() const= 0;
 		virtual bool IsFree() const = 0;
+		virtual bool isNeedSplit(uint32 nPageSize) const = 0;
 		//virtual bool init(ICompressorParams *pParams = NULL) = 0;
 		virtual int getFlags() const
 		{

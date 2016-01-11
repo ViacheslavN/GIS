@@ -187,6 +187,13 @@ namespace embDB
 			assert(m_pBaseNode);
 			return sFilePageHeader::size() + 1 + /*3 * sizeof(int16) */+ m_pBaseNode->size();
 		}
+
+		bool isNeedSplit(uint32 nPageSize) const
+		{
+			assert(m_pBaseNode);
+			return m_pBaseNode->isNeedSplit(nPageSize - ( sFilePageHeader::size() + 1));
+		}
+
 		size_t headSize()
 		{
 			assert(m_pBaseNode);

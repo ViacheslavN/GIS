@@ -92,6 +92,10 @@ namespace embDB
 		{
 			return sizeof(TKey) *  m_nSize +  sizeof(uint32);
 		}
+		virtual bool isNeedSplit(uint32 nPageSize) const
+		{
+			return nPageSize < size();
+		}
 		virtual size_t count() const
 		{
 			return m_nSize;

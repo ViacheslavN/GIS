@@ -18,7 +18,7 @@ int _tmain(int argc, _TCHAR* argv[])
 //	CommonLib::CString str;
 //	comp.decompress(&stream, str);
 
-	TestCompressAC("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaasaaaaaaaaaaaaaaaaaaaaaaaaaa");
+	TestCompressAC("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 	return 0;
 }
 

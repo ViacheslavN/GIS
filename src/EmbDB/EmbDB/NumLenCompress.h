@@ -5,6 +5,7 @@
 #include <map>
 namespace embDB
 {
+	
 
 	static int bits_lens[] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3};
 	struct TFindMostSigBit
@@ -120,9 +121,28 @@ namespace embDB
 			{
 				return m_MapFreq;
 			}
+			double Log2( double n )  const
+			{  
 
+				return log( n ) / log( (double)2 );  
+			}
+			double GetCodeBitSize() const
+			{
+				double dBitRowSize = 0;
+				for (TLenFreq::const_iterator it = m_MapFreq.begin(); it != m_MapFreq.end(); ++it)
+				{
+					double dFreq = it->second;
+					double dLog2 = -1*Log2(dFreq/m_nCount); 
+					dBitRowSize += dFreq* dLog2;
 
-	 
+				}
+
+				return dBitRowSize;
+			}
+			int GetBitLenSize() const
+			{
+				return m_nLenBitSize;
+			}
 
 		private:	
 

@@ -7,6 +7,7 @@
 #include "BPVector.h"
 #include "Key.h"
 #include "CompressorParams.h"
+#include "OIDCompress.h"
 namespace embDB
 {
 
@@ -40,18 +41,20 @@ namespace embDB
 		virtual bool recalc(const TKeyMemSet& keySet, const TLinkMemSet& linkSet);
 		virtual bool remove(int nIndex, const TKey& key, TLink link);
 		virtual bool update(int nIndex, const TKey& key, TLink link);
-		virtual size_t size() const;
-		virtual size_t count() const;
-		size_t headSize() const;
-		size_t rowSize();
+		virtual uint32 size() const;
+		virtual bool  isNeedSplit(uint32 nPageSize) const;
+		virtual uint32 count() const;
+		uint32 headSize() const;
+		uint32 rowSize() const;
 		void clear();
-		size_t tupleSize() const;
+		uint32 tupleSize() const;
 		void SplitIn(uint32 nBegin, uint32 nEnd, BPInnerNodeFieldCompressor *pCompressor);
 	
 	private:
-		size_t m_nSize;
+		uint32 m_nSize;
 		TKeyMemSet* m_pKeyMemSet;
 		TLinkMemSet* m_pLinkMemSet;
+		OIDCompress m_OIDCompress;
 	};
 }
 

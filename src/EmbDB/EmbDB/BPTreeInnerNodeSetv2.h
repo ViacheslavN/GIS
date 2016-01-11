@@ -56,6 +56,11 @@ namespace embDB
 			assert(m_pCompressor);
 			return sizeof(TLink) +  m_pCompressor->size();
 		}
+		virtual bool isNeedSplit(uint32 nPageSize) const
+		{
+			assert(m_pCompressor);
+			return m_pCompressor->isNeedSplit(nPageSize - sizeof(TLink));
+		}
 		virtual size_t headSize() const
 		{
 			assert(m_pCompressor);

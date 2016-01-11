@@ -71,16 +71,27 @@ namespace embDB
 		bool BPInnerNodeFieldCompressor::insert(int nIndex, const TKey& key, TLink link )
 		{
 			m_nSize++;
+			if(nIndex != 0)
+				m_OIDCompress.AddSymbol(key - (*m_pKeyMemSet)[nIndex - 1]);
 			return true;
 		}
 		bool BPInnerNodeFieldCompressor::add(const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
 		{
-			m_nSize += keySet.size();
+			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
+			{
+				insert(i, keySet[i], linkSet[i]);
+			}
 			return true;
 		}
 		bool BPInnerNodeFieldCompressor::recalc(const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
 		{
-			m_nSize = keySet.size();
+			m_nSize = 0;
+		
+			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
+			{
+				insert(i, keySet[i], linkSet[i]);
+			}
+
 			return true;
 		}
 		bool BPInnerNodeFieldCompressor::remove(int nIndex, const TKey& key, TLink link)
@@ -92,19 +103,37 @@ namespace embDB
 		{
 			return true;
 		}
-		size_t BPInnerNodeFieldCompressor::size() const
+		uint32 BPInnerNodeFieldCompressor::size() const
 		{
-			return (sizeof(TKey) + sizeof(TLink) ) *  m_nSize + sizeof(uint32) ;
+			uint32 nRowSize = rowSize();
+			uint32 nHeadSize = headSize();
+
+
+			uint32 nCompSize = m_OIDCompress.GetRowSize();
+
+			return nRowSize + nHeadSize;
 		}
-		size_t BPInnerNodeFieldCompressor::count() const
+		bool  BPInnerNodeFieldCompressor::isNeedSplit(uint32 nPageSize) const
+		{
+			uint32 nRowSize = rowSize();
+			uint32 nHeadSize = headSize();
+
+			if(nPageSize > (nRowSize + nHeadSize))
+			{
+				return false;
+			}
+
+			return nPageSize < size();
+		}
+		uint32 BPInnerNodeFieldCompressor::count() const
 		{
 			return m_nSize;
 		}
-		size_t BPInnerNodeFieldCompressor::headSize() const
+		uint32 BPInnerNodeFieldCompressor::headSize() const
 		{
 			return  sizeof(uint32);
 		}
-		size_t BPInnerNodeFieldCompressor::rowSize()
+		uint32 BPInnerNodeFieldCompressor::rowSize() const
 		{
 			return (sizeof(TKey) + sizeof(TLink)) *  m_nSize;
 		}
@@ -112,7 +141,7 @@ namespace embDB
 		{
 			m_nSize = 0;
 		}
-		size_t BPInnerNodeFieldCompressor::tupleSize() const
+		uint32 BPInnerNodeFieldCompressor::tupleSize() const
 		{
 			return  (sizeof(TKey) + sizeof(TLink));
 		}

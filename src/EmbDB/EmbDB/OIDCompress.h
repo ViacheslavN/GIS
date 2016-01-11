@@ -9,6 +9,7 @@
 #include "NumLenCompress.h"
 #include "ArithmeticCoder.h"
 #include "RangeCoder.h"
+#include "BPVector.h"
 namespace embDB
 {
 	class OIDCompress
@@ -21,20 +22,25 @@ namespace embDB
 			OIDCompress();
 			~OIDCompress();
 
-			uint32 GetRowSize();
+			uint32 GetRowSize() const;
 			void AddSymbol(int64 nDiff);
 			void RemoveSymbol(int64 nDiff);
 
-			double Log2( double n )  
+			double Log2( double n )  const
 			{  
-	 
+
 				return log( n ) / log( (double)2 );  
 			}
 
+
+			void compress(TBPVector<int64>& oids, CommonLib::IWriteStream* pStream);
+			void read(uint32 nSize, TBPVector<int64>& oids, CommonLib::IReadStream* pStream);
+			double GetRowBitSize() const;
 	private:
  
 		TDiffFreq m_DiffFreq;
 		TCalcNumLen m_CalcNum;
+		uint32 m_nCount;
 
 	};
 
