@@ -30,9 +30,16 @@ namespace CommonLib
 		ofmOpenExisting,
 	};
 
+	enum enOpenFileType
+	{
+		oftBinary,
+		oftText
+	};
 
 #ifdef WIN32
 typedef   HANDLE  FileHandle;
+#elif ANDROID
+typedef   int  FileHandle;
 #endif
 
 	class IFile
@@ -42,7 +49,7 @@ typedef   HANDLE  FileHandle;
 			virtual ~IFile(){}
 			virtual bool attach(FileHandle handle) = 0;
 			virtual FileHandle deattach() = 0;
-			virtual bool openFile(const wchar_t *pszFileName,  enOpenFileMode mode, enAccesRights access, enShareMode share) = 0;
+			virtual bool openFile(const wchar_t *pszFileName,  enOpenFileMode mode, enAccesRights access, enShareMode share, enOpenFileType openType = oftBinary ) = 0;
 			virtual int64 getFileSize() const= 0;
 			virtual bool setFilePos64(uint64 nPos, enSeekOffset offset) = 0;
 			virtual bool setFilePos(uint32 nPos, enSeekOffset offset) = 0;
@@ -71,6 +78,9 @@ typedef   HANDLE  FileHandle;
 
 #ifdef WIN32
 #include "FileWin32.h"
+#elif ANDROID
+#include "FilePosix.h"
+
 #endif
 
 #endif

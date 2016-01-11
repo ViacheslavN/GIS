@@ -3,6 +3,15 @@
 #include "File.h"
 #include "CSSection.h"
 #include <stdio.h>
+#ifdef ANDROID
+#include <ctype.h>
+#include <alloca.h>
+#define _gcvt gcvt
+#define _ecvt ecvt
+#define _alloca alloca 
+
+#endif
+
 namespace CommonLib
 {
 

@@ -1,15 +1,15 @@
-#ifndef _LIB_COMMON_FILE_WIN32_H
-#define _LIB_COMMON_FILE_WIN32_H
+#ifndef _LIB_COMMON_FILE_POSIX_H
+#define _LIB_COMMON_FILE_POSIX_H
 
 #include "File.h"
 
 namespace CommonLib
 {
-	class CFileWin32Impl : public IFile
+	class CFilePosixImpl : public IFile
 	{
 	public:
-		CFileWin32Impl();
-		~CFileWin32Impl();
+		CFilePosixImpl();
+		~CFilePosixImpl();
 
 		virtual bool attach(FileHandle handle);
 		virtual FileHandle deattach();
@@ -26,15 +26,15 @@ namespace CommonLib
 		virtual bool isValid() const;
 		virtual bool Flush();
 	private:
-		HANDLE m_hFile;
+		FileHandle m_hFile;
 		bool m_bAttach;
 	};
 
-	typedef CFileWin32Impl CFile;
+	typedef CFilePosixImpl CFile;
 }
 
 #endif
 
-	//SetEndOfFile(
-	//SetFilePointerEx
+//SetEndOfFile(
+//SetFilePointerEx
 //GetFileSize

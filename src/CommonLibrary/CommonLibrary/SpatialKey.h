@@ -43,7 +43,7 @@ namespace CommonLib
 
 
 
-	template <typename _TPointType >
+	template <class _TPointType >
 	struct TRect2D
 	{
 	public:
@@ -61,16 +61,16 @@ namespace CommonLib
 		m_minX(minX),m_minY(minY), m_maxX(maxX), m_maxY(maxY)
 		{}
 
-		TPointType TRect2D::width()  const
+		TPointType width()  const
 		{  
 			return m_maxX - m_minX;
 		}
-		TPointType TRect2D::height()  const
+		TPointType height()  const
 		{  
 			return m_maxY - m_minY; 
 		}
 
-		bool TRect2D::IsEmpty()  const
+		bool IsEmpty()  const
 		{ 
 			return (m_maxX < m_minX || (m_maxY < m_minY)); 
 		}

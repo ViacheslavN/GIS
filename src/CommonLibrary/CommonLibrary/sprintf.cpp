@@ -282,7 +282,7 @@ __vfprintf(out_str_stream/*wostringstream*/ &f, const wchar_t *s, va_list args)
                 else
                         precision = -1;
                 while(tflag[*s&_IO_CHMASK]) flags |= tflag[*s++&_IO_CHMASK];
-                if(ocvt[*s]) nprint += (*ocvt[*s++])(f, &args, flags, width, precision);
+                if(ocvt[*s]) nprint += (*ocvt[*s++])(f, (va_list*)&args, flags, width, precision);
                 else if(*s){
                         putc(*s++, f);
                         nprint++;

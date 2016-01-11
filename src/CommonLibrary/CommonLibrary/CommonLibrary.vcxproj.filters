@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="alloc">
       <UniqueIdentifier>{c1e97f5c-f453-4b44-9d26-31dbce5eab92}</UniqueIdentifier>
     </Filter>
@@ -49,6 +45,10 @@
     <Filter Include="utils">
       <UniqueIdentifier>{e2979666-3b03-48e2-b0f8-46ca43d10e16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="log\Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -57,6 +57,9 @@
     </None>
     <None Include="tolower.incl">
       <Filter>string</Filter>
+    </None>
+    <None Include="Android.mk">
+      <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -201,6 +204,9 @@
     <ClInclude Include="WriteBitStream.h">
       <Filter>stream\bits</Filter>
     </ClInclude>
+    <ClInclude Include="FilePosix.h">
+      <Filter>file</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -289,6 +295,9 @@
     </ClCompile>
     <ClCompile Include="WriteBitStream.cpp">
       <Filter>stream\bits</Filter>
+    </ClCompile>
+    <ClCompile Include="FilePosix.cpp">
+      <Filter>file</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -14,7 +14,14 @@
 #include "multibyte.h"
 #ifdef ANDROID
   #include <android/log.h>
+	#include <ctype.h>
+	#include <alloca.h>
+	#define _gcvt gcvt
+	#define _ecvt ecvt
+	#define _alloca alloca 
 #endif
+ 
+
 #define LOADSTRING_BUFFER_MAX_SIZE 1024
 
 namespace CommonLib

@@ -65,7 +65,7 @@ namespace stdext
 }
 
 #else //not _WIN32
-#include "CString.h"
+#include "String.h"
 
 namespace CommonLib
 {
