@@ -1,5 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_RB_SET_
 #define _EMBEDDED_DATABASE_RB_SET_
+#ifndef ANDROID
 
 #include "BaseRBTree.h"
 namespace embDB
@@ -56,4 +57,6 @@ namespace embDB
 	};
 	//#include "RBSet.cpp"
 }
+
+#endif
 #endif

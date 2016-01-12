@@ -165,7 +165,7 @@ namespace embDB
 			typedef TPageVectorLazySave<sUndoPageInfo, UndoPageInfoReaderWriter> TUndoVector;
 
 
-			bool SaveUndoPage(__int64 nPage, IDBTransaction *pTran, TUndoVector& vec);
+			bool SaveUndoPage(int64 nPage, IDBTransaction *pTran, TUndoVector& vec);
 		private:
 		
 			

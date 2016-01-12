@@ -406,7 +406,7 @@ namespace embDB
 	}
 
 
-	bool  CFreePageManager::SaveUndoPage(__int64 nPageAddr, IDBTransaction *pTran, TUndoVector& UndoVector)
+	bool  CFreePageManager::SaveUndoPage(int64 nPageAddr, IDBTransaction *pTran, TUndoVector& UndoVector)
 	{
 		sUndoPageInfo undoPageInfo;
 		undoPageInfo.m_BitMapAddr = nPageAddr;

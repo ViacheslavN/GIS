@@ -49,8 +49,8 @@ public:
 
 		TypeVal & value(){return m_pNode->m_val;}
 		const TypeVal & value() const{return m_pNode->m_val;}
-		TNode*  node() {return m_pNode};
-		const TNode* node() const {return m_pNode};
+		TNode*  node() {return m_pNode;}
+		const TNode* node() const {return m_pNode;}
 
 		friend class TList;
 	protected: 
@@ -142,12 +142,12 @@ public:
 		m_nSize = 0;
 	}
 	iterator begin() {return iterator(m_pBegin);}
-	iterator back(){return iterator(m_pBack)}
+	iterator back(){return iterator(m_pBack);}
 	iterator insert(const iterator& it, const TypeVal& val)
 	{
 		TNode* pNode = it.m_pNode;
 		if(!pNode)
-			return iterator(NULL):
+			return iterator(NULL);
 
 		TNode* pElem =  new (m_pAlloc->alloc(sizeof(TNode))) TNode(val);
 
@@ -160,7 +160,7 @@ public:
 		else
 		{
 			m_pBegin = pElem;
-			Node->m_pNext = pElem;
+			pNode->m_pNext = pElem;
 		}
 		m_nSize++;
 		return iterator(pElem);
@@ -168,7 +168,7 @@ public:
 	iterator remove(TNode* pNode, bool bDel = true)
 	{		
 		if(!pNode)
-			return iterator(NULL):
+			return iterator(NULL);
 
 		TNode *pPrev = pNode->m_pPrev;
 		TNode *pNext = pNode->m_pNext;
@@ -186,7 +186,7 @@ public:
 		if(bDel)
 			m_pAlloc->free(pNode);
 		m_nSize--;
-		return iterator(pNext):
+		return iterator(pNext);
 	}
 	iterator remove(const iterator& it, bool bDel = true)
 	{

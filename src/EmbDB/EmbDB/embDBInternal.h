@@ -464,7 +464,7 @@ namespace embDB
 		virtual size_t getLinkCnt() const = 0;
 		virtual ILinkPtr getLink(size_t nIndex) const = 0;
 
-		virtual bool open(IDBStorage* pStorage, __int64 nFileAddr, bool bNew = false) = 0;
+		virtual bool open(IDBStorage* pStorage, int64 nFileAddr, bool bNew = false) = 0;
 		virtual bool close() = 0;
 		virtual bool save(IDBTransaction *pTran) = 0;
 	};

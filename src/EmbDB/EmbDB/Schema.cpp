@@ -16,7 +16,7 @@ namespace embDB
 	{
 
 	}
-	bool CSchema::open(IDBStorage* pStorage, __int64 nFileAddr, bool bNew)
+	bool CSchema::open(IDBStorage* pStorage, int64 nFileAddr, bool bNew)
 	{
 		m_pStorage = pStorage;
 		m_nAddr = nFileAddr;

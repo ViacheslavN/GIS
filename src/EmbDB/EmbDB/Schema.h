@@ -19,7 +19,7 @@ namespace embDB
 		public:
 			CSchema(CDatabase *pDB);
 			~CSchema();
-			virtual bool open(IDBStorage* pStorage, __int64 nFileAddr, bool bNew = false);
+			virtual bool open(IDBStorage* pStorage, int64 nFileAddr, bool bNew = false);
 			virtual bool close();
 			virtual bool addTable(const wchar_t*  pszTableName, ITransaction *Tran = NULL);
  			virtual bool save(IDBTransaction *pTran);

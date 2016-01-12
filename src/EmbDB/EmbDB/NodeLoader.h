@@ -33,7 +33,7 @@ namespace embDB
 			
 			}
 			template<class _TAggrKey, class _TMemSet>
-			bool WriteNode(_TMemSet& Set, __int64 nAddr, CommonLib::MemoryStream& stream)
+			bool WriteNode(_TMemSet& Set, int64 nAddr, CommonLib::MemoryStream& stream)
 			{
 				CFilePage *pFilePage = NULL;
 				if(nAddr != -1)

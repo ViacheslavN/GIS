@@ -1,5 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_RB_MAP_H_
 #define _EMBEDDED_DATABASE_RB_MAP_H_
+#ifndef ANDROID
+
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "BaseRBTree.h"
@@ -45,15 +47,15 @@ namespace embDB
 
 	
 	template <
-		class TypeKey,
+		class _TypeKey,
 		class TypeVal,
-		class TComp = comp<TypeKey>
+		class TComp = comp<_TypeKey>
 	>
-	class RBMap : public _RBTree<TypeKey, RBMapNode<TypeKey, TypeVal>, TComp>
+	class RBMap : public _RBTree<_TypeKey, RBMapNode<_TypeKey, TypeVal>, TComp>
 	{
 		public:
-			typedef TypeKey     TKey;
-			typedef TypeKey     TypeKey;
+			typedef _TypeKey     TKey;
+			typedef _TypeKey     TypeKey;
 			typedef TypeVal     TValue;
 			typedef _RBTree<TypeKey, RBMapNode<TypeKey, TypeVal>, TComp> _Mybase;
 			typedef typename  _Mybase::TTreeNode TTreeNode;
@@ -222,5 +224,7 @@ namespace embDB
 
 	};
 }
+
+#endif
 
 #endif

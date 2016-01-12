@@ -140,7 +140,7 @@ namespace embDB
 		  }
 		  TObj*  remove(const TKey& key)
 		  {
-			  TCacheMap::iterator it = m_CacheMap.find(key);
+			 typename TCacheMap::iterator it = m_CacheMap.find(key);
 			  if(it == m_CacheMap.end())
 				  return NULL;
 
@@ -229,7 +229,7 @@ namespace embDB
 
 		  TObj* GetElem(const TKey& key, bool bNotMove = false)
 		  {
-			  TCacheMap::iterator it = m_CacheMap.find(key);
+			  typename TCacheMap::iterator it = m_CacheMap.find(key);
 			  if(it == m_CacheMap.end())
 				  return NULL;
 

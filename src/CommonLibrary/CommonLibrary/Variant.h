@@ -205,12 +205,12 @@ namespace CommonLib
 		}
 		bool IsNull() const
 		{
-			return (m_id == type2int<CNullVariant>::typeId);
+			return (m_id == eDataTypes(type2int<CNullVariant>::typeId));
 		}
 		template <typename T>
 		bool isType() const
 		{
-			return (m_id == type2int<T>::typeId);
+			return (m_id == eDataTypes(type2int<T>::typeId));
 		}
 		CVariant& operator=(const CVariant& variant)
 		{

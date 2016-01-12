@@ -31,6 +31,7 @@ template<class _Ty>
 			return (_Left > _Right);
 		}*/
 	};
+#ifndef ANDROID
 
 #define RED  true
 	#define BLACK false
@@ -77,7 +78,7 @@ template<class _Ty>
 
 template <
 	class TypeKey,
-	class TTreeNode = BaseRBTreeNode<TypeKey>,
+	class _TTreeNode = BaseRBTreeNode<TypeKey>,
 	class TComp = comp<TypeKey>
 >
 class _RBTree
@@ -87,7 +88,7 @@ class _RBTree
 public:
 	typedef TypeKey  TKey;
 	typedef TypeKey  TKeyVal;
-	typedef TTreeNode TTreeNode;
+	typedef _TTreeNode TTreeNode;
 	//typedef TIter iterator;
 	typedef TComp TComporator;
 	_RBTree(CommonLib::alloc_t *pAlloc = NULL, bool bMulti = false);
@@ -191,5 +192,7 @@ public:
 
 
 #include "BaseRBTree.cpp"
+
+#endif
 }
 #endif

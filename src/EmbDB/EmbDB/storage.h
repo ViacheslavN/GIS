@@ -9,12 +9,16 @@
 
 #include "DBConfig.h"
 #include "embDBInternal.h"
-#include "FreePageManage.h"
+//#define USE_FREE_PAGES
+#ifdef  USE_FREE_PAGES
+	#include "FreePageManage.h"
+#endif
 #include "StorageInfo.h"
 #include "MemPageCache.h"
 #include "PageCrypto.h"
 #include "CacheLRU.h"
-//#define USE_FREE_PAGES
+#include <iostream>
+#include <memory>
 namespace embDB
 {
 	class CStorage : public IDBStorage
