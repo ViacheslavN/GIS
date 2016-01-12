@@ -15,8 +15,26 @@ namespace embDB
 	class OIDCompress
 	{
  
-		 typedef std::map<int64, int32> TDiffFreq;
+		enum eSchemeCompress
+		{
+			eCompressDiff = 1,
+			eCopmress
+
+		};
+
+		struct SymbolInfo
+		{
+
+			uint16 m_nFreq;
+			uint32 m_nB;
+			SymbolInfo() : m_nFreq(0), m_nB(0)
+			{}
+		};
+
+		 typedef std::map<int64, SymbolInfo> TDiffFreq;
 		 typedef TUnsignedCalcNumLen<uint64, TFindMostSigBit> TCalcNumLen;
+		 typedef TRangeEncoder<uint64, 64> TRangeEncoder;
+		 typedef TRangeDecoder<uint64, 64> TRangeDecoder;
 		public:
 
 			OIDCompress();
@@ -36,8 +54,17 @@ namespace embDB
 			void compress(TBPVector<int64>& oids, CommonLib::IWriteStream* pStream);
 			void read(uint32 nSize, TBPVector<int64>& oids, CommonLib::IReadStream* pStream);
 			double GetRowBitSize() const;
+			
 	private:
- 
+		uint32 GetNeedByteForDiffCompress() const;
+		uint32 GetNeedByteForNumLen() const;
+
+		void compressDiffScheme(TBPVector<int64>& oids, CommonLib::IWriteStream* pStream);
+		void compressNumLen(TBPVector<int64>& oids, CommonLib::IWriteStream* pStream);
+
+
+		void readDiffScheme(uint32 nSize, TBPVector<int64>& oids, CommonLib::IReadStream* pStream);
+
 		TDiffFreq m_DiffFreq;
 		TCalcNumLen m_CalcNum;
 		uint32 m_nCount;

@@ -14,8 +14,8 @@
 
 typedef embDB::TACEncoder<int32, 16> TACEncoder;
 typedef embDB::TACDecoder<int32, 16> TACDecoder;
-typedef embDB::TRangeEncoder<uint32, 32> TRangeEncoder; 
-typedef embDB::TRangeDecoder<uint32, 32> TRangeDecoder; 
+typedef embDB::TRangeEncoder<uint64, 64> TRangeEncoder; 
+typedef embDB::TRangeDecoder<uint64, 64> TRangeDecoder; 
 double Log2( double n )  
 {  
 	// log(n)/log(2) is log2.  

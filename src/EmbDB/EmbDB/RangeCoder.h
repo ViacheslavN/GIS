@@ -60,6 +60,11 @@ namespace embDB
 					}
 
 				}
+
+				uint16 GetMinByte() const
+				{
+					return _nValueBits/8;
+				}
 		private:
 			CommonLib::IWriteStream* m_pStream;
 
@@ -105,7 +110,10 @@ namespace embDB
 		{
 			return (m_nValue-Low)/(Range/=nTotalCount);
 		}
-
+		uint16 GetMinByte() const
+		{
+			return _nValueBits/8;
+		}
 		 
 	private:
 		CommonLib::IReadStream* m_pStream;

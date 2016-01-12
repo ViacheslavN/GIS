@@ -1,7 +1,8 @@
 #ifndef _EMBEDDED_DATABASE_ARITHMETIC_CODER_H_
 #define _EMBEDDED_DATABASE_ARITHMETIC_CODER_H_
 
-#include "CommonLibrary/FixedBitStream.h"
+#include "CommonLibrary/WriteBitStream.h"
+#include "CommonLibrary/FixedBitStream.h" 
 namespace embDB
 {
 	template<class _TCodeValue, uint16 _nValueBits>
