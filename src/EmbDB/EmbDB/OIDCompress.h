@@ -29,12 +29,33 @@ namespace embDB
 			uint32 m_nB;
 			SymbolInfo() : m_nFreq(0), m_nB(0)
 			{}
+ 
+		};
+
+
+		struct Symbols
+		{
+
+			uint16 m_nFreq;
+			uint32 m_nB;
+			uint64 m_nDiff;
+			Symbols() : m_nFreq(0), m_nB(0), m_nDiff(0)
+			{}
+
+			Symbols(SymbolInfo si, uint64 nDiff) : m_nFreq(si.m_nFreq), m_nB(si.m_nB), m_nDiff(nDiff)
+			{}
+
+			bool operator < (const Symbols& SymInfo) const
+			{
+				return m_nB < SymInfo.m_nB;
+			}
 		};
 
 		 typedef std::map<int64, SymbolInfo> TDiffFreq;
 		 typedef TUnsignedCalcNumLen<uint64, TFindMostSigBit> TCalcNumLen;
-		 typedef TRangeEncoder<uint64, 64> TRangeEncoder;
-		 typedef TRangeDecoder<uint64, 64> TRangeDecoder;
+		 typedef TRangeEncoder<uint32, 32> TRangeEncoder;
+		 typedef TRangeDecoder<uint32, 32> TRangeDecoder;
+		 typedef std::vector<Symbols> TVecFreq;
 		public:
 
 			OIDCompress();

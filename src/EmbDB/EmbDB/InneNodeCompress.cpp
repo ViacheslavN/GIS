@@ -65,6 +65,21 @@ namespace embDB
 				LinkStreams.write(linkSet[i]);
 			}
 			
+
+			uint32 nByte = m_OIDCompress.GetRowSize();
+
+			CommonLib::FxMemoryWriteStream OIDStreams;
+
+			OIDStreams.create(nByte);
+
+			m_OIDCompress.compress(keySet, &OIDStreams);
+
+
+			CommonLib::FxMemoryReadStream OIDReadStreams;
+			OIDReadStreams.attach(OIDStreams.buffer(), OIDStreams.size());
+			TKeyMemSet oidSet;
+			m_OIDCompress.read(m_nSize, oidSet, &OIDReadStreams);
+
 			return true;
 		}
 
