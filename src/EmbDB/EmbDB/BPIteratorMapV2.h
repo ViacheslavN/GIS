@@ -41,11 +41,11 @@ namespace embDB
 
 		const TValue& value() const
 		{
-			return m_pCurLeafNode->value((uint32)m_nIndex);
+			return this->m_pCurLeafNode->value((uint32)this->m_nIndex);
 		}
 		TValue& value()
 		{
-			return m_pCurLeafNode->value((uint32)m_nIndex);
+			return this->m_pCurLeafNode->value((uint32)this->m_nIndex);
 		}
 
 	};

@@ -30,6 +30,7 @@ public:
 	typedef typename TBase::TInnerNode TInnerNode;
 	typedef typename TBase::TLeafNode	TLeafNode;
 	typedef typename TBase::TBTreeNode TBTreeNode;
+	typedef typename TBase::TBTreeNodePtr TBTreeNodePtr;
 	typedef _TValue  TValue;
 	typedef typename TBase::TInnerCompressorParams TInnerCompressorParams;
 	typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
@@ -62,7 +63,7 @@ public:
 		}
 		
 		
-		ClearChache();
+		this->ClearChache();
 	//	if(bRet)
 	//		m_BTreeInfo.AddKey(1);
 
@@ -76,37 +77,37 @@ public:
 	TBTreeNodePtr InsertInLeafNode(TBTreeNode *pNode, const TKey& key, const TValue& value, int& nRetIndex, int nToIndex = -1 )
 	{
 		assert(pNode->isLeaf());
-		nRetIndex = pNode->insertInLeaf(m_comp, key, value, nToIndex);
+		nRetIndex = pNode->insertInLeaf(this->m_comp, key, value, nToIndex);
 		if(nRetIndex == -1)
 		{
-			m_pTransaction->error(_T("BTREE: Error insert"));
+			this->m_pTransaction->error(L"BTREE: Error insert");
 			return TBTreeNodePtr(NULL);
 		}
 		pNode->setFlags(CHANGE_NODE |BUSY_NODE, true);
 
 		//m_ChangeNode.insert(TBTreeNodePtr(pNode));
-		m_nStateTree |= eBPTChangeLeafNode;
+		this->m_nStateTree |= TBase::eBPTChangeLeafNode;
 		return CheckLeafNode(pNode, &nRetIndex);
 	}
 	
 	iterator begin()
 	{
-		return TBase::begin<iterator>();
+		return TBase::template begin<iterator>();
 	}
 
 	iterator last()
 	{
-		return TBase::last<iterator>();
+		return TBase::template last<iterator>();
 	}
 
 	iterator find(const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)  
 	{
-		return TBase::find<iterator>(m_comp, key, pFromIterator, bFindNext);
+		return TBase::template find<iterator>(this->m_comp, key, pFromIterator, bFindNext);
 	}
 	template<class TComp>
 	iterator find(const TComp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)  
 	{
-		return TBase::find<iterator, TComp>(comp, key, pFromIterator, bFindNext);
+		return TBase::template find<iterator, TComp>(comp, key, pFromIterator, bFindNext);
 	}
 	/*iterator find(iterator& itFrom, const TKey& key, bool bFoundNext = true)
 	{
@@ -121,12 +122,12 @@ public:
 	template<class TComp>
 	iterator upper_bound(const TComp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 	{
-		return TBase::upper_bound<iterator>(comp, key, pFromIterator, bFindNext);
+		return TBase::template upper_bound<iterator>(comp, key, pFromIterator, bFindNext);
 	}
 	template<class TComp>
 	iterator lower_bound(const TComp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 	{
-		return TBase::lower_bound<iterator>(comp, key, pFromIterator, bFindNext);
+		return TBase::template lower_bound<iterator>(comp, key, pFromIterator, bFindNext);
 	}
 	
 
@@ -134,20 +135,20 @@ public:
 
 	iterator upper_bound( const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 	{
-		return TBase::upper_bound<iterator>(m_comp, key, pFromIterator, bFindNext);
+		return TBase::template upper_bound<iterator>(this->m_comp, key, pFromIterator, bFindNext);
 	}
 	iterator lower_bound(const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 	{
-		return TBase::lower_bound<iterator>(m_comp, key, pFromIterator, bFindNext);
+		return TBase::template lower_bound<iterator>(this->m_comp, key, pFromIterator, bFindNext);
 	}
 
 
 	bool remove(const TKey& key)
 	{
-		iterator it = find(m_comp, key);
+		iterator it = find(this->m_comp, key);
 		if(it.isNull())
 			return false;
-		return TBase::remove<iterator>(it);
+		return TBase::template remove<iterator>(it);
 	}
 	template<class TKeyFunctor>
 	bool insertLast(TKeyFunctor& keyFunctor, const TValue& value, TKey* pKey = NULL,  iterator* pFromIterator = NULL,  iterator* pRetIterator = NULL)
@@ -172,7 +173,7 @@ public:
 		if(pKey)
 			*pKey = key;
 		TBTreeNodePtr pNode = InsertInLeafNode(it.m_pCurNode.get(), key, value, nIndex, pFromIterator ? pFromIterator->m_nIndex + 1 : -1);
-		ClearChache();
+		TBase::ClearChache();
 		bool bRet = pNode.get() ? true : false;
 	//	if(bRet)
 		//	m_BTreeInfo.AddKey(1);

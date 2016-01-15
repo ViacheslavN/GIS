@@ -20,7 +20,7 @@ namespace embDB
 		typedef typename TBase::TCompressor TCompressor;
 		typedef typename TBase::TLeafMemSet TLeafMemSet;
 		typedef TBPVector<sStringVal>		TValueMemSet;
-
+		typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
 		TStringLeafNode( CommonLib::alloc_t *pAlloc, bool bMulti) :
 		TBase(pAlloc, bMulti), m_pPageAlloc(NULL)
 		{

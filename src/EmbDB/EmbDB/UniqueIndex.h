@@ -19,7 +19,7 @@ namespace embDB
 		typedef typename TBase::TBTree TBTree;
 		typedef _TIndexType FType;
 		typedef typename TBTree::iterator  iterator;
-		typedef TIndexIterator<iterator> TIndexIterator;
+		typedef TIndexIterator<iterator> IndexIterator;
 
 
 		CUniqueIndex( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize) :
@@ -35,22 +35,22 @@ namespace embDB
 			iterator RetIterator;
 			if(pFromIterator)
 			{
-				TIndexIterator *pFieldIterator = (TIndexIterator*)pFromIter;
+				IndexIterator *pFieldIterator = (IndexIterator*)pFromIter;
 				assert(pFromIterator);
 				pFromIterator = &pFieldIterator->m_ParentIt;
 			}
 
 			FType val;
 			pIndexKey->getVal(val);
-			bool bRet =  m_tree.insert(val, nOID, pFromIterator, pRetIter ? &RetIterator : NULL);
+			bool bRet =  this->m_tree.insert(val, nOID, pFromIterator, pRetIter ? &RetIterator : NULL);
 
 
 			if(pRetIter)
 			{
 				if(*pRetIter) 
-					((TIndexIterator*)(*pRetIter))->set(RetIterator);
+					((IndexIterator*)(*pRetIter))->set(RetIterator);
 				else
-					*pRetIter = new TIndexIterator(RetIterator, this); 
+					*pRetIter = new IndexIterator(RetIterator, this); 
 			}
 			return bRet;
 		}
@@ -74,8 +74,8 @@ namespace embDB
 		{
 			FType val;
 			pIndexKey->getVal(val);
-			TBTree::iterator it = m_tree.find(val);
-			TIndexIterator *pIndexIterator = new TIndexIterator(it, this);
+			typename TBTree::iterator it = this->m_tree.find(val);
+			IndexIterator *pIndexIterator = new IndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 		virtual IIndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
@@ -83,16 +83,16 @@ namespace embDB
 			FType val;
 			pIndexKey->getVal(val);
 
-			TBTree::iterator it = m_tree.lower_bound(val);
-			TIndexIterator *pIndexIterator = new TIndexIterator(it, this);
+			typename TBTree::iterator it = this->m_tree.lower_bound(val);
+			IndexIterator *pIndexIterator = new IndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 		virtual IIndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
-			TBTree::iterator it = m_tree.upper_bound(val);
-			TIndexIterator *pIndexIterator = new TIndexIterator(it, this);
+			typename TBTree::iterator it = this->m_tree.upper_bound(val);
+			IndexIterator *pIndexIterator = new IndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 
@@ -100,12 +100,12 @@ namespace embDB
 		{
 			FType val;
 			pIndexKey->getVal(val);
-			return m_tree.remove(val);
+			return this->m_tree.remove(val);
 		}
 
 		virtual bool commit()
 		{
-			return m_tree.commit();
+			return this->m_tree.commit();
 		}
 	};
 

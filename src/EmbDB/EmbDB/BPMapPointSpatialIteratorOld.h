@@ -1,7 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_B_PLUS_TREE_SPATIAL_POINT_ITERATOR_MAP_H_
 #define _EMBEDDED_DATABASE_B_PLUS_TREE_SPATIAL_POINT_ITERATOR_MAP_H_
 //#include "PointSpatialBPMaTraits.h"
-#include "BPTreeNodeMap.h"
 #include "CommonLibrary/SpatialKey.h"
 #include "simple_stack.h"
 namespace embDB

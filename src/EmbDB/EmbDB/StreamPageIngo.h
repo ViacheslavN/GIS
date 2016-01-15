@@ -78,7 +78,7 @@ namespace embDB
 				sFilePageHeader header(stream);
 				if(header.m_nObjectPageType != BTREE_PAGE || header.m_nSubObjectPageType != BTREE_STREAM_PAGE_INFO)
 				{
-					pTran->error(_T("BTREE: Page %I64d is not stream info page"), m_nRootPage);
+					pTran->error(L"BTREE: Page %I64d is not stream info page", m_nRootPage);
 					return false;
 				}
 				m_nBeginStream = stream.readInt64();

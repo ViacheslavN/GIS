@@ -19,6 +19,7 @@ namespace embDB
 		typedef typename TBase::Transaction Transaction;
 		typedef typename TBase::TCompressor TCompressor;
 		typedef typename TBase::TLeafMemSet TLeafMemSet;
+		typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
 		typedef _TValueMemSet TValueMemSet;
 
 		BPTreeLeafNodeMapv2( CommonLib::alloc_t *pAlloc, bool bMulti) :
@@ -34,22 +35,22 @@ namespace embDB
 
 		virtual bool init(TLeafCompressorParams *pParams = NULL, Transaction* pTransaction = NULL )
 		{
-			assert(!m_pCompressor);
-			m_pCompressor = new TCompressor(pTransaction, m_pAlloc, pParams, &m_leafKeyMemSet, &m_leafValueMemSet);
+			assert(!this->m_pCompressor);
+			this->m_pCompressor = new TCompressor(pTransaction,this-> m_pAlloc, pParams, &this->m_leafKeyMemSet, &this->m_leafValueMemSet);
 			return true;
 		}
 		
 		virtual  bool Save(	CommonLib::FxMemoryWriteStream& stream) 
 		{
-			stream.write(m_nNext);
-			stream.write(m_nPrev);
-			return m_pCompressor->Write(m_leafKeyMemSet, m_leafValueMemSet, stream);
+			stream.write(this->m_nNext);
+			stream.write(this->m_nPrev);
+			return this->m_pCompressor->Write(this->m_leafKeyMemSet, this->m_leafValueMemSet, stream);
 		}
 		virtual bool Load(CommonLib::FxMemoryReadStream& stream)
 		{
-			stream.read(m_nNext);
-			stream.read(m_nPrev); 
-			return m_pCompressor->Load(m_leafKeyMemSet,m_leafValueMemSet, stream);
+			stream.read(this->m_nNext);
+			stream.read(this->m_nPrev); 
+			return this->m_pCompressor->Load(this->m_leafKeyMemSet, this->m_leafValueMemSet, stream);
 		}
 		template<class TComp>
 		int insert(TComp& comp, const TKey& key, const TValue& value, int nInsertInIndex = -1)
@@ -59,8 +60,8 @@ namespace embDB
 			if(!bRet)
 				return -1;
 
-			m_leafValueMemSet.insert(value, nIndex);
-			if(!m_pCompressor->insert(nIndex, key, value))
+			this->m_leafValueMemSet.insert(value, nIndex);
+			if(!this->m_pCompressor->insert(nIndex, key, value))
 				return -1;
 			return nIndex;
 		}
@@ -68,20 +69,20 @@ namespace embDB
 		{
  			TCompressor* pNewNodeComp = pNode->m_pCompressor;
 
-			if(m_bOneSplit)
+			if(this->m_bOneSplit)
 			{
-				int nSplitIndex = SplitOne(m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
-				SplitOne(m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
-				m_pCompressor->remove(nSplitIndex, pNode->m_leafKeyMemSet[0], pNode->m_leafValueMemSet[0]);
+				int nSplitIndex = SplitOne(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
+				SplitOne(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
+				this->m_pCompressor->remove(nSplitIndex, pNode->m_leafKeyMemSet[0], pNode->m_leafValueMemSet[0]);
 				pNewNodeComp->insert(0, pNode->m_leafKeyMemSet[0], pNode->m_leafValueMemSet[0]);
 				return nSplitIndex;
 			}
 			else
 			{
 
-				int nSplitIndex = SplitInVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
-				SplitInVec(m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
-				m_pCompressor->SplitIn(0, nSplitIndex, pNewNodeComp);
+				int nSplitIndex = SplitInVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
+				SplitInVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
+				this->m_pCompressor->SplitIn(0, nSplitIndex, pNewNodeComp);
 				return nSplitIndex;
 			}
 
@@ -101,16 +102,16 @@ namespace embDB
 			TCompressor* pRightNodeComp = pRightNode->m_pCompressor;
 
 
-			uint32 nSize = m_leafKeyMemSet.size()/2;
+			uint32 nSize = this->m_leafKeyMemSet.size()/2;
 
 			if(pSplitKey)
-				*pSplitKey = m_leafKeyMemSet[nSize];
+				*pSplitKey = this->m_leafKeyMemSet[nSize];
 
-			SplitInVec(m_leafKeyMemSet, leftKeyMemSet, 0, nSize);
-			SplitInVec(m_leafValueMemSet, leftValueMemSet, 0, nSize);
+			SplitInVec(this->m_leafKeyMemSet, leftKeyMemSet, 0, nSize);
+			SplitInVec(this->m_leafValueMemSet, leftValueMemSet, 0, nSize);
 
-			SplitInVec(m_leafKeyMemSet, rightKeyMemSet, nSize, m_leafKeyMemSet.size());
-			SplitInVec(m_leafValueMemSet, rightValueMemSet, nSize, m_leafValueMemSet.size());
+			SplitInVec(this->m_leafKeyMemSet, rightKeyMemSet, nSize, this->m_leafKeyMemSet.size());
+			SplitInVec(this->m_leafValueMemSet, rightValueMemSet, nSize, this->m_leafValueMemSet.size());
 
 			pleftNodeComp->recalc(leftKeyMemSet, leftValueMemSet);
 			pRightNodeComp->recalc(rightKeyMemSet, rightValueMemSet);
@@ -122,26 +123,26 @@ namespace embDB
 		
 		const TValue& value(uint32 nIndex) const
 		{
-			return m_leafValueMemSet[nIndex];
+			return this->m_leafValueMemSet[nIndex];
 		}
 		TValue& value(uint32 nIndex)
 		{
-			return m_leafValueMemSet[nIndex];
+			return this->m_leafValueMemSet[nIndex];
 		}
 
 		bool UnionWith(BPTreeLeafNodeMapv2* pNode, bool bLeft, int *nCheckIndex = 0)
 		{
-			m_pCompressor->add(pNode->m_leafKeyMemSet, pNode->m_leafValueMemSet);
-			UnionVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft, nCheckIndex);
-			UnionVec(m_leafValueMemSet, pNode->m_leafValueMemSet, bLeft);
+			this->m_pCompressor->add(pNode->m_leafKeyMemSet, pNode->m_leafValueMemSet);
+			UnionVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft, nCheckIndex);
+			UnionVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, bLeft);
 			return true;
 		}
 		bool AlignmentOf(BPTreeLeafNodeMapv2* pNode, bool bFromLeft)
 		{
-			if(!AlignmentOfVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, bFromLeft))
+			if(!AlignmentOfVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, bFromLeft))
 				return false;
 						
-			AlignmentOfVec(m_leafValueMemSet, pNode->m_leafValueMemSet, bFromLeft);
+			AlignmentOfVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, bFromLeft);
 
 			pNode->recalc();
 			recalc();
@@ -150,19 +151,19 @@ namespace embDB
 		}
 		void recalc()
 		{
-			m_pCompressor->recalc(m_leafKeyMemSet, m_leafValueMemSet);
+			this->m_pCompressor->recalc(this->m_leafKeyMemSet, this->m_leafValueMemSet);
 		}
 
 		bool removeByIndex(int32 nIndex)
 		{
-			m_pCompressor->remove(nIndex, m_leafKeyMemSet[nIndex], m_leafValueMemSet[nIndex]);
-			bool bRet = m_leafKeyMemSet.remove(nIndex);
+			this->m_pCompressor->remove(nIndex, this->m_leafKeyMemSet[nIndex], this->m_leafValueMemSet[nIndex]);
+			bool bRet = this->m_leafKeyMemSet.remove(nIndex);
 			if(!bRet)
 			{
 				//TO DO Logs
 				return false;
 			}
-			 bRet = m_leafValueMemSet.remove(nIndex);
+			 bRet = this->m_leafValueMemSet.remove(nIndex);
 			if(!bRet)
 			{
 				//TO DO Logs
@@ -172,10 +173,10 @@ namespace embDB
 		}
 		virtual void clear()
 		{
-			m_leafKeyMemSet.clear();
-			m_leafValueMemSet.clear();
-			delete m_pCompressor;
-			m_pCompressor = NULL;
+			this->m_leafKeyMemSet.clear();
+			this->m_leafValueMemSet.clear();
+			delete this->m_pCompressor;
+			this->m_pCompressor = NULL;
 
 		}
 	public:

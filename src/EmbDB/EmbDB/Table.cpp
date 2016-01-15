@@ -7,7 +7,7 @@
 #include "DBFieldInfo.h"
 #include "ValueField.h"
 #include "Database.h"
-#include "SpatialOIDField.h"
+//#include "SpatialOIDField.h"
 #include "Index.h"
 #include "MultiIndexBPTree.h"
 #include "UniqueIndex.h"

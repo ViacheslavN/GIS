@@ -4,11 +4,10 @@
 
 #include "CacheLRU.h"
 #include "TranStorage.h" 
-//#include "RBSet.h"
 #include "FilePage.h"
 #include "embDBInternal.h"
-#include "BPTreeInfoPage.h"
-#include "BaseBPMapv2.h"
+//#include "BPTreeInfoPage.h"
+//#include "BaseBPMapv2.h"
 #include <map>
 #include "TranPerfCounter.h"
 
@@ -19,6 +18,19 @@ namespace embDB
 	class CTransactionsCache
 	{
 	public:
+
+		struct sFileTranPageInfo
+		{
+			sFileTranPageInfo(int64  nAddr = -1, int nFlags = -1, uint32 nPageSize = 0) : m_nFileAddr(nAddr), m_nFlags(nFlags), m_bOrignSave(false),
+				m_bRedoSave(false), m_nPageSize(nPageSize)
+			{}
+			int64  m_nFileAddr; // адрес страницы в файле транзакций
+			uint32 m_nFlags; //флаги выгружаемой страницы
+			bool m_bOrignSave; // for undo
+			bool m_bRedoSave; // for redo
+			uint32 m_nPageSize;
+		};
+
 		CTransactionsCache(CommonLib::alloc_t* pAlloc, CTranStorage *pStorage, CTransaction *pTransaction, CTranPerfCounter *pCounter, uint32 nTranCache) : 
 			    m_pFileStorage(pStorage)
 			  , m_nPageInMemory(0)

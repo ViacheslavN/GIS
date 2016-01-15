@@ -22,7 +22,7 @@ namespace embDB
 		typedef BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> > TInnerNode;
 		typedef TFixedStringLeafNode<_TKey, _Transaction>	TLeafNode;
 
-		typedef BPTreeNodeMapv2<TKey, sFixedStringVal, _Transaction, TInnerCompressor, TLeafCompressor, TInnerNode,	 TLeafNode > TBase;
+		typedef BPTreeNodeMapv2<_TKey, sFixedStringVal, _Transaction, TInnerCompressor, TLeafCompressor, TInnerNode,	 TLeafNode > TBase;
 
 		typedef sFixedStringVal TValue;
 		typedef typename TBase::TKey TKey;

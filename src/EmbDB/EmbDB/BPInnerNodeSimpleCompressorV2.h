@@ -6,7 +6,6 @@
 #include "RBSet.h"
 #include "BPVector.h"
 #include "Key.h"
-#include "BPCompressors.h"
 namespace embDB
 {
 

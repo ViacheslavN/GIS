@@ -7,7 +7,7 @@
 #include "DBFieldInfo.h"
 #include "Database.h"
 #include "DBMagicSymbol.h"
-#include "BaseBPTreeRO.h"
+//#include "BaseBPTreeRO.h"
 #include "FieldIteratorBase.h"
 namespace embDB
 {
@@ -47,7 +47,7 @@ namespace embDB
 				return 1;
 			}
 		};
-
+		TOIDIncFunctor m_OIDIncFunck;
 		ValueFieldBase( IDBFieldHandler* pFieldHandler, IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize) :
 			  m_pDBTransactions(pTransactions),
 			  m_tree(-1, pTransactions, pAlloc, 100, nPageSize), 
@@ -148,7 +148,7 @@ namespace embDB
 					pFromIterator = &pFieldIterator->m_ParentIt;
 				}
 				int64 nOID;
-				if(!m_tree.insertLast(TOIDIncFunctor(), value, &nOID, pFromIterator, pRetIter ? &RetIterator : NULL))
+				if(!m_tree.insertLast(m_OIDIncFunck, value, &nOID, pFromIterator, pRetIter ? &RetIterator : NULL))
 					return  0;
 
 				if(pRetIter)
@@ -156,7 +156,7 @@ namespace embDB
 					if(*pRetIter) 
 						((TFieldIterator*)(*pRetIter))->set(RetIterator, this);
 					else
-						*pRetIter = new TFieldIterator(RetIterator, this); 
+						*pRetIter = new TFieldIterator(RetIterator, (IValueField*)this); 
 				}
 				return nOID;
 			}
@@ -178,7 +178,7 @@ namespace embDB
 			{
 				if(pRetIter)
 				{
-					TBTree::iterator retIt;
+					typename TBTree::iterator retIt;
 					return m_tree.remove(nOID);
 				}
 				else
@@ -223,7 +223,7 @@ namespace embDB
 					pFromIterator = &pFieldIterator->m_ParentIt;
 				}
 
-				TBTree::iterator it = m_tree.find(nOID, pFromIterator, true);
+				typename  TBTree::iterator it = m_tree.find(nOID, pFromIterator, true);
 				TFieldIterator *pFiledIterator = new TFieldIterator(it, this);
 				return IFieldIteratorPtr(pFiledIterator);
 			}
@@ -239,7 +239,7 @@ namespace embDB
 					pFromIterator = &pFieldIterator->m_ParentIt;
 				}
 
-				TBTree::iterator it = m_tree.upper_bound(nRowID, pFromIterator, true);
+				typename  TBTree::iterator it = m_tree.upper_bound(nRowID, pFromIterator, true);
 				TFieldIterator *pFiledIterator = new TFieldIterator(it, this);
 				return IFieldIteratorPtr(pFiledIterator);
 			}
@@ -253,20 +253,20 @@ namespace embDB
 					pFromIterator = &pFieldIterator->m_ParentIt;
 				}
 
-				TBTree::iterator it = m_tree.lower_bound(nRowID, pFromIterator, true);
+				typename  TBTree::iterator it = m_tree.lower_bound(nRowID, pFromIterator, true);
 				TFieldIterator *pFiledIterator = new TFieldIterator(it, this);
 				return IFieldIteratorPtr(pFiledIterator);
 			}
 
 			IFieldIteratorPtr begin()
 			{
-				TBTree::iterator it = m_tree.begin();
+				typename  TBTree::iterator it = m_tree.begin();
 				TFieldIterator *pFiledIterator = new TFieldIterator(it, this);
 				return IFieldIteratorPtr(pFiledIterator);
 			}
 			virtual IFieldIteratorPtr last()
 			{
-				TBTree::iterator it = m_tree.last();
+				typename  TBTree::iterator it = m_tree.last();
 				TFieldIterator *pFiledIterator = new TFieldIterator(it, this);
 				return IFieldIteratorPtr(pFiledIterator);
 			}
@@ -301,6 +301,7 @@ namespace embDB
 	{
 	public:
 	 
+		typedef typename TBTree::iterator  iterator;
 		typedef TFieldIteratorBase<TBTree, IFieldIterator> TBase;
 
 		FieldIterator(iterator& it,  IValueField* pField) : TBase(it, pField)
@@ -311,7 +312,7 @@ namespace embDB
 
 		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
-			pVal->setVal(m_ParentIt.value());
+			pVal->setVal(this->m_ParentIt.value());
 			return true;
 		}
 	};
@@ -325,10 +326,10 @@ namespace embDB
 	 
 	
 			typedef _FieldIterator TFieldIterator;
-
+			typedef ValueFieldBase<_FType, _TBTree, TFieldIterator> TBase;
 
 			ValueField(IDBFieldHandler* pFieldHandler,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize) :
-			  ValueFieldBase(pFieldHandler, pTransactions, pAlloc, nPageSize)
+			  TBase(pFieldHandler, pTransactions, pAlloc, nPageSize)
 			{
 
 			}
@@ -336,7 +337,7 @@ namespace embDB
 		 
 			~ValueField()
 			{}
-			typedef ValueFieldBase<_FType, _TBTree, TFieldIterator> TBase;
+			
 			typedef typename TBase::TBTree TBTree;
 			typedef typename TBTree::iterator  iterator;
 			typedef _FType FType;
@@ -344,7 +345,7 @@ namespace embDB
 
 			virtual bool find(int64 nOID, CommonLib::CVariant* pFieldVal)
 			{
-				TBTree::iterator it = m_tree.find(nOID);
+				typename TBTree::iterator it = this->m_tree.find(nOID);
 				if(it.isNull())
 					return false;
 				pFieldVal->setVal(it.value());

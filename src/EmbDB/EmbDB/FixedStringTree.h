@@ -25,9 +25,11 @@ public:
 		TFixedStringLeafNode<_TKey, _Transaction>,
 		BPFixedStringTreeNodeMapv2<_TKey, _Transaction>	> TBase;
 
-
+	typedef typename TBase::TKey TKey; 
 	typedef typename TBase::TInnerCompressorParams TInnerCompressorParams;
 	typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
+	typedef typename TBase::TBTreeNode TBTreeNode;
+	typedef typename TBase::iterator iterator; 
 
 	TBPFixedString(int64 nPageBTreeInfo, embDB::IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, uint32 nPageSize, bool bMulti = false, bool bCheckCRC32 = true) :
 	  TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nPageSize, bMulti, bCheckCRC32), m_PageAlloc(pAlloc, 1024*1024, 2)
@@ -37,27 +39,27 @@ public:
 
 	  ~TBPFixedString()
 	  {
-		  DeleteNodes();
+		  this->DeleteNodes();
 	  }
 
 	  virtual TBTreeNode* CreateNode(int64 nAdd, bool bIsLeaf)
 	  {
-		  TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, nAdd, m_bMulti, bIsLeaf, m_bCheckCRC32, m_nNodesPageSize, m_InnerCompParams.get(),
-			  m_LeafCompParams.get());
+		  TBTreeNode *pNode = new TBTreeNode(-1, this->m_pAlloc, nAdd, this->m_bMulti, bIsLeaf, this->m_bCheckCRC32, this->m_nNodesPageSize, this->m_InnerCompParams.get(),
+			  this->m_LeafCompParams.get());
 		  pNode->m_LeafNode.SetPageAlloc(&m_PageAlloc);
 		return pNode;
 	  }
 
 	  void convert(const CommonLib::CString& sString, sFixedStringVal& sValue)
 	  {
-		  if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
+		  if(this->m_LeafCompParams->GetStringCoding() == embDB::scASCII)
 		  {
 			  sValue.m_nLen = sString.length() + 1;
 			  sValue.m_pBuf = (byte*)m_PageAlloc.alloc(sValue.m_nLen);
 			  strcpy((char*)sValue.m_pBuf, sString.cstr());
 			  sValue.m_pBuf[sValue.m_nLen] = 0;
 		  }
-		  else if(m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
+		  else if(this->m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
 		  {
 			  sValue.m_nLen  = sString.calcUTF8Length() + 1;
 			  sValue.m_pBuf = (byte*)m_PageAlloc.alloc(sValue.m_nLen);
@@ -66,12 +68,12 @@ public:
 	  }
 	  void convert(const sFixedStringVal& sStrVal, CommonLib::CString& sString) 
 	  {
-		  CommonLib::CString sVal(m_pAlloc);
-		  if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
+		  CommonLib::CString sVal(this->m_pAlloc);
+		  if(this->m_LeafCompParams->GetStringCoding() == embDB::scASCII)
 		  {
 			  sString.loadFromASCII((const char*)sStrVal.m_pBuf);
 		  }
-		   else if(m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
+		   else if(this->m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
 		  {
 			  sString.loadFromUTF8((const char*)sStrVal.m_pBuf);
 		  }

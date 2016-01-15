@@ -4,11 +4,11 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "Key.h"
-#include "RBMap.h"
 #include "embDBInternal.h"
-#include "BTBaseNode.h"
+
 #include "CompressorParams.h"
 #include "BPVector.h"
+#include "BTBaseNode.h"
 namespace embDB
 {
 	template<typename _TKey,/* typename _TComp,*/
@@ -71,10 +71,10 @@ namespace embDB
 			assert(m_pCompressor);
 			return m_pCompressor->rowSize();
 		}
-		virtual bool IsFree() const 
+		/*virtual bool IsFree() const 
 		{
 			return !(m_nFlag & (ROOT_NODE | BUSY_NODE));
-		}
+		}*/
 		virtual  bool Save(	CommonLib::FxMemoryWriteStream& stream) 
 		{
 			assert(m_nLess != -1);
@@ -131,7 +131,6 @@ namespace embDB
 		{
 			uint32 nIndex = -1;
 			short nType = 0;
-
 			if(m_innerKeyMemSet.empty())
 			{
 				m_innerKeyMemSet.push_back(key);
@@ -173,7 +172,7 @@ namespace embDB
 			{
 				
 				nIndex = m_innerKeyMemSet.upper_bound(key, comp);
-				if(nIndex && m_comp.EQ(key, m_innerKeyMemSet[nIndex - 1]))
+				if(nIndex && comp.EQ(key, m_innerKeyMemSet[nIndex - 1]))
 				{
 					nType = FIND_KEY;
 					nIndex -= 1;

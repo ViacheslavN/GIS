@@ -3,7 +3,7 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "Key.h"
-#include "RBMap.h"
+//#include "RBMap.h"
 #include "embDBInternal.h"
 #include "BTBaseNode.h"
 #include "CompressorParams.h"
@@ -154,7 +154,7 @@ namespace embDB
 			if(m_bMulti)
 			{
 				nIndex = m_leafKeyMemSet.upper_bound(key,  comp);
-				if(nIndex && m_comp.EQ(key, m_leafKeyMemSet[nIndex - 1]))
+				if(nIndex && comp.EQ(key, m_leafKeyMemSet[nIndex - 1]))
 				{
 					nType = FIND_KEY;
 					nIndex -= 1;
@@ -384,21 +384,21 @@ namespace embDB
 		//TComporator m_comp;
 	};
 
-	template<typename _TKey, /* typename _TComp,*/
+	template<typename _TKey, 
 	class _Transaction, class _TCompressor>
-	class BPTreeLeafNodeSetv2: public  BPTreeLeafNodeSetv2Base <_TKey, /*_TComp,*/ _Transaction, _TCompressor>
+	class BPTreeLeafNodeSetv2: public  BPTreeLeafNodeSetv2Base <_TKey,  _Transaction, _TCompressor>
 	{
 	public:
 		
-		typedef BPTreeLeafNodeSetv2Base <_TKey, /*_TComp,*/ _Transaction, _TCompressor> TBase;
-		typedef int64 TLink;
+		typedef BPTreeLeafNodeSetv2Base <_TKey, _Transaction, _TCompressor> TBase;
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;
 		typedef typename TBase::Transaction Transaction;
-		//typedef typename TBase::TComporator	 TComporator;
+		
+
 		typedef typename TBase::TCompressor TCompressor;
 		typedef typename TBase::TLeafMemSet TLeafMemSet;
-
+		typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
 
 		BPTreeLeafNodeSetv2( CommonLib::alloc_t *pAlloc, bool bMulti) : TBase(pAlloc, bMulti)
 		{}
@@ -406,23 +406,23 @@ namespace embDB
 
 		bool init(TLeafCompressorParams *pParams = NULL, Transaction* pTransaction = NULL )
 		{
-			assert(!m_pCompressor);
-			m_pCompressor = new TCompressor(pTransaction, m_pAlloc, pParams, &m_leafKeyMemSet);
+			assert(!this->m_pCompressor);
+			this->m_pCompressor = new TCompressor(pTransaction, this->m_pAlloc, pParams, &this->m_leafKeyMemSet);
 			return true;
 		}
 	
 
 		virtual  bool Save(	CommonLib::FxMemoryWriteStream& stream) 
 		{
-			stream.write(m_nNext);
-			stream.write(m_nPrev);
-			return m_pCompressor->Write(m_leafKeyMemSet, stream);
+			stream.write(this->m_nNext);
+			stream.write(this->m_nPrev);
+			return this->m_pCompressor->Write(this->m_leafKeyMemSet, stream);
 		}
 		virtual bool Load(CommonLib::FxMemoryReadStream& stream)
 		{
-			stream.read(m_nNext);
-			stream.read(m_nPrev); 
-			return m_pCompressor->Load(m_leafKeyMemSet, stream);
+			stream.read(this->m_nNext);
+			stream.read(this->m_nPrev); 
+			return this->m_pCompressor->Load(this->m_leafKeyMemSet, stream);
 		}
 
 	};

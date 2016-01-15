@@ -6,12 +6,11 @@
 #include "BPTreeNodeSetV2.h"
 #include "embDBInternal.h"
 #include "simple_stack.h"
-//#include "CacheNodes.h"
 #include "DBMagicSymbol.h"
 #include "BPTreeStatistics.h"
 #include "BPInnerNodeSimpleCompressorV2.h"
 #include "BPLeafNodeSetSimpleCompressorV2.h"
-#include "BPTree.h"
+//#include "BPTree.h"
 #include "CompressorParams.h"
 #include "BPIteratorSetV2.h"
 #include "CommonLibrary/delegate.h"
@@ -19,6 +18,7 @@
 #include "DBConfig.h"
 #include "WriteStreamPage.h"
 #include "ReadStreamPage.h"
+#include <memory>
 namespace embDB
 {
 
@@ -93,7 +93,7 @@ namespace embDB
 
 		void DeleteNodes()
 		{
-			TNodesCache::iterator it =	m_Cache.begin();
+			typename TNodesCache::iterator it = m_Cache.begin();
 			while(!it.isNull())
 			{
 				TBTreeNode* pBNode = it.object();
@@ -154,9 +154,9 @@ namespace embDB
 			
 		}
 
-		void clear(bool bNotSetFreePage = true)
+		/*void clear(bool bNotSetFreePage = true)
 		{
-			TNodesCache::TCacheSet::iterator it =	m_Cache.m_set.begin();
+			typename TNodesCache::TCacheSet::iterator it =	m_Cache.m_set.begin();
 			while(!it.isNull())
 			{
 				TBTreeNode* pBNode = it.value().pListEl->obj_;
@@ -179,11 +179,11 @@ namespace embDB
 				m_pRoot->setFlags(ROOT_NODE, true);
 				m_pRoot->Save(m_pTransaction);
 			//	m_BTreeInfo.clear();
-				m_BTreeInfo.Save(m_pTransaction);
+			//	m_BTreeInfo.Save(m_pTransaction);
 				saveBTreeInfo();
 			}
 			m_nStateTree |=(eBPTDeleteLeafNode | eBPTDeleteInnerNode |  eBPTNewRootNode);
-		}
+		}*/
 
 		void setRootPage(int64 nPageBTreeInfo)
 		{
@@ -193,13 +193,13 @@ namespace embDB
 		{
 			if(m_nPageBTreeInfo == -1)
 			{
-				m_pTransaction->error(_T("BTREE: Error Load  BTreeInfoPage: -1"));
+				m_pTransaction->error(L"BTREE: Error Load  BTreeInfoPage: -1");
 				return false;
 			}
 			FilePagePtr pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo, MIN_PAGE_SIZE);
 			if(!pPage.get())
 			{
-				m_pTransaction->error(_T("BTREE: Error load BTreeInfoPage: %I64d"), (int64)m_nPageBTreeInfo);
+				m_pTransaction->error(L"BTREE: Error load BTreeInfoPage: %I64d", (int64)m_nPageBTreeInfo);
 				return false;
 			}
 			ReadStreamPage stream(m_pTransaction, MIN_PAGE_SIZE,  BTREE_PAGE, BTREE_INFO_PAGE);
@@ -241,7 +241,7 @@ namespace embDB
 		{
 			if(!m_pRoot.get())
 				return true;
-			TNodesCache::iterator it =	m_Cache.begin();
+			typename TNodesCache::iterator it =	m_Cache.begin();
 			while(!it.isNull())
 			{
 				TBTreeNode* pBNode = it.object();
@@ -389,11 +389,11 @@ namespace embDB
 	}
 
 
-	void save(CommonLib::IWriteStream *pStream)
+/*	void save(CommonLib::IWriteStream *pStream)
 	{
 		pStream->write(m_nRootAddr);
 		pStream->write(m_bMulti);
-		pStream->write(m_nNodesPageSize)
+		pStream->write(m_nNodesPageSize);
 
 		if(m_InnerCompParams.get())
 			m_InnerCompParams->save(pStream);
@@ -417,7 +417,7 @@ namespace embDB
 
 		m_LeafCompParams->load(pStream);
 
-	}
+	}*/
 
 
 
@@ -447,7 +447,7 @@ namespace embDB
 				m_nPageBTreeInfo = pPage->getAddr();
 			if(m_nPageBTreeInfo == -1)
 			{
-				m_pTransaction->error(_T("BTREE: Error save BTreeInfoPage: -1"), (int64)m_nPageBTreeInfo);
+				m_pTransaction->error(L"BTREE: Error save BTreeInfoPage: -1", (int64)m_nPageBTreeInfo);
 				return false;
 			}
 		}
@@ -456,7 +456,7 @@ namespace embDB
 			pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo, MIN_PAGE_SIZE, false);
 			if(!pPage.get())
 			{
-				m_pTransaction->error(_T("BTREE: Error save BTreeInfoPage: %I64d is not load"), (int64)m_nPageBTreeInfo);
+				m_pTransaction->error(L"BTREE: Error save BTreeInfoPage: %I64d is not load", (int64)m_nPageBTreeInfo);
 				return false;
 			}
 		}
@@ -466,7 +466,7 @@ namespace embDB
 
 		if(!pPage.get())
 		{
-			m_pTransaction->error(_T("BTREE: Error save BTreeInfoPage: %I64d is not load"), (int64)m_nPageBTreeInfo);
+			m_pTransaction->error(L"BTREE: Error save BTreeInfoPage: %I64d is not load", (int64)m_nPageBTreeInfo);
 			return false;
 		}
 		
@@ -512,7 +512,7 @@ namespace embDB
 		}	
 		if(!m_pRoot.get())
 		{
-			m_pTransaction->error(_T("BTREE: Error load root page: %I64d"), (int64)m_nRootAddr);
+			m_pTransaction->error(L"BTREE: Error load root page: %I64d", (int64)m_nRootAddr);
 			return false;
 		}
 		return true;
@@ -606,7 +606,7 @@ namespace embDB
 	bool insertLast(TKeyFunctor& keyFunctor, TKey* pKey = NULL,  TIterator* pRetIterator = NULL)
 		{
 
-			TIterator it = last();
+			TIterator it = last<TIterator>();
 			if(!it.m_pCurLeafNode)
 				return false;
 			
@@ -618,10 +618,9 @@ namespace embDB
 
 			if(pKey)
 				*pKey = key;
-			TBTreeNodePtr pNode = InsertInLeafNode(pBNode, key);
+			TBTreeNodePtr pNode = InsertInLeafNode(it.m_pCurLeafNode, key);
 			ClearChache();
-		//	if(pNode.get())
-		//		m_BTreeInfo.AddKey(1);
+		 
 			return pNode.get() ? true : false;	
 		}
 		TBTreeNodePtr InsertInLeafNode(TBTreeNode *pNode, const TKey& key, int *pInIndex = NULL, int nInsertLeafIndex = -1)
@@ -630,7 +629,7 @@ namespace embDB
 			int nIndex = pNode->insertInLeaf(m_comp, key, nInsertLeafIndex);
 			if(nIndex == -1)
 			{
-				m_pTransaction->error(_T("BTREE: Error insert"));
+				m_pTransaction->error(L"BTREE: Error insert");
 				return TBTreeNodePtr(NULL);
 			}
 			pNode->setFlags(CHANGE_NODE, true);
@@ -657,7 +656,7 @@ namespace embDB
 					pParentNode  = newNode(false, true);
 					if(!pParentNode.get())
 					{
-						m_pTransaction->error(_T("BTREE: Error create new root node"));
+						m_pTransaction->error(L"BTREE: Error create new root node");
 						return TBTreeNodePtr(NULL);
 					}
 					//bNewRoot = true;
@@ -831,7 +830,7 @@ namespace embDB
 				pNodeNewRight = newNode(false, false);
 				if(!pNodeNewRight.get())
 				{
-					m_pTransaction->error(_T("BTREE: Error create new right B Node"));
+					m_pTransaction->error(L"BTREE: Error create new right B Node");
 					return false;
 				}
 
@@ -858,7 +857,7 @@ namespace embDB
 			TBTreeNodePtr pNodeNewRoot = newNode(true, false);
 			if(!pNodeNewRoot.get())
 			{
-				m_pTransaction->error(_T("BTREE: Error create new root node"));
+				m_pTransaction->error(L"BTREE: Error create new root node");
 				return false;
 			}
 			m_nStateTree |= eBPTNewRootNode;
@@ -1248,7 +1247,7 @@ namespace embDB
 	}
 
 
-	void SetParentBack(TBTreeNode *pNode, TBTreeNode* pNodePrev)
+/*	void SetParentBack(TBTreeNode *pNode, TBTreeNode* pNodePrev)
 	{
 		int nFoundIndex = pNode->foundIndex();
 		TBTreeNodePtr pParent = getNode(pNode->parentAddr());
@@ -1291,7 +1290,7 @@ namespace embDB
 		assert(pNodeNext->addr() == pNextParentNode->less());
 		pNodeNext->setParent(pNextParentNode.get(), -1);
 	}
-
+	*/
 
 	template<class TIterator>
 	bool remove(TIterator& it)
@@ -2131,12 +2130,12 @@ namespace embDB
 
 			iterator find(const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)  
 			{
-				return TBase::find<iterator, TComp>(m_comp, key, pFromIterator, bFindNext);
+				return TBase::template find<iterator, TComp>(this->m_comp, key, pFromIterator, bFindNext);
 			}
-			template<class _TComp>
-			iterator find(_TComp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)  
+			template<class _TCustComp>
+			iterator find(_TCustComp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)  
 			{
-				return TBase::find<iterator, _TComp>(comp, key, pFromIterator, bFindNext);
+				return TBase::template find<iterator, _TCustComp>(comp, key, pFromIterator, bFindNext);
 			}
 		 
 			/*iterator find(iterator& itFrom, const TKey& key, bool bFoundNext = true)
@@ -2147,33 +2146,33 @@ namespace embDB
 
 			iterator begin()
 			{
-				return TBase::begin<iterator>();
+				return TBase::template begin<iterator>();
 			}
 
 			iterator last()
 			{
-				return TBase::last<iterator>();
+				return TBase::template last<iterator>();
 			}
 
 
 			iterator upper_bound(const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 			{
-				return TBase::upper_bound<iterator, TComp>(m_comp, key, pFromIterator, bFindNext);
+				return TBase::template upper_bound<iterator, TComp>(this->m_comp, key, pFromIterator, bFindNext);
 			}
 			iterator lower_bound(const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 			{
-				return TBase::lower_bound<iterator, TComp>(m_comp, key, pFromIterator, bFindNext);
+				return TBase::template lower_bound<iterator, TComp>(this->m_comp, key, pFromIterator, bFindNext);
 			}
 
 			template<class _Comp>
 			iterator upper_bound(const _Comp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 			{
-				return TBase::upper_bound<iterator, _Comp>(comp, key, pFromIterator, bFindNext);
+				return TBase::template upper_bound<iterator, _Comp>(comp, key, pFromIterator, bFindNext);
 			}
 			template<class _Comp>
 			iterator lower_bound(const _Comp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
 			{
-				return TBase::lower_bound<iterator, _Comp>(comp, key, pFromIterator, bFindNext);
+				return TBase::template lower_bound<iterator, _Comp>(comp, key, pFromIterator, bFindNext);
 			}
 
 
@@ -2181,7 +2180,7 @@ namespace embDB
 
 			bool  insert(const TKey& key, iterator *pFromIterator = NULL, iterator *pRetIterator = NULL)
 			{
-				return TBase::insert<iterator>(key, pFromIterator, pRetIterator);
+				return TBase::template insert<iterator>(key, pFromIterator, pRetIterator);
 			}
 
 			bool remove(const TKey& key)
@@ -2189,7 +2188,7 @@ namespace embDB
 				iterator it = find(key);
 				if(it.isNull())
 					return false;
-				return TBase::remove<iterator>(it);
+				return TBase::template remove<iterator>(it);
 			}
 			
 
@@ -2200,12 +2199,12 @@ namespace embDB
 				iterator it = find(key);
 				if(it.isNull())
 					return false;
-				return TBase::remove<iterator>(it, nRet);
+				return TBase::template remove<iterator>(it, nRet);
 			}
 
 			iterator remove(iterator it, int& nRet)
 			{
-				return TBase::remove<iterator>(it, nRet);
+				return TBase::template remove<iterator>(it, nRet);
 			}
 
 

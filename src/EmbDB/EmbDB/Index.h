@@ -21,12 +21,12 @@ public:
 	}
 	virtual bool getKey(CommonLib::CVariant* pVal)
 	{
-		pVal->setVal(m_ParentIt.key());
+		pVal->setVal(this->m_ParentIt.key());
 		return true;
 	}
 	virtual int64 getRowID()
 	{
-		return m_ParentIt.value();
+		return this->m_ParentIt.value();
 	}
 };
 
@@ -63,12 +63,12 @@ public:
 		  sFilePageHeader header(stream);
 		  if(!header.isValid())
 		  {
-			  m_pDBTransactions->error(_T("IndexField: Page %I64d Error CRC for node page"), pPage->getAddr()); //TO DO log error
+			  m_pDBTransactions->error(L"IndexField: Page %I64d Error CRC for node page", pPage->getAddr()); //TO DO log error
 			  return false;
 		  }
 		  if(header.m_nObjectPageType != FIELD_PAGE || header.m_nSubObjectPageType != INDEX_INFO_PAGE)
 		  {
-			  m_pDBTransactions->error(_T("IndexField: Page %I64d Not field info page"), pPage->getAddr()); //TO DO log error
+			  m_pDBTransactions->error(L"IndexField: Page %I64d Not field info page", pPage->getAddr()); //TO DO log error
 			  return false;
 		  }
 		  stream.read(m_nBTreeRootPage);

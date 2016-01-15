@@ -88,7 +88,7 @@ public:
 
 		bool remove(const TValue& val)
 		{
-			TvecValues::iterator it = std::find(m_vec.begin(), m_vec.end(), val);
+			typename TvecValues::iterator it = std::find(m_vec.begin(), m_vec.end(), val);
 			if(it == m_vec.end())
 				return false;
 			m_vec.erase(it);

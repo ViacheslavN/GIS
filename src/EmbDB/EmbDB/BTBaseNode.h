@@ -3,10 +3,10 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "Key.h"
-#include "RBMap.h"
-#include "BPCompressors.h"
+//#include "RBMap.h"
+//#include "BPCompressors.h"
 #include "embDBInternal.h"
-#include "BPSimpleCompessor.h"
+//#include "BPSimpleCompessor.h"
 #include "BTVector.h"
 #include "CompressorParams.h"
 namespace embDB
@@ -33,7 +33,7 @@ namespace embDB
 		virtual size_t headSize() const = 0;
 		virtual size_t rowSize() const = 0;
 		virtual	size_t tupleSize() const= 0;
-		virtual bool IsFree() const = 0;
+		//virtual bool IsFree() const = 0;
 		virtual bool isNeedSplit(uint32 nPageSize) const = 0;
 		//virtual bool init(ICompressorParams *pParams = NULL) = 0;
 		virtual int getFlags() const
@@ -54,7 +54,7 @@ namespace embDB
 
 
 
-	template<typename _TKey, typename _TLink, typename _TComp>
+/*	template<typename _TKey, typename _TLink, typename _TComp>
 	class BPSetTreeLeafNodeBase : public  BPBaseTreeNode
 	{
 	public:
@@ -116,7 +116,7 @@ namespace embDB
 		virtual bool remove(const TKey& key) = 0;
 	public:
 		TLink m_nLess;
-	};
+	};*/
 
 }
 #endif

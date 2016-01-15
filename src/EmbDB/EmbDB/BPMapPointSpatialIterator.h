@@ -1,7 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_B_PLUS_TREE_SPATIAL_POINT_ITERATOR_MAP_H_
 #define _EMBEDDED_DATABASE_B_PLUS_TREE_SPATIAL_POINT_ITERATOR_MAP_H_
 //#include "PointSpatialBPMaTraits.h"
-#include "BPTreeNodeMap.h"
 #include "CommonLibrary/SpatialKey.h"
 #include "simple_stack.h"
 namespace embDB
@@ -191,7 +190,7 @@ namespace embDB
 				}
 				TPointKey zRes;
 				FindRectMinZVal(zNextVal, m_zMin, m_zMax, zRes);
-				TBTree::iterator it = m_pTree->lower_bound(zRes);
+				typename TBTree::iterator it = m_pTree->lower_bound(zRes);
 				if(it.isNull())
 				{
 					m_nIndex = -1;

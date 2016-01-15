@@ -20,17 +20,17 @@ namespace embDB
 		{
 
 		}
-		FixedStringFieldIterator() :
+		FixedStringFieldIterator() 
 		{}
 		virtual ~FixedStringFieldIterator(){}
 
 	
 		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
-			const sFixedStringVal& sString= m_ParentIt.value();
+			const sFixedStringVal& sString= this->m_ParentIt.value();
 			CommonLib::CString sVal;
 
-			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), sVal);
+			((TBTree*)this->m_ParentIt.m_pTree)->convert(this->m_ParentIt.value(), sVal);
 
 			
 			pVal->setVal(sVal);
@@ -39,7 +39,7 @@ namespace embDB
 
 		virtual bool getVal(CommonLib::CString& sValue)
 		{
-			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), sValue);
+			((TBTree*)this->m_ParentIt.m_pTree)->convert(this->m_ParentIt.value(), sValue);
 			return true;
 		}
 	};
@@ -69,12 +69,12 @@ namespace embDB
 
 		virtual bool find(int64 nOID, CommonLib::CVariant* pFieldVal)
 		{
-			TBTree::iterator it = m_tree.find(nOID);
+			typename TBTree::iterator it = this->m_tree.find(nOID);
 			if(it.isNull())
 				return false;
 		 
-			CommonLib::CString sVal(m_pAlloc);
-			m_tree.convert(it.value(), sVal);
+			CommonLib::CString sVal(this->m_pAlloc);
+			this->m_tree.convert(it.value(), sVal);
 
 			pFieldVal->setVal(sVal);
 			return true;

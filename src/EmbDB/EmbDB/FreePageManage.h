@@ -3,7 +3,7 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "simple_stack.h"
-#include "BaseBPSet.h"
+//#include "BaseBPSet.h"
 #include "DirectTransactions.h"
 #include "BTVector.h"
 #include "BitMap.h"
@@ -14,7 +14,7 @@ namespace embDB
 {
 	class CStorage;
 
-	typedef embDB::TBPlusTreeSet<int64, int64, embDB::comp<int64>, embDB::IDBTransaction> TBTreeSet;
+//	typedef embDB::TBPlusTreeSet<int64, int64, embDB::comp<int64>, embDB::IDBTransaction> TBTreeSet;
 	class CFreePageManager
 	{
 		public:

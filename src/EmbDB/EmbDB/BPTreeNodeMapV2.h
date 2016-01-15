@@ -18,7 +18,7 @@ namespace embDB
 	{
 	public:
 
-		typedef BPTreeNodeSetv2<TKey, /*_TComp, */_Transaction, 	_TInnerCompressor, 
+		typedef BPTreeNodeSetv2<_TKey, _Transaction, 	_TInnerCompressor, 
 			_TLeafCompressor,  _TInnerNode,	 _TLeafNode > TBase;
 
 		typedef _TValue TValue;
@@ -48,19 +48,19 @@ namespace embDB
 		int insertInLeaf(TComp& comp, const TKey& key, const TValue& val, int nInsertInIndex = -1)
 		{
 			assert(m_bIsLeaf);
-			return m_LeafNode.insert(comp, key, val, nInsertInIndex);
+			return this->m_LeafNode.insert(comp, key, val, nInsertInIndex);
 		}
 
 
 		const TValue& value(uint32 nIndex) const
 		{
-			assert(m_bIsLeaf);
-			return m_LeafNode.value(nIndex);
+			assert(this->m_bIsLeaf);
+			return  this->m_LeafNode.value(nIndex);
 		}
 		TValue& value(uint32 nIndex)
 		{
-				assert(m_bIsLeaf);
-			return m_LeafNode.value(nIndex);
+			assert(this->m_bIsLeaf);
+			return this->m_LeafNode.value(nIndex);
 		}
 
 

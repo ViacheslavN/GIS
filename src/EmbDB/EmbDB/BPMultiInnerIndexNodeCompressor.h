@@ -4,7 +4,6 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "BPVector.h"
 #include "Key.h"
-#include "BPCompressors.h"
 #include "MultiIndexBase.h"
 namespace embDB
 {

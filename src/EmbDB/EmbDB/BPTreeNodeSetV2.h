@@ -132,7 +132,7 @@ namespace embDB
 			sFilePageHeader header(stream, m_bCheckCRC32 && !pFilePage->isCheck());
 			if( m_bCheckCRC32 && !pFilePage->isCheck() && !header.isValid())
 			{
-				pTransactions->error(_T("BTREE: Page %I64d Error CRC for node page (crc page: %ud, calc crc %ud)"), pFilePage->getAddr(), header.m_nCRC32, header.m_nCalcCRC32);
+				pTransactions->error(L"BTREE: Page %I64d Error CRC for node page (crc page: %ud, calc crc %ud)", pFilePage->getAddr(), header.m_nCRC32, header.m_nCalcCRC32);
 				return false;
 			}
 			pFilePage->setCheck(true);

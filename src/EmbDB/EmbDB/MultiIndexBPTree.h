@@ -21,12 +21,12 @@ namespace embDB
 	
 		virtual bool getKey(CommonLib::CVariant* pVal)
 		{
-			pVal->setVal(m_ParentIt.key().m_key);
+			pVal->setVal(this->m_ParentIt.key().m_key);
 			return true;
 		}
 		virtual int64 getRowID()
 		{
-			return m_ParentIt.key().m_nObjectID;
+			return this->m_ParentIt.key().m_nObjectID;
 		}
 	};
 
@@ -73,7 +73,7 @@ namespace embDB
 			pIndexKey->getVal(val);*/
 			FType val = pValue->Get<FType>();
 			TIndexTuple index(val, nOID);
-			bool bRet =  m_tree.insert(index, pFromIterator, pRetIter ? &RetIterator : NULL);
+			bool bRet =  this->m_tree.insert(index, pFromIterator, pRetIter ? &RetIterator : NULL);
 
 
 			if(pRetIter)
@@ -107,7 +107,7 @@ namespace embDB
 			pIndexKey->getVal(val);
 			TIndexTuple index(val, 0);
 
-			TBTree::iterator it = m_tree.find(m_CompKeyOnly, index);
+			typename TBTree::iterator it = this->m_tree.find(m_CompKeyOnly, index);
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
@@ -117,7 +117,7 @@ namespace embDB
 			pIndexKey->getVal(val);
 			TIndexTuple index(val, 0);
 
-			TBTree::iterator it = m_tree.lower_bound(m_CompKeyOnly, index);
+			typename TBTree::iterator it = this->m_tree.lower_bound(m_CompKeyOnly, index);
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
@@ -127,7 +127,7 @@ namespace embDB
 			pIndexKey->getVal(val);
 			TIndexTuple index(val, 0);
 
-			TBTree::iterator it = m_tree.upper_bound(m_CompKeyOnly, index);
+			typename TBTree::iterator it = this->m_tree.upper_bound(m_CompKeyOnly, index);
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
@@ -139,7 +139,7 @@ namespace embDB
 			pIndexKey->getVal(val);
 			TIndexTuple index(val,nOID);
 
-			TBTree::iterator it = m_tree.find(index);
+			typename TBTree::iterator it = this->m_tree.find(index);
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
@@ -149,7 +149,7 @@ namespace embDB
 			pIndexKey->getVal(val);
 			TIndexTuple index(val,nOID);
 
-			TBTree::iterator it = m_tree.lower_bound(index);
+			typename TBTree::iterator it = this->m_tree.lower_bound(index);
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
@@ -159,7 +159,7 @@ namespace embDB
 			pIndexKey->getVal(val);
 			TIndexTuple index(val,nOID);
 
-			TBTree::iterator it = m_tree.upper_bound(index);
+			typename TBTree::iterator it = this->m_tree.upper_bound(index);
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
@@ -169,12 +169,12 @@ namespace embDB
 			pIndexKey->getVal(val);
 			TIndexTuple index(val,nOID);
 
-			return m_tree.remove(index);
+			return this->m_tree.remove(index);
 		}
 
 		virtual bool commit()
 		{
-			return m_tree.commit();
+			return this->m_tree.commit();
 		}
 	};
 
@@ -218,8 +218,8 @@ namespace embDB
 		virtual IndexFiledPtr getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
 
-			TMultiIndex * pIndex = new  TMultiIndex(pTransactions, m_pAlloc, m_nNodePageSize);
-			pIndex->load(m_nBTreeRootPage, pTransactions->getType());
+			TMultiIndex * pIndex = new  TMultiIndex(pTransactions, this->m_pAlloc, m_nNodePageSize);
+			pIndex->load(this->m_nBTreeRootPage, pTransactions->getType());
 			return IndexFiledPtr(pIndex);	
 		}
 

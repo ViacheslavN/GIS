@@ -35,7 +35,9 @@ LOCAL_CFLAGS :=	-DANDROID \
 		-I$(STLPORT_BASE)/stlport \
 		-I$(COMMON_I_PATH) \
 		-x c++
-
+#storage
 LOCAL_SRC_FILES :=  FilePage.cpp storage.cpp StorageInfo.cpp
+#Table
+LOCAL_SRC_FILES +=Table.cpp   
 
 include $(BUILD_STATIC_LIBRARY)

@@ -76,8 +76,8 @@ namespace embDB
 			sDBHeader m_dbHeader;
 			std::auto_ptr<CDBTranManager>  m_pTranManager;
 			bool m_bOpen;
-			typedef RBMap<CommonLib::CString, CStorage*> TTableStorages;
-			TTableStorages m_TableStorages;
+		//	typedef RBMap<CommonLib::CString, CStorage*> TTableStorages;
+		//	TTableStorages m_TableStorages;
 			 
 			
 			
