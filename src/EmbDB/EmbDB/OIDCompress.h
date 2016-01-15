@@ -52,7 +52,7 @@ namespace embDB
 		};
 
 		 typedef std::map<int64, SymbolInfo> TDiffFreq;
-		 typedef TUnsignedCalcNumLen<uint64, TFindMostSigBit> TCalcNumLen;
+		 typedef TUnsignedCalcNumLen<uint64, TFindMostSigBit, 64> TCalcNumLen;
 		 typedef TRangeEncoder<uint32, 32> TRangeEncoder;
 		 typedef TRangeDecoder<uint32, 32> TRangeDecoder;
 		 typedef std::vector<Symbols> TVecFreq;
@@ -65,12 +65,7 @@ namespace embDB
 			void AddSymbol(int64 nDiff);
 			void RemoveSymbol(int64 nDiff);
 
-			double Log2( double n )  const
-			{  
-
-				return log( n ) / log( (double)2 );  
-			}
-
+		
 
 			void compress(TBPVector<int64>& oids, CommonLib::IWriteStream* pStream);
 			void read(uint32 nSize, TBPVector<int64>& oids, CommonLib::IReadStream* pStream);

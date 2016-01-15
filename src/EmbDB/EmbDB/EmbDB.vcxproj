@@ -530,6 +530,7 @@
     <ClInclude Include="LeafSetCompBase.h" />
     <ClInclude Include="LeafStringCompress.h" />
     <ClInclude Include="LinkCompress.h" />
+    <ClInclude Include="MathUtils.h" />
     <ClInclude Include="MemPageCache.h" />
     <ClInclude Include="MultiIndex.h" />
     <ClInclude Include="MultiIndexBase.h" />
@@ -683,6 +684,8 @@
     <ClCompile Include="FreePageManage.cpp" />
     <ClCompile Include="InneNodeCompress.cpp" />
     <ClCompile Include="InsertCursor.cpp" />
+    <ClCompile Include="LinkCompress.cpp" />
+    <ClCompile Include="MathUtils.cpp" />
     <ClCompile Include="OIDCompress.cpp" />
     <ClCompile Include="PageAlloc.cpp" />
     <ClCompile Include="Row.cpp" />

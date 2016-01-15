@@ -3,6 +3,7 @@
 
 #include "CommonLibrary/FixedBitStream.h"
 #include <map>
+#include "MathUtils.h"
 namespace embDB
 {
 	
@@ -81,7 +82,7 @@ namespace embDB
 
 	};
 
-	template<class _TValue, class _TFindMostSigBit>
+	template<class _TValue, class _TFindMostSigBit, int _nMaxBitsLens>
 	class TUnsignedCalcNumLen
 	{
 		public:
@@ -89,9 +90,9 @@ namespace embDB
 			typedef _TValue TValue;
 			typedef _TFindMostSigBit TFindBit;
 
-			typedef std::map<uint16, uint32> TLenFreq;
+	 
 
-			TUnsignedCalcNumLen() : m_nLenBitSize(0), m_nCount(0)
+			TUnsignedCalcNumLen() : m_nLenBitSize(0), m_nCount(0), m_nDIffsLen(0)
 			{
 
 			}
@@ -100,10 +101,17 @@ namespace embDB
 			{
 				uint16 nBitLen =  m_FindBit.FMSB(symbol);
 
+				assert(nBitLen < _nMaxBitsLens);
+
 				m_nLenBitSize += nBitLen;
 				m_nCount++;
 
-				m_MapFreq[nBitLen] += 1;
+			//	if(!m_BitsLensFreq[nBitLen])
+			//		m_nDIffsLen++;
+
+				m_BitsLensFreq[nBitLen] += 1;
+
+				//m_MapFreq[nBitLen] += 1;
 
 				return nBitLen;
 			}
@@ -114,28 +122,27 @@ namespace embDB
 				m_nLenBitSize -= nBitLen;
 				m_nCount--;
 
-				m_MapFreq[nBitLen] -= 1;
+				m_BitsLensFreq[nBitLen] -= 1;
+			//	if(!m_BitsLensFreq[nBitLen])
+			//		m_nDIffsLen--;
 			}
-
-			const TLenFreq& GetLenFreq() const
-			{
-				return m_MapFreq;
-			}
-			double Log2( double n )  const
-			{  
-
-				return log( n ) / log( (double)2 );  
-			}
+ 
+			 
 			double GetCodeBitSize() const
 			{
 				double dBitRowSize = 0;
-				for (TLenFreq::const_iterator it = m_MapFreq.begin(); it != m_MapFreq.end(); ++it)
+				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
 				{
-					double dFreq = it->second;
-					double dLog2 = -1*Log2(dFreq/m_nCount); 
+					double dFreq = m_BitsLensFreq[i];
+					double dLog2 = -1*mathUtils::Log2(dFreq/m_nCount); 
 					dBitRowSize += dFreq* dLog2;
 
 				}
+
+				if(dBitRowSize < 32)
+					dBitRowSize = 32;
+
+				dBitRowSize += dBitRowSize*0.05;
 
 				return dBitRowSize;
 			}
@@ -144,12 +151,30 @@ namespace embDB
 				return m_nLenBitSize;
 			}
 
+			uint32 GetCompressSize() const
+			{
+				double dRowBitsLen = GetCodeBitSize();
+				uint32 nByteSize = (dRowBitsLen + 7)/8;
+
+
+
+				return nByteSize + _nMaxBitsLens * (sizeof(uint16)) + m_nLenBitSize;
+
+			}
+
+
+			void compress
+
 		private:	
 
 			TFindBit    m_FindBit;
-			TLenFreq m_MapFreq;
+	  
 			uint32 m_nLenBitSize;
 			uint32 m_nCount;
+
+			//uint32 m_nDIffsLen;
+
+			uint16  m_BitsLensFreq[_nMaxBitsLens];
 	};
 }
 #endif

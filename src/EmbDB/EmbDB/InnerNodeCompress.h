@@ -15,9 +15,9 @@ namespace embDB
 	{
 	public:
 
-		typedef  int64 TKey;
+		typedef  int64 TOID;
 		typedef  int64 TLink;
-		typedef  TBPVector<int64> TKeyMemSet;
+		typedef  TBPVector<int64> TOIDMemSet;
 		typedef  TBPVector<int64> TLinkMemSet;
 		typedef CompressorParamsBaseImp TInnerCompressorParams;
 
@@ -30,17 +30,17 @@ namespace embDB
 		}
 
 
-		BPInnerNodeFieldCompressor(TKeyMemSet* pKeyMemSet, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = NULL);
+		BPInnerNodeFieldCompressor(TOIDMemSet* pKeyMemSet, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = NULL);
 		~BPInnerNodeFieldCompressor();
-		bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream);
-		bool Write(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryWriteStream& stream);
+		bool Load(TOIDMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream);
+		bool Write(TOIDMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryWriteStream& stream);
 		
 
-		virtual bool insert(int nIndex, const TKey& key, TLink link );
-		virtual bool add(const TKeyMemSet& keySet, const TLinkMemSet& linkSet);
-		virtual bool recalc(const TKeyMemSet& keySet, const TLinkMemSet& linkSet);
-		virtual bool remove(int nIndex, const TKey& key, TLink link);
-		virtual bool update(int nIndex, const TKey& key, TLink link);
+		virtual bool insert(int nIndex, const TOID& key, TLink link );
+		virtual bool add(const TOIDMemSet& keySet, const TLinkMemSet& linkSet);
+		virtual bool recalc(const TOIDMemSet& keySet, const TLinkMemSet& linkSet);
+		virtual bool remove(int nIndex, const TOID& key, TLink link);
+		virtual bool update(int nIndex, const TOID& key, TLink link);
 		virtual uint32 size() const;
 		virtual bool  isNeedSplit(uint32 nPageSize) const;
 		virtual uint32 count() const;
@@ -52,7 +52,7 @@ namespace embDB
 	
 	private:
 		uint32 m_nSize;
-		TKeyMemSet* m_pKeyMemSet;
+		TOIDMemSet* m_pKeyMemSet;
 		TLinkMemSet* m_pLinkMemSet;
 		OIDCompress m_OIDCompress;
 	};

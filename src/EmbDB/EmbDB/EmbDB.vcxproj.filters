@@ -879,6 +879,12 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MathUtils.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1006,6 +1012,12 @@
     </ClCompile>
     <ClCompile Include="OIDCompress.cpp">
       <Filter>DB\Fields\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="LinkCompress.cpp">
+      <Filter>DB\Fields\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="MathUtils.cpp">
+      <Filter>utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

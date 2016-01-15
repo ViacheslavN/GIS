@@ -2,6 +2,7 @@
 #include "OIDCompress.h"
 #include <algorithm>
 #include "CommonLibrary/PodVector.h"
+#include "MathUtils.h"
 namespace embDB
 {
 
@@ -20,7 +21,7 @@ namespace embDB
 		for (TDiffFreq::const_iterator it = m_DiffFreq.begin(); it != m_DiffFreq.end(); ++it)
 		{
 			const SymbolInfo& info = it->second;
-			dBitRowSize += (info.m_nFreq * (-1*Log2((double)(info.m_nFreq)/(m_nCount - 1))));
+			dBitRowSize += (info.m_nFreq * (-1*mathUtils::Log2((double)(info.m_nFreq)/(m_nCount - 1))));
 
 		}
 		if(dBitRowSize < 32)
@@ -118,7 +119,7 @@ namespace embDB
 		}
 
 
-		for (size_t i = 1, sz = oids.size() - 1; i < sz; ++i)
+		for (size_t i = 1, sz = oids.size(); i < sz; ++i)
 		{
 			int64 nDiff = oids[i] - oids[i - 1];
 			TDiffFreq::iterator it =  m_DiffFreq.find(nDiff);

@@ -1,1 +1,0 @@
-[arm64-v8a] Compile++      : EmbDB <= Table.cpp
