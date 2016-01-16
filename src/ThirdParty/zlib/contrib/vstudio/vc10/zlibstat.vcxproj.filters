@@ -76,6 +76,9 @@
     <None Include="zlibvc.def">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="..\..\..\Android.mk">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\zlib_lib.h">

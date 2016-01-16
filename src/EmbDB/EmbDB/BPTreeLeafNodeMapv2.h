@@ -56,7 +56,7 @@ namespace embDB
 		int insert(TComp& comp, const TKey& key, const TValue& value, int nInsertInIndex = -1)
 		{
 			int32 nIndex = 0;
-			bool bRet =  insertImp(comp, key, nIndex, nInsertInIndex);
+			bool bRet =  this->insertImp(comp, key, nIndex, nInsertInIndex);
 			if(!bRet)
 				return -1;
 
@@ -71,8 +71,8 @@ namespace embDB
 
 			if(this->m_bOneSplit)
 			{
-				int nSplitIndex = SplitOne(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
-				SplitOne(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
+				int nSplitIndex = this->SplitOne(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
+				this->SplitOne(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
 				this->m_pCompressor->remove(nSplitIndex, pNode->m_leafKeyMemSet[0], pNode->m_leafValueMemSet[0]);
 				pNewNodeComp->insert(0, pNode->m_leafKeyMemSet[0], pNode->m_leafValueMemSet[0]);
 				return nSplitIndex;
@@ -80,8 +80,8 @@ namespace embDB
 			else
 			{
 
-				int nSplitIndex = SplitInVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
-				SplitInVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
+				int nSplitIndex = this->SplitInVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
+				this->SplitInVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
 				this->m_pCompressor->SplitIn(0, nSplitIndex, pNewNodeComp);
 				return nSplitIndex;
 			}
@@ -107,11 +107,11 @@ namespace embDB
 			if(pSplitKey)
 				*pSplitKey = this->m_leafKeyMemSet[nSize];
 
-			SplitInVec(this->m_leafKeyMemSet, leftKeyMemSet, 0, nSize);
-			SplitInVec(this->m_leafValueMemSet, leftValueMemSet, 0, nSize);
+			this->SplitInVec(this->m_leafKeyMemSet, leftKeyMemSet, 0, nSize);
+			this->SplitInVec(this->m_leafValueMemSet, leftValueMemSet, 0, nSize);
 
-			SplitInVec(this->m_leafKeyMemSet, rightKeyMemSet, nSize, this->m_leafKeyMemSet.size());
-			SplitInVec(this->m_leafValueMemSet, rightValueMemSet, nSize, this->m_leafValueMemSet.size());
+			this->SplitInVec(this->m_leafKeyMemSet, rightKeyMemSet, nSize, this->m_leafKeyMemSet.size());
+			this->SplitInVec(this->m_leafValueMemSet, rightValueMemSet, nSize, this->m_leafValueMemSet.size());
 
 			pleftNodeComp->recalc(leftKeyMemSet, leftValueMemSet);
 			pRightNodeComp->recalc(rightKeyMemSet, rightValueMemSet);
@@ -133,16 +133,16 @@ namespace embDB
 		bool UnionWith(BPTreeLeafNodeMapv2* pNode, bool bLeft, int *nCheckIndex = 0)
 		{
 			this->m_pCompressor->add(pNode->m_leafKeyMemSet, pNode->m_leafValueMemSet);
-			UnionVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft, nCheckIndex);
-			UnionVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, bLeft);
+			this->UnionVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft, nCheckIndex);
+			this->UnionVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, bLeft);
 			return true;
 		}
 		bool AlignmentOf(BPTreeLeafNodeMapv2* pNode, bool bFromLeft)
 		{
-			if(!AlignmentOfVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, bFromLeft))
+			if(!this->AlignmentOfVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, bFromLeft))
 				return false;
 						
-			AlignmentOfVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, bFromLeft);
+			this->AlignmentOfVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, bFromLeft);
 
 			pNode->recalc();
 			recalc();

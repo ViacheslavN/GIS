@@ -55,7 +55,7 @@ public:
 		}
 		else
 		{
-			pNode = findLeafNodeForInsert(key);
+			pNode = this->findLeafNodeForInsert(key);
 			if(pNode.get())
 			{
 				bRet = InsertInLeafNode(pNode.get(), key, value, nIndex) != NULL;
@@ -87,7 +87,7 @@ public:
 
 		//m_ChangeNode.insert(TBTreeNodePtr(pNode));
 		this->m_nStateTree |= TBase::eBPTChangeLeafNode;
-		return CheckLeafNode(pNode, &nRetIndex);
+		return this->CheckLeafNode(pNode, &nRetIndex);
 	}
 	
 	iterator begin()

@@ -241,7 +241,7 @@ namespace CommonLib
 		template <typename T>
 		T& Get()
 		{
-			if (m_id != type2int<T>::typeId)
+			if (m_id != (eDataTypes)type2int<T>::typeId)
 				assert(false);
 			return *(T *)getBuffer();
 		}
@@ -249,7 +249,7 @@ namespace CommonLib
 		template <typename T>
 		const T& Get() const
 		{
-			if (m_id != type2int<T>::typeId)
+			if (m_id != (eDataTypes)type2int<T>::typeId)
 				assert(false);
 			return *(T *)getBuffer();
 		}
@@ -257,7 +257,7 @@ namespace CommonLib
 		template <typename T>
 		void getVal(T& value) const
 		{
-			if (m_id != type2int<T>::typeId)
+			if (m_id != (eDataTypes)type2int<T>::typeId)
 				assert(false);
 			value = *(T *)getBuffer();
 		}
@@ -278,7 +278,7 @@ namespace CommonLib
 		template <typename T> 
 		T* GetPtr()
 		{
-			if (m_id != type2int<T>::typeId)
+			if (m_id != (eDataTypes)type2int<T>::typeId)
 				return NULL;
 			return (T *)getBuffer();
 		}
@@ -286,7 +286,7 @@ namespace CommonLib
 		template <typename T> 
 		const T* GetPtr() const
 		{
-			if (m_id != type2int<T>::typeId)
+			if (m_id != (eDataTypes)type2int<T>::typeId)
 				return NULL;
 			return (T *)getBuffer();
 		}

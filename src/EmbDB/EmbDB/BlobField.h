@@ -19,16 +19,16 @@ namespace embDB
 		{
 
 		}
-		BlobFieldIterator() :
+		BlobFieldIterator()
 		{}
 		virtual ~BlobFieldIterator(){}
 
 		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
-			const sBlobVal& sBlob = m_ParentIt.value();
+			const sBlobVal& sBlob = this->m_ParentIt.value();
 			CommonLib::CBlob blob;
 
-			((TBTree*)m_ParentIt.m_pTree)->convert(sBlob, blob);
+			((TBTree*)this->m_ParentIt.m_pTree)->convert(sBlob, blob);
 
 
 			pVal->setVal(blob);
@@ -37,7 +37,7 @@ namespace embDB
 
 		virtual bool getVal(CommonLib::CBlob& blob)
 		{
-			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), blob);
+			((TBTree*)this->m_ParentIt.m_pTree)->convert(this->m_ParentIt.value(), blob);
 			return true;
 		}
 	};
@@ -63,12 +63,12 @@ namespace embDB
 
 		virtual bool find(int64 nOID, CommonLib::CVariant* pFieldVal)
 		{
-			TBTree::iterator it = m_tree.find(nOID);
+			typename TBTree::iterator it = this->m_tree.find(nOID);
 			if(it.isNull())
 				return false;
 
-			CommonLib::CBlob blob(m_pAlloc);
-			m_tree.convert(it.value(), blob);
+			CommonLib::CBlob blob(this->m_pAlloc);
+			this->m_tree.convert(it.value(), blob);
 
 			pFieldVal->setVal(blob);
 			return true;

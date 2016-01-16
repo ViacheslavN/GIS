@@ -923,6 +923,7 @@ bld_ml64.bat</Command>
     <ResourceCompile Include="zlib.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\Android.mk" />
     <None Include="zlibvc.def" />
   </ItemGroup>
   <ItemGroup>

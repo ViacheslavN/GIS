@@ -1,10 +1,11 @@
 #include "stdafx.h"
+#include "Database.h"
 #include "Transactions.h"
 #include "CommonLibrary/alloc_t.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/String.h"
 #include "TransactionCache.h"
-#include "Database.h"
+
 namespace embDB
 {
 
@@ -93,14 +94,14 @@ namespace embDB
 		bool bOpen =  m_TranStorage.open(m_sFileName, /*m_pDBStorage->getPageSize(),*/ true);
 		if(!bOpen)
 		{
-			error(_T("Transactions: Can't create storage %s"), m_sFileName.cstr());
+			error(L"Transactions: Can't create storage %s", m_sFileName.cstr());
 			return false;
 		}
 		m_LogStateManager.setState(eTS_BEGIN);
 		CFilePage* pFilePage = m_TranStorage.getNewPage(MIN_PAGE_SIZE);
 		if(!pFilePage)
 		{
-			error(_T("Transactions: Can't create page addr:0"));
+			error(L"Transactions: Can't create page addr:0");
 			return false;
 		}
 		m_Header.nRestoreType = m_nRestoreType;
@@ -400,7 +401,7 @@ namespace embDB
 		if(nTranAddr == -1)
 		{
 			CommonLib::CString sMsg;
-			error(_T("Transactions: Error save page: %I64d"), pPage->getAddr());
+			error(L"Transactions: Error save page: %I64d", pPage->getAddr());
 			return false;
 		}
 		if(m_nRestoreType == rtUndo)

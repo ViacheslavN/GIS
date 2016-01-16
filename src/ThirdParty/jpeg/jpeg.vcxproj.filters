@@ -186,4 +186,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Android.mk">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

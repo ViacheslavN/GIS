@@ -37,6 +37,8 @@
 #include <vector>
 #include <list>
 #include <assert.h>
+#include <map>
+#include <memory>
 
 
 #include "GeneralTypes.h"

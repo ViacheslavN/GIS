@@ -95,7 +95,7 @@ namespace GisEngine
 			m_type = (eBrushType)stream.readByte();
 			m_color.load(&stream);
 			m_bgColor.load(&stream);
-			m_bRelease = stream.readByte();
+			m_bRelease = stream.readBool();
 		 
 			if(m_bRelease)
 			{

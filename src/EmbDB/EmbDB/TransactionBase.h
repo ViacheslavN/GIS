@@ -8,15 +8,16 @@
 #include "SimpleSelectCursor.h"
 #include "DeleteCursor.h"
 #include <set>
+
 namespace embDB
 {
-	class CDatabase;
+	 
 	template<typename I>
 	class ITransactionBase : public I
 	{
 		public:
 
-			ITransactionBase(CDatabase* pDatabase) : m_pDatabase(pDatabase)
+			ITransactionBase(IDBDatabase* pDatabase) : m_pDatabase(pDatabase)
 			{
 				if(m_pDatabase) //check for test bplus tree 
 				{
@@ -180,7 +181,7 @@ namespace embDB
 			}
 	protected:
 
-		CDatabase* m_pDatabase;
+		IDBDatabase* m_pDatabase;
 		IDBStoragePtr m_pDBStorage;
 		ISchemaPtr m_pSchema;
 		typedef CommonLib::CHash2Key<CommonLib::CString, CommonLib::CString> TValueFieldKey;

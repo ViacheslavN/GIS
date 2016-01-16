@@ -25,6 +25,11 @@ namespace embDB
 			TBlobLeafNode<_TKey, _Transaction, _TCompParams>,
 			TBlobNodeMap<_TKey, _Transaction, _TCompParams>	> TBase;
 
+
+		typedef typename TBase::TBTreeNode	TBTreeNode;
+		typedef typename TBase::iterator	iterator;
+		typedef typename TBase::TKey	TKey;
+
 		TBPBlobTree(int64 nPageBTreeInfo, embDB::IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, uint32 nPageSize, bool bMulti = false, bool bCheckCRC32 = true) :
 		TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nPageSize, bMulti, bCheckCRC32), m_PageAlloc(pAlloc, 1024*1024, 2)
 		{
@@ -33,13 +38,13 @@ namespace embDB
 
 		~TBPBlobTree()
 		{
-			DeleteNodes();
+			this->DeleteNodes();
 		}
 
 		virtual TBTreeNode* CreateNode(int64 nAdd, bool bIsLeaf)
 		{
-			TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, nAdd, m_bMulti, bIsLeaf, m_bCheckCRC32, m_nNodesPageSize, m_InnerCompParams.get(),
-				m_LeafCompParams.get());
+			TBTreeNode *pNode = new TBTreeNode(-1, this->m_pAlloc, nAdd, this->m_bMulti, bIsLeaf, this->m_bCheckCRC32, this->m_nNodesPageSize, this->m_InnerCompParams.get(),
+				this->m_LeafCompParams.get());
 			pNode->m_LeafNode.SetPageAlloc(&m_PageAlloc);
 			return pNode;
 		}
@@ -51,7 +56,7 @@ namespace embDB
 			if(blob.size())
 			{
 				sValue.m_nSize = blob.size();
-				sValue.m_pBuf = (byte*)m_pAlloc->alloc(blob.size());
+				sValue.m_pBuf = (byte*)this->m_pAlloc->alloc(blob.size());
 				memcpy(sValue.m_pBuf, blob.buffer(), blob.size());
 			}
 			else
@@ -67,13 +72,13 @@ namespace embDB
 			if(!blobVal.m_nSize)
 				return;
 
-			if(blobVal.m_nSize < m_LeafCompParams->GetMaxPageBlobSize())
+			if(blobVal.m_nSize < this->m_LeafCompParams->GetMaxPageBlobSize())
 			{
 				blob.copy(blobVal.m_pBuf, blobVal.m_nSize);
 			}
 			else
 			{
-				embDB::ReadStreamPagePtr pReadStream = m_LeafCompParams->GetReadStream(m_pTransaction, blobVal.m_nPage, blobVal.m_nBeginPos);
+				embDB::ReadStreamPagePtr pReadStream = this->m_LeafCompParams->GetReadStream(this->m_pTransaction, blobVal.m_nPage, blobVal.m_nBeginPos);
 				pReadStream->read(blob.buffer(), blobVal.m_nSize);
 				 
 			}

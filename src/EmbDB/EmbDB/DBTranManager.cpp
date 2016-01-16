@@ -114,10 +114,10 @@ namespace embDB
 		long nDate = 0;
 		long nTime = 0;
 		nDate = CommonLib::TimeUtils::GetCurrentDate(&nTime);
-		sFileName.format(_T("\\%d_%d_%I64d"), nDate, nTime, m_nTranID++);
+		sFileName.format(L"\\%d_%d_%I64d", nDate, nTime, m_nTranID++);
 		while(CommonLib::FileSystem::isFileExisit(sFileName.wstr()))
 		{
-			sFileName.format(_T("\\%d_%d_%I64d"),nDate, nTime, m_nTranID++);
+			sFileName.format(L"\\%d_%d_%I64d", nDate, nTime, m_nTranID++);
 		}
 		CTransaction *pTran = new CTransaction(m_pAlloc, rtUndo, trType, m_sWorkingPath + sFileName, m_pDB, m_nTranID++ );
 		//CDirectTransactions *pTran = new CDirectTransactions(m_pAlloc, rtUndo, trType, m_sWorkingPath + sFileName, m_pDB->getMainStorage(), m_nTranID++ );

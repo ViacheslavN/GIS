@@ -28,7 +28,7 @@ namespace embDB
 
 		virtual bool getKey(CommonLib::CVariant* pVal)
 		{
-			TPointKey& zKey = m_ParentIt.key();
+			TPointKey& zKey = this->m_ParentIt.key();
 			TSpObj spObj; 
 			zKey.getXY(spObj);
 			pVal->setVal(spObj);
@@ -36,7 +36,7 @@ namespace embDB
 		}
 		virtual int64 getRowID()
 		{
-			return m_ParentIt.value();
+			return this->m_ParentIt.value();
 		}
 	};
 
@@ -303,8 +303,8 @@ namespace embDB
 	{
 	public:
 		typedef TStatialIndexBase<_TSpatialTree, _TZCoordType, _TSpObj,ISpatialIndexRect> TBase;
-
-
+		typedef typename TBase::TSpatialObj	TSpatialObj;
+		typedef typename TBase::TPointType	TPointType;
 
 		TStatialIndexRect( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageNodeSize) : TBase(pTransactions, pAlloc, nPageNodeSize)
 		{}
@@ -317,30 +317,30 @@ namespace embDB
 		{
 			CommonLib::IGeoShapePtr& pShape = pValue->Get<CommonLib::IGeoShapePtr>();
 			CommonLib::bbox bbox = pShape->getBB();
-			Obj.m_minX = TPointType((bbox.xMin + m_dOffsetX) / m_dScaleX);
-			Obj.m_maxX = TPointType((bbox.xMax + m_dOffsetX) / m_dScaleX);
-			Obj.m_minY = TPointType((bbox.yMin + m_dOffsetY) / m_dScaleY);
-			Obj.m_maxY = TPointType((bbox.yMax + m_dOffsetY) / m_dScaleY);
+			Obj.m_minX = TPointType((bbox.xMin + this->m_dOffsetX) / this->m_dScaleX);
+			Obj.m_maxX = TPointType((bbox.xMax + this->m_dOffsetX) / this->m_dScaleX);
+			Obj.m_minY = TPointType((bbox.yMin + this->m_dOffsetY) / this->m_dScaleY);
+			Obj.m_maxY = TPointType((bbox.yMax + this->m_dOffsetY) / this->m_dScaleY);
 		}
  
 
 		virtual bool insert(const CommonLib::bbox& bbox, int64 nOID)
 		{
-			if(bbox.xMin < m_extent.xMin)
+			if(bbox.xMin < this->m_extent.xMin)
 				return false;
-			if(bbox.xMax > m_extent.xMax)
+			if(bbox.xMax > this->m_extent.xMax)
 				return false;
-			if(bbox.yMin < m_extent.yMin)
+			if(bbox.yMin < this->m_extent.yMin)
 				return false;
-			if(bbox.yMax > m_extent.yMax)
+			if(bbox.yMax > this->m_extent.yMax)
 				return false;
 
-			TPointType xMin = TPointType((bbox.xMin + m_dOffsetX) / m_dScaleX);
-			TPointType xMax = TPointType((bbox.xMax + m_dOffsetX) / m_dScaleX);
-			TPointType yMin = TPointType((bbox.yMin + m_dOffsetY) / m_dScaleY);
-			TPointType yMax = TPointType((bbox.yMax + m_dOffsetY) / m_dScaleY);
+			TPointType xMin = TPointType((bbox.xMin + this->m_dOffsetX) / this->m_dScaleX);
+			TPointType xMax = TPointType((bbox.xMax + this->m_dOffsetX) / this->m_dScaleX);
+			TPointType yMin = TPointType((bbox.yMin + this->m_dOffsetY) / this->m_dScaleY);
+			TPointType yMax = TPointType((bbox.yMax + this->m_dOffsetY) / this->m_dScaleY);
 
-			return m_tree.insert(xMin, yMin, xMax, yMax, nOID);
+			return this->m_tree.insert(xMin, yMin, xMax, yMax, nOID);
 
 		}
 	};
@@ -351,6 +351,8 @@ namespace embDB
 	{
 	public:
 		typedef TStatialIndexBase<_TSpatialTree, _TZCoordType,  _TSpObj, ISpatialIndexPoint> TBase;
+		typedef typename TBase::TSpatialObj	TSpatialObj;
+		typedef typename TBase::TPointType	TPointType;
 
 		TStatialIndexPoint( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageNodeSize) : TBase(pTransactions, pAlloc, nPageNodeSize)
 		{}
@@ -364,15 +366,15 @@ namespace embDB
 
 		virtual bool insert(double dX, double dY, int64 nOID)
 		{
-			if(dX < m_extent.xMin || dX > m_extent.xMax )
+			if(dX < this->m_extent.xMin || dX > this->m_extent.xMax )
 				return false;
-			if(dY < m_extent.yMin || dY > m_extent.yMax )
+			if(dY < this->m_extent.yMin || dY > this->m_extent.yMax )
 				return false;
 
-			TPointType x = TPointType((dX + m_dOffsetX) / m_dScaleX);
-			TPointType y = TPointType((dY + m_dOffsetY) / m_dScaleY);
+			TPointType x = TPointType((dX + this->m_dOffsetX) / this->m_dScaleX);
+			TPointType y = TPointType((dY + this->m_dOffsetY) / this->m_dScaleY);
 			
-			return m_tree.insert(x, y, nOID);
+			return this->m_tree.insert(x, y, nOID);
 
 		}
 	};

@@ -28,15 +28,15 @@ namespace embDB
 		}
 		~TStringLeafNode()
 		{
-			if(m_pCompressor)
-				m_pCompressor->Clear();
+			if(this->m_pCompressor)
+				this->m_pCompressor->Clear();
 		}
 
 
 		virtual bool init(TLeafCompressorParams *pParams , Transaction* pTransaction)
 		{
-			assert(!m_pCompressor);
-			m_pCompressor = new TCompressor(pTransaction, (CommonLib::alloc_t*)m_pPageAlloc, pParams, &m_leafKeyMemSet, &m_leafValueMemSet);
+			assert(!this->m_pCompressor);
+			this->m_pCompressor = new TCompressor(pTransaction, (CommonLib::alloc_t*)m_pPageAlloc, pParams, &this->m_leafKeyMemSet, &this->m_leafValueMemSet);
 			return true;
 		}
 
@@ -47,7 +47,7 @@ namespace embDB
 		void SetPageAlloc(CPageAlloc *pPageAlloc)
 		{
 			assert(pPageAlloc != NULL);
-			assert(m_pCompressor == NULL);
+			assert(this->m_pCompressor == NULL);
 			m_pPageAlloc = pPageAlloc;
 		}
 	public:

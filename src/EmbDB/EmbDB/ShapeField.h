@@ -20,16 +20,16 @@ namespace embDB
 		{
 
 		}
-		ShapeFieldIterator() :
+		ShapeFieldIterator()
 		{}
 		virtual ~ShapeFieldIterator(){}
 
 		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
-			const sBlobVal& sBlob = m_ParentIt.value();
+			const sBlobVal& sBlob = this->m_ParentIt.value();
 			CommonLib::IGeoShapePtr shape(new CommonLib::CGeoShape());
 
-			((TBTree*)m_ParentIt.m_pTree)->convert(sBlob, shape);
+			((TBTree*)this->m_ParentIt.m_pTree)->convert(sBlob, shape);
 
 
 			pVal->setVal(shape);
@@ -38,7 +38,7 @@ namespace embDB
 
 		virtual bool getVal(CommonLib::IGeoShapePtr& shape)
 		{
-			((TBTree*)m_ParentIt.m_pTree)->convert(m_ParentIt.value(), shape);
+			((TBTree*)this->m_ParentIt.m_pTree)->convert(this->m_ParentIt.value(), shape);
 			return true;
 		}
 		
@@ -49,11 +49,11 @@ namespace embDB
 	class TShapeValueField : public ValueFieldBase<CommonLib::IGeoShapePtr, _TBTree, ShapeFieldIterator<_TBTree> >
 	{
 	public:
-		typedef typename TBTree::iterator  iterator;
+	
 		typedef  ShapeFieldIterator<_TBTree> TFieldIterator;
 		typedef ValueFieldBase<CommonLib::IGeoShapePtr,_TBTree, TFieldIterator> TBase;
 		typedef typename TBase::TBTree TBTree;
-	
+		typedef typename TBTree::iterator  iterator;
 
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
@@ -76,12 +76,12 @@ namespace embDB
 
 		virtual bool find(int64 nOID, CommonLib::CVariant* pFieldVal)
 		{
-			TBTree::iterator it = m_tree.find(nOID);
+			typename TBTree::iterator it = this->m_tree.find(nOID);
 			if(it.isNull())
 				return false;
 
-			CommonLib::IGeoShapePtr shape( new CommonLib::CGeoShape(m_pAlloc));
-			m_tree.convert(it.value(), shape);
+			CommonLib::IGeoShapePtr shape( new CommonLib::CGeoShape(this->m_pAlloc));
+			this->m_tree.convert(it.value(), shape);
 
 			pFieldVal->setVal(shape);
 			return true;

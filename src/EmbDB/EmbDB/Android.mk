@@ -39,5 +39,10 @@ LOCAL_CFLAGS :=	-DANDROID \
 LOCAL_SRC_FILES :=  FilePage.cpp storage.cpp StorageInfo.cpp
 #Table
 LOCAL_SRC_FILES +=Table.cpp   
-
+#transactions
+LOCAL_SRC_FILES +=Transactions.cpp TransactionCache.cpp TranStorage.cpp TranUndoPageManager.cpp  TranRedoPageManager.cpp  TranLogStateManager.cpp DirectTransactions.cpp
+#database
+LOCAL_SRC_FILES +=Database.cpp DBStateManager.cpp DBTranManager.cpp Schema.cpp
+#sdk
+LOCAL_SRC_FILES +=Fields.cpp FieldSet.cpp Row.cpp
 include $(BUILD_STATIC_LIBRARY)

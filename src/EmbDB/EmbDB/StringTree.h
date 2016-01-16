@@ -25,6 +25,11 @@ namespace embDB
 			TStringLeafNode<_TKey, _Transaction>,
 			BPStringTreeNodeMapv2<_TKey, _Transaction>	> TBase;
 
+
+		typedef typename TBase::TBTreeNode TBTreeNode;
+		typedef typename TBase::iterator	iterator;
+		typedef typename TBase::TKey	TKey;
+
 		TBPStringTree(int64 nPageBTreeInfo, embDB::IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, uint32 nNodesPageSize,  bool bMulti = false, bool bCheckCRC32 = true) :
 		TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nNodesPageSize, bMulti, bCheckCRC32), m_PageAlloc(pAlloc, 1024*1024, 2)
 		{
@@ -33,27 +38,27 @@ namespace embDB
 
 		~TBPStringTree()
 		{
-			DeleteNodes();
+			this->DeleteNodes();
 		}
 
 		virtual TBTreeNode* CreateNode(int64 nAdd, bool bIsLeaf)
 		{
-			TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, nAdd, m_bMulti, bIsLeaf, m_bCheckCRC32, m_nNodesPageSize,  m_InnerCompParams.get(),
-				m_LeafCompParams.get());
+			TBTreeNode *pNode = new TBTreeNode(-1, this->m_pAlloc, nAdd, this->m_bMulti, bIsLeaf, this->m_bCheckCRC32, this->m_nNodesPageSize,  this->m_InnerCompParams.get(),
+				this->m_LeafCompParams.get());
 			pNode->m_LeafNode.SetPageAlloc(&m_PageAlloc);
 			return pNode;
 		}
 
 		void convert(const CommonLib::CString& sString, sStringVal& sValue)
 		{
-			if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
+			if(this->m_LeafCompParams->GetStringCoding() == embDB::scASCII)
 			{
 				sValue.m_nLen = sString.length() + 1;
 				sValue.m_pBuf = (byte*)m_PageAlloc.alloc(sValue.m_nLen);
 				strcpy((char*)sValue.m_pBuf, sString.cstr());
 				sValue.m_pBuf[sValue.m_nLen] = 0;
 			}
-			else if(m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
+			else if(this->m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
 			{
 				sValue.m_nLen  = sString.calcUTF8Length() + 1;
 				sValue.m_pBuf = (byte*)m_PageAlloc.alloc(sValue.m_nLen);
@@ -63,23 +68,23 @@ namespace embDB
 		void convert(const sStringVal& sStrVal, CommonLib::CString& sString) 
 		{
 
-			if(sStrVal.m_nLen < m_LeafCompParams->GetMaxPageStringSize())
+			if(sStrVal.m_nLen < this->m_LeafCompParams->GetMaxPageStringSize())
 			{
-				if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
+				if(this->m_LeafCompParams->GetStringCoding() == embDB::scASCII)
 				{
 					sString.loadFromASCII((const char*)sStrVal.m_pBuf);
 				}
-				else if(m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
+				else if(this->m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
 				{
 					sString.loadFromUTF8((const char*)sStrVal.m_pBuf);
 				}
 			}
 			else
 			{
-				embDB::ReadStreamPagePtr pReadStream = m_LeafCompParams->GetReadStream(m_pTransaction, sStrVal.m_nPage, sStrVal.m_nPos);
+				embDB::ReadStreamPagePtr pReadStream = this->m_LeafCompParams->GetReadStream(this->m_pTransaction, sStrVal.m_nPage, sStrVal.m_nPos);
 				m_CacheBlob.resize(sStrVal.m_nLen);
 				pReadStream->read(m_CacheBlob.buffer(), sStrVal.m_nLen);
-				if(m_LeafCompParams->GetStringCoding() == embDB::scASCII)
+				if(this->m_LeafCompParams->GetStringCoding() == embDB::scASCII)
 					sString.loadFromASCII((const char*)m_CacheBlob.buffer());
 				else
 					sString.loadFromUTF8((const char*)m_CacheBlob.buffer());

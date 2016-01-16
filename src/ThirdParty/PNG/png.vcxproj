@@ -51,10 +51,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CB612C10-910E-42F2-B46C-8EC4BB7E8B52}</ProjectGuid>
+    <ProjectGuid>{ADC78C4A-8448-4E36-A28B-B5C1F9A4C982}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>proj4</RootNamespace>
-    <ProjectName>proj4Lib</ProjectName>
+    <RootNamespace>png</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -67,17 +66,17 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugShared|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
@@ -99,12 +98,6 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -117,11 +110,11 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'" Label="Configuration">
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -132,13 +125,13 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugShared|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugShared|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'" Label="PropertySheets">
@@ -150,29 +143,36 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseShared|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseShared|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">
     <OutDir>.\lib\</OutDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
     <OutDir>.\lib\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">
-    <OutDir>.\lib\</OutDir>
     <IntDir>Obj\Win32_DebugStatic\</IntDir>
-    <TargetName>LibProj432ds-4.9.1</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
+    <IntDir>Obj\Win64_DebugStatic\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>.\lib\</OutDir>
+    <IntDir>Obj\Win64_DebugStatic\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\lib\</OutDir>
+    <IntDir>Obj\Win64_DebugStatic\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseShared|Win32'">
+    <OutDir>.\lib\</OutDir>
+    <IntDir>Obj\Win32_ReleaseShared\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">
     <OutDir>.\lib\</OutDir>
@@ -182,17 +182,15 @@
     <OutDir>.\lib\</OutDir>
     <IntDir>Obj\Win32_DebugShared\</IntDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseShared|Win32'">
-    <OutDir>.\lib\</OutDir>
-    <IntDir>Obj\Win32_ReleaseShared\</IntDir>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>.\lib\</OutDir>
+    <IntDir>Obj\Win64_DebugStatic\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>.\lib\</OutDir>
+    <IntDir>Obj\Win64_DebugStatic\</IntDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseShared|x64'">
     <OutDir>.\lib\</OutDir>
     <IntDir>Obj\Win64_DebugStatic\</IntDir>
   </PropertyGroup>
@@ -202,11 +200,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugShared|x64'">
     <OutDir>.\lib\</OutDir>
-    <IntDir>Obj\Win64_Debug_Shared\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseShared|x64'">
-    <OutDir>.\lib\</OutDir>
-    <IntDir>Obj\Win64_ReleaseShared\</IntDir>
+    <IntDir>Obj\Win64_DebugShared\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -215,11 +209,15 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../zlib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <OutputFile>$(OutDir)\LibPng32dx-1.6.16.lib</OutputFile>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugShared|Win32'">
     <ClCompile>
@@ -228,32 +226,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../zlib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj432dx-4.9.1.lib</OutputFile>
-    </Lib>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-    <Lib>
-      <OutputFile>$(OutDir)\LibProj432ds-4.9.1.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibPng32dx-1.6.16.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -263,12 +243,15 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../zlib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <OutputFile>$(OutDir)\LibPng32dx-1.6.16.lib</OutputFile>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugShared|x64'">
     <ClCompile>
@@ -277,14 +260,36 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../zlib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj464dx-4.9.1.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibPng64dx-1.6.16.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;ZLIB_WINAPI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../zlib</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <OutputFile>$(OutDir)\LibPng32ds-1.6.16.lib</OutputFile>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
@@ -294,7 +299,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../zlib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -302,7 +307,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj464ds-4.9.1.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibPng64ds-1.6.16.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -314,6 +319,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../zlib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -321,6 +327,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib>
+      <OutputFile>$(OutDir)\LibPng32dx-1.6.16.lib</OutputFile>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseShared|Win32'">
     <ClCompile>
@@ -331,6 +340,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../zlib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -339,28 +349,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj432rx-4.9.1.lib</OutputFile>
-    </Lib>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-    <Lib>
-      <OutputFile>$(OutDir)\Proj432rs-4.9.1.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibPng32rx-1.6.16.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -372,7 +361,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../zlib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -380,6 +369,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib>
+      <OutputFile>$(OutDir)\LibPng32dx-1.6.16.lib</OutputFile>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseShared|x64'">
     <ClCompile>
@@ -390,7 +382,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../zlib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -399,199 +391,54 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj464rx-4.9.1.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibPng64rx-1.6.16.lib</OutputFile>
     </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">
+    <Lib>
+      <OutputFile>$(OutDir)\LibPng32rs-1.6.16.lib</OutputFile>
+    </Lib>
+    <ClCompile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>../zlib</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_LIB;ZLIB_WINAPI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj464rs-4.9.1.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibPng64rs-1.6.16.lib</OutputFile>
     </Lib>
+    <ClCompile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>../zlib</AdditionalIncludeDirectories>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="Android.mk" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\aasincos.c" />
-    <ClCompile Include="src\adjlon.c" />
-    <ClCompile Include="src\bch2bps.c" />
-    <ClCompile Include="src\bchgen.c" />
-    <ClCompile Include="src\biveval.c" />
-    <ClCompile Include="src\dmstor.c" />
-    <ClCompile Include="src\geocent.c" />
-    <ClCompile Include="src\mk_cheby.c" />
-    <ClCompile Include="src\nad_cvt.c" />
-    <ClCompile Include="src\nad_init.c" />
-    <ClCompile Include="src\nad_intr.c" />
-    <ClCompile Include="src\PJ_aea.c" />
-    <ClCompile Include="src\PJ_aeqd.c" />
-    <ClCompile Include="src\PJ_airy.c" />
-    <ClCompile Include="src\PJ_aitoff.c" />
-    <ClCompile Include="src\pj_apply_gridshift.c" />
-    <ClCompile Include="src\pj_apply_vgridshift.c" />
-    <ClCompile Include="src\PJ_august.c" />
-    <ClCompile Include="src\pj_auth.c" />
-    <ClCompile Include="src\PJ_bacon.c" />
-    <ClCompile Include="src\PJ_bipc.c" />
-    <ClCompile Include="src\PJ_boggs.c" />
-    <ClCompile Include="src\PJ_bonne.c" />
-    <ClCompile Include="src\PJ_calcofi.c" />
-    <ClCompile Include="src\PJ_cass.c" />
-    <ClCompile Include="src\PJ_cc.c" />
-    <ClCompile Include="src\PJ_cea.c" />
-    <ClCompile Include="src\PJ_chamb.c" />
-    <ClCompile Include="src\PJ_collg.c" />
-    <ClCompile Include="src\PJ_crast.c" />
-    <ClCompile Include="src\pj_ctx.c" />
-    <ClCompile Include="src\pj_datums.c" />
-    <ClCompile Include="src\pj_datum_set.c" />
-    <ClCompile Include="src\PJ_denoy.c" />
-    <ClCompile Include="src\pj_deriv.c" />
-    <ClCompile Include="src\PJ_eck1.c" />
-    <ClCompile Include="src\PJ_eck2.c" />
-    <ClCompile Include="src\PJ_eck3.c" />
-    <ClCompile Include="src\PJ_eck4.c" />
-    <ClCompile Include="src\PJ_eck5.c" />
-    <ClCompile Include="src\pj_ellps.c" />
-    <ClCompile Include="src\pj_ell_set.c" />
-    <ClCompile Include="src\PJ_eqc.c" />
-    <ClCompile Include="src\PJ_eqdc.c" />
-    <ClCompile Include="src\pj_errno.c" />
-    <ClCompile Include="src\pj_factors.c" />
-    <ClCompile Include="src\PJ_fahey.c" />
-    <ClCompile Include="src\pj_fileapi.c" />
-    <ClCompile Include="src\PJ_fouc_s.c" />
-    <ClCompile Include="src\pj_fwd.c" />
-    <ClCompile Include="src\PJ_gall.c" />
-    <ClCompile Include="src\pj_gauss.c" />
-    <ClCompile Include="src\pj_gc_reader.c" />
-    <ClCompile Include="src\pj_geocent.c" />
-    <ClCompile Include="src\PJ_geos.c" />
-    <ClCompile Include="src\PJ_gins8.c" />
-    <ClCompile Include="src\PJ_gnom.c" />
-    <ClCompile Include="src\PJ_gn_sinu.c" />
-    <ClCompile Include="src\PJ_goode.c" />
-    <ClCompile Include="src\pj_gridcatalog.c" />
-    <ClCompile Include="src\pj_gridinfo.c" />
-    <ClCompile Include="src\pj_gridlist.c" />
-    <ClCompile Include="src\PJ_gstmerc.c" />
-    <ClCompile Include="src\PJ_hammer.c" />
-    <ClCompile Include="src\PJ_hatano.c" />
-    <ClCompile Include="src\PJ_healpix.c" />
-    <ClCompile Include="src\PJ_igh.c" />
-    <ClCompile Include="src\PJ_imw_p.c" />
-    <ClCompile Include="src\pj_init.c" />
-    <ClCompile Include="src\pj_initcache.c" />
-    <ClCompile Include="src\pj_inv.c" />
-    <ClCompile Include="src\PJ_isea.c" />
-    <ClCompile Include="src\PJ_krovak.c" />
-    <ClCompile Include="src\PJ_labrd.c" />
-    <ClCompile Include="src\PJ_laea.c" />
-    <ClCompile Include="src\PJ_lagrng.c" />
-    <ClCompile Include="src\PJ_larr.c" />
-    <ClCompile Include="src\PJ_lask.c" />
-    <ClCompile Include="src\pj_latlong.c" />
-    <ClCompile Include="src\PJ_lcc.c" />
-    <ClCompile Include="src\PJ_lcca.c" />
-    <ClCompile Include="src\pj_list.c" />
-    <ClCompile Include="src\pj_log.c" />
-    <ClCompile Include="src\PJ_loxim.c" />
-    <ClCompile Include="src\PJ_lsat.c" />
-    <ClCompile Include="src\pj_malloc.c" />
-    <ClCompile Include="src\PJ_mbtfpp.c" />
-    <ClCompile Include="src\PJ_mbtfpq.c" />
-    <ClCompile Include="src\PJ_mbt_fps.c" />
-    <ClCompile Include="src\PJ_merc.c" />
-    <ClCompile Include="src\PJ_mill.c" />
-    <ClCompile Include="src\pj_mlfn.c" />
-    <ClCompile Include="src\PJ_mod_ster.c" />
-    <ClCompile Include="src\PJ_moll.c" />
-    <ClCompile Include="src\pj_msfn.c" />
-    <ClCompile Include="src\pj_mutex.c" />
-    <ClCompile Include="src\PJ_natearth.c" />
-    <ClCompile Include="src\PJ_nell.c" />
-    <ClCompile Include="src\PJ_nell_h.c" />
-    <ClCompile Include="src\PJ_nocol.c" />
-    <ClCompile Include="src\PJ_nsper.c" />
-    <ClCompile Include="src\PJ_nzmg.c" />
-    <ClCompile Include="src\PJ_ob_tran.c" />
-    <ClCompile Include="src\PJ_ocea.c" />
-    <ClCompile Include="src\PJ_oea.c" />
-    <ClCompile Include="src\PJ_omerc.c" />
-    <ClCompile Include="src\pj_open_lib.c" />
-    <ClCompile Include="src\PJ_ortho.c" />
-    <ClCompile Include="src\pj_param.c" />
-    <ClCompile Include="src\pj_phi2.c" />
-    <ClCompile Include="src\PJ_poly.c" />
-    <ClCompile Include="src\pj_pr_list.c" />
-    <ClCompile Include="src\PJ_putp2.c" />
-    <ClCompile Include="src\PJ_putp3.c" />
-    <ClCompile Include="src\PJ_putp4p.c" />
-    <ClCompile Include="src\PJ_putp5.c" />
-    <ClCompile Include="src\PJ_putp6.c" />
-    <ClCompile Include="src\PJ_qsc.c" />
-    <ClCompile Include="src\pj_qsfn.c" />
-    <ClCompile Include="src\pj_release.c" />
-    <ClCompile Include="src\PJ_robin.c" />
-    <ClCompile Include="src\PJ_rpoly.c" />
-    <ClCompile Include="src\PJ_sconics.c" />
-    <ClCompile Include="src\PJ_somerc.c" />
-    <ClCompile Include="src\PJ_stere.c" />
-    <ClCompile Include="src\PJ_sterea.c" />
-    <ClCompile Include="src\pj_strerrno.c" />
-    <ClCompile Include="src\PJ_sts.c" />
-    <ClCompile Include="src\PJ_tcc.c" />
-    <ClCompile Include="src\PJ_tcea.c" />
-    <ClCompile Include="src\PJ_tmerc.c" />
-    <ClCompile Include="src\PJ_tpeqd.c" />
-    <ClCompile Include="src\pj_transform.c" />
-    <ClCompile Include="src\pj_tsfn.c" />
-    <ClCompile Include="src\pj_units.c" />
-    <ClCompile Include="src\PJ_urm5.c" />
-    <ClCompile Include="src\PJ_urmfps.c" />
-    <ClCompile Include="src\pj_utils.c" />
-    <ClCompile Include="src\PJ_vandg.c" />
-    <ClCompile Include="src\PJ_vandg2.c" />
-    <ClCompile Include="src\PJ_vandg4.c" />
-    <ClCompile Include="src\PJ_wag2.c" />
-    <ClCompile Include="src\PJ_wag3.c" />
-    <ClCompile Include="src\PJ_wag7.c" />
-    <ClCompile Include="src\PJ_wink1.c" />
-    <ClCompile Include="src\PJ_wink2.c" />
-    <ClCompile Include="src\pj_zpoly1.c" />
-    <ClCompile Include="src\proj_etmerc.c" />
-    <ClCompile Include="src\proj_mdist.c" />
-    <ClCompile Include="src\proj_rouss.c" />
-    <ClCompile Include="src\rtodms.c" />
-    <ClCompile Include="src\vector1.c" />
+    <ClInclude Include="png.h" />
+    <ClInclude Include="pngconf.h" />
+    <ClInclude Include="png_lib.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="proj4_lib.h" />
-    <ClInclude Include="src\emess.h" />
-    <ClInclude Include="src\geocent.h" />
-    <ClInclude Include="src\geodesic.h" />
-    <ClInclude Include="src\geod_interface.h" />
-    <ClInclude Include="src\org_proj4_PJ.h" />
-    <ClInclude Include="src\org_proj4_Projections.h" />
-    <ClInclude Include="src\pj_list.h" />
-    <ClInclude Include="src\projects.h" />
-    <ClInclude Include="src\proj_api.h" />
+    <ClCompile Include="png.c" />
+    <ClCompile Include="pngerror.c" />
+    <ClCompile Include="pngget.c" />
+    <ClCompile Include="pngmem.c" />
+    <ClCompile Include="pngpread.c" />
+    <ClCompile Include="pngread.c" />
+    <ClCompile Include="pngrio.c" />
+    <ClCompile Include="pngrtran.c" />
+    <ClCompile Include="pngrutil.c" />
+    <ClCompile Include="pngset.c" />
+    <ClCompile Include="pngtest.c" />
+    <ClCompile Include="pngtrans.c" />
+    <ClCompile Include="pngwio.c" />
+    <ClCompile Include="pngwrite.c" />
+    <ClCompile Include="pngwtran.c" />
+    <ClCompile Include="pngwutil.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

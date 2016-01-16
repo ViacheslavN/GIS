@@ -1012,7 +1012,7 @@ namespace embDB
 		if(!m_pRoot.get())
 			m_pRoot = getNode(m_nRootAddr, true); 
 		if(!m_pRoot.get())
-			return TIterator(this, NULL, NULL);
+			return TIterator(this, NULL, -1);
 		if(m_pRoot->isLeaf())
 		{
 			return TIterator(this, m_pRoot.get(), m_pRoot->count() ? 0 : -1);

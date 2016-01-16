@@ -175,7 +175,6 @@ void SADError( const char *message )
 /************************************************************************/
 
 void SASetupDefaultHooks( SAHooks *psHooks )
-
 {
     psHooks->FOpen   = SADFOpen;
     psHooks->FRead   = SADFRead;
@@ -284,5 +283,6 @@ void SASetupUtf8Hooks( SAHooks *psHooks )
     psHooks->Error   = SADError;
     psHooks->Atof    = atof;
 }
-}
+
 #endif
+}

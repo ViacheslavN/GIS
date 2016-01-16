@@ -7,6 +7,7 @@
 #include "CommonLibrary/alloc_t.h"
 #include "TranPerfCounter.h"
 #include "PageCrypto.h"
+#include <memory>
 namespace embDB
 {
 	class CTranStorage
