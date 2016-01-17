@@ -28,7 +28,7 @@ namespace GisEngine
 			std::map<int, CommonLib::IBlobPtr> m_mapCacheBlob;
 			//CommonLib::IBlobPtr		  m_pCacheBlob;
 			SQLiteUtils::CSQLiteDB*				  m_pDB;
-			SQLiteUtils::TSQLiteResultSetPtr	  m_pStmt;
+			SQLiteUtils::CSQLiteResultSetPtr	  m_pStmt;
 			int m_nRecordCount;
 			bool m_bInvalidCursor;
 		 

@@ -49,7 +49,7 @@
 //use_deprecated: Enables temporary support for the obsolete functions
 //#define use_deprecated  
 
-#define NOMINMAX
+//#define NOMINMAX
  
 #include <vector>
 #include <set>
@@ -60,6 +60,7 @@
 #include <functional>
 #include <queue>
 
+#include "CommonLibrary/general.h"
 #include "CommonLibrary/GeoShape.h"
 
 

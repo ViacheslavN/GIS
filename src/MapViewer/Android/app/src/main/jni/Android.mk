@@ -31,9 +31,17 @@ LOCAL_CFLAGS :=	-I. \
 		-I$(PROJ4_I_PATH) \
 		-I$(SHAPELIB_I_PATH) \
 		-I$(PNG_I_PATH) \
-		-x c++
+		-x c++	\
+		-fexceptions
 
-LOCAL_STATIC_LIBRARIES :=libcommon libEmbDB libfreetype libproj4 libshapelib libzlib libpng libjpeg libagg libDisplay libGisCommon
+
+LOCAL_STATIC_LIBRARIES := libcommon
+#EmbDB
+LOCAL_STATIC_LIBRARIES += libEmbDB
+#ThirdParty
+LOCAL_STATIC_LIBRARIES += libfreetype libproj4 libshapelib libzlib libpng libjpeg
+#GisEngine
+LOCAL_STATIC_LIBRARIES += libagg libDisplay libGisCommon libCartography libGeomerty libGeoDatabase
 LOCAL_LDLIBS := -llog
 
 
@@ -69,6 +77,9 @@ $(call import-add-path, $(GIS_ENGINE_LIB_PATH))
 $(call import-module, Common)
 $(call import-module, agg)
 $(call import-module, Display)
+$(call import-module, Cartography)
+$(call import-module, GisGeometry)
+$(call import-module, GeoDatabase)
 
 
 $(call import-module,android/ndk_helper)

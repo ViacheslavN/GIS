@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GeoDatabaseUtils.h"
-
+#include <wchar.h>
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -58,7 +58,7 @@ namespace GisEngine
 #ifdef _WIN32
 								_wcstoi64(sData.cwstr(), &pEnd, 10);
 #else
-								(uint64)wcstoll(sData.cwstr(), &pEnd, 10);
+								(uint64)wcstol(sData.cwstr(), &pEnd, 10); //TO DO SET wcstoll
 #endif
 
 							return CommonLib::CVariant(nVal);
@@ -70,7 +70,7 @@ namespace GisEngine
 #ifdef _WIN32
 								_wcstoi64(sData.cwstr(), &pEnd, 10);
 #else
-								(uint64)wcstoll(sData.cwstr(), &pEnd, 10);
+								(uint64)wcstol(sData.cwstr(), &pEnd, 10); //TO DO SET wcstoll
 #endif
 
 							return CommonLib::CVariant(nVal);

@@ -8,11 +8,17 @@
 #include "CommonLibrary/GeoShape.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/Variant.h"
-
+#include <iostream>
+#include <memory>
 extern "C" 
 {
 #include "sqlite3/sqlite3.h"
 }
+
+#ifdef ANDROID
+	//#include <tr1/memory>
+//#include "c:\NDK\x64\android-ndk-r10e\sources\cxx-stl\gnu-libstdc++\4.9\include\tr1\shared_ptr.h"
+#endif
 
 
 namespace GisEngine
@@ -22,7 +28,7 @@ namespace GisEngine
 		namespace SQLiteUtils
 		{
 
-			class CSQLiteResultSet
+			class CSQLiteResultSet : public CommonLib::AutoRefCounter
 			{
 			public:
 
@@ -301,7 +307,8 @@ namespace GisEngine
 
 			};
 
-			typedef std::shared_ptr<CSQLiteResultSet> TSQLiteResultSetPtr;
+			COMMON_LIB_REFPTR_TYPEDEF(CSQLiteResultSet);
+			//typedef std::shared_ptr<CSQLiteResultSet> CSQLiteResultSetPtr;
 		}
 	}
 }

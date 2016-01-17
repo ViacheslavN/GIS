@@ -41,7 +41,7 @@ namespace GisEngine
 			{
 				if(iswdigit(m_sShapeField[0]))
 				{
-					int shpIndex = _wtoi(m_sShapeField.cwstr());
+					int shpIndex = wcstol(m_sShapeField.cwstr(), 0, 10);//_wtoi(m_sShapeField.cwstr());
 					int count = cls->GetFields()->GetFieldCount();
 					int shp = -1;
 					for(int i = 0; i < count; ++i)

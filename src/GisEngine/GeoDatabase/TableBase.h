@@ -14,9 +14,9 @@ namespace GisEngine
 			typedef IDataSetBase<I> TBase;
 			ITableBase(IWorkspace *pWks) : TBase(pWks)
 			{
-				m_DatasetType = dtTypeTable;
-				m_pFields = new CFields();
-				m_bHashOID = false;
+				this->m_DatasetType = dtTypeTable;
+				this->m_pFields = new CFields();
+				this->m_bHashOID = false;
 			}
 
 			virtual ~ITableBase()

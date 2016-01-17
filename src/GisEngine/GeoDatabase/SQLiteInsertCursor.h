@@ -35,8 +35,8 @@ namespace GisEngine
 
 					std::vector<eDataTypes> m_vecTypes;
 					SQLiteUtils::CSQLiteDB *m_pDB;
-					SQLiteUtils::TSQLiteResultSetPtr	m_pStmt;
-					SQLiteUtils::TSQLiteResultSetPtr	m_pStmtSpatial;
+					SQLiteUtils::CSQLiteResultSetPtr	m_pStmt;
+					SQLiteUtils::CSQLiteResultSetPtr	m_pStmtSpatial;
 					bool m_bValidCursor;
 					bool m_bInit;
 					CommonLib::CString m_sErrorMessage;

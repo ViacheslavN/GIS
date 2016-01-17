@@ -62,17 +62,17 @@ namespace GisEngine
 
 			
 
-			TSQLiteResultSetPtr prepare_query(const CommonLib::CString& sSql)
+			CSQLiteResultSetPtr prepare_query(const CommonLib::CString& sSql)
 			{
 				sqlite3_stmt* pStmt = 0;
 				const int rc = sqlite3_prepare_v2 (m_pDB, sSql.cstr(), -1, &pStmt, 0);
 				if (rc != SQLITE_OK)
 				{
 					m_sError  =  sqlite3_errmsg (m_pDB); 
-					return TSQLiteResultSetPtr();
+					return CSQLiteResultSetPtr();
 				}
 
-				return std::make_shared<CSQLiteResultSet>(pStmt);
+				return CSQLiteResultSetPtr(new CSQLiteResultSet(pStmt));
 			}
 
 			bool execute(const CommonLib::CString& sSql)
@@ -135,7 +135,7 @@ namespace GisEngine
 				CommonLib::CString sQuery;
 				sQuery.format(L"pragma table_info ('%s')", sTableName.cwstr());
 
-				SQLiteUtils::TSQLiteResultSetPtr pRS = prepare_query(sQuery);
+				SQLiteUtils::CSQLiteResultSetPtr pRS = prepare_query(sQuery);
 				if (pRS.get())
 				{
 					pFields = new CFields();
@@ -169,7 +169,7 @@ namespace GisEngine
 			{
 				CommonLib::CString sSQL;
 				sSQL.format(L"SELECT name FROM sqlite_master WHERE type='table' AND name='%s'", sName.cwstr());
-				SQLiteUtils::TSQLiteResultSetPtr pRS = prepare_query(sSQL);
+				SQLiteUtils::CSQLiteResultSetPtr pRS = prepare_query(sSQL);
 				if(!pRS->IsError() && pRS->StepNext())
 				{
 					return true;

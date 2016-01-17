@@ -1123,7 +1123,7 @@ static const char* CPLvsnprintf_get_end_of_formatting(const char* fmt)
 /************************************************************************/
 
 #define call_native_snprintf(type) \
-    local_ret = _snprintf(str + offset_out, size - offset_out, localfmt, va_arg(wrk_args, type))
+    local_ret = snprintf(str + offset_out, size - offset_out, localfmt, va_arg(wrk_args, type))
 
 /** vsnprintf() wrapper that is not sensitive to LC_NUMERIC settings.
   *

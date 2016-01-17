@@ -2,6 +2,17 @@
    declare STDCALL interfaces even if an application is built against it
    using MinGW */
 
+#ifdef ANDROID
+	#define CPL_DISABLE_STDCALL
+
+	#include <fcntl.h>
+	#include <sys/types.h>
+	#include <sys/stat.h>
+	#include <unistd.h>
+#else
+	
+#endif
+#define HAVE_GETCWD 1
 #ifndef CPL_DISABLE_STDCALL
 #  define CPL_STDCALL __stdcall
 #endif
@@ -20,10 +31,12 @@
 #  define snprintf _snprintf
 #endif
 
-#define HAVE_GETCWD 1
 /* gmt_notunix.h from GMT project also redefines getcwd. See #3138 */
-#ifndef getcwd
-#define getcwd _getcwd
+
+#ifndef ANDROID
+	#ifndef getcwd
+		#define getcwd _getcwd
+	#endif
 #endif
 
 /* Define if you have the ANSI C header files.  */
@@ -58,7 +71,9 @@
 #define HAVE_SEARCH_H 1
 
 /* Define to 1 if you have the <direct.h> header file. */
-#define HAVE_DIRECT_H
+#ifndef ANDROID
+	#define HAVE_DIRECT_H
+#endif
 
 /* Define to 1 if you have the `localtime_r' function. */
 #undef HAVE_LOCALTIME_R
@@ -104,6 +119,8 @@
 #if defined(_MSC_VER) && (_MSC_VER < 1310)
 #  define VSI_STAT64 _stat
 #  define VSI_STAT64_T _stat
+#elif defined(ANDROID)
+
 #else
 #  define VSI_STAT64 _stat64
 #  define VSI_STAT64_T __stat64

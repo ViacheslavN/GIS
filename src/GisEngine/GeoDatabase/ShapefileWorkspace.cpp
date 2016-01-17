@@ -31,7 +31,8 @@ namespace GisEngine
 			}
 			if(pVarName)
 			{
-				m_sName = ShapefileUtils::NormalizePath(CommonLib::apply_visitor<CommonLib::ToStringVisitor>(*pVarName, CommonLib::ToStringVisitor()));
+				CommonLib::ToStringVisitor vis;
+				m_sName = ShapefileUtils::NormalizePath(CommonLib::apply_visitor<CommonLib::ToStringVisitor>(*pVarName, vis));
 			}
 			//load();
 		}
@@ -193,7 +194,7 @@ namespace GisEngine
 			 }
 			 if(pSprefPtr.get())
 			 {
-				 FILE* pFile = _wfopen(prjFileName.cwstr(), L"wt");
+				 FILE* pFile = fopen(prjFileName.cstr(), "wt");
 				 fputs(pSprefPtr->GetProjectionString().cstr(), pFile);
 				 fclose(pFile);
 			 }

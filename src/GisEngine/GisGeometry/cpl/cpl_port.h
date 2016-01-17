@@ -31,7 +31,11 @@
 
 #ifndef CPL_BASE_H_INCLUDED
 #define CPL_BASE_H_INCLUDED
-
+/*
+#ifdef ANDROID
+	#define unix
+#endif
+*/
 /**
  * \file cpl_port.h
  *

@@ -157,9 +157,11 @@ int CPL_DLL     VSIIngestFile( VSILFILE* fp,
                                GIntBig nMaxSize );
 
 #if defined(VSI_STAT64_T)
-typedef struct VSI_STAT64_T VSIStatBufL;
+typedef struct VSI_STAT64_T VSIStatBufL; 
+/*#elif defined(ANDROID)
+	#define stat    VSIStatBufL  */
 #else
-#define VSIStatBufL    VSIStatBuf
+ #define VSIStatBufL    VSIStatBuf 
 #endif
 
 int CPL_DLL     VSIStatL( const char *, VSIStatBufL * );

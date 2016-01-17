@@ -233,7 +233,7 @@ namespace GisEngine
 #ifdef _WIN32
 		 (int64)_wcstoi64(pStr->cwstr(), &pEnd, 10);
 #else
-		 (int64)wcstol(pStr->cwstr(), &pEnd, 10);
+		 (int64)wcstol(pStr->cwstr(), &pEnd, 10); //TO DO SET wcstoll
 #endif
 			
 			return defValue;
@@ -248,7 +248,7 @@ namespace GisEngine
 #ifdef _WIN32
 			return _wcstoui64(pStr->cwstr(), &pEnd, 10);
 #else
-			return (uint64)wcstol(pStr->cwstr(), &pEnd, 10);
+			return (uint64)wcstol(pStr->cwstr(), &pEnd, 10); //TO DO SET wcstoll
 #endif
 
 		}

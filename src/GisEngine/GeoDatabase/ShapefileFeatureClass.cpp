@@ -30,7 +30,7 @@ namespace GisEngine
 		}
 		ICursorPtr  CShapefileFeatureClass::Search(IQueryFilter* filter, bool recycling)
 		{
-			return  ICursorPtr(new CShapefileRowCursor(filter, recycling, this));
+			return  ICursorPtr((ICursor*)new CShapefileRowCursor(filter, recycling, this));
 		}
 
 		void CShapefileFeatureClass::close()

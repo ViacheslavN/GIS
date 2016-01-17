@@ -22,10 +22,10 @@
 	#include <sys/stat.h>
 	#include <fcntl.h>
 #ifndef min
-	#define min(a,b) ((a)<(b)?(a):(b))
+	#define min(a,b)  (((a) < (b)) ? (a) : (b))
 #endif
 #ifndef max
-	#define max(a,b) ((a)>(b)?(a):(b))
+	#define max(a,b)  (((a) > (b)) ? (a) : (b))
 #endif
 
 
@@ -39,10 +39,20 @@
 #include <assert.h>
 #include <map>
 #include <memory>
-
+#include <algorithm>
 
 #include "GeneralTypes.h"
 #define  _CHECK_MEM
 
 
+#ifdef ANDROID
+#ifndef min
+	#define min(a,b)  (((a) < (b)) ? (a) : (b))
+#endif
+#ifndef max
+	#define max(a,b)  (((a) > (b)) ? (a) : (b))
+#endif
+
+
+#endif
 #endif

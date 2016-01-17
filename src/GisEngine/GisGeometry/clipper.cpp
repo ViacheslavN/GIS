@@ -47,7 +47,7 @@
 #include <cstdlib>
 #include <ostream>
 #include <functional>
-
+#include <stdlib.h>
 
 namespace ClipperLib {
 
@@ -1320,7 +1320,7 @@ HORIZONTAL : (double)(pt2.X - pt1.X) / (pt2.Y - pt1.Y);
 		result.bottom = lm->LeftBound->Bot.Y;
 		while (lm != m_MinimaList.end())
 		{
-			result.bottom = std::max(result.bottom, lm->LeftBound->Bot.Y);
+			result.bottom = max(result.bottom, lm->LeftBound->Bot.Y);
 			TEdge* e = lm->LeftBound;
 			for (;;) {
 				TEdge* bottomE = e;
@@ -1330,11 +1330,11 @@ HORIZONTAL : (double)(pt2.X - pt1.X) / (pt2.Y - pt1.Y);
 					if (e->Bot.X > result.right) result.right = e->Bot.X;
 					e = e->NextInLML;
 				}
-				result.left = std::min(result.left, e->Bot.X);
-				result.right = std::max(result.right, e->Bot.X);
-				result.left = std::min(result.left, e->Top.X);
-				result.right = std::max(result.right, e->Top.X);
-				result.top = std::min(result.top, e->Top.Y);
+				result.left = min(result.left, e->Bot.X);
+				result.right = max(result.right, e->Bot.X);
+				result.left = min(result.left, e->Top.X);
+				result.right = max(result.right, e->Top.X);
+				result.top = min(result.top, e->Top.Y);
 				if (bottomE == lm->LeftBound) e = lm->RightBound;
 				else break;
 			}
@@ -3150,13 +3150,13 @@ HORIZONTAL : (double)(pt2.X - pt1.X) / (pt2.Y - pt1.Y);
 	{
 		if (a1 < a2)
 		{
-			if (b1 < b2) {Left = std::max(a1,b1); Right = std::min(a2,b2);}
-			else {Left = std::max(a1,b2); Right = std::min(a2,b1);}
+			if (b1 < b2) {Left = max(a1,b1); Right = min(a2,b2);}
+			else {Left = max(a1,b2); Right = min(a2,b1);}
 		} 
 		else
 		{
-			if (b1 < b2) {Left = std::max(a2,b1); Right = std::min(a1,b2);}
-			else {Left = std::max(a2,b2); Right = std::min(a1,b1);}
+			if (b1 < b2) {Left = max(a2,b1); Right = min(a1,b2);}
+			else {Left = max(a2,b2); Right = min(a1,b1);}
 		}
 		return Left < Right;
 	}
@@ -4043,7 +4043,7 @@ HORIZONTAL : (double)(pt2.X - pt1.X) / (pt2.Y - pt1.Y);
 	{
 		double a = std::atan2(m_sinA,
 			m_normals[k].X * m_normals[j].X + m_normals[k].Y * m_normals[j].Y);
-		int steps = std::max((int)Round(m_StepsPerRad * std::fabs(a)), 1);
+		int steps = max((int)Round(m_StepsPerRad * std::fabs(a)), 1);
 
 		double X = m_normals[k].X, Y = m_normals[k].Y, X2;
 		for (int i = 0; i < steps; ++i)
@@ -4444,7 +4444,7 @@ HORIZONTAL : (double)(pt2.X - pt1.X) / (pt2.Y - pt1.Y);
 	}
 	//------------------------------------------------------------------------------
 
-	std::ostream& operator <<(std::ostream &s, const IntPoint &p)
+	/*std::ostream& operator <<(std::ostream &s, const IntPoint &p)
 	{
 		s << "(" << p.X << "," << p.Y << ")";
 		return s;
@@ -4468,7 +4468,7 @@ HORIZONTAL : (double)(pt2.X - pt1.X) / (pt2.Y - pt1.Y);
 			s << p[i];
 		s << "\n";
 		return s;
-	}
+	}*/
 	//------------------------------------------------------------------------------
 
 } //ClipperLib namespace

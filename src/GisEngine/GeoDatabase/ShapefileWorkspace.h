@@ -30,7 +30,7 @@ namespace GisEngine
 				static const wchar_t c_PropertyPath[];
 
 
-				virtual ITablePtr CShapefileWorkspace::GetTable(const CommonLib::CString& name);
+				virtual ITablePtr GetTable(const CommonLib::CString& name);
 
 				virtual bool save(CommonLib::IWriteStream *pWriteStream) const;
 				virtual bool load(CommonLib::IReadStream* pReadStream);

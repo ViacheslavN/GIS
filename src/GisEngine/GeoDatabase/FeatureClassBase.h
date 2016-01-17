@@ -13,7 +13,7 @@ namespace GisEngine
 				IFeatureClassBase(IWorkspace *pWks) : TBase(pWks),
 					m_ShapeType(CommonLib::shape_type_null), m_bAnnotation(false)
 				{
-					m_DatasetType = dtFeatureClass;
+					this->m_DatasetType = dtFeatureClass;
 					
 				}
 				virtual ~IFeatureClassBase()

@@ -58,7 +58,7 @@ namespace GisEngine
 			{
 				CommonLib::CSSection::scoped_lock lock (m_mutex);
 
-				TDatasetMap::const_iterator it = m_DataSetMap.find(pDataset->GetDatasetName());
+				typename TDatasetMap::iterator it = m_DataSetMap.find(pDataset->GetDatasetName());
 				if(it == m_DataSetMap.end())
 					return;
 				assert(it->second < (int)m_vecDatasets.size());

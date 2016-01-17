@@ -26,7 +26,7 @@ namespace GisEngine
 				 if(!pDisplay)
 					 return;
 
-				 if(!IsValid() || !(GetSupportedDrawPhases() & phase) || !GetVisible())
+				 if(!this->IsValid() || !(this->GetSupportedDrawPhases() & phase) || GetVisible())
 					 return;
 
 				 double scale = pDisplay->GetTransformation()->GetScale();

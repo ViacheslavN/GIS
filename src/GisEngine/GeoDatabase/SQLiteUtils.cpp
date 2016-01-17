@@ -147,7 +147,8 @@ namespace GisEngine
 					if(!defVal.IsNull())
 					{
 						CommonLib::ToStringVisitor vis;
-						sType += L" DEFAULT '" + CommonLib::apply_visitor<CommonLib::ToStringVisitor>(defVal, vis) + "' ";
+						CommonLib::CString sDefValue =  CommonLib::apply_visitor<CommonLib::ToStringVisitor>(defVal, vis);
+						sType += L" DEFAULT '" + sDefValue + L"' ";
 					}
 
 

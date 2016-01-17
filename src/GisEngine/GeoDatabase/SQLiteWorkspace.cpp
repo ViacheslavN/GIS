@@ -56,9 +56,9 @@ namespace GisEngine
 
 			if(!sFullName.isEmpty())
 			{
-				if(sFullName[sFullName.length() - 1] != _T('/') || sFullName[sFullName.length() - 1] != _T('\\'))
+				if(sFullName[sFullName.length() - 1] != L'/' || sFullName[sFullName.length() - 1] != L'\\')
 				{
-					sFullName += _T('\\');
+					sFullName += L'\\';
 				}
 			}
 
@@ -99,9 +99,9 @@ namespace GisEngine
 
 			if(!sFullName.isEmpty())
 			{
-				if(sFullName[sFullName.length() - 1] != _T('/') || sFullName[sFullName.length() - 1] != _T('\\'))
+				if(sFullName[sFullName.length() - 1] != L'/' || sFullName[sFullName.length() - 1] != L'\\')
 				{
-					sFullName += _T('\\');
+					sFullName += L'\\';
 				}
 			}
 
@@ -343,7 +343,7 @@ namespace GisEngine
 
 			 CommonLib::CString sSQL = L"SELECT * FROM sqlite_master WHERE type='table' AND name NOT LIKE '%_SpatialIndex%' AND name NOT LIKE '%_PROPERTIES' ORDER BY name ";
 
-			 SQLiteUtils::TSQLiteResultSetPtr pRS = m_pDB->prepare_query(sSQL);
+			 SQLiteUtils::CSQLiteResultSetPtr pRS = m_pDB->prepare_query(sSQL);
 			 if(!pRS.get())
 			 {
 				return false;

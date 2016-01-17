@@ -2,6 +2,8 @@
 #define GIS_ENGINE_GEO_DATABASE_CURSOR_BASE_H
 
 #include "GeoDatabase.h"
+#include "FieldSet.h"
+#include "GisGeometry/Envelope.h"
 namespace GisEngine
 {
 	namespace GeoDatabase

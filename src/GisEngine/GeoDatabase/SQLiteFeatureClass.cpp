@@ -123,7 +123,7 @@ namespace GisEngine
 
 			
 			sSQL.format(L"SELECT name FROM sqlite_master WHERE type='table' AND name='%s'", m_sPropTableName.cwstr());
-			SQLiteUtils::TSQLiteResultSetPtr pRS = pDB->prepare_query(sSQL);
+			SQLiteUtils::CSQLiteResultSetPtr pRS = pDB->prepare_query(sSQL);
 			if(!pRS->IsError() && pRS->StepNext())
 			{
 				sSQL.format(L"delete from %s", m_sPropTableName.cwstr());
@@ -166,7 +166,7 @@ namespace GisEngine
 			CommonLib::CString sBBSql;
 			sBBSql.format(L"SELECT MIN(minX), MIN(minY), MAX(maxX), MAX(maxY) FROM %s", m_sSpatialIndexName.cwstr());
 
-			SQLiteUtils::TSQLiteResultSetPtr pRS_BB =  pDB->prepare_query(sBBSql);
+			SQLiteUtils::CSQLiteResultSetPtr pRS_BB =  pDB->prepare_query(sBBSql);
 			GisBoundingBox bounds;
 			if(pRS_BB.get())
 			{
@@ -183,7 +183,7 @@ namespace GisEngine
 
 			CommonLib::CString sSPropSQL;
 			sSPropSQL.format(L"SELECT PROJ, SHAPEFIELD, GEOMTYPE, ANNO, OIDFIELD, OIDTYPE from %s  limit 1", m_sPropTableName.cwstr());
-			SQLiteUtils::TSQLiteResultSetPtr pRS_Prop =  pDB->prepare_query(sSPropSQL);
+			SQLiteUtils::CSQLiteResultSetPtr pRS_Prop =  pDB->prepare_query(sSPropSQL);
 
 			
 			if(pRS_Prop.get())
@@ -272,7 +272,7 @@ namespace GisEngine
 		}
 		ICursorPtr	CSQLiteFeatureClass::Search(IQueryFilter* filter, bool recycling)
 		{
-			return  ICursorPtr(new CSQLiteRowCursor(filter, recycling, this, m_pSQLiteWorkspace->GetDB()));
+			return  ICursorPtr((ICursor*)new CSQLiteRowCursor(filter, recycling, this, m_pSQLiteWorkspace->GetDB()));
 		}
 
 
