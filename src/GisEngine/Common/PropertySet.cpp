@@ -24,7 +24,7 @@ namespace GisEngine
 		const CommonLib::CVariant* CPropertySet::GetProperty(const wchar_t *name) const
 		{
 			TMapProp::const_iterator c_it =  m_mapProp.find(name);
-			return c_it != m_mapProp.end() ? &c_it->second : nullptr;
+			return c_it != m_mapProp.end() ? &c_it->second : NULL;
 		}
 		void  CPropertySet::SetProperty(const wchar_t *name, const CommonLib::CVariant& variant)
 		{

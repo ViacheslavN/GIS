@@ -424,6 +424,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="Android.mk" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>

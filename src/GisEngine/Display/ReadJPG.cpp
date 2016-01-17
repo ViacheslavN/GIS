@@ -4,7 +4,7 @@
 #include "Bitmap.h"
 #include "GraphTypes.h"
 #include "jpeglib_lib.h"
-
+#include <setjmp.h>
 namespace GisEngine
 {
 	namespace Display

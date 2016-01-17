@@ -38,7 +38,7 @@ namespace GisEngine
 			void scale(double scl) ;
 			void scale(double sclx, double scly);
 			bool pointInRect(const GPoint &p) const;
-			bool GRect::pointInRectEQ(const GPoint &p) const;
+			bool pointInRectEQ(const GPoint &p) const;
 
 		public:
 			GUnits xMin;

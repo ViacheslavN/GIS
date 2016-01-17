@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "conv_offset.h"
 #include <math.h>
-
+#include <limits>
 namespace GisEngine
 {
 	namespace Display

@@ -34,7 +34,7 @@ namespace GisEngine
 				if(m_bDirty || !equals(pDisplay->GetTransformation()->GetResolution(), m_dLastDpi) || (m_bScaleDependent && !(equals(m_dLastScale, pDisplay->GetTransformation()->GetScale()))) ||
 					!equals(m_dLastRotation, pDisplay->GetTransformation()->GetRotation()))
 				{
-					Prepare(pDisplay);
+					this->Prepare(pDisplay);
 					m_bDirty = false;
 					m_dLastDpi = pDisplay->GetTransformation()->GetResolution();
 					m_dLastScale = pDisplay->GetTransformation()->GetScale();
@@ -42,6 +42,7 @@ namespace GisEngine
 				}
 			}
 			virtual void Reset(){}
+ 
 			virtual bool CanDraw(CommonLib::CGeoShape* pShape) const
 			{
 				 return pShape->getPointCnt() > 0;
@@ -57,7 +58,7 @@ namespace GisEngine
 					if(!m_bDrawToBuffers)
 					{
 						m_pGeom = pShape;
-						DrawGeometryEx(pDisplay, points, parts, count);
+						this->DrawGeometryEx(pDisplay, points, parts, count);
 						m_pGeom = NULL;
 					}
 					else
@@ -80,7 +81,7 @@ namespace GisEngine
 				int     count;
 				pDisplay->GetTransformation()->MapToDevice(*pShape, &points, &parts, &count);
 				if(count > 0)
-					QueryBoundaryRectEx(pDisplay, points, parts, count, rect);
+					this->QueryBoundaryRectEx(pDisplay, points, parts, count, rect);
 			}
 			bool GetScaleDependent() const
 			{

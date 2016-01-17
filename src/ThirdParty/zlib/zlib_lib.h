@@ -1,7 +1,7 @@
 #pragma once
 
 #include "zlib.h"
-
+#ifndef ANDROID
 #if defined(ZLIB_TMP_LIBPREFIX) || defined(ZLIB_TMP_LIBSUFFIX_DBG) \
   || defined(ZLIB_TMP_LIBSUFFIX_UNC) || defined(ZLIB_TMP_LIBSUFFIX_CRT) \
   || defined(ZLIB_TMP_PLATFORM) \
@@ -70,3 +70,4 @@
 //#undef ZLIB_TMP_CCVER
 #undef ZLIB_TMP_PLATFORM
 #undef ZLIB_TMP_LIBNAME
+#endif

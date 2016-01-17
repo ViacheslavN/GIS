@@ -116,8 +116,9 @@ namespace GisEngine
 
 				virtual void Lock();
 				virtual void UnLock();
-
+#ifndef ANDROID
 				HDC GetDC();
+#endif
 			private:
 #ifdef ANDROID
 				typedef agg::pixfmt_rgba32 pixfmt_t; 
@@ -190,8 +191,9 @@ namespace GisEngine
 
 				GUnits m_nWidth;
 				GUnits m_nHeight;
-				HDC m_dc;
+				
 #ifndef ANDROID
+				HDC m_dc;
 				HBITMAP m_oldBitmap;
 #endif
 

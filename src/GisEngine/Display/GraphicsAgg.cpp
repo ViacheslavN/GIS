@@ -22,7 +22,9 @@ namespace GisEngine
 			m_ftrans(m_fsegm, m_tcurve),
 			m_fcontour(m_ftrans),
 			m_rendering_buffer(m_rbuf),
+#ifndef ANDROID
 			m_dc(0),
+#endif
 			m_bflipY(flipY)
 
 
@@ -53,7 +55,9 @@ namespace GisEngine
 			m_ftrans(m_fsegm, m_tcurve),
 			m_fcontour(m_ftrans),
 			m_rendering_buffer(m_rbuf),
+#ifndef ANDROID
 			m_dc(0),
+#endif
 			m_bflipY(flipY)
 		{
 			size_t line_size =  4 * (((size_t)width * 32 + 31) / 32);
@@ -86,7 +90,8 @@ namespace GisEngine
 			m_rbuf.attach(m_surface.bits(), (int)width, (int)height, flipY ? (int)line_size : -1 *(int)line_size);
 #else
 		
-			unsigned char* pBuf = new unsigned char[line_size* height_];
+			int nBufSize = (int)line_size* height;
+			unsigned char* pBuf = new unsigned char[nBufSize];
 			m_surface.attach(pBuf, size_t(width), size_t(height),BitmapFormatType32bppARGB, 0, true);
 			m_rbuf.attach(m_surface.bits(), (int)width, (int)height, (int)(flipY ? line_size : -line_size));
 #endif
@@ -101,11 +106,12 @@ namespace GisEngine
 			::DeleteDC(m_dc);
 #endif
 		}
+#ifndef ANDROID
 		HDC  CGraphicsAgg::GetDC()
 		{
 			return m_dc;
 		}
-
+#endif
 		 eDeviceType  CGraphicsAgg::GetDeviceType() const
 		 {
 			   return DeviceTypeDisplay;

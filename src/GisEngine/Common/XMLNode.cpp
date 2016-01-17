@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "XMLNode.h"
 #include "XMLUtils.h"
+#include <wchar.h>
+#include <cwchar>
 namespace GisEngine
 {
 	namespace GisCommon
@@ -231,7 +233,7 @@ namespace GisEngine
 #ifdef _WIN32
 		 (int64)_wcstoi64(pStr->cwstr(), &pEnd, 10);
 #else
-		 (int64)wcstoll(pStr->cwstr(), &pEnd, 10);
+		 (int64)wcstol(pStr->cwstr(), &pEnd, 10);
 #endif
 			
 			return defValue;
@@ -246,7 +248,7 @@ namespace GisEngine
 #ifdef _WIN32
 			return _wcstoui64(pStr->cwstr(), &pEnd, 10);
 #else
-			return (uint64)wcstoll(pStr->cwstr(), &pEnd, 10);
+			return (uint64)wcstol(pStr->cwstr(), &pEnd, 10);
 #endif
 
 		}

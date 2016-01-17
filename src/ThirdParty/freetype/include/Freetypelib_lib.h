@@ -2,6 +2,8 @@
 #define _FREETYPE_LIB_LIB_H__
 #include <ft2build.h>
 
+#ifndef ANDROID
+
 #if defined(FT_TMP_LIBPREFIX) || defined(FT_TMP_LIBSUFFIX_DBG) \
 	|| defined(FT_TMP_LIBSUFFIX_UNC) || defined(FT_TMP_LIBSUFFIX_CRT) \
 	||defined(FT_TMP_PLATFORM) \
@@ -65,3 +67,4 @@
 #include <ft2build.h>
 #endif
 
+#endif

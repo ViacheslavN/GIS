@@ -1,8 +1,7 @@
-#ifndef ANDROID
 #pragma once
 
 #include "jpeglib.h"
-
+#ifndef ANDROID
 #if defined(JPG_TMP_LIBPREFIX) || defined(JPG_TMP_LIBSUFFIX_DBG) \
   || defined(JPG_TMP_LIBSUFFIX_UNC) || defined(JPG_TMP_LIBSUFFIX_CRT) \
   || defined(JPG_TMP_PLATFORM) \

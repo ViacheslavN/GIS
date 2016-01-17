@@ -1,6 +1,8 @@
 #include "polygon_clipper.h"
 #include "stdafx.h"
-#include <xutility>
+#ifndef ANDROID
+	#include <xutility>
+#endif
 namespace agg
 {
 polygon_clipper::polygon_clipper() : inited_(false)

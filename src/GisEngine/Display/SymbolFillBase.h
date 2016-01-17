@@ -25,7 +25,7 @@ namespace GisEngine
 			virtual void SetOutlineSymbol(ILineSymbol *pLine)
 			{
 				m_pBorderSymbol = pLine;
-				m_bDirty = true;
+				this->m_bDirty = true;
 			}
 
 			virtual Color GetColor() const
@@ -35,7 +35,7 @@ namespace GisEngine
 			virtual void  SetColor(const Color &color)
 			{
 				m_Brush.setColor(color);
-				m_bDirty = true;
+				this->m_bDirty = true;
 			}
 			virtual void  Prepare(IDisplay* pDisplay){}
 

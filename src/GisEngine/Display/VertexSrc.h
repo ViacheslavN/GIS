@@ -5,6 +5,7 @@
 #include "agg/agg_conv_dash.h"
 #include "agg/agg_rounded_rect.h"
 #include "Point.h"
+#include "conv_offset.h"
 namespace GisEngine
 {
 	namespace Display
