@@ -206,7 +206,7 @@ namespace GisEngine
 						*pValue = (uint64)m_pStmt->ColumnInt64(fi.m_nRowIndex);
 						break;
 					case dtInteger64:
-						*pValue = m_pStmt->ColumnInt64(fi.m_nRowIndex); 
+						*pValue = (int64)m_pStmt->ColumnInt64(fi.m_nRowIndex); 
 						break;
 					case dtString:
 					case dtAnnotation:
@@ -219,7 +219,7 @@ namespace GisEngine
 						*pValue =  m_pStmt->ColumnInt(fi.m_nRowIndex);//TO DO fix
 						break;
 					case dtOid64:
-						*pValue =  m_pStmt->ColumnInt64(fi.m_nRowIndex);
+						*pValue =  (int64)m_pStmt->ColumnInt64(fi.m_nRowIndex);
 						break;
 				 }
 
