@@ -106,8 +106,8 @@ namespace embDB
 				m_nLenBitSize += nBitLen;
 				m_nCount++;
 
-			//	if(!m_BitsLensFreq[nBitLen])
-			//		m_nDIffsLen++;
+				if(!m_BitsLensFreq[nBitLen])
+					m_nDIffsLen++;
 
 				m_BitsLensFreq[nBitLen] += 1;
 
@@ -123,8 +123,8 @@ namespace embDB
 				m_nCount--;
 
 				m_BitsLensFreq[nBitLen] -= 1;
-			//	if(!m_BitsLensFreq[nBitLen])
-			//		m_nDIffsLen--;
+				if(!m_BitsLensFreq[nBitLen])
+					m_nDIffsLen--;
 			}
  
 			 
@@ -158,12 +158,33 @@ namespace embDB
 
 
 
-				return nByteSize + _nMaxBitsLens * (sizeof(uint16)) + m_nLenBitSize;
+				return nByteSize + m_nDIffsLen + 1 + m_nLenBitSize;
 
 			}
 
 
-			void compress
+			void compress(TBPVector<_TValue>& vecValues, CommonLib::IWriteStream* pStream)
+			{
+
+				uint16 ModelLens[_nMaxBitsLens];
+
+				pStream->write(byte(m_nDIffsLen));
+				for (uint32 i = 0, i < _nMaxBitsLens; ++i)
+				{
+					if(m_BitsLensFreq[i] != 0)
+					{
+						ModelLens[i] = 1;
+						pStream->write(byte(i));
+					}
+					else
+						ModelLens[i] = 0;
+				}
+				
+			
+
+
+
+			}
 
 		private:	
 
@@ -172,7 +193,7 @@ namespace embDB
 			uint32 m_nLenBitSize;
 			uint32 m_nCount;
 
-			//uint32 m_nDIffsLen;
+			uint32 m_nDIffsLen;
 
 			uint16  m_BitsLensFreq[_nMaxBitsLens];
 	};

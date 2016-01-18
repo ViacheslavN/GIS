@@ -6,10 +6,15 @@
 #include "CommonLibrary/FixedBitStream.h"
 #include "TestAC.h"
 
+
+uint32 compressFile(const wchar_t *pszFileNameIn, const wchar_t* pszCompressFile);
+uint32 compressStaticFile(const wchar_t *pszFileNameIn, const wchar_t* pszCompressFile);
+void DecompressFile(uint32 nFileSize, const wchar_t *pszCompressFile, const wchar_t* pszFileOut);
+void DecompressStaticFile(uint32 nFileSize, const wchar_t *pszCompressFile, const wchar_t* pszFileOut);
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	ACComp comp;
+/*	ACComp comp;
 	CommonLib::MemoryStream stream;
 	CommonLib::MemoryStream stream1;
 //	comp.compress(" Œ¬. Œ–Œ¬¿", &stream);
@@ -18,7 +23,19 @@ int _tmain(int argc, _TCHAR* argv[])
 //	CommonLib::CString str;
 //	comp.decompress(&stream, str);
 
-	TestCompressAC("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+	TestCompressAC("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");*/
+
+	CommonLib::CString sSrcFile;
+	//sSrcFile = L"D:\\1\\jscript.dll";
+	//sSrcFile = L"D:\\2\\1.log";
+	sSrcFile = L"D:\\2\\brok_XML_EN.xml";
+	sSrcFile = L"D:\\2\\CALC_FUTOPT";
+
+	uint32 nOutSize = compressFile(sSrcFile.cwstr(), L"D:\\2\\1.log.compress");
+	DecompressFile(nOutSize, L"D:\\2\\1.log.compress", L"D:\\2\\1.log.decompress");
+
+	uint32 nOutSize1 = compressStaticFile(sSrcFile.cwstr(), L"D:\\2\\1.log.static.compress");
+	DecompressStaticFile(nOutSize1, L"D:\\2\\1.log.static.compress", L"D:\\2\\1.log.static.decompress");
 	return 0;
 }
 

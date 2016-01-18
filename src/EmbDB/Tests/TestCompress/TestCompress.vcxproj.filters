@@ -65,5 +65,11 @@
     <ClCompile Include="range.c">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="testRange.cpp">
+      <Filter>RangeCode</Filter>
+    </ClCompile>
+    <ClCompile Include="testStaticRange.cpp">
+      <Filter>RangeCode</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

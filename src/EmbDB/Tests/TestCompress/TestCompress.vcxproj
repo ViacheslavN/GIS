@@ -98,6 +98,8 @@
     </ClCompile>
     <ClCompile Include="TestAC.cpp" />
     <ClCompile Include="TestCompress.cpp" />
+    <ClCompile Include="testRange.cpp" />
+    <ClCompile Include="testStaticRange.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

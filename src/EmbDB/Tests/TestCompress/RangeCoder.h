@@ -13,6 +13,8 @@ namespace embDB
 				static const _TCodeValue Bottom = (_TCodeValue)1 << (nValueBits - 8);
 				_TCodeValue Low,Range;
 	public:
+
+				static const _TCodeValue MaxRange = Bottom;
 				TRangeEncoder(CommonLib::IWriteStream* pStream) : m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1)
 				{
 
@@ -75,6 +77,8 @@ namespace embDB
 		static const _TCodeValue Top = (_TCodeValue)1 << nValueBits;
 		static const _TCodeValue Bottom = (_TCodeValue)1 << (nValueBits - 8);
 	public:
+
+		static const _TCodeValue MaxRange = Bottom;
 		typedef _TCodeValue TCodeValue;
 
 		TRangeDecoder(CommonLib::IReadStream* pStream) : m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1), m_nValue(0)
