@@ -5,7 +5,7 @@
 #include "CommonLibrary/MemoryStream.h"
 #include "CommonLibrary/FixedBitStream.h"
 #include "TestAC.h"
-
+#include "Test.h"
 
 uint32 compressFile(const wchar_t *pszFileNameIn, const wchar_t* pszCompressFile);
 uint32 compressStaticFile(const wchar_t *pszFileNameIn, const wchar_t* pszCompressFile);
@@ -21,21 +21,32 @@ int _tmain(int argc, _TCHAR* argv[])
 	comp.compressInteger(" Œ¬. Œ–Œ¬¿", &stream1);
 //	stream.seek(0, CommonLib::soFromBegin);
 //	CommonLib::CString str;
-//	comp.decompress(&stream, str);
+//	comp.decompress(&stream, str);*/
 
-	TestCompressAC("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");*/
+/*	TestCompressAC("aa22dggaaaaaahhggfghhgfaaaaaddfddggaaaaaaaaaaaaaffgjaaaaaaaaaaaaaaaaaafgtthtjhjaaaaaaaaafhghfghhfhaaaaaaaaaaa");
 
+	CommonLib::CString sSrcFile;
+	//sSrcFile = L"D:\\1\\jscript.dll";
+	sSrcFile = L"D:\\2\\1.log";
+	//sSrcFile = L"D:\\2\\brok_XML_EN.xml";
+	//sSrcFile = L"D:\\2\\CALC_FUTOPT";*/
+
+
+
+	/*uint32 nOutSize1 = compressStaticFile(sSrcFile.cwstr(), L"D:\\2\\1.log.static.compress");
+	DecompressStaticFile(nOutSize1, L"D:\\2\\1.log.static.compress", L"D:\\2\\1.log.static.decompress");
+	*/
 	CommonLib::CString sSrcFile;
 	//sSrcFile = L"D:\\1\\jscript.dll";
 	//sSrcFile = L"D:\\2\\1.log";
 	sSrcFile = L"D:\\2\\brok_XML_EN.xml";
-	sSrcFile = L"D:\\2\\CALC_FUTOPT";
+	//sSrcFile = L"D:\\2\\CALC_FUTOPT";
 
-	uint32 nOutSize = compressFile(sSrcFile.cwstr(), L"D:\\2\\1.log.compress");
-	DecompressFile(nOutSize, L"D:\\2\\1.log.compress", L"D:\\2\\1.log.decompress");
+//	uint32 nOutSize = compressFile(sSrcFile.cwstr(), L"D:\\2\\1.log.compress");
+//	DecompressFile(nOutSize, L"D:\\2\\1.log.compress", L"D:\\2\\1.log.decompress");
 
-	uint32 nOutSize1 = compressStaticFile(sSrcFile.cwstr(), L"D:\\2\\1.log.static.compress");
-	DecompressStaticFile(nOutSize1, L"D:\\2\\1.log.static.compress", L"D:\\2\\1.log.static.decompress");
+	CTestCompess test;
+	test.compressFile(sSrcFile.cwstr(), L"D:\\2\\1.log.compress");
 	return 0;
 }
 

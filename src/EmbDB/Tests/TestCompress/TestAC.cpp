@@ -12,8 +12,8 @@
 #include "ACDecoder.h"
 #include "RangeCoder.h"
 
-typedef embDB::TACEncoder<int32, 16> TACEncoder;
-typedef embDB::TACDecoder<int32, 16> TACDecoder;
+typedef embDB::TACEncoder<uint32, 16> TACEncoder;
+typedef embDB::TACDecoder<uint32, 16> TACDecoder;
 typedef embDB::TRangeEncoder<uint64, 64> TRangeEncoder; 
 typedef embDB::TRangeDecoder<uint64, 64> TRangeDecoder; 
 double Log2( double n )  
@@ -428,10 +428,10 @@ void TestCompressAC(const std::string& sStr)
 
 	CommonLib::simple_alloc_t alloc;
 	CommonLib::FxBitWriteStream bitWriteStream(&alloc);
-	CommonLib::WriteBitStream  BitStream(&alloc);
+	CommonLib::FxMemoryWriteStream  BitStream(&alloc);
 	CommonLib::MemoryStream  WriteStream(&alloc);
-	bitWriteStream.create(nSize/8 + 1 + 100);
-	BitStream.create(nSize/8 + 1); 
+	bitWriteStream.create(nSize/8 + 1);
+	BitStream.create(nSize/8 + 1 + 100); 
 
 
 	ArithmeticCoderC ac;
@@ -450,15 +450,20 @@ void TestCompressAC(const std::string& sStr)
 		ac1.EncodeSymbol(nPrevB, info.m_nB, sz);
 		rgEncode.EncodeSymbol(nPrevB, info.m_nB, sz);
 	}
+	int64 A1 = ac1._FirstQuarter;
+	int64 A2 = ac1._ThirdQuarter;
+	int64 A3 = ac1._TopValue;
+	int64 A4 = ac1._Half;
+	int64 MaxRage = ac1.MaxRange;
 	ac.EncodeFinish();
 	ac1.EncodeFinish();
 	rgEncode.EncodeFinish();
 	source.seekp(0);
-	size_t sizeInBits = BitStream.posInBits();
-	CommonLib::FxBitReadStream bitReadStream(&alloc);
+	size_t sizeInBits = BitStream.pos();
+	CommonLib::FxMemoryReadStream bitReadStream(&alloc);
 	CommonLib::FxMemoryReadStream ReadStream(&alloc);
 
-	bitReadStream.attachBits(BitStream.buffer(),sizeInBits);
+	bitReadStream.attach(BitStream.buffer(),sizeInBits);
 	ReadStream.attach(WriteStream.buffer(), WriteStream.pos());
 //	ac.SetBitReadStream(&bitReadStream);
 	int32 nLens = 0;

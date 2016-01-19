@@ -19,6 +19,9 @@
     <Filter Include="RangeCode">
       <UniqueIdentifier>{b693431e-dc19-46a3-aaac-f69162a14055}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tests">
+      <UniqueIdentifier>{a6954ed8-a525-46d4-99c2-94b8c401acf4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -48,6 +51,9 @@
     <ClInclude Include="range.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Test.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -70,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="testStaticRange.cpp">
       <Filter>RangeCode</Filter>
+    </ClCompile>
+    <ClCompile Include="Test.cpp">
+      <Filter>Tests</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

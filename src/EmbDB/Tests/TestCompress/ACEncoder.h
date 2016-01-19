@@ -13,20 +13,22 @@ namespace embDB
 			static const TCodeValue  _FirstQuarter = (_TopValue/4  + 1);
 			static const TCodeValue  _Half = (2 * _FirstQuarter);
 			static const TCodeValue  _ThirdQuarter = (3 * _FirstQuarter);
+			static const _TCodeValue MaxRange = _FirstQuarter - 1;
 
-			TACEncoder(CommonLib::WriteBitStream* pBitStream) : m_pBitStream(pBitStream), m_nLow(0), m_nHigh(_TopValue), m_nScale(0), m_bBitsWrite(0)
+			TACEncoder(CommonLib::IWriteStream* pStream) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue), m_nScale(0), m_nBitsWrite(0),
+				m_nBitsBuf(0), m_nCurrBit(0)
 			{}
 
 			void BitsPlusFollow(bool bBit)
 			{
-				m_pBitStream->writeBit(bBit);
+				writeBit(bBit);
 			
 				for (; m_nScale > 0; m_nScale--)
 				{
-					m_pBitStream->writeBit(!bBit);
+					writeBit(!bBit);
 				}
 
-				m_bBitsWrite += (1 + m_nScale);
+			 
 			}
 			void EncodeSymbol(TCodeValue nLowCount, TCodeValue nHightCount, TCodeValue nTotalCount)
 			{
@@ -67,14 +69,35 @@ namespace embDB
 
 				else BitsPlusFollow(true);     
 
+				if(m_nCurrBit != 0)
+				{
+					m_pStream->write(m_nBitsBuf);
+				}
+			}
+
+			void writeBit(bool bBit)
+			{
+				if(m_nCurrBit > 7)
+				{
+					m_pStream->write(m_nBitsBuf);
+					m_nBitsBuf = 0;
+					m_nCurrBit = 0;
+				}
+				if(bBit)
+					m_nBitsBuf |= (1 << m_nCurrBit);
+				m_nCurrBit++;
+
+				m_nBitsWrite++;
 			}
 
 		private:
-			CommonLib::WriteBitStream* m_pBitStream;
+			CommonLib::IWriteStream* m_pStream;
 			TCodeValue m_nLow;
 			TCodeValue m_nHigh;
 			uint32	   m_nScale;
-			uint32	   m_bBitsWrite;
+			uint32	   m_nBitsWrite;
+			byte	   m_nBitsBuf;
+			uint32	   m_nCurrBit;
 	};
 }
 

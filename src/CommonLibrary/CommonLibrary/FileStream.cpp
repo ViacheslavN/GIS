@@ -48,7 +48,10 @@ namespace CommonLib
 		return m_File.isValid();
 	}
 
-
+	bool CFileStream::flush()
+	{
+		return m_File.Flush();
+	}
 	CReadFileStream::CReadFileStream()
 	{
 

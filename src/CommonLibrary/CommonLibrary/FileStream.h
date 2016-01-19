@@ -27,7 +27,7 @@ namespace CommonLib
 		virtual void reset();
 		virtual void close();
 		virtual bool isValid() const;
-
+		virtual bool flush();
 	protected:
 	
 		CFile m_File;
