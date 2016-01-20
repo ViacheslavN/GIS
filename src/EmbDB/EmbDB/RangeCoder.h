@@ -13,11 +13,15 @@ namespace embDB
 				static const _TCodeValue Bottom = (_TCodeValue)1 << (nValueBits - 8);
 				_TCodeValue Low,Range;
 	public:
-				TRangeEncoder(CommonLib::IWriteStream* pStream) : m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1)
+
+				static const _TCodeValue MaxRange = Bottom;
+				TRangeEncoder(CommonLib::IWriteStream* pStream, TCodeValue nMaxSize = 0) : 
+				m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1), m_nMaxSize(nMaxSize), m_WriteSize(0)
 				{
+					assert(m_pStream);
 
 				}
-				void EncodeSymbol(_TCodeValue SymbolLow, _TCodeValue SymbolHigh,_TCodeValue TotalRange)
+				bool EncodeSymbol(_TCodeValue SymbolLow, _TCodeValue SymbolHigh,_TCodeValue TotalRange)
 				{
 
 					Low += SymbolLow*(Range/=TotalRange);
@@ -43,16 +47,21 @@ namespace embDB
 						{
 							break;
 						}
+						if(m_nMaxSize != 0 && m_WriteSize > m_nMaxSize)
+							return false;
+						m_WriteSize += 1;
 						m_pStream->write(byte((Low>>nValueBits)& 0xFF));
 						Range<<=8;
 						Low<<=8;  
 					}
 
 
-					 
+					 return true;
 				}
-				void EncodeFinish()
+				bool EncodeFinish()
 				{
+
+
 					for(int i=0;i<_nValueBits/8;i++)
 					{
 						m_pStream->write((byte)((Low>>nValueBits)& 0xFF));
@@ -60,14 +69,10 @@ namespace embDB
 					}
 
 				}
-
-				uint16 GetMinByte() const
-				{
-					return _nValueBits/8;
-				}
 		private:
 			CommonLib::IWriteStream* m_pStream;
-
+			TCodeValue m_nMaxSize;
+			TCodeValue m_WriteSize;
 	};
 
 
@@ -80,6 +85,8 @@ namespace embDB
 		static const _TCodeValue Top = (_TCodeValue)1 << nValueBits;
 		static const _TCodeValue Bottom = (_TCodeValue)1 << (nValueBits - 8);
 	public:
+
+		static const _TCodeValue MaxRange = Bottom;
 		typedef _TCodeValue TCodeValue;
 
 		TRangeDecoder(CommonLib::IReadStream* pStream) : m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1), m_nValue(0)
@@ -110,10 +117,7 @@ namespace embDB
 		{
 			return (m_nValue-Low)/(Range/=nTotalCount);
 		}
-		uint16 GetMinByte() const
-		{
-			return _nValueBits/8;
-		}
+
 		 
 	private:
 		CommonLib::IReadStream* m_pStream;

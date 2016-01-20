@@ -15,20 +15,26 @@ namespace embDB
 		static const TCodeValue  _FirstQuarter = (_TopValue/4  + 1);
 		static const TCodeValue  _Half = (2 * _FirstQuarter);
 		static const TCodeValue  _ThirdQuarter = (3 * _FirstQuarter);
+		static const _TCodeValue MaxRange = _FirstQuarter - 1;
 
-		TACEncoder(CommonLib::WriteBitStream* pBitStream) : m_pBitStream(pBitStream), m_nLow(0), m_nHigh(_TopValue), m_nScale(0), m_bBitsWrite(0)
+		TACEncoder(CommonLib::IWriteStream* pStream) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue), m_nScale(0),
+			m_nBitsBuf(0), m_nCurrBit(0)
+#ifdef _DEBUG
+		, m_nBitsWrite(0)
+#endif
+
 		{}
 
 		void BitsPlusFollow(bool bBit)
 		{
-			m_pBitStream->writeBit(bBit);
+			writeBit(bBit);
 
 			for (; m_nScale > 0; m_nScale--)
 			{
-				m_pBitStream->writeBit(!bBit);
+				writeBit(!bBit);
 			}
 
-			m_bBitsWrite += (1 + m_nScale);
+
 		}
 		void EncodeSymbol(TCodeValue nLowCount, TCodeValue nHightCount, TCodeValue nTotalCount)
 		{
@@ -69,14 +75,38 @@ namespace embDB
 
 			else BitsPlusFollow(true);     
 
+			if(m_nCurrBit != 0)
+			{
+				m_pStream->write(m_nBitsBuf);
+			}
+		}
+
+		void writeBit(bool bBit)
+		{
+			if(m_nCurrBit > 7)
+			{
+				m_pStream->write(m_nBitsBuf);
+				m_nBitsBuf = 0;
+				m_nCurrBit = 0;
+			}
+			if(bBit)
+				m_nBitsBuf |= (1 << m_nCurrBit);
+			m_nCurrBit++;
+#ifdef _DEBUG
+			m_nBitsWrite++;
+#endif
 		}
 
 	private:
-		CommonLib::WriteBitStream* m_pBitStream;
+		CommonLib::IWriteStream* m_pStream;
 		TCodeValue m_nLow;
 		TCodeValue m_nHigh;
 		uint32	   m_nScale;
-		uint32	   m_bBitsWrite;
+#ifdef _DEBUG
+		uint32	   m_nBitsWrite;
+#endif
+		byte	   m_nBitsBuf;
+		uint32	   m_nCurrBit;
 	};
 
 	template<class _TCodeValue, uint16 _nValueBits>
@@ -89,16 +119,27 @@ namespace embDB
 		static const TCodeValue  _FirstQuarter = (_TopValue/4  + 1);
 		static const TCodeValue  _Half = (2 * _FirstQuarter);
 		static const TCodeValue  _ThirdQuarter = (3 * _FirstQuarter);
+		static const _TCodeValue MaxRange = _FirstQuarter - 1;
 
-		TACDecoder(CommonLib::FxBitReadStream* pBitStream) : m_pBitStream(pBitStream), m_nLow(0), m_nHigh(_TopValue),m_nBitsRead(0), m_nValue(0)
+		TACDecoder(CommonLib::IReadStream* pStream) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue),
+			m_nBitsRead(0), m_nValue(0), m_nBitsBuf(0), m_nCurrBit(8)
 		{}
 
 		TCodeValue GetBit()
 		{
-			if(m_nBitsRead == m_pBitStream->sizeInBits())
+
+			if(m_nCurrBit > 7 && m_pStream->IsEndOfStream())
 				return 0;
-			m_nBitsRead++;
-			return m_pBitStream->readBit() ? 1 : 0;
+
+			if (m_nCurrBit > 7)
+			{
+				m_nCurrBit = 0;
+				m_nBitsBuf = m_pStream->readByte();
+			} 
+
+			TCodeValue nBit = (m_nBitsBuf & (1 << m_nCurrBit)) ? 1 : 0;
+			m_nCurrBit++;
+			return nBit;
 		}
 		void StartDecode()
 		{
@@ -150,11 +191,13 @@ namespace embDB
 
 
 	private:
-		CommonLib::FxBitReadStream* m_pBitStream;
+		CommonLib::IReadStream* m_pStream;
 		TCodeValue m_nLow;
 		TCodeValue m_nHigh;
 		uint32	   m_nBitsRead;
 		TCodeValue m_nValue;
+		byte	   m_nBitsBuf;
+		uint32	   m_nCurrBit;
 	};
 }
 

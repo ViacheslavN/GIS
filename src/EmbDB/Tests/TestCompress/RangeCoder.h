@@ -15,6 +15,7 @@ namespace embDB
 	public:
 
 				static const _TCodeValue MaxRange = Bottom;
+				static const uint32 Max_Size_Error = 100; //1 %
 				TRangeEncoder(CommonLib::IWriteStream* pStream) : m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1)
 				{
 
@@ -79,6 +80,7 @@ namespace embDB
 	public:
 
 		static const _TCodeValue MaxRange = Bottom;
+	
 		typedef _TCodeValue TCodeValue;
 
 		TRangeDecoder(CommonLib::IReadStream* pStream) : m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1), m_nValue(0)

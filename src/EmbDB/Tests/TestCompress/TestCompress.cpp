@@ -39,14 +39,18 @@ int _tmain(int argc, _TCHAR* argv[])
 	CommonLib::CString sSrcFile;
 	//sSrcFile = L"D:\\1\\jscript.dll";
 	//sSrcFile = L"D:\\2\\1.log";
-	sSrcFile = L"D:\\2\\brok_XML_EN.xml";
+	sSrcFile = L"D:\\test\\files\\bib";
 	//sSrcFile = L"D:\\2\\CALC_FUTOPT";
 
-//	uint32 nOutSize = compressFile(sSrcFile.cwstr(), L"D:\\2\\1.log.compress");
-//	DecompressFile(nOutSize, L"D:\\2\\1.log.compress", L"D:\\2\\1.log.decompress");
+	/*uint32 nOutSize = compressFile(sSrcFile.cwstr(), L"D:\\test\\files\\bib.compress");
+	DecompressFile(nOutSize, L"D:\\test\\files\\bib.compress", L"D:\\test\\files\\bib.compress.decompress");
 
+	compressStaticFile(sSrcFile.cwstr(), L"D:\\test\\files\\bib.static.compress");
+	DecompressStaticFile(nOutSize, L"D:\\test\\files\\bib.static.compress", L"D:\\test\\files\\bib.static.compress.decompress");
+	*/
 	CTestCompess test;
-	test.compressFile(sSrcFile.cwstr(), L"D:\\2\\1.log.compress");
+	//test.compressFile(L"D:\\test\\files\\bib", L"D:\\test\\files\\bib.compress");
+	test.TestCompress(L"D:\\test\\files");
 	return 0;
 }
 

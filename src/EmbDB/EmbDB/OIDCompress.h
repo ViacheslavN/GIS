@@ -55,6 +55,10 @@ namespace embDB
 		 typedef TUnsignedCalcNumLen<uint64, TFindMostSigBit, 64> TCalcNumLen;
 		 typedef TRangeEncoder<uint32, 32> TRangeEncoder;
 		 typedef TRangeDecoder<uint32, 32> TRangeDecoder;
+
+		 typedef TACEncoder<uint32, 16> TACEncoder;
+		 typedef TACDecoder<uint32, 16> TACDecoder;
+
 		 typedef std::vector<Symbols> TVecFreq;
 		public:
 
