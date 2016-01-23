@@ -56,7 +56,7 @@ int64 CFileWin32Impl::getFileSize() const
 	::GetFileSizeEx(m_hFile, &FileSize);
 	return (int64)FileSize.QuadPart;
 }
-bool CFileWin32Impl::setFilePos64(uint64 nPos, enSeekOffset offset){
+bool CFileWin32Impl::setFilePos64(int64 nPos, enSeekOffset offset){
 
 	  LARGE_INTEGER lpos;
 	  lpos.QuadPart = nPos;
@@ -64,7 +64,7 @@ bool CFileWin32Impl::setFilePos64(uint64 nPos, enSeekOffset offset){
  		: FILE_END);
 }
 
-bool CFileWin32Impl::setFilePos(uint32 nPos, enSeekOffset offset){
+bool CFileWin32Impl::setFilePos(int32 nPos, enSeekOffset offset){
 	 return 0 != ::SetFilePointer(m_hFile, nPos, 0, offset == soFromBegin ? FILE_BEGIN : offset == soFromCurrent ? FILE_CURRENT
  		: FILE_END);
 }

@@ -15,8 +15,8 @@ namespace CommonLib
 		virtual FileHandle deattach();
 		virtual bool openFile(const wchar_t* pszFileName, enOpenFileMode mode, enAccesRights access, enShareMode share, enOpenFileType openType = oftBinary);
 		virtual int64 getFileSize() const;
-		virtual bool setFilePos64(uint64 nPos, enSeekOffset offset);
-		virtual bool setFilePos(uint32 nPos, enSeekOffset offset);
+		virtual bool setFilePos64(int64 nPos, enSeekOffset offset);
+		virtual bool setFilePos(int32 nPos, enSeekOffset offset);
 		virtual int64 getFilePos() const;
 		virtual bool setFileEnd();
 		virtual bool setFileBegin();
