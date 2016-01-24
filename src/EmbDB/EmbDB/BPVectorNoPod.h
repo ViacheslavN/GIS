@@ -371,7 +371,7 @@ namespace embDB
 
 		TValue& front() 
 		{
-			assert(this->this->m_nSize);
+			assert(this->m_nSize);
 			return this->m_pData[0];
 		}
 
