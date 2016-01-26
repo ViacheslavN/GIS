@@ -106,8 +106,8 @@ namespace DatasetLite
 			TCoord yMin = TCoord((extent.yMin + m_dOffsetY) / m_dScaleY);
 			TCoord xMax = TCoord((extent.xMax + m_dOffsetX) / m_dScaleX);
 			TCoord yMax = TCoord((extent.yMax + m_dOffsetY) / m_dScaleY);
-
-			TShapeCursor *pCursor = new TShapeCursor(m_SpatialTree->spatialQuery(xMin, yMin, xMax, yMax), 
+			TIterator SPIterator = m_SpatialTree->spatialQuery(xMin, yMin, xMax, yMax);
+			TShapeCursor *pCursor = new TShapeCursor(SPIterator, 
 				m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY);
 			return IShapeCursorPtr(pCursor);
 		}

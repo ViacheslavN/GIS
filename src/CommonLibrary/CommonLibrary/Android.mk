@@ -31,8 +31,8 @@ LOCAL_CFLAGS :=	-DANDROID \
 		-I$(STLPORT_BASE)/stlport \
 		-x c++
 
-LOCAL_SRC_FILES :=  FilePosix.cpp blob.cpp String.cpp sprintf.cpp crc.cpp caseutils.cpp BoundaryBox.cpp GeoShape.cpp \
+LOCAL_SRC_FILES :=  Interlocked.cpp  FilePosix.cpp blob.cpp String.cpp sprintf.cpp crc.cpp caseutils.cpp BoundaryBox.cpp GeoShape.cpp \
 					IGeoShape.cpp  BitStream.cpp FixedBitStream.cpp WriteBitStream.cpp  FileStream.cpp FixedMemoryStream.cpp MemoryStream.cpp stream.cpp \
-					guit.cpp multibyte.cpp Interlocked.cpp thread.cpp alloc_t.cpp  Variant.cpp
+					guit.cpp multibyte.cpp thread.cpp alloc_t.cpp  Variant.cpp
 
 include $(BUILD_STATIC_LIBRARY)

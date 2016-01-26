@@ -46,5 +46,7 @@ LOCAL_SRC_FILES += DisplayTransformation2D.cpp
 LOCAL_SRC_FILES += conv_offset.cpp DisplayUtils.cpp Screen.cpp
 #symbols
 LOCAL_SRC_FILES += LoaderSymbols.cpp SimpleFillSymbol.cpp SimpleLineSymbol.cpp TextSymbol.cpp
+#clip
+LOCAL_SRC_FILES += ClipRectAlloc.cpp RectClipper.cpp
 
 include $(BUILD_STATIC_LIBRARY)

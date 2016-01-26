@@ -31,13 +31,14 @@ LOCAL_CFLAGS :=	-I. \
 		-I$(PROJ4_I_PATH) \
 		-I$(SHAPELIB_I_PATH) \
 		-I$(PNG_I_PATH) \
+		-I$(GIS_ENGINE_LIB_PATH) \
 		-x c++	\
 		-fexceptions
 
 
 LOCAL_STATIC_LIBRARIES := libcommon
 #EmbDB
-LOCAL_STATIC_LIBRARIES += libEmbDB
+LOCAL_STATIC_LIBRARIES += libEmbDB libDatasetLite
 #ThirdParty
 LOCAL_STATIC_LIBRARIES += libfreetype libproj4 libshapelib libzlib libpng libjpeg
 #GisEngine
@@ -46,8 +47,7 @@ LOCAL_LDLIBS := -llog
 
 
 
-LOCAL_SRC_FILES := GisLibrary.cpp \
-				   map.cpp
+LOCAL_SRC_FILES := MapDrawer.cpp GisLibrary.cpp map.cpp 
 
 
 
@@ -70,7 +70,7 @@ $(call import-module, CommonLibrary)
 
 $(call import-add-path, $(EMBDB_LIB_PATH))
 $(call import-module, EmbDB)
-
+$(call import-module, DatasetLite)
 
 #GisEngine
 $(call import-add-path, $(GIS_ENGINE_LIB_PATH))

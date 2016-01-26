@@ -19,7 +19,7 @@ namespace GisEngine
 		template< typename TVal, typename TMap>
 		TVal* getBuf(uint32 nSlot, uint32 nCount, TMap& map)
 		{
-			TMap::iterator it = map.find(nSlot);
+			typename TMap::iterator it = map.find(nSlot);
 			if(it != map.end())
 			{
 				if(it->second.size() < nCount)

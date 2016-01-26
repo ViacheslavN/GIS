@@ -54,14 +54,14 @@ namespace DatasetLite
 		
 		virtual  CommonLib::bbox extent() const
 		{
-			const TZOrderVal& zVal = m_Iterator.key();
+			const TZOrderVal& zVal = this->m_Iterator.key();
 			TPointType xMin = 0, xMax = 0, yMin = 0, yMax = 0;
 			zVal.getXY(xMin, yMin, xMax, yMax);
 			CommonLib::bbox bbox;
-			bbox.xMin = (xMin*m_dScaleX) - m_dOffsetX;
-			bbox.xMax = (xMax*m_dScaleX) - m_dOffsetX;
-			bbox.yMin = (yMin*m_dScaleY) - m_dOffsetY;
-			bbox.yMax = (yMax*m_dScaleY) - m_dOffsetY;
+			bbox.xMin = (xMin*this->m_dScaleX) - this->m_dOffsetX;
+			bbox.xMax = (xMax*this->m_dScaleX) - this->m_dOffsetX;
+			bbox.yMin = (yMin*this->m_dScaleY) - this->m_dOffsetY;
+			bbox.yMax = (yMax*this->m_dScaleY) - this->m_dOffsetY;
 
 			return bbox;
 		}
@@ -83,12 +83,12 @@ namespace DatasetLite
 
 		virtual  CommonLib::bbox extent() const
 		{
-			const TZOrderVal& zVal = m_Iterator.key();
+			const TZOrderVal& zVal = this->m_Iterator.key();
 			TPointType X = 0, Y = 0;
 			zVal.getXY(X, Y);
 			CommonLib::bbox bbox;
-			bbox.xMax = bbox.xMin = (X*m_dScaleX) - m_dOffsetX;
-			bbox.yMax = bbox.yMin = (Y*m_dScaleY) - m_dOffsetY;
+			bbox.xMax = bbox.xMin = (X*this->m_dScaleX) - this->m_dOffsetX;
+			bbox.yMax = bbox.yMin = (Y*this->m_dScaleY) - this->m_dOffsetY;
 			return bbox;
 		}
 

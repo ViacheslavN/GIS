@@ -2,6 +2,7 @@
 #define _LIB_COMMON_POD_VECTOR_
 
 #include "alloc_t.h"
+#include <assert.h>
 namespace CommonLib
 {
 

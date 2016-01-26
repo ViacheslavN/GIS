@@ -1,4 +1,4 @@
-package app.com.mapviewer.native_api;
+package app.com.mapviewer.nativeApi;
 
 /**
  * Created by Slava on 10.01.2016.

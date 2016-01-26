@@ -12,7 +12,7 @@ struct Interlocked
 #elif defined(__IPHONE_3_1)
 	typedef volatile int32_t inc_type;
 #elif defined (ANDROID)
-	typedef volatile int32_t inc_type;
+	typedef volatile int32 inc_type;
 #else
 #error implement your platform
 #endif
