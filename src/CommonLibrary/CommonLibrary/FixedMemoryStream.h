@@ -7,76 +7,11 @@
 namespace CommonLib
 {
 
-	class FxStreamBase : public IStream
-	{
-
-		public:
-
-			FxStreamBase(alloc_t *pAlloc = NULL);
-			~FxStreamBase();
-
-
-			virtual void create(uint32 nSize);
-			virtual void attach(byte* pBuffer, uint32 nSize, bool bCopy = false);
-			virtual byte* deattach();
-			virtual byte* buffer();
-			virtual const byte* buffer() const;
-			virtual uint32 size() const;
-			virtual bool seek(uint32 position, enSeekOffset offset );
-			virtual uint32 pos() const;
-			virtual void reset();
-			virtual void close();
-
-
-			
-
-			/*template <typename T>
-			void writeT(T value)
-			{
-				if(m_bIsBigEndian)
-					write_inverse((byte*)&value, sizeof(T));
-				else
-					write_bytes((byte*)&value, sizeof(T));
-			}*/
-			/*template <typename T>
-			void readT(T& val)
-			{
-
-				if(m_bIsBigEndian)
-					read_inverse((byte*)&val, sizeof(T));
-				else
-					read_bytes((byte*)&val, sizeof(T));
-			}
-		template <typename T>
-			T readTR()
-			{
-				T ret;
-				if(m_bIsBigEndian)
-					read_inverse((byte*)&ret, sizeof(T));
-				else
-					read_bytes((byte*)&ret, sizeof(T));
-				return ret;
-			}*/
-			
-		protected:
-		
-		/*	void write_bytes(const byte* buffer, size_t size);
-			void write_inverse(const byte* buffer, size_t size);
-			void read_bytes(byte* dst, size_t size);
-			void read_inverse(byte* buffer, size_t size);*/
-	    protected:
-			byte* m_pBuffer;
-			uint32  m_nPos;
-			uint32  m_nSize;
-			bool m_bIsBigEndian;
-			alloc_t *m_pAlloc;
-			bool m_bAttach;
-			simple_alloc_t m_alloc;
-	};
-	class FxMemoryReadStream : public IReadStreamBase, public FxStreamBase
+	 
+	class FxMemoryReadStream : public TMemoryStreamBase<IReadStreamBase>
 	{
 	public:
-
+		typedef  TMemoryStreamBase<IReadStreamBase> TBase;
 		FxMemoryReadStream(alloc_t *pAlloc = NULL);
 		FxMemoryReadStream(byte* pBuffer, uint32 nSize, bool bAttach = true, alloc_t *pAlloc = NULL);
 		~FxMemoryReadStream();
@@ -84,62 +19,20 @@ namespace CommonLib
 
 		virtual void read_bytes(byte* dst, uint32 size);
 		virtual void read_inverse(byte* buffer, uint32 size);
-		virtual bool checkRead(uint32 nSize) const;
-		virtual bool IsEndOfStream() const;
-		virtual bool AttachStream(IStream *pStream, uint32 nSize, bool bSeek = true);
 
-		/*virtual void read( byte* pBuffer, size_t bufLen );
-		virtual void read(bool& value);
-		virtual void read(char& value) ;
-		virtual void read(byte& value) ;
- 		virtual void read(int16& value);
-		virtual void read(uint16& value);
-		virtual void read(uint32& value);
-		virtual void read(int32& value);
-		virtual void read(int64& value);
-		virtual void read(uint64& value);
-		virtual void read(float& value);
-		virtual void read(double& value);
-		virtual void read(CommonLib::str_t& str);
-
-		virtual bool         readBool();
-		virtual byte         readByte();
-		virtual char         readChar();
-		virtual int16		 readint16();
-		virtual uint16       readintu16();
-		virtual uint32       readDword();
-		virtual int32        readInt32();
-		virtual uint32       readIntu32();
-		virtual int64        readInt64();
-		virtual uint64       readIntu64();
-		virtual float        readFloat();
-		virtual double       readDouble();*/
-	private:
-	
 	};
 
-	class FxMemoryWriteStream : public FxStreamBase, public IWriteStreamBase
+	class FxMemoryWriteStream : public TMemoryStreamBase<IWriteStreamBase> 
 	{
 	public:
+		typedef  TMemoryStreamBase<IWriteStreamBase> TBase;
 		FxMemoryWriteStream(alloc_t *pAlloc = NULL);
 		~FxMemoryWriteStream();
 
 		virtual void write_bytes(const byte* buffer, uint32 size);
 		virtual void write_inverse(const byte* buffer, uint32 size);
 		
-		/*virtual void write(const byte* pBuffer, size_t bufLen );
-		virtual void write(bool value);
-		virtual void write(byte value);
-		virtual void write(char value);
-		virtual void write(int16 value);
-		virtual void write(uint16 value);
-		virtual void write(uint32 value);
-		virtual void write(int32 value);
-		virtual void write(int64 value);
-		virtual void write(uint64 value);
-		virtual void write(float value);
-		virtual void write(double value);
-		virtual void write(const CommonLib::str_t& str);*/
+		
 	};
 
 }

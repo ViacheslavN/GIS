@@ -43,7 +43,7 @@ namespace embDB
 		}
 		void convert(const CommonLib::IGeoShapePtr& shape, sBlobVal& sValue)
 		{
-			CommonLib::MemoryStream stream;
+			CommonLib::CWriteMemoryStream stream;
 			shape->write(&stream);
 
 			sValue.m_nPage = -1;

@@ -7,7 +7,7 @@
 namespace embDB
 {
 
-	class ReadStreamPage : public CommonLib::IReadStreamBase, public CommonLib::AutoRefCounter
+	class ReadStreamPage : public CommonLib::TMemoryStreamBase<CommonLib::IReadStreamBase>, public CommonLib::AutoRefCounter
 	{
 	public:
 		ReadStreamPage(IFilePage* pTran, uint32 nPageSize, uint16 nObjectPage = 0, uint16 nSubObjectPage = 0) :

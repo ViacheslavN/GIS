@@ -99,16 +99,19 @@ namespace CommonLib
 		~BitStreamBase();
 
 
-		virtual void create(uint32 nSize);
+		virtual bool create(uint32 nSize);
 		virtual void attach(byte* pBuffer, uint32 nSize, bool bCopy = false);
 		virtual void attachBits(byte* pBuffer, uint32 nsizeInBits, bool bCopy = false);
 		virtual byte* deattach();
 		virtual byte* buffer();
 		virtual const byte* buffer() const;
-		virtual uint32 size() const;
+		virtual int32 size() const;
+		virtual int64 size64() const;
 		virtual uint32 sizeInBits() const;
 		virtual bool seek(uint32 position, enSeekOffset offset );
-		virtual uint32 pos() const;
+		virtual bool seek64(uint64 position, enSeekOffset offset );
+		virtual int32 pos() const;
+		virtual int64 pos64() const;
 		virtual uint32 posInBits() const;
 		virtual void reset();
 		virtual void close();

@@ -4,6 +4,7 @@
 #include "CommonLibrary/FixedBitStream.h"
 #include <map>
 #include "MathUtils.h"
+#include "BPVector.h"
 namespace embDB
 {
 	
@@ -82,17 +83,38 @@ namespace embDB
 
 	};
 
-	template<class _TValue, class _TFindMostSigBit, int _nMaxBitsLens>
+	template<class _TValue, class _TFindMostSigBit, 
+			class _TRangeCoder,
+			class _TACCoder,
+			class _TRangeEncoder,
+			class _TACEncoder,
+		
+			uint32 _nMaxBitsLens>
 	class TUnsignedCalcNumLen
 	{
 		public:
 
 			typedef _TValue TValue;
 			typedef _TFindMostSigBit TFindBit;
+			typedef _TRangeCoder TRangeCoder;
+			typedef _TACCoder TACCoder;
 
+			//Flags
+			//diff lens|type freq|type comp|
+			//type comp      1/0 1-range coder, 0-ac-coder  1 bit
+			//type freq value  1-byte, 2-short, 3-int32     2 bit
+			 
+
+			enum eTypeFreq
+			{
+				etfByte = 0,
+				etfShort = 1,
+				etfInt32 = 2
+			};
 	 
 
-			TUnsignedCalcNumLen() : m_nLenBitSize(0), m_nCount(0), m_nDIffsLen(0)
+			TUnsignedCalcNumLen() : m_nLenBitSize(0), m_nCount(0), m_nDiffsLen(0), m_nFlags(0),
+						m_nTypeFreq(etfByte)
 			{
 
 			}
@@ -107,12 +129,18 @@ namespace embDB
 				m_nCount++;
 
 				if(!m_BitsLensFreq[nBitLen])
-					m_nDIffsLen++;
+					m_nDiffsLen++;
 
 				m_BitsLensFreq[nBitLen] += 1;
 
-				//m_MapFreq[nBitLen] += 1;
-
+				if(m_nTypeFreq != etfInt32)
+				{
+					if(m_BitsLensFreq[nBitLen] > 255)
+						m_nTypeFreq = etfShort;
+					if(m_BitsLensFreq[nBitLen] > 65535)
+						m_nTypeFreq = etfInt32;
+				}
+				
 				return nBitLen;
 			}
 
@@ -124,7 +152,7 @@ namespace embDB
 
 				m_BitsLensFreq[nBitLen] -= 1;
 				if(!m_BitsLensFreq[nBitLen])
-					m_nDIffsLen--;
+					m_nDiffsLen--;
 			}
  
 			 
@@ -142,7 +170,7 @@ namespace embDB
 				if(dBitRowSize < 32)
 					dBitRowSize = 32;
 
-				dBitRowSize += dBitRowSize*0.05;
+				dBitRowSize += dBitRowSize/200;  //0.5% error
 
 				return dBitRowSize;
 			}
@@ -158,32 +186,87 @@ namespace embDB
 
 
 
-				return nByteSize + m_nDIffsLen + 1 + m_nLenBitSize;
+				return nByteSize + 1 + (_nMaxBitsLens)/8 + GetLenForDiffLen(); //Type comp (rang or ac) + 4 +
 
 			}
 
+		
 
-			void compress(TBPVector<_TValue>& vecValues, CommonLib::IWriteStream* pStream)
+			bool compress(const TBPVector<TValue>& vecValues, CommonLib::IWriteStream* pStream)
 			{
 
 				uint16 ModelLens[_nMaxBitsLens];
 
-				pStream->write(byte(m_nDIffsLen));
-				for (uint32 i = 0, i < _nMaxBitsLens; ++i)
+				uint32 nBeginPos = pStream->pos();
+				WriteDiffsLens(pStream);
+
+				double dRowBitsLen = GetCodeBitSize();
+				uint32 nByteSize = (dRowBitsLen + 7)/8;
+
+
+				 
+
+				return true;
+			}
+			bool decompress(TBPVector<_TValue>& vecValues, CommonLib::IWriteStream* pStream)
+			{
+				return true;
+			}
+		private:
+			uint32 GetLenForDiffLen() const 
+			{
+				switch(m_nTypeFreq)
 				{
-					if(m_BitsLensFreq[i] != 0)
-					{
-						ModelLens[i] = 1;
-						pStream->write(byte(i));
-					}
-					else
-						ModelLens[i] = 0;
+					case etfByte:
+						return m_nDiffsLen;
+						break;
+					case etfShort:
+						return m_nDiffsLen * sizeof(uint16);
+						break;
+					case etfInt32:
+						return m_nDiffsLen * sizeof(uint32);
+						break;
+				}
+			}
+
+			void WriteDiffsLens(CommonLib::IWriteStream* pStream)
+			{
+
+				byte LensMask[(_nMaxBitsLens)/8];
+
+				memset(LensMask, 0, _nMaxBitsLens/8);
+				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				{
+					uint32 nByte = i/8;
+					uint32 nBit =  i - (nByte * 8);
+					if(m_BitsLensFreq[_nMaxBitsLens] != 0)
+						LensMask[nByte] |= (0x01 << nBit);
+				}
+				for (uint32 i = 0; i < _nMaxBitsLens/8; ++i)
+				{
+					pStream->write((byte)LensMask[i]);
 				}
 				
-			
+				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				{
+					if(m_BitsLensFreq[_nMaxBitsLens] == 0)
+						continue;
 
+					switch(m_nTypeFreq)
+					{
+					case etfByte:
+						pStream->write((byte)m_BitsLensFreq[i]);
+						break;
+					case etfShort:
+						pStream->write((uint16)m_BitsLensFreq[i]);
+						break;
+					case etfInt32:
+						pStream->write((uint32)m_BitsLensFreq[i]);
+						break;
+					}
 
-
+				}
+				
 			}
 
 		private:	
@@ -193,9 +276,11 @@ namespace embDB
 			uint32 m_nLenBitSize;
 			uint32 m_nCount;
 
-			uint32 m_nDIffsLen;
+			uint32 m_nDiffsLen;
 
-			uint16  m_BitsLensFreq[_nMaxBitsLens];
+			uint32  m_BitsLensFreq[_nMaxBitsLens];
+			uint16 m_nFlags;
+			eTypeFreq m_nTypeFreq;
 	};
 }
 #endif

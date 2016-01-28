@@ -52,12 +52,16 @@ namespace embDB
 		};
 
 		 typedef std::map<int64, SymbolInfo> TDiffFreq;
-		 typedef TUnsignedCalcNumLen<uint64, TFindMostSigBit, 64> TCalcNumLen;
 		 typedef TRangeEncoder<uint32, 32> TRangeEncoder;
 		 typedef TRangeDecoder<uint32, 32> TRangeDecoder;
 
 		 typedef TACEncoder<uint32, 16> TACEncoder;
 		 typedef TACDecoder<uint32, 16> TACDecoder;
+
+		 typedef TUnsignedCalcNumLen<uint64, TFindMostSigBit, TRangeEncoder, TACEncoder, 64> TCalcNumLen;
+	
+
+	
 
 		 typedef std::vector<Symbols> TVecFreq;
 		public:

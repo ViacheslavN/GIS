@@ -120,6 +120,81 @@ void IReadStreamBase::read(CommonLib::CString& str)
 
 }
 
+bool IReadStreamBase::save_read( byte* pBuffer, uint32 bufLen )
+{
+
+	if(getFree() < bufLen)
+		return false;
+	if(IStream::isBigEndian())
+		read_inverse(pBuffer, bufLen);
+	else
+		read_bytes(pBuffer, bufLen);
+
+	return true;
+}
+bool IReadStreamBase::save_read(bool& value)
+{
+	return save_readT<bool>(value);
+}
+bool IReadStreamBase::save_read(char& value)
+{
+	return save_readT<char>(value);
+}
+bool IReadStreamBase::save_read(byte& value)
+{
+	return save_readT<byte>(value);
+}
+bool IReadStreamBase::save_read(int16& value)
+{
+	return save_readT<int16>(value);
+}
+bool IReadStreamBase::save_read(uint16& value)
+{
+	return save_readT<uint16>(value);
+}
+bool IReadStreamBase::save_read(uint32& value)
+{
+	return save_readT<uint32>(value);
+}
+bool IReadStreamBase::save_read(int32& value)
+{
+	return save_readT<int32>(value);
+}
+bool IReadStreamBase::save_read(int64& value)
+{
+	return save_readT<int64>(value);
+}
+bool IReadStreamBase::save_read(uint64& value)
+{
+	return save_readT<uint64>(value);
+}
+bool IReadStreamBase::save_read(float& value)
+{
+	return save_readT<float>(value);
+}
+bool IReadStreamBase::save_read(double& value)
+{
+	return save_readT<double>(value);
+}
+bool IReadStreamBase::save_read(CommonLib::CString& str)
+{
+	uint32 nUtf8Len = 0;
+	if(!save_readT<uint32>(nUtf8Len))
+		return false;
+	
+	if(getFree() < nUtf8Len)
+		return false;
+
+	if(nUtf8Len)
+	{
+		std::vector<char> buf(nUtf8Len + 1);
+		read((byte*)&buf[0], buf.size());
+		str.loadFromUTF8(&buf[0]);
+	}
+
+	return true;
+		
+}
  
 
 void  IWriteStreamBase::write(const byte* pBuffer, uint32 bufLen )
@@ -191,14 +266,7 @@ void IWriteStreamBase::write(const CommonLib::CString& str)
 	
 	}
 }
-void IWriteStreamBase::write(const IStream *pStream)
-{
-	writeT<uint32>(pStream->pos());
-	if(pStream->pos())
-	{
-		write(pStream->buffer(), pStream->pos());
-	}
-}
+
 void IWriteStreamBase::write(const char* pszStr)
 {
 	write((byte*)pszStr, strlen(pszStr));

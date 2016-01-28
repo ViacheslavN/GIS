@@ -6,7 +6,7 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 namespace embDB
 {
-	class WriteStreamPage : public CommonLib::IWriteStreamBase, public CommonLib::AutoRefCounter
+	class WriteStreamPage : public CommonLib::TMemoryStreamBase<CommonLib::IWriteStreamBase>, public CommonLib::AutoRefCounter
 	{
 	public:
 		WriteStreamPage(IDBTransaction* pTran, uint32 nPageSize, uint16 nObjectPage = 0, uint16 nSubObjectPage = 0) :
