@@ -26,8 +26,8 @@ public:
 	typedef embDB::TRangeEncoder<TCodeValue, _nValueBit> TRangeEncoder; 
 	typedef embDB::TRangeDecoder<TCodeValue, _nValueBit> TRangeDecoder; 
 
-	CommonLib::MemoryStream m_pReadStream;
-	CommonLib::MemoryStream m_pWriteStream;
+	CommonLib::CReadMemoryStream m_pReadStream;
+	CommonLib::CWriteMemoryStream m_pWriteStream;
 
 	TestCompressor()
 	{
@@ -124,7 +124,7 @@ public:
 	{
 		CommonLib::CReadFileStream srcFile;
 		CommonLib::CWriteFileStream dstFile;
-		CommonLib::MemoryStream stream; 
+		//CommonLib::MemoryStream stream; 
 
 	
 
@@ -274,7 +274,7 @@ public:
 	{
 		CommonLib::CReadFileStream srcFile;
 		CommonLib::CWriteFileStream dstFile;
-		CommonLib::MemoryStream stream; 
+//		CommonLib::MemoryStream stream; 
 
 
 

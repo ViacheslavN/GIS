@@ -23,7 +23,7 @@ namespace embDB
 		TCodeValue GetBit()
 		{
 
-			if(m_nCurrBit > 7 && m_pStream->IsEndOfStream())
+			if(m_nCurrBit > 7 && (m_pStream->pos() == m_pStream->size()))
 				return 0;
 
 			if (m_nCurrBit > 7)

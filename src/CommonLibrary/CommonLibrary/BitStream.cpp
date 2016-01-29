@@ -107,7 +107,7 @@ namespace CommonLib
 
 		return m_pBuffer != NULL;
 	}
-	void BitStreamBase::attach(byte* pBuffer, uint32 nSize, bool bCopy)
+	bool BitStreamBase::attach(byte* pBuffer, uint32 nSize, bool bCopy)
 	{
 
 		if(bCopy)
@@ -126,6 +126,8 @@ namespace CommonLib
 		m_nPos = 0;
 		m_nSize = nSize;
 		m_nEndBits = m_nBitBase;
+
+		return true;
 
 	}
 	void BitStreamBase::attachBits(byte* pBuffer, uint32 nSizeInBits, bool bCopy)

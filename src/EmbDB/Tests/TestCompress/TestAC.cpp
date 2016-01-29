@@ -429,7 +429,7 @@ void TestCompressAC(const std::string& sStr)
 	CommonLib::simple_alloc_t alloc;
 	CommonLib::FxBitWriteStream bitWriteStream(&alloc);
 	CommonLib::FxMemoryWriteStream  BitStream(&alloc);
-	CommonLib::MemoryStream  WriteStream(&alloc);
+	CommonLib::CWriteMemoryStream  WriteStream(&alloc);
 	bitWriteStream.create(nSize/8 + 1);
 	BitStream.create(nSize/8 + 1 + 100); 
 

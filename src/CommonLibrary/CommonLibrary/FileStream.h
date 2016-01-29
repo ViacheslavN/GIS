@@ -18,8 +18,8 @@ namespace CommonLib
 
 	 
 		virtual bool open(const wchar_t *pszFileName,  enOpenFileMode mode, enAccesRights access, enShareMode share) = 0;
-		virtual void attach(FileHandle handle)  = 0;
-		virtual FileHandle deattach() = 0;
+		virtual void attachF(FileHandle handle)  = 0;
+		virtual FileHandle deattachF() = 0;
 		virtual bool isValid() const = 0;
 		virtual bool flush() = 0;
 	protected:
@@ -48,11 +48,11 @@ namespace CommonLib
 		{
 			return m_File.openFile(pszFileName, mode, access, share);
 		}
-		virtual void attach(FileHandle handle)
+		virtual void attachF(FileHandle handle)
 		{
 			m_File.attach(handle);
 		}
-		virtual FileHandle deattach()
+		virtual FileHandle deattachF()
 		{
 			return m_File.deattach();
 		}
@@ -68,7 +68,7 @@ namespace CommonLib
 		{
 			return m_File.setFilePos(position, offset);
 		}
-		virtual bool seek64(int64 position, enSeekOffset offset )
+		virtual bool seek64(uint64 position, enSeekOffset offset )
 		{
 			return m_File.setFilePos64(position, offset);
 		}
@@ -96,6 +96,27 @@ namespace CommonLib
 		{
 			return m_File.Flush();
 		}
+
+		virtual bool create(uint32 nSize)
+		{
+			return false;
+		}
+		virtual bool attach(byte* pBuffer, uint32 nSize, bool bCopy = true)
+		{
+			return false;
+		}
+		virtual byte* deattach()
+		{
+			return NULL;
+		}
+		virtual byte* buffer()
+		{
+			return NULL;
+		}
+		virtual const byte* buffer() const
+		{
+			return NULL;
+		}
 	protected:
 		CFile m_File;
 	};
@@ -115,7 +136,7 @@ namespace CommonLib
   	};
 
 
-	class CWriteFileStream : TFileStreamBase<IWriteStreamBase>
+	class CWriteFileStream : public TFileStreamBase<IWriteStreamBase>
 	{
 	public:
 

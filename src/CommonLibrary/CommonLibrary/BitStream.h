@@ -100,7 +100,7 @@ namespace CommonLib
 
 
 		virtual bool create(uint32 nSize);
-		virtual void attach(byte* pBuffer, uint32 nSize, bool bCopy = false);
+		virtual bool attach(byte* pBuffer, uint32 nSize, bool bCopy = false);
 		virtual void attachBits(byte* pBuffer, uint32 nsizeInBits, bool bCopy = false);
 		virtual byte* deattach();
 		virtual byte* buffer();

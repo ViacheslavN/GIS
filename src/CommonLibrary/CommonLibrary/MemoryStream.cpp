@@ -17,7 +17,7 @@ namespace CommonLib
 
 		void CReadMemoryStream::read_inverse(byte* buffer, uint32 size)
 		{
-			for(int64 i = 0; i < size; m_nPos++, i++)
+			for(uint32 i = 0; i < size; m_nPos++, i++)
 				buffer[i] = this->m_pBuffer[m_nPos + size - i - 1];
 			this->m_nPos += size;
 			assert(this->m_nPos <= this->m_nSize);
@@ -26,7 +26,14 @@ namespace CommonLib
 
 
 
+		CWriteMemoryStream::CWriteMemoryStream(alloc_t *pAlloc): TBase(pAlloc)
+		{
 
+		}
+		CWriteMemoryStream::~CWriteMemoryStream()
+		{
+
+		}
 
 		void CWriteMemoryStream::write_bytes(const byte* buffer, uint32 size)
 		{

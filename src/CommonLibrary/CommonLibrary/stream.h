@@ -23,24 +23,18 @@ public:
 	virtual int64 pos64() const = 0;
 	virtual void reset() = 0;
 	virtual void close() = 0;
+	virtual bool create(uint32 nSize) = 0;
+	virtual bool attach(byte* pBuffer, uint32 nSize, bool bCopy = true)  = 0;
+	virtual byte* deattach()  = 0;
+	virtual byte* buffer()  = 0;
+	virtual const byte* buffer() const = 0;
+
 	static bool isBigEndian()
 	{
 		static const uint16 word = 0xFF00;
 		return *((byte*) & word) != 0;
 
 	}
-};
-
-
-class IMemoryStream
-{
-public:
-	virtual bool create(uint32 nSize) = 0;
-	virtual void attach(byte* pBuffer, uint32 nSize, bool bCopy = true)  = 0;
-	virtual byte* deattach()  = 0;
-	virtual byte* buffer()  = 0;
-	virtual const byte* buffer() const = 0;
-	virtual ~IMemoryStream()  {}
 };
 
 
@@ -314,7 +308,7 @@ public:
 
 
 template<class I>
-class TMemoryStreamBase : public I, public IMemoryStream
+class TMemoryStreamBase : public I
 {
 
 
@@ -346,6 +340,7 @@ public:
 
 	virtual bool create(uint32 nSize)
 	{
+		if(!m_bAttach && m_pBuffer)
 		{
 			m_pAlloc->free(m_pBuffer);
 		}
@@ -356,7 +351,7 @@ public:
 
 		return m_pBuffer != NULL;
 	}
-	virtual void attach(byte* pBuffer, uint32 nSize, bool bCopy = true)
+	virtual bool attach(byte* pBuffer, uint32 nSize, bool bCopy = true)
 	{
 		if(bCopy)
 		{
@@ -372,6 +367,7 @@ public:
 		}
 		m_nPos = 0;
 		m_nSize = nSize;
+		return true;
 	}
 
 	virtual byte* deattach()
