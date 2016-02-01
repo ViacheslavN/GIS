@@ -104,7 +104,7 @@ namespace embDB
 		FilePagePtr pPage = m_pDBStorage->getFilePage(m_nTablePage, nTableHeaderPageSize);
 		if(!pPage.get())
 			return false;
-		stream.attach(pPage->getRowData(), pPage->getPageSize());
+		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream);
 		if(!header.isValid())
 			return false;//TO DO DB LOg
@@ -169,7 +169,7 @@ namespace embDB
 		if(!pFPage.get())
 			return false;
 		CommonLib::FxMemoryWriteStream stream;
-		stream.attach(pFPage->getRowData(), pFPage->getPageSize());
+		stream.attachBuffer(pFPage->getRowData(), pFPage->getPageSize());
 		sFilePageHeader header(stream, TABLE_PAGE, TABLE_HEADER_PAGE);
 		stream.write((int64)-1);	
 		stream.write((int64)-1);	
@@ -346,7 +346,7 @@ namespace embDB
 		if(!pPage.get())
 			return false;
 		CommonLib::FxMemoryReadStream stream;
-		stream.attach(pPage->getRowData(), pPage->getPageSize());
+		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream);
 		if(!header.isValid())
 			return false;//TO DO DB LOg
@@ -769,7 +769,7 @@ namespace embDB
 		FilePagePtr pPage = m_pDBStorage->getFilePage(nAddr, nFieldInfoPageSize);
 		if(!pPage.get())
 			return false;
-		stream.attach(pPage->getRowData(), pPage->getPageSize());
+		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		SIndexProp ip;
 		sFilePageHeader header (stream);
 		if(!header.isValid())

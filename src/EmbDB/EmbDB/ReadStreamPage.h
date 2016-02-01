@@ -33,7 +33,7 @@ namespace embDB
 			  m_pPage = pPage;
 			  assert(m_nBeginPos < m_pPage->getPageSize());
 
-			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
+			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
 
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
@@ -71,7 +71,7 @@ namespace embDB
 			  }
 			  
 			  assert(m_nBeginPos < m_pPage->getPageSize());
-			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
+			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
 
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
@@ -166,17 +166,38 @@ namespace embDB
 		  }
 
 
-		  virtual bool checkRead(uint32 nSize) const
+		  void readStream(IStream *pStream, bool bAttach)
 		  {
-			  return true;
+			  if(bAttach)
+				  return;
+
+			  IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
+			  if(pMemStream)
+			  {
+				  uint32 nStreamSize = readIntu32();
+				
+				  if(nStreamSize)
+				  {
+					   pMemStream->resize(nStreamSize);
+					  read(pMemStream->buffer() + pStream->pos(), nStreamSize);
+				  }
+			  }
 		  }
-		  virtual bool IsEndOfStream() const
+		  bool SaveReadStream(IStream *pStream, bool bAttach)
 		  {
-			  return m_nPageHeader == m_nEndPage && m_stream.pos() == m_nEndPos;
-		  }
-		  virtual bool AttachStream(CommonLib::IStream *pStream, uint32 nSize, bool bSeek = true)
-		  {
-			  return false;
+			   if(bAttach)
+				   return false;
+
+			  IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
+			  if(!pMemStream)
+				  return false;
+			  uint32 nStreamSize = 0;
+			  if(!save_read(nStreamSize))
+				  return false;			 
+					
+			  pMemStream->resize(nStreamSize);
+			 return save_read(pMemStream->buffer() + pStream->pos(), nStreamSize);
+			 
 		  }
 
 		  bool NextPage(int64 nNextPage)
@@ -188,7 +209,7 @@ namespace embDB
 			  if(!m_pPage.get())
 				  return false;  // TO DO Log
 
-			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
+			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
 
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {

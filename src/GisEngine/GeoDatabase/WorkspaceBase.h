@@ -108,7 +108,7 @@ namespace GisEngine
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const
 			{
 				pWriteStream->write((uint32)GetWorkspaceType());
-				CommonLib::MemoryStream stream;
+				CommonLib::CWriteMemoryStream stream;
 				stream.write(m_nID);
 				stream.write(m_sName);
 				pWriteStream->write(&stream);
@@ -117,9 +117,9 @@ namespace GisEngine
 			virtual bool load(CommonLib::IReadStream* pReadStream)
 			{
 				CommonLib::FxMemoryReadStream stream;
-				pReadStream->AttachStream(&stream, pReadStream->readInt32());
-				stream.read(m_nID);
-				stream.read(m_sName);
+				SAFE_READ(pReadStream->save_read(&stream, true))
+				SAFE_READ(stream.save_read(m_nID))
+				SAFE_READ(stream.save_read(m_sName))
 				return true;
 			}
 		

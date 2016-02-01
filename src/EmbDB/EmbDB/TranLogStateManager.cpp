@@ -25,7 +25,7 @@ namespace embDB
 			if(!pPage)
 				return false;
 			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
+			stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 			stream.read(m_nState);
 			stream.read(m_nDbSize);
 			delete pPage; 
@@ -39,7 +39,7 @@ namespace embDB
 		if(!pPage)
 			return false;
 		CommonLib::FxMemoryWriteStream stream;
-		stream.attach(pPage->getRowData(), pPage->getPageSize());
+		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		stream.write(m_nState);
 		stream.write(m_nDbSize);
 		m_pStorage->saveFilePage(pPage, pPage->getAddr());

@@ -35,7 +35,10 @@ FileHandle CFileWin32Impl::deattach()
 	return handle;
 
 }
-
+FileHandle CFileWin32Impl::handle()
+{
+	return m_hFile;
+}
 bool CFileWin32Impl::openFile(const wchar_t *pszFileName, enOpenFileMode mode, enAccesRights access, enShareMode share, enOpenFileType openType)
 {
 	DWORD win_access = (access & arExecute ? GENERIC_EXECUTE: 0) | (access & arRead ? GENERIC_READ: 0) 

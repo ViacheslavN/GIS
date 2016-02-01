@@ -312,7 +312,7 @@ namespace GisEngine
 		//IStreamSerialize
 		bool CTextSymbol::save(CommonLib::IWriteStream *pWriteStream) const
 		{
-			CommonLib::MemoryStream stream;
+			CommonLib::CWriteMemoryStream stream;
 			if(!TBase::save(&stream))
 				return false;
 
@@ -333,18 +333,18 @@ namespace GisEngine
 		bool CTextSymbol::load(CommonLib::IReadStream* pReadStream)
 		{
 			CommonLib::FxMemoryReadStream stream;
-			pReadStream->AttachStream(&stream, pReadStream->readInt32());
+			SAFE_READ(pReadStream->save_read(&stream,true))
 			if(!TBase::load(&stream))
 				return false;
-			stream.read(m_sText);
-			bool bBgSymbol = stream.readBool();
+			SAFE_READ(stream.save_read(m_sText))
+			bool bBgSymbol = false;
+			SAFE_READ(stream.save_read(bBgSymbol))
 			if(bBgSymbol)
 			{
 
 				m_pTextBg =  (ITextBackground*)LoaderSymbol::LoadSymbol(&stream).get();
 			}
-			m_nTextDrawFlags = stream.readInt32();
-		 
+			SAFE_READ(stream.save_read(m_nTextDrawFlags))
 			return m_Font.load(&stream);
 		}
 

@@ -32,7 +32,7 @@ namespace embDB
 			if(!pFilePage.get())
 				return false; 
 			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
+			stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 			sFilePageHeader header(stream, m_bCheckCRC32 && !pFilePage->isCheck());
  
 			if(!pFilePage->isCheck() && !header.isValid())
@@ -62,7 +62,7 @@ namespace embDB
 				return false; 
 			CommonLib::FxMemoryWriteStream stream;
 			
-			stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
+			stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 			sFilePageHeader header(stream, BTREE_PAGE, BTREE_STATIC_PAGE);
 			stream.write(m_nInnerNodeCounts);
 			stream.write(m_nLeafNodeCounts);

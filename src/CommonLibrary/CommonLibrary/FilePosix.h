@@ -13,6 +13,7 @@ namespace CommonLib
 
 		virtual bool attach(FileHandle handle);
 		virtual FileHandle deattach();
+		virtual FileHandle handle();
 		virtual bool openFile(const wchar_t* pszFileName, enOpenFileMode mode, enAccesRights access, enShareMode share, enOpenFileType openType = oftBinary);
 		virtual int64 getFileSize() const;
 		virtual bool setFilePos64(int64 nPos, enSeekOffset offset);

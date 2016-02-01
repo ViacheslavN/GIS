@@ -114,7 +114,7 @@ namespace GisEngine
 		bool CPen::save(CommonLib::IWriteStream *pStream) const
 		{
 
-			CommonLib::MemoryStream stream;
+			CommonLib::CWriteMemoryStream stream;
 
 			stream.write(byte(m_type));
 			m_color.save(&stream);
@@ -140,28 +140,33 @@ namespace GisEngine
 		bool CPen::load(CommonLib::IReadStream *pStream)
 		{
 			CommonLib::FxMemoryReadStream stream;
-			uint32 nSize = 0;
-			SAFE_READ_RES(pStream, nSize);
-			if(pStream->AttachStream(&stream, nSize))
-				return false;
+	 		SAFE_READ(pStream->save_read(&stream, true))
+		
 
-			m_type = (ePenType)stream.readByte();
-			m_color.load(&stream);
-			m_joinType = (eJoinType)stream.readByte();
-			pStream->read(m_nWidth);
-			m_capType = (eCapType)stream.readByte();
-			m_bRelease = stream.readBool();
+			byte type = 0;
+			byte joinType = 0;
+			byte capType = 0;
+			SAFE_READ(pStream->save_read(type))
+			m_type = (ePenType)type;
+			SAFE_READ(m_color.load(&stream))
+			SAFE_READ(pStream->save_read(joinType))
+			m_joinType = (eJoinType)joinType;
+			SAFE_READ(pStream->save_read(m_nWidth))
+			SAFE_READ(pStream->save_read(capType))
+			m_capType = (eCapType)capType;
+			SAFE_READ(pStream->save_read(m_bRelease))
 			if(m_bRelease)
 			{
 				m_pTexture = new CBitmap();
 				m_pTexture->load(&stream);
 			}
-			uint32 nCount = stream.readIntu32();
+			uint32 nCount = 0;
+			SAFE_READ(pStream->save_read(nCount))
 			for (uint32 i = 0; i < nCount; ++i)
 			{
 				GUnits val1, val2;
-				stream.read(val1);
-				stream.read(val2);
+				SAFE_READ(pStream->save_read(val1))
+				SAFE_READ(pStream->save_read(val2))
 				m_vecTemplates.push_back(std::make_pair(val1, val2));
 			}
 			return true;
@@ -189,7 +194,7 @@ namespace GisEngine
 
 			if(m_vecTemplates.size())
 			{
-				CommonLib::MemoryStream stream;
+				CommonLib::CWriteMemoryStream stream;
 				stream.write((uint32)m_vecTemplates.size());
 				for (size_t i = 0; i < m_vecTemplates.size(); ++i)
 				{
@@ -232,7 +237,7 @@ namespace GisEngine
 				CommonLib::CBlob blob; 
 				pTemplatesNode->GetBlobCDATA(blob);
 				CommonLib::FxMemoryReadStream stream;
-				stream.attach(blob.buffer(), blob.size());
+				stream.attachBuffer(blob.buffer(), blob.size());
 
 				CommonLib::FxMemoryReadStream *pStream = &stream;
 				uint32 nSize = 0;

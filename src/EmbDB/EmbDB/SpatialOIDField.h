@@ -41,7 +41,7 @@ namespace embDB
 			if(!pPage.get())
 				return false;
 			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
+			stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 			sFilePageHeader header(stream);
 			if(!header.isValid())
 			{
@@ -150,7 +150,7 @@ namespace embDB
 				if(!pPage.get())
 					return false;
 				CommonLib::FxMemoryWriteStream stream;
-				stream.attach(pPage->getRowData(), pPage->getPageSize());
+				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 				sFilePageHeader header(stream, FIELD_PAGE, FIELD_INFO_PAGE);
 				int64 m_nBTreeRootPage = -1;
 				FilePagePtr pRootPage(pTran->getNewPage());

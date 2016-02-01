@@ -52,7 +52,7 @@ namespace embDB
 			FileFreeMap* pFreeMaps = m_FreeMaps.begin()->second;
 			m_ListFreeMaps.push(pFreeMaps->m_nAddr, m_pStorage);
 			/*CommonLib::FxMemoryWriteStream stream;
-			stream.attach(pListFreeBitMapsPage->getRowData(), pListFreeBitMapsPage->getPageSize());
+			stream.attachBuffer(pListFreeBitMapsPage->getRowData(), pListFreeBitMapsPage->getPageSize());
 			sFilePageHeader header(stream, STORAGE_PAGE, STORAGE_LIST_FREEMAP_PAGE);
 			stream.write(int64(-1)); //next
 			stream.write(uint32(1)); //next
@@ -72,7 +72,7 @@ namespace embDB
 		}
 		{
 			CommonLib::FxMemoryWriteStream stream;
-			stream.attach(pRootPage->getRowData(), pRootPage->getPageSize());
+			stream.attachBuffer(pRootPage->getRowData(), pRootPage->getPageSize());
 			sFilePageHeader header(stream, STORAGE_PAGE, STORAGE_FREE_MAP_ROOT_PAGE);
 			stream.write(m_nFreeMapLists); 
 			header.writeCRC32(stream);
@@ -107,7 +107,7 @@ namespace embDB
 			pFreeMap->save(pPage.get());
 			/*memset(pPage->getRowData(), 0, pPage->getPageSize());
 			CommonLib::FxMemoryWriteStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
+			stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 			sFilePageHeader header(stream, STORAGE_PAGE, STORAGE_FREE_MAP_PAGE);
 			header.writeCRC32(stream);
 			pFreeMap->m_BitMap.setBits(pPage->getRowData(), m_nAddrLen/8);*/
@@ -140,7 +140,7 @@ namespace embDB
 		}
 		{
 			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pRootPage->getRowData(), pRootPage->getPageSize());
+			stream.attachBuffer(pRootPage->getRowData(), pRootPage->getPageSize());
 			sFilePageHeader header(stream);
 			if(!header.isValid())
 			{
@@ -186,7 +186,7 @@ namespace embDB
 
 		{
 			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pListFreeBitMapsPage->getRowData(), pListFreeBitMapsPage->getPageSize());
+			stream.attachBuffer(pListFreeBitMapsPage->getRowData(), pListFreeBitMapsPage->getPageSize());
 			sFilePageHeader header(stream);
 			if(!header.isValid())
 			{
@@ -253,7 +253,7 @@ namespace embDB
 		/*	FilePagePtr pFreeMapListsPage(m_pStorage->getFilePage(m_nFreeMapLists));
 
 			CommonLib::FxMemoryWriteStream stream;
-			stream.attach(pFreeMapListsPage->getRowData(), pFreeMapListsPage->getPageSize());
+			stream.attachBuffer(pFreeMapListsPage->getRowData(), pFreeMapListsPage->getPageSize());
 			sFilePageHeader header(stream, STORAGE_PAGE, STORAGE_LIST_FREEMAP_PAGE);
 			stream.write(int64(-1)); //next
 			stream.write(uint32(m_FreeMaps.size())); 
@@ -378,7 +378,7 @@ namespace embDB
 			return false;
 		}
 		CommonLib::FxMemoryReadStream stream;
-		stream.attach(pRootPage->getRowData(), pRootPage->getPageSize());
+		stream.attachBuffer(pRootPage->getRowData(), pRootPage->getPageSize());
 		sFilePageHeader header(stream);
 		if(!header.isValid())
 		{

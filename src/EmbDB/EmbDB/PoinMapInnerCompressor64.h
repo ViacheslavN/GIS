@@ -44,8 +44,8 @@ namespace embDB
 			uint32 nLinkSize =  m_nSize * sizeof(int64);
 
 
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 
 			ZOrderPoint2DU64 zPoint;
 			int64 nlink;
@@ -75,8 +75,8 @@ namespace embDB
 			uint32 nKeySize =  nSize * 2 *sizeof(int64);
 			uint32 nLinkSize =  nSize * sizeof(int64);
 
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);			 
 
 	 

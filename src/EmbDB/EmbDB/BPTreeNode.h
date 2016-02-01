@@ -89,7 +89,7 @@ namespace embDB
 					return false;
 				pFilePage->setFlag(eFP_CHANGE, true);
 				CommonLib::FxMemoryWriteStream stream;
-				stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
+				stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 				stream.write(m_bIsLeaf);
 				//stream.write(m_bMulti);
 				assert(m_pBaseNode);
@@ -100,7 +100,7 @@ namespace embDB
 			bool LoadFromPage(CFilePage* pFilePage)
 			{
 				CommonLib::FxMemoryReadStream stream;
-				stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
+				stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 				m_bIsLeaf = stream.readBool();
 				//m_bMulti = stream.readBool();
 				if(m_bIsLeaf)

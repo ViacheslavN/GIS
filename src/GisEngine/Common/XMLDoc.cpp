@@ -196,9 +196,8 @@ namespace GisEngine
 
 		bool CXMLDoc::get_char(CommonLib::IReadStream* pStream)
 		{
-			if(pStream->IsEndOfStream())
-				return false;
-			pStream->read(m_char);
+			
+			SAFE_READ(pStream->save_read(m_char))
 
 			if(m_char=='\n')
 			{
@@ -208,7 +207,7 @@ namespace GisEngine
 			else
 				m_nCurrCol++;
 
-			return !pStream->IsEndOfStream();
+			return pStream->pos() != pStream->size();
 		}
 		bool CXMLDoc::get_token (CommonLib::IReadStream* pStream)
 		{
@@ -226,14 +225,14 @@ namespace GisEngine
 			{
 				return get_char(pStream);
 			}
-			return !pStream->IsEndOfStream();
+			return pStream->pos() != pStream->size();
 		}
 
 
 		bool CXMLDoc::skip_space(CommonLib::IReadStream* pStream)
 		{
 			while( is_empty_char() && get_char(pStream));
-			return pStream->IsEndOfStream();
+			return pStream->pos() == pStream->size();
 		}
 
 		bool CXMLDoc::is_empty_char()
@@ -259,7 +258,7 @@ namespace GisEngine
 			}
 			m_token = m_char;
 			//utils::trim( m_token );
-			return pStream->IsEndOfStream();
+			return pStream->pos() == pStream->size();
 		}
 		bool CXMLDoc::get_string( CommonLib::IReadStream* pStream )
 		{
@@ -270,7 +269,7 @@ namespace GisEngine
 			while( get_char(pStream) && m_char != '\"' ) 
 				m_vecText.push_back(m_char);
 			m_char = 0;
-			return pStream->IsEndOfStream();
+			return pStream->pos() == pStream->size();
 		}
 		bool  CXMLDoc::Save(const CommonLib::CString& xml)
 		{

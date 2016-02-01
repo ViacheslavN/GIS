@@ -247,7 +247,7 @@ namespace GisEngine
 		bool CFeatureLayer::save(CommonLib::IWriteStream *pWriteStream) const
 		{
 
-			CommonLib::MemoryStream stream;
+			CommonLib::CWriteMemoryStream stream;
 			if(!TBase::save(&stream))
 				return false;
 
@@ -275,28 +275,30 @@ namespace GisEngine
 		bool CFeatureLayer::load(CommonLib::IReadStream* pReadStream)
 		{
 			CommonLib::FxMemoryReadStream stream;
-			pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+			SAFE_READ(pReadStream->save_read(&stream, true))
 			if(!TBase::load(&stream))
 				return false;
 
-			stream.read(m_sDisplayField);
-			stream.read(m_sQuery);
-			stream.read(m_bSelectable);
-			stream.read(m_hasReferenceScale);
-			uint32 nRenders = stream.readIntu32();
-
+			SAFE_READ(stream.save_read(m_sDisplayField))
+			SAFE_READ(stream.save_read(m_sQuery))
+			SAFE_READ(stream.save_read(m_bSelectable))
+			SAFE_READ(stream.save_read(m_hasReferenceScale))
+			uint32 nRenders = 0;
+			SAFE_READ(stream.save_read(nRenders))
 			for (size_t i = 0; i < nRenders; ++i)
 			{
 				IFeatureRendererPtr pRenderer = LoaderRenderers::LoadRenderer(&stream);
 				if(pRenderer.get())
 					m_vecRenderers.push_back(pRenderer);
 			}
-			bool bFC = stream.readBool();
+			bool bFC = false;
+			SAFE_READ(stream.save_read(bFC))
 			if(bFC)
 			{
-				int32 nWksID = stream.readInt32();
+				int32 nWksID = -1;
+				SAFE_READ(stream.save_read(nWksID))
 				CommonLib::CString sFCName;
-				stream.read(sFCName);
+				SAFE_READ(stream.save_read(sFCName))
 				GeoDatabase::IWorkspacePtr pWks = GeoDatabase::IWorkspace::GetWorkspaceByID(nWksID);
 				if(pWks.get())
 				{

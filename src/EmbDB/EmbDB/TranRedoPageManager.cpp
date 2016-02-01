@@ -43,7 +43,7 @@ bool CTranRedoPageManager::save()
 	if(!pPage)
 		return false; //TO DO Logs
 	CommonLib::FxMemoryWriteStream stream;	
-	stream.attach(pPage->getRowData(), pPage->getPageSize());
+	stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 	sFilePageHeader header(stream, TRANSACTION_PAGE, REDO_PAGES);
 	 stream.write(m_Header.nRedoBlock);
 	 stream.write(m_Header.nUndoBlock);
@@ -137,7 +137,7 @@ void CTranRedoPageManager::setFirstPage(int64 nPage, bool bCreate)
 		if(!pPage)
 			return; //TO DO Logs
 		CommonLib::FxMemoryReadStream stream;	
-		stream.attach(pPage->getRowData(), pPage->getPageSize());
+		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream);
 		if(!header.isValid())
 		{

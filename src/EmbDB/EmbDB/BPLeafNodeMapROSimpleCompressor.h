@@ -36,8 +36,8 @@ namespace embDB
 			uint32 nKeySize = stream.readInt32();
 			uint32 nValSize = stream.readInt32();
 
-			KeyStream.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValStream.attach(stream.buffer() + stream.pos() + nKeySize, nValSize);
+			KeyStream.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			ValStream.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValSize);
 
 			TKey nkey;
 			TValue val;

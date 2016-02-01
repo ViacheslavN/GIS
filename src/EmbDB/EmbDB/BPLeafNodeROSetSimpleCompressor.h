@@ -29,7 +29,7 @@ namespace embDB
 			Set.reserve(m_nSize);
 
 			uint32 nKeySize = stream.readInt32();
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			TKey nkey;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{

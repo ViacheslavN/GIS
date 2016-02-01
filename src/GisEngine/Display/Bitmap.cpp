@@ -326,7 +326,7 @@ namespace GisEngine
 
 		bool CBitmap::save(CommonLib::IWriteStream *pStream) const
 		{
-			CommonLib::MemoryStream stream;
+			CommonLib::CWriteMemoryStream stream;
 			stream.write((uint32)m_nWidth);
 			stream.write((uint32)m_nHeight);
 			stream.write((byte)m_type);
@@ -341,16 +341,17 @@ namespace GisEngine
 		bool  CBitmap::load(CommonLib::IReadStream *pStream)
 		{
 			CommonLib::FxMemoryReadStream stream;
-			if(!pStream->AttachStream(&stream, pStream->readIntu32()))
-				return false;
+			SAFE_READ(pStream->save_read(&stream, true))
 
-			m_nWidth = stream.readIntu32();
-			m_nHeight = stream.readIntu32();
- 			m_type = (eBitmapFormatType)stream.readByte();;
+			SAFE_READ(stream.save_read(m_nWidth));
+			SAFE_READ(stream.save_read(m_nHeight));
+			byte type = 0;
+			SAFE_READ(stream.save_read(type));
+ 			m_type = (eBitmapFormatType)type;
 			init(m_nWidth, m_nHeight, m_type);
 			size_t nSize = size();
 			if(nSize)
-				stream.read(m_pBuf, nSize);
+				SAFE_READ(stream.save_read(m_pBuf, nSize))
 			if(m_pPalette)
 			{
 				for(int i = 0; i < 1 << bpp(); i++)
@@ -366,7 +367,7 @@ namespace GisEngine
 		bool CBitmap::saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszNodeName) const
 		{
 			GisCommon::IXMLNodePtr pBlobNode = pXmlNode->CreateChildNode(pszNodeName);
-			CommonLib::MemoryStream stream(m_pAlloc);
+			CommonLib::CWriteMemoryStream stream(m_pAlloc);
 			save(&stream);
 			CommonLib::CBlob blob(stream.buffer(), stream.size(), true, NULL);
 			pBlobNode->SetBlobCDATA(blob);
@@ -382,7 +383,7 @@ namespace GisEngine
 			 CommonLib::CBlob blob;
 			 pBlobNode->GetBlobCDATA(blob);
 			 CommonLib::FxMemoryReadStream stream;
-			 stream.attach(blob.buffer(), blob.size());
+			 stream.attachBuffer(blob.buffer(), blob.size());
 			 return load(&stream);
 		}
 

@@ -111,7 +111,7 @@ namespace GisEngine
 			bool save(CommonLib::IWriteStream *pWriteStream) const
 			{
 
-				CommonLib::MemoryStream stream;
+				CommonLib::CWriteMemoryStream stream;
 
 				//pWriteStream->write(GetSymbolID());
 				stream.write(m_bScaleDependent);
@@ -124,10 +124,10 @@ namespace GisEngine
 			bool load(CommonLib::IReadStream* pReadStream)
 			{
 				CommonLib::FxMemoryReadStream stream;
-				pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+				SAFE_READ(pReadStream->save_read(&stream, pReadStream->readIntu32()))
 				
-				stream.read(m_bScaleDependent);
-				stream.read(m_bDrawToBuffers);
+				SAFE_READ(stream.save_read(m_bScaleDependent))
+				SAFE_READ(stream.save_read(m_bDrawToBuffers))
 				return true;
 			}
 

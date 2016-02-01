@@ -73,7 +73,7 @@ namespace embDB
 				return false;
 
 			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
+			stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 			if(stream.readInt64() != (int64)DB_BTREE_INFO_PAGE)
 				return false;
 			stream.read(m_nRootAddr);

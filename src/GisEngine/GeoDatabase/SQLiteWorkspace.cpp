@@ -294,7 +294,7 @@ namespace GisEngine
 		bool CSQLiteWorkspace::save(CommonLib::IWriteStream *pWriteStream) const
 		{
 			TBase::save(pWriteStream);
-			CommonLib::MemoryStream steram;
+			CommonLib::CWriteMemoryStream steram;
 			steram.write(m_sPath);
 
 			pWriteStream->write(&steram);
@@ -304,8 +304,8 @@ namespace GisEngine
 		{
 			TBase::load(pReadStream);
 			CommonLib::FxMemoryReadStream stream;
-			pReadStream->AttachStream(&stream, pReadStream->readIntu32());
-			stream.read(m_sPath);
+			SAFE_READ(pReadStream->save_read(&stream, true))
+			SAFE_READ(stream.save_read(m_sPath))
 
 			const CommonLib::CString sFullName = m_sPath + m_sName;
 			return load(sFullName, true, false);

@@ -115,7 +115,7 @@ namespace embDB
 			}
 
 			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
+			stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 			if(stream.readInt64() != (int64)DB_BTREE_INFO_PAGE)
 			{
 				CommonLib::CString sMsg;
@@ -159,7 +159,7 @@ namespace embDB
 			}
 					
 			CommonLib::FxMemoryWriteStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
+			stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 			stream.write((int64)DB_BTREE_INFO_PAGE); 
 			stream.write(m_nRootAddr);
 			stream.write(m_nRTreeStaticAddr);

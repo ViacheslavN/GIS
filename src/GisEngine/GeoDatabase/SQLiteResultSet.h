@@ -159,7 +159,7 @@ namespace GisEngine
 						return;
 					}
 					CommonLib::FxMemoryReadStream stream;
-					stream.attach((byte*)sqlite3_column_blob(m_pStmt, col), bytes);
+					stream.attachBuffer((byte*)sqlite3_column_blob(m_pStmt, col), bytes);
 					pShape->read(&stream);
 				}
 

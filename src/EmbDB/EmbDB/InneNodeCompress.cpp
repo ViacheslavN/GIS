@@ -23,8 +23,8 @@ namespace embDB
 			uint32 nKeySize =   stream.readInt32();//m_nSize * sizeof(TKey);
 			uint32 nLinkSize =  m_nSize * sizeof(int64);
 
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 
 		//	TKey key;
 			TLink nlink;
@@ -58,8 +58,8 @@ namespace embDB
 			stream.write(nKeySize);
 			//stream.write(nLinkSize);
 
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);	
 
 			m_OIDCompress.compress(keySet, &KeyStreams);
@@ -80,7 +80,7 @@ namespace embDB
 
 
 			CommonLib::FxMemoryReadStream OIDReadStreams;
-			OIDReadStreams.attach(OIDStreams.buffer(), OIDStreams.size());
+			OIDReadStreams.attachBuffer(OIDStreams.buffer(), OIDStreams.size());
 			TKeyMemSet oidSet;
 			m_OIDCompress.read(m_nSize, oidSet, &OIDReadStreams);*/
 

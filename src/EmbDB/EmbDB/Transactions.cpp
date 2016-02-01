@@ -113,7 +113,7 @@ namespace embDB
 		m_Header.nFreeUndoPage	= -1;
  
 		CommonLib::FxMemoryWriteStream stream;
-		stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
+		stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 		stream.write(m_Header.nRestoreType);
 		stream.write(m_Header.nErrorLogHeader);
 		stream.write(m_Header.nPageChangeHeader);
@@ -176,7 +176,7 @@ namespace embDB
 			return false;
 		}
 		CommonLib::FxMemoryReadStream stream;
-		stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
+		stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 		stream.read(m_Header.nRestoreType);
 		stream.read(m_Header.nErrorLogHeader);
 		stream.read(m_Header.nPageChangeHeader);

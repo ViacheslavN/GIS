@@ -57,7 +57,7 @@ namespace embDB
 
 
 				CommonLib::FxMemoryWriteStream stream;
-				stream.attach(pPage->getRowData(), pPage->getPageSize());
+				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 				sFilePageHeader header(stream, BTREE_PAGE, BTREE_STREAM_PAGE_INFO);
 				stream.write(m_nBeginStream);
 				stream.write(m_nEndStream);
@@ -74,7 +74,7 @@ namespace embDB
 				if(!pPage.get())
 					return false; //TO DO Error
 				CommonLib::FxMemoryReadStream stream;
-				stream.attach(pPage->getRowData(), pPage->getPageSize());
+				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 				sFilePageHeader header(stream);
 				if(header.m_nObjectPageType != BTREE_PAGE || header.m_nSubObjectPageType != BTREE_STREAM_PAGE_INFO)
 				{

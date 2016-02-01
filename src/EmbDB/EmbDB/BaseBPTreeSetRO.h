@@ -77,7 +77,7 @@ namespace embDB
 				return false;
 
 			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
+			stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 			sFilePageHeader header;
 			header.read(stream, m_bCheckCRC32 && !pPage->isCheck());
 			if(m_bCheckCRC32 && !pPage->isCheck() && !header.isValid())

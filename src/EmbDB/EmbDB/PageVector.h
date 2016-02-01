@@ -217,7 +217,7 @@ public:
 			if(!pPage.get())
 				return false;
 			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pPage->getRowData(), pPage->getPageSize());
+			stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 			sFilePageHeader header(stream);
 			if(!header.isValid())
 			{
@@ -261,7 +261,7 @@ public:
 		if(!pPage.get())
 			return false;
 		CommonLib::FxMemoryWriteStream stream;
-		stream.attach(pPage->getRowData(), pPage->getPageSize());
+		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream, m_nObjectPage, m_nSubObjectPage);
 		stream.write(pNode->m_pNext ? pNode->m_pNext->m_nPageAddr : -1);
 		pNode->save(m_rw, stream);

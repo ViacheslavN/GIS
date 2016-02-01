@@ -87,7 +87,7 @@ namespace GisEngine
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const
 			{
 
-				CommonLib::MemoryStream stream;
+				CommonLib::CWriteMemoryStream stream;
 				stream.write(GetLayerID());
 				stream.write(m_sName);
 				stream.write(m_bVisible);
@@ -101,13 +101,13 @@ namespace GisEngine
 			virtual bool load(CommonLib::IReadStream* pReadStream)
 			{
 				CommonLib::FxMemoryReadStream stream;
-				pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+				SAFE_READ(pReadStream->save_read(&stream, true))
 
-				stream.read(m_sName);
-				stream.read(m_bVisible);
-				stream.read(m_dMinimumScale);
-				stream.read(m_dMaximumScale);
-				stream.read(m_nCheckCancelStep);
+				SAFE_READ(stream.save_read(m_sName))
+				SAFE_READ(stream.save_read(m_bVisible))
+				SAFE_READ(stream.save_read(m_dMinimumScale))
+				SAFE_READ(stream.save_read(m_dMaximumScale))
+				SAFE_READ(stream.save_read(m_nCheckCancelStep))
 				return true;
 			}
 

@@ -189,6 +189,11 @@ public:
 
 	virtual void read_bytes(byte* dst, uint32 size) = 0;
 	virtual void read_inverse(byte* buffer, uint32 size) = 0;
+	virtual void readStream(IStream *pStream, bool bAttach) = 0;
+	virtual bool SaveReadStream(IStream *pStream, bool bAttach) = 0;
+ 
+
+
 
 	virtual void read( byte* pBuffer, uint32 bufLen );
 	virtual void read(bool& value); 
@@ -203,6 +208,7 @@ public:
 	virtual void read(float& value); 
 	virtual void read(double& value);
 	virtual void read(CommonLib::CString& str);
+	virtual void read(IStream *pStream, bool bAttach = false);
 
 
 
@@ -220,7 +226,7 @@ public:
 	virtual bool save_read(float& value);
 	virtual bool save_read(double& value);
 	virtual bool save_read(CommonLib::CString& str);
-
+	virtual bool save_read(IStream *pStream, bool bAttach = false);
 
 
 
@@ -264,6 +270,7 @@ public:
 
 	virtual void write_bytes(const byte* buffer, uint32 size) = 0;
 	virtual void write_inverse(const byte* buffer, uint32 size) = 0;
+	virtual void writeStream(IStream *pStream, int32 nPos = -1, int32 nSize = -1) = 0;
 
 	virtual void write(const byte* pBuffer, uint32 bufLen );
 	virtual void write(bool value);
@@ -280,39 +287,14 @@ public:
 	virtual void write(const CommonLib::CString& str);
 	virtual void write(const char* pszStr);
 	virtual void write(const wchar_t* pszStr);
+	virtual void write(IStream *pStream, int32 nPos = -1, int32 nSize = -1);
 };
 
 
 
 
-/*
-#define  SAFE_READ_EX(pStream, Val, size)  \
-	if(pStream->checkRead(size))\
-		pStream->read(Val);
-
-#define  SAFE_READ(pStream, Val)  \
-	if(pStream->checkRead(sizeof(Val)))\
-		pStream->read(Val);
-
-#define  SAFE_READ_RES_EX(pStream, Val, size)  \
-	if(!pStream->checkRead(size))\
-		return false;					\
-	else							\
-		pStream->read(Val); 
  
-#define  SAFE_READ_RES(pStream, Val)  \
-	if(!pStream->checkRead(sizeof(Val)))\
-		return false;					\
-	else							\
-		pStream->read(Val); 
 
-#define  SAFE_READ_BOOL_RES(pStream, bVal)  \
-	if(!pStream->checkRead(sizeof(byte)))\
-		return false;					\
-	else							\
-		bVal = pStream->readBool(); 
-*/
- 
 
 
 
@@ -413,7 +395,7 @@ public:
 			return false;
 
 		  int32 _nPos = (nPos != -1 ? nPos : 0);
-		  int32 _nSize= (_nSize != -1 ? _nSize : pStream->size());
+		  int32 _nSize= (nSize != -1 ? nSize : pStream->size());
 
 		 if(!attachBuffer(pMemStream->buffer() + _nPos, _nSize, false))
 			 return false;

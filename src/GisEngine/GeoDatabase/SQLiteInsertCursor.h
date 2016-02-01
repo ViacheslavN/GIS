@@ -40,7 +40,7 @@ namespace GisEngine
 					bool m_bValidCursor;
 					bool m_bInit;
 					CommonLib::CString m_sErrorMessage;
-					CommonLib::MemoryStream m_WriteShapeStream;
+					CommonLib::CWriteMemoryStream m_WriteShapeStream;
 			};
 	}
 }

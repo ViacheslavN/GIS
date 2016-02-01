@@ -80,7 +80,7 @@ namespace embDB
 		virtual bool Load(CommonLib::FxMemoryReadStream& stream)
 		{
 			//CommonLib::FxMemoryReadStream stream;
-			//stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
+			//stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 			//m_bIsLeaf = stream.readBool();
 			//m_bMulti = stream.readBool();
 			//m_leafMemSet.setMulti(m_bMulti);

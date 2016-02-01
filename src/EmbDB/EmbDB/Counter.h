@@ -36,7 +36,7 @@ namespace embDB
 					return false; //TO DO Log;
 
 				CommonLib::FxMemoryReadStream stream;
-				stream.attach(pPage->getRowData(), pPage->getPageSize());
+				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 				sFilePageHeader header(stream);
 				if(!header.isValid())
 				{
@@ -60,7 +60,7 @@ namespace embDB
 				if(!pPage.get())
 					return false; //TO DO Log;
 				CommonLib::FxMemoryWriteStream stream;
-				stream.attach(pPage->getRowData(), pPage->getPageSize());
+				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 				sFilePageHeader header(stream, m_nObjectPage, m_nSubObjectPage);
 				stream.write(m_nVal);
 				header.writeCRC32(stream);

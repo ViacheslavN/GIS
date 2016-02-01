@@ -374,7 +374,7 @@ namespace GisEngine
 
 		bool CMap::save(CommonLib::IWriteStream *pWriteStream) const
 		{
-			CommonLib::MemoryStream mapStream;
+			CommonLib::CWriteMemoryStream mapStream;
 			uint32 nCrc = 0;
 			
 			mapStream.write(m_sName);
@@ -411,20 +411,24 @@ namespace GisEngine
 		{
 			uint32 nCRC = pReadStream->readIntu32();
 			CommonLib::FxMemoryReadStream mapStream;
-			pReadStream->AttachStream(&mapStream, pReadStream->readInt32());
+			SAFE_READ(pReadStream->save_read(&mapStream, true))
 			uint32 nCalcCRC = CommonLib::Crc32(mapStream.buffer(), mapStream.size()); 
 			if(nCalcCRC != nCRC)
 				return false;
 
-			mapStream.read(m_sName);
-			m_MapUnits = (GisCommon::Units)mapStream.readintu16();
-			mapStream.read(m_dMinScale);
-			mapStream.read(m_dMaxScale);
-			mapStream.read(m_bHasReferenceScale);
-			mapStream.read(m_dReferenceScale);
-			mapStream.read(m_bFlipVertical);
-			mapStream.read(m_bflipHorizontal);
-			bool bSpRef = mapStream.readBool();
+			SAFE_READ(mapStream.save_read(m_sName))
+			
+			uint16 MapUnits = 0;
+			SAFE_READ(mapStream.save_read(MapUnits))
+			m_MapUnits = (GisCommon::Units)MapUnits;
+			SAFE_READ(mapStream.save_read(m_dMinScale))
+			SAFE_READ(mapStream.save_read(m_dMaxScale))
+			SAFE_READ(mapStream.save_read(m_bHasReferenceScale))
+			SAFE_READ(mapStream.save_read(m_dReferenceScale))
+			SAFE_READ(mapStream.save_read(m_bFlipVertical))
+			SAFE_READ(mapStream.save_read(m_bflipHorizontal))
+			bool bSpRef = false;
+			SAFE_READ(mapStream.save_read(bSpRef))
 			if(bSpRef)
 			{
 				m_pSpatialRef = new GisGeometry::CSpatialReferenceProj4();
@@ -432,19 +436,22 @@ namespace GisEngine
 
 			}
 			GeoDatabase::IWorkspace::LoadWks(&mapStream);
-			bool bBgSymbol = mapStream.readBool();
+			bool bBgSymbol = false;
+			SAFE_READ(mapStream.save_read(bBgSymbol))
 			if(bBgSymbol)
 			{
 				m_pBackgroundSymbol = (Display::IFillSymbol*)Display::LoaderSymbol::LoadSymbol(&mapStream).get();
 			}
 
-			bool bFgSymbol = mapStream.readBool();
+			bool bFgSymbol = false;
+			SAFE_READ(mapStream.save_read(bFgSymbol))
 			if(bFgSymbol)
 			{
 				m_pForegroundSymbol = (Display::IFillSymbol*)Display::LoaderSymbol::LoadSymbol(&mapStream).get();
 			}
 			 
-			int nLayerCnt = mapStream.readInt32();
+			int nLayerCnt = 0;
+			SAFE_READ(mapStream.save_read(nLayerCnt))
 			for (int i = 0; i < nLayerCnt; ++i)
 			{
 				ILayerPtr pLayer =  LoaderLayers::LoadLayer(&mapStream);

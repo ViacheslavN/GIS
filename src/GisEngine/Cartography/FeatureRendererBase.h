@@ -51,7 +51,7 @@ namespace GisEngine
 			{
 				//pWriteStream->write(GetFeatureRendererID());
 				
-				CommonLib::MemoryStream stream;
+				CommonLib::CWriteMemoryStream stream;
 				stream.write(m_dMaximumScale);
 				stream.write(m_dMinimumScale);
 				stream.write(m_sShapeField);
@@ -60,10 +60,10 @@ namespace GisEngine
 			virtual bool load(CommonLib::IReadStream* pReadStream)
 			{
 				CommonLib::FxMemoryReadStream stream;
-				pReadStream->AttachStream(&stream, pReadStream->readIntu32());
-				stream.read(m_dMaximumScale);
-				stream.read(m_dMinimumScale);
-				stream.read(m_sShapeField);
+				SAFE_READ(pReadStream->save_read(&stream, true))
+				SAFE_READ(stream.save_read(m_dMaximumScale))
+				SAFE_READ(stream.save_read(m_dMinimumScale))
+				SAFE_READ(stream.save_read(m_sShapeField))
 		 		return true;
 			}
 

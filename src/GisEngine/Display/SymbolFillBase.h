@@ -49,7 +49,7 @@ namespace GisEngine
 
 			bool save(CommonLib::IWriteStream *pWriteStream) const
 			{
-				CommonLib::MemoryStream stream;
+				CommonLib::CWriteMemoryStream stream;
 				TSymbolBase::save(&stream);
 				if(m_pBorderSymbol.get())
 				{
@@ -65,11 +65,12 @@ namespace GisEngine
 			bool load(CommonLib::IReadStream* pReadStream)
 			{
 				CommonLib::FxMemoryReadStream stream;
-				pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+				SAFE_READ(pReadStream->save_read(&stream, true))
 
 				if(!TSymbolBase::load(&stream))
 					return false;
-				bool bSymbol = stream.readBool();
+				bool bSymbol = false;
+				SAFE_READ(stream.save_read(bSymbol))
 				if(bSymbol)
 					m_pBorderSymbol = (ILineSymbol*)LoaderSymbol::LoadSymbol(&stream).get();
 

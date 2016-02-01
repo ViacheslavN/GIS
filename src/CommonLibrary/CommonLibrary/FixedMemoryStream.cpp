@@ -43,27 +43,52 @@ namespace CommonLib
 		this->m_nPos += size;
 		assert(this->m_nPos <= this->m_nSize);
 	}
-	void FxMemoryReadStream::read(IStream *pStream)
+	void FxMemoryReadStream::readStream(IStream *pStream, bool bAttach)
 	{
 		IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
 		if(pMemStream)
 		{
 			uint32 nStreamSize = readIntu32();
-			if(nStreamSize)
-				IReadStream::read(pMemStream->buffer() + pStream->pos(), nStreamSize);
+			if(bAttach)
+			{
+				pMemStream->attachBuffer(buffer() + pos(), nStreamSize);
+				seek(nStreamSize, soFromCurrent);
+			}
+			else
+			{
+				pMemStream->resize(nStreamSize);
+				if(nStreamSize)
+					read(pMemStream->buffer() + pStream->pos(), nStreamSize);
+			}
+
 		}
 	}
-	bool FxMemoryReadStream::save_read(IStream *pStream)
+	bool FxMemoryReadStream::SaveReadStream(IStream *pStream, bool bAttach)
 	{
 		IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
 		if(!pMemStream)
 			return false;
 		uint32 nStreamSize = 0;
-		if(!IReadStream::save_read(nStreamSize))
+		if(!save_read(nStreamSize))
 			return false;
-		return IReadStream::save_read(pMemStream->buffer() + pStream->pos(), nStreamSize);
+		if(bAttach)
+		{
+			if((size() - pos())  < nStreamSize)
+				return false;
+			pMemStream->attachBuffer(buffer() + pos(), nStreamSize);
+			seek(nStreamSize, soFromCurrent);
+			return true;
+		}
+		else
+		{
+			if(nStreamSize)
+			{
+				pMemStream->resize(nStreamSize);
+			}
+			return save_read(pMemStream->buffer() + pStream->pos(), nStreamSize);
+		}
 	}
-	
+
 	FxMemoryWriteStream::FxMemoryWriteStream(alloc_t *pAlloc) : TBase(pAlloc)
 	{
 
@@ -90,13 +115,16 @@ namespace CommonLib
 		assert(m_nPos <= m_nSize);
 	}
 
-	void FxMemoryWriteStream::write(IStream *pStream, uint32 nPos, uint32 nSize)
+	void FxMemoryWriteStream::writeStream(IStream *pStream, int32 nPos, int32 nSize)
 	{
 		IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
 		if(pMemStream)
 		{
-			IWriteStream::write(nSize ? nSize : (uint32)pStream->size());
-			IWriteStream::write(pMemStream->buffer() + nPos, nSize ? nSize : pStream->size());
+			uint32 _nPos = (nPos != -1 ? nPos : 0);
+			uint32 _nSize= (nSize != -1 ? nSize : pStream->size());
+
+			write(_nSize);
+			write(pMemStream->buffer() + _nPos, _nSize);
 		}
 
 	}

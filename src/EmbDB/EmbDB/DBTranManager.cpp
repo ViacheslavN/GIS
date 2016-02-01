@@ -70,7 +70,7 @@ namespace embDB
 	bool CDBTranManager::SaveHeader(CFilePage *pPage)
 	{
 		CommonLib::FxMemoryWriteStream stream;
-		stream.attach(pPage->getRowData(), pPage->getPageSize());
+		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream, TRAN_MANAGE_PAGE, TM_HEADER_PAGE);
 		stream.write(m_Info.nRootPageTree);
 		stream.write(m_nTranID);
@@ -82,7 +82,7 @@ namespace embDB
 	bool CDBTranManager::LoadHeader(CFilePage *pPage)
 	{
 		CommonLib::FxMemoryReadStream stream;
-		stream.attach(pPage->getRowData(), pPage->getPageSize());
+		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream);
 		if(!header.isValid())
 			return false;//TO DO Log

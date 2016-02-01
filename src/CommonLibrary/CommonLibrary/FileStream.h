@@ -22,6 +22,8 @@ namespace CommonLib
 		virtual FileHandle deattachFile() = 0;
 		virtual bool isValid() const = 0;
 		virtual bool flush() = 0;
+		virtual IFile* GetFile() {return &m_File;}
+		virtual const IFile* GetFile() const {return &m_File;}
 	protected:
 	
 		CFile m_File;
@@ -104,17 +106,31 @@ namespace CommonLib
 		virtual bool attach(IStream *pStream, int32 nPos = -1, int32 nSize = -1)
 		{
 
-			IFileStream *pFileStream = dynamic_cast<IFileStream *>(pFileStream);
+			IFileStream *pFileStream = dynamic_cast<IFileStream *>(pStream);
+			if(!pFileStream)
+				return false;
+
+			m_File.attach(pFileStream->GetFile()->handle());
+
+			m_pAttachStream = pStream;
 			return true;
 
 		}
 		virtual bool attach64(IStream *pStream, int64 nPos = -1, int64 nSize  = -1) 
 		{
-			return true;
+			return attach(pStream, (int32)nPos, (int32)nSize);
 		}
 		virtual IStream * deattach()
 		{
+			if(!m_pAttachStream)
+				return NULL;
 
+			IStream *pStream  = m_pAttachStream;
+
+			m_File.deattach();
+
+			m_pAttachStream = NULL;
+			return pStream;
 		}
 	protected:
 		CFile m_File;
@@ -133,6 +149,8 @@ namespace CommonLib
 
 		virtual void  read_bytes(byte* dst, uint32 size);
 		virtual void  read_inverse(byte* buffer, uint32 size);
+		virtual void readStream(IStream *pStream, bool bAttach = false);
+		virtual bool SaveReadStream(IStream *pStream, bool bAttach = false);
   	};
 
 
@@ -145,7 +163,7 @@ namespace CommonLib
 		
 		virtual void write_bytes(const byte* buffer, uint32 size);
 		virtual void write_inverse(const byte* buffer, uint32 size);
-
+		virtual void writeStream(IStream *pStream, int32 nPos = -1, int32 nSize = -1);
 	};
 }
 

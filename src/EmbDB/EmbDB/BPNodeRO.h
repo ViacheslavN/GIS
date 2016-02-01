@@ -69,7 +69,7 @@ namespace embDB
 		bool LoadFromPage(CFilePage* pFilePage)
 		{
 			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
+			stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 			m_bIsLeaf = stream.readBool();
 			//m_bMulti = stream.readBool();
 	

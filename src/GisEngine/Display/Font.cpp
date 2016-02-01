@@ -136,7 +136,7 @@ namespace GisEngine
 
 		bool CFont::save(CommonLib::IWriteStream *pStream) const
 		{
-			CommonLib::MemoryStream stream;
+			CommonLib::CWriteMemoryStream stream;
 			stream.write(m_sFace);
 			stream.write(m_nSize);
 			stream.write(m_nCharSet);
@@ -156,19 +156,25 @@ namespace GisEngine
 		{
 			CommonLib::FxMemoryReadStream stream;
 
-			pStream->AttachStream(&stream, pStream->readIntu32());
+			SAFE_READ(pStream->save_read(&stream, true))
 
-			stream.read(m_sFace);
-			stream.read(m_nSize);
-			stream.read(m_nCharSet);
-			m_color.load(&stream);
-			stream.read(m_nStyle);
-			stream.read(m_dOrientation);
-			m_bgColor.load(&stream);
-			stream.read(m_bIsTransparent);
-			m_vAlignment = (eTextVAlignment)stream.readByte();
-			m_hAlignment = (eTextHAlignment)stream.readByte();
-			stream.read(m_nHaloSize);
+			SAFE_READ(stream.save_read(m_sFace))
+			SAFE_READ(stream.save_read(m_nSize))
+			SAFE_READ(stream.save_read(m_nCharSet))
+			SAFE_READ(m_color.load(&stream))
+			SAFE_READ(stream.save_read(m_nStyle))
+			SAFE_READ(stream.save_read(m_dOrientation))
+			SAFE_READ(m_bgColor.load(&stream))
+			SAFE_READ(stream.save_read(m_bIsTransparent))
+
+			byte vAlignment = 0;
+			byte hAlignment = 0;
+			SAFE_READ(stream.save_read(vAlignment))
+			SAFE_READ(stream.save_read(hAlignment))
+
+			m_vAlignment = (eTextVAlignment)vAlignment;
+			m_hAlignment = (eTextHAlignment)hAlignment;
+			stream.save_read(m_nHaloSize);
 			return true;
 		}
 		bool CFont::saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName) const

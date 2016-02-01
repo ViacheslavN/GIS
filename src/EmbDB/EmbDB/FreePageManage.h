@@ -73,7 +73,7 @@ namespace embDB
 				bool load(CFilePage* pPage )
 				{
 					CommonLib::FxMemoryReadStream stream;
-					stream.attach(pPage->getRowData(), pPage->getPageSize());
+					stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 					sFilePageHeader header (stream);
 					if(!header.isValid())
 					{
@@ -120,7 +120,7 @@ namespace embDB
 				bool save(CFilePage* pPage )
 				{
 					CommonLib::FxMemoryWriteStream stream;
-					stream.attach(pPage->getRowData(), pPage->getPageSize());
+					stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 					sFilePageHeader header (stream, STORAGE_PAGE, STORAGE_FREE_MAP_PAGE);
 					stream.write(m_nBlockNum);
 				//	m_BitMap.setBits(stream.buffer() + stream.pos(), stream.size() - stream.pos());

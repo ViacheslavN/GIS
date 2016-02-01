@@ -22,7 +22,7 @@ namespace CommonLib
 			this->m_nPos += size;
 			assert(this->m_nPos <= this->m_nSize);
 		}
-		void CReadMemoryStream::read(IStream *pStream, bool bAttach)
+		void CReadMemoryStream::readStream(IStream *pStream, bool bAttach)
 		{
 			IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
 			if(pMemStream)
@@ -35,20 +35,23 @@ namespace CommonLib
 				}
 				else
 				{
-					pMemStream->resize(nStreamSize);
+			
 					if(nStreamSize)
-						IReadStream::read(pMemStream->buffer() + pStream->pos(), nStreamSize);
+					{
+						pMemStream->resize(nStreamSize);
+						read(pMemStream->buffer() + pStream->pos(), nStreamSize);
+					}
 				}
 
 			}
 		}
-		bool CReadMemoryStream::save_read(IStream *pStream, bool bAttach)
+		bool CReadMemoryStream::SaveReadStream(IStream *pStream, bool bAttach)
 		{
 			IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
 			if(!pMemStream)
 				return false;
 			uint32 nStreamSize = 0;
-			if(!IReadStream::save_read(nStreamSize))
+			if(!save_read(nStreamSize))
 				return false;
 			if(bAttach)
 			{
@@ -61,7 +64,7 @@ namespace CommonLib
 			else
 			{
 				pMemStream->resize(nStreamSize);
-				return IReadStream::save_read(pMemStream->buffer() + pStream->pos(), nStreamSize);
+				return save_read(pMemStream->buffer() + pStream->pos(), nStreamSize);
 			}
 		}
 
@@ -118,13 +121,16 @@ namespace CommonLib
 
 			return this->m_pBuffer != NULL;
 		}
-		void CWriteMemoryStream::write(IStream *pStream, uint32 nPos, uint32 nSize)
+		void CWriteMemoryStream::writeStream(IStream *pStream, int32 nPos, int32 nSize)
 		{
 			IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
 			if(pMemStream)
 			{
-				IWriteStream::write(nSize ? nSize : (uint32)pStream->size());
-				IWriteStream::write(pMemStream->buffer() + nPos, nSize ? nSize : pStream->size());
+				uint32 _nPos = (nPos != -1 ? nPos : 0);
+				uint32 _nSize= (nSize != -1 ? nSize : pStream->size());
+
+				write(_nSize);
+				write(pMemStream->buffer() + _nPos, _nSize);
 			}
 
 		}

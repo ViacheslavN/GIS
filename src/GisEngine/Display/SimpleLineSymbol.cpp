@@ -96,7 +96,7 @@ namespace GisEngine
 		//IStreamSerialize
 		bool CSimpleLineSymbol::save(CommonLib::IWriteStream *pWriteStream) const
 		{
-			CommonLib::MemoryStream stream;
+			CommonLib::CWriteMemoryStream stream;
 			if(!TBase::save(&stream))
 				return false;
 
@@ -107,7 +107,7 @@ namespace GisEngine
 		bool CSimpleLineSymbol::load(CommonLib::IReadStream* pReadStream)
 		{
 			CommonLib::FxMemoryReadStream stream;
-			pReadStream->AttachStream(&stream, pReadStream->readIntu32());
+			SAFE_READ(pReadStream->save_read(&stream, true))
 			if(!TBase::load(&stream))
 				return false;
 

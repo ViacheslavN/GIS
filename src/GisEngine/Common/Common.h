@@ -31,6 +31,10 @@ typedef CommonLib::GisXYPoint GisXYPoint;
 #endif
 #define RAD2DEG(r) ((double)(r) * (180.0 / M_PI))
 #define DEG2RAD(d) ((double)(d) * (M_PI / 180.0))
+#define SAFE_READ(x) if (!(x)) \
+{ \
+	return false; \
+}
 
 namespace GisEngine
 {

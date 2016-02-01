@@ -223,7 +223,7 @@ namespace embDB
 				CommonLib::FxBitWriteStream bitStream;
 
 				uint32 nBitSize = (m_nLenBitSize +7)/8;
-				bitStream.attach(pStream->buffer() + pStream->pos(), nBitSize);
+				bitStream.attachBuffer(pStream->buffer() + pStream->pos(), nBitSize);
 				
 
 				bool bRangeCode = true;

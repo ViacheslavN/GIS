@@ -111,7 +111,7 @@ namespace GisEngine
 		bool CSimpleSymbolAssigner::save(CommonLib::IWriteStream *pWriteStream) const
 		{
 		//	pWriteStream->write(GetSymbolAssignerID());
-			CommonLib::MemoryStream stream;
+			CommonLib::CWriteMemoryStream stream;
 
 			stream.write(m_sLabel);
 			stream.write(m_sDescription);
@@ -129,11 +129,11 @@ namespace GisEngine
 		{
 
 			CommonLib::FxMemoryReadStream stream;
-			pReadStream->AttachStream(&stream, pReadStream->readIntu32());
-
-			stream.read(m_sLabel);
-			stream.read(m_sDescription);
-			bool bSymbol = stream.readBool();
+			SAFE_READ(pReadStream->save_read(&stream, true))
+			SAFE_READ(stream.save_read(m_sLabel));
+			SAFE_READ(stream.save_read(m_sDescription));
+			bool bSymbol = false;
+			SAFE_READ(stream.save_read(bSymbol));
 			if(bSymbol)
 				m_pSymbol = Display::LoaderSymbol::LoadSymbol(&stream);
 			return true;

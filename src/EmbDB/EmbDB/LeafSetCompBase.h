@@ -38,7 +38,7 @@ namespace embDB
 
 			/*uint32 nKeySize = stream.readInt32();*/
 			uint32 nKeySize =  m_nSize * sizeof(TKey);
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
 			TKey nkey;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
@@ -58,7 +58,7 @@ namespace embDB
 			uint32 nKeySize =  m_nSize * sizeof(TKey);
 			/*stream.write(nKeySize);*/
 			CommonLib::FxMemoryWriteStream KeyStreams;
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
 			for(size_t i = 0, sz = Set.size(); i < sz; ++i)
 			{

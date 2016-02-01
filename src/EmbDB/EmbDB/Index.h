@@ -59,7 +59,7 @@ public:
 		  if(!pPage.get())
 			  return false;
 		  CommonLib::FxMemoryReadStream stream;
-		  stream.attach(pPage->getRowData(), pPage->getPageSize());
+		  stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		  sFilePageHeader header(stream);
 		  if(!header.isValid())
 		  {

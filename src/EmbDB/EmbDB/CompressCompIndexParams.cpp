@@ -16,7 +16,7 @@ namespace embDB
 		if(!pPage.get())
 			return false;//TO DO log error
 		CommonLib::FxMemoryReadStream stream;
-		stream.attach(pPage->getRowData(), pPage->getPageSize());
+		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream);
 		if(!header.isValid())
 			return false; //TO DO log error
@@ -46,7 +46,7 @@ namespace embDB
 		if(!pPage.get())
 			return false;//TO DO log error
 		CommonLib::FxMemoryWriteStream stream;
-		stream.attach(pPage->getRowData(), pPage->getPageSize());
+		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream, INDEX_PAGE, COMP_INDEX_INFO_PAGE);
 		stream.write(uint32(m_vecScheme.size()));
 		for (size_t i = 0, sz = m_vecScheme.size(); i < sz; ++i)

@@ -29,7 +29,7 @@ namespace embDB
 					return false;
 			  assert(m_nBeginPos < m_pPage->getPageSize());
 
-			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
+			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
 				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage);
@@ -63,7 +63,7 @@ namespace embDB
 			
 			  assert(m_nBeginPos < m_pPage->getPageSize());
 			 
-			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
+			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
 			  if(m_nObjectPage !=0 && m_nSubObjectPage != 0)
 			  {
 				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage);
@@ -115,7 +115,7 @@ namespace embDB
 					  m_pTran->saveFilePage(m_pPage);
 
 					  m_pPage = pPage;
-					  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
+					  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
 					  size -= nWriteSize;
 					  nPos += nWriteSize;
 				  }
@@ -156,7 +156,7 @@ namespace embDB
 					  m_pTran->saveFilePage(m_pPage);
 
 					  m_pPage = pPage;
-					  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
+					  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
 					  size -= nWriteSize;
 					  nPos += nWriteSize;
 				  }
@@ -182,7 +182,7 @@ namespace embDB
 				  return; //TO DO Log
 			  }
 			  m_pPage = pPage;
-			  m_stream.attach(m_pPage->getRowData(), m_pPage->getPageSize());
+			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
 				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage);
@@ -202,7 +202,18 @@ namespace embDB
 				  m_pTran->saveFilePage(m_pPage);
 			  }
 		  }
+		  virtual void writeStream(CommonLib::IStream *pStream, int32 nPos = -1, int32 nSize = -1)
+		  {
+			  CommonLib::IMemoryStream *pMemStream = dynamic_cast<CommonLib::IMemoryStream *>(pStream);
+			  if(pMemStream)
+			  {
+				  uint32 _nPos = (nPos != -1 ? nPos : 0);
+				  uint32 _nSize= (nSize != -1 ? nSize : pStream->size());
 
+				  write(_nSize);
+				  write(pMemStream->buffer() + _nPos, _nSize);
+			  }
+		  }
 	public:
 		FilePagePtr m_pPage;
 		embDB::IDBTransaction* m_pTran;

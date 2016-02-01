@@ -47,8 +47,8 @@ namespace embDB
 			uint32 nKeySize =  m_nSize *  m_pCompParams->getRowSize();
 			uint32 nLinkSize =  m_nSize * sizeof(TLink);
 
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
  
 			TLink nlink;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
@@ -80,8 +80,8 @@ namespace embDB
 			uint32 nKeySize =  nSize * m_pCompParams->getRowSize();
 			uint32 nLinkSize =  nSize * sizeof(TLink);
 
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);			 
 			for(size_t i = 0, sz = keySet.size(); i < sz; ++i)
 			{

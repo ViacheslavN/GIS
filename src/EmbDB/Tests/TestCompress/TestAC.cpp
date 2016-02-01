@@ -174,13 +174,13 @@ void  ACComp::compressInteger(const char *pszText, CommonLib::IWriteStream* pStr
 
 	//bitStream.writeBits(nLow, 16);
 
-	uint32 nBitsSize = bitStream.sizeInBits();
-	uint32 nBitPos = bitStream.posInBits();
+	uint32 nBitsSize = bitStream.size();
+	uint32 nBitPos = bitStream.pos();
 	std::string sText;
 	CommonLib::FxBitReadStream bitReadStream(&alloc);
-	bitReadStream.attachBits(bitStream.buffer(), nBitPos);
+	bitReadStream.attachBuffer(bitStream.buffer(), nBitPos);
 
-	uint32 nBitPo2s = bitReadStream.posInBits();
+	uint32 nBitPo2s = bitReadStream.pos();
 	uint16 value = 0;
 	bitReadStream.readBits(value, 16);
 	bitReadStream.seek(0, CommonLib::soFromBegin);
@@ -463,8 +463,8 @@ void TestCompressAC(const std::string& sStr)
 	CommonLib::FxMemoryReadStream bitReadStream(&alloc);
 	CommonLib::FxMemoryReadStream ReadStream(&alloc);
 
-	bitReadStream.attach(BitStream.buffer(),sizeInBits);
-	ReadStream.attach(WriteStream.buffer(), WriteStream.pos());
+	bitReadStream.attachBuffer(BitStream.buffer(),sizeInBits);
+	ReadStream.attachBuffer(WriteStream.buffer(), WriteStream.pos());
 //	ac.SetBitReadStream(&bitReadStream);
 	int32 nLens = 0;
 	int32 nLens1 = 0;

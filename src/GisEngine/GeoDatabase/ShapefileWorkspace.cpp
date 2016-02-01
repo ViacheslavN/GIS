@@ -270,20 +270,13 @@ namespace GisEngine
 		}
 		IWorkspacePtr CShapefileWorkspace::Open(CommonLib::IReadStream* pSteram)
 		{
-
 			CommonLib::CString sName;
 			CommonLib::CString sPath;
-
-			if(!pSteram->checkRead(4))
+			if(!pSteram->save_read(sName))
 				return IWorkspacePtr();
-
-			pSteram->read(sName);
-
-			if(!pSteram->checkRead(4))
-				return IWorkspacePtr();
-
-			pSteram->read(sPath);
-
+		 
+			if(!pSteram->save_read(sPath))
+				return IWorkspacePtr();	
 			return Open(sName.cwstr(), sPath.cwstr());
 		}
 		IWorkspacePtr CShapefileWorkspace::Open(GisCommon::IXMLNode *pNode)
@@ -305,8 +298,8 @@ namespace GisEngine
 		}
 		bool CShapefileWorkspace::load(CommonLib::IReadStream* pReadStream)
 		{
-			SAFE_READ_RES_EX(pReadStream, m_sName, 1);
-			SAFE_READ_RES_EX(pReadStream, m_sPath, 1);
+			SAFE_READ(pReadStream->save_read(m_sName))
+			SAFE_READ(pReadStream->save_read(m_sPath))
 			load();
 			return true;
 		}

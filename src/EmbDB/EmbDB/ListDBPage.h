@@ -49,7 +49,7 @@ namespace embDB
 		bool getNext(CFilePage *pFilePage, int64& nNext)
 		{
 			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
+			stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 			int64 nSymbol = stream.readInt64();
 			if(nSymbol != m_nKeySymbol)
 				return false;

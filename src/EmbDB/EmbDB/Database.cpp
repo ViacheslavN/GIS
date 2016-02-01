@@ -84,7 +84,7 @@ namespace embDB
 		m_dbHeader.nUserPage = pDBUserPage->getAddr();
 
 		CommonLib::FxMemoryWriteStream stream;
-		stream.attach(pDBHeaderPage->getRowData(), pDBHeaderPage->getPageSize());
+		stream.attachBuffer(pDBHeaderPage->getRowData(), pDBHeaderPage->getPageSize());
 		sFilePageHeader header(stream, DATABASE_PAGE, DB_HEADER_PAGE);
 		m_dbHeader.Write(&stream);
 		header.writeCRC32(stream);
@@ -112,7 +112,7 @@ namespace embDB
 	bool CDatabase::readRootPage(CFilePage* pFilePage)
 	{
 		CommonLib::FxMemoryReadStream stream(m_pAlloc.get());
-		stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
+		stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 		sFilePageHeader header(stream);
 		if(!header.isValid())
 		{

@@ -85,7 +85,7 @@ namespace GisEngine
 		bool CWorkspaceHolder::SaveWks(CommonLib::IWriteStream *pStream)
 		{
 			CommonLib::CSSection::scoped_lock lock (m_SharedMutex); 
-			CommonLib::MemoryStream stream;
+			CommonLib::CWriteMemoryStream stream;
 			stream.write(m_nWksID);
 			stream.write((uint32)m_wksMapByID.size());
 			TWksMapByID::iterator it = m_wksMapByID.begin();
@@ -102,9 +102,10 @@ namespace GisEngine
 		{
 			CommonLib::CSSection::scoped_lock lock (m_SharedMutex); 
 			CommonLib::FxMemoryReadStream stream;
-			pStream->AttachStream(&stream, pStream->readIntu32());
-			m_nWksID = stream.readInt32();
-			uint32 nSize = stream.readIntu32();
+			SAFE_READ(pStream->save_read(&stream, true))
+			SAFE_READ(stream.save_read(m_nWksID))
+			uint32 nSize = 0;
+			SAFE_READ(stream.save_read(nSize))
 			for(uint32 i = 0; i < nSize; ++i)
 			{
 				IWorkspacePtr pWks = LoaderWorkspace::LoadWorkspace(&stream);

@@ -111,7 +111,7 @@ namespace GisEngine
 		}
 		bool Color::load(CommonLib::IReadStream *pStream)
 		{
-			SAFE_READ_RES(pStream, m_rgba);
+			SAFE_READ(pStream->save_read(m_rgba))
 			return true;
 		}
 

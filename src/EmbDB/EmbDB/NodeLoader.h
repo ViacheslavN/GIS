@@ -22,7 +22,7 @@ namespace embDB
 				if(!pFilePage)
 					return false;
 				CommonLib::MemoryStream stream(m_pAlloc);
-				stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
+				stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 				uint16 nTypeComp = stream.readInt32();
 				switch(nTypeComp)
 				{

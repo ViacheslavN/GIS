@@ -52,8 +52,8 @@ namespace embDB
 			uint32 nKeySize =  m_nSize * m_pCompParams->getRowSize();
 			uint32 nValueSize =  m_nSize * sizeof(TValue);
 
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValueStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValueSize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			ValueStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValueSize);
 
 		 
 			TValue value;
@@ -87,8 +87,8 @@ namespace embDB
 			uint32 nKeySize =  nSize  * m_pCompParams->getRowSize();
 			uint32 nValuesSize =  nSize * sizeof(TValue);
 
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			valueStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValuesSize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			valueStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValuesSize);
 			stream.seek(stream.pos() + nKeySize + nValuesSize, CommonLib::soFromBegin);			 
 			for(size_t i = 0, sz = vecKeys.size(); i < sz; ++i)
 			{

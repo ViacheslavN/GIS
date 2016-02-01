@@ -38,7 +38,10 @@ namespace CommonLib
 		return handle;
 
 	}
-
+	FileHandle CFilePosixImpl::handle()
+	{
+		return m_hFile;
+	}
 	bool CFilePosixImpl::openFile(const wchar_t *pszFileName, enOpenFileMode mode, enAccesRights access, enShareMode share, enOpenFileType openType)
 	{
 		long file_flags = 0;

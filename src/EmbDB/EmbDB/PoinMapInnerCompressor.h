@@ -46,8 +46,8 @@ namespace embDB
 			uint32 nKeySize =  m_nSize * sizeof(ZValueType);
 			uint32 nLinkSize =  m_nSize * sizeof(int64);
 
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 
 			CoordPoint zPoint;
 			TLink nlink;
@@ -76,8 +76,8 @@ namespace embDB
 			uint32 nKeySize =  nSize * sizeof(ZValueType);
 			uint32 nLinkSize =  nSize * sizeof(int64);
 
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			LinkStreams.attach(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);			 
 			for(size_t i = 0, sz = keySet.size(); i < sz; ++i)
 			{

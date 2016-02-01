@@ -96,7 +96,7 @@ namespace embDB
 				header.m_nSubObjectPageType = BTREE_LEAF_PAGE;
 			else
 				header.m_nSubObjectPageType = BTREE_INNER_PAGE;
-			stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
+			stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 			header.write(stream);
 			stream.write(m_bIsLeaf);
 			//stream.write(m_bMulti);
@@ -111,7 +111,7 @@ namespace embDB
 		bool LoadFromPage(CFilePage* pFilePage, Transaction* pTransactions)
 		{
 			CommonLib::FxMemoryReadStream stream;
-			stream.attach(pFilePage->getRowData(), pFilePage->getPageSize());
+			stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 			sFilePageHeader header(stream, m_bCheckCRC32 && !pFilePage->isCheck());
 			if( m_bCheckCRC32 && !pFilePage->isCheck() && !header.isValid())
 			{

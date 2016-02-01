@@ -89,8 +89,8 @@ namespace embDB
 
 			uint32 nKeySize =  m_nSize * sizeof(TKey);
  
-			KeyStream.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValueStream.attach(stream.buffer() + stream.pos() + nKeySize, stream.size() -  stream.pos() -  nKeySize);
+			KeyStream.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			ValueStream.attachBuffer(stream.buffer() + stream.pos() + nKeySize, stream.size() -  stream.pos() -  nKeySize);
 
 			TKey nKey;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
@@ -137,8 +137,8 @@ namespace embDB
 			uint32 nKeySize =  m_nSize * sizeof(TKey);
 	
 
-			KeyStream.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValueStream.attach(stream.buffer() + stream.pos() + nKeySize, m_nBlobDataSize);
+			KeyStream.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			ValueStream.attachBuffer(stream.buffer() + stream.pos() + nKeySize, m_nBlobDataSize);
 			stream.seek(stream.pos() + nKeySize + m_nBlobDataSize, CommonLib::soFromBegin);		
  
 

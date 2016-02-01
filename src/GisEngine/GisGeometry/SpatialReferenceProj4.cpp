@@ -435,7 +435,7 @@ namespace GisEngine
 
 		bool CSpatialReferenceProj4::save(CommonLib::IWriteStream *pStream) const
 		{
-			CommonLib::MemoryStream stream;
+			CommonLib::CWriteMemoryStream stream;
 			stream.write(m_prj4Str);
 
 			pStream->write(&stream);
@@ -444,8 +444,8 @@ namespace GisEngine
 		bool CSpatialReferenceProj4::load(CommonLib::IReadStream *pStream)
 		{
 			CommonLib::FxMemoryReadStream stream;
-			pStream->AttachStream(&stream, pStream->readIntu32());
-			stream.read(m_prj4Str);
+			SAFE_READ(pStream->save_read(&stream, true))
+			SAFE_READ(stream.save_read(m_prj4Str))
 			CreateProjection();
 			return true;
 		}

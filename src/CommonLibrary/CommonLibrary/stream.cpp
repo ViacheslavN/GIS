@@ -119,6 +119,16 @@ void IReadStreamBase::read(CommonLib::CString& str)
 	}
 
 }
+void IReadStreamBase::read(IStream *pStream, bool bAttach)
+{
+	 readStream(pStream, bAttach);
+}
+bool IReadStreamBase::save_read(IStream *pStream, bool bAttach)
+{
+	return SaveReadStream(pStream, bAttach);
+}
+
+
 
 bool IReadStreamBase::save_read( byte* pBuffer, uint32 bufLen )
 {
@@ -274,5 +284,10 @@ void IWriteStreamBase::write(const char* pszStr)
 void IWriteStreamBase::write(const wchar_t* pszStr)
 {
 	write((byte*)pszStr, 2* wcslen(pszStr));
+}
+
+void IWriteStreamBase::write(IStream *pStream, int32 nPos, int32 nSize)
+{
+	writeStream(pStream, nPos, nSize);
 }
 }

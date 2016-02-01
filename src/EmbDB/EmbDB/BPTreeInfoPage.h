@@ -48,8 +48,8 @@ namespace embDB
 			uint32 nKeySize =  m_nSize * sizeof(TKey);
 			uint32 nValueSize =  m_nSize *  (sizeof(int64) + sizeof(int32));
 
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValueStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValueSize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			ValueStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValueSize);
 
 			int64 nkey;
 			sFileTranPageInfo nval;
@@ -79,8 +79,8 @@ namespace embDB
 			uint32 nValSize =  m_nSize * (sizeof(int64) + sizeof(int32));
 
 	 
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
-			valueStreams.attach(stream.buffer() + stream.pos() + nKeySize, nValSize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			valueStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValSize);
 			stream.seek(stream.pos() + nKeySize + nValSize, CommonLib::soFromBegin);			 
 
 			for(size_t i = 0, sz = vecKeys.size(); i < sz; ++i)

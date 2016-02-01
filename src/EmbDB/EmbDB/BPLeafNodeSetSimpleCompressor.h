@@ -27,7 +27,7 @@ namespace embDB
 			Set.reserve(m_nSize);
 
 			uint32 nKeySize = stream.readInt32();
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			TKey nkey;
 			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
 			{
@@ -46,7 +46,7 @@ namespace embDB
 			uint32 nKeySize =  m_nSize * sizeof(TKey);
 			stream.write(nKeySize);
 			CommonLib::FxMemoryWriteStream KeyStreams;
-			KeyStreams.attach(stream.buffer() + stream.pos(), nKeySize);
+			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			TLeafMemSet::iterator it = Set.begin();
 			for(; !it.isNull(); ++it)
 			{

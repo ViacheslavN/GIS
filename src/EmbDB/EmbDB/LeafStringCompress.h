@@ -94,8 +94,8 @@ namespace embDB
 
 			uint32 nKeySize =  m_nSize * sizeof(TKey);
  
-			KeyStream.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValueStream.attach(stream.buffer() + stream.pos() + nKeySize, stream.size() -  stream.pos() -  nKeySize);
+			KeyStream.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			ValueStream.attachBuffer(stream.buffer() + stream.pos() + nKeySize, stream.size() -  stream.pos() -  nKeySize);
 
 			TKey nKey;
 
@@ -152,8 +152,8 @@ namespace embDB
 			uint32 nKeySize =  m_nSize * sizeof(TKey);
 	
 
-			KeyStream.attach(stream.buffer() + stream.pos(), nKeySize);
-			ValueStream.attach(stream.buffer() + stream.pos() + nKeySize, m_nStringDataSize);
+			KeyStream.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+			ValueStream.attachBuffer(stream.buffer() + stream.pos() + nKeySize, m_nStringDataSize);
 			stream.seek(stream.pos() + nKeySize + m_nStringDataSize, CommonLib::soFromBegin);		
 
 			uint32 nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();

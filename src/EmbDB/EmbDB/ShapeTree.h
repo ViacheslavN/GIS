@@ -70,14 +70,14 @@ namespace embDB
 
 			if(blobVal.m_nSize < this->m_LeafCompParams->GetMaxPageBlobSize())
 			{
-				 stream.attach(blobVal.m_pBuf, blobVal.m_nSize);
+				 stream.attachBuffer(blobVal.m_pBuf, blobVal.m_nSize);
 			}
 			else
 			{
 				m_CacheBlob.resize(blobVal.m_nSize);
 				embDB::ReadStreamPagePtr pReadStream = this->m_LeafCompParams->GetReadStream(this->m_pTransaction, blobVal.m_nPage, blobVal.m_nBeginPos);
 				pReadStream->read(m_CacheBlob.buffer(), blobVal.m_nSize);
-				stream.attach(m_CacheBlob.buffer(), m_CacheBlob.size());
+				stream.attachBuffer(m_CacheBlob.buffer(), m_CacheBlob.size());
 			}
 			shape->read(&stream);
 		}
