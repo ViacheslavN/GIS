@@ -509,7 +509,7 @@
     <ClCompile Include="src\PJ_hatano.c" />
     <ClCompile Include="src\PJ_healpix.c" />
     <ClCompile Include="src\PJ_igh.c" />
-    <ClCompile Include="src\PJ_imw_p.c" />
+    <ClCompile Include="src\PJ_imwp.c" />
     <ClCompile Include="src\pj_init.c" />
     <ClCompile Include="src\pj_initcache.c" />
     <ClCompile Include="src\pj_inv.c" />

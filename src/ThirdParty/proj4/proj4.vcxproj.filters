@@ -97,9 +97,6 @@
     <ClCompile Include="src\PJ_eqdc.c">
       <Filter>Source Files\conic</Filter>
     </ClCompile>
-    <ClCompile Include="src\PJ_imw_p.c">
-      <Filter>Source Files\conic</Filter>
-    </ClCompile>
     <ClCompile Include="src\PJ_lcc.c">
       <Filter>Source Files\conic</Filter>
     </ClCompile>
@@ -492,6 +489,9 @@
     </ClCompile>
     <ClCompile Include="src\PJ_lagrng.c">
       <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PJ_imwp.c">
+      <Filter>Source Files\conic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

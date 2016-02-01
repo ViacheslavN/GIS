@@ -30,7 +30,7 @@ LOCAL_CFLAGS := -DANDROID
 #azimuthal
 LOCAL_SRC_FILES := src/PJ_aeqd.c src/PJ_gnom.c src/PJ_laea.c src/PJ_mod_ster.c	src/PJ_nsper.c src/PJ_nzmg.c src/PJ_ortho.c src/PJ_stere.c src/PJ_sterea.c src/proj_rouss.c
 #conic
-LOCAL_SRC_FILES += src/PJ_aea.c src/PJ_bipc.c src/PJ_bonne.c src/PJ_eqdc.c src/PJ_imw_p.c src/PJ_lcc.c src/PJ_lcca.c src/PJ_poly.c src/PJ_rpoly.c src/PJ_sconics.c
+LOCAL_SRC_FILES += src/PJ_aea.c src/PJ_bipc.c src/PJ_bonne.c src/PJ_eqdc.c src/PJ_imwp.c src/PJ_lcc.c src/PJ_lcca.c src/PJ_poly.c src/PJ_rpoly.c src/PJ_sconics.c
 #cylinder
 LOCAL_SRC_FILES += src/PJ_cass.c src/PJ_cc.c src/PJ_cea.c src/PJ_eqc.c src/PJ_gall.c src/PJ_geos.c src/PJ_gstmerc.c src/PJ_labrd.c src/PJ_lsat.c src/PJ_merc.c \
 				   src/PJ_mill.c src/PJ_ocea.c src/PJ_omerc.c src/PJ_somerc.c src/PJ_tcc.c src/PJ_tcea.c src/PJ_tmerc.c src/proj_etmerc.c
