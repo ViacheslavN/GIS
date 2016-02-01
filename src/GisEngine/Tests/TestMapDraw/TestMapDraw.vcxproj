@@ -56,7 +56,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../../ThirdParty/freetype/lib;../../Output;../../../ThirdParty/zlib/lib;../../../ThirdParty/jpeg/lib;../../../ThirdParty/PNG/lib;../../../CommonLibrary/Output;../../../ThirdParty/ShapeLib/lib;../../../ThirdParty/proj-4.9.1/lib;../../../EmbDB/Output;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../ThirdParty/freetype/lib;../../Output;../../../ThirdParty/zlib/lib;../../../ThirdParty/jpeg/lib;../../../ThirdParty/PNG/lib;../../../CommonLibrary/Output;../../../ThirdParty/ShapeLib/lib;../../../ThirdParty/proj4/lib;../../../EmbDB/Output;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ResourceCompile>
       <Culture>0x0409</Culture>

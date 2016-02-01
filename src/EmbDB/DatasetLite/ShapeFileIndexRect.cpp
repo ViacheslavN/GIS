@@ -48,10 +48,10 @@ namespace DatasetLite
 		TStatialTreeRect(CommonLib::alloc_t* pAlloc, embDB::CStorage* pStorage, int64 nTreeRootPageID, 
 			double dOffsetX, double dOffsetY, double dScaleX, double dScaleY):
 		m_Storage(pStorage), m_DBTran(pAlloc, pStorage), m_dOffsetX(dOffsetX), m_dOffsetY(dOffsetY),
-			m_dScaleX(dScaleX), m_dScaleY(dScaleY)
+			m_dScaleX(dScaleX), m_dScaleY(dScaleY), m_nTreeRootPageID(nTreeRootPageID)
 		{
 
-			m_SpatialTree.reset( new TSPTree(nTreeRootPageID, &m_DBTran, pAlloc, 50, 8192));
+			m_SpatialTree.reset( new TSPTree(-1, &m_DBTran, pAlloc, 50, 8192));
 		}
 		~TStatialTreeRect()
 		{
@@ -69,7 +69,7 @@ namespace DatasetLite
 			if(!m_SpatialTree.get())
 				return false;
 
-			m_SpatialTree->init(-1); 
+			m_SpatialTree->init(m_nTreeRootPageID); 
 			return m_SpatialTree->commit();
 		}
 		virtual embDB::eDataTypes GetType()
@@ -119,6 +119,7 @@ namespace DatasetLite
 		double m_dOffsetY;
 		double m_dScaleX;
 		double m_dScaleY;
+		int64 m_nTreeRootPageID;
 	 
 
 	};

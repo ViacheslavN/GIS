@@ -75,11 +75,11 @@ namespace DatasetLite
 					return false;
 				}
 
-				embDB::FilePagePtr pPage = m_pStorage->getNewPage(8192);
-				embDB::FilePagePtr pTreePage = m_pStorage->getNewPage(8192, true);
+				embDB::FilePagePtr pPage = m_pStorage->getNewPage(MIN_PAGE_SIZE);
+				embDB::FilePagePtr pTreePage = m_pStorage->getNewPage(MIN_PAGE_SIZE, true);
 				m_pStorage->saveFilePage(pTreePage.get());
 				CommonLib::FxMemoryWriteStream stream;
-				stream.attach(pPage->getRowData(), pPage->getPageSize());	
+				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());	
 				stream.write(m_bbox.xMin);
 				stream.write(m_bbox.yMin);
 				stream.write(m_bbox.xMax);
@@ -108,9 +108,9 @@ namespace DatasetLite
 					return false;
 				}
 				m_pStorage->setFileSize(-1);
-				embDB::FilePagePtr pPage = m_pStorage->getFilePage(0, 8192);
+				embDB::FilePagePtr pPage = m_pStorage->getFilePage(0, MIN_PAGE_SIZE);
 				CommonLib::FxMemoryReadStream stream;
-				stream.attach(pPage->getRowData(), pPage->getPageSize());	
+				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());	
 				stream.read(m_bbox.xMin);
 				stream.read(m_bbox.yMin);
 				stream.read(m_bbox.xMax);

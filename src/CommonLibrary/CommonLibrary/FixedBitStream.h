@@ -11,7 +11,7 @@ namespace CommonLib
 	class FxBitWriteStream : public TBaseBitMemryStream<IWriteBitStreamBase>
 	{
 	public:
-		typedef public TBaseBitMemryStream<IWriteBitStreamBase> TBase;
+		typedef TBaseBitMemryStream<IWriteBitStreamBase> TBase;
 		FxBitWriteStream(alloc_t *pAlloc = NULL);
 		~FxBitWriteStream();
 		virtual void writeBit(bool bBit);

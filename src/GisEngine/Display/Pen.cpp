@@ -241,14 +241,14 @@ namespace GisEngine
 
 				CommonLib::FxMemoryReadStream *pStream = &stream;
 				uint32 nSize = 0;
-				SAFE_READ(pStream, nSize)
+				SAFE_READ(pStream->save_read(nSize))
 				if(nSize)
 				{
 					m_vecTemplates.reserve(nSize);
 					for (size_t i = 0; i < nSize; ++i)
 					{
-						SAFE_READ(pStream, m_vecTemplates[i].first)
-						SAFE_READ(pStream, m_vecTemplates[i].second)
+						SAFE_READ(pStream->save_read(m_vecTemplates[i].first))
+						SAFE_READ(pStream->save_read(m_vecTemplates[i].second))
 					}
 				}
 			}
