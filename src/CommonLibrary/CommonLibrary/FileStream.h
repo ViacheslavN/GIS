@@ -18,8 +18,8 @@ namespace CommonLib
 
 	 
 		virtual bool open(const wchar_t *pszFileName,  enOpenFileMode mode, enAccesRights access, enShareMode share) = 0;
-		virtual void attachF(FileHandle handle)  = 0;
-		virtual FileHandle deattachF() = 0;
+		virtual void attachFile(FileHandle handle)  = 0;
+		virtual FileHandle deattachFile() = 0;
 		virtual bool isValid() const = 0;
 		virtual bool flush() = 0;
 	protected:
@@ -36,7 +36,7 @@ namespace CommonLib
 
 	private:
 
-		TFileStreamBase(const TFileStreamBase& stream){}
+		TFileStreamBase(const TFileStreamBase& stream) : m_pAttachStream(NULL) {}
 		TFileStreamBase& operator=(const TFileStreamBase& stream){}
 
 	public:
@@ -44,18 +44,30 @@ namespace CommonLib
 		{}
 		~TFileStreamBase()
 		{}
+
+		//IFileStream
 		virtual bool open(const wchar_t *pszFileName,  enOpenFileMode mode, enAccesRights access, enShareMode share)
 		{
 			return m_File.openFile(pszFileName, mode, access, share);
 		}
-		virtual void attachF(FileHandle handle)
+		virtual void attachFile(FileHandle handle)
 		{
 			m_File.attach(handle);
 		}
-		virtual FileHandle deattachF()
+		virtual FileHandle deattachFile()
 		{
 			return m_File.deattach();
 		}
+		virtual bool isValid() const
+		{
+			return m_File.isValid();
+		}
+		virtual bool flush()
+		{
+			return m_File.Flush();
+		}
+
+
 		virtual int32 size() const
 		{
 			return (int32)m_File.getFileSize();
@@ -88,37 +100,25 @@ namespace CommonLib
 		{
 			m_File.closeFile();
 		}
-		virtual bool isValid() const
+	
+		virtual bool attach(IStream *pStream, int32 nPos = -1, int32 nSize = -1)
 		{
-			return m_File.isValid();
-		}
-		virtual bool flush()
-		{
-			return m_File.Flush();
-		}
 
-		virtual bool create(uint32 nSize)
-		{
-			return false;
+			IFileStream *pFileStream = dynamic_cast<IFileStream *>(pFileStream);
+			return true;
+
 		}
-		virtual bool attach(byte* pBuffer, uint32 nSize, bool bCopy = true)
+		virtual bool attach64(IStream *pStream, int64 nPos = -1, int64 nSize  = -1) 
 		{
-			return false;
+			return true;
 		}
-		virtual byte* deattach()
+		virtual IStream * deattach()
 		{
-			return NULL;
-		}
-		virtual byte* buffer()
-		{
-			return NULL;
-		}
-		virtual const byte* buffer() const
-		{
-			return NULL;
+
 		}
 	protected:
 		CFile m_File;
+		IStream *m_pAttachStream;
 	};
 
 

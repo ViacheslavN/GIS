@@ -22,7 +22,48 @@ namespace CommonLib
 			this->m_nPos += size;
 			assert(this->m_nPos <= this->m_nSize);
 		}
+		void CReadMemoryStream::read(IStream *pStream, bool bAttach)
+		{
+			IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
+			if(pMemStream)
+			{
+				uint32 nStreamSize = readIntu32();
+				if(bAttach)
+				{
+					pMemStream->attachBuffer(buffer() + pos(), nStreamSize);
+					seek(nStreamSize, soFromCurrent);
+				}
+				else
+				{
+					pMemStream->resize(nStreamSize);
+					if(nStreamSize)
+						IReadStream::read(pMemStream->buffer() + pStream->pos(), nStreamSize);
+				}
 
+			}
+		}
+		bool CReadMemoryStream::save_read(IStream *pStream, bool bAttach)
+		{
+			IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
+			if(!pMemStream)
+				return false;
+			uint32 nStreamSize = 0;
+			if(!IReadStream::save_read(nStreamSize))
+				return false;
+			if(bAttach)
+			{
+				if((size() - pos())  < nStreamSize)
+					return false;
+				pMemStream->attachBuffer(buffer() + pos(), nStreamSize);
+				seek(nStreamSize, soFromCurrent);
+				return true;
+			}
+			else
+			{
+				pMemStream->resize(nStreamSize);
+				return IReadStream::save_read(pMemStream->buffer() + pStream->pos(), nStreamSize);
+			}
+		}
 
 
 
@@ -77,5 +118,14 @@ namespace CommonLib
 
 			return this->m_pBuffer != NULL;
 		}
-	
+		void CWriteMemoryStream::write(IStream *pStream, uint32 nPos, uint32 nSize)
+		{
+			IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
+			if(pMemStream)
+			{
+				IWriteStream::write(nSize ? nSize : (uint32)pStream->size());
+				IWriteStream::write(pMemStream->buffer() + nPos, nSize ? nSize : pStream->size());
+			}
+
+		}
 }

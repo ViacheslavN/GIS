@@ -5,7 +5,7 @@
 
 namespace CommonLib
 {
-	WriteBitStream::WriteBitStream(alloc_t *pAlloc) : BitStreamBase(pAlloc)
+	WriteBitStream::WriteBitStream(alloc_t *pAlloc) : TBase(pAlloc)
 	{
 	}
 	WriteBitStream::~WriteBitStream()

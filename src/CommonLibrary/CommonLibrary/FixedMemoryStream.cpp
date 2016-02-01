@@ -43,7 +43,26 @@ namespace CommonLib
 		this->m_nPos += size;
 		assert(this->m_nPos <= this->m_nSize);
 	}
-	
+	void FxMemoryReadStream::read(IStream *pStream)
+	{
+		IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
+		if(pMemStream)
+		{
+			uint32 nStreamSize = readIntu32();
+			if(nStreamSize)
+				IReadStream::read(pMemStream->buffer() + pStream->pos(), nStreamSize);
+		}
+	}
+	bool FxMemoryReadStream::save_read(IStream *pStream)
+	{
+		IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
+		if(!pMemStream)
+			return false;
+		uint32 nStreamSize = 0;
+		if(!IReadStream::save_read(nStreamSize))
+			return false;
+		return IReadStream::save_read(pMemStream->buffer() + pStream->pos(), nStreamSize);
+	}
 	
 	FxMemoryWriteStream::FxMemoryWriteStream(alloc_t *pAlloc) : TBase(pAlloc)
 	{
@@ -69,6 +88,17 @@ namespace CommonLib
 		for(size_t i = 0; i < size; m_nPos++, i++)
 			m_pBuffer[m_nPos + size - i - 1] = buffer[i];
 		assert(m_nPos <= m_nSize);
+	}
+
+	void FxMemoryWriteStream::write(IStream *pStream, uint32 nPos, uint32 nSize)
+	{
+		IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
+		if(pMemStream)
+		{
+			IWriteStream::write(nSize ? nSize : (uint32)pStream->size());
+			IWriteStream::write(pMemStream->buffer() + nPos, nSize ? nSize : pStream->size());
+		}
+
 	}
 
 }

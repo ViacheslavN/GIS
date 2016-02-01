@@ -3,9 +3,10 @@
 
 namespace CommonLib
 {
-	class WriteBitStream : public BitStreamBase, public IWriteBitStreamBase
+	class WriteBitStream : public TBaseBitMemryStream<IWriteBitStreamBase>
 	{
 	public:
+		typedef TBaseBitMemryStream<IWriteBitStreamBase> TBase;
 		WriteBitStream(alloc_t *pAlloc = NULL);
 		~WriteBitStream();
 		virtual void writeBit(bool bBit);

@@ -8,9 +8,10 @@
 namespace CommonLib
 {
 
-		class FxBitWriteStream : public BitStreamBase, public IWriteBitStreamBase
+	class FxBitWriteStream : public TBaseBitMemryStream<IWriteBitStreamBase>
 	{
 	public:
+		typedef public TBaseBitMemryStream<IWriteBitStreamBase> TBase;
 		FxBitWriteStream(alloc_t *pAlloc = NULL);
 		~FxBitWriteStream();
 		virtual void writeBit(bool bBit);
@@ -21,9 +22,10 @@ namespace CommonLib
 
 
 
-	class FxBitReadStream : public BitStreamBase , public IReadBitStreamBase
+	class FxBitReadStream: public TBaseBitMemryStream<IReadBitStreamBase>
 	{
 	public:
+		typedef  TBaseBitMemryStream<IReadBitStreamBase> TBase;
 		FxBitReadStream(alloc_t *pAlloc = NULL);
 		~FxBitReadStream();
 

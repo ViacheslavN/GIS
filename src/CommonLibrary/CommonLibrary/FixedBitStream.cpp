@@ -4,7 +4,7 @@ namespace CommonLib
 {
 
 
-	FxBitWriteStream::FxBitWriteStream(alloc_t *pAlloc) : BitStreamBase(pAlloc)
+	FxBitWriteStream::FxBitWriteStream(alloc_t *pAlloc) : TBase(pAlloc)
 	{}
 
 	FxBitWriteStream::~FxBitWriteStream()
@@ -27,7 +27,7 @@ namespace CommonLib
 	
 
 
-	FxBitReadStream::FxBitReadStream(alloc_t *pAlloc) : BitStreamBase(pAlloc)
+	FxBitReadStream::FxBitReadStream(alloc_t *pAlloc) : TBase(pAlloc)
 	{
 
 	}

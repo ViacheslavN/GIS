@@ -88,7 +88,26 @@ namespace CommonLib
 	};
 
 
+	template< class I>
+	class TBaseBitMemryStream : public TMemoryStreamBase<I>
+	{
+		public:
+			typedef TMemoryStreamBase<I> TBase;
+			TBaseBitMemryStream(CommonLib::alloc_t *pAlloc) : TBase(pAlloc), m_nCurrBit(0)
+			{
 
+			}
+			virtual ~TBaseBitMemryStream()
+			{
+
+			}
+	protected:
+		static const uint32 m_nBitBase = 7;
+		uint32 m_nCurrBit;
+	};
+
+
+	/*
 
 	class BitStreamBase : public IStream
 	{
@@ -127,7 +146,7 @@ namespace CommonLib
 
 		uint32 m_nEndBits;
 
-	};
+	};*/
 
 
 }

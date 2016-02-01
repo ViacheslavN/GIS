@@ -70,7 +70,7 @@ namespace CommonLib
 
 
 
-	BitStreamBase::BitStreamBase(alloc_t *pAlloc ):
+/*	BitStreamBase::BitStreamBase(alloc_t *pAlloc ):
 	m_pAlloc(pAlloc)
 		,m_pBuffer(0)
 		,m_nPos(0)
@@ -238,7 +238,7 @@ namespace CommonLib
 			m_pAlloc->free(m_pBuffer);
 		}
 		m_pBuffer = 0;
-	}
+	}*/
 
 
 

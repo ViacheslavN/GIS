@@ -27,7 +27,10 @@ namespace CommonLib
 		
 		virtual void read_bytes(byte* dst, uint32 size);
 		virtual void read_inverse(byte* buffer, uint32 size);
+		virtual void read(IStream *pStream, bool bAttach = false);
+		virtual bool save_read(IStream *pStream, bool bAttach = false);
 
+		 
 	};
 
 
@@ -50,6 +53,8 @@ namespace CommonLib
 		virtual void write_bytes(const byte* buffer, uint32 size);
 		virtual void write_inverse(const byte* buffer, uint32 size);
 		virtual bool  resize(uint32 nSize);
+
+		virtual void write(IStream *pStream, uint32 nPos = 0, uint32 nSize = 0);
 	private:
 		
 	};

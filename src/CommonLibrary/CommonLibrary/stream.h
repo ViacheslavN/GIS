@@ -23,11 +23,10 @@ public:
 	virtual int64 pos64() const = 0;
 	virtual void reset() = 0;
 	virtual void close() = 0;
-	virtual bool create(uint32 nSize) = 0;
-	virtual bool attach(byte* pBuffer, uint32 nSize, bool bCopy = true)  = 0;
-	virtual byte* deattach()  = 0;
-	virtual byte* buffer()  = 0;
-	virtual const byte* buffer() const = 0;
+
+	virtual bool attach(IStream *pStream, int32 nPos = -1, int32 nSize = -1)  = 0;
+	virtual bool attach64(IStream *pStream, int64 nPos = -1, int64 nSize = -1)  = 0;
+	virtual IStream * deattach()  = 0;
 
 	static bool isBigEndian()
 	{
@@ -37,7 +36,17 @@ public:
 	}
 };
 
+class IMemoryStream
+{
+public:
+	virtual bool attachBuffer(byte* pBuffer, uint32 nSize, bool bCopy = true)  = 0;
+	virtual byte* deattachBuffer()  = 0;
 
+	virtual byte* buffer()  = 0;
+	virtual const byte* buffer() const = 0;
+	virtual bool create(uint32 nSize) = 0;
+	virtual bool resize(uint32 nSize) = 0;
+};
 
 class IWriteStream : public IStream
 {
@@ -58,7 +67,7 @@ public:
 	virtual void write(const CommonLib::CString& str) = 0;
 	virtual void write(const char* pszStr) = 0;
 	virtual void write(const wchar_t* pszStr) = 0;
-	
+	virtual void write(IStream *pStream, int32 nPos = -1, int32 nSize = -1) = 0;
 	
 	virtual ~IWriteStream()  {}
 
@@ -90,6 +99,7 @@ public:
 	virtual void read(float& value) = 0;
 	virtual void read(double& value) = 0;
 	virtual void read(CommonLib::CString& str) = 0;
+	virtual void read(IStream *pStream, bool bAttach = false) = 0;
  
 
 	virtual bool         readBool() = 0;
@@ -119,7 +129,7 @@ public:
 	virtual bool save_read(float& value) = 0;
 	virtual bool save_read(double& value) = 0;
 	virtual bool save_read(CommonLib::CString& str) = 0;
-
+	virtual bool save_read(IStream *pStream, bool bAttach = false) = 0;
 
 
 	//virtual bool checkRead(uint32 nSize) const = 0;
@@ -308,7 +318,7 @@ public:
 
 
 template<class I>
-class TMemoryStreamBase : public I
+class TMemoryStreamBase : public I, public IMemoryStream
 {
 
 
@@ -322,6 +332,8 @@ public:
 		,m_nPos(0)
 		,m_nSize(0)
 		,m_bAttach(false)
+		,m_pAttachStream(NULL)
+
 	{
 		if(!m_pAlloc)
 			m_pAlloc = &m_alloc;
@@ -338,55 +350,10 @@ public:
 		}
 	}
 
-	virtual bool create(uint32 nSize)
-	{
-		if(!m_bAttach && m_pBuffer)
-		{
-			m_pAlloc->free(m_pBuffer);
-		}
-		m_pBuffer = (byte*)m_pAlloc->alloc(sizeof(byte) * nSize);
-		m_nPos = 0;
-		m_nSize = nSize;
-		m_bAttach = false;
+	//IStream
 
-		return m_pBuffer != NULL;
-	}
-	virtual bool attach(byte* pBuffer, uint32 nSize, bool bCopy = true)
-	{
-		if(bCopy)
-		{
-			create(nSize);
-			memcpy(m_pBuffer, pBuffer, nSize);
-			m_bAttach = false;
-		}
-		else
-		{
-			m_pBuffer = pBuffer;
-			m_bAttach = true;
-
-		}
-		m_nPos = 0;
-		m_nSize = nSize;
-		return true;
-	}
-
-	virtual byte* deattach()
-	{
-		byte* tmp = m_pBuffer;
-		m_nPos = 0;
-		m_nSize = 0;
-		m_pBuffer = 0;
-		m_bAttach = false;
-		return tmp;
-	}
-	virtual byte* buffer()
-	{
-		return m_pBuffer;
-	}
-	virtual const byte* buffer() const
-	{
-		return m_pBuffer;
-	}
+	
+	
 	virtual int32 size() const 
 	{
 		return m_nSize;
@@ -439,6 +406,36 @@ public:
 	{
 		m_nPos = 0;
 	}
+	virtual bool attach(IStream *pStream, int32 nPos = -1, int32 nSize = -1)
+	{
+		IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
+		if(!pMemStream)
+			return false;
+
+		  int32 _nPos = (nPos != -1 ? nPos : 0);
+		  int32 _nSize= (_nSize != -1 ? _nSize : pStream->size());
+
+		 if(!attachBuffer(pMemStream->buffer() + _nPos, _nSize, false))
+			 return false;
+		 m_pAttachStream = pStream;
+		return true;
+	}
+	virtual bool attach64(IStream *pStream, int64 nPos = -1, int64 nSize = -1)
+	{
+		return attach(pStream, int32(nPos), int32(nSize));
+	}
+	virtual IStream* deattach()
+	{
+		if(!m_pAttachStream)
+			return NULL;
+
+		deattachBuffer();
+		IStream* pTmp = m_pAttachStream;
+		m_pAttachStream = NULL;
+		return pTmp;
+
+
+	}
 	virtual void close()
 	{
 		m_nPos = 0;
@@ -451,6 +448,61 @@ public:
 			m_pBuffer = 0;
 		}
 	}
+
+
+	//IMemoryStream
+	virtual bool attachBuffer(byte* pBuffer, uint32 nSize, bool bCopy = true)
+	{
+		if(bCopy)
+		{
+			create(nSize);
+			memcpy(m_pBuffer, pBuffer, nSize);
+			m_bAttach = false;
+		}
+		else
+		{
+			m_pBuffer = pBuffer;
+			m_bAttach = true;
+
+		}
+		if(m_pAttachStream)
+			m_pAttachStream = NULL;
+		m_nPos = 0;
+		m_nSize = nSize;
+		return true;
+	}
+
+	virtual byte* deattachBuffer()
+	{
+		byte* tmp = m_pBuffer;
+		m_nPos = 0;
+		m_nSize = 0;
+		m_pBuffer = 0;
+		m_bAttach = false;
+		return tmp;
+	}
+	virtual byte* buffer()
+	{
+		return m_pBuffer;
+	}
+	virtual const byte* buffer() const
+	{
+		return m_pBuffer;
+	}
+	virtual bool create(uint32 nSize)
+	{
+		if(!m_bAttach && m_pBuffer)
+		{
+			m_pAlloc->free(m_pBuffer);
+		}
+		m_pAttachStream = NULL;
+		m_pBuffer = (byte*)m_pAlloc->alloc(sizeof(byte) * nSize);
+		m_nPos = 0;
+		m_nSize = nSize;
+		m_bAttach = false;
+
+		return m_pBuffer != NULL;
+	}
 	virtual bool resize(uint32 nSize) {return false;}
 protected:
 
@@ -460,6 +512,7 @@ protected:
 	bool m_bIsBigEndian;
 	alloc_t *m_pAlloc;
 	bool m_bAttach;
+	IStream *m_pAttachStream;
 	simple_alloc_t m_alloc;
 };
 
