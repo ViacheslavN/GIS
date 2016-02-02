@@ -22,6 +22,9 @@
     <Filter Include="Tests">
       <UniqueIdentifier>{a6954ed8-a525-46d4-99c2-94b8c401acf4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TestNumLen">
+      <UniqueIdentifier>{fccf1f2d-961e-4bd4-82d3-c58f0a24650d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
