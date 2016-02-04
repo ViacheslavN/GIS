@@ -7,11 +7,11 @@ namespace embDB
 
 	namespace mathUtils
 	{
-	  static  double LOG10_2 = 0.30102999566;
+	  static  double Ln_2 = 0.69314718055994529;
 
 	  static inline double Log2(double dVal)
 	  {
-		  return log(dVal)/LOG10_2;
+		  return log(dVal)/Ln_2;
 	  }
 	}
 }

@@ -24,7 +24,14 @@ namespace CommonLib
 		m_nCurrBit++;
 	 
 	}
-	
+	bool FxBitWriteStream::attach(IStream *pStream, int32 nPos, int32 nSize)
+	{
+
+		if(!TBase::attach(pStream, nPos, nSize))
+			return false;
+		m_pBuffer[0] = 0;
+		return true;
+	}
 
 
 	FxBitReadStream::FxBitReadStream(alloc_t *pAlloc) : TBase(pAlloc)

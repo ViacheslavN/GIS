@@ -221,6 +221,7 @@ public:
 			FreqPrev[i + 1] = Freq[i] + nPrevF;
 			nPrevF = FreqPrev[i + 1];
 		}
+		
 		srcFile.seek(0, CommonLib::soFromBegin);
 		m_pReadStream.seek(0, CommonLib::soFromBegin);
 
@@ -244,7 +245,11 @@ public:
 		TCoder coder(&m_pWriteStream);
 		int64 nMax = coder.MaxRange;
 
-
+		if(FreqPrev[256] >= coder.MaxRange)
+		{
+			int i = 0;
+			i++;
+		}
 
 
 		for (uint32 i = 0; i < nFileSize; ++i)

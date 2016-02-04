@@ -15,6 +15,7 @@ namespace CommonLib
 		FxBitWriteStream(alloc_t *pAlloc = NULL);
 		~FxBitWriteStream();
 		virtual void writeBit(bool bBit);
+		virtual bool attach(IStream *pStream, int32 nPos = -1, int32 nSize = -1);
 	private:
 		
 

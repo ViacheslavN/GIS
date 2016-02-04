@@ -13,8 +13,7 @@ namespace embDB
 				static const _TCodeValue Bottom = (_TCodeValue)1 << (nValueBits - 8);
 				_TCodeValue Low,Range;
 	public:
-
-			static const uint32 Max_Size_Error = 200; //error 0.5%
+		 
 				static const _TCodeValue MaxRange = Bottom;
 				TRangeEncoder(CommonLib::IWriteStream* pStream, TCodeValue nMaxSize = 0) : 
 				m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1), m_nMaxSize(nMaxSize), m_WriteSize(0)
@@ -48,9 +47,11 @@ namespace embDB
 						{
 							break;
 						}
+
+						m_WriteSize += 1;
 						if(m_nMaxSize != 0 && m_WriteSize > m_nMaxSize)
 							return false;
-						m_WriteSize += 1;
+						
 						m_pStream->write(byte((Low>>nValueBits)& 0xFF));
 						Range<<=8;
 						Low<<=8;  
@@ -65,6 +66,7 @@ namespace embDB
 
 					for(int i=0;i<_nValueBits/8;i++)
 					{
+						m_WriteSize++;
 						if(m_nMaxSize != 0 && m_WriteSize > m_nMaxSize)
 							return false;
 						m_pStream->write((byte)((Low>>nValueBits)& 0xFF));

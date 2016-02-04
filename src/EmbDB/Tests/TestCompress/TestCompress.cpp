@@ -6,6 +6,7 @@
 #include "CommonLibrary/FixedBitStream.h"
 #include "TestAC.h"
 #include "Test.h"
+#include "testNumLem.h"
 
 uint32 compressFile(const wchar_t *pszFileNameIn, const wchar_t* pszCompressFile);
 uint32 compressStaticFile(const wchar_t *pszFileNameIn, const wchar_t* pszCompressFile);
@@ -48,9 +49,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	compressStaticFile(sSrcFile.cwstr(), L"D:\\test\\files\\bib.static.compress");
 	DecompressStaticFile(nOutSize, L"D:\\test\\files\\bib.static.compress", L"D:\\test\\files\\bib.static.compress.decompress");
 	*/
-	CTestCompess test;
+//	CTestCompess test;
 	//test.compressFile(L"D:\\test\\files\\bib", L"D:\\test\\files\\bib.compress");
-	test.TestCompress(L"D:\\test\\files");
+	//test.TestCompress(L"D:\\test\\files");
+
+	TestNumLen();
 	return 0;
 }
 

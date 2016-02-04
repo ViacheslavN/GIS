@@ -15,12 +15,29 @@ int _tmain(int argc, _TCHAR* argv[])
 	int i = 0;
 	int j = i++;
 	CommonLib::alloc_t *alloc = new CommonLib::simple_alloc_t();
-	CommonLib::FxMemoryReadStream readStrim(alloc);
-	CommonLib::MemoryStream memStream(alloc);
+	 
+	CommonLib::CWriteMemoryStream memStream(alloc);
+	memStream.resize(50);
+	CommonLib::FxBitWriteStream bitWrite;
+	CommonLib::FxBitReadStream bitRead;
+
+	bitWrite.attach(&memStream, 0, 50);
+	bitRead.attach(&memStream, 0, 50);
+
+	uint64 nValue = 0;
+	bitWrite.writeBits(nValue, 1);
+	nValue = 1024;
+	bitWrite.writeBits(nValue, 11);
+
+	uint64 nReadValue = 1;
+
+	bitRead.readBits(nReadValue, 1);
+	bitRead.readBits(nReadValue, 11);
 
 
+	bitWrite.writeBits(nValue, 11);
 
-	CommonLib::CWriteFileStream writeFSteam;
+	/*CommonLib::CWriteFileStream writeFSteam;
 	writeFSteam.open(L"D:\\1.fs", CommonLib::ofmCreateAlways,  CommonLib::arWrite,  CommonLib::smNoMode);
 
 
@@ -44,7 +61,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	memStream.write((byte)1);
 
 
-	readStrim.attach(memStream.buffer(), memStream.size());
+	readStrim.attachBuffer(memStream.buffer(), memStream.size());
 	uint64 nType;
 	readStrim.read(nType);
 	
@@ -140,22 +157,14 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 
-	readBitStream.attach(writeBitStream.buffer(), writeBitStream.size());
+ 
 
  
 
 	byte bBit1, bBit2, bBit3, bBit4, bBit5, bBit6, bBit7, bBit8, bBit9;
 
 
-	readBitStream.readBit(bBit1);
-	readBitStream.readBit(bBit2);
-	readBitStream.readBit(bBit3);
-	readBitStream.readBit(bBit4);
-	readBitStream.readBit(bBit5);
-	readBitStream.readBit(bBit6);
-	readBitStream.readBit(bBit7);
-	readBitStream.readBit(bBit8);
-	readBitStream.readBit(bBit9);
+ 
 	readBitStream.readBits(nBit16_14_r, 14);
 	readBitStream.readBits(nBit16_r, 16);
 

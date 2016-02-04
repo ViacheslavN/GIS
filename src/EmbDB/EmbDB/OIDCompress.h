@@ -58,7 +58,7 @@ namespace embDB
 		 typedef TACEncoder<uint32, 16> TACEncoder;
 		 typedef TACDecoder<uint32, 16> TACDecoder;
 
-		 typedef TUnsignedCalcNumLen<uint64, TFindMostSigBit, TRangeEncoder, TACEncoder, 
+		 typedef TUnsignedNumLenCompressor<uint64, TFindMostSigBit, TRangeEncoder, TACEncoder, 
 			 TRangeDecoder, TACDecoder, 64> TCalcNumLen;
 	
 

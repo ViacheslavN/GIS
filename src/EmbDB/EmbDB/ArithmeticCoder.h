@@ -1,8 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_ARITHMETIC_CODER_H_
 #define _EMBEDDED_DATABASE_ARITHMETIC_CODER_H_
 
-#include "CommonLibrary/WriteBitStream.h"
-#include "CommonLibrary/FixedBitStream.h" 
+#include "CommonLibrary/stream.h"
 namespace embDB
 {
 	template<class _TCodeValue, uint16 _nValueBits>
@@ -128,7 +127,7 @@ namespace embDB
 		TCodeValue GetBit()
 		{
 
-			if(m_nCurrBit > 7 && m_pStream->IsEndOfStream())
+			if(m_nCurrBit > 7 && (m_pStream->pos() == m_pStream->size()))
 				return 0;
 
 			if (m_nCurrBit > 7)

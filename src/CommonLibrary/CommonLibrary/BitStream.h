@@ -49,7 +49,7 @@ namespace CommonLib
 		void _readBits(TVal& bits, size_t nCount)
 		{
 			bits = 0;
-			for (int i = nCount - 1; i >= 0; --i)
+			for (size_t i = 0; i < nCount; ++i)
 			{
 				bool bBit = readBit();
 				if(bBit)
@@ -67,7 +67,7 @@ namespace CommonLib
 
 		IWriteBitStreamBase();
 		virtual ~IWriteBitStreamBase();
-		
+		virtual void writeBit(bool nBit) = 0;
 		virtual void writeBit(byte nBit);
 		virtual void writeBits(byte nBits, size_t nCntBits);
 		virtual void writeBits(uint16 nBits, size_t nCntBits);
@@ -101,6 +101,17 @@ namespace CommonLib
 			{
 
 			}
+
+			virtual bool seek(uint32 position, enSeekOffset offset )
+			{
+				if(!TBase::seek(position, offset))
+					return false;
+
+				m_nCurrBit = 0;
+				return true;
+			}
+
+	
 	protected:
 		static const uint32 m_nBitBase = 7;
 		uint32 m_nCurrBit;
