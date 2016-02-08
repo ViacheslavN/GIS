@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source files">
+      <UniqueIdentifier>{0e839ebe-8a9b-4801-be26-75da3c4877e4}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header files">
+      <UniqueIdentifier>{b61f40ae-f211-4f4c-ad9e-2078317fe096}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource files">
+      <UniqueIdentifier>{c8288372-f086-4ef3-94ec-62d97f17240c}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Java Source Files">
+      <UniqueIdentifier>{d3403049-4482-4b88-8943-76643ab53aaa}</UniqueIdentifier>
+      <Extensions>*.java</Extensions>
+    </Filter>
+    <Filter Include="Java Source Files\com">
+      <UniqueIdentifier>{c2b822b6-20d9-467c-b090-a4fc34941109}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Java Source Files\com\visualgdb">
+      <UniqueIdentifier>{74bb5f6f-e7d2-415c-b93f-fd6450cb267f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Java Source Files\com\visualgdb\example">
+      <UniqueIdentifier>{de70aad2-317f-43d5-a328-d04e7032b0e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Java Source Files\com\visualgdb\example\mapviewer">
+      <UniqueIdentifier>{68e75446-b440-4728-99a6-cfb6f042b8e3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AndroidManifest.xml" />
+    <None Include="jni\Android.mk" />
+    <None Include="jni\Application.mk" />
+    <None Include="src\com\visualgdb\example\mapviewer\MapFrameActivity.java">
+      <Filter>Java Source Files\com\visualgdb\example\mapviewer</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="jni\GisLibrary.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\GisLibrary.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\map.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\MapContext.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\MapDrawer.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="jni\MapContext.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\MapDrawer.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

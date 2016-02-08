@@ -27,5 +27,5 @@ LOCAL_CFLAGS := -DANDROID
 
  
 LOCAL_SRC_FILES :=  adler32.c compress.c crc32.c deflate.c gzclose.c gzlib.c gzread.c gzwrite.c infback.c inffast.c inflate.c inftrees.c contrib/minizip/ioapi.c \
-					trees.c	uncompr.c contrib/minizip/unzip.c contrib/minizip/zip.c
+					trees.c	uncompr.c contrib/minizip/unzip.c contrib/minizip/zip.c  zutil.c
 include $(BUILD_STATIC_LIBRARY)

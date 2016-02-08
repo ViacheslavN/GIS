@@ -41,12 +41,12 @@ LOCAL_SRC_FILES += src/PJ_airy.c src/PJ_aitoff.c src/PJ_august.c src/PJ_bacon.c 
 #pseudo
 LOCAL_SRC_FILES += src/PJ_boggs.c src/PJ_calcofi.c src/PJ_collg.c src/PJ_crast.c src/PJ_denoy.c src/PJ_eck1.c src/PJ_eck2.c src/PJ_eck3.c src/PJ_eck4.c src/PJ_eck5.c src/PJ_fahey.c \
 				   src/PJ_fouc_s.c src/PJ_gins8.c src/PJ_gn_sinu.c src/PJ_goode.c src/PJ_hatano.c src/PJ_igh.c src/PJ_isea.c src/PJ_loxim.c src/PJ_mbt_fps.c src/PJ_mbtfpp.c src/PJ_mbtfpq.c \
-				   src/PJ_moll.c src/PJ_nell.c src/PJ_putp2.c src/PJ_putp3.c src/PJ_putp4p.c src/PJ_putp5.c src/PJ_putp6.c src/PJ_robin.c src/PJ_sts.c src/PJ_urm5.c src/PJ_urmfps.c src/PJ_wag2.c \
+				   src/PJ_moll.c src/PJ_nell.c   src/PJ_nell_h.c src/PJ_putp2.c src/PJ_putp3.c src/PJ_putp4p.c src/PJ_putp5.c src/PJ_putp6.c src/PJ_robin.c src/PJ_sts.c src/PJ_urm5.c src/PJ_urmfps.c src/PJ_wag2.c \
 				   src/PJ_wag3.c src/PJ_wink1.c src/PJ_wink2.c
 #support
 LOCAL_SRC_FILES += src/aasincos.c src/adjlon.c src/bch2bps.c src/bchgen.c src/biveval.c src/dmstor.c src/geocent.c src/mk_cheby.c src/nad_cvt.c src/nad_init.c src/nad_intr.c src/pj_apply_gridshift.c \
 				   src/pj_apply_vgridshift.c src/pj_auth.c src/pj_ctx.c src/pj_datum_set.c src/pj_datums.c src/pj_deriv.c src/pj_ell_set.c src/pj_ellps.c src/pj_errno.c src/pj_factors.c src/pj_fileapi.c \
 				   src/pj_fwd.c src/pj_gauss.c src/pj_gc_reader.c src/pj_gridcatalog.c src/pj_gridinfo.c src/pj_gridlist.c src/pj_init.c src/pj_initcache.c src/pj_inv.c src/pj_list.c src/pj_log.c \
 				   src/pj_malloc.c src/pj_mlfn.c src/pj_msfn.c src/pj_mutex.c src/pj_open_lib.c src/pj_param.c src/pj_phi2.c src/pj_pr_list.c src/pj_qsfn.c src/pj_release.c src/pj_strerrno.c \
-				   src/pj_transform.c src/pj_tsfn.c src/pj_units.c src/pj_zpoly1.c src/proj_mdist.c src/rtodms.c src/vector1.c
+				   src/pj_transform.c src/pj_tsfn.c src/pj_units.c  src/pj_utils.c src/pj_zpoly1.c src/proj_mdist.c src/rtodms.c src/vector1.c
 include $(BUILD_STATIC_LIBRARY)

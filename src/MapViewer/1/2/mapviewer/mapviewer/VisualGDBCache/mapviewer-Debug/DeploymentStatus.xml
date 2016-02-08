@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<ApkDeploymentStatus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ApkFile>D:\work\MyProject\GIS\src\MapViewer\1\2\mapviewer\mapviewer\bin\MapFrameActivity-debug.apk</ApkFile>
+  <DeviceID>emulator-Nexus_4_API_15</DeviceID>
+  <ApkTimestamp>2016-02-07T16:22:58.5150251+07:00</ApkTimestamp>
+  <LastDeployment>2016-02-07T16:23:13.0328554+07:00</LastDeployment>
+</ApkDeploymentStatus>

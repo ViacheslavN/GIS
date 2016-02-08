@@ -1,5 +1,5 @@
-#ifndef _LIB_COMMON_LIBRARY_H_
-#define _LIB_COMMON_LIBRARY_H_
+#ifndef _LIB_GENERAL_COMMON_LIBRARY_H_
+#define _LIB_GENERAL_COMMON_LIBRARY_H_
 
 
 #ifdef _WIN32
@@ -20,7 +20,7 @@
 	#include <wchar.h>
 	#include <sys/types.h>
 	#include <sys/stat.h>
-	#include <fcntl.h>
+    #include <fcntl.h>
 #ifndef min
 	#define min(a,b)  (((a) < (b)) ? (a) : (b))
 #endif

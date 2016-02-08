@@ -15,6 +15,7 @@ public:
 
  void SetMap(GisEngine::Cartography::IMap *pMap);
  void SetSize(int cx , int cy, bool bDraw = true);
+ int openMap(const CommonLib::CString& connectionString, unsigned char* key, size_t keyLen, int width, int height, int dpi);
 private:
 
 	void Init();

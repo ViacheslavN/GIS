@@ -73,7 +73,8 @@ namespace embDB
 
 		if(m_vecOIDs.size())
 		{
-			m_vecOIDs.quick_sort(embDB::comp<uint64>());
+			embDB::comp<uint64> comp;
+			m_vecOIDs.quick_sort(comp);
 		}
 	}
 	IFieldSetPtr SimpleSearchCursor::GetFieldSet() const
@@ -171,7 +172,10 @@ namespace embDB
 				if(!field.m_pFieldIterator->isNull())
 					field.m_pFieldIterator->getVal(m_pCacheRow->value(i));
 				else
-					m_pCacheRow->set(CommonLib::CVariant(), i);
+				{	
+					CommonLib::CVariant var;
+					m_pCacheRow->set(var, i);
+				}
 
 				m_pCacheRow->SetRow(m_nCurrObj);
 				*pRow = m_pCacheRow.get();

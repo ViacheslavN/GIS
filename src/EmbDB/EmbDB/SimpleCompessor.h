@@ -46,9 +46,9 @@ namespace embDB
 				uint32 nValSize = stream.readInt32();
 				uint32 nLessSize = stream.readInt32();
 
-				KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
-				ValStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValSize);
-				LessStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize + nValSize, nLessSize);
+				KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize, false);
+				ValStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValSize, false);
+				LessStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize + nValSize, nLessSize, false);
 				//OIDs
 
 				for (uint32 nIndex = 0; nIndex < nSize; ++nIndex)
@@ -82,9 +82,9 @@ namespace embDB
 				stream.write(nKeySize);
 				stream.write(nValSize);
 				stream.write(nLessSize);
-				KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
-				ValStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValSize);
-				LessStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize + nValSize, nLessSize);
+				KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize, false);
+				ValStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValSize, false);
+				LessStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize + nValSize, nLessSize, false);
 				
 			
 			
@@ -116,9 +116,9 @@ namespace embDB
 				uint32 nValSize = stream.readInt32();
 				uint32 nLessSize = stream.readInt32();
 
-				KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
-				ValStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValSize);
-				LessStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize + nValSize, nLessSize);
+				KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize, false);
+				ValStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValSize, false);
+				LessStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize + nValSize, nLessSize, false);
 				//OIDs
 
 				for (uint32 nIndex = 0; nIndex < nSize; ++nIndex)

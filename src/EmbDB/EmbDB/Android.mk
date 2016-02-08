@@ -40,9 +40,20 @@ LOCAL_SRC_FILES :=  FilePage.cpp storage.cpp StorageInfo.cpp
 #Table
 LOCAL_SRC_FILES +=Table.cpp   
 #transactions
-LOCAL_SRC_FILES +=Transactions.cpp TransactionCache.cpp TranStorage.cpp TranUndoPageManager.cpp  TranRedoPageManager.cpp  TranLogStateManager.cpp DirectTransactions.cpp
+LOCAL_SRC_FILES +=Transactions.cpp TransactionCache.cpp TranStorage.cpp TranUndoPageManager.cpp  TranRedoPageManager.cpp  TranLogStateManager.cpp DirectTransactions.cpp TranPerfCounter.cpp
+#Cursors
+LOCAL_SRC_FILES +=InsertCursor.cpp  DeleteCursor.cpp  SimpleSearchCursor.cpp SimpleSelectCursor.cpp
 #database
 LOCAL_SRC_FILES +=Database.cpp DBStateManager.cpp DBTranManager.cpp Schema.cpp
 #sdk
 LOCAL_SRC_FILES +=Fields.cpp FieldSet.cpp Row.cpp
+#utils
+LOCAL_SRC_FILES += CRC.cpp MathUtils.cpp
+#alloc
+LOCAL_SRC_FILES += PageAlloc.cpp MemPageCache.cpp
+#Z-Order
+LOCAL_SRC_FILES += SpatialPointQuery.cpp  SpatialRectQuery.cpp
+
+LOCAL_STATIC_LIBRARIES := libcommon
+
 include $(BUILD_STATIC_LIBRARY)

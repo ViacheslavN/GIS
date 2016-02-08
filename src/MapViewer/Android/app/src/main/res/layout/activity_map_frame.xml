@@ -17,4 +17,19 @@
         >
 
     </app.com.mapviewer.MapView>
+
+    <LinearLayout
+        android:id="@+id/MapToolbarLayout"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/toolbarbkg"
+
+        >
+        <ImageButton android:src="@drawable/search_btn" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/ShowSearchBtn" android:onClick="OnToolBtnClick" android:clickable="true"></ImageButton>
+        <ImageButton android:src="@drawable/ident_btn" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/WhereIBtn" android:onClick="OnToolBtnClick"></ImageButton>
+        <ImageButton android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/FullScreenBtn" android:src="@drawable/full_extent_btn" android:onClick="OnToolBtnClick"></ImageButton>
+        <ImageButton android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/OpenMapBtn" android:src="@drawable/open_map_btn" android:onClick="OnToolBtnClick"></ImageButton>
+        <ImageButton android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/SettingsBtn" android:src="@drawable/menu_btn" android:onClick="OnToolBtnClick"></ImageButton>
+    </LinearLayout>
 </LinearLayout>

@@ -75,11 +75,11 @@ void insertINBTreeMapBlob  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSize,
 			if(i%10000 == 0)
 			{
 
-				stream.attach(MaxBlob.buffer(), MaxBlob.size());
+				stream.attachBuffer(MaxBlob.buffer(), MaxBlob.size());
 			}
 			else
 			{
-				stream.attach(MinBlob.buffer(), MinBlob.size());
+				stream.attachBuffer(MinBlob.buffer(), MinBlob.size());
 			}
 
 			stream.write(i);
@@ -178,7 +178,7 @@ void searchINBTreeMapBlob   (CommonLib::alloc_t* pAlloc,
 				   	embDB::ReadStreamPage readStream(pTran, 1024*1024);
 					readStream.open(BlobVal.m_nPage, BlobVal.m_nBeginPos);
 					readStream.read(CacheBlob.buffer(), BlobVal.m_nSize);
-					stream.attach(CacheBlob.buffer(), BlobVal.m_nSize);
+					stream.attachBuffer(CacheBlob.buffer(), BlobVal.m_nSize);
 				}
 				else
 				{
@@ -190,7 +190,7 @@ void searchINBTreeMapBlob   (CommonLib::alloc_t* pAlloc,
 						continue;
 
 					}
-					stream.attach(BlobVal.m_pBuf, BlobVal.m_nSize);
+					stream.attachBuffer(BlobVal.m_pBuf, BlobVal.m_nSize);
 				}
 
 			

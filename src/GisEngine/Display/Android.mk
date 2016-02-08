@@ -49,4 +49,5 @@ LOCAL_SRC_FILES += LoaderSymbols.cpp SimpleFillSymbol.cpp SimpleLineSymbol.cpp T
 #clip
 LOCAL_SRC_FILES += ClipRectAlloc.cpp RectClipper.cpp
 
+LOCAL_STATIC_LIBRARIES += libGisCommon libagg  libzlib libpng libjpeg
 include $(BUILD_STATIC_LIBRARY)

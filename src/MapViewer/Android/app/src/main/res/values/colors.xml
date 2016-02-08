@@ -3,4 +3,17 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="toolbarbg">#b3bccb</color>
+    <color name="toolbarBkgEnd">#6c83a2</color>
+    <color name="menuBkg">#505050</color>
+    <color name="menuBkgEnd">#555555</color>
+    <color name="menuButtonBkg">#f5f5f5</color>
+    <color name="menuButtonBkgEnd">#9c9c9c</color>
+
+    <color name="menuButtonPushBkg">#7882ac</color>
+    <color name="menuButtonPushBkgEnd">#0021ac</color>
+
+    <color name="menuButtonCancelBkg">#616161</color>
+    <color name="menuButtonCancelBkgEnd">#1a1a1a</color>
+    <color name="menuButtonCancelColor">#ffffff</color>
 </resources>

@@ -28,7 +28,7 @@ namespace embDB
 	}
 	CPageAlloc::~CPageAlloc()
 	{
-		for (auto it = m_mapPage.begin(); it != m_mapPage.end(); ++it)
+		for (std::map<void*, SMemPage*>::iterator it = m_mapPage.begin(); it != m_mapPage.end(); ++it)
 		{
 			SMemPage* pPage = it->second;
 			assert(pPage->m_nCnt == 0);
@@ -94,7 +94,7 @@ namespace embDB
 		memcpy(&nPageID, pBuf, sizeof(size_t));
 		assert(nPageID < m_mapPage.size());*/
 
-		auto it = m_mapPage.lower_bound(ptr);
+		std::map<void*, SMemPage*>::iterator it = m_mapPage.lower_bound(ptr);
 		if(it == m_mapPage.end())
 		{
 			SMemPage* pPage = m_mapPage.rbegin()->second;

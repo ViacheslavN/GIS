@@ -32,7 +32,7 @@ void TestEmbDBWks()
 	{
 
 
-		pEmbDBFC = pWks->CreateFeatureClass(L"building", pShapeFC->GetFields().get()/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
+		pEmbDBFC = pWks->CreateFeatureClass(L"building", pShapeFC->GetFields().get(), true/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
 
 
 

@@ -39,7 +39,7 @@ public:
 class IMemoryStream
 {
 public:
-	virtual bool attachBuffer(byte* pBuffer, uint32 nSize, bool bCopy = true)  = 0;
+	virtual bool attachBuffer(byte* pBuffer, uint32 nSize, bool bCopy = false)  = 0;
 	virtual byte* deattachBuffer()  = 0;
 
 	virtual byte* buffer()  = 0;
@@ -433,7 +433,7 @@ public:
 
 
 	//IMemoryStream
-	virtual bool attachBuffer(byte* pBuffer, uint32 nSize, bool bCopy = true)
+	virtual bool attachBuffer(byte* pBuffer, uint32 nSize, bool bCopy = false)
 	{
 		if(bCopy)
 		{

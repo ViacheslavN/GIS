@@ -59,7 +59,9 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="AndroidManifest.xml" />
+    <None Include="AndroidManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="jni\Android.mk" />
     <None Include="jni\Application.mk" />
     <None Include="src\app\com\mapviewer\AndroidViewerDebug\AndroidViewerDebug.java" />

@@ -60,7 +60,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="..\app\src\androidTest\java\app\com\mapviewer\ApplicationTest.java" />
-    <None Include="..\app\src\main\AndroidManifest.xml" />
+    <None Include="..\app\src\main\AndroidManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="..\app\src\main\build_ndk.cmd" />
     <None Include="..\app\src\main\java\app\com\mapviewer\MapFrameActivity.java" />
     <None Include="..\app\src\main\java\app\com\mapviewer\MapView.java" />

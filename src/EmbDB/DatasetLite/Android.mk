@@ -42,5 +42,5 @@ LOCAL_CFLAGS :=	-DANDROID \
 
 #ShapeFileIndex
 LOCAL_SRC_FILES :=  ShapeCursor.cpp ShapeFileIndex.cpp ShapeFileIndexPoint.cpp ShapeFileIndexRect.cpp
-
+LOCAL_STATIC_LIBRARIES := libEmbDB
 include $(BUILD_STATIC_LIBRARY)

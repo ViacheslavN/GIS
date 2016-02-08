@@ -26,6 +26,7 @@ LOCAL_CFLAGS :=	-I. \
 		-DANDROID \
 		-I$(STLPORT_BASE)/stlport \
 		-I$(COMMON_I_PATH) \
+		-I$(FHIRD_PARTY_LIB_PATH) \
 		-I$(EMBDB_I_PATH) \
 		-I$(FREETYPE_I_PATH) \
 		-I$(PROJ4_I_PATH) \

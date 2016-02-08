@@ -5,6 +5,7 @@
 #include "Display/RectClipper.h"
 #include "Display/ClipRectAlloc.h"
 #include "Common/Common.h"
+#include "GeoDatabase/GeoDatabase.h"
 
 
 class CMapDrawer
@@ -15,8 +16,13 @@ public:
 
  void SetMap(GisEngine::Cartography::IMap *pMap);
  void SetSize(int cx , int cy, bool bDraw = true);
+ int openMap(const CommonLib::CString& connectionString, int width, int height, int dpi);
 private:
-
+	int openShape(const CommonLib::CString& connectionString, int width, int height, int dpi);
+	int openSQLite(const CommonLib::CString& connectionString, int width, int height, int dpi);
+	int openEmbDB(const CommonLib::CString& connectionString, int width, int height, int dpi);
+	void AddFeatureClass(GisEngine::GeoDatabase::IFeatureClass *pFC);
+private:
 	void Init();
 
 	GisEngine::Cartography::IMapPtr m_pMap;

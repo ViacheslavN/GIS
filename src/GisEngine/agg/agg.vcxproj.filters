@@ -19,9 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
-    <None Include="Android.mk">
-      <Filter>Source Files</Filter>
-    </None>
+    <None Include="Android.mk" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

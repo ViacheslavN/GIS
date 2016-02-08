@@ -51,7 +51,7 @@ namespace DatasetLite
 			m_dScaleX(dScaleX), m_dScaleY(dScaleY), m_nTreeRootPageID(nTreeRootPageID)
 		{
 
-			m_SpatialTree.reset( new TSPTree(-1, &m_DBTran, pAlloc, 50, 8192));
+			m_SpatialTree.reset( new TSPTree(nTreeRootPageID, &m_DBTran, pAlloc, 50, 8192));
 		}
 		~TStatialTreeRect()
 		{
@@ -64,11 +64,11 @@ namespace DatasetLite
 
 			return m_SpatialTree->commit();
 		}
-		virtual bool init()
+		virtual bool init(int64 nRootPage)
 		{
 			if(!m_SpatialTree.get())
 				return false;
-
+			m_nTreeRootPageID = nRootPage;
 			m_SpatialTree->init(m_nTreeRootPageID); 
 			return m_SpatialTree->commit();
 		}
@@ -173,19 +173,19 @@ namespace DatasetLite
 		switch(m_Type)
 		{
 		case embDB::stRect16:
-			m_SpTree.reset(new TSpatialTreeU16(m_pAlloc, m_pStorage.get(), m_nRootTreePage, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
+			m_SpTree.reset(new TSpatialTreeU16(m_pAlloc, m_pStorage.get(), -1, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 			break;
 		case embDB::stRect32:
-			m_SpTree.reset(new TSpatialTreeU32(m_pAlloc, m_pStorage.get(), m_nRootTreePage, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
+			m_SpTree.reset(new TSpatialTreeU32(m_pAlloc, m_pStorage.get(), -1, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 			break;
 		case embDB::stRect64:
-			m_SpTree.reset(new TSpatialTreeU64(m_pAlloc, m_pStorage.get(), m_nRootTreePage, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
+			m_SpTree.reset(new TSpatialTreeU64(m_pAlloc, m_pStorage.get(), -1, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 			break;
 		}
 		if(m_SpTree.get() == NULL)
 			return false;
 
-		m_SpTree->init();
+		m_SpTree->init(m_nRootTreePage);
 		m_SpTree->commit();
 			
 		return true;

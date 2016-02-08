@@ -49,5 +49,5 @@ LOCAL_SRC_FILES += cpl\cpl_atomic_ops.cpp cpl\cpl_conv.cpp cpl\cpl_csv.cpp cpl\c
 #ogr
 LOCAL_SRC_FILES += ogr\ogr_fromepsg.cpp ogr\ogr_srs_dict.cpp ogr\ogr_srs_esri.cpp ogr\ogr_srs_proj4.cpp ogr\ogr_srs_xml.cpp ogr\ogr_srsnode.cpp	ogr\ogrct.cpp ogr\ogrspatialreference.cpp			   
 				   
-
+LOCAL_STATIC_LIBRARIES := libcommon libproj4
 include $(BUILD_STATIC_LIBRARY)

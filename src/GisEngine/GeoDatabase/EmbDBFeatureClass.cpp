@@ -186,13 +186,18 @@ namespace GisEngine
 
 		embDB::IRowPtr pRow = pCursor->createRow();
 
-
-		pRow->set(CommonLib::CVariant(m_pSpatialReference.get() ? m_pSpatialReference->GetProjectionString() : L""), 0);
-		pRow->set(CommonLib::CVariant(m_sShapeFieldName), 1);
-		pRow->set(CommonLib::CVariant((int)m_ShapeType), 2);
-		pRow->set(CommonLib::CVariant(m_sAnnotationName), 3);
-		pRow->set(CommonLib::CVariant(m_bUseRowID ? L"" : m_sOIDFieldName), 4);
-		pRow->set(CommonLib::CVariant((int32)m_nOIDType), 5);
+		CommonLib::CVariant spRefVar(m_pSpatialReference.get() ? m_pSpatialReference->GetProjectionString() : CommonLib::CString(L""));
+		CommonLib::CVariant varShapeField(m_sShapeFieldName);
+		CommonLib::CVariant varShapeType((int)m_ShapeType);
+		CommonLib::CVariant varAnnotation(m_sAnnotationName);
+		CommonLib::CVariant varOIDField(m_bUseRowID ? L"" :  m_sOIDFieldName);
+		CommonLib::CVariant varOIDType((int32)m_nOIDType);
+		pRow->set(spRefVar, 0);
+		pRow->set(varShapeField, 1);
+		pRow->set(varShapeType, 2);
+		pRow->set(varAnnotation, 3);
+		pRow->set(varOIDField, 4);
+		pRow->set(varOIDType, 5);
 		pCursor->insert(pRow.get());
 		return pTran->commit();
 	}
@@ -331,7 +336,7 @@ namespace GisEngine
 	}
 	ICursorPtr	CEmbDBFeatureClass::Search(IQueryFilter* filter, bool recycling)
 	{
-		return  ICursorPtr(new CEmbDBRowCursor(filter, recycling, this, m_pEmbDBWorkspace->GetDB().get()));
+		return  ICursorPtr( (ICursor*)(new CEmbDBRowCursor(filter, recycling, this, m_pEmbDBWorkspace->GetDB().get())) );
 	}
 
 

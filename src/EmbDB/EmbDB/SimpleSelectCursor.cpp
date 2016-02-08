@@ -139,7 +139,10 @@ namespace embDB
 			else
 			{
 				if(pRow)
-					m_pCacheRow->set(CommonLib::CVariant(), i);
+				{
+					CommonLib::CVariant var;
+					m_pCacheRow->set(var, i);
+				}
 			}
 		}
 		if(pRow)
@@ -191,7 +194,10 @@ namespace embDB
 			else
 			{
 				if(pRow)
-					m_pCacheRow->set(CommonLib::CVariant(), i);
+				{
+					CommonLib::CVariant var;
+					m_pCacheRow->set(var, i);
+				}
 			}
 		
 		}

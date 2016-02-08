@@ -18,7 +18,7 @@ void testWriteXML()
 	GisEngine::GisCommon::IXMLNodePtr pRoot = xmlDoc.GetNodes();
 
 	GisEngine::GisCommon::IXMLNodePtr pBody = pRoot->CreateChildNode(L"Body");
-	CommonLib::MemoryStream memStream;
+	CommonLib::CWriteMemoryStream memStream;
 
 	memStream.write(int64(456));
 	memStream.write(int(457));
@@ -89,7 +89,7 @@ void testLoadXML()
 			pChild0->GetBlobCDATA(blob);
 
 			CommonLib::FxMemoryReadStream memStream;
-			memStream.attach(blob.buffer(), blob.size());
+			memStream.attachBuffer(blob.buffer(), blob.size(), false);
 			int64 nVal;
 			int intVal;
 			memStream.read(nVal);

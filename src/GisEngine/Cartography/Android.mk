@@ -45,4 +45,6 @@ LOCAL_SRC_FILES += FeatureClassLoader.cpp map.cpp Selection.cpp
 #SymbolAssigners
 LOCAL_SRC_FILES += LoadSymbolAssigners.cpp SimpleSymbolAssigner.cpp
 
+
+LOCAL_STATIC_LIBRARIES := libDisplay
 include $(BUILD_STATIC_LIBRARY)

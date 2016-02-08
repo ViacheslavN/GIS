@@ -31,6 +31,7 @@
     <None Include="esri.inc">
       <Filter>SpatialReferenceProj4</Filter>
     </None>
+    <None Include="Android.mk" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

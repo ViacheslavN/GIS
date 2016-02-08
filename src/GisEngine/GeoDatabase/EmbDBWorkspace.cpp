@@ -46,9 +46,9 @@ namespace GisEngine
 
 			if(!sFullName.isEmpty())
 			{
-				if(sFullName[sFullName.length() - 1] != _T('/') || sFullName[sFullName.length() - 1] != _T('\\'))
+				if(sFullName[sFullName.length() - 1] != L'/' || sFullName[sFullName.length() - 1] != L'\\')
 				{
-					sFullName += _T('\\');
+					sFullName +=  L'\\';
 				}
 			}
 
@@ -89,9 +89,9 @@ namespace GisEngine
 
 			if(!sFullName.isEmpty())
 			{
-				if(sFullName[sFullName.length() - 1] != _T('/') || sFullName[sFullName.length() - 1] != _T('\\'))
+				if(sFullName[sFullName.length() - 1] !=  L'/' || sFullName[sFullName.length() - 1] !=  L'\\')
 				{
-					sFullName += _T('\\');
+					sFullName +=  L'\\';
 				}
 			}
 

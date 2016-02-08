@@ -38,10 +38,15 @@ LOCAL_CPPFLAGS  := -std=c++11 \
 				 -I$(TR1_BASE)
 
 #Source Files
-LOCAL_SRC_FILES := Feature.cpp Field.cpp Fields.cpp FieldSet.cpp GeoDatabase.cpp GeoDatabaseUtils.cpp GeometryDef.cpp OIDSet.cpp QueryFilter.cpp
+LOCAL_SRC_FILES := Feature.cpp Field.cpp Fields.cpp FieldSet.cpp GeoDatabase.cpp GeoDatabaseUtils.cpp GeometryDef.cpp OIDSet.cpp QueryFilter.cpp WorkspaceBase.cpp LoaderWorkspase.cpp
 #GeoDatabaseShape
 LOCAL_SRC_FILES += ShapefileFeatureClass.cpp ShapefileRowCursor.cpp ShapefileUtils.cpp ShapefileWorkspace.cpp
 #GeoDatabaseSQlite
 LOCAL_SRC_FILES += sqlite3\sqlite3.c sqlite3\shell.c SQLiteUtils.cpp SQLiteFeatureClass.cpp SQLiteInsertCursor.cpp SQLiteRowCursor.cpp SQLiteTable.cpp SQLiteTransaction.cpp SQLiteWorkspace.cpp
+#GeoDatabaseEmbDB
+LOCAL_SRC_FILES += EmbDBFeatureClass.cpp EmbDBInsertCursor.cpp EmbDBRowCursor.cpp EmbDBTable.cpp EmbDBTransaction.cpp embDBUtils.cpp EmbDBWorkspace.cpp
+
+				   
+LOCAL_STATIC_LIBRARIES := libEmbDB libDatasetLite libshapelib
 
 include $(BUILD_STATIC_LIBRARY)

@@ -18,7 +18,7 @@ namespace DatasetLite
 			virtual bool insert(double dX, double dY, int nRow ) = 0;
 			virtual IShapeCursorPtr search(const CommonLib::bbox& extent) = 0;
 			virtual bool commit() = 0;
-			virtual bool init() = 0;
+			virtual bool init(int64 nRootPage) = 0;
 
 	};
 

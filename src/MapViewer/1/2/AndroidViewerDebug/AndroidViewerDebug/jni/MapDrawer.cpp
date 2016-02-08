@@ -29,6 +29,10 @@ void CMapDrawer::SetSize(int cx , int cy, bool bDraw)
 	 
 	}
 }
+int CMapDrawer::openMap(const CommonLib::CString& connectionString, unsigned char* key, size_t keyLen, int width, int height, int dpi)
+{
+	return 1;
+}
 void CMapDrawer::Init()
 {
 }
@@ -44,4 +48,32 @@ Java_app_com_mapviewer_nativeApi_MapDrawer_createMapDrawerN
 	)
 {
 	return int(new CMapDrawer(double(nDpi)));
+}
+///mnt/sdcard/maps/building.sqlite
+
+extern "C"
+jint 
+Java_app_com_mapviewer_nativeApi_MapDrawer_openMapN
+	(
+	JNIEnv *env,
+	jobject thiz,
+	jint ptr,
+	jstring path,
+	jint width,
+	jint height,
+	jint dpi)
+{
+	CMapDrawer* pdrawer = (CMapDrawer*)ptr;
+	if (!pdrawer)
+	{
+		return 0;
+	}
+
+	const char *string = env->GetStringUTFChars(path, 0);
+	unsigned char* key = 0;
+	uint32 keyLen = 0;
+	CommonLib::CString connectionString(string, strlen(string));
+	int ret =  pdrawer->openMap(connectionString, key, keyLen, width, height, dpi);
+	env->ReleaseStringUTFChars(path, string);
+	return ret;
 }

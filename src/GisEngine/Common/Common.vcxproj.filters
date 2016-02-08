@@ -103,5 +103,6 @@
     <None Include="ReadMe.txt">
       <Filter>XML</Filter>
     </None>
+    <None Include="Android.mk" />
   </ItemGroup>
 </Project>

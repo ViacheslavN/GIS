@@ -26,7 +26,7 @@ namespace embDB
 		}
 		if(dBitRowSize < 32)
 			dBitRowSize = 32;
-		dBitRowSize  += (dBitRowSize /TRangeEncoder::Max_Size_Error); //error range code 0.05%
+		dBitRowSize  += (dBitRowSize /200); //error range code 0.05%
 		return dBitRowSize;
 	}
 	uint32 OIDCompress::GetRowSize() const
