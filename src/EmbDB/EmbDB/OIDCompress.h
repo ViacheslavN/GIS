@@ -18,7 +18,7 @@ namespace embDB
 		enum eSchemeCompress
 		{
 			eCompressDiff = 1,
-			eCopmress
+			eCopmressNumLen
 
 		};
 
@@ -52,14 +52,14 @@ namespace embDB
 		};
 
 		 typedef std::map<int64, SymbolInfo> TDiffFreq;
-		 typedef TRangeEncoder<uint32, 32> TRangeEncoder;
-		 typedef TRangeDecoder<uint32, 32> TRangeDecoder;
+		 typedef TRangeEncoder<int64, 32> TRangeEncoder;
+		 typedef TRangeDecoder<int64, 32> TRangeDecoder;
 
-		 typedef TACEncoder<uint32, 16> TACEncoder;
-		 typedef TACDecoder<uint32, 16> TACDecoder;
+		 typedef TACEncoder<int64, 32> TACEncoder;
+		 typedef TACDecoder<int64, 32> TACDecoder;
 
 		 typedef TUnsignedNumLenCompressor<uint64, TFindMostSigBit, TRangeEncoder, TACEncoder, 
-			 TRangeDecoder, TACDecoder, 64> TCalcNumLen;
+			 TRangeDecoder, TACDecoder, 64> TNumLenCompressor;
 	
 
 	
@@ -67,32 +67,30 @@ namespace embDB
 		 typedef std::vector<Symbols> TVecFreq;
 		public:
 
-			OIDCompress();
+			OIDCompress(uint32 nError = 200);
 			~OIDCompress();
 
-			uint32 GetRowSize() const;
-			void AddSymbol(int64 nDiff);
-			void RemoveSymbol(int64 nDiff);
-
+			void AddDiffSymbol(int64 nOid);
+			void RemoveDiffSymbol(int64 nOid);
+			uint32 GetComressSize() const;
 		
-
-			void compress(TBPVector<int64>& oids, CommonLib::IWriteStream* pStream);
-			void read(uint32 nSize, TBPVector<int64>& oids, CommonLib::IReadStream* pStream);
-			double GetRowBitSize() const;
+			void compress( const embDB::TBPVector<int64>& vecLinks, CommonLib::IWriteStream *pStream);
+			void decompress(uint32 nSize, embDB::TBPVector<int64>& vecLinks, CommonLib::IReadStream *pStream);
 			
 	private:
 		uint32 GetNeedByteForDiffCompress() const;
-		uint32 GetNeedByteForNumLen() const;
 
-		void compressDiffScheme(TBPVector<int64>& oids, CommonLib::IWriteStream* pStream);
-		void compressNumLen(TBPVector<int64>& oids, CommonLib::IWriteStream* pStream);
+
+		void compressDiffScheme(const TBPVector<int64>& oids, CommonLib::IWriteStream* pStream);
+		void compressNumLen(const TBPVector<int64>& oids, CommonLib::IWriteStream* pStream);
 
 
 		void readDiffScheme(uint32 nSize, TBPVector<int64>& oids, CommonLib::IReadStream* pStream);
 
 		TDiffFreq m_DiffFreq;
-		TCalcNumLen m_CalcNum;
+		TNumLenCompressor m_NumLenComp;
 		uint32 m_nCount;
+		uint32 m_nError;
 
 	};
 

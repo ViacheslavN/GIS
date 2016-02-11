@@ -2,7 +2,7 @@
 #include "testNumLem.h"
 #include <iostream>
 
-CTestNumLem::CTestNumLem()
+CTestNumLem::CTestNumLem() : m_compressor(100)
 {
 
 }
@@ -39,12 +39,13 @@ void TestNumLen()
 
 	embDB::TBPVector<uint64> vec1, vec2;
 	uint64 nCnt = 0;
+	uint32 nSize = 0;
 	for (uint64 i = 0; i < 0xFFFFFFFFFFFF; i += 1024)
 	{
 		nCnt++;
 		test.AddLink(i);
 		vec1.push_back(i);
-		uint32 nSize = test.GetCompressSize();
+		nSize = test.GetCompressSize();
 		if(nSize > 8192)
 		{
 			WriteStream.create(nSize);
@@ -63,5 +64,5 @@ void TestNumLen()
 		if(nValue1 != nValue2)
 			std::cout << "error i: " << i << " value vec1: " <<nValue1 << std::endl;
 	}
-	 
+	 std::cout << "compress: row size " << nCnt * sizeof(int64) << " compress size " <<nSize <<" k: " << ((double)nCnt * sizeof(int64)) /nSize << std::endl;
 }

@@ -42,6 +42,9 @@ namespace CommonLib
 		virtual void readBits(uint16&  nBits, size_t nCntBits);
 		virtual void readBits(uint32&  nBits, size_t nCntBits);
 		virtual void readBits(uint64&  nBits, size_t nCntBits);
+		virtual void readBits(int16&  nBits, size_t nCntBits);
+		virtual void readBits(int32&  nBits, size_t nCntBits);
+		virtual void readBits(int64&  nBits, size_t nCntBits);
 	
 	protected:
 
@@ -73,6 +76,9 @@ namespace CommonLib
 		virtual void writeBits(uint16 nBits, size_t nCntBits);
 		virtual void writeBits(uint32 nBits, size_t nCntBits);
 		virtual void writeBits(uint64 nBits, size_t nCntBits);
+		virtual void writeBits(int16 nBits, size_t nCntBits);
+		virtual void writeBits(int32 nBits, size_t nCntBits);
+		virtual void writeBits(int64 nBits, size_t nCntBits);
 
 	protected:
 

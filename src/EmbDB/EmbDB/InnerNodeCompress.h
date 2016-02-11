@@ -8,6 +8,7 @@
 #include "Key.h"
 #include "CompressorParams.h"
 #include "OIDCompress.h"
+#include "LinkCompress.h"
 namespace embDB
 {
 
@@ -55,6 +56,7 @@ namespace embDB
 		TOIDMemSet* m_pKeyMemSet;
 		TLinkMemSet* m_pLinkMemSet;
 		OIDCompress m_OIDCompress;
+		InnerLinkCompress m_LinkCompressor;
 	};
 }
 

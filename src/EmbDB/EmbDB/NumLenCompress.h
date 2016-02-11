@@ -79,7 +79,10 @@ namespace embDB
 			return bits;
 		}
 
-
+		int FMSB(int64 val64)
+		{
+			 return FMSB(uint64(val64) );
+		}
 
 	};
 
@@ -172,7 +175,7 @@ namespace embDB
 				if(dBitRowSize < 32)
 					dBitRowSize = 32;
 
-				dBitRowSize += dBitRowSize/m_nError; 
+				dBitRowSize += (dBitRowSize/m_nError); 
 
 				return dBitRowSize;
 			}
@@ -441,32 +444,7 @@ namespace embDB
 
 			}
 
-			/*bool DecompressRangeCode(TBPVector<_TValue>& vecValues, CommonLib::IReadStream* pStream, uint32 *FreqPrev, 
-				CommonLib::FxBitReadStream *pBitStream)
-			{
-				
-
-				TRangeDecoder rgDecoder(pStream);
-				rgDecoder.StartDecode();
-
-				for (size_t i = 0; i < m_nCount; ++i)
-				{
-					unsigned int freq = rgDecoder.GetFreq(m_nCount);
-
-					uint32 nBitLen;
-					for(nBitLen = _nMaxBitsLens;FreqPrev[nBitLen] > freq;nBitLen--);
-
-					_TValue value = 0;
-					pBitStream->readBits(value, nBitLen);
-					vecValues.push_back(value);
-				 
-					rgDecoder.DecodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen+1], m_nCount);
-				
-				}
-				 
-				return true;
-			}*/
-
+			
 
 			template<class TDecoder>
 			bool Decompress(TBPVector<_TValue>& vecValues, CommonLib::IReadStream* pStream, uint32 *FreqPrev, 

@@ -7,7 +7,7 @@ namespace embDB
 {
 
 
-	OIDCompress::OIDCompress() : m_nCount(0)
+	OIDCompress::OIDCompress(uint32 nError) : m_nCount(0), m_nError(nError), m_NumLenComp(nError)
 	{
 
 	}
@@ -15,33 +15,25 @@ namespace embDB
 	{
 
 	}
-	double OIDCompress::GetRowBitSize() const
+	uint32 OIDCompress::GetComressSize() const
 	{
 		double dBitRowSize = 0;
 		for (TDiffFreq::const_iterator it = m_DiffFreq.begin(); it != m_DiffFreq.end(); ++it)
 		{
 			const SymbolInfo& info = it->second;
-			dBitRowSize += (info.m_nFreq * (-1*mathUtils::Log2((double)(info.m_nFreq)/(m_nCount - 1))));
+			dBitRowSize += (info.m_nFreq * (-1*mathUtils::Log2((double)(info.m_nFreq)/(m_nCount))));
 
 		}
 		if(dBitRowSize < 32)
 			dBitRowSize = 32;
-		dBitRowSize  += (dBitRowSize /200); //error range code 0.05%
+		dBitRowSize  += (dBitRowSize /m_nError); //error range code 0.05%
 		return dBitRowSize;
 	}
-	uint32 OIDCompress::GetRowSize() const
-	{
-		uint32 nNeedByteForDiffSheme = GetNeedByteForDiffCompress();
-		uint32 nNeedByteForNumLen= GetNeedByteForNumLen();
-
-		
-
-		return min(nNeedByteForDiffSheme, nNeedByteForNumLen);
-	}
+	 
 
 	uint32 OIDCompress::GetNeedByteForDiffCompress() const
 	{
-		double dCodeBit =  GetRowBitSize();
+		double dCodeBit =  GetComressSize();
 		uint32 nByteSize = ((dCodeBit + 7)/8);
 		nByteSize += (sizeof(int64) + 1);
 
@@ -49,40 +41,30 @@ namespace embDB
 
 		return nByteSize;
 	}
-	uint32 OIDCompress::GetNeedByteForNumLen() const
-	{
-		double dCodeBit = m_CalcNum.GetCodeBitSize();
-		if(dCodeBit < 32)
-			dCodeBit = 32;
-
-		dCodeBit  += (dCodeBit *0.05); //error range code 0.05%
-
-		uint32 nByteSize = ((dCodeBit + 7)/8 + (m_CalcNum.GetBitLenSize() + 7)/8) + 1;
-		return nByteSize;
-	}
-	void OIDCompress::AddSymbol(int64 nDiff)
+	
+	void OIDCompress::AddDiffSymbol(int64 nDiff)
 	{
 		SymbolInfo& symInfo =  m_DiffFreq[nDiff];
 		symInfo.m_nFreq++;
 		m_nCount++;
-		m_CalcNum.AddSymbol(nDiff);
+		m_NumLenComp.AddSymbol(nDiff);
 	}
-	void OIDCompress::RemoveSymbol(int64 nDiff)
+	void OIDCompress::RemoveDiffSymbol(int64 nDiff)
 	{
 		SymbolInfo& symInfo =  m_DiffFreq[nDiff];
 		symInfo.m_nFreq--;
 		m_nCount--;
-		m_CalcNum.RemoveSymbol(nDiff);
+		m_NumLenComp.RemoveSymbol(nDiff);
 	}
 
-	void OIDCompress::compress(TBPVector<int64>& oids, CommonLib::IWriteStream* pStream)
+	void OIDCompress::compress( const embDB::TBPVector<int64>& oids, CommonLib::IWriteStream *pStream)
 	{
 		if(oids.empty())
 			return;
 
 
 		uint32 nNeedByteForDiffSheme = GetNeedByteForDiffCompress();
-		uint32 nNeedByteForNumLen= GetNeedByteForNumLen();
+		uint32 nNeedByteForNumLen= m_NumLenComp.GetCompressSize();
 
 		if(nNeedByteForNumLen < nNeedByteForDiffSheme)
 		{
@@ -96,7 +78,7 @@ namespace embDB
 	}
 
 
-	void  OIDCompress::compressDiffScheme(TBPVector<int64>& oids, CommonLib::IWriteStream* pStream)
+	void  OIDCompress::compressDiffScheme(const TBPVector<int64>& oids, CommonLib::IWriteStream* pStream)
 	{
 		pStream->write((byte)eCompressDiff);
 		pStream->write(oids[0]);
@@ -131,12 +113,12 @@ namespace embDB
 		rgEncode.EncodeFinish();
 
 	}
-	void  OIDCompress::compressNumLen(TBPVector<int64>& oids, CommonLib::IWriteStream* pStream)
+	void  OIDCompress::compressNumLen(const TBPVector<int64>& oids, CommonLib::IWriteStream* pStream)
 	{
 
 	}
 
-	void OIDCompress::read(uint32 nSize, TBPVector<int64>& oids, CommonLib::IReadStream* pStream)
+	void OIDCompress::decompress(uint32 nSize, TBPVector<int64>& oids, CommonLib::IReadStream* pStream)
 	{
 		if(nSize == 0)
 			return;

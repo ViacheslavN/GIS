@@ -24,15 +24,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	bitWrite.attach(&memStream, 0, 50);
 	bitRead.attach(&memStream, 0, 50);
 
-	uint64 nValue = 0;
+	int64 nValue = 0;
 	bitWrite.writeBits(nValue, 1);
-	nValue = 1024;
-	bitWrite.writeBits(nValue, 11);
+	nValue = -1024;
+	bitWrite.writeBits(nValue, 64);
 
-	uint64 nReadValue = 1;
+	int64 nReadValue = 1;
 
 	bitRead.readBits(nReadValue, 1);
-	bitRead.readBits(nReadValue, 11);
+	bitRead.readBits(nReadValue, 64);
 
 
 	bitWrite.writeBits(nValue, 11);

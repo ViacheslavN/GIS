@@ -36,7 +36,7 @@ namespace embDB
 			m_nSize = 0;
 			m_nCapacity = 0;
 		}
-		bool empty()
+		bool empty() const
 		{
 			return m_nSize == 0;
 		}

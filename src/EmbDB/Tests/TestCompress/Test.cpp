@@ -254,6 +254,11 @@ public:
 
 		for (uint32 i = 0; i < nFileSize; ++i)
 		{
+			if(i == 4500)
+			{
+				int dd = 0;
+				dd++;
+			}
 			byte ch= m_pReadStream.readByte();
 			coder.EncodeSymbol(FreqPrev[ch], FreqPrev[ch+1], nFileSize);
 		}
@@ -324,6 +329,12 @@ public:
 		for (size_t i = 0; i < nFileSize; ++i)
 		{
 			unsigned int freq = coder.GetFreq(nFileSize);
+
+			if(i == 998)
+			{
+				int dd = 0;
+				dd++;
+			}
 
 			byte Symbol;
 			for(Symbol = 255;FreqPrev[Symbol] > freq;Symbol--);

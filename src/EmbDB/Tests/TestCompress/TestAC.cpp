@@ -19,7 +19,7 @@ typedef embDB::TRangeDecoder<uint64, 64> TRangeDecoder;
 double Log2( double n )  
 {  
 	// log(n)/log(2) is log2.  
-	return log( n ) / log( 2. );  
+	return log( n ) /  0.69314718055994529;  
 }
 ACComp::ACComp()
 {

@@ -9,8 +9,8 @@ class CTestNumLem
 {
 	public:
 
-		typedef embDB::TRangeEncoder<uint32, 32> TRangeEncoder;
-		typedef embDB::TRangeDecoder<uint32, 32> TRangeDecoder;
+		typedef embDB::TRangeEncoder<uint64, 64> TRangeEncoder;
+		typedef embDB::TRangeDecoder<uint64, 64> TRangeDecoder;
 
 		typedef embDB::TACEncoder<uint64, 32> TACEncoder;
 		typedef embDB::TACDecoder<uint64, 32> TACDecoder;

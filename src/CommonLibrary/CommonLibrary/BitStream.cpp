@@ -34,6 +34,23 @@ namespace CommonLib
 	}
 
 
+	void IReadBitStreamBase::readBits(int16&  nBits, size_t nCntBits)
+	{
+		assert(nCntBits < 17);
+		_readBits<int16>(nBits, nCntBits);
+	}
+	void IReadBitStreamBase::readBits(int32&  nBits, size_t nCntBits)
+	{
+		assert(nCntBits < 33);
+		_readBits<int32>(nBits, nCntBits); 
+	}
+	void IReadBitStreamBase::readBits(int64&  nBits, size_t nCntBits)
+	{
+		assert(nCntBits < 65);
+		_readBits<int64>(nBits, nCntBits); 
+	}
+
+
 
 	IWriteBitStreamBase::IWriteBitStreamBase()  {}
 	IWriteBitStreamBase::~IWriteBitStreamBase()  {}
@@ -67,7 +84,22 @@ namespace CommonLib
 		assert(nCntBits < 65);
 		_writeBits<uint64>(nBits, nCntBits); 
 	}
+	void IWriteBitStreamBase::writeBits(int16 nBits, size_t nCntBits)
+	{
+		assert(nCntBits < 17);
+		_writeBits<int16>(nBits, nCntBits); 
 
+	}
+	void IWriteBitStreamBase::writeBits(int32 nBits, size_t nCntBits)
+	{
+		assert(nCntBits < 33);
+		_writeBits<int32>(nBits, nCntBits); 
+	}
+	void IWriteBitStreamBase::writeBits(int64 nBits, size_t nCntBits)
+	{
+		assert(nCntBits < 65);
+		_writeBits<int64>(nBits, nCntBits); 
+	}
 
 
 /*	BitStreamBase::BitStreamBase(alloc_t *pAlloc ):

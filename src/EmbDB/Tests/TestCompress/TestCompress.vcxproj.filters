@@ -25,6 +25,9 @@
     <Filter Include="TestNumLen">
       <UniqueIdentifier>{fccf1f2d-961e-4bd4-82d3-c58f0a24650d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TestDiffComp">
+      <UniqueIdentifier>{2abcf42f-cf42-45fb-92e4-c4fa1c9cbbed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -60,6 +63,9 @@
     <ClInclude Include="testNumLem.h">
       <Filter>TestNumLen</Filter>
     </ClInclude>
+    <ClInclude Include="TestDiffComp.h">
+      <Filter>TestDiffComp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -88,6 +94,9 @@
     </ClCompile>
     <ClCompile Include="testNumLem.cpp">
       <Filter>TestNumLen</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDiffComp.cpp">
+      <Filter>TestDiffComp</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

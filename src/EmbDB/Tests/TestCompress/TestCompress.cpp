@@ -7,6 +7,7 @@
 #include "TestAC.h"
 #include "Test.h"
 #include "testNumLem.h"
+#include "TestDiffComp.h"
 
 uint32 compressFile(const wchar_t *pszFileNameIn, const wchar_t* pszCompressFile);
 uint32 compressStaticFile(const wchar_t *pszFileNameIn, const wchar_t* pszCompressFile);
@@ -49,11 +50,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	compressStaticFile(sSrcFile.cwstr(), L"D:\\test\\files\\bib.static.compress");
 	DecompressStaticFile(nOutSize, L"D:\\test\\files\\bib.static.compress", L"D:\\test\\files\\bib.static.compress.decompress");
 	*/
-//	CTestCompess test;
-	//test.compressFile(L"D:\\test\\files\\bib", L"D:\\test\\files\\bib.compress");
+	CTestCompess test;
+	//test.compressFile(L"D:\\test\\files\\adigit", L"D:\\test\\files\\adigit.compress");
 	//test.TestCompress(L"D:\\test\\files");
 
-	TestNumLen();
+	//TestNumLen();
+	TestDiffComp();
 	return 0;
 }
 

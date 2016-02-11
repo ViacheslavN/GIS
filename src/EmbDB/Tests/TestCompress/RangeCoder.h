@@ -112,7 +112,12 @@ namespace embDB
 			return (m_nValue-Low)/(Range/=nTotalCount);
 		}
 
-		 
+		 byte ReadByte()
+		 {
+			 byte bb = 0;
+			 m_pStream->save_read(bb);
+			 return bb;
+		 }
 	private:
 		CommonLib::IReadStream* m_pStream;
 

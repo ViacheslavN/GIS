@@ -526,6 +526,7 @@
     <ClInclude Include="IndexIteratorBase.h" />
     <ClInclude Include="InnerNodeCompress.h" />
     <ClInclude Include="InsertCursor.h" />
+    <ClInclude Include="IntegerDiffCompress.h" />
     <ClInclude Include="LeafCounterCompress.h" />
     <ClInclude Include="LeafSetCompBase.h" />
     <ClInclude Include="LeafStringCompress.h" />
