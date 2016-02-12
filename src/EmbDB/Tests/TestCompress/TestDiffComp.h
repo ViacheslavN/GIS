@@ -22,8 +22,8 @@ public:
 	~CTestDiffComp();
 	void AddDiff(int64 nDiff);
 	uint32 GetCompressSize();
-	void compress( const embDB::TBPVector<uint64>& vecLinks, embDB::TBPVector<uint64>& vecCheck,CommonLib::IWriteStream *pStream);
-	void decompress( embDB::TBPVector<uint64>& vecLinks,embDB::TBPVector<uint64>& vecCheck, CommonLib::IReadStream *pStream);
+	void compress( const embDB::TBPVector<uint64>& vecLinks, CommonLib::IWriteStream *pStream);
+	void decompress( embDB::TBPVector<uint64>& vecLinks, CommonLib::IReadStream *pStream);
 
 private:
 

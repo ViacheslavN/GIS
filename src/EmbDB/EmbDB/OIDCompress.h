@@ -7,6 +7,8 @@
 #include <vector>
 #include <map>
 #include "NumLenCompress.h"
+#include "NumLenDiffCompress.h"
+#include "IntegerDiffCompress.h"
 #include "ArithmeticCoder.h"
 #include "RangeCoder.h"
 #include "BPVector.h"
@@ -22,75 +24,42 @@ namespace embDB
 
 		};
 
-		struct SymbolInfo
-		{
+  
+		 typedef TRangeEncoder<uint64, 64> TRangeEncoder;
+		 typedef TRangeDecoder<uint64, 64> TRangeDecoder;
 
-			uint16 m_nFreq;
-			uint32 m_nB;
-			SymbolInfo() : m_nFreq(0), m_nB(0)
-			{}
- 
-		};
+		 typedef TACEncoder<uint64, 32> TACEncoder;
+		 typedef TACDecoder<uint64, 32> TACDecoder;
 
-
-		struct Symbols
-		{
-
-			uint16 m_nFreq;
-			uint32 m_nB;
-			uint64 m_nDiff;
-			Symbols() : m_nFreq(0), m_nB(0), m_nDiff(0)
-			{}
-
-			Symbols(SymbolInfo si, uint64 nDiff) : m_nFreq(si.m_nFreq), m_nB(si.m_nB), m_nDiff(nDiff)
-			{}
-
-			bool operator < (const Symbols& SymInfo) const
-			{
-				return m_nB < SymInfo.m_nB;
-			}
-		};
-
-		 typedef std::map<int64, SymbolInfo> TDiffFreq;
-		 typedef TRangeEncoder<int64, 32> TRangeEncoder;
-		 typedef TRangeDecoder<int64, 32> TRangeDecoder;
-
-		 typedef TACEncoder<int64, 32> TACEncoder;
-		 typedef TACDecoder<int64, 32> TACDecoder;
-
-		 typedef TUnsignedNumLenCompressor<uint64, TFindMostSigBit, TRangeEncoder, TACEncoder, 
+		 typedef TUnsignedDiffNumLenCompressor<int64, TFindMostSigBit, TRangeEncoder, TACEncoder, 
 			 TRangeDecoder, TACDecoder, 64> TNumLenCompressor;
 	
+		 typedef embDB::TUnsignedIntegerDiffCompress<int64, TRangeEncoder, TACEncoder, 
+			 TRangeDecoder, TACDecoder> TDiffCompressor;
 
-	
-
-		 typedef std::vector<Symbols> TVecFreq;
+	 
 		public:
 
 			OIDCompress(uint32 nError = 200);
 			~OIDCompress();
 
-			void AddDiffSymbol(int64 nOid);
+			void AddSymbol(uint32 nSize,  int nIndex, int64 nOID, const embDB::TBPVector<int64>& vecOIDs);
+			void RemoveSymbol(uint32 nSize,  int nIndex, int64 nOID, const embDB::TBPVector<int64>& vecOIDs);
 			void RemoveDiffSymbol(int64 nOid);
 			uint32 GetComressSize() const;
 		
-			void compress( const embDB::TBPVector<int64>& vecLinks, CommonLib::IWriteStream *pStream);
-			void decompress(uint32 nSize, embDB::TBPVector<int64>& vecLinks, CommonLib::IReadStream *pStream);
-			
+			void compress( const embDB::TBPVector<int64>& vecOIDs, CommonLib::IWriteStream *pStream);
+			void decompress(uint32 nSize, embDB::TBPVector<int64>& vecOIDs, CommonLib::IReadStream *pStream);
+			void clear();
+
+			void AddDiffSymbol(int64 nDiff);
 	private:
-		uint32 GetNeedByteForDiffCompress() const;
+	
+ 
 
-
-		void compressDiffScheme(const TBPVector<int64>& oids, CommonLib::IWriteStream* pStream);
-		void compressNumLen(const TBPVector<int64>& oids, CommonLib::IWriteStream* pStream);
-
-
-		void readDiffScheme(uint32 nSize, TBPVector<int64>& oids, CommonLib::IReadStream* pStream);
-
-		TDiffFreq m_DiffFreq;
+		TDiffCompressor	  m_DiffComp;
 		TNumLenCompressor m_NumLenComp;
-		uint32 m_nCount;
-		uint32 m_nError;
+		 
 
 	};
 

@@ -527,10 +527,12 @@
     <ClInclude Include="InnerNodeCompress.h" />
     <ClInclude Include="InsertCursor.h" />
     <ClInclude Include="IntegerDiffCompress.h" />
+    <ClInclude Include="IntegerDiffCompressTest.h" />
     <ClInclude Include="LeafCounterCompress.h" />
     <ClInclude Include="LeafSetCompBase.h" />
     <ClInclude Include="LeafStringCompress.h" />
     <ClInclude Include="LinkCompress.h" />
+    <ClInclude Include="MapLeafNodeOIDComp.h" />
     <ClInclude Include="MathUtils.h" />
     <ClInclude Include="MemPageCache.h" />
     <ClInclude Include="MultiIndex.h" />
@@ -538,6 +540,7 @@
     <ClInclude Include="MultiIndexBPTree.h" />
     <ClInclude Include="Counter.h" />
     <ClInclude Include="NumLenCompress.h" />
+    <ClInclude Include="NumLenDiffCompress.h" />
     <ClInclude Include="OIDCompress.h" />
     <ClInclude Include="PageCrypto.h" />
     <ClInclude Include="PageVectorLazySave.h" />

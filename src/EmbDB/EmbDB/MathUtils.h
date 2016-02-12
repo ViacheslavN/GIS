@@ -11,7 +11,7 @@ namespace embDB
 
 	  static inline double Log2(double dVal)
 	  {
-		  return log(dVal)/log(2.);//Ln_2;
+		  return log(dVal)/Ln_2;
 	  }
 	}
 }

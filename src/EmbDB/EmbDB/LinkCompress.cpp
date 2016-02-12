@@ -33,5 +33,8 @@ namespace embDB
 	{
 		m_compressor.decompress(vecLinks, pStream);
 	}
-
+	void InnerLinkCompress::clear()
+	{
+		m_compressor.clear();
+	}
 }

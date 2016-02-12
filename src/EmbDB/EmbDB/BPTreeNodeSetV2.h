@@ -98,6 +98,13 @@ namespace embDB
 			if(!pFilePage.get())
 				return false;
 
+
+			if(m_nPageAddr == 581729)
+			{
+				int dd = 0;
+				dd++;
+			}
+
 					
 			CommonLib::FxMemoryWriteStream stream;
 

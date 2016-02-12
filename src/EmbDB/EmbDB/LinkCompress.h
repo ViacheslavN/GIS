@@ -16,11 +16,11 @@ namespace embDB
 	{
 		public:
 
-			typedef TRangeEncoder<int64, 64> TRangeEncoder;
-			typedef TRangeDecoder<int64, 64> TRangeDecoder;
+			typedef TRangeEncoder<uint64, 64> TRangeEncoder;
+			typedef TRangeDecoder<uint64, 64> TRangeDecoder;
 
-			typedef TACEncoder<int64, 32> TACEncoder;
-			typedef TACDecoder<int64, 32> TACDecoder;
+			typedef TACEncoder<uint64, 32> TACEncoder;
+			typedef TACDecoder<uint64, 32> TACDecoder;
 
 			typedef TUnsignedNumLenCompressor<int64, TFindMostSigBit, TRangeEncoder, TACEncoder, 
 				TRangeDecoder, TACDecoder, 64> TCompressor;
@@ -37,6 +37,7 @@ namespace embDB
 
 			void compress( const embDB::TBPVector<int64>& vecLinks, CommonLib::IWriteStream *pStream);
 			void decompress(uint32 nSize, embDB::TBPVector<int64>& vecLinks, CommonLib::IReadStream *pStream);
+			void clear();
 	private:
 			TCompressor m_compressor;
 	};

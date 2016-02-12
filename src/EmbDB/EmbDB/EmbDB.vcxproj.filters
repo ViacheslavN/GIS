@@ -891,8 +891,20 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IntegerDiffCompressTest.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
     <ClInclude Include="IntegerDiffCompress.h">
       <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="NumLenDiffCompress.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="MapLeafNodeOIDComp.h">
+      <Filter>DB\Fields\compress</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

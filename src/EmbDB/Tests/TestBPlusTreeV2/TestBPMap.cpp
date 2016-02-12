@@ -5,10 +5,11 @@
 #include "../../EmbDB/Transactions.h"
 #include "../../EmbDB/DirectTransactions.h"
 #include "CommonLibrary/DebugTime.h"
+#include "../../EmbDB//InnerNodeCompress.h"
 
+typedef embDB::TBPMapV2 <int64,  uint64, embDB::comp<uint64>, embDB::IDBTransaction, embDB::BPInnerNodeFieldCompressor> TBInt64Map;
 
-typedef embDB::TBPMapV2 <int64,  uint64, embDB::comp<uint64>, embDB::IDBTransaction> TBInt64Map;
-
+//typedef embDB::TBPMapV2 <int64,  uint64, embDB::comp<uint64>, embDB::IDBTransaction> TBInt64Map;
 
 template<class TBtree, class Tran, class TKey, class TValue>
 void insertINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64& nTreeRootPage)
@@ -20,7 +21,7 @@ void insertINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 	double tranCom  = 0;
 	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo(); 
-	tree.SetMinSplit(true);
+//	tree.SetMinSplit(true);
 	time.start();
 	int64 n = 0;
 	if(nStart < nEndStart)
@@ -267,6 +268,18 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			pPage.release();
 			storage.saveStorageInfo();
 
+			{
+				TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\db\\createtran.data", &storage, 1);
+				tran.begin();
+				embDB::FilePagePtr pPage = tran.getNewPage(256);
+
+				nTreeRootPage = pPage->getAddr();
+				TBtree tree(-1, &tran, alloc, nCacheBPTreeSize, 8192);
+				tree.init(nTreeRootPage); 
+
+				tran.commit();
+			}
+
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran1.data", &storage, 1);
 			tran.begin();
 			insertINBTreeMap <TBtree, TTran,  TKey, TValue>(nCacheBPTreeSize, 0, nCount, nStep, &tran, alloc, nTreeRootPage);
@@ -283,6 +296,8 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			searchINBTreeMap <TBtree, TTran, TKey, TValue>(nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage);
 			storage.close();
 		}
+
+		return;
 	/*	{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
@@ -368,7 +383,7 @@ void TestBRteeMap()
 {
 	//__int64 nCount = 1531;
 
-	__int64 nCount = 100000000;
+	__int64 nCount = 10000000;
 		size_t nPageSize = 8192;
 
 	testBPTreeMapImpl<TBInt64Map,  embDB::CDirectTransaction, int64, int64>(nCount, nPageSize, 5000, 10);

@@ -55,7 +55,7 @@ namespace embDB
 		uint32 m_nSize;
 		TOIDMemSet* m_pKeyMemSet;
 		TLinkMemSet* m_pLinkMemSet;
-		OIDCompress m_OIDCompress;
+		OIDCompress m_OIDCompressor;
 		InnerLinkCompress m_LinkCompressor;
 	};
 }

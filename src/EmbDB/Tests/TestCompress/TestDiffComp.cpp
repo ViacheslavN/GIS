@@ -20,13 +20,13 @@ uint32 CTestDiffComp::GetCompressSize()
 {
 	return m_compressor.GetCompressSize();
 }
-void CTestDiffComp::compress( const embDB::TBPVector<uint64>& vecLinks,  embDB::TBPVector<uint64>& vecCheck, CommonLib::IWriteStream *pStream)
+void CTestDiffComp::compress( const embDB::TBPVector<uint64>& vecLinks,  CommonLib::IWriteStream *pStream)
 {
-	m_compressor.compress(vecLinks, vecCheck, pStream);
+	m_compressor.compress(vecLinks, pStream);
 }
-void CTestDiffComp::decompress(embDB::TBPVector<uint64>& vecLinks,  embDB::TBPVector<uint64>& vecCheck, CommonLib::IReadStream *pStream)
+void CTestDiffComp::decompress(embDB::TBPVector<uint64>& vecLinks,  CommonLib::IReadStream *pStream)
 {
-	m_compressor.decompress(vecLinks, vecCheck,  pStream);
+	m_compressor.decompress(vecLinks, pStream);
 }
 
 
@@ -38,7 +38,7 @@ void TestDiffComp()
 	CommonLib::CReadMemoryStream ReadStream;
 
 
-	embDB::TBPVector<uint64> vec1, vec2, vecData, vecData1;
+	embDB::TBPVector<uint64> vec1, vec2;
 	uint64 nCnt = 0;
 	uint32 nSize = 0;
 	uint64 nK = 1;
@@ -47,13 +47,12 @@ void TestDiffComp()
 		vec1.push_back(i);
 
 		nCnt++;
-		if((nCnt%1000) == 0)
-			nK += 1;
+		//if((nCnt%1000) == 0)
+	//		nK += 1;
 		if(i != 0)
 		{
 			uint32 nSize = vec1.size() - 1;
 			int64 nDiff = vec1[nSize] - vec1[nSize-1];
-			vecData.push_back(nDiff);
 			test.AddDiff(nDiff);
 		}
 	
@@ -62,7 +61,7 @@ void TestDiffComp()
 		if(nSize > 8192 || nCnt > 20000)
 		{
 			WriteStream.create(nSize);
-			test.compress(vec1, vecData, &WriteStream);
+			test.compress(vec1, &WriteStream);
 			break;
 		}
 	}
@@ -78,12 +77,12 @@ void TestDiffComp()
 	
 	fStream.close();*/
 	ReadStream.attachBuffer(WriteStream.buffer(), WriteStream.pos(), false);
-	test1.decompress(vec2, vecData1, &ReadStream);
+	test1.decompress(vec2, &ReadStream);
 
-	for (uint64 i = 0; i < nCnt-1; ++i)
+	for (uint64 i = 0; i < nCnt; ++i)
 	{
-		uint64 nValue1 = vecData[i];
-		uint64 nValue2 = vecData1[i];
+		uint64 nValue1 = vec1[i];
+		uint64 nValue2 = vec2[i];
 		if(nValue1 != nValue2)
 			std::cout << "error i: " << i << " value vec1: " <<nValue1 << std::endl;
 	}

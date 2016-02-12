@@ -267,6 +267,10 @@ namespace embDB
 
 				m_innerKeyMemSet.resize(nNewSize);
 				m_innerLinkMemSet.resize(nNewSize);
+				m_pCompressor->recalc(m_innerKeyMemSet, m_innerLinkMemSet);
+
+
+				pNewNodeComp->recalc(newNodeKeySet, newNodeLinkSet);
 			}
 
 		

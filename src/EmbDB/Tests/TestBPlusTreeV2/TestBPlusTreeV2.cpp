@@ -22,8 +22,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//TestSearch();
 	// TestInsert();
 	//TestBPVector();
-	TestBRteeSet();
-	//TestBRteeMap();
+	//TestBRteeSet();
+	TestBRteeMap();
 	//testUndo();
 	//testRedo();
 

@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_NUM_LEN_COMPRESS_H_
-#define _EMBEDDED_DATABASE_NUM_LEN_COMPRESS_H_
+#ifndef _EMBEDDED_DATABASE_NUM_LEN_DIFF_COMPRESS_H_
+#define _EMBEDDED_DATABASE_NUM_LEN_DIFF_COMPRESS_H_
 
 #include "CommonLibrary/FixedBitStream.h"
 #include <map>
@@ -8,83 +8,6 @@
 namespace embDB
 {
 	
-	//						  0	 1  2  3  4  5  6  7  8....................15
-	static int bits_lens[] = {1, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4};
-	struct TFindMostSigBit
-	{
-
-		
-/*#ifdef _WIN32
-		uint16 FMSB(uint32 x)
-		{
-			int32 y;
-			__asm
-			{
-				bsr eax, x
-				mov y, eax
-			}
-			return (uint16)y;
-		}
-#endif*/
-		int FMSB(uint16 val16)
-		{
-			int bits = 0;
-			if(val16 > 0xff){
-				bits += 8;
-				val16 >>= 8;
-			}
-			if(val16 > 0xf){
-				bits += 4;
-				val16 >>= 4;
-			}
-			bits += bits_lens[val16];
-			return bits;
-		}
-
-
-		int FMSB(uint32 val32)
-		{
-			int bits = 0;
-		 
-			if(val32 > 0xffff){
-				bits = 16;
-				val32 >>= 16;
-			}
-			if(val32 > 0xff){
-				bits += 8;
-				val32 >>= 8;
-			}
-			if(val32 > 0xf){
-				bits += 4;
-				val32 >>= 4;
-			}
-			bits += bits_lens[val32];
-			return bits;
-		}
-
-
-		int FMSB(uint64 val64)
-		{
-			int bits = 0;
-			uint32 val32;
-
-			if(val64 > 0xffffffff)
-			{
-				val32 = (uint32)(val64 >> 32);
-				bits = 32;
-			}
-			else
-				val32 = (unsigned int)val64;
-			bits += FMSB(val32);
-			return bits;
-		}
-
-		int FMSB(int64 val64)
-		{
-			 return FMSB(uint64(val64) );
-		}
-
-	};
 
 	template<class _TValue, class _TFindMostSigBit, 
 			class _TRangeEncoder,
@@ -92,7 +15,7 @@ namespace embDB
 			class _TRangeDecoder,
 			class _TACDecoder,		
 			uint32 _nMaxBitsLens>
-	class TUnsignedNumLenCompressor
+	class TUnsignedDiffNumLenCompressor
 	{
 		public:
 
@@ -117,7 +40,7 @@ namespace embDB
 			};
 	 
 
-			TUnsignedNumLenCompressor(uint32 nError = 200 /*0.5%*/) : m_nLenBitSize(0), m_nCount(0), m_nDiffsLen(0), m_nFlags(0),
+			TUnsignedDiffNumLenCompressor(uint32 nError = 200 /*0.5%*/) : m_nLenBitSize(0), m_nCount(0), m_nDiffsLen(0), m_nFlags(0),
 						m_nTypeFreq(etfByte), m_nError(nError)
 			{
 				 memset(m_BitsLensFreq, 0, sizeof(m_BitsLensFreq));
@@ -194,7 +117,7 @@ namespace embDB
 
 
 
-				return nByteSize + 1 + (_nMaxBitsLens)/8 + GetLenForDiffLen() + (m_nLenBitSize +7)/8 + sizeof(uint16); //Type comp (rang or ac) + 4 +
+				return nByteSize + 1 + (_nMaxBitsLens)/8 + GetLenForDiffLen() + (m_nLenBitSize +7)/8 + sizeof(uint16) + sizeof(TValue); //Type comp (rang or ac) + 4 +
 
 			}
 
@@ -203,7 +126,7 @@ namespace embDB
 			bool compress(const TBPVector<TValue>& vecValues, CommonLib::IWriteStream* pStream)
 			{
 
-				assert(m_nCount == vecValues.size());
+				assert(m_nCount == (vecValues.size() - 1));
 				 TBPVector<TValue> vec;
 				uint32 nBeginPos = pStream->pos();
 				byte nFlag = 0;
@@ -230,6 +153,7 @@ namespace embDB
 				CommonLib::FxBitWriteStream bitStream;
 				uint32 nBitSize = (m_nLenBitSize +7)/8;
 				
+				pStream->write(vecValues[0]);
 				pStream->write((uint16)nBitSize);
 				bitStream.attach(pStream, pStream->pos(), nBitSize);
 				pStream->seek(nBitSize, CommonLib::soFromCurrent);
@@ -280,6 +204,10 @@ namespace embDB
 					FreqPrev[i + 1] = m_BitsLensFreq[i] + nPrevF;
 					nPrevF = FreqPrev[i + 1];
 				}
+
+				TValue nBegin = 0;
+				pStream->read(nBegin);
+				vecValues.push_back(nBegin);
 				uint16 nBitSize = pStream->readintu16();
 
 				CommonLib::FxBitReadStream bitStream;
@@ -289,9 +217,9 @@ namespace embDB
 				pStream->seek(nBitSize, CommonLib::soFromCurrent);
 
 				if(bRangeCode)
-					return Decompress<TRangeDecoder>(vecValues, pStream, FreqPrev, &bitStream);
+					return Decompress<TRangeDecoder>(vecValues, pStream, FreqPrev, &bitStream, nBegin);
 				else
-					return Decompress<TACDecoder>(vecValues, pStream, FreqPrev, &bitStream);
+					return Decompress<TACDecoder>(vecValues, pStream, FreqPrev, &bitStream, nBegin);
 
 				//DecompressRangeCode(vecValues, pStream, FreqPrev, &bitStream);
 		 
@@ -313,16 +241,16 @@ namespace embDB
 
 				TRangeEncoder rgEncoder(pStream, nMaxByteSize);
 
-				for (uint32 i = 0, sz = vecValues.size(); i< sz; ++i)
+				for (uint32 i = 1, sz = vecValues.size(); i< sz; ++i)
 				{
 				
-					_TValue value = vecValues[i];
-					uint16 nBitLen =  m_FindBit.FMSB(value);
+					_TValue nDiff = vecValues[i] - vecValues[i - 1];
+					uint16 nBitLen =  m_FindBit.FMSB(nDiff);
 
 					assert(m_BitsLensFreq[nBitLen] != 0);
 
 
-					pBitStream->writeBits(value, nBitLen);
+					pBitStream->writeBits(nDiff, nBitLen);
 					if(!rgEncoder.EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], m_nCount))
 						return false;
 				}
@@ -338,10 +266,11 @@ namespace embDB
 
 				for (uint32 i = 0, sz = vecValues.size(); i< sz; ++i)
 				{
-					TValue value = vecValues[i];
-					uint16 nBitLen =  m_FindBit.FMSB(value);
+					_TValue nDiff = vecValues[i] - vecValues[i - 1];
+					uint16 nBitLen =  m_FindBit.FMSB(nDiff);
+			 
 
-					pBitStream->writeBits(value, nBitLen);
+					pBitStream->writeBits(nDiff, nBitLen);
 					acEncoder.EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], m_nCount);
 						
 				}
@@ -465,13 +394,13 @@ namespace embDB
 
 			template<class TDecoder>
 			bool Decompress(TBPVector<_TValue>& vecValues, CommonLib::IReadStream* pStream, uint32 *FreqPrev, 
-				CommonLib::FxBitReadStream *pBitStream)
+				CommonLib::FxBitReadStream *pBitStream, TValue nBegin)
 			{
 
 
 				TDecoder decoder(pStream);
 				decoder.StartDecode();
-
+				TValue value = 0;
 				for (size_t i = 0; i < m_nCount; ++i)
 				{
 					unsigned int freq = decoder.GetFreq(m_nCount);
@@ -479,9 +408,10 @@ namespace embDB
 					uint32 nBitLen;
 					for(nBitLen = _nMaxBitsLens;FreqPrev[nBitLen] > freq;nBitLen--);
 
-					TValue value = 0;
+					
 					pBitStream->readBits(value, nBitLen);
-					vecValues.push_back(value);
+					nBegin += value;
+					vecValues.push_back(nBegin);
 
 					decoder.DecodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen+1], m_nCount);
 

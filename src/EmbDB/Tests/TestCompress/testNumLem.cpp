@@ -2,7 +2,7 @@
 #include "testNumLem.h"
 #include <iostream>
 
-CTestNumLem::CTestNumLem() : m_compressor(100)
+CTestNumLem::CTestNumLem() : m_compressor(200)
 {
 
 }
@@ -19,11 +19,11 @@ uint32 CTestNumLem::GetCompressSize()
 {
 	return m_compressor.GetCompressSize();
 }
-void CTestNumLem::compress( const embDB::TBPVector<uint64>& vecLinks, CommonLib::IWriteStream *pStream)
+void CTestNumLem::compress( const embDB::TBPVector<int64>& vecLinks, CommonLib::IWriteStream *pStream)
 {
 	m_compressor.compress(vecLinks, pStream);
 }
-void CTestNumLem::decompress(embDB::TBPVector<uint64>& vecLinks, CommonLib::IReadStream *pStream)
+void CTestNumLem::decompress(embDB::TBPVector<int64>& vecLinks, CommonLib::IReadStream *pStream)
 {
 	m_compressor.decompress(vecLinks, pStream);
 }
@@ -37,16 +37,16 @@ void TestNumLen()
 	CommonLib::CReadMemoryStream ReadStream;
 
 
-	embDB::TBPVector<uint64> vec1, vec2;
+	embDB::TBPVector<int64> vec1, vec2;
 	uint64 nCnt = 0;
 	uint32 nSize = 0;
 	for (uint64 i = 0; i < 0xFFFFFFFFFFFF; i += 1024)
 	{
 		nCnt++;
-		test.AddLink(i);
-		vec1.push_back(i);
+		test.AddLink(255);
+		vec1.push_back(255);
 		nSize = test.GetCompressSize();
-		if(nSize > 8192)
+		if(nSize > 8192 || nCnt > 1259)
 		{
 			WriteStream.create(nSize);
 			test.compress(vec1, &WriteStream);

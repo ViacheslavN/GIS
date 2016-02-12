@@ -1,10 +1,9 @@
-#ifndef _EMBEDDED_DATABASE_INTEGER_DIFF_COMPRESS_H_
-#define _EMBEDDED_DATABASE_INTEGER_DIFF_COMPRESS_H_
+#ifndef _EMBEDDED_DATABASE_INTEGER_COMPRESS_TEST_H_
+#define _EMBEDDED_DATABASE_INTEGER_COMPRESS_TEST_H_
 #include "CommonLibrary/FixedBitStream.h"
 #include <map>
 #include "MathUtils.h"
 #include "BPVector.h"
-
 namespace embDB
 {
 
@@ -27,35 +26,39 @@ template<class _TValue,
 			{
 
 				uint32 m_nFreq;
+				uint32 m_nB;
 				uint32 m_nLow;
 				uint32 m_nHight;
 			
-				SymbolInfo() : m_nFreq(0), m_nLow(0), m_nHight(0)
+				SymbolInfo() : m_nFreq(0), m_nB(0), m_nLow(0), m_nHight(0)
 				{}
 
 			};
-			struct Symbol
+			struct Symbols
 			{
 
+				uint32 m_nFreq;
+				uint32 m_nB;
 				uint64 m_nSymbol;
+
 				uint32 m_nLow;
 				uint32 m_nHight;
 
-				Symbol() :  m_nSymbol(0), m_nLow(0), m_nHight(0)
+				Symbols() : m_nFreq(0), m_nB(0), m_nSymbol(0), m_nLow(0), m_nHight(0)
 				{}
 
-				Symbol(SymbolInfo si, uint64 nSymbol) :  m_nSymbol(nSymbol)
+				Symbols(SymbolInfo si, uint64 nSymbol) : m_nFreq(si.m_nFreq), m_nB(si.m_nB), m_nSymbol(nSymbol)
 					, m_nLow(si.m_nLow), m_nHight(si.m_nHight)
 				{}
 
-				bool operator < (const Symbol& SymInfo) const
+				bool operator < (const Symbols& SymInfo) const
 				{
-					return m_nLow < SymInfo.m_nLow;
+					return m_nLow< SymInfo.m_nFreq;
 				}
 			};
 
 			typedef std::map<int64, SymbolInfo> TSymbolsFreq;
-			typedef std::vector<Symbol> TVecFreq;
+			typedef std::vector<Symbols> TVecFreq;
 
 
 			 
@@ -115,8 +118,8 @@ template<class _TValue,
 					dBitRowSize += (dFreq * dLog2);
 
 				}
-				if(dBitRowSize < 64)
-					dBitRowSize = 64;
+				if(dBitRowSize < 32)
+					dBitRowSize = 32;
 				dBitRowSize  += (dBitRowSize /m_nError); 
 				return dBitRowSize;
 			}
@@ -136,7 +139,7 @@ template<class _TValue,
 
 		
 
-			bool compress(const TBPVector<TValue>& vecValues, CommonLib::IWriteStream* pStream)
+			bool compress(const TBPVector<TValue>& vecValues, TBPVector<_TValue>& vecCheck, CommonLib::IWriteStream* pStream)
 			{
 
 				
@@ -154,7 +157,7 @@ template<class _TValue,
 				uint32 nBeginCompressPos = pStream->pos();
 				bool bRangeCode = true;
 				
-				if(!CompressRangeCode(vecValues, pStream, nByteSize))
+				if(!CompressRangeCode(vecValues, vecCheck, pStream, nByteSize))
 				{
 					pStream->seek(nBeginCompressPos, CommonLib::soFromBegin);
 					CompressAcCode(vecValues, pStream);
@@ -176,7 +179,7 @@ template<class _TValue,
 				pStream->seek(nEndPos, CommonLib::soFromBegin);
 				return true;
 			}
-			bool decompress(TBPVector<_TValue>& vecValues, CommonLib::IReadStream* pStream)
+			bool decompress(TBPVector<_TValue>& vecValues, TBPVector<_TValue>& vecCheck, CommonLib::IReadStream* pStream)
 			{
 				
 				byte nFlag = pStream->readByte();
@@ -191,22 +194,14 @@ template<class _TValue,
 				pStream->read(nBegin);
 				vecValues.push_back(nBegin);
 				if(bRangeCode)
-					return Decompress<TRangeDecoder>(vecValues, pStream, nBegin, vecFreq);
+					return Decompress<TRangeDecoder>(vecValues, vecCheck, pStream, nBegin, vecFreq);
 				else
-					return Decompress<TACDecoder>(vecValues, pStream, nBegin, vecFreq);
+					return Decompress<TACDecoder>(vecValues, vecCheck, pStream, nBegin, vecFreq);
  
-			}
-			void clear()
-			{
-
-				m_nCount = 0;
-				m_nTypeFreq = etfByte;
-				m_SymbolsFreq.clear();
-				m_nFlags = 0;
 			}
 		private:
 
-			bool CompressRangeCode(const TBPVector<_TValue>& vecValues, CommonLib::IWriteStream* pStream, 
+			bool CompressRangeCode(const TBPVector<_TValue>& vecValues, TBPVector<_TValue>& vecCheck, CommonLib::IWriteStream* pStream, 
 				uint32 nMaxByteSize)
 			{
 
@@ -214,20 +209,61 @@ template<class _TValue,
 
 				TSymbolsFreq checkSymbolsFreq;
 
+				uint32 FreqPrev[257];
+				for(int i = 0;i < 257; i++) 
+				{
+					FreqPrev[i] = 0;
+				}
 
-				assert((vecValues.size() - 1) == m_nCount);
-								
+				std::vector<uint32> vecFreq;
+			
+				for(int i = 0;i < 257; i++) 
+				{
+					FreqPrev[i] = 0;
+				}
+				int32 nPrevF = 0;
+				for(int i = 0;i < 256; i++) 
+				{
+					TSymbolsFreq::iterator it =  m_SymbolsFreq.find(i);
+					uint32 nFreq = 0;
+					if(it != m_SymbolsFreq.end())
+					{
+						nFreq = it->second.m_nFreq;
+					}
+					FreqPrev[i + 1] = nFreq + nPrevF;
+					nPrevF = FreqPrev[i + 1];
+				}
+			
 
-				for (size_t i = 1, sz = vecValues.size(); i < sz; ++i)
+				
+
+				for (size_t i = 0, sz = vecCheck.size(); i < sz; ++i)
 				{
 				 
-					TValue nDiff = vecValues[i] - vecValues[i - 1];
+					//int64 nDiff = vecValues[i] - vecValues[i - 1];
+					int64 nDiff = vecCheck[i];
+					/*checkSymbolsFreq[nDiff].m_nFreq++;
+					int64 nCheckDiff = vecCheck[i-1];
+					if(nDiff != nCheckDiff)
+					{
+						int dd = 0;
+						dd++;
+					}*/
+					
+					
 					TSymbolsFreq::iterator it =  m_SymbolsFreq.find(nDiff);
 					assert(it != m_SymbolsFreq.end());
 					SymbolInfo& info = it->second;
-					
+					int32 nPrevB = info.m_nB - info.m_nFreq;
 
-					if(!rgEncoder.EncodeSymbol(info.m_nLow, info.m_nHight, m_nCount))
+					if(nPrevB != FreqPrev[nDiff] || info.m_nB != FreqPrev[nDiff+1])
+					{
+						int dd = 0;
+						dd++;
+					}
+
+					if(!rgEncoder.EncodeSymbol(nPrevB, info.m_nB, vecCheck.size()))
+					//if(!rgEncoder.EncodeSymbol(FreqPrev[nDiff], FreqPrev[nDiff+1], vecCheck.size()))
 						return false;
 				}
 				return rgEncoder.EncodeFinish();
@@ -237,15 +273,14 @@ template<class _TValue,
 			{
 				TACEncoder acEncoder(pStream);
 
-				assert((vecValues.size() - 1) == m_nCount);
-
 				for (size_t i = 1, sz = vecValues.size(); i < sz; ++i)
 				{
 					int64 nDiff = vecValues[i] - vecValues[i - 1];
 					TSymbolsFreq::iterator it =  m_SymbolsFreq.find(nDiff);
 					assert(it != m_SymbolsFreq.end());
 					SymbolInfo& info = it->second;
-					acEncoder.EncodeSymbol(info.m_nLow, info.m_nHight, m_nCount);
+					int32 nPrevB = info.m_nB - info.m_nFreq;
+					acEncoder.EncodeSymbol(nPrevB, info.m_nB, m_nCount);
 				}
 				acEncoder.EncodeFinish();
 			}
@@ -279,10 +314,9 @@ template<class _TValue,
 				{
 					SymbolInfo& info = it->second;
 
-
-					info.m_nLow = nPrevF;
-					info.m_nHight = info.m_nLow + info.m_nFreq;
-					nPrevF = info.m_nHight;
+				 
+					info.m_nB = nPrevF + info.m_nFreq;
+					nPrevF = info.m_nB;
 
 					pStream->write(it->first);
 
@@ -332,34 +366,66 @@ template<class _TValue,
 					}
 
 					SymbolInfo info;
-		
+					info.m_nFreq = nFreq;
+					info.m_nB = nPrevF + info.m_nFreq;
+				
+
 					info.m_nLow = nPrevF;
 					info.m_nHight = info.m_nLow + nFreq;
 
-					nPrevF = info.m_nHight;
+					nPrevF = info.m_nB;
 					m_SymbolsFreq.insert(std::make_pair(nDiff, info));
 
-					vecFreq.push_back(Symbol(info, nDiff));
+					vecFreq.push_back(Symbols(info, nDiff));
 				}
-			//	std::sort(vecFreq.begin(), vecFreq.end());
+				std::sort(vecFreq.begin(), vecFreq.end());
 			}
 
 			
 
 			template<class TDecoder>
-			bool Decompress(TBPVector<_TValue>& vecValues,  CommonLib::IReadStream* pStream, TValue nBegin, TVecFreq& vecFreq)
+			bool Decompress(TBPVector<_TValue>& vecValues, TBPVector<_TValue>& vecCheck, CommonLib::IReadStream* pStream, TValue nBegin, TVecFreq& vecFreq)
 			{
 			
 
 				TDecoder decoder(pStream);
 				decoder.StartDecode();
-				Symbol sysInfo;
-								
+				Symbols sysInfo;
+
+
+				uint32 FreqPrev[257];
+				for(int i = 0;i < 257; i++) 
+				{
+					FreqPrev[i] = 0;
+				}
+
+
+				for(int i = 0;i < 257; i++) 
+				{
+					FreqPrev[i] = 0;
+				}
+				int32 nPrevF = 0;
+				for(int i = 0;i < 256; i++) 
+				{
+					TSymbolsFreq::iterator it =  m_SymbolsFreq.find(i);
+					uint32 nFreq = 0;
+					if(it != m_SymbolsFreq.end())
+					{
+						nFreq = it->second.m_nFreq;
+					}
+					FreqPrev[i + 1] = nFreq + nPrevF;
+					nPrevF = FreqPrev[i + 1];
+				}
+				std::vector<uint32> vecFreq1;
+				for(int i = 0;i < 256; i++) 
+				{
+					vecFreq1.push_back(FreqPrev[i]);
+				}
 				for (size_t i = 0; i < m_nCount; ++i)
 				{ 
 					uint32 freq = decoder.GetFreq(m_nCount);
 
-					sysInfo.m_nLow = freq;
+					sysInfo.m_nFreq = freq;
 					TVecFreq::iterator it = std::lower_bound(vecFreq.begin(), vecFreq.end(), sysInfo);
 					if(it == vecFreq.end())
 						it = vecFreq.end() -1;
@@ -367,15 +433,57 @@ template<class _TValue,
 					{
 						if(it->m_nLow > freq)
 							it--;
-					}		
+					}
+
+
+
+					int64 nSymbolFind = 0;
+
+					for (TSymbolsFreq::iterator it = m_SymbolsFreq.begin(); it != m_SymbolsFreq.end(); ++it)
+					{
+						SymbolInfo& info = it->second;
+						if(info.m_nLow <= freq && freq < info.m_nHight)
+						{
+							nSymbolFind = it->first;
+						}
+
+					}
+
+
+					std::vector<uint32>::iterator it1  = std::lower_bound(vecFreq1.begin(), vecFreq1.end(), freq); 
+				
+				 
+
+					int32 Symbol;
+					for(Symbol = 255;FreqPrev[Symbol] > freq;Symbol--);
+
+					//m_pWriteStream.write(Symbol);
+				//	coder.DecodeSymbol(FreqPrev[Symbol], FreqPrev[Symbol+1], nFileSize);
+				 
+					if( it->m_nSymbol != Symbol)
+					{
+						int dd = 0;
+						dd++;
+					}
+					 
+					vecCheck.push_back(Symbol);
 					nBegin += it->m_nSymbol;
 					vecValues.push_back(nBegin);
-					decoder.DecodeSymbol( it->m_nLow, it->m_nHight, m_nCount);
+
+					uint32 nPrevB = it->m_nB - it->m_nFreq;
+					if(nPrevB != FreqPrev[Symbol] || it->m_nB != FreqPrev[Symbol+1])
+					{
+						int dd = 0;
+						dd++;
+					}
+					decoder.DecodeSymbol( nPrevB, it->m_nB, m_nCount);
+				//	decoder.DecodeSymbol( FreqPrev[Symbol], FreqPrev[Symbol+1], m_nCount);
+
 				}
 
 				return true;
 			}
-		
+
 		private:	
 
 	

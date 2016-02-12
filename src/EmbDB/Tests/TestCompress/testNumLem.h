@@ -15,15 +15,15 @@ class CTestNumLem
 		typedef embDB::TACEncoder<uint64, 32> TACEncoder;
 		typedef embDB::TACDecoder<uint64, 32> TACDecoder;
 
-		typedef embDB::TUnsignedNumLenCompressor<uint64, embDB::TFindMostSigBit, TRangeEncoder, TACEncoder, 
+		typedef embDB::TUnsignedNumLenCompressor<int64, embDB::TFindMostSigBit, TRangeEncoder, TACEncoder, 
 			TRangeDecoder, TACDecoder, 64> TCompressor;
 
 		CTestNumLem();
 		~CTestNumLem();
 		void AddLink(int64 nLink);
 		uint32 GetCompressSize();
-		void compress( const embDB::TBPVector<uint64>& vecLinks, CommonLib::IWriteStream *pStream);
-		void decompress( embDB::TBPVector<uint64>& vecLinks, CommonLib::IReadStream *pStream);
+		void compress( const embDB::TBPVector<int64>& vecLinks, CommonLib::IWriteStream *pStream);
+		void decompress( embDB::TBPVector<int64>& vecLinks, CommonLib::IReadStream *pStream);
 
 	private:
 	 
