@@ -1384,9 +1384,9 @@ namespace embDB
 			assert(pLeafNodeLeft.get() != NULL || pLeafNodeRight.get() != NULL);
 			assert(pLeafNodeLeft != pNode && (pLeafNodeRight != pNode) && (pLeafNodeLeft != pLeafNodeRight));
 
-			int nLeftsize =  pLeafNodeLeft.get() ? pLeafNodeLeft->rowSize() : -1;
-			int nRightSize = pLeafNodeRight.get() ? pLeafNodeRight->rowSize() : -1;
-			if(nLeftsize > nRightSize)
+			int nLeftsize =  pLeafNodeLeft.get() ? pLeafNodeLeft->count() : -1;
+			int nRightSize = pLeafNodeRight.get() ? pLeafNodeRight->count() : -1;
+			if(nLeftsize < nRightSize)
 			{
 				pDonorNode = pLeafNodeLeft;
 				bLeft = true;
@@ -1398,12 +1398,23 @@ namespace embDB
 			}
 		}
 		assert(pDonorNode.get());
+
+
+
+		bool bUnion = pDonorNode->IsHaveUnion(pNode);
+		bool bAlignment = false;
+		if(!bUnion)
+		{
+			bAlignment = pDonorNode->IsHaveAlignment(pNode);
+		}
+
+
 		 
-		size_t nSumSize = pDonorNode->rowSize() + pLeafNode->rowSize() + pNode->headSize();
+		/*size_t nSumSize = pDonorNode->rowSize() + pLeafNode->rowSize() + pNode->headSize();
 		int nCnt = ((pLeafNode->count() + pDonorNode->count()))/2 - pLeafNode->count();
 
 		bool bUnion = false;
-		bool bAlignment = false;
+		
 
 		if(nSumSize <  m_nNodesPageSize)	
 			bUnion = true;
@@ -1415,7 +1426,7 @@ namespace embDB
 			{
 				bUnion = true;
 			}
-		}
+		}*/
 		if(bUnion)  
 		{
 			bool bRet = true;

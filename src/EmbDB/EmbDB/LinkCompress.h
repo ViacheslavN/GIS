@@ -6,8 +6,8 @@
 #include "CommonLibrary/alloc_t.h"
 #include "BPVector.h"
 #include "CommonLibrary/stream.h"
-#include "ArithmeticCoder.h"
-#include "RangeCoder.h"
+#include "CommonLibrary/ArithmeticCoder.h"
+#include "CommonLibrary/RangeCoder.h"
 #include "NumLenCompress.h"
 namespace embDB
 {
@@ -16,11 +16,11 @@ namespace embDB
 	{
 		public:
 
-			typedef TRangeEncoder<uint64, 64> TRangeEncoder;
-			typedef TRangeDecoder<uint64, 64> TRangeDecoder;
+			typedef CommonLib::TRangeEncoder<uint64, 64> TRangeEncoder;
+			typedef CommonLib::TRangeDecoder<uint64, 64> TRangeDecoder;
 
-			typedef TACEncoder<uint64, 32> TACEncoder;
-			typedef TACDecoder<uint64, 32> TACDecoder;
+			typedef CommonLib::TACEncoder<uint64, 32> TACEncoder;
+			typedef CommonLib::TACDecoder<uint64, 32> TACDecoder;
 
 			typedef TUnsignedNumLenCompressor<int64, TFindMostSigBit, TRangeEncoder, TACEncoder, 
 				TRangeDecoder, TACDecoder, 64> TCompressor;

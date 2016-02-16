@@ -98,7 +98,10 @@ template<class _TValue,
 
 			void RemoveSymbol(TValue symbol)
 			{
-				SymbolInfo& symInfo =  m_SymbolsFreq[symbol];
+
+				TSymbolsFreq::iterator it = m_SymbolsFreq.find(symbol);
+				assert(it != m_SymbolsFreq.end());
+				SymbolInfo& symInfo =  it->second;
 				symInfo.m_nFreq--;
 				m_nCount--;
 			}

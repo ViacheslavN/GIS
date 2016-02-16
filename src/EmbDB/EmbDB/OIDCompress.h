@@ -9,8 +9,8 @@
 #include "NumLenCompress.h"
 #include "NumLenDiffCompress.h"
 #include "IntegerDiffCompress.h"
-#include "ArithmeticCoder.h"
-#include "RangeCoder.h"
+#include "CommonLibrary/ArithmeticCoder.h"
+#include "CommonLibrary/RangeCoder.h"
 #include "BPVector.h"
 namespace embDB
 {
@@ -25,11 +25,11 @@ namespace embDB
 		};
 
   
-		 typedef TRangeEncoder<uint64, 64> TRangeEncoder;
-		 typedef TRangeDecoder<uint64, 64> TRangeDecoder;
+		 typedef CommonLib::TRangeEncoder<uint64, 64> TRangeEncoder;
+		 typedef CommonLib::TRangeDecoder<uint64, 64> TRangeDecoder;
 
-		 typedef TACEncoder<uint64, 32> TACEncoder;
-		 typedef TACDecoder<uint64, 32> TACDecoder;
+		 typedef CommonLib::TACEncoder<uint64, 32> TACEncoder;
+		 typedef CommonLib::TACDecoder<uint64, 32> TACDecoder;
 
 		 typedef TUnsignedDiffNumLenCompressor<int64, TFindMostSigBit, TRangeEncoder, TACEncoder, 
 			 TRangeDecoder, TACDecoder, 64> TNumLenCompressor;
@@ -48,8 +48,8 @@ namespace embDB
 			void RemoveDiffSymbol(int64 nOid);
 			uint32 GetComressSize() const;
 		
-			void compress( const embDB::TBPVector<int64>& vecOIDs, CommonLib::IWriteStream *pStream);
-			void decompress(uint32 nSize, embDB::TBPVector<int64>& vecOIDs, CommonLib::IReadStream *pStream);
+			bool compress( const embDB::TBPVector<int64>& vecOIDs, CommonLib::IWriteStream *pStream);
+			bool decompress(uint32 nSize, embDB::TBPVector<int64>& vecOIDs, CommonLib::IReadStream *pStream);
 			void clear();
 
 			void AddDiffSymbol(int64 nDiff);

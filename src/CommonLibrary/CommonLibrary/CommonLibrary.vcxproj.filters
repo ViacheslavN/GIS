@@ -49,6 +49,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="compress">
+      <UniqueIdentifier>{7653650c-6e10-42d0-add4-b2aff5a3dbac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -206,6 +209,12 @@
     </ClInclude>
     <ClInclude Include="FilePosix.h">
       <Filter>file</Filter>
+    </ClInclude>
+    <ClInclude Include="ArithmeticCoder.h">
+      <Filter>compress</Filter>
+    </ClInclude>
+    <ClInclude Include="RangeCoder.h">
+      <Filter>compress</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_BTREE_PLUS_V2_LEAF_NODE_MAP_OID_COMPRESSOR_H_
-#define _EMBEDDED_DATABASE_BTREE_PLUS_V2_LEAF_NODE_MAP_OID_COMPRESSOR_H_
+#ifndef _EMBEDDED_DATABASE_VALUE_FIELD_COMPRESS_BASE_
+#define _EMBEDDED_DATABASE_VALUE_FIELD_COMPRESS_BASE_
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/alloc_t.h"
@@ -12,15 +12,13 @@
 namespace embDB
 {
 
-	template<typename _TValue, class _Transaction = IDBTransaction>
-	class TMapLeafNodeOIDComp
+	template<class _Transaction = IDBTransaction, class _TOID = int64>
+	class TValueFieldOIDCompress
 	{
 	public:	
-	 
-		typedef int64 TOID;
-		typedef _TValue TValue;
+
+		typedef class TOID;
 		typedef  TBPVector<TOID> TOIDMemSet;
-		typedef  TBPVector<TValue> TLeafValueMemSet;
 		typedef CompressorParamsBaseImp TLeafCompressorParams;
 
 		enum eSchemeCompress
@@ -30,49 +28,21 @@ namespace embDB
 
 		};
 
-		TMapLeafNodeOIDComp(_Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
-			TOIDMemSet *pOIDMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nSize(0), m_pOIDMemSet(pOIDMemset)
+		TValueFieldOIDCompress(_Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
+			TOIDMemSet *pOIDMemset= NULL) : m_nSize(0), m_pOIDMemSet(pOIDMemset)
 		{
 
 			assert(m_pOIDMemSet);
 
 		}
 
-		template<typename _Transactions  >
-		static TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
+		virtual ~TValueFieldOIDCompress(){}
+		
+		
+		bool LoadOIDs(uint32 nSize, TOIDMemSet& vecOIDs, CommonLib::FxMemoryReadStream& stream)
 		{
-			return NULL;
-		}
-
-		virtual ~TMapLeafNodeOIDComp(){}
-		virtual bool Load(TOIDMemSet& vecOIDs, TLeafValueMemSet& vecValues, CommonLib::FxMemoryReadStream& stream)
-		{
-
-			CommonLib::FxMemoryReadStream OIDStreams;
-			CommonLib::FxMemoryReadStream ValueStreams;
-
-			m_nSize = stream.readInt32();
-			if(!m_nSize)
-				return true;
-
-			vecOIDs.reserve(m_nSize);
-			vecValues.reserve(m_nSize);
-
-			uint32 nOIDSize =  stream.readIntu32();
-			uint32 nValueSize =  m_nSize * sizeof(TValue);
-
-			OIDStreams.attachBuffer(stream.buffer() + stream.pos(), nOIDSize);
-			ValueStreams.attachBuffer(stream.buffer() + stream.pos() + nOIDSize, nValueSize);
-
-			m_OIDCompressor.decompress(m_nSize, vecOIDs, &OIDStreams);
-			TValue value;
-			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
-			{
-	 
-				ValueStreams.read(value);
-				vecValues.push_back(value);
-			}
-
+			
+			m_OIDCompressor.decompress(m_nSize, vecOIDs, &stream);
 			return true;
 		}
 		virtual bool Write(TOIDMemSet& vecOIDs, TLeafValueMemSet& vecValues, CommonLib::FxMemoryWriteStream& stream)
@@ -101,7 +71,7 @@ namespace embDB
 			for(size_t i = 0, sz = vecValues.size(); i < sz; ++i)
 			{
 				ValueStreams.write(vecValues[i]);
-			 
+
 			}
 
 			return true;
@@ -139,10 +109,9 @@ namespace embDB
 		}
 		virtual bool remove(uint32 nIndex, const TOID& nOID, const TValue& value)
 		{
-			m_nSize--;
 			m_OIDCompressor.RemoveSymbol(m_nSize, nIndex, nOID, *m_pOIDMemSet);
-			
-			
+			m_nSize--;
+
 			return true;
 		}
 		virtual size_t size() const
@@ -178,7 +147,7 @@ namespace embDB
 			pCompressor->m_nSize += nSize;
 			recalc();
 			pCompressor->recalc();
- 
+
 		}
 
 		void recalc()
@@ -196,7 +165,7 @@ namespace embDB
 		size_t m_nSize;
 		OIDCompress m_OIDCompressor;
 		TOIDMemSet* m_pOIDMemSet;
-		 
+
 	};
 }
 

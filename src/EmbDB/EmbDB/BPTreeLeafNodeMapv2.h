@@ -71,9 +71,11 @@ namespace embDB
 
 			if(this->m_bOneSplit)
 			{
+
+				this->m_pCompressor->remove(this->m_leafKeyMemSet.size() - 1, this->m_leafKeyMemSet.back(), this->m_leafValueMemSet.back());
 				int nSplitIndex = this->SplitOne(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
 				this->SplitOne(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
-				this->m_pCompressor->remove(nSplitIndex, pNode->m_leafKeyMemSet[0], pNode->m_leafValueMemSet[0]);
+			
 				pNewNodeComp->insert(0, pNode->m_leafKeyMemSet[0], pNode->m_leafValueMemSet[0]);
 				return nSplitIndex;
 			}

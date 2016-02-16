@@ -1,8 +1,8 @@
 #ifndef _EMBEDDED_DATABASE_ARITHMETIC_CODER_H_
 #define _EMBEDDED_DATABASE_ARITHMETIC_CODER_H_
 
-#include "CommonLibrary/stream.h"
-namespace embDB
+#include "stream.h"
+namespace CommonLib
 {
 	template<class _TCodeValue, uint16 _nValueBits>
 	class TACEncoder
@@ -16,10 +16,10 @@ namespace embDB
 		static const TCodeValue  _ThirdQuarter = (3 * _FirstQuarter);
 		static const _TCodeValue MaxRange = _FirstQuarter - 1;
 
-		TACEncoder(CommonLib::IWriteStream* pStream) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue), m_nScale(0),
+		TACEncoder(IWriteStream* pStream) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue), m_nScale(0),
 			m_nBitsBuf(0), m_nCurrBit(0)
 #ifdef _DEBUG
-		, m_nBitsWrite(0)
+			, m_nBitsWrite(0)
 #endif
 
 		{}
@@ -97,7 +97,7 @@ namespace embDB
 		}
 
 	private:
-		CommonLib::IWriteStream* m_pStream;
+		IWriteStream* m_pStream;
 		TCodeValue m_nLow;
 		TCodeValue m_nHigh;
 		uint32	   m_nScale;
@@ -120,7 +120,7 @@ namespace embDB
 		static const TCodeValue  _ThirdQuarter = (3 * _FirstQuarter);
 		static const _TCodeValue MaxRange = _FirstQuarter - 1;
 
-		TACDecoder(CommonLib::IReadStream* pStream) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue),
+		TACDecoder(IReadStream* pStream) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue),
 			m_nBitsRead(0), m_nValue(0), m_nBitsBuf(0), m_nCurrBit(8)
 		{}
 
@@ -190,7 +190,7 @@ namespace embDB
 
 
 	private:
-		CommonLib::IReadStream* m_pStream;
+		IReadStream* m_pStream;
 		TCodeValue m_nLow;
 		TCodeValue m_nHigh;
 		uint32	   m_nBitsRead;

@@ -6,8 +6,10 @@
 #include "../../EmbDB/DirectTransactions.h"
 #include "CommonLibrary/DebugTime.h"
 #include "../../EmbDB//InnerNodeCompress.h"
+#include "../../EmbDB/MapLeafNodeOIDComp.h"
 
-typedef embDB::TBPMapV2 <int64,  uint64, embDB::comp<uint64>, embDB::IDBTransaction, embDB::BPInnerNodeFieldCompressor> TBInt64Map;
+typedef embDB::TBPMapV2 <int64,  uint64, embDB::comp<uint64>, embDB::IDBTransaction, 
+	embDB::BPInnerNodeFieldCompressor, embDB::TMapLeafNodeOIDComp<uint64> > TBInt64Map;
 
 //typedef embDB::TBPMapV2 <int64,  uint64, embDB::comp<uint64>, embDB::IDBTransaction> TBInt64Map;
 
@@ -21,7 +23,7 @@ void insertINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 	double tranCom  = 0;
 	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo(); 
-//	tree.SetMinSplit(true);
+	tree.SetMinSplit(true);
 	time.start();
 	int64 n = 0;
 	if(nStart < nEndStart)

@@ -450,7 +450,6 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ArithmeticCoder.h" />
     <ClInclude Include="BackTableZPoint16Bit.h" />
     <ClInclude Include="BaseBPMapRO.h" />
     <ClInclude Include="BaseBPMapv2.h" />
@@ -582,7 +581,6 @@
     <ClInclude Include="HuffmanOIDComp.h" />
     <ClInclude Include="ListDBPage.h" />
     <ClInclude Include="PageAlloc.h" />
-    <ClInclude Include="RangeCoder.h" />
     <ClInclude Include="RowIDCounter.h" />
     <ClInclude Include="ShapeComp.h" />
     <ClInclude Include="ShapeCompressorParams.h" />
@@ -656,6 +654,7 @@
     <ClInclude Include="Transactions.h" />
     <ClInclude Include="TranStorage.h" />
     <ClInclude Include="TranUndoPageManager.h" />
+    <ClInclude Include="ValueFieldOIDCompress.h" />
     <ClInclude Include="VariantField.h" />
     <ClInclude Include="PageVector.h" />
     <ClInclude Include="WriteStreamPage.h" />

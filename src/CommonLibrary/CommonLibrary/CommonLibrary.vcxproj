@@ -438,6 +438,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="alloc_t.h" />
+    <ClInclude Include="ArithmeticCoder.h" />
     <ClInclude Include="AutoPtr.h" />
     <ClInclude Include="BitStream.h" />
     <ClInclude Include="blob.h" />
@@ -470,6 +471,7 @@
     <ClInclude Include="FixedBitStream.h" />
     <ClInclude Include="GeoShape.h" />
     <ClInclude Include="PodVector.h" />
+    <ClInclude Include="RangeCoder.h" />
     <ClInclude Include="SpatialKey.h" />
     <ClInclude Include="sprintf.h" />
     <ClInclude Include="stdafx.h" />

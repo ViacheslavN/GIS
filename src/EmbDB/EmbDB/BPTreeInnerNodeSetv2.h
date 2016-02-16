@@ -234,9 +234,9 @@ namespace embDB
 				pNode->m_nLess = m_innerLinkMemSet[nLessIndex];
 
 	
-
-				m_pCompressor->remove(nLessIndex, m_innerKeyMemSet[nLessIndex],  m_innerLinkMemSet[nLessIndex]);
 				m_pCompressor->remove(nSplitIndex, m_innerKeyMemSet[nSplitIndex], m_innerLinkMemSet[nSplitIndex]);
+				m_pCompressor->remove(nLessIndex, m_innerKeyMemSet[nLessIndex],  m_innerLinkMemSet[nLessIndex]);
+				
 
 				pNewNodeComp->insert(0, newNodeKeySet[0], newNodeLinkSet[0]);
 

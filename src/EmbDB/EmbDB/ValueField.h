@@ -9,6 +9,8 @@
 #include "DBMagicSymbol.h"
 //#include "BaseBPTreeRO.h"
 #include "FieldIteratorBase.h"
+#include "InnerNodeCompress.h"
+#include "MapLeafNodeOIDComp.h"
 namespace embDB
 {
 
@@ -357,14 +359,15 @@ namespace embDB
 	};
 	
 	template<class _FType, int FieldDataType,
-		class _TLeafCompressor = embDB::BPLeafNodeMapSimpleCompressorV2<int64, _FType > 	
+		class _TLeafCompressor = embDB::TMapLeafNodeOIDComp<_FType > 	
 	>
 	class ValueFieldHandler :  CDBFieldHandlerBase<IDBFieldHandler>
 	{
 		public:
 
 			typedef _FType FType;
-			typedef embDB::BPInnerNodeSimpleCompressorV2<int64> TInnerCompressor;
+			//typedef embDB::BPInnerNodeSimpleCompressorV2<int64> TInnerCompressor;
+			typedef BPInnerNodeFieldCompressor					TInnerCompressor;
 			typedef _TLeafCompressor TLeafCompressor;
 
 			typedef embDB::TBPMapV2<int64, FType, embDB::comp<int64>, 

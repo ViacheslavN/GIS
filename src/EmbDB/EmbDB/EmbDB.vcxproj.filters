@@ -202,9 +202,6 @@
     <Filter Include="utils\compress">
       <UniqueIdentifier>{046c345b-17e3-41f1-98fb-47665bf81d58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="utils\compress\AC">
-      <UniqueIdentifier>{64b4f23b-d792-44cd-902a-3d88c72dc4be}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -858,9 +855,6 @@
     <ClInclude Include="OIDCompress.h">
       <Filter>DB\Fields\compress</Filter>
     </ClInclude>
-    <ClInclude Include="ArithmeticCoder.h">
-      <Filter>utils\compress\AC</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -869,9 +863,6 @@
     </ClInclude>
     <ClInclude Include="LinkCompress.h">
       <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="RangeCoder.h">
-      <Filter>utils\compress\AC</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
@@ -904,6 +895,12 @@
       <Filter>utils\compress</Filter>
     </ClInclude>
     <ClInclude Include="MapLeafNodeOIDComp.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ValueFieldOIDCompress.h">
       <Filter>DB\Fields\compress</Filter>
     </ClInclude>
   </ItemGroup>

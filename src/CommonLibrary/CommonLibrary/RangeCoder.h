@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_RANGE_CODER_H_
 #define _EMBEDDED_DATABASE_RANGE_CODER_H_
-#include "CommonLibrary/MemoryStream.h"
-namespace embDB
+#include "stream.h"
+namespace CommonLib
 {
 	template<class _TCodeValue, uint16 _nValueBits>
 	class TRangeEncoder
@@ -15,7 +15,7 @@ namespace embDB
 	public:
 		 
 				static const _TCodeValue MaxRange = Bottom;
-				TRangeEncoder(CommonLib::IWriteStream* pStream, TCodeValue nMaxSize = 0) : 
+				TRangeEncoder(IWriteStream* pStream, TCodeValue nMaxSize = 0) : 
 				m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1), m_nMaxSize(nMaxSize), m_WriteSize(0)
 				{
 					assert(m_pStream);
@@ -75,7 +75,7 @@ namespace embDB
 					return true;
 				}
 		private:
-			CommonLib::IWriteStream* m_pStream;
+			IWriteStream* m_pStream;
 			TCodeValue m_nMaxSize;
 			TCodeValue m_WriteSize;
 	};
@@ -94,7 +94,7 @@ namespace embDB
 		static const _TCodeValue MaxRange = Bottom;
 		typedef _TCodeValue TCodeValue;
 
-		TRangeDecoder(CommonLib::IReadStream* pStream) : m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1), m_nValue(0)
+		TRangeDecoder(IReadStream* pStream) : m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1), m_nValue(0)
 		{
 
 		}
@@ -130,7 +130,7 @@ namespace embDB
 			  return b;
 		 }
 	private:
-		CommonLib::IReadStream* m_pStream;
+		IReadStream* m_pStream;
 
 		_TCodeValue m_nValue;
 		_TCodeValue Low,Range;

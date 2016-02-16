@@ -127,6 +127,7 @@ namespace embDB
 			m_nSize--;
 			m_OIDCompressor.RemoveSymbol(m_nSize, nIndex, oid, *m_pKeyMemSet);
 			m_LinkCompressor.RemoveLink(link);
+			
 			return true;
 		}
 		bool BPInnerNodeFieldCompressor::update(int nIndex, const TOID& key, TLink link)

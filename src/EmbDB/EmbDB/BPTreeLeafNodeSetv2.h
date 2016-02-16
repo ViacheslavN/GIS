@@ -221,8 +221,9 @@ namespace embDB
 	
 			if(m_bOneSplit)
 			{
+				m_pCompressor->remove(m_leafKeyMemSet.size() -1, m_leafKeyMemSet.back());
 				int nSplitIndex = SplitOne(m_leafKeyMemSet, newNodeMemSet, pSplitKey);
-				m_pCompressor->remove(nSplitIndex, newNodeMemSet[0]);
+				
 				pNewNodeComp->insert(0, newNodeMemSet[0]);
 				return nSplitIndex;
 			}
