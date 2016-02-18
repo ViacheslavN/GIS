@@ -240,30 +240,17 @@ template<class _TValue,
 				for (size_t i = 0, sz = vecCheck.size(); i < sz; ++i)
 				{
 				 
-					//int64 nDiff = vecValues[i] - vecValues[i - 1];
-					int64 nDiff = vecCheck[i];
-					/*checkSymbolsFreq[nDiff].m_nFreq++;
-					int64 nCheckDiff = vecCheck[i-1];
-					if(nDiff != nCheckDiff)
-					{
-						int dd = 0;
-						dd++;
-					}*/
 					
+					int64 nDiff = vecCheck[i];
+										
 					
 					TSymbolsFreq::iterator it =  m_SymbolsFreq.find(nDiff);
 					assert(it != m_SymbolsFreq.end());
 					SymbolInfo& info = it->second;
 					int32 nPrevB = info.m_nB - info.m_nFreq;
 
-					if(nPrevB != FreqPrev[nDiff] || info.m_nB != FreqPrev[nDiff+1])
-					{
-						int dd = 0;
-						dd++;
-					}
-
+					
 					if(!rgEncoder.EncodeSymbol(nPrevB, info.m_nB, vecCheck.size()))
-					//if(!rgEncoder.EncodeSymbol(FreqPrev[nDiff], FreqPrev[nDiff+1], vecCheck.size()))
 						return false;
 				}
 				return rgEncoder.EncodeFinish();

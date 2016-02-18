@@ -14,7 +14,8 @@ namespace embDB
 		typedef  TBPVector<ZOrderPoint2DU64> TKeyMemSet;
 		typedef  TBPVector<int64> TLinkMemSet;
 		typedef CompressorParamsBaseImp TInnerCompressorParams;
-		BPSpatialPointInnerNodeSimpleCompressor64(TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParms = NULL) : m_nSize(0)
+		BPSpatialPointInnerNodeSimpleCompressor64(uint32 nPageSize, TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParms = NULL) :
+		m_nSize(0), m_nPageSize(nPageSize)
 		{}
 
 
@@ -120,9 +121,9 @@ namespace embDB
 		{
 			return (2 *sizeof(uint64) + sizeof(int64) ) *  m_nSize + sizeof(uint32) ;
 		}
-		virtual bool isNeedSplit(uint32 nPageSize) const
+		virtual bool isNeedSplit() const
 		{
-			return nPageSize < size();
+			return m_nPageSize < size();
 		}
 		virtual size_t count() const
 		{
@@ -153,6 +154,7 @@ namespace embDB
 		}
 	private:
 		size_t m_nSize;
+		uint32 m_nPageSize;
 	};
 }
 

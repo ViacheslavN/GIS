@@ -24,7 +24,8 @@ namespace embDB
 			return NULL;
 		}
 
-		BPSpatialRectInnerNodeSimpleCompressor(TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = 0) : m_nSize(0)
+		BPSpatialRectInnerNodeSimpleCompressor(uint32 nPageSize, TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = 0) : m_nSize(0),
+			m_nPageSize(nPageSize)
 		{}
 		virtual ~BPSpatialRectInnerNodeSimpleCompressor(){}
 		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
@@ -125,9 +126,9 @@ namespace embDB
 		{
 			return (TCoordPoint::SizeInByte + sizeof(TLink) ) *  m_nSize + sizeof(uint32) ;
 		}
-		virtual bool isNeedSplit(uint32 nPageSize) const
+		virtual bool isNeedSplit() const
 		{
-			return nPageSize < size();
+			return m_nPageSize < size();
 		}
 		virtual size_t count() const
 		{
@@ -158,6 +159,7 @@ namespace embDB
 		}
 	private:
 		size_t m_nSize;
+		uint32 m_nPageSize;
 	};
 }
 

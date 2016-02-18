@@ -17,8 +17,9 @@ namespace embDB
 		typedef  TBPVector<TValue> TLeafValueMemSet;
 		typedef CompressorParamsBaseImp TLeafCompressorParams;
 
-		BPLeafNodeMapSimpleCompressorV2(_Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
-			TLeafKeyMemSet *pKeyMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nSize(0)
+		BPLeafNodeMapSimpleCompressorV2(uint32 nPageSize, _Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
+			TLeafKeyMemSet *pKeyMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nCount(0),
+			m_nPageSize(nPageSize)
 		{}
 		
 		template<typename _Transactions  >
@@ -34,22 +35,22 @@ namespace embDB
 			CommonLib::FxMemoryReadStream KeyStreams;
 			CommonLib::FxMemoryReadStream ValueStreams;
 
-			m_nSize = stream.readInt32();
-			if(!m_nSize)
+			m_nCount = stream.readInt32();
+			if(!m_nCount)
 				return true;
 
-			vecKeys.reserve(m_nSize);
-			vecValues.reserve(m_nSize);
+			vecKeys.reserve(m_nCount);
+			vecValues.reserve(m_nCount);
 
-			uint32 nKeySize =  m_nSize * sizeof(TKey);
-			uint32 nValueSize =  m_nSize * sizeof(TValue);
+			uint32 nKeySize =  m_nCount * sizeof(TKey);
+			uint32 nValueSize =  m_nCount * sizeof(TValue);
 
 			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			ValueStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValueSize);
 
 			TKey key;
 			TValue value;
-			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
+			for (uint32 nIndex = 0; nIndex < m_nCount; ++nIndex)
 			{
 				KeyStreams.read(key);
 				ValueStreams.read(value);
@@ -63,7 +64,7 @@ namespace embDB
 		virtual bool Write(TLeafKeyMemSet& vecKeys, TLeafValueMemSet& vecValues, CommonLib::FxMemoryWriteStream& stream)
 		{
 			uint32 nSize = (uint32)vecKeys.size();
-			assert(m_nSize == nSize);
+			assert(m_nCount == nSize);
 			stream.write(nSize);
 			if(!nSize)
 				return true;
@@ -87,17 +88,17 @@ namespace embDB
 		}
 		virtual bool insert(uint32 nIndex, const TKey& key, const TValue& value)
 		{
-			m_nSize++;
+			m_nCount++;
 			return true;
 		}
 		virtual bool add(const TLeafKeyMemSet& vecKeys, const TLeafValueMemSet& vecValues)
 		{
-			m_nSize += vecKeys.size();
+			m_nCount += vecKeys.size();
 			return true;
 		}
 		virtual bool recalc(const TLeafKeyMemSet& vecKeys, const TLeafValueMemSet& vecValues)
 		{
-			m_nSize = vecKeys.size();
+			m_nCount = vecKeys.size();
 			return true;
 		}
 		virtual bool update(uint32 nIndex, const TKey& key, const TValue& value)
@@ -106,20 +107,20 @@ namespace embDB
 		}
 		virtual bool remove(uint32 nIndex, const TKey& key, const TValue& value)
 		{
-			m_nSize--;
+			m_nCount--;
 			return true;
 		}
 		virtual size_t size() const
 		{
-			return (sizeof(TKey) + sizeof(TValue)) *  m_nSize +  sizeof(uint32);
+			return (sizeof(TKey) + sizeof(TValue)) *  m_nCount +  sizeof(uint32);
 		}
-		virtual bool isNeedSplit(uint32 nPageSize) const
+		virtual bool isNeedSplit() const
 		{
-			return nPageSize < size();
+			return m_nPageSize < size();
 		}
 		virtual size_t count() const
 		{
-			return m_nSize;
+			return m_nCount;
 		}
 		size_t headSize() const
 		{
@@ -127,7 +128,7 @@ namespace embDB
 		}
 		size_t rowSize() const
 		{
-			return  (sizeof(TKey) + sizeof(TValue)) *  m_nSize ;
+			return  (sizeof(TKey) + sizeof(TValue)) *  m_nCount ;
 		}
 		size_t tupleSize() const
 		{
@@ -137,11 +138,26 @@ namespace embDB
 		{
 			uint32 nSize = nEnd- nBegin;
 
-			m_nSize -= nSize;
-			pCompressor->m_nSize += nSize;
+			m_nCount -= nSize;
+			pCompressor->m_nCount += nSize;
+		}
+		bool IsHaveUnion(BPLeafNodeMapSimpleCompressorV2 *pCompressor) const
+		{
+			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(TValue));
+			uint32 nNoCompSizeUnion = pCompressor->m_nCount * (sizeof(TKey) + sizeof(TValue));
+
+			return (nNoCompSize + nNoCompSizeUnion) < (m_nPageSize - headSize());
+
+
+		}
+		bool IsHaveAlignment(BPLeafNodeMapSimpleCompressorV2 *pCompressor) const
+		{
+			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(TValue));
+			return nNoCompSize < (m_nPageSize - headSize());
 		}
 	private:
-		size_t m_nSize;
+		uint32 m_nCount;
+		uint32 m_nPageSize;
 	};
 }
 

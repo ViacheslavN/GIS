@@ -17,7 +17,7 @@ namespace embDB
 
 		TLeafMemSet m_LeafMemSet;
 
-		BPLeafNodeSetSimpleCompressorV2(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL) : m_nSize(0)
+		BPLeafNodeSetSimpleCompressorV2(CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL) : m_nCount(0)
 		{}
 
 	
@@ -30,18 +30,18 @@ namespace embDB
 		virtual bool Load(TLeafMemSet& Set, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;
-			m_nSize = stream.readInt32();
-			if(!m_nSize)
+			m_nCount = stream.readInt32();
+			if(!m_nCount)
 				return true;
 
-			Set.reserve(m_nSize);
+			Set.reserve(m_nCount);
 
 			/*uint32 nKeySize = stream.readInt32();*/
-			uint32 nKeySize =  m_nSize * sizeof(TKey);
+			uint32 nKeySize =  m_nCount * sizeof(TKey);
 			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
 			TKey nkey;
-			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
+			for (uint32 nIndex = 0; nIndex < m_nCount; ++nIndex)
 			{
 				KeyStreams.read(nkey);
 				Set.push_back(nkey);
@@ -51,11 +51,11 @@ namespace embDB
 		}
 		virtual bool Write(TLeafMemSet& Set, CommonLib::FxMemoryWriteStream& stream)
 		{
-			assert(m_nSize == Set.size());
-			stream.write(m_nSize);
-			if(!m_nSize)
+			assert(m_nCount == Set.size());
+			stream.write(m_nCount);
+			if(!m_nCount)
 				return true;
-			uint32 nKeySize =  m_nSize * sizeof(TKey);
+			uint32 nKeySize =  m_nCount * sizeof(TKey);
 			/*stream.write(nKeySize);*/
 			CommonLib::FxMemoryWriteStream KeyStreams;
 			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
@@ -70,17 +70,17 @@ namespace embDB
 
 		virtual bool insert(int nIndex, const TKey& key)
 		{
-			m_nSize++;
+			m_nCount++;
 			return true;
 		}
 		virtual bool add(const TLeafMemSet& Set)
 		{
-			m_nSize += Set.size();
+			m_nCount += Set.size();
 			return true;
 		}
 		virtual bool recalc(const TLeafMemSet& Set)
 		{
-			m_nSize = Set.size();
+			m_nCount = Set.size();
 			return true;
 		}
 		virtual bool update(int nIndex, const TKey& key)
@@ -89,12 +89,12 @@ namespace embDB
 		}
 		virtual bool remove(int nIndex, const TKey& key)
 		{
-			m_nSize--;
+			m_nCount--;
 			return true;
 		}
 		virtual size_t size() const
 		{
-			return sizeof(TKey) *  m_nSize +  sizeof(uint32);
+			return sizeof(TKey) *  m_nCount +  sizeof(uint32);
 		}
 		virtual bool isNeedSplit(uint32 nPageSize) const
 		{
@@ -102,7 +102,7 @@ namespace embDB
 		}
 		virtual size_t count() const
 		{
-			return m_nSize;
+			return m_nCount;
 		}
 		size_t headSize() const
 		{
@@ -110,7 +110,7 @@ namespace embDB
 		}
 		size_t rowSize() const
 		{
-			return sizeof(TKey) *  m_nSize;
+			return sizeof(TKey) *  m_nCount;
 		}
 		size_t tupleSize() const
 		{
@@ -120,11 +120,11 @@ namespace embDB
 		{
 			uint32 nSize = nEnd- nBegin;
 
-			m_nSize -= nSize;
-			pCompressor->m_nSize += nSize;
+			m_nCount -= nSize;
+			pCompressor->m_nCount += nSize;
 		}
 	private:
-		size_t m_nSize;
+		size_t m_nCount;
 	};
 }
 

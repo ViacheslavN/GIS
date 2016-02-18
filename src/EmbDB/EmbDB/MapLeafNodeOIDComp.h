@@ -30,8 +30,9 @@ namespace embDB
 
 		};
 
-		TMapLeafNodeOIDComp(_Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
-			TOIDMemSet *pOIDMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nSize(0), m_pOIDMemSet(pOIDMemset)
+		TMapLeafNodeOIDComp(uint32 nPageSize, _Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
+			TOIDMemSet *pOIDMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nCount(0), m_pOIDMemSet(pOIDMemset),
+			m_nPageSize(nPageSize)
 		{
 
 			assert(m_pOIDMemSet);
@@ -51,34 +52,72 @@ namespace embDB
 			CommonLib::FxMemoryReadStream OIDStreams;
 			CommonLib::FxMemoryReadStream ValueStreams;
 
-			m_nSize = stream.readInt32();
-			if(!m_nSize)
+			m_nCount = stream.readInt32();
+			if(!m_nCount)
 				return true;
 
-			vecOIDs.reserve(m_nSize);
-			vecValues.reserve(m_nSize);
 
-			uint32 nOIDSize =  stream.readIntu32();
-			uint32 nValueSize =  m_nSize * sizeof(TValue);
 
+			vecOIDs.reserve(m_nCount);
+			vecValues.reserve(m_nCount);
+
+			uint32 nRowNoCompSize = m_nCount * (sizeof(TValue) + sizeof(TOID));
+			uint32 nValueSize =  m_nCount * sizeof(TValue);
+
+
+			uint32 nOIDSize =  0;
+
+			bool bNoComp = nRowNoCompSize < (m_nPageSize - sizeof(uint32));
+
+
+			if(bNoComp)
+			{
+				nOIDSize = m_nCount * sizeof(TOID);
+			}
+			else
+			{
+				nOIDSize = stream.readIntu32();
+			}
+	
 			OIDStreams.attachBuffer(stream.buffer() + stream.pos(), nOIDSize);
 			ValueStreams.attachBuffer(stream.buffer() + stream.pos() + nOIDSize, nValueSize);
 
-			m_OIDCompressor.decompress(m_nSize, vecOIDs, &OIDStreams);
-			TValue value;
-			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
+			if(bNoComp)
 			{
-	 
-				ValueStreams.read(value);
-				vecValues.push_back(value);
-			}
+				 
+				TValue value;
+				TOID oid;
+				for (uint32 nIndex = 0; nIndex < m_nCount; ++nIndex)
+				{
 
+					OIDStreams.read(oid);
+					ValueStreams.read(value);
+				
+					vecValues.push_back(value);
+					vecOIDs.push_back(oid);
+
+					if(nIndex != 0)
+						m_OIDCompressor.AddDiffSymbol(vecOIDs[nIndex] - vecOIDs[nIndex - 1]);
+				}
+			}
+			else
+			{
+				m_OIDCompressor.decompress(m_nCount, vecOIDs, &OIDStreams);
+				TValue value;
+				for (uint32 nIndex = 0; nIndex < m_nCount; ++nIndex)
+				{
+
+					ValueStreams.read(value);
+					vecValues.push_back(value);
+				}
+			}
+			
 			return true;
 		}
 		virtual bool Write(TOIDMemSet& vecOIDs, TLeafValueMemSet& vecValues, CommonLib::FxMemoryWriteStream& stream)
 		{
 			uint32 nSize = (uint32)vecOIDs.size();
-			assert(m_nSize == nSize);
+			assert(m_nCount == nSize);
 			stream.write(nSize);
 			if(!nSize)
 				return true;
@@ -86,35 +125,65 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream ValueStreams;
 			CommonLib::FxMemoryWriteStream OidsStreams;
 
-			uint32 nOidsSize = m_OIDCompressor.GetComressSize();
+			uint32 nOidsSize = 0;
 			uint32 nValuesSize =  nSize * sizeof(TValue);
 
 
-			stream.write(nOidsSize);
+			uint32 nRowNoCompSize = m_nCount * (sizeof(TValue) + sizeof(TOID));
+			bool bNoComp = nRowNoCompSize < (m_nPageSize - sizeof(uint32));
+
+			if(bNoComp)
+			{
+
+				nOidsSize = m_nCount * (sizeof(TOID));
+			}
+			else
+			{
+				nOidsSize = m_OIDCompressor.GetComressSize();
+				stream.write(nOidsSize);
+
+			}
+
 
 			OidsStreams.attachBuffer(stream.buffer() + stream.pos(), nOidsSize);
 			ValueStreams.attachBuffer(stream.buffer() + stream.pos() + nOidsSize, nValuesSize);
+
 			stream.seek(stream.pos() + nOidsSize + nValuesSize, CommonLib::soFromBegin);			 
 
 
-			m_OIDCompressor.compress(vecOIDs, &OidsStreams);
-			for(size_t i = 0, sz = vecValues.size(); i < sz; ++i)
+			
+
+			if(bNoComp)
 			{
-				ValueStreams.write(vecValues[i]);
-			 
+				for(size_t i = 0, sz = vecValues.size(); i < sz; ++i)
+				{
+					ValueStreams.write(vecValues[i]);
+					OidsStreams.write(vecOIDs[i]);
+
+				}
+			}
+			else
+			{
+				m_OIDCompressor.compress(vecOIDs, &OidsStreams);
+				for(size_t i = 0, sz = vecValues.size(); i < sz; ++i)
+				{
+					ValueStreams.write(vecValues[i]);
+
+				}
+
 			}
 
 			return true;
 		}
 		virtual bool insert(uint32 nIndex, const TOID& oid, const TValue& value)
 		{
-			m_nSize++;
-			m_OIDCompressor.AddSymbol(m_nSize, nIndex, oid, *m_pOIDMemSet);
+			m_nCount++;
+			m_OIDCompressor.AddSymbol(m_nCount, nIndex, oid, *m_pOIDMemSet);
 			return true;
 		}
 		virtual bool add(const TOIDMemSet& vecOIDs, const TLeafValueMemSet& vecValues)
 		{
-			uint32 nOff = m_nSize;
+			uint32 nOff = m_nCount;
 			for (uint32 i = 0, sz = vecOIDs.size(); i < sz; 	++i)
 			{
 				insert(i + nOff, vecOIDs[i], vecValues[i]);
@@ -123,7 +192,7 @@ namespace embDB
 		}
 		virtual bool recalc(const TOIDMemSet& vecOIDs, const TLeafValueMemSet& vecValues)
 		{
-			m_nSize = vecOIDs.size();
+			m_nCount = vecOIDs.size();
 			m_OIDCompressor.clear();
 			for (size_t i = 0, sz = vecOIDs.size(); i < sz; 	++i)
 			{
@@ -139,8 +208,8 @@ namespace embDB
 		}
 		virtual bool remove(uint32 nIndex, const TOID& nOID, const TValue& value)
 		{
-			m_nSize--;
-			m_OIDCompressor.RemoveSymbol(m_nSize, nIndex, nOID, *m_pOIDMemSet);
+			m_nCount--;
+			m_OIDCompressor.RemoveSymbol(m_nCount, nIndex, nOID, *m_pOIDMemSet);
 			
 			
 			return true;
@@ -149,14 +218,20 @@ namespace embDB
 		{
 			return rowSize() +  headSize();
 		}
-		virtual bool isNeedSplit(uint32 nPageSize) const
+		virtual bool isNeedSplit() const
 		{
 
-			return nPageSize < size();
+
+			uint32 nRowNoCompSize = m_nCount * (sizeof(TValue) + sizeof(TOID));
+			if(nRowNoCompSize < (m_nPageSize - sizeof(uint32)))
+				return false;
+
+
+			return m_nPageSize < size();
 		}
 		virtual size_t count() const
 		{
-			return m_nSize;
+			return m_nCount;
 		}
 		size_t headSize() const
 		{
@@ -164,7 +239,7 @@ namespace embDB
 		}
 		size_t rowSize() const
 		{
-			return  (sizeof(TValue) *  m_nSize) + m_OIDCompressor.GetComressSize();
+			return  (sizeof(TValue) *  m_nCount) + m_OIDCompressor.GetComressSize();
 		}
 		size_t tupleSize() const
 		{
@@ -174,8 +249,8 @@ namespace embDB
 		{
 			uint32 nSize = nEnd- nBegin;
 
-			m_nSize -= nSize;
-			pCompressor->m_nSize += nSize;
+			m_nCount -= nSize;
+			pCompressor->m_nCount += nSize;
 			recalc();
 			pCompressor->recalc();
  
@@ -183,7 +258,7 @@ namespace embDB
 
 		void recalc()
 		{
-			m_nSize = m_pOIDMemSet->size();
+			m_nCount = m_pOIDMemSet->size();
 			m_OIDCompressor.clear();
 			for (size_t i = 0, sz = m_pOIDMemSet->size(); i < sz; 	++i)
 			{
@@ -192,11 +267,26 @@ namespace embDB
 					m_OIDCompressor.AddDiffSymbol((*m_pOIDMemSet)[i] - (*m_pOIDMemSet)[i - 1]); 
 			}
 		}
+
+		bool IsHaveUnion(TMapLeafNodeOIDComp *pCompressor) const
+		{
+			uint32 nNoCompSize = m_nCount * (sizeof(TOID) + sizeof(TValue));
+			uint32 nNoCompSizeUnion = pCompressor->m_nCount * (sizeof(TOID) + sizeof(TValue));
+
+			return (nNoCompSize + nNoCompSizeUnion) < (m_nPageSize - headSize());
+
+
+		}
+		bool IsHaveAlignment(TMapLeafNodeOIDComp *pCompressor) const
+		{
+			uint32 nNoCompSize = m_nCount * (sizeof(TOID) + sizeof(TValue));
+			return nNoCompSize < (m_nPageSize - headSize());
+		}
 	private:
-		size_t m_nSize;
+		size_t m_nCount;
 		OIDCompress m_OIDCompressor;
 		TOIDMemSet* m_pOIDMemSet;
-		 
+		 uint32 m_nPageSize;
 	};
 }
 

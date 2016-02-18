@@ -27,7 +27,8 @@ namespace embDB
 			return NULL;
 		}
 
-		BPSpatialPointInnerNodeSimpleCompressor(TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParms = NULL) : m_nSize(0)
+		BPSpatialPointInnerNodeSimpleCompressor(uint32 nPageSize, TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParms = NULL) : m_nSize(0),
+			m_nPageSize(nPageSize)
 		{}
 		virtual ~BPSpatialPointInnerNodeSimpleCompressor(){}
 	
@@ -116,9 +117,9 @@ namespace embDB
 		{
 			return (sizeof(ZValueType) + sizeof(TLink) ) *  m_nSize +  sizeof(uint32) ;
 		}
-		virtual bool isNeedSplit(uint32 nPageSize) const
+		virtual bool isNeedSplit() const
 		{
-			return nPageSize < size();
+			return m_nPageSize < size();
 		}
 		virtual size_t count() const
 		{
@@ -149,6 +150,7 @@ namespace embDB
 		}
 	private:
 		size_t m_nSize;
+		uint32 m_nPageSize;
 	};
 }
 

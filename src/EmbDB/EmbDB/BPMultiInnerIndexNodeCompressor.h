@@ -28,7 +28,8 @@ namespace embDB
 			return NULL;
 		}
 
-		BPMultiIndexInnerNodeCompressor(TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = NULL) : m_nSize(0)
+		BPMultiIndexInnerNodeCompressor(uint32 nPageSize, TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = NULL) : m_nCount(0),
+			m_nPageSize(nPageSize)
 		{}
 		virtual ~BPMultiIndexInnerNodeCompressor(){}
 		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
@@ -36,22 +37,22 @@ namespace embDB
 			CommonLib::FxMemoryReadStream KeyStreams;
 			CommonLib::FxMemoryReadStream LinkStreams;
 
-			m_nSize = stream.readInt32();
-			if(!m_nSize)
+			m_nCount = stream.readInt32();
+			if(!m_nCount)
 				return true;
 
-			keySet.reserve(m_nSize);
-			linkSet.reserve(m_nSize);
+			keySet.reserve(m_nCount);
+			linkSet.reserve(m_nCount);
 
-			uint32 nKeySize =  m_nSize * (sizeof(TKey) + sizeof(int64));
-			uint32 nLinkSize =  m_nSize * sizeof(int64);
+			uint32 nKeySize =  m_nCount * (sizeof(TKey) + sizeof(int64));
+			uint32 nLinkSize =  m_nCount * sizeof(int64);
 
 			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 
 			TIndex index;
 			TLink nlink;
-			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
+			for (uint32 nIndex = 0; nIndex < m_nCount; ++nIndex)
 			{
 				KeyStreams.read(index.m_key);
 				KeyStreams.read(index.m_nObjectID);
@@ -67,7 +68,7 @@ namespace embDB
 		virtual bool Write(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryWriteStream& stream)
 		{
 			uint32 nSize = (uint32)keySet.size();
-			assert(m_nSize == nSize);
+			assert(m_nCount == nSize);
 			stream.write(nSize);
 			if(!nSize)
 				return true;
@@ -96,22 +97,22 @@ namespace embDB
 
 		virtual bool insert(int nIndex, const TIndex& key, TLink link )
 		{
-			m_nSize++;
+			m_nCount++;
 			return true;
 		}
 		virtual bool add(const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
 		{
-			m_nSize += keySet.size();
+			m_nCount += keySet.size();
 			return true;
 		}
 		virtual bool recalc(const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
 		{
-			m_nSize = keySet.size();
+			m_nCount = keySet.size();
 			return true;
 		}
 		virtual bool remove(int nIndex, const TIndex& key, TLink link)
 		{
-			m_nSize--;
+			m_nCount--;
 			return true;
 		}
 		virtual bool update(int nIndex, const TIndex& key, TLink link)
@@ -120,15 +121,15 @@ namespace embDB
 		}
 		virtual size_t size() const
 		{
-			return (sizeof(TKey) + 2 * sizeof(TLink) ) *  m_nSize + sizeof(uint32) ;
+			return (sizeof(TKey) + 2 * sizeof(TLink) ) *  m_nCount + sizeof(uint32) ;
 		}
-		virtual bool isNeedSplit(uint32 nPageSize) const
+		virtual bool isNeedSplit() const
 		{
-			return nPageSize < size();
+			return m_nPageSize < size();
 		}
 		virtual size_t count() const
 		{
-			return m_nSize;
+			return m_nCount;
 		}
 		size_t headSize() const
 		{
@@ -136,11 +137,11 @@ namespace embDB
 		}
 		size_t rowSize()
 		{
-			return (sizeof(TKey) + 2 *sizeof(TLink)) *  m_nSize;
+			return (sizeof(TKey) + 2 *sizeof(TLink)) *  m_nCount;
 		}
 		void clear()
 		{
-			m_nSize = 0;
+			m_nCount = 0;
 		}
 		size_t tupleSize() const
 		{
@@ -150,11 +151,26 @@ namespace embDB
 		{
 			uint32 nSize = nEnd- nBegin;
 
-			m_nSize -= nSize;
-			pCompressor->m_nSize += nSize;
+			m_nCount -= nSize;
+			pCompressor->m_nCount += nSize;
+		}
+		bool IsHaveUnion(BPMultiIndexInnerNodeCompressor *pCompressor) const
+		{
+			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(TLink) );
+			uint32 nNoCompSizeUnion = pCompressor->m_nCount * (sizeof(TKey) + sizeof(TLink) );
+
+			return (nNoCompSize + nNoCompSizeUnion) < (m_nPageSize - headSize());
+
+
+		}
+		bool IsHaveAlignment(BPMultiIndexInnerNodeCompressor *pCompressor) const
+		{
+			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(TLink) );
+			return nNoCompSize < (m_nPageSize - headSize());
 		}
 	private:
-		size_t m_nSize;
+		size_t m_nCount;
+		uint32 m_nPageSize;
 	};
 }
 

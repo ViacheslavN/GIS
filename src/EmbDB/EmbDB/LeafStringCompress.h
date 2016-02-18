@@ -37,11 +37,12 @@ namespace embDB
 			return pInnerComp;
 		}
 
-		BPStringLeafNodeCompressor(Transaction *pTransaction, CommonLib::alloc_t *pAlloc, 
+		BPStringLeafNodeCompressor(uint32 nPageSize, Transaction *pTransaction, CommonLib::alloc_t *pAlloc, 
 			TLeafCompressorParams *pParams,
-			TLeafKeyMemSet *pKeyMemset, TLeafValueMemSet *pValueMemSet) : m_nSize(0), 
+			TLeafKeyMemSet *pKeyMemset, TLeafValueMemSet *pValueMemSet) : m_nCount(0), 
 			m_pTransaction(pTransaction),
-			m_pAlloc(pAlloc), m_pLeafCompParams(pParams),		m_nStringDataSize(0), m_pValueMemset(pValueMemSet) 
+			m_pAlloc(pAlloc), m_pLeafCompParams(pParams),		m_nStringDataSize(0), m_pValueMemset(pValueMemSet),
+			m_nPageSize(nPageSize)
 		{
 
 			assert(m_pTransaction);
@@ -84,22 +85,22 @@ namespace embDB
 			uint32 nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();
 
 			m_nStringDataSize = 0;
-			m_nSize = stream.readInt32();
-			if(!m_nSize)
+			m_nCount = stream.readInt32();
+			if(!m_nCount)
 				return true;
 
 		
-			keySet.reserve(m_nSize);
-			valueSet.reserve(m_nSize);
+			keySet.reserve(m_nCount);
+			valueSet.reserve(m_nCount);
 
-			uint32 nKeySize =  m_nSize * sizeof(TKey);
+			uint32 nKeySize =  m_nCount * sizeof(TKey);
  
 			KeyStream.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			ValueStream.attachBuffer(stream.buffer() + stream.pos() + nKeySize, stream.size() -  stream.pos() -  nKeySize);
 
 			TKey nKey;
 
-			for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
+			for (uint32 nIndex = 0; nIndex < m_nCount; ++nIndex)
 			{
 				KeyStream.read(nKey);
 
@@ -140,7 +141,7 @@ namespace embDB
 		virtual bool Write(TLeafKeyMemSet& keySet, TLeafValueMemSet& valueSet, CommonLib::FxMemoryWriteStream& stream)
 		{
 			uint32 nSize = (uint32)keySet.size();
-			assert(m_nSize == nSize);
+			assert(m_nCount == nSize);
 			stream.write(nSize);
 			if(!nSize)
 				return true;
@@ -149,7 +150,7 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream ValueStream;
 
 		 
-			uint32 nKeySize =  m_nSize * sizeof(TKey);
+			uint32 nKeySize =  m_nCount * sizeof(TKey);
 	
 
 			KeyStream.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
@@ -208,7 +209,7 @@ namespace embDB
 
 		virtual bool insert(int nIndex, TKey key, /*const CommonLib::CString&*/ const sStringVal& sStr)
 		{
-			m_nSize++;
+			m_nCount++;
 			m_nStringDataSize += GetStingSize(sStr);
 				
 			return true;
@@ -226,7 +227,7 @@ namespace embDB
 		{
 
 		
-			m_nSize = 0;
+			m_nCount = 0;
 			m_nStringDataSize = 0;
 			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
@@ -238,7 +239,7 @@ namespace embDB
 		}
 		virtual bool remove(int nIndex, TKey key, const sStringVal& sStr)
 		{
-			m_nSize--;
+			m_nCount--;
 			m_nStringDataSize -=GetStingSize(sStr);
 			return true;
 		}
@@ -254,27 +255,27 @@ namespace embDB
 		}
 		virtual size_t size() const
 		{
-			return (sizeof(TKey) *  m_nSize )  + sizeof(uint32) + m_nStringDataSize;
+			return (sizeof(TKey) *  m_nCount )  + sizeof(uint32) + m_nStringDataSize;
 		}
-		virtual bool isNeedSplit(uint32 nPageSize) const
+		virtual bool isNeedSplit() const
 		{
-			return nPageSize < size();
+			return m_nPageSize < size();
 		}
 		virtual size_t count() const
 		{
-			return m_nSize;
+			return m_nCount;
 		}
 		size_t headSize() const
 		{
 			return  sizeof(uint32);
 		}
-		size_t rowSize()
+		size_t rowSize() const
 		{
-			return (sizeof(TKey) *  m_nSize ) + m_nStringDataSize;
+			return (sizeof(TKey) *  m_nCount ) + m_nStringDataSize;
 		}
 		void clear()
 		{
-			m_nSize = 0;
+			m_nCount = 0;
 		}
 		size_t tupleSize() const
 		{
@@ -293,12 +294,25 @@ namespace embDB
 			uint32 nCount = nEnd - nBegin;
 
 
-			pCompressor->m_nSize = m_nSize - nCount;
+			pCompressor->m_nCount = m_nCount - nCount;
 			pCompressor->m_nStringDataSize = m_nStringDataSize - nSplitStringDataSize;
 
-			m_nSize = nCount;
+			m_nCount = nCount;
 			m_nStringDataSize = nSplitStringDataSize; 
 
+		}
+
+		bool IsHaveUnion(BPStringLeafNodeCompressor *pCompressor) const
+		{
+
+			return (rowSize() + pCompressor->rowSize()) < (m_nPageSize - headSize());
+
+
+		}
+		bool IsHaveAlignment(BPStringLeafNodeCompressor *pCompressor) const
+		{
+			 
+			return false;
 		}
 	private:
 		int GetStingSize(const sStringVal& sStr) const 
@@ -320,14 +334,15 @@ namespace embDB
 	
 	private:
 
-		size_t m_nStringDataSize;
-		size_t m_nSize;
+		uint32 m_nStringDataSize;
+		uint32 m_nCount;
 		uint32 m_nMaxPageLen;
  
 		CommonLib::alloc_t* m_pAlloc;
 		TLeafCompressorParams *m_pLeafCompParams;
 		TLeafValueMemSet *m_pValueMemset;
 		Transaction		*m_pTransaction;
+		uint32 m_nPageSize;
 	};
 }
 

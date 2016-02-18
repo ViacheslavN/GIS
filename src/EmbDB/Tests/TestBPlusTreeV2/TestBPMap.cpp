@@ -299,17 +299,18 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			storage.close();
 		}
 
-		return;
-	/*	{
+/*
+		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open(L"d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran tran5(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran3.data", &storage, 1);
 			tran5.begin();
 			testOrderINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize,  nStep, &tran5, alloc, nTreeRootPage, true);
 			storage.close();
-		}*/
+		}
+		return;*/
 	/*	{
 
 			TTran tran5(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran4.data", &storage, 1);
@@ -329,41 +330,41 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 			storage.close();
 		}
-	/*
+	
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran tran1(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran6.data", &storage, 1);
 			tran1.begin();
-			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, mRemConst, nCount, nStep, &tran1, alloc, nTreeRootPage);
+			searchINBTreeMap <TBtree, TTran, TKey, TValue>(nCacheBPTreeSize, mRemConst, nCount, nStep, &tran1, alloc, nTreeRootPage);
 			storage.close();
 		}
 	
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran7.data", &storage, 1);
 			tran.begin();
-			insertINBTreeSet <TBtree, TTran,  TKey>(nCacheBPTreeSize, mRemConst, 0, nStep, &tran, alloc, nTreeRootPage);
+			insertINBTreeMap <TBtree, TTran,  TKey, TValue>(nCacheBPTreeSize, mRemConst, 0, nStep, &tran, alloc, nTreeRootPage);
 			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 			storage.close();
 		}
 
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
-			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
+			storage.open(L"d:\\dbplus.data", false, false,  false, false);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
 			TTran tran1(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran8.data", &storage, 1);
 			tran1.begin();
-			searchINBTreeSet <TBtree, TTran, TKey>(nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage);
+			searchINBTreeMap <TBtree, TTran, TKey, TValue>(nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage);
 			storage.close();
 		}
-		{
+		/*{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open("d:\\dbplus.data", false, false,  false, false, nPageSize);
 			storage.setStoragePageInfo(nStorageInfoPage);
@@ -385,8 +386,8 @@ void TestBRteeMap()
 {
 	//__int64 nCount = 1531;
 
-	__int64 nCount = 10000000;
+	__int64 nCount = 1000000;
 		size_t nPageSize = 8192;
 
-	testBPTreeMapImpl<TBInt64Map,  embDB::CDirectTransaction, int64, int64>(nCount, nPageSize, 5000, 10);
+	testBPTreeMapImpl<TBInt64Map,  embDB::CDirectTransaction, int64, int64>(nCount, nPageSize, 50, 10);
 }

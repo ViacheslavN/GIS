@@ -25,9 +25,9 @@ namespace embDB
 
 		typedef typename _TCompressor::TLeafCompressorParams TLeafCompressorParams;
 
-		BPTreeLeafNodeSetv2Base( CommonLib::alloc_t *pAlloc, bool bMulti) :
+		BPTreeLeafNodeSetv2Base(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
 		m_leafKeyMemSet(pAlloc),  m_pCompressor(0),	m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti),
-			m_pAlloc(pAlloc), m_bOneSplit(false)
+			m_pAlloc(pAlloc), m_bOneSplit(false), m_nPageSize(nPageSize)
 
 		{
 		
@@ -46,10 +46,10 @@ namespace embDB
 			assert(m_pCompressor);
 			return  2 * sizeof(TLink) +  m_pCompressor->size();
 		}
-		virtual bool isNeedSplit(uint32 nPageSize) const
+		virtual bool isNeedSplit() const
 		{
 			assert(m_pCompressor);
-			return m_pCompressor->isNeedSplit(nPageSize - 2 *sizeof(TLink));
+			return m_pCompressor->isNeedSplit(/*nPageSize - 2 *sizeof(TLink)*/);
 		}
 		virtual size_t headSize() const
 		{
@@ -374,6 +374,21 @@ namespace embDB
 			m_pCompressor = NULL;
 
 		}
+		bool IsHaveUnion(BPTreeLeafNodeSetv2Base *pNode)
+		{
+
+			return m_pCompressor->IsHaveUnion(pNode->m_pCompressor);
+		}
+		bool IsHaveAlignment(BPTreeLeafNodeSetv2Base *pNode)
+		{
+			return m_pCompressor->IsHaveAlignment(pNode->m_pCompressor);
+		}
+		bool isHalfEmpty() const
+		{
+			return m_pCompressor->isHalfEmpty();
+		}
+		
+
 	public:
 		TCompressor * m_pCompressor;
 		TLeafMemSet m_leafKeyMemSet;
@@ -382,6 +397,7 @@ namespace embDB
 		bool m_bMulti;
 		CommonLib::alloc_t *m_pAlloc;
 		bool m_bOneSplit;
+		uint32 m_nPageSize;
 		//TComporator m_comp;
 	};
 
@@ -401,14 +417,14 @@ namespace embDB
 		typedef typename TBase::TLeafMemSet TLeafMemSet;
 		typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
 
-		BPTreeLeafNodeSetv2( CommonLib::alloc_t *pAlloc, bool bMulti) : TBase(pAlloc, bMulti)
+		BPTreeLeafNodeSetv2( CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) : TBase(pAlloc, bMulti, nPageSize)
 		{}
 
 
 		bool init(TLeafCompressorParams *pParams = NULL, Transaction* pTransaction = NULL )
 		{
 			assert(!this->m_pCompressor);
-			this->m_pCompressor = new TCompressor(pTransaction, this->m_pAlloc, pParams, &this->m_leafKeyMemSet);
+			this->m_pCompressor = new TCompressor(this->m_nPageSize - 2* sizeof(TLink), pTransaction, this->m_pAlloc, pParams, &this->m_leafKeyMemSet);
 			return true;
 		}
 	
@@ -426,6 +442,16 @@ namespace embDB
 			return this->m_pCompressor->Load(this->m_leafKeyMemSet, stream);
 		}
 
+
+		bool IsHaveUnion(BPTreeLeafNodeSetv2 *pNode)
+		{
+			 
+			return m_pCompressor->IsHaveUnion(pNode->m_pCompressor);
+		}
+		bool IsHaveAlignment(BPTreeLeafNodeSetv2 *pNode)
+		{
+			return m_pCompressor->IsHaveAlignment(pNode->m_pCompressor);
+		}
 	};
 	
 }

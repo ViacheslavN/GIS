@@ -131,16 +131,34 @@ namespace embDB
 		if(nSize == 0)
 			return true;
 		byte nCompSchema = pStream->readByte();
+		bool bRet = false;
 		if(nCompSchema == (byte)eCompressDiff)
 		{
-			 return m_DiffComp.decompress(oids, pStream);
+			 bRet =  m_DiffComp.decompress(oids, pStream);
+
+			 if(bRet)
+			 {
+				 for (uint32 i = 1; i < nSize; ++i )
+				 {
+					 m_NumLenComp.AddSymbol(oids[i] - oids[i - 1]);
+				 }
+				 
+			 }
 		}
 		else
 		{
-			return m_NumLenComp.decompress(oids, pStream);
+			 bRet = m_NumLenComp.decompress(oids, pStream);
+			 if(bRet)
+			 {
+				 for (uint32 i = 1; i < nSize; ++i )
+				 {
+					 m_DiffComp.AddSymbol(oids[i] - oids[i - 1]);
+				 }
+			 }
+
 		}
 
-		return false;
+		return bRet;
 	}
 	void OIDCompress::clear()
 	{

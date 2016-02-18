@@ -4,104 +4,146 @@
 namespace embDB
 {
 	
-		BPInnerNodeFieldCompressor::BPInnerNodeFieldCompressor(TOIDMemSet* pKeyMemSet, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc, TInnerCompressorParams *pParams) : 
-		m_pKeyMemSet(pKeyMemSet), m_pLinkMemSet(pLinkMemSet), m_nSize(0)
+		BPInnerNodeFieldCompressor::BPInnerNodeFieldCompressor(uint32 nPageSize, TOIDMemSet* pKeyMemSet, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc, TInnerCompressorParams *pParams) : 
+		m_pKeyMemSet(pKeyMemSet), m_pLinkMemSet(pLinkMemSet), m_nCount(0), m_nPageSize(nPageSize)
 		{}
 		BPInnerNodeFieldCompressor:: ~BPInnerNodeFieldCompressor(){}
-		bool BPInnerNodeFieldCompressor::Load(TOIDMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
+		bool BPInnerNodeFieldCompressor::Load(TOIDMemSet& oidSet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
 		{
-			CommonLib::FxMemoryReadStream KeyStreams;
+			CommonLib::FxMemoryReadStream OIDStreams;
 			CommonLib::FxMemoryReadStream LinkStreams;
 
-			m_nSize = stream.readInt32();
-			if(!m_nSize)
+			m_nCount = stream.readInt32();
+			if(!m_nCount)
 				return true;
 
-			keySet.reserve(m_nSize);
-			linkSet.reserve(m_nSize);
 
-			uint32 nKeySize =   stream.readInt32();//m_nSize * sizeof(TKey);
-			uint32 nLinkSize =  stream.readInt32();//m_nSize * sizeof(int64);
+			oidSet.reserve(m_nCount);
+			linkSet.reserve(m_nCount);
 
-			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
-			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
+			uint32 nRowNoCompSize = m_nCount * (sizeof(TLink) + sizeof(TOID));
+			bool bNoComp = nRowNoCompSize < (m_nPageSize - sizeof(uint32));
+			uint32 nOIDSize =   0;
+			uint32 nLinkSize = 0;
 
-		//	TKey key;
-		//	TLink nlink;
 
-			m_OIDCompressor.decompress(m_nSize, keySet, &KeyStreams);
-			m_LinkCompressor.decompress(m_nSize, linkSet, &LinkStreams);
-		/*	for (uint32 nIndex = 0; nIndex < m_nSize; ++nIndex)
+			
+
+			 if(bNoComp)
+			 {
+				nOIDSize =   m_nCount * (sizeof(TOID));
+				nLinkSize =  m_nCount * (sizeof(TLink));
+			 }
+			 else
+			 {
+				 nOIDSize =   stream.readInt32();
+				 nLinkSize =  stream.readInt32();
+			 }
+
+
+			OIDStreams.attachBuffer(stream.buffer() + stream.pos(), nOIDSize);
+			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nOIDSize, nLinkSize);
+
+
+			if(bNoComp)
 			{
-				//KeyStreams.read(key);
-				LinkStreams.read(nlink);
+				TOID oid;
+				TLink nlink;
 
-				//keySet.push_back(key);
-				linkSet.push_back(nlink);
-			}*/
-			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);		
+				for (uint32 nIndex = 0; nIndex < m_nCount; ++nIndex)
+				{
+					OIDStreams.read(oid);
+					LinkStreams.read(nlink);
+
+					oidSet.push_back(oid);
+					linkSet.push_back(nlink);
+
+
+					if(nIndex != 0)
+						m_OIDCompressor.AddDiffSymbol(oidSet[nIndex] - oidSet[nIndex - 1]);
+
+					m_LinkCompressor.AddLink(nlink);
+				}
+			}
+			else
+			{
+				m_OIDCompressor.decompress(m_nCount, oidSet, &OIDStreams);
+				m_LinkCompressor.decompress(m_nCount, linkSet, &LinkStreams);
+			}
+
+			stream.seek(stream.pos() + nOIDSize + nLinkSize, CommonLib::soFromBegin);		
 			return true;
 		}
-		bool BPInnerNodeFieldCompressor::Write(TOIDMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryWriteStream& stream)
+		bool BPInnerNodeFieldCompressor::Write(TOIDMemSet& oidSet, TLinkMemSet& linkSet, CommonLib::FxMemoryWriteStream& stream)
 		{
-			uint32 nSize = (uint32)keySet.size();
-			assert(m_nSize == nSize);
+			uint32 nSize = (uint32)oidSet.size();
+			assert(m_nCount == nSize);
 			stream.write(nSize);
 			if(!nSize)
 				return true;
 
-			CommonLib::FxMemoryWriteStream KeyStreams;
-			CommonLib::FxMemoryWriteStream LinkStreams;
 
-			uint32 nKeySize = m_OIDCompressor.GetComressSize();			// nSize * sizeof(TKey);
-			uint32 nLinkSize=  m_LinkCompressor.GetComressSize();
-			//uint32 nLinkSize =  nSize * sizeof(int64);
+			uint32 nRowNoCompSize = m_nCount * (sizeof(TLink) + sizeof(TOID));
+			bool bNoComp = nRowNoCompSize < (m_nPageSize - sizeof(uint32));
+			uint32 nOIDSize =   0;
+			uint32 nLinkSize = 0;
 
-			stream.write(nKeySize);
-			stream.write(nLinkSize);
 
-			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
-			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
-			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);	
-
-			m_OIDCompressor.compress(keySet, &KeyStreams);
-			m_LinkCompressor.compress(linkSet, &LinkStreams);
-
-			/*for(size_t i = 0, sz = keySet.size(); i < sz; ++i)
+			if(bNoComp)
 			{
-				//KeyStreams.write(keySet[i]);
-				LinkStreams.write(linkSet[i]);
-			}*/
-			
+				nOIDSize =   m_nCount * (sizeof(TOID));
+				nLinkSize =  m_nCount * (sizeof(TLink));
+			}
+			else
+			{
+				nOIDSize = m_OIDCompressor.GetComressSize();			// nSize * sizeof(TKey);
+				nLinkSize=  m_LinkCompressor.GetComressSize();
 
-			/*uint32 nByte = m_OIDCompress.GetRowSize();
+				stream.write(nOIDSize);
+				stream.write(nLinkSize);
+			}
+
 
 			CommonLib::FxMemoryWriteStream OIDStreams;
+			CommonLib::FxMemoryWriteStream LinkStreams;
 
-			OIDStreams.create(nByte);
+		
+			//uint32 nLinkSize =  nSize * sizeof(int64);
 
-			m_OIDCompress.compress(keySet, &OIDStreams);
+
+			OIDStreams.attachBuffer(stream.buffer() + stream.pos(), nOIDSize);
+			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nOIDSize, nLinkSize);
+			stream.seek(stream.pos() + nOIDSize + nLinkSize, CommonLib::soFromBegin);	
 
 
-			CommonLib::FxMemoryReadStream OIDReadStreams;
-			OIDReadStreams.attachBuffer(OIDStreams.buffer(), OIDStreams.size());
-			TKeyMemSet oidSet;
-			m_OIDCompress.read(m_nSize, oidSet, &OIDReadStreams);*/
 
+			if(bNoComp)
+			{
+				for(size_t i = 0, sz = oidSet.size(); i < sz; ++i)
+				{
+					OIDStreams.write(oidSet[i]);
+					LinkStreams.write(linkSet[i]);
+				}
+			}
+			else
+			{
+				m_OIDCompressor.compress(oidSet, &OIDStreams);
+				m_LinkCompressor.compress(linkSet, &LinkStreams);
+			}
 			return true;
 		}
 
 		bool BPInnerNodeFieldCompressor::insert(int nIndex, const TOID& oid, TLink link )
 		{
-			m_nSize++;
+			m_nCount++;
 
-			m_OIDCompressor.AddSymbol(m_nSize, nIndex, oid, *m_pKeyMemSet);
+			m_OIDCompressor.AddSymbol(m_nCount, nIndex, oid, *m_pKeyMemSet);
 			m_LinkCompressor.AddLink(link);
 			return true;
 		}
 		bool BPInnerNodeFieldCompressor::add(const TOIDMemSet& keySet, const TLinkMemSet& linkSet)
 		{
-			uint32 nOff = m_nSize;
+			uint32 nOff = m_nCount;
 			for (uint32 i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
 				insert(i + nOff, keySet[i], linkSet[i]);
@@ -110,7 +152,7 @@ namespace embDB
 		}
 		bool BPInnerNodeFieldCompressor::recalc(const TOIDMemSet& keySet, const TLinkMemSet& linkSet)
 		{
-			m_nSize = keySet.size();
+			m_nCount = keySet.size();
 			m_LinkCompressor.clear();
 			m_OIDCompressor.clear();
 			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
@@ -124,8 +166,8 @@ namespace embDB
 		}
 		bool BPInnerNodeFieldCompressor::remove(int nIndex, const TOID& oid, TLink link)
 		{
-			m_nSize--;
-			m_OIDCompressor.RemoveSymbol(m_nSize, nIndex, oid, *m_pKeyMemSet);
+			m_nCount--;
+			m_OIDCompressor.RemoveSymbol(m_nCount, nIndex, oid, *m_pKeyMemSet);
 			m_LinkCompressor.RemoveLink(link);
 			
 			return true;
@@ -144,16 +186,16 @@ namespace embDB
 			//uint32 nLinkSize = m_LinkCompressor.GetComressSize();
 			return nRowSize + nHeadSize;
 		}
-		bool  BPInnerNodeFieldCompressor::isNeedSplit(uint32 nPageSize) const
+		bool  BPInnerNodeFieldCompressor::isNeedSplit() const
 		{
 
-			if(m_nSize > 8192)
+			if(m_nCount > 8192)
 				return true;
 
 			uint32 nRowSize = rowSize();
 			uint32 nHeadSize = headSize();
 
-			if(nPageSize > (nRowSize + nHeadSize))
+			if(m_nPageSize > (nRowSize + nHeadSize))
 			{
 				return false;
 			}
@@ -162,7 +204,7 @@ namespace embDB
 		}
 		uint32 BPInnerNodeFieldCompressor::count() const
 		{
-			return m_nSize;
+			return m_nCount;
 		}
 		uint32 BPInnerNodeFieldCompressor::headSize() const
 		{
@@ -181,7 +223,7 @@ namespace embDB
 		}
 		void BPInnerNodeFieldCompressor::clear()
 		{
-			m_nSize = 0;
+			m_nCount = 0;
 			m_OIDCompressor.clear();
 			m_LinkCompressor.clear();
 		}
@@ -194,7 +236,22 @@ namespace embDB
 		{
 			uint32 nSize = nEnd- nBegin;
 		 
-			m_nSize -= nSize;
-			pCompressor->m_nSize += nSize;
+			m_nCount -= nSize;
+			pCompressor->m_nCount += nSize;
+		}
+
+		bool BPInnerNodeFieldCompressor::IsHaveUnion(BPInnerNodeFieldCompressor *pCompressor) const
+		{
+			uint32 nNoCompSize = m_nCount * (sizeof(TOID) + sizeof(TLink));
+			uint32 nNoCompSizeUnion = pCompressor->m_nCount * (sizeof(TOID) + sizeof(TLink));
+
+			return (nNoCompSize + nNoCompSizeUnion + tupleSize()) < (m_nPageSize - headSize());
+
+
+		}
+		bool BPInnerNodeFieldCompressor::IsHaveAlignment(BPInnerNodeFieldCompressor *pCompressor) const
+		{
+			uint32 nNoCompSize = m_nCount * (sizeof(TOID) + sizeof(TLink));
+			return nNoCompSize < (m_nPageSize - headSize());
 		}
 }

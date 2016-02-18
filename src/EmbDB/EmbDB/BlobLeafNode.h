@@ -22,8 +22,8 @@ namespace embDB
 		typedef typename TBase::TLeafCompressorParams	TLeafCompressorParams;
 		typedef TBPVector<sBlobVal>		TValueMemSet;
 
-		TBlobLeafNode( CommonLib::alloc_t *pAlloc, bool bMulti) :
-		TBase(pAlloc, bMulti), m_pPageAlloc(NULL)
+		TBlobLeafNode( CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
+		TBase(pAlloc, bMulti, nPageSize), m_pPageAlloc(NULL)
 		{
 
 		}
@@ -37,7 +37,7 @@ namespace embDB
 		bool init(TLeafCompressorParams *pParams, Transaction* pTransaction)
 		{
 			assert(!this->m_pCompressor);
-			this->m_pCompressor = new TCompressor(pTransaction, (CommonLib::alloc_t*)m_pPageAlloc, pParams, &this->m_leafKeyMemSet, &this->m_leafValueMemSet);
+			this->m_pCompressor = new TCompressor(m_nPageSize - 2 * sizeof(TLink),  pTransaction, (CommonLib::alloc_t*)m_pPageAlloc, pParams, &this->m_leafKeyMemSet, &this->m_leafValueMemSet);
 			return true;
 		}
 

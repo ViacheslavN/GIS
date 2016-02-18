@@ -34,14 +34,14 @@ namespace embDB
 
 		BPTreeNodeSetv2(int64 nParentAddr, CommonLib::alloc_t *pAlloc, int64 nPageAddr, bool bMulti, bool  bIsLeaf, bool bCheckCRC32,
 			uint32 nPageSize,	TInnerCompressorParams *pInnerCompParams = NULL, TLeafCompressorParams *pLeafCompParams = NULL) :
-		m_bIsLeaf(bIsLeaf)
+			m_bIsLeaf(bIsLeaf)
 			,m_nPageAddr(nPageAddr)
 			,m_pAlloc(pAlloc)
 			,m_nParent(nParentAddr)
 			,m_bMulti(bMulti)
 			,m_pBaseNode(0)
-			,m_LeafNode(pAlloc,  bMulti)
-			,m_InnerNode(pAlloc, bMulti)
+			,m_LeafNode(pAlloc,  bMulti, nPageSize - ( sFilePageHeader::size() + 1))
+			,m_InnerNode(pAlloc, bMulti, nPageSize - ( sFilePageHeader::size() + 1))
 			,m_nFoundIndex(-1)
 			,m_nType(0)
 			,m_bValidNextKey(false)
@@ -97,14 +97,7 @@ namespace embDB
 
 			if(!pFilePage.get())
 				return false;
-
-
-			if(m_nPageAddr == 581729)
-			{
-				int dd = 0;
-				dd++;
-			}
-
+ 
 					
 			CommonLib::FxMemoryWriteStream stream;
 
@@ -195,10 +188,10 @@ namespace embDB
 			return sFilePageHeader::size() + 1 + /*3 * sizeof(int16) */+ m_pBaseNode->size();
 		}
 
-		bool isNeedSplit(uint32 nPageSize) const
+		bool isNeedSplit() const
 		{
 			assert(m_pBaseNode);
-			return m_pBaseNode->isNeedSplit(nPageSize - ( sFilePageHeader::size() + 1));
+			return m_pBaseNode->isNeedSplit();
 		}
 
 		size_t headSize()
@@ -475,6 +468,32 @@ namespace embDB
 				m_InnerNode.clear();
 		}
 
+
+		bool IsHaveUnion(BPTreeNodeSetv2 *pNode)
+		{
+			assert(pNode);
+			if(m_bIsLeaf)
+				return m_LeafNode.IsHaveUnion(&pNode->m_LeafNode);
+			else
+				return m_InnerNode.IsHaveUnion(&pNode->m_InnerNode);
+		}
+		bool IsHaveAlignment(BPTreeNodeSetv2 *pNode)
+		{
+			assert(pNode);
+			if(m_bIsLeaf)
+				return m_LeafNode.IsHaveAlignment(&pNode->m_LeafNode);
+			else
+				return m_InnerNode.IsHaveAlignment(&pNode->m_InnerNode);
+		}
+
+
+		bool isHalfEmpty() const
+		{
+			if(m_bIsLeaf)
+				return m_LeafNode.isHalfEmpty();
+			else
+				return m_InnerNode.isHalfEmpty();
+		}
 	public:
 
 		BPBaseTreeNode* m_pBaseNode;
@@ -493,6 +512,8 @@ namespace embDB
 
  
 
+ 
+
 
 		TInnerCompressorParams *m_pInnerCompParams;
 		TLeafCompressorParams *m_pLeafCompParams;
@@ -503,7 +524,7 @@ namespace embDB
 		TParentNodePtr m_pParent;
 		int32 m_nFoundIndex;
 		int64 m_nParent;
-		uint32 m_nPageSize;
+		 uint32 m_nPageSize;
 	};
 }
 #endif

@@ -25,8 +25,8 @@ namespace embDB
 			return NULL;
 		}
 
-		BPSpatialRectLeafNodeMapSimpleCompressor(_Transaction *pTran = 0, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = 0,
-			TLeafKeyMemSet *pKeyMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nSize(0)
+		BPSpatialRectLeafNodeMapSimpleCompressor(uint32 nPageSize, _Transaction *pTran = 0, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = 0,
+			TLeafKeyMemSet *pKeyMemset= NULL, TLeafValueMemSet *pValueMemSet = NULL) : m_nSize(0), m_nPageSize(nPageSize)
 		{}
 		virtual ~BPSpatialRectLeafNodeMapSimpleCompressor(){}
 		virtual bool Load(TLeafKeyMemSet& vecKeys, TLeafValueMemSet& vecValues, CommonLib::FxMemoryReadStream& stream)
@@ -125,9 +125,9 @@ namespace embDB
 		{
 			return (TCoordPoint::SizeInByte + sizeof(TValue)) *  m_nSize +  sizeof(uint32);
 		}
-		virtual bool isNeedSplit(uint32 nPageSize) const
+		virtual bool isNeedSplit() const
 		{
-			return nPageSize < size();
+			return m_nPageSize < size();
 		}
 		virtual size_t count() const
 		{
@@ -154,7 +154,7 @@ namespace embDB
 		}
 	private:
 		size_t m_nSize;
-
+		uint32 m_nPageSize;
 	};
 }
 

@@ -31,9 +31,9 @@ namespace embDB
 
 		typedef typename _TCompressor::TInnerCompressorParams TInnerCompressorParams;
 		
-		BPTreeInnerNodeSetv2( CommonLib::alloc_t *pAlloc,  bool bMulti) :
+		BPTreeInnerNodeSetv2( CommonLib::alloc_t *pAlloc,  bool bMulti, uint32 nPageSize) :
 		  m_pCompressor(0), m_nLess(-1),  m_innerKeyMemSet(pAlloc), m_innerLinkMemSet(pAlloc), m_bMulti(bMulti),
-			  m_pAlloc(pAlloc), m_bOneSplit(false)
+			  m_pAlloc(pAlloc), m_bOneSplit(false), m_nPageSize(nPageSize)
 		{
 			
 		}
@@ -41,7 +41,7 @@ namespace embDB
 		virtual bool init(TInnerCompressorParams *pParams = NULL, Transaction* pTransaction = NULL )
 		{
 			assert(!m_pCompressor);
-			m_pCompressor = new TCompressor(&m_innerKeyMemSet, &m_innerLinkMemSet, m_pAlloc, pParams);
+			m_pCompressor = new TCompressor(m_nPageSize - sizeof(TLink), &m_innerKeyMemSet, &m_innerLinkMemSet, m_pAlloc, pParams);
 			return true;
 		}
 		~BPTreeInnerNodeSetv2()
@@ -56,10 +56,10 @@ namespace embDB
 			assert(m_pCompressor);
 			return sizeof(TLink) +  m_pCompressor->size();
 		}
-		virtual bool isNeedSplit(uint32 nPageSize) const
+		virtual bool isNeedSplit() const
 		{
 			assert(m_pCompressor);
-			return m_pCompressor->isNeedSplit(nPageSize - sizeof(TLink));
+			return m_pCompressor->isNeedSplit();
 		}
 		virtual size_t headSize() const
 		{
@@ -460,6 +460,25 @@ namespace embDB
 			m_pCompressor = NULL;
 
 		}
+
+
+
+	 
+
+
+		bool IsHaveUnion(BPTreeInnerNodeSetv2 *pNode)
+		{
+			return m_pCompressor->IsHaveUnion(pNode->m_pCompressor);
+		}
+		bool IsHaveAlignment(BPTreeInnerNodeSetv2 *pNode)
+		{
+			return m_pCompressor->IsHaveAlignment(pNode->m_pCompressor);
+		}
+		bool isHalfEmpty() const
+		{
+			return m_pCompressor->isHalfEmpty();
+		}
+
 	public:
 		TLink m_nLess;
 		TKeyMemSet m_innerKeyMemSet;
@@ -469,6 +488,7 @@ namespace embDB
 		TCompressor *m_pCompressor;
 		CommonLib::alloc_t *m_pAlloc;
 		bool m_bOneSplit;
+		uint32 m_nPageSize;
 	};	
 }
 

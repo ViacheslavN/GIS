@@ -22,8 +22,8 @@ namespace embDB
 		typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
 		typedef _TValueMemSet TValueMemSet;
 
-		BPTreeLeafNodeMapv2( CommonLib::alloc_t *pAlloc, bool bMulti) :
-			TBase(pAlloc, bMulti), m_leafValueMemSet(pAlloc)
+		BPTreeLeafNodeMapv2( CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
+			TBase(pAlloc, bMulti, nPageSize), m_leafValueMemSet(pAlloc)
 		{
 
 		}
@@ -36,7 +36,7 @@ namespace embDB
 		virtual bool init(TLeafCompressorParams *pParams = NULL, Transaction* pTransaction = NULL )
 		{
 			assert(!this->m_pCompressor);
-			this->m_pCompressor = new TCompressor(pTransaction,this-> m_pAlloc, pParams, &this->m_leafKeyMemSet, &this->m_leafValueMemSet);
+			this->m_pCompressor = new TCompressor(this->m_nPageSize - 2 *sizeof(TLink), pTransaction,this-> m_pAlloc, pParams, &this->m_leafKeyMemSet, &this->m_leafValueMemSet);
 			return true;
 		}
 		
@@ -181,6 +181,8 @@ namespace embDB
 			this->m_pCompressor = NULL;
 
 		}
+		
+
 	public:
 		TValueMemSet m_leafValueMemSet;
 	

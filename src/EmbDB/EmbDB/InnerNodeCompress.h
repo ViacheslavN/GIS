@@ -31,7 +31,7 @@ namespace embDB
 		}
 
 
-		BPInnerNodeFieldCompressor(TOIDMemSet* pKeyMemSet, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = NULL);
+		BPInnerNodeFieldCompressor(uint32 nPageSize,  TOIDMemSet* pKeyMemSet, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = NULL);
 		~BPInnerNodeFieldCompressor();
 		bool Load(TOIDMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream);
 		bool Write(TOIDMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryWriteStream& stream);
@@ -43,20 +43,24 @@ namespace embDB
 		virtual bool remove(int nIndex, const TOID& key, TLink link);
 		virtual bool update(int nIndex, const TOID& key, TLink link);
 		virtual uint32 size() const;
-		virtual bool  isNeedSplit(uint32 nPageSize) const;
+		virtual bool  isNeedSplit() const;
 		virtual uint32 count() const;
 		uint32 headSize() const;
 		uint32 rowSize() const;
 		void clear();
 		uint32 tupleSize() const;
 		void SplitIn(uint32 nBegin, uint32 nEnd, BPInnerNodeFieldCompressor *pCompressor);
-	
+
+
+		bool IsHaveUnion(BPInnerNodeFieldCompressor *pCompressor) const;
+		bool IsHaveAlignment(BPInnerNodeFieldCompressor *pCompressor) const;
 	private:
-		uint32 m_nSize;
+		uint32 m_nCount;
 		TOIDMemSet* m_pKeyMemSet;
 		TLinkMemSet* m_pLinkMemSet;
 		OIDCompress m_OIDCompressor;
 		InnerLinkCompress m_LinkCompressor;
+		uint32 m_nPageSize;
 	};
 }
 
