@@ -11,6 +11,7 @@
 #include "RangeCoder.h"
 #include <iostream>
 #include <vector>
+#include "CommonLibrary/algorithm.h"
 
 double Log2( double n );
 
@@ -108,7 +109,7 @@ public:
 			if(CalcFreq[i] == 0)
 				continue;
 
-			dMinSize += CalcFreq[i] * (-1*Log2((double)CalcFreq[i]/nFileSize));
+			dMinSize += CalcFreq[i] * (Log2((double)nFileSize/(double)CalcFreq[i]));
 		}
 		uint64 nMinByteSize = (uint64)(dMinSize + 7)/8;
 		int64 nError = nOutFileSize - nMinByteSize;
@@ -231,7 +232,7 @@ public:
 		{
 			if(Freq[i] == 0)
 				continue;
-			dMinSize += Freq[i] * (-1*Log2((double)Freq[i]/nFileSize));
+			dMinSize += Freq[i] * (Log2((double)nFileSize/(double)Freq[i]));
 		}
 
 		for(int i = 0;i < 257; i++) 
@@ -254,11 +255,6 @@ public:
 
 		for (uint32 i = 0; i < nFileSize; ++i)
 		{
-			if(i == 4500)
-			{
-				int dd = 0;
-				dd++;
-			}
 			byte ch= m_pReadStream.readByte();
 			coder.EncodeSymbol(FreqPrev[ch], FreqPrev[ch+1], nFileSize);
 		}
@@ -330,14 +326,22 @@ public:
 		{
 			unsigned int freq = coder.GetFreq(nFileSize);
 
-			if(i == 998)
+			
+			byte Symbol;
+			for(Symbol = 255;FreqPrev[Symbol] > freq;Symbol--);
+
+
+			byte Symbol2 = 0;
+
+			int32 nIndex = CommonLib::upper_bound(FreqPrev, 256, freq);
+			if(nIndex != 0)
+				nIndex--;
+			if(byte(nIndex) != Symbol)
 			{
 				int dd = 0;
 				dd++;
 			}
 
-			byte Symbol;
-			for(Symbol = 255;FreqPrev[Symbol] > freq;Symbol--);
 	
 			m_pWriteStream.write(Symbol);
 			coder.DecodeSymbol(FreqPrev[Symbol], FreqPrev[Symbol+1], nFileSize);

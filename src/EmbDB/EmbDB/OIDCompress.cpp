@@ -43,7 +43,7 @@ namespace embDB
 			else
 			{
 				int64 nPrevOID =  vecOIDs[nIndex - 1];
-				if(nIndex == (vecOIDs.size() - 1))
+				if(nIndex == nSize - 1)
 				{
 					AddDiffSymbol(nOID - nPrevOID); 
 				}

@@ -306,8 +306,10 @@ namespace embDB
 		bool UnionWith(BPTreeLeafNodeSetv2Base* pNode, bool bLeft, 
 			int *nCheckIndex = 0)
 		{
+			
 			m_pCompressor->add(pNode->m_leafKeyMemSet);
 			UnionVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft, nCheckIndex);
+		
 		/*	m_pCompressor->add(pNode->m_leafKeyMemSet);
 			if(bLeft)
 			{

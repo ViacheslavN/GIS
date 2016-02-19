@@ -216,6 +216,9 @@
     <ClInclude Include="RangeCoder.h">
       <Filter>compress</Filter>
     </ClInclude>
+    <ClInclude Include="algorithm.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

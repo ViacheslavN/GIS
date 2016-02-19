@@ -94,7 +94,7 @@ namespace embDB
 					if(m_BitsLensFreq[i] == 0)
 						continue;
 					double dFreq = m_BitsLensFreq[i];
-					double dLog2 = -1*mathUtils::Log2(dFreq/(double)m_nCount); 
+					double dLog2 = mathUtils::Log2((double)m_nCount/dFreq); 
 					dBitRowSize += (dFreq* dLog2);
 
 				}
@@ -403,10 +403,13 @@ namespace embDB
 				TValue value = 0;
 				for (size_t i = 0; i < m_nCount; ++i)
 				{
-					unsigned int freq = decoder.GetFreq(m_nCount);
+					uint32 freq = decoder.GetFreq(m_nCount);
 
-					uint32 nBitLen;
-					for(nBitLen = _nMaxBitsLens;FreqPrev[nBitLen] > freq;nBitLen--);
+					//uint32 nBitLen;
+					//for(nBitLen = _nMaxBitsLens;FreqPrev[nBitLen] > freq;nBitLen--);
+					int32 nBitLen = CommonLib::upper_bound(FreqPrev, _nMaxBitsLens, freq);
+					if(nBitLen != 0)
+						nBitLen--;
 
 					
 					pBitStream->readBits(value, nBitLen);

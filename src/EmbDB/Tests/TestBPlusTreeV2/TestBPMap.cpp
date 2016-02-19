@@ -298,7 +298,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			searchINBTreeMap <TBtree, TTran, TKey, TValue>(nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage);
 			storage.close();
 		}
-
+		
 /*
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
@@ -386,7 +386,7 @@ void TestBRteeMap()
 {
 	//__int64 nCount = 1531;
 
-	__int64 nCount = 1000000;
+	__int64 nCount = 100000000;
 		size_t nPageSize = 8192;
 
 	testBPTreeMapImpl<TBInt64Map,  embDB::CDirectTransaction, int64, int64>(nCount, nPageSize, 50, 10);

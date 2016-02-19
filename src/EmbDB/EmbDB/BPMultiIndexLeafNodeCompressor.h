@@ -138,6 +138,11 @@ namespace embDB
 			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(int64) );
 			return nNoCompSize < (m_nPageSize - headSize());
 		}
+		bool isHalfEmpty() const
+		{
+			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(int64));
+			return nNoCompSize < (m_nPageSize - headSize())/2;
+		}
 	private:
 		size_t m_nCount;
 		uint32 m_nPageSize;

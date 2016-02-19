@@ -54,6 +54,7 @@ namespace embDB
 
 		bool IsHaveUnion(BPInnerNodeFieldCompressor *pCompressor) const;
 		bool IsHaveAlignment(BPInnerNodeFieldCompressor *pCompressor) const;
+		bool isHalfEmpty() const;
 	private:
 		uint32 m_nCount;
 		TOIDMemSet* m_pKeyMemSet;

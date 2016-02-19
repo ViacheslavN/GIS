@@ -296,6 +296,11 @@ namespace embDB
 			//uint32 nNoCompSize = m_nCount * (sizeof(TOID) + sizeof(TLink));
 			return false;//nNoCompSize < (m_nPageSize - headSize());
 		}
+
+		bool isHalfEmpty() const
+		{ 
+			return rowSize()  < (m_nPageSize - headSize())/2;
+		}
 	private:
 		int GetBlobSize(const sBlobVal& blob) const 
 		{

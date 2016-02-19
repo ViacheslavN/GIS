@@ -50,11 +50,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	compressStaticFile(sSrcFile.cwstr(), L"D:\\test\\files\\bib.static.compress");
 	DecompressStaticFile(nOutSize, L"D:\\test\\files\\bib.static.compress", L"D:\\test\\files\\bib.static.compress.decompress");
 	*/
-	//CTestCompess test;
+	CTestCompess test;
 	//test.compressFile(L"D:\\test\\files\\adigit", L"D:\\test\\files\\adigit.compress");
-	//test.TestCompress(L"D:\\test\\files");
+	test.TestCompress(L"D:\\test\\files");
 
-	TestNumLen();
+//	TestNumLen();
 //	TestDiffComp();
 	return 0;
 }

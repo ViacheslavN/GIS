@@ -137,6 +137,8 @@ namespace embDB
 			this->m_pCompressor->add(pNode->m_leafKeyMemSet, pNode->m_leafValueMemSet);
 			this->UnionVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft, nCheckIndex);
 			this->UnionVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, bLeft);
+			
+		
 			return true;
 		}
 		bool AlignmentOf(BPTreeLeafNodeMapv2* pNode, bool bFromLeft)

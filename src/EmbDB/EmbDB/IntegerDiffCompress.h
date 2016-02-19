@@ -104,6 +104,9 @@ template<class _TValue,
 				SymbolInfo& symInfo =  it->second;
 				symInfo.m_nFreq--;
 				m_nCount--;
+
+				if(symInfo.m_nFreq == 0)
+					m_SymbolsFreq.erase(it);
 			}
  
 			 
@@ -113,8 +116,8 @@ template<class _TValue,
 				for (TSymbolsFreq::const_iterator it = m_SymbolsFreq.begin(); it != m_SymbolsFreq.end(); ++it)
 				{
 					const SymbolInfo& info = it->second;
-					double dFreq = info.m_nFreq;
-					double dLog2 = -1*mathUtils::Log2(dFreq/(double)m_nCount); 
+				 	double dFreq = info.m_nFreq;
+					double dLog2 =  mathUtils::Log2((double)m_nCount/dFreq); 
 					dBitRowSize += (dFreq * dLog2);
 
 				}
@@ -338,6 +341,7 @@ template<class _TValue,
 		
 					info.m_nLow = nPrevF;
 					info.m_nHight = info.m_nLow + nFreq;
+					info.m_nFreq = nFreq;
 
 					nPrevF = info.m_nHight;
 					m_SymbolsFreq.insert(std::make_pair(nDiff, info));

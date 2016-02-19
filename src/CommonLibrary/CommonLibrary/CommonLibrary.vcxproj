@@ -437,6 +437,7 @@
     <None Include="toupper.incl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="algorithm.h" />
     <ClInclude Include="alloc_t.h" />
     <ClInclude Include="ArithmeticCoder.h" />
     <ClInclude Include="AutoPtr.h" />

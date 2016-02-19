@@ -174,6 +174,14 @@ namespace embDB
 		}
 		bool BPInnerNodeFieldCompressor::update(int nIndex, const TOID& key, TLink link)
 		{
+
+
+			m_OIDCompressor.RemoveSymbol(m_nCount, nIndex, (*m_pKeyMemSet)[nIndex], *m_pKeyMemSet);
+			m_LinkCompressor.RemoveLink((*m_pLinkMemSet)[nIndex]);
+
+
+			m_OIDCompressor.AddSymbol(m_nCount, nIndex, key, *m_pKeyMemSet);
+			m_LinkCompressor.AddLink(link);
 			return true;
 		}
 		uint32 BPInnerNodeFieldCompressor::size() const
@@ -253,5 +261,10 @@ namespace embDB
 		{
 			uint32 nNoCompSize = m_nCount * (sizeof(TOID) + sizeof(TLink));
 			return nNoCompSize < (m_nPageSize - headSize());
+		}
+		bool BPInnerNodeFieldCompressor::isHalfEmpty() const
+		{
+			uint32 nNoCompSize = m_nCount * (sizeof(TOID) + sizeof(TLink));
+			return nNoCompSize < (m_nPageSize - headSize())/2;
 		}
 }

@@ -314,6 +314,10 @@ namespace embDB
 			 
 			return false;
 		}
+		bool isHalfEmpty() const
+		{ 
+			return rowSize()  < (m_nPageSize - headSize())/2;
+		}
 	private:
 		int GetStingSize(const sStringVal& sStr) const 
 		{

@@ -177,16 +177,25 @@ namespace embDB
 		}
 		virtual bool insert(uint32 nIndex, const TOID& oid, const TValue& value)
 		{
-			m_nCount++;
+			m_nCount++;			
 			m_OIDCompressor.AddSymbol(m_nCount, nIndex, oid, *m_pOIDMemSet);
 			return true;
 		}
 		virtual bool add(const TOIDMemSet& vecOIDs, const TLeafValueMemSet& vecValues)
 		{
-			uint32 nOff = m_nCount;
-			for (uint32 i = 0, sz = vecOIDs.size(); i < sz; 	++i)
+			//uint32 nOff = m_nCount;
+
+			if(!vecOIDs.empty())
 			{
-				insert(i + nOff, vecOIDs[i], vecValues[i]);
+				m_OIDCompressor.AddDiffSymbol(vecOIDs[0] - (*m_pOIDMemSet)[m_nCount - 1]);
+				m_nCount++;
+			}
+			
+			for (uint32 i = 1, sz = vecOIDs.size(); i < sz; 	++i)
+			{
+				//insert(i + nOff, vecOIDs[i], vecValues[i]);
+				m_OIDCompressor.AddDiffSymbol(vecOIDs[i] - vecOIDs[i - 1]);
+				m_nCount++;
 			}
 			return true;
 		}
@@ -281,6 +290,11 @@ namespace embDB
 		{
 			uint32 nNoCompSize = m_nCount * (sizeof(TOID) + sizeof(TValue));
 			return nNoCompSize < (m_nPageSize - headSize());
+		}
+		bool isHalfEmpty() const
+		{
+			uint32 nNoCompSize = m_nCount * (sizeof(TOID) + sizeof(TValue));
+			return nNoCompSize < (m_nPageSize - headSize())/2;
 		}
 	private:
 		size_t m_nCount;
