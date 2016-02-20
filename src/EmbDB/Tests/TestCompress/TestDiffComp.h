@@ -24,7 +24,7 @@ public:
 	uint32 GetCompressSize();
 	void compress( const embDB::TBPVector<uint64>& vecLinks, CommonLib::IWriteStream *pStream);
 	void decompress( embDB::TBPVector<uint64>& vecLinks, CommonLib::IReadStream *pStream);
-
+	void RemoveDiff(int64 nDiff);
 private:
 
 

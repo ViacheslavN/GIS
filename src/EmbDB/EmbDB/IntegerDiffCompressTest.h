@@ -110,16 +110,20 @@ template<class _TValue,
 			double GetCodeBitSize() const
 			{
 				double dBitRowSize = 0;
-				for (TSymbolsFreq::const_iterator it = m_SymbolsFreq.begin(); it != m_SymbolsFreq.end(); ++it)
+				if(m_SymbolsFreq.size() > 1)
 				{
-					const SymbolInfo& info = it->second;
-					double dFreq = info.m_nFreq;
-					double dLog2 = -1*mathUtils::Log2(dFreq/(double)m_nCount); 
-					dBitRowSize += (dFreq * dLog2);
+					for (TSymbolsFreq::const_iterator it = m_SymbolsFreq.begin(); it != m_SymbolsFreq.end(); ++it)
+					{
+						const SymbolInfo& info = it->second;
+						double dFreq = info.m_nFreq;
+						double dLog2 = -1*mathUtils::Log2(dFreq/(double)m_nCount); 
+						dBitRowSize += (dFreq * dLog2);
 
+					}
 				}
-				if(dBitRowSize < 32)
-					dBitRowSize = 32;
+				
+				if(dBitRowSize < 64)
+					dBitRowSize = 64;
 				dBitRowSize  += (dBitRowSize /m_nError); 
 				return dBitRowSize;
 			}

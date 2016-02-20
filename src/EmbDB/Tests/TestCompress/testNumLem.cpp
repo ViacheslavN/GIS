@@ -27,7 +27,10 @@ void CTestNumLem::decompress(embDB::TBPVector<int64>& vecLinks, CommonLib::IRead
 {
 	m_compressor.decompress(vecLinks, pStream);
 }
-
+void CTestNumLem::RemoveLink(int64 nLink)
+{
+	m_compressor.RemoveSymbol(nLink);
+}
 
 void TestNumLen()
 {
@@ -43,10 +46,10 @@ void TestNumLen()
 	for (uint64 i = 0; i < 0xFFFFFFFFFFFF; i += 1024)
 	{
 		nCnt++;
-		test.AddLink(255);
-		vec1.push_back(255);
+		test.AddLink(i);
+		vec1.push_back(i);
 		nSize = test.GetCompressSize();
-		if(nSize > 8192 || nCnt > 1259)
+		if(nSize > 8192 )
 		{
 			WriteStream.create(nSize);
 			test.compress(vec1, &WriteStream);
@@ -63,6 +66,8 @@ void TestNumLen()
 		uint64 nValue2 = vec2[i];
 		if(nValue1 != nValue2)
 			std::cout << "error i: " << i << " value vec1: " <<nValue1 << std::endl;
+		else
+			test1.RemoveLink(nValue1);
 	}
-	 std::cout << "compress: row size " << nCnt * sizeof(int64) << " compress size " <<nSize <<" k: " << ((double)nCnt * sizeof(int64)) /nSize << std::endl;
+	 std::cout << "count: "<< nCnt << " compress: row size " << nCnt * sizeof(int64) << " compress size " <<nSize <<" k: " << ((double)nCnt * sizeof(int64)) /nSize << std::endl;
 }

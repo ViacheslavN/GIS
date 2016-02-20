@@ -17,6 +17,8 @@ template<class TBtree, class Tran, class TKey, class TValue>
 void insertINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64& nTreeRootPage)
 {
 	std::cout << "Insert Test"  << std::endl;
+
+	embDB::CBPTreeStatistics statInfo;
 	CommonLib::TimeUtils::CDebugTime time;
 	double tmInsert = 0;
 	double treeCom = 0;
@@ -24,6 +26,7 @@ void insertINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo(); 
 	tree.SetMinSplit(true);
+	tree.SetBPTreeStatistics(&statInfo);
 	time.start();
 	int64 n = 0;
 	if(nStart < nEndStart)
@@ -71,6 +74,12 @@ void insertINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 
 	std::cout << "Insert end key start: " << nStart << " key end: " << nEndStart << " Total time: " << (tmInsert + treeCom + tranCom) <<
 		" time insert: " << tmInsert << " time tree commit: " << treeCom << " Tran commit: " << tranCom <<	std::endl;
+
+
+	std::cout << "Create Inner Nodes: " << statInfo.GetCreateNode(false) << " Create Leaf Nodes: " <<  statInfo.GetCreateNode(true) <<	std::endl;
+	std::cout << "Load Inner Nodes: " << statInfo.GetLoadNode(false) << " Load Leaf Nodes: " <<  statInfo.GetLoadNode(true) <<	std::endl;
+	std::cout << "Save Inner Nodes: " << statInfo.GetSaveNode(false) << " Save Leaf Nodes: " <<  statInfo.GetSaveNode(true) <<	std::endl;
+
 }
 
 
@@ -80,9 +89,11 @@ template<class TBtree, class Tran, class TKey, class TValue>
 void searchINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64& nTreeRootPage)
 {
 	std::cout << "Search Test"  << std::endl;
+	embDB::CBPTreeStatistics statInfo;
 	CommonLib::TimeUtils::CDebugTime time;
 	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo();
+	tree.SetBPTreeStatistics(&statInfo);
 	int64 nNotFound = 0;
 	double searchTm  = 0;
 	int64 n = 0;
@@ -147,6 +158,7 @@ void searchINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 
 	searchTm = time.stop();
 	std::cout << "Search end key start: " << nStart << " key end: " << nEndStart << " Not found: " << nNotFound << " Total time: " << searchTm << std::endl;
+	std::cout << "Load Inner Nodes: " << statInfo.GetLoadNode(false) << " Load Leaf Nodes: " <<  statInfo.GetLoadNode(true) <<	std::endl;
 
 }
 
@@ -160,8 +172,10 @@ void removeFromBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart,
 	double tmRemove = 0;
 	double treeCom = 0;
 	double tranCom  = 0;
+	embDB::CBPTreeStatistics statInfo;
 	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo();
+	tree.SetBPTreeStatistics(&statInfo);
 	time.start();
 	int64 i = nStart;
 	int64 n = 0;
@@ -245,6 +259,13 @@ void removeFromBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart,
 	std::cout << "Remove end key start: " << nStart << " key end: " << nEndStart << " Total time: " << (tmRemove + treeCom + tranCom) <<
 		" time remove: " << tmRemove << " time tree commit: " << treeCom << " Tran commit: " << tranCom <<	std::endl;
 	
+	
+	std::cout << "Create Inner Nodes: " << statInfo.GetCreateNode(false) << " Create Leaf Nodes: " <<  statInfo.GetCreateNode(true) <<	std::endl;
+	std::cout << "Load Inner Nodes: " << statInfo.GetLoadNode(false) << " Load Leaf Nodes: " <<  statInfo.GetLoadNode(true) <<	std::endl;
+	std::cout << "Save Inner Nodes: " << statInfo.GetSaveNode(false) << " Save Leaf Nodes: " <<  statInfo.GetSaveNode(true) <<	std::endl;
+	std::cout << "Remove Inner Nodes: " << statInfo.GetDeleteNode(false) << " Remove Leaf Nodes: " <<  statInfo.GetDeleteNode(true) <<	std::endl;
+
+
 }
 
 

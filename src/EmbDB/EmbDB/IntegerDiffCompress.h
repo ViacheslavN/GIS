@@ -73,8 +73,8 @@ template<class _TValue,
 			};
 	 
 
-			TUnsignedIntegerDiffCompress(uint32 nError = 200 /*0.5%*/) : m_nCount(0),  m_nFlags(0),
-						m_nTypeFreq(etfByte), m_nError(nError)
+			TUnsignedIntegerDiffCompress(uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : m_nCount(0),  m_nFlags(0),
+						m_nTypeFreq(etfByte), m_nError(nError), m_dBitRowSize(0), m_bOnlineCalcSize(bOnlineCalcSize)
 			{
 				
 			}
@@ -85,7 +85,9 @@ template<class _TValue,
 				symInfo.m_nFreq++;
 				m_nCount++;
 
-				
+
+
+
 				if(m_nTypeFreq != etfInt32)
 				{
 					if(symInfo.m_nFreq > 255)
@@ -94,6 +96,35 @@ template<class _TValue,
 						m_nTypeFreq = etfInt32;
 				}
 				
+				
+				if(!m_bOnlineCalcSize)
+					return;
+
+				uint32 nOldCount = symInfo.m_nFreq - 1;
+				uint32 nNewCount = nOldCount + 1;
+
+
+				if(m_SymbolsFreq.size() > 1)
+				{
+					//m_dBitRowSize += (nNewCount * mathUtils::Log2((double)m_nCount/nNewCount) -  
+					//	nOldCount* mathUtils::Log2((double)(m_nCount - 1)/nOldCount) + (m_nCount - nNewCount) * mathUtils::Log2((double)m_nCount/(m_nCount - 1)));
+
+					m_dBitRowSize += (nNewCount * mathUtils::Log2((double)m_nCount/nNewCount));
+					if(nOldCount > 0)
+						m_dBitRowSize -= nOldCount* mathUtils::Log2((double)(m_nCount - 1)/nOldCount);
+
+					m_dBitRowSize += (m_nCount - nNewCount) * mathUtils::Log2((double)m_nCount/(m_nCount - 1));
+
+				}
+
+
+			/*	double dBitRowSize = CalcRowBitSize();
+				if(fabs(m_dBitRowSize - dBitRowSize) > 0.00000001)
+				{
+					int dd = 0;
+					dd++;
+				}*/
+
 			}
 
 			void RemoveSymbol(TValue symbol)
@@ -105,29 +136,68 @@ template<class _TValue,
 				symInfo.m_nFreq--;
 				m_nCount--;
 
+
 				if(symInfo.m_nFreq == 0)
 					m_SymbolsFreq.erase(it);
+
+
+				if(!m_bOnlineCalcSize)
+					return;
+				
+				uint32 nNewCount = symInfo.m_nFreq;
+				uint32 nOldCount = nNewCount + 1;
+				if(m_SymbolsFreq.size() > 1)
+				{
+
+					m_dBitRowSize -= (nOldCount* mathUtils::Log2((double)(m_nCount + 1)/(nOldCount)));
+					if(nNewCount > 0)
+						m_dBitRowSize += (nNewCount* mathUtils::Log2((double)(m_nCount)/(nNewCount)));
+
+					m_dBitRowSize -= (m_nCount - nNewCount) * mathUtils::Log2((double)(m_nCount + 1)/(m_nCount));
+
+				}
+				else
+				{
+					m_dBitRowSize = 0;
+
+				}
+
+				/*	double dBitRowSize = CalcRowBitSize();
+				if(fabs(m_dBitRowSize - dBitRowSize) > 0.00000001)
+				{
+					int dd = 0;
+					dd++;
+				}*/
 			}
  
 			 
 			double GetCodeBitSize() const
 			{
-				double dBitRowSize = 0;
-				for (TSymbolsFreq::const_iterator it = m_SymbolsFreq.begin(); it != m_SymbolsFreq.end(); ++it)
-				{
-					const SymbolInfo& info = it->second;
-				 	double dFreq = info.m_nFreq;
-					double dLog2 =  mathUtils::Log2((double)m_nCount/dFreq); 
-					dBitRowSize += (dFreq * dLog2);
-
-				}
+				
+				double dBitRowSize = m_bOnlineCalcSize ? m_dBitRowSize :  CalcRowBitSize();
+				
 				if(dBitRowSize < 64)
 					dBitRowSize = 64;
 				dBitRowSize  += (dBitRowSize /m_nError); 
 				return dBitRowSize;
 			}
 		
-
+			double CalcRowBitSize() const
+			{
+				double dBitRowSize =0;
+				if(m_SymbolsFreq.size() > 1)
+				{
+					for (TSymbolsFreq::const_iterator it = m_SymbolsFreq.begin(); it != m_SymbolsFreq.end(); ++it)
+					{
+						const SymbolInfo& info = it->second;
+						double dFreq = info.m_nFreq;
+						double dLog2 =  mathUtils::Log2((double)m_nCount/dFreq); 
+						dBitRowSize  += (dFreq * dLog2);
+					}
+				}
+				return dBitRowSize;
+				
+			}
 			uint32 GetCompressSize() const
 			{
 				double dRowBitsLen = GetCodeBitSize();
@@ -185,6 +255,7 @@ template<class _TValue,
 			bool decompress(TBPVector<_TValue>& vecValues, CommonLib::IReadStream* pStream)
 			{
 				
+				clear();
 				byte nFlag = pStream->readByte();
 				bool bRangeCode = nFlag & 0x01;
 				m_nTypeFreq = (eTypeFreq)(nFlag>>1);
@@ -192,6 +263,8 @@ template<class _TValue,
 				TVecFreq vecFreq;
 				ReadSymbolsFreq(pStream, vecFreq);
 
+				if(m_bOnlineCalcSize)
+					m_dBitRowSize = CalcRowBitSize();
 
 				TValue nBegin;
 				pStream->read(nBegin);
@@ -209,6 +282,7 @@ template<class _TValue,
 				m_nTypeFreq = etfByte;
 				m_SymbolsFreq.clear();
 				m_nFlags = 0;
+				m_dBitRowSize = 0;
 			}
 		private:
 
@@ -392,6 +466,8 @@ template<class _TValue,
 			uint32 m_nCount;
 			uint16 m_nFlags;
 			eTypeFreq m_nTypeFreq;
+			mutable double m_dBitRowSize;
+			bool m_bOnlineCalcSize;
 	};
 }
 

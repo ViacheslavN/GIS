@@ -19,6 +19,7 @@
 #include "WriteStreamPage.h"
 #include "ReadStreamPage.h"
 #include <memory>
+#include "BPTreeStatistics.h"
 namespace embDB
 {
 
@@ -81,6 +82,7 @@ namespace embDB
 		 ,m_nStateTree(eBPTNoChange)
 		 ,m_bOneSplit(false)
 		 ,m_nNodesPageSize(nNodesPageSize)
+		 ,m_pBPTreeStatistics(NULL)
 		{
 
 			m_NodeRemove.reset(new TRemoveNodeDelegate(this, &TBPlusTreeSetV2::deleteNodeRef));
@@ -130,7 +132,6 @@ namespace embDB
 		typedef CommonLib::IRefCntPtr<TBTreeNode> TBTreeNodePtr;
  
  
-		typedef BPTreeStatistics<int64, _Transaction, _TKey> BPTreeStatisticsInfo;
 		typedef CommonLib::delegateimpl1_t<TBPlusTreeSetV2, CommonLib::RefCounter*> TRemoveNodeDelegate;
 		std::auto_ptr<TRemoveNodeDelegate> m_NodeRemove;
 
@@ -152,6 +153,11 @@ namespace embDB
 		{
 			m_bOneSplit = bOneSplit;
 			
+		}
+
+		void SetBPTreeStatistics(CBPTreeStatistics* pBPTreeStatistics)
+		{
+			m_pBPTreeStatistics = pBPTreeStatistics;
 		}
 
 		/*void clear(bool bNotSetFreePage = true)
@@ -249,6 +255,9 @@ namespace embDB
 				{
 					pBNode->Save(m_pTransaction);
 					pBNode->setFlags(CHANGE_NODE, false);
+
+					if(m_pBPTreeStatistics)
+						m_pBPTreeStatistics->SaveNode(pBNode->isLeaf());
 				}
 				it.next();
 			}
@@ -256,6 +265,9 @@ namespace embDB
 			{
 				m_pRoot->Save(m_pTransaction);
 				m_pRoot->setFlags(CHANGE_NODE, false);
+
+				if(m_pBPTreeStatistics)
+					m_pBPTreeStatistics->SaveNode(m_pRoot->isLeaf());
 			}
 
 		/*	FilePagePtr pFilePage = m_pTransaction->getFilePage(m_pRoot->addr());
@@ -283,11 +295,8 @@ namespace embDB
 	}
 	virtual TBTreeNodePtr newNode(bool bIsRoot, bool bIsLeaf)
 	{
-
-		/*if(bIsLeaf)
-			nLeafCount++;
-		else
-			nInnerCount ++;*/
+		if(m_pBPTreeStatistics)
+			m_pBPTreeStatistics->CreateNode(bIsLeaf);
 
 		TBTreeNode *pNode = CreateNode(-1, bIsLeaf);/*new TBTreeNode(-1, m_pAlloc, -1, m_bMulti, bIsLeaf, m_bCheckCRC32,  m_InnerCompParams.get(),
 				 m_LeafCompParams.get() );*/
@@ -325,6 +334,11 @@ namespace embDB
 					delete pBNode;
 					return TBTreeNodePtr(NULL);
 				}
+
+				if(m_pBPTreeStatistics)
+					m_pBPTreeStatistics->LoadNode(pBNode->isLeaf());
+
+
 				pBNode->m_pRemFunk = m_NodeRemove.get();
 				if(bCheckCache)
 				{
@@ -334,7 +348,11 @@ namespace embDB
 						if(pDelNode)
 						{
 							if(pDelNode->getFlags() & CHANGE_NODE)
+							{
 								pDelNode->Save(m_pTransaction);
+								if(m_pBPTreeStatistics)
+									m_pBPTreeStatistics->SaveNode(pDelNode->isLeaf());
+							}
 							delete pDelNode;
 						}
 					}
@@ -348,11 +366,13 @@ namespace embDB
 	}
 	bool deleteNode(TBTreeNode* pNode)
 	{
-		//m_BTreeInfo.AddNode(-1, pNode->isLeaf());
+	 
+		if(m_pBPTreeStatistics)
+			m_pBPTreeStatistics->DeleteNode(pNode->isLeaf());
 		m_pTransaction->dropFilePage(pNode->m_nPageAddr, m_nNodesPageSize);
 		pNode->setFlags(REMOVE_NODE, true);
 		m_Cache.remove(pNode->m_nPageAddr);
-		//delete pNode;
+		 
 		return true;
 	}
 	void deleteNodeRef(CommonLib::RefCounter *pRefPtr)
@@ -381,7 +401,11 @@ namespace embDB
 			if(pDelNode)
 			{
 				if( pDelNode->getFlags() & CHANGE_NODE)
+				{
 					pDelNode->Save(m_pTransaction);
+					if(m_pBPTreeStatistics)
+						m_pBPTreeStatistics->SaveNode(pDelNode->isLeaf());
+				}
 				delete pDelNode;
 			}
 		}
@@ -2090,6 +2114,8 @@ namespace embDB
 		std::auto_ptr<TInnerCompressorParams> m_InnerCompParams;
 		uint32 m_nStateTree;
 		bool m_bOneSplit;
+
+		CBPTreeStatistics* m_pBPTreeStatistics;
 	};
 
 

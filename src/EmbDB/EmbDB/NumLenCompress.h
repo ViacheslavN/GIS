@@ -103,6 +103,7 @@ namespace embDB
 			typedef _TACEncoder		 TACEncoder;
 			typedef _TRangeDecoder	 TRangeDecoder;
 			typedef _TACDecoder		 TACDecoder;
+		 
 
 			//Flags
 			//diff lens|type freq|type comp|
@@ -118,8 +119,8 @@ namespace embDB
 			};
 	 
 
-			TUnsignedNumLenCompressor(uint32 nError = 200 /*0.5%*/) : m_nLenBitSize(0), m_nCount(0), m_nDiffsLen(0), m_nFlags(0),
-						m_nTypeFreq(etfByte), m_nError(nError)
+			TUnsignedNumLenCompressor(uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : m_nLenBitSize(0), m_nCount(0), m_nDiffsLen(0), m_nFlags(0),
+						m_nTypeFreq(etfByte), m_nError(nError), m_dBitRowSize(0.), m_bOnlineCalcSize(bOnlineCalcSize)
 			{
 				 memset(m_BitsLensFreq, 0, sizeof(m_BitsLensFreq));
 			}
@@ -135,8 +136,10 @@ namespace embDB
 
 				if(!m_BitsLensFreq[nBitLen])
 					m_nDiffsLen++;
-
+				
 				m_BitsLensFreq[nBitLen] += 1;
+
+
 
 				if(m_nTypeFreq != etfInt32)
 				{
@@ -146,6 +149,32 @@ namespace embDB
 						m_nTypeFreq = etfInt32;
 				}
 				
+				if(!m_bOnlineCalcSize)
+					return nBitLen;
+
+				uint32 nNewCount = m_BitsLensFreq[nBitLen];
+				uint32 nOldCount = nNewCount - 1;
+				
+				if(m_nDiffsLen > 1)
+				{
+					//m_dBitRowSize += (nNewCount * mathUtils::Log2((double)m_nCount/nNewCount) -  
+					//	nOldCount* mathUtils::Log2((double)(m_nCount - 1)/nOldCount) + (m_nCount - nNewCount) * mathUtils::Log2((double)m_nCount/(m_nCount - 1)));
+				
+					m_dBitRowSize += (nNewCount * mathUtils::Log2((double)m_nCount/nNewCount));
+					if(nOldCount > 0)
+						m_dBitRowSize -= nOldCount* mathUtils::Log2((double)(m_nCount - 1)/nOldCount);
+
+					m_dBitRowSize += (m_nCount - nNewCount) * mathUtils::Log2((double)m_nCount/(m_nCount - 1));
+				
+				}
+
+			/*	double dBitRowSize = CalcRowBitSize();
+				if(fabs(m_dBitRowSize - dBitRowSize) > 0.00000001)
+				{
+					int dd = 0;
+					dd++;
+				}*/
+
 				return nBitLen;
 			}
 
@@ -155,27 +184,49 @@ namespace embDB
 				m_nLenBitSize -= nBitLen;
 				m_nCount--;
 
-				assert(m_BitsLensFreq[nBitLen] );
-			
+				assert(m_BitsLensFreq[nBitLen] );				
 
 				m_BitsLensFreq[nBitLen] -= 1;
 				if(!m_BitsLensFreq[nBitLen])
 					m_nDiffsLen--;
+				
+
+				if(!m_bOnlineCalcSize)
+					return;
+
+				uint32 nNewCount = m_BitsLensFreq[nBitLen];
+				uint32 nOldCount = nNewCount + 1;
+
+				if(m_nDiffsLen > 1)
+				{
+
+					m_dBitRowSize -= (nOldCount* mathUtils::Log2((double)(m_nCount + 1)/(nOldCount)));
+					if(nNewCount > 0)
+						m_dBitRowSize += (nNewCount* mathUtils::Log2((double)(m_nCount)/(nNewCount)));
+
+					m_dBitRowSize -= (m_nCount - nNewCount) * mathUtils::Log2((double)(m_nCount + 1)/(m_nCount));
+
+				}
+				else
+				{
+					m_dBitRowSize = 0;
+			
+				}
+
+
+				/*	double dBitRowSize = CalcRowBitSize();
+				if(fabs(m_dBitRowSize - dBitRowSize) > 0.00000001)
+				{
+					int dd = 0;
+					dd++;
+				}*/
+
 			}
  
 			 
 			double GetCodeBitSize() const
 			{
-				double dBitRowSize = 0;
-				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
-				{
-					if(m_BitsLensFreq[i] == 0)
-						continue;
-					double dFreq = m_BitsLensFreq[i];
-					double dLog2 = mathUtils::Log2((double)m_nCount/dFreq); 
-					dBitRowSize += (dFreq* dLog2);
-
-				}
+				double dBitRowSize = m_bOnlineCalcSize ? m_dBitRowSize :  CalcRowBitSize();
 				if(dBitRowSize < 64)
 					dBitRowSize = 64;
 
@@ -199,6 +250,24 @@ namespace embDB
 
 			}
 
+			double CalcRowBitSize() const
+			{
+				double dBitRowSize  = 0;
+				if(m_nDiffsLen > 1)
+				{
+					for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+					{
+					if(m_BitsLensFreq[i] == 0)
+				 			continue;
+						double dFreq = m_BitsLensFreq[i];
+						double dLog2 = mathUtils::Log2((double)m_nCount/dFreq); 
+						dBitRowSize += (dFreq* dLog2);
+
+					}
+				}
+				
+				return dBitRowSize;
+			}
 		
 
 			bool compress(const TBPVector<TValue>& vecValues, CommonLib::IWriteStream* pStream)
@@ -262,13 +331,16 @@ namespace embDB
 			}
 			bool decompress(TBPVector<_TValue>& vecValues, CommonLib::IReadStream* pStream)
 			{
-				
+				clear();
 				byte nFlag = pStream->readByte();
 				bool bRangeCode = nFlag & 0x01;
 				m_nTypeFreq = (eTypeFreq)(nFlag>>1);
 				ReadDiffsLens(pStream);
 
+				if(m_bOnlineCalcSize)
+					m_dBitRowSize = CalcRowBitSize();
 
+				
 		 
 
 				uint32 FreqPrev[_nMaxBitsLens + 1];
@@ -304,9 +376,10 @@ namespace embDB
 				m_nDiffsLen = 0;
 				m_nTypeFreq = etfByte;
 				m_nFlags = 0;
+				m_dBitRowSize = 0.;
 				memset(m_BitsLensFreq, 0, sizeof(m_BitsLensFreq));
 			}
-		private:
+		protected:
 
 			bool CompressRangeCode(const TBPVector<_TValue>& vecValues, CommonLib::IWriteStream* pStream, uint32 *FreqPrev, uint32 nMaxByteSize,
 				CommonLib::FxBitWriteStream *pBitStream)
@@ -441,7 +514,7 @@ namespace embDB
 						m_BitsLensFreq[i] = 0;
 						continue;
 					}
-
+					m_nDiffsLen++;
 					switch(m_nTypeFreq)
 					{
 					case etfByte:
@@ -497,7 +570,7 @@ namespace embDB
 
 			
 
-		private:	
+		protected:	
 
 			TFindBit    m_FindBit;
 			uint32 m_nError;
@@ -510,6 +583,9 @@ namespace embDB
 			uint32  m_BitsLensFreq[_nMaxBitsLens];
 			uint16 m_nFlags;
 			eTypeFreq m_nTypeFreq;
+
+			mutable double m_dBitRowSize;
+			bool m_bOnlineCalcSize;
 	};
 }
 #endif

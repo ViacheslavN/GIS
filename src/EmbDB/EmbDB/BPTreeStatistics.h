@@ -1,108 +1,43 @@
-#ifndef _EMBEDDED_DATABASE_B_PLUS_TREE_STATISTICS_H_
-#define _EMBEDDED_DATABASE_B_PLUS_TREE_STATISTICS_H_
-
-#include "embDBInternal.h"
-#include "CommonLibrary/FixedMemoryStream.h"
-#include "BTVector.h"
+#ifndef _EMBEDDED_DATABASE_B_PLUS_TREE_V2_STATISTICS_H_
+#define _EMBEDDED_DATABASE_B_PLUS_TREE_V2_STATISTICS_H_
+ #include "CommonLibrary/general.h"
 namespace embDB
 {
-	template <typename _TLink, class _Transaction, typename _TKey>
-	class BPTreeStatistics
+
+	class CBPTreeStatistics
 	{
-	public:
-		typedef _TLink TLink;
-		typedef _TKey Tkey;
-		BPTreeStatistics(bool bCheckCRC32) : m_nRootPage(-1), m_nInnerNodeCounts(0), m_nKeyCounts(0), m_nLeafNodeCounts(0),
-			m_bCheckCRC32(bCheckCRC32)
-		{
+		public:
+			CBPTreeStatistics();
+			~CBPTreeStatistics();
 
-		}
-		~BPTreeStatistics()
-		{
+			void CreateNode(bool bLeaf);
+			void LoadNode(bool bLeaf);
+			void DeleteNode(bool bLeaf);
+			void SaveNode(bool bLeaf);
 
-		}
-
-		void setPage(TLink nPage)
-		{
-			m_nRootPage = nPage;
-		}
-		bool Load(_Transaction* pTransaction)
-		{
-			FilePagePtr pFilePage =  pTransaction->getFilePage(m_nRootPage);
-			if(!pFilePage.get())
-				return false; 
-			CommonLib::FxMemoryReadStream stream;
-			stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
-			sFilePageHeader header(stream, m_bCheckCRC32 && !pFilePage->isCheck());
- 
-			if(!pFilePage->isCheck() && !header.isValid())
-			{
-				pTransaction->error(L"BTREE: Page %I64d Error CRC for static btree page", pFilePage->getAddr());
-				return false;
-			}
-			if(header.m_nObjectPageType != BTREE_PAGE || header.m_nSubObjectPageType != BTREE_STATIC_PAGE)
-			{
-				pTransaction->error(L"BTREE: Page %I64d is not BTreeStaticPage", (int64)m_nRootPage);
-				return false;
-			}
-			pFilePage->setCheck(true);
-			stream.read(m_nInnerNodeCounts);
-			stream.read(m_nLeafNodeCounts);
-			stream.read(m_nKeyCounts);
-
-			assert(m_nLeafNodeCounts >= 0);
-			assert(m_nInnerNodeCounts >= 0);
-
-			return true;
-		}
-		bool Save(_Transaction* pTransaction)
-		{
-			FilePagePtr pFilePage =  pTransaction->getFilePage(m_nRootPage, false);
-			if(!pFilePage.get())
-				return false; 
-			CommonLib::FxMemoryWriteStream stream;
+			uint32 GetCreateNode(bool bLeaf) const;
+			uint32 GetLoadNode(bool bLeaf) const;
+			uint32 GetDeleteNode(bool bLeaf) const;
+			uint32 GetSaveNode(bool bLeaf) const;
 			
-			stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
-			sFilePageHeader header(stream, BTREE_PAGE, BTREE_STATIC_PAGE);
-			stream.write(m_nInnerNodeCounts);
-			stream.write(m_nLeafNodeCounts);
-			stream.write(m_nKeyCounts);
-			header.writeCRC32(stream);
-			pTransaction->saveFilePage(pFilePage);
-			return true;
-		}
+			void Clear();
 
 
-		void AddKey(int nKey)
-		{
-			m_nKeyCounts += nKey;
-		}
-		void AddNode(int nNode, bool bLeaf)
-		{
-			if(bLeaf)
-				m_nLeafNodeCounts += nNode;
-			else
-				m_nInnerNodeCounts += nNode;
 
-			assert(m_nLeafNodeCounts >= 0);
-			assert(m_nInnerNodeCounts >= 0);
-		}
-		void clear()
-		{
-			m_nKeyCounts = 0;
-			m_nLeafNodeCounts = 1;
-			m_nInnerNodeCounts = 0;
-		}
+		private:
 
-	public:
-		TLink m_nRootPage;
-		TLink m_nLeafNodeCounts;
-		TLink m_nInnerNodeCounts;
-		TLink m_nKeyCounts;
-		bool m_bCheckCRC32;
-
+			uint32 m_nCreateLeafNodes;
+			uint32 m_nCreateInnerNodes;
+			uint32 m_nLoadLeafNodes;
+			uint32 m_nLoadInnerNodes;
+			uint32 m_nDeleteLeafNodes;
+			uint32 m_nDeleteInnerNodes;
+			uint32 m_nSaveLeafNodes;
+			uint32 m_nSaveInnerNodes;
 
 	};
+
+
 }
 
 #endif

@@ -279,11 +279,13 @@ namespace embDB
 
 		bool IsHaveUnion(TMapLeafNodeOIDComp *pCompressor) const
 		{
-			uint32 nNoCompSize = m_nCount * (sizeof(TOID) + sizeof(TValue));
+			/*uint32 nNoCompSize = m_nCount * (sizeof(TOID) + sizeof(TValue));
 			uint32 nNoCompSizeUnion = pCompressor->m_nCount * (sizeof(TOID) + sizeof(TValue));
 
-			return (nNoCompSize + nNoCompSizeUnion) < (m_nPageSize - headSize());
+			return (nNoCompSize + nNoCompSizeUnion) < (m_nPageSize - headSize());*/
 
+
+			return (rowSize() + pCompressor->rowSize()) < (m_nPageSize - headSize());
 
 		}
 		bool IsHaveAlignment(TMapLeafNodeOIDComp *pCompressor) const

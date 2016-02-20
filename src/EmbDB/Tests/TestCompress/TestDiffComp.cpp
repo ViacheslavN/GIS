@@ -28,7 +28,10 @@ void CTestDiffComp::decompress(embDB::TBPVector<uint64>& vecLinks,  CommonLib::I
 {
 	m_compressor.decompress(vecLinks, pStream);
 }
-
+void CTestDiffComp::RemoveDiff(int64 nDiff)
+{
+	m_compressor.RemoveSymbol(nDiff);
+}
 
 void TestDiffComp()
 {
@@ -47,8 +50,8 @@ void TestDiffComp()
 		vec1.push_back(i);
 
 		nCnt++;
-		//if((nCnt%1000) == 0)
-	//		nK += 1;
+		if((nCnt%1000) == 0)
+			nK += 1;
 		if(i != 0)
 		{
 			uint32 nSize = vec1.size() - 1;
@@ -85,6 +88,8 @@ void TestDiffComp()
 		uint64 nValue2 = vec2[i];
 		if(nValue1 != nValue2)
 			std::cout << "error i: " << i << " value vec1: " <<nValue1 << std::endl;
+		if(i != 0)
+			test1.RemoveDiff(vec2[i] - vec2[i-1]);
 	}
-	std::cout << "compress: row size " << nCnt * sizeof(int64) << " compress size " <<nSize <<" k: " << ((double)nCnt * sizeof(int64)) /nSize << std::endl;
+	std::cout << "Cnt: " << nCnt << " compress: row size " << nCnt * sizeof(int64) << " compress size " <<nSize <<" k: " << ((double)nCnt * sizeof(int64)) /nSize << std::endl;
 }

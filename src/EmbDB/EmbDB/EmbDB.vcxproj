@@ -494,6 +494,7 @@
     <ClInclude Include="BPMapPointSpatialIterator.h" />
     <ClInclude Include="BPMultiIndexLeafNodeCompressor.h" />
     <ClInclude Include="BPMultiInnerIndexNodeCompressor.h" />
+    <ClInclude Include="BPTreeStatistics.h" />
     <ClInclude Include="BPTreeInnerNodeSetv2.h" />
     <ClInclude Include="BPTreeLeafNodeMapv2.h" />
     <ClInclude Include="BPTreeLeafNodeSetv2.h" />
@@ -675,6 +676,7 @@
     </ClCompile>
     <ClCompile Include="BitMap.cpp" />
     <ClCompile Include="BPTreeInfoPage.cpp" />
+    <ClCompile Include="BPTreeStatistics.cpp" />
     <ClCompile Include="CompositeIndexKey.cpp" />
     <ClCompile Include="CompressCompIndexParams.cpp" />
     <ClCompile Include="CRC.cpp" />

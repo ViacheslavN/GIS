@@ -21,6 +21,7 @@ class CTestNumLem
 		CTestNumLem();
 		~CTestNumLem();
 		void AddLink(int64 nLink);
+		void RemoveLink(int64 nLink);
 		uint32 GetCompressSize();
 		void compress( const embDB::TBPVector<int64>& vecLinks, CommonLib::IWriteStream *pStream);
 		void decompress( embDB::TBPVector<int64>& vecLinks, CommonLib::IReadStream *pStream);
