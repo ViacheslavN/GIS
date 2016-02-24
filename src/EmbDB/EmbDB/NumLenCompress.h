@@ -181,6 +181,7 @@ namespace embDB
 			void RemoveSymbol(TValue symbol)
 			{
 				uint16 nBitLen =  m_FindBit.FMSB(symbol);
+				assert(m_nLenBitSize >= nBitLen);
 				m_nLenBitSize -= nBitLen;
 				m_nCount--;
 
@@ -531,6 +532,7 @@ namespace embDB
 						break;
 					}
 
+					m_nLenBitSize += m_BitsLensFreq[i] * i;
 				}
 
 			}

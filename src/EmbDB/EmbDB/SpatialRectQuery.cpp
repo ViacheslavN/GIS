@@ -100,6 +100,10 @@ namespace embDB
 	{
 
 	}
+	ZOrderRect2DU16::ZOrderRect2DU16(ZValueType zValue) : m_nZValue(zValue)
+	{
+
+	}
 	ZOrderRect2DU16::ZOrderRect2DU16(const TRect& rect)
 	{
 		setZOrder(rect.m_minX, rect.m_minY, rect.m_maxX, rect.m_maxY);
@@ -228,7 +232,37 @@ namespace embDB
 			m_nZValue[0] &= ~(bitMask & (bit - 1));
 		}
 	}
+	ZOrderRect2DU32 ZOrderRect2DU32::operator - (const ZOrderRect2DU32&  Zorder) const
+	{
 
+		ZOrderRect2DU32 ret;
+
+		ret.m_nZValue[1] = m_nZValue[1] - Zorder.m_nZValue[1];
+		ret.m_nZValue[0] = m_nZValue[0] - Zorder.m_nZValue[0];
+		if (ret.m_nZValue[0] > m_nZValue[0])
+			ret.m_nZValue[1] -= 1;
+		return ret;
+	}
+	ZOrderRect2DU32 ZOrderRect2DU32::operator + (const ZOrderRect2DU32&  Zorder) const
+	{
+		ZOrderRect2DU32 ret;
+
+		ret.m_nZValue[1] = m_nZValue[1] + Zorder.m_nZValue[1];
+		ret.m_nZValue[0] = m_nZValue[0] + Zorder.m_nZValue[0];
+		if (ret.m_nZValue[0] < m_nZValue[0])
+			ret.m_nZValue[1] += 1;
+
+		return ret;
+	}
+	ZOrderRect2DU32& ZOrderRect2DU32::operator += (const ZOrderRect2DU32&  Zorder)
+	{
+		m_nZValue[1] = m_nZValue[1] + Zorder.m_nZValue[1];
+		m_nZValue[0] = m_nZValue[0] + Zorder.m_nZValue[0];
+		if (m_nZValue[0] < m_nZValue[0])
+			m_nZValue[1] += 1;
+
+		return *this;
+	}
 
 	ZOrderRect2DU64::ZOrderRect2DU64()
 	{

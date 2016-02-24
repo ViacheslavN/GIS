@@ -1849,7 +1849,8 @@ namespace embDB
 			if(pCheckNode->foundIndex() != -1 && pParentNode->isKey(m_comp, key, pCheckNode->foundIndex() ))
 			{
 				TBTreeNodePtr pIndexNode = getNode(pParentNode->link(pCheckNode->foundIndex() ));
-				pParentNode->updateKey(pCheckNode->foundIndex(), pIndexNode->key(0));
+				TBTreeNodePtr pMinNode =  getMinimumNode(pIndexNode); 
+				pParentNode->updateKey(pCheckNode->foundIndex(), pMinNode->key(0));
 				pParentNode->setFlags(CHANGE_NODE, true);
 				//m_ChangeNode.insert(pParentNode);
 			}
@@ -1867,6 +1868,7 @@ namespace embDB
 
 			TBTreeNodePtr pDonorNode(NULL);
 			bool bLeft = false;
+
 
 			if(pParentNode->less() == pCheckNode->addr())
 			{
@@ -1915,8 +1917,8 @@ namespace embDB
 				assert(pLeafNodeLeft != pCheckNode && (pLeafNodeRight != pCheckNode) && (pLeafNodeLeft != pLeafNodeRight));
 
 
-				int nLeftCount =  pLeafNodeLeft.get() ? pLeafNodeLeft->count() : 0xFFFFFFFF;
-				int nRightCount = pLeafNodeRight.get() ? pLeafNodeRight->count() : 0xFFFFFFFF;
+				uint32 nLeftCount =  pLeafNodeLeft.get() ? pLeafNodeLeft->count() : 0xFFFFFFFF;
+				uint32 nRightCount = pLeafNodeRight.get() ? pLeafNodeRight->count() : 0xFFFFFFFF;
 				if(nLeftCount < nRightCount)
 				{
 					pDonorNode = pLeafNodeLeft;

@@ -230,13 +230,15 @@ template<class _TValue,
 				uint32 nBeginCompressPos = pStream->pos();
 				bool bRangeCode = true;
 				
-				if(!CompressRangeCode(vecValues, pStream, nByteSize))
+				if(m_SymbolsFreq.size() > 1)
 				{
-					pStream->seek(nBeginCompressPos, CommonLib::soFromBegin);
-					CompressAcCode(vecValues, pStream);
-					bRangeCode = false;
+					if(!CompressRangeCode(vecValues, pStream, nByteSize))
+					{
+						pStream->seek(nBeginCompressPos, CommonLib::soFromBegin);
+						CompressAcCode(vecValues, pStream);
+						bRangeCode = false;
+					}
 				}
-		
 
 				uint32 nEndPos = pStream->pos();
 
@@ -269,6 +271,19 @@ template<class _TValue,
 				TValue nBegin;
 				pStream->read(nBegin);
 				vecValues.push_back(nBegin);
+
+				if(m_SymbolsFreq.size() == 1)
+				{
+					int64 nDiff = m_SymbolsFreq.begin()->first;
+					for (size_t i = 0; i < m_nCount; ++i)
+					{ 
+						nBegin += nDiff;
+						vecValues.push_back(nBegin);
+					}
+					return true;
+				}
+
+
 				if(bRangeCode)
 					return Decompress<TRangeDecoder>(vecValues, pStream, nBegin, vecFreq);
 				else
@@ -429,8 +444,7 @@ template<class _TValue,
 
 			template<class TDecoder>
 			bool Decompress(TBPVector<_TValue>& vecValues,  CommonLib::IReadStream* pStream, TValue nBegin, TVecFreq& vecFreq)
-			{
-			
+			{						
 
 				TDecoder decoder(pStream);
 				decoder.StartDecode();

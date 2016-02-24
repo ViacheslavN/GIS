@@ -13,6 +13,23 @@ namespace embDB
 	  {
 		  return log(dVal)/Ln_2;
 	  }
+
+	  static inline uint64 UI64_Sub(uint64 x, uint64 y, bool carryin, bool* carryout)
+	  {
+			uint64 tmp = y - carryin;
+			uint64 result = x - tmp;
+			*carryout = (tmp > y) || (result > x);
+			return result;
+	  }
+
+	  static inline uint64 UI64_Add(uint64 x, uint64 y, bool carryin, bool* carryout)
+	  {
+		  uint64 tmp = y + carryin;
+		  uint64 result = x + tmp;
+		  *carryout = (tmp < y) || (result < x);
+		  return result;
+	  }
+	  
 	}
 }
 
