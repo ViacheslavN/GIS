@@ -35,7 +35,7 @@ embDB:: BPSpatialRectLeafNodeMapSimpleCompressor<embDB::ZOrderRect2DU32, uint64>
 
 
 template <class TSparialTree, class TCoodType, class Tran>
-void TestRectSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndStart, uint64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64& nTreeRootPage)
+void TestRectSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndStart, uint64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, uint32 nPageNodeSize, int64& nTreeRootPage)
 {
 	std::cout << "Insert Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
@@ -47,7 +47,7 @@ void TestRectSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndSta
 	ExtentTree.m_minY = 0;
 	ExtentTree.m_maxX =  (TCoodType)nEndStart;
 	ExtentTree.m_maxY =  (TCoodType)nEndStart;
-	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, nPageNodeSize);
 	tree.loadBTreeInfo(); 
 	tree.setExtent(ExtentTree);
 	time.start();
@@ -90,7 +90,7 @@ void TestRectSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndSta
 
 	std::cout << "Insert end key start: " << nStart << " key end: " << nEndStart << " Total time: " << (tmInsert + treeCom + tranCom) <<
 		" time insert: " << tmInsert << " time tree commit: " << treeCom << " Tran commit: " << tranCom <<	std::endl;
-	std::cout << "Tree inner node : " << tree.m_BTreeInfo.m_nInnerNodeCounts<< " Tree leaf node : " << tree.m_BTreeInfo.m_nLeafNodeCounts <<	std::endl;
+	//std::cout << "Tree inner node : " << tree.m_BTreeInfo.m_nInnerNodeCounts<< " Tree leaf node : " << tree.m_BTreeInfo.m_nLeafNodeCounts <<	std::endl;
 
 }
 
@@ -99,7 +99,7 @@ void TestRectSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndSta
 template <class TSparialTree, class TCoodType, class Tran, class TZorderType>
 void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndStart, uint64 nStep, 
 	TCoodType qXmin,  TCoodType qYmin,  TCoodType qXmax,  TCoodType qYmax, 
-	Tran* pTran, CommonLib::alloc_t *pAlloc, int64 nTreeRootPage)
+	Tran* pTran, CommonLib::alloc_t *pAlloc, uint32 nPageSize, int64 nTreeRootPage)
 {
 	std::cout << "Search Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
@@ -113,7 +113,7 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 	ExtentTree.m_minY = 0;
 	ExtentTree.m_maxX = (TCoodType)nEndStart;
 	ExtentTree.m_maxY =  (TCoodType)nEndStart;
-	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, nPageSize);
 	tree.loadBTreeInfo(); 
 	tree.setExtent(ExtentTree);
 	time.start();
@@ -294,7 +294,7 @@ void TestRectSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 
 
 
 template <class TSparialTree, class TCoodType, class Tran, class TZorderType>
-void TestRectSpatialSearchByFeature(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndStart, uint64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64 nTreeRootPage)
+void TestRectSpatialSearchByFeature(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndStart, uint64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, uint32 nPageSize, int64 nTreeRootPage)
 {
 	std::cout << "Search Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
@@ -303,7 +303,7 @@ void TestRectSpatialSearchByFeature(int32 nCacheBPTreeSize, uint64 nStart, uint6
 	ExtentTree.m_minY = 0;
 	ExtentTree.m_maxX = (TCoodType)nEndStart;
 	ExtentTree.m_maxY =  (TCoodType)nEndStart;
-	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, nPageSize);
 	tree.loadBTreeInfo(); 
 	tree.setExtent(ExtentTree);
 	time.start();
@@ -359,20 +359,21 @@ void TestRectSpatial(const CommonLib::CString& sFileName,  int nCacheStorageSize
 	std::cout <<"Begin test Count: Begin: " << nBegin << " End: " << nEnd << " Step: " << nStep << " PageSize :" << nPageSize << std::endl;
 	{
 		embDB::CStorage storage( alloc, nCacheStorageSize);
-		storage.open(sFileName.cwstr(), false, false,  nType != INSERT ? false : true, false, nPageSize);
+		storage.open(sFileName.cwstr(), false, false,  nType != INSERT ? false : true, false);
 	
 
 		int64 nTreeRootPage = nType != INSERT ? 6 : -1;
 
 		if(nType == INSERT)
 		{
-			embDB::FilePagePtr pPage = storage.getNewPage();
+			embDB::FilePagePtr pPage = storage.getNewPage(nPageSize);
 			storage.initStorage(pPage->getAddr());
 			storage.saveStorageInfo();
+			pPage.release();
 
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tranUndo.data", &storage, 1);
 			tran.begin();
-			TestRectSpatialInsert<TSparialTree,TCoodType, TTran>(50, nBegin, nEnd, nStep, &tran, alloc, nTreeRootPage);
+			TestRectSpatialInsert<TSparialTree,TCoodType, TTran>(50, nBegin, nEnd, nStep, &tran, alloc, nPageSize, nTreeRootPage);
 			return;
 		}
 		if(nType == SEARCH)
@@ -381,7 +382,7 @@ void TestRectSpatial(const CommonLib::CString& sFileName,  int nCacheStorageSize
 			storage.loadStorageInfo();
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tranSearch.data", &storage, 1);
 			tran.begin();
-			TestRectSpatialSearchByQuery<TSparialTree,TCoodType, TTran, TZorderType>(50, nBegin, nEnd, nStep,  qXmin,   qYmin,   qXmax,   qYmax,   &tran, alloc, nTreeRootPage);
+			TestRectSpatialSearchByQuery<TSparialTree,TCoodType, TTran, TZorderType>(50, nBegin, nEnd, nStep,  qXmin,   qYmin,   qXmax,   qYmax,   &tran, alloc, nPageSize, nTreeRootPage);
 			
 		}
 		if(nType == IDENTIFY)
@@ -389,7 +390,7 @@ void TestRectSpatial(const CommonLib::CString& sFileName,  int nCacheStorageSize
 
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tranSearch.data", &storage, 1);
 			tran.begin();
-			TestRectSpatialSearchByFeature<TSparialTree,TCoodType, TTran, TZorderType>(50, nBegin, nEnd, nStep, &tran, alloc, nTreeRootPage);
+			TestRectSpatialSearchByFeature<TSparialTree,TCoodType, TTran, TZorderType>(50, nBegin, nEnd, nStep, &tran, alloc, nPageSize, nTreeRootPage);
 
 		}
 	}

@@ -9,8 +9,63 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/FileStream.h"
 void testAlloc ();
+
+
+class Int128
+{
+public:
+
+	Int128(uint64 h = 0, uint64 l = 0) :high(h),low(l)
+	{
+
+	}
+	Int128 operator+(const Int128 & rhs)
+	{
+		Int128 sum;
+		sum.high = high + rhs.high;
+		sum.low = low + rhs.low;
+		// check for overflow of low 64 bits, add carry to high
+		if (sum.low < low)
+			++sum.high;
+		return sum;
+	}
+	Int128 operator-(const Int128 & rhs)
+	{
+		Int128 difference;
+		difference.high = high - rhs.high;
+		difference.low = low - rhs.low;
+		// check for underflow of low 64 bits, subtract carry to high
+		if (difference.low > low)
+			--difference.high;
+		return difference;
+	}
+
+private:
+	uint64 high;
+	uint64 low;
+};
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+
+
+
+	Int128 a1(2, 0xFFFFFFFFFFFFFFFF);
+	Int128 a2(1, 1);
+
+	Int128 res = a1 + a2;
+
+	uint64 dd = 0;
+	uint64 dd1 = 0;
+	uint64 dd2 =100;
+
+	dd = (dd1 - 1);
+	if(dd > (dd + 1))
+	{
+		int rr = 0;
+		rr++;
+	}
+
 
 	int i = 0;
 	int j = i++;

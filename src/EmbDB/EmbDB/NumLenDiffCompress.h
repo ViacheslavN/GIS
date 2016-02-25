@@ -32,113 +32,22 @@ namespace embDB
 			typedef typename TBase::TRangeDecoder	 TRangeDecoder;
 			typedef typename TBase::TACDecoder		 TACDecoder;
 
-			//Flags
-			//diff lens|type freq|type comp|
-			//type comp      1/0 1-range coder, 0-ac-coder  1 bit
-			//type freq value  1-byte, 2-short, 3-int32     2 bit
-			 
 
-		/*	enum eTypeFreq
+			TUnsignedDiffNumLenCompressor(uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : TBase(nError, bOnlineCalcSize)
 			{
-				etfByte = 0,
-				etfShort = 1,
-				etfInt32 = 2
-			};*/
-	 
-
-			TUnsignedDiffNumLenCompressor(uint32 nError = 200 /*0.5%*/) : TBase(nError)
-			{
-				// memset(m_BitsLensFreq, 0, sizeof(m_BitsLensFreq));
-			}
-
-			/*uint16 AddSymbol(TValue symbol)
-			{
-				uint16 nBitLen =  m_FindBit.FMSB(symbol);
-
-				assert(nBitLen < _nMaxBitsLens);
-
-				m_nLenBitSize += nBitLen;
-				m_nCount++;
-
-				if(!m_BitsLensFreq[nBitLen])
-					m_nDiffsLen++;
-
-				m_BitsLensFreq[nBitLen] += 1;
-
-				if(m_nTypeFreq != etfInt32)
-				{
-					if(m_BitsLensFreq[nBitLen] > 255)
-						m_nTypeFreq = etfShort;
-					if(m_BitsLensFreq[nBitLen] > 65535)
-						m_nTypeFreq = etfInt32;
-				}
-				
-				return nBitLen;
-			}
-
-			void RemoveSymbol(TValue symbol)
-			{
-				uint16 nBitLen =  m_FindBit.FMSB(symbol);
-				m_nLenBitSize -= nBitLen;
-				m_nCount--;
-
-				assert(m_BitsLensFreq[nBitLen] );
-			
-
-				m_BitsLensFreq[nBitLen] -= 1;
-				if(!m_BitsLensFreq[nBitLen])
-					m_nDiffsLen--;
-			}
- 
-			 
-			double GetCodeBitSize() const
-			{
-				double dBitRowSize = 0;
-
-				if(m_nDiffsLen > 1)
-				{
-					for (uint32 i = 0; i < _nMaxBitsLens; ++i)
-					{
-						if(m_BitsLensFreq[i] == 0)
-							continue;
-						double dFreq = m_BitsLensFreq[i];
-						double dLog2 = mathUtils::Log2((double)m_nCount/dFreq); 
-						dBitRowSize += (dFreq* dLog2);
-
-					}
-				}
-				
-				if(dBitRowSize < 64)
-					dBitRowSize = 64;
-
-				dBitRowSize += (dBitRowSize/m_nError); 
-
-				return dBitRowSize;
-			}
-			int GetBitLenSize() const
-			{
-				return m_nLenBitSize;
 			}
 
 			uint32 GetCompressSize() const
-			{
-				double dRowBitsLen = GetCodeBitSize();
-				uint32 nByteSize = (dRowBitsLen + 7)/8;
-
-
-
-				return nByteSize + 1 + (_nMaxBitsLens)/8 + GetLenForDiffLen() + (m_nLenBitSize +7)/8 + sizeof(uint16) + sizeof(TValue); //Type comp (rang or ac) + 4 +
-
-			}*/
-
-		
+			{ 
+				uint32 nBaseSize = TBase::GetCompressSize();
+				return nBaseSize +  sizeof(TValue);
+			}
 
 			bool compress(const TBPVector<TValue>& vecValues, CommonLib::IWriteStream* pStream)
 			{
 
 				assert(m_nCount == (vecValues.size() - 1));
-				 TBPVector<TValue> vec;
-				uint32 nBeginPos = pStream->pos();
+			 	uint32 nBeginPos = pStream->pos();
 				byte nFlag = 0;
 				pStream->write(nFlag);
 
@@ -231,18 +140,8 @@ namespace embDB
 				else
 					return Decompress<TACDecoder>(vecValues, pStream, FreqPrev, &bitStream, nBegin);
 
-				//DecompressRangeCode(vecValues, pStream, FreqPrev, &bitStream);
 		 
 			}
-		/*	void clear()
-			{
-				m_nLenBitSize = 0;
-				m_nCount = 0;
-				m_nDiffsLen = 0;
-				m_nTypeFreq = etfByte;
-				m_nFlags = 0;
-				memset(m_BitsLensFreq, 0, sizeof(m_BitsLensFreq));
-			}*/
 		private:
 
 			bool CompressRangeCode(const TBPVector<_TValue>& vecValues, CommonLib::IWriteStream* pStream, uint32 *FreqPrev, uint32 nMaxByteSize,
@@ -289,110 +188,6 @@ namespace embDB
 				acEncoder.EncodeFinish();
 			}
 
-		/*	uint32 GetLenForDiffLen() const 
-			{
-				switch(m_nTypeFreq)
-				{
-					case etfByte:
-						return m_nDiffsLen;
-						break;
-					case etfShort:
-						return m_nDiffsLen * sizeof(uint16);
-						break;
-					case etfInt32:
-						return m_nDiffsLen * sizeof(uint32);
-						break;
-				}
-				assert(false);
-				return m_nDiffsLen;
-			}*/
-
-		/*	void WriteDiffsLens(CommonLib::IWriteStream* pStream)
-			{
-
-				byte LensMask[(_nMaxBitsLens)/8];
-
-				memset(LensMask, 0, _nMaxBitsLens/8);
-				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
-				{
-					uint32 nByte = i/8;
-					uint32 nBit =  i - (nByte * 8);
-					if(m_BitsLensFreq[i] != 0)
-						LensMask[nByte] |= (0x01 << nBit);
-				}
-				for (uint32 i = 0; i < _nMaxBitsLens/8; ++i)
-				{
-					pStream->write((byte)LensMask[i]);
-				}
-				
-				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
-				{
-					if(m_BitsLensFreq[i] == 0)
-						continue;
-
-					switch(m_nTypeFreq)
-					{
-					case etfByte:
-						pStream->write((byte)m_BitsLensFreq[i]);
-						break;
-					case etfShort:
-						pStream->write((uint16)m_BitsLensFreq[i]);
-						break;
-					case etfInt32:
-						pStream->write((uint32)m_BitsLensFreq[i]);
-						break;
-					}
-
-				}
-				
-			}*/
-
-
-			/*void ReadDiffsLens(CommonLib::IReadStream* pStream)
-			{
-
-				byte LensMask[(_nMaxBitsLens)/8];
-				for (uint32 i = 0; i < _nMaxBitsLens/8; ++i)
-				{
-					LensMask[i] = pStream->readByte();
-
-					
-				}
-
-				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
-				{
-
-					uint32 nByte = i/8;
-					uint32 nBit  =  i - (nByte * 8);
-
-					if(!(LensMask[nByte] & (0x01 << nBit)))
-					{
-						m_BitsLensFreq[i] = 0;
-						continue;
-					}
-
-					switch(m_nTypeFreq)
-					{
-					case etfByte:
-						m_BitsLensFreq[i] = pStream->readByte();
-						m_nCount += m_BitsLensFreq[i];
-						break;
-					case etfShort:
-						m_BitsLensFreq[i] = pStream->readintu16();
-						m_nCount += m_BitsLensFreq[i];
-						break;
-					case etfInt32:
-						m_BitsLensFreq[i] = pStream->readIntu32();
-						m_nCount += m_BitsLensFreq[i];
-						break;
-					}
-
-				}
-
-			}*/
-
-			
-
 			template<class TDecoder>
 			bool Decompress(TBPVector<_TValue>& vecValues, CommonLib::IReadStream* pStream, uint32 *FreqPrev, 
 				CommonLib::FxBitReadStream *pBitStream, TValue nBegin)
@@ -423,23 +218,6 @@ namespace embDB
 
 				return true;
 			}
-
-
-			
-
-		/*private:	
-
-			TFindBit    m_FindBit;
-			uint32 m_nError;
-	  
-			uint32 m_nLenBitSize;
-			uint32 m_nCount;
-
-			uint32 m_nDiffsLen;
-
-			uint32  m_BitsLensFreq[_nMaxBitsLens];
-			uint16 m_nFlags;
-			eTypeFreq m_nTypeFreq;*/
 	};
 }
 #endif

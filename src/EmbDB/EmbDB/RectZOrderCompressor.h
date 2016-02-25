@@ -1,0 +1,9 @@
+#ifndef _EMBEDDED_DATABASE_RECT_ZORDER_COMPRESOR_H_
+#define _EMBEDDED_DATABASE_RECT_ZORDER_COMPRESOR_H_
+
+namespace embDB
+{
+
+}
+
+#endif

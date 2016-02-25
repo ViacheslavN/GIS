@@ -299,6 +299,13 @@ namespace embDB
 		{		 
 			return IsZRectOrdertInRect<uint64, ZOrderRect2DU64, CommonLib::TRect2Du64>(rect, *this);
 		}
+
+
+		ZOrderRect2DU64 operator - (const ZOrderRect2DU64&  zOrder) const;
+		ZOrderRect2DU64 operator + (const ZOrderRect2DU64&  zOrder) const;
+		ZOrderRect2DU64& operator += (const ZOrderRect2DU64&  zOrder);
+
+
 		uint64 m_nZValue[4];
 	};
 

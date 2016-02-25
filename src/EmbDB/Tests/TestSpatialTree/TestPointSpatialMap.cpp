@@ -11,9 +11,16 @@
 #include "CommonLibrary/DebugTime.h"
 #include <iostream>
 #include <set>
+#include "../../EmbDB/PointSpatialInnerCompress.h"
+#include "../../EmbDB/PointSpatialLeafCompress.h"
+
+
+
+typedef embDB::BPSpatialPointInnerCompressor<embDB::ZOrderPoint2DU16> TPoint16InnerCompress;
+typedef embDB::BPSpatialPointLeafCompressor<embDB::ZOrderPoint2DU16, uint64> TPoint16LeafCompress;
 
 typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU16, uint64,
-	embDB::ZPointComp<embDB::ZOrderPoint2DU16> > TBPMapPOint16;
+	embDB::ZPointComp<embDB::ZOrderPoint2DU16>, embDB::IDBTransaction, TPoint16InnerCompress, TPoint16LeafCompress > TBPMapPOint16;
 
 
 typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU32, uint64,
@@ -32,7 +39,7 @@ typedef embDB::TBPPointSpatialMap<
 
 
 template <class TSparialTree, class TCoodType, class Tran>
-void TestPointSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndStart, uint64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64& nTreeRootPage)
+void TestPointSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndStart, uint64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, uint32 nPageNodeSize, int64& nTreeRootPage)
 {
 	std::cout << "Insert Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
@@ -44,9 +51,14 @@ void TestPointSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndSt
 	ExtentTree.m_minY = 0;
 	ExtentTree.m_maxX =  (TCoodType)nEndStart;
 	ExtentTree.m_maxY =  (TCoodType)nEndStart;
-	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, nPageNodeSize);
 	tree.loadBTreeInfo(); 
 	tree.setExtent(ExtentTree);
+
+
+	embDB::CBPTreeStatistics statInfo;
+	tree.SetBPTreeStatistics(&statInfo);
+
 	time.start();
 	uint64 nOID = 1;
 	
@@ -57,7 +69,11 @@ void TestPointSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndSt
 	{
 		for (uint64 y = nStart; y < nEndStart; y +=nStep)
 		{
-
+			if(nOID == 7851)
+			{
+				int dd = 0;
+				dd++;
+			}
 			tree.insert((TCoodType)x, (TCoodType)y, nOID);
 			if(nOID%nProcStep == 0)
 			{
@@ -82,7 +98,9 @@ void TestPointSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndSt
 
 	std::cout << "Insert end key start: " << nStart << " key end: " << nEndStart << " Total time: " << (tmInsert + treeCom + tranCom) <<
 		" time insert: " << tmInsert << " time tree commit: " << treeCom << " Tran commit: " << tranCom <<	std::endl;
-	std::cout << "Tree inner node : " << tree.m_BTreeInfo.m_nInnerNodeCounts<< " Tree leaf node : " << tree.m_BTreeInfo.m_nLeafNodeCounts <<	std::endl;
+	std::cout << "Create Inner Nodes: " << statInfo.GetCreateNode(false) << " Create Leaf Nodes: " <<  statInfo.GetCreateNode(true) <<	std::endl;
+	std::cout << "Load Inner Nodes: " << statInfo.GetLoadNode(false) << " Load Leaf Nodes: " <<  statInfo.GetLoadNode(true) <<	std::endl;
+	std::cout << "Save Inner Nodes: " << statInfo.GetSaveNode(false) << " Save Leaf Nodes: " <<  statInfo.GetSaveNode(true) <<	std::endl;
 
 }
 
@@ -100,6 +118,8 @@ void TestPointSpatialSearchByFeature(int32 nCacheBPTreeSize, uint64 nStart, uint
 	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
 	tree.loadBTreeInfo(); 
 	tree.setExtent(ExtentTree);
+	embDB::CBPTreeStatistics statInfo;
+	tree.SetBPTreeStatistics(&statInfo);
 	time.start();
 	uint64 nOID = 1;
 	uint64 nNotFound = 0;
@@ -140,6 +160,9 @@ void TestPointSpatialSearchByFeature(int32 nCacheBPTreeSize, uint64 nStart, uint
 
 	searchTm = time.stop();
 	std::cout << "Search end key start: " << nStart << " key end: " << nEndStart << " Not found: " << nNotFound<< " OID Error found: " << nOIDErr  << " Total time: " << searchTm << std::endl;
+	std::cout << "Create Inner Nodes: " << statInfo.GetCreateNode(false) << " Create Leaf Nodes: " <<  statInfo.GetCreateNode(true) <<	std::endl;
+	std::cout << "Load Inner Nodes: " << statInfo.GetLoadNode(false) << " Load Leaf Nodes: " <<  statInfo.GetLoadNode(true) <<	std::endl;
+	std::cout << "Save Inner Nodes: " << statInfo.GetSaveNode(false) << " Save Leaf Nodes: " <<  statInfo.GetSaveNode(true) <<	std::endl;
 
 }
 
@@ -147,7 +170,7 @@ void TestPointSpatialSearchByFeature(int32 nCacheBPTreeSize, uint64 nStart, uint
 template <class TSparialTree, class TCoodType, class Tran, class TZorderType>
 void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndStart, uint64 nStep,
 			TCoodType qXmin,  TCoodType qYmin,  TCoodType qXmax,  TCoodType qYmax,
-			Tran* pTran, CommonLib::alloc_t *pAlloc, int64 nTreeRootPage)
+			Tran* pTran, CommonLib::alloc_t *pAlloc, uint32 nPageNodeSize, int64 nTreeRootPage)
 {
 	std::cout << "Search Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
@@ -157,9 +180,12 @@ void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64
 	ExtentTree.m_minY = 0;
 	ExtentTree.m_maxX = (TCoodType)nEndStart;
 	ExtentTree.m_maxY =  (TCoodType)nEndStart;
-	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize);
+	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, nPageNodeSize);
 	tree.loadBTreeInfo(); 
 	tree.setExtent(ExtentTree);
+	embDB::CBPTreeStatistics statInfo;
+	tree.SetBPTreeStatistics(&statInfo);
+
 	time.start();
 
 	 
@@ -276,6 +302,10 @@ void TestPointSpatialSearchByQuery(int32 nCacheBPTreeSize, uint64 nStart, uint64
 
 	std::cout << "Found Zorder  time: " << searchZorderTm <<" Cnt: " << nCnt << " InQuery " <<  nCntInQuery<< " NotInQuery " << nCntNotQuery  << std::endl;
 	std::cout << "Found Full    time: " << searchFullTm   <<" Cnt: " << nCntFull << " InQuery " <<  nCntInQueryFull<< " NotInQuery " << nCntNotQueryFull  << std::endl;
+	std::cout << "Create Inner Nodes: " << statInfo.GetCreateNode(false) << " Create Leaf Nodes: " <<  statInfo.GetCreateNode(true) <<	std::endl;
+	std::cout << "Load Inner Nodes: " << statInfo.GetLoadNode(false) << " Load Leaf Nodes: " <<  statInfo.GetLoadNode(true) <<	std::endl;
+	std::cout << "Save Inner Nodes: " << statInfo.GetSaveNode(false) << " Save Leaf Nodes: " <<  statInfo.GetSaveNode(true) <<	std::endl;
+
 	return;
 
 }
@@ -292,20 +322,35 @@ void TestPointSpatial(const CommonLib::CString& sFileName,  int nCacheStorageSiz
 	std::cout <<"Begin test Count: Begin: " << nBegin << " End: " << nEnd << " Step: " << nStep << " PageSize :" << nPageSize << std::endl;
 	{
 		embDB::CStorage storage( alloc, nCacheStorageSize);
-		storage.open(sFileName.cwstr(), false, false,  onlySearch ? false : true, false, nPageSize);
+		storage.open(sFileName.cwstr(), false, false,  onlySearch ? false : true, false);
 	
 
-		int64 nTreeRootPage = onlySearch ? 6 : -1;
-
+		int64 nTreeRootPage = onlySearch ? 32 : -1;
+		int64 nStorageInfoPage = onlySearch ? 0 : -1;
 		if(!onlySearch)
 		{
-			embDB::FilePagePtr pPage = storage.getNewPage();
-			storage.initStorage(pPage->getAddr());
+			embDB::FilePagePtr pPage = storage.getNewPage(nPageSize);
+			nStorageInfoPage = pPage->getAddr();
+			storage.initStorage(nStorageInfoPage);
 			storage.saveStorageInfo();
+			pPage.release();
+			{
+				TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\db\\createtran.data", &storage, 1);
+				tran.begin();
+				embDB::FilePagePtr pPage = tran.getNewPage(256);
+
+				nTreeRootPage = pPage->getAddr();
+				pPage.release();
+				TSparialTree tree(-1, &tran, alloc, 10, 8192);
+				tree.init(nTreeRootPage); 
+
+				tran.commit();
+			}
 
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tranUndo.data", &storage, 1);
 			tran.begin();
-			TestPointSpatialInsert<TSparialTree,TCoodType, TTran>(50, nBegin, nEnd, nStep, &tran, alloc, nTreeRootPage);
+			TestPointSpatialInsert<TSparialTree,TCoodType, TTran>(50, nBegin, nEnd, nStep, &tran, alloc, nPageSize, nTreeRootPage);
+			storage.close();
 			return;
 		}
 
@@ -317,14 +362,17 @@ void TestPointSpatial(const CommonLib::CString& sFileName,  int nCacheStorageSiz
 			
 		}*/
 		{
-			storage.setStoragePageInfo(0);
+	
+			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
+			
 
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tranUndo1.data", &storage, 1);
 			tran.begin();
 			TestPointSpatialSearchByQuery<TSparialTree,TCoodType, TTran, TZorderType>(50, nBegin, nEnd,  nStep,
-				  qXmin,  qYmin,  qXmax,   qYmax,	&tran, alloc, nTreeRootPage);
+				  qXmin,  qYmin,  qXmax,   qYmax,	&tran, alloc, nPageSize, nTreeRootPage);
 
+			storage.close();
 		}
 	}
 }
@@ -338,13 +386,13 @@ void TestPointSpatialTree()
 	uint64 yMin = 0;
 	uint64 yMax = 100;*/
 
-//	TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransactions, embDB::ZOrderPoint2DU16>("d:\\db\\dbspatialpoint16.data", 50, 8192, 0, 10000, 1, 0, 0, 100, 100, false);
-//	TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransactions, embDB::ZOrderPoint2DU16>("d:\\db\\dbspatialpoint16.data", 50, 8192, 0, 10000, 1, 100, 0, 1000, 1000, true);
+	TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransaction, embDB::ZOrderPoint2DU16>("d:\\db\\dbspatialpoint16.data", 50, 8192, 0, 1000, 1, 0, 0, 100, 100, false);
+	TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransaction, embDB::ZOrderPoint2DU16>("d:\\db\\dbspatialpoint16.data", 50, 8192, 0, 1000, 1, 0, 0, 1000, 1000, true);
 
 
 //	TestPointSpatial<TBPMapPOint32, uint32, embDB::CDirectTransactions, embDB::ZOrderPoint2DU32>("d:\\db\\dbspatialpoint32.data", 50, 8192, 0, 2000, 1, 0, 0, 100, 100, false);
 //	TestPointSpatial<TBPMapPOint32, uint32, embDB::CDirectTransactions, embDB::ZOrderPoint2DU32>("d:\\db\\dbspatialpoint32.data", 50, 8192, 0, 10000, 1, 100, 0, 1000, 1000, true);
 
 //	TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransactions, embDB::ZOrderPoint2DU64>("d:\\db\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 0, 0, 100, 100, false);
-    TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransaction, embDB::ZOrderPoint2DU64>("d:\\db\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-500, 0xFFFFFFFFFFFFFFFF-500, true);
+ //   TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransaction, embDB::ZOrderPoint2DU64>("d:\\db\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-500, 0xFFFFFFFFFFFFFFFF-500, true);
 }

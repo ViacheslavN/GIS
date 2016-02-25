@@ -582,6 +582,10 @@
     <ClInclude Include="HuffmanOIDComp.h" />
     <ClInclude Include="ListDBPage.h" />
     <ClInclude Include="PageAlloc.h" />
+    <ClInclude Include="PointSpatialInnerCompress.h" />
+    <ClInclude Include="PointSpatialLeafCompress.h" />
+    <ClInclude Include="PointZOrderCompressor.h" />
+    <ClInclude Include="RectZOrderCompressor.h" />
     <ClInclude Include="RowIDCounter.h" />
     <ClInclude Include="ShapeComp.h" />
     <ClInclude Include="ShapeCompressorParams.h" />
@@ -591,6 +595,8 @@
     <ClInclude Include="SimpleSelectCursor.h" />
     <ClInclude Include="SpatialIndexBase.h" />
     <ClInclude Include="SpatialIndexHandler.h" />
+    <ClInclude Include="SpatialPointCompressor.h" />
+    <ClInclude Include="SpatialRectCompressor.h" />
     <ClInclude Include="Statement.h" />
     <ClInclude Include="ReadStreamPage.h" />
     <ClInclude Include="StreamPageIngo.h" />

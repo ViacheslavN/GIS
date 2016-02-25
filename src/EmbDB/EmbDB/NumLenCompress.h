@@ -270,7 +270,6 @@ namespace embDB
 				return dBitRowSize;
 			}
 		
-
 			bool compress(const TBPVector<TValue>& vecValues, CommonLib::IWriteStream* pStream)
 			{
 
@@ -588,6 +587,7 @@ namespace embDB
 
 			mutable double m_dBitRowSize;
 			bool m_bOnlineCalcSize;
+
 	};
 }
 #endif

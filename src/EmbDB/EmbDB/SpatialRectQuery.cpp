@@ -9,6 +9,8 @@
 #else
 	#include "tableZRect16Bit.h"
 #endif
+
+#include "MathUtils.h"
 namespace embDB
 {
 
@@ -232,34 +234,52 @@ namespace embDB
 			m_nZValue[0] &= ~(bitMask & (bit - 1));
 		}
 	}
-	ZOrderRect2DU32 ZOrderRect2DU32::operator - (const ZOrderRect2DU32&  Zorder) const
+	ZOrderRect2DU32 ZOrderRect2DU32::operator - (const ZOrderRect2DU32&  zOrder) const
 	{
 
-		ZOrderRect2DU32 ret;
+		/*ZOrderRect2DU32 ret;
 
 		ret.m_nZValue[1] = m_nZValue[1] - Zorder.m_nZValue[1];
 		ret.m_nZValue[0] = m_nZValue[0] - Zorder.m_nZValue[0];
 		if (ret.m_nZValue[0] > m_nZValue[0])
 			ret.m_nZValue[1] -= 1;
-		return ret;
+		return ret;*/
+
+		ZOrderRect2DU32 result;
+		bool bCarry = true;
+
+		result.m_nZValue[0] = mathUtils::UI64_Add(m_nZValue[0], ~zOrder.m_nZValue[0], bCarry, &bCarry);
+		result.m_nZValue[1] = mathUtils::UI64_Add(m_nZValue[1], ~zOrder.m_nZValue[1], bCarry, &bCarry);
+
+		return result;
 	}
-	ZOrderRect2DU32 ZOrderRect2DU32::operator + (const ZOrderRect2DU32&  Zorder) const
+	ZOrderRect2DU32 ZOrderRect2DU32::operator + (const ZOrderRect2DU32&  zOrder) const
 	{
-		ZOrderRect2DU32 ret;
+		/*ZOrderRect2DU32 ret;
 
 		ret.m_nZValue[1] = m_nZValue[1] + Zorder.m_nZValue[1];
 		ret.m_nZValue[0] = m_nZValue[0] + Zorder.m_nZValue[0];
 		if (ret.m_nZValue[0] < m_nZValue[0])
-			ret.m_nZValue[1] += 1;
+			ret.m_nZValue[1] += 1;*/
 
-		return ret;
+		ZOrderRect2DU32 result;
+		bool bCarry = false;
+
+		result.m_nZValue[0] = mathUtils::UI64_Add(m_nZValue[0], zOrder.m_nZValue[0], bCarry, &bCarry);
+		result.m_nZValue[1] = mathUtils::UI64_Add(m_nZValue[1], zOrder.m_nZValue[1], bCarry, &bCarry);
+
+		return result;
 	}
-	ZOrderRect2DU32& ZOrderRect2DU32::operator += (const ZOrderRect2DU32&  Zorder)
+	ZOrderRect2DU32& ZOrderRect2DU32::operator += (const ZOrderRect2DU32&  zOrder)
 	{
-		m_nZValue[1] = m_nZValue[1] + Zorder.m_nZValue[1];
+		/*m_nZValue[1] = m_nZValue[1] + Zorder.m_nZValue[1];
 		m_nZValue[0] = m_nZValue[0] + Zorder.m_nZValue[0];
 		if (m_nZValue[0] < m_nZValue[0])
-			m_nZValue[1] += 1;
+			m_nZValue[1] += 1;*/
+
+		bool bCarry = false;
+		m_nZValue[0] = mathUtils::UI64_Add(m_nZValue[0], zOrder.m_nZValue[0], bCarry, &bCarry);
+		m_nZValue[1] = mathUtils::UI64_Add(m_nZValue[1], zOrder.m_nZValue[1], bCarry, &bCarry);
 
 		return *this;
 	}
@@ -359,5 +379,124 @@ namespace embDB
 		{
 			m_nZValue[i] &= ~(bitMask & (bit - 1));
 		}
+	}
+
+
+	ZOrderRect2DU64 ZOrderRect2DU64::operator - (const ZOrderRect2DU64&  zOrder) const
+	{
+		ZOrderRect2DU64 result;
+		bool bCarry = true;
+
+		result.m_nZValue[0] = mathUtils::UI64_Add(m_nZValue[0], ~zOrder.m_nZValue[0], bCarry, &bCarry);
+		result.m_nZValue[1] = mathUtils::UI64_Add(m_nZValue[1], ~zOrder.m_nZValue[1], bCarry, &bCarry);
+		result.m_nZValue[2] = mathUtils::UI64_Add(m_nZValue[2], ~zOrder.m_nZValue[2], bCarry, &bCarry);
+		result.m_nZValue[3] = mathUtils::UI64_Add(m_nZValue[3], ~zOrder.m_nZValue[3], bCarry, &bCarry);
+		
+
+		/*result.m_nZValue[3] = m_nZValue[3] - zOrder.m_nZValue[3];
+		result.m_nZValue[2] = m_nZValue[2] - zOrder.m_nZValue[2];
+		if(result.m_nZValue[2] > m_nZValue[2])
+			result.m_nZValue[3]--;
+
+		result.m_nZValue[1] = m_nZValue[1] - zOrder.m_nZValue[1];
+		if(result.m_nZValue[1] > m_nZValue[1])
+		{
+			result.m_nZValue[2]--;
+			if(result.m_nZValue[2] > (result.m_nZValue[2] + 1))
+			{
+				result.m_nZValue[3]--;	
+			}
+		}
+		result.m_nZValue[0] = m_nZValue[0] - zOrder.m_nZValue[0];		
+		if(result.m_nZValue[0] > m_nZValue[0])
+		{
+			result.m_nZValue[0]--;	
+			if(result.m_nZValue[1] > (result.m_nZValue[1] + 1))
+			{
+				result.m_nZValue[2]--;	
+				if(result.m_nZValue[2] > (result.m_nZValue[2] + 1))
+				{
+					result.m_nZValue[3]--;	
+				}
+			}
+		}
+		*/
+		return result;
+	}
+	ZOrderRect2DU64 ZOrderRect2DU64::operator + (const ZOrderRect2DU64&  zOrder) const
+	{
+		ZOrderRect2DU64 result;
+
+		bool bCarry = false;
+
+		result.m_nZValue[0] = mathUtils::UI64_Add(m_nZValue[0], zOrder.m_nZValue[0], bCarry, &bCarry);
+		result.m_nZValue[1] = mathUtils::UI64_Add(m_nZValue[1], zOrder.m_nZValue[1], bCarry, &bCarry);
+		result.m_nZValue[2] = mathUtils::UI64_Add(m_nZValue[2], zOrder.m_nZValue[2], bCarry, &bCarry);
+		result.m_nZValue[3] = mathUtils::UI64_Add(m_nZValue[3], zOrder.m_nZValue[3], bCarry, &bCarry);
+
+		/*result.m_nZValue[3] = m_nZValue[3] + zOrder.m_nZValue[3];
+		result.m_nZValue[2] = m_nZValue[2] + zOrder.m_nZValue[2];
+		if(result.m_nZValue[2] < m_nZValue[2])
+			result.m_nZValue[3]++;
+
+		result.m_nZValue[1] = m_nZValue[1] + zOrder.m_nZValue[1];			
+		if(result.m_nZValue[1] < m_nZValue[1])
+		{
+			if(++result.m_nZValue[2] == 0)
+			{
+				result.m_nZValue[3]++;	
+			}
+		}
+
+		result.m_nZValue[0] = m_nZValue[0] + zOrder.m_nZValue[0];		
+		if(result.m_nZValue[0] < m_nZValue[0])
+		{
+			if(++result.m_nZValue[1] == 0)
+			{		
+				if(++result.m_nZValue[2] == 0)
+				{
+					result.m_nZValue[3]++;	
+				}
+			}
+		}
+
+		*/
+		return result;
+	}
+	ZOrderRect2DU64& ZOrderRect2DU64::operator += (const ZOrderRect2DU64&  zOrder)
+	{
+
+		bool bCarry = false;
+		m_nZValue[0] = mathUtils::UI64_Add(m_nZValue[0], zOrder.m_nZValue[0], bCarry, &bCarry);
+		m_nZValue[1] = mathUtils::UI64_Add(m_nZValue[1], zOrder.m_nZValue[1], bCarry, &bCarry);
+		m_nZValue[2] = mathUtils::UI64_Add(m_nZValue[2], zOrder.m_nZValue[2], bCarry, &bCarry);
+		m_nZValue[3] = mathUtils::UI64_Add(m_nZValue[3], zOrder.m_nZValue[3], bCarry, &bCarry);
+
+		/*m_nZValue[3] += zOrder.m_nZValue[3];
+		m_nZValue[2] += zOrder.m_nZValue[2];
+		if(m_nZValue[2] < zOrder.m_nZValue[2])
+			m_nZValue[3]++;
+
+		m_nZValue[1] += zOrder.m_nZValue[1];			
+		if(m_nZValue[1] < zOrder.m_nZValue[1])
+		{
+				if(++m_nZValue[2] == 0))
+			{
+				m_nZValue[3]++;	
+			}
+		}
+
+		m_nZValue[0] += zOrder.m_nZValue[0];		
+		if(m_nZValue[0] < zOrder.m_nZValue[0])
+		{
+			if(++m_nZValue[1] == 0)
+			{
+				if(++m_nZValue[2] == 0)
+				{
+					m_nZValue[3]++;	
+				}
+			}
+		}*/
+		return *this;
 	}
 }

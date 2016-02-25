@@ -909,6 +909,42 @@
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>DB\BPTrees\BtreePlusv2</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialPointCompressor.h">
+      <Filter>DB\Fields\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialRectCompressor.h">
+      <Filter>DB\Fields\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RectZOrderCompressor.h">
+      <Filter>DB\Fields\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="PointZOrderCompressor.h">
+      <Filter>DB\Fields\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="PointSpatialInnerCompress.h">
+      <Filter>DB\Fields\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PointSpatialLeafCompress.h">
+      <Filter>DB\Fields\Index\spatial</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

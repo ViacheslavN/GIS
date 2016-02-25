@@ -35,7 +35,7 @@ namespace CommonLib
 
 
 		}
-		void EncodeSymbol(TCodeValue nLowCount, TCodeValue nHightCount, TCodeValue nTotalCount)
+		bool EncodeSymbol(TCodeValue nLowCount, TCodeValue nHightCount, TCodeValue nTotalCount)
 		{
 			TCodeValue range = m_nHigh - m_nLow + 1; 
 
@@ -65,6 +65,7 @@ namespace CommonLib
 				m_nLow += m_nLow;
 				m_nHigh += (m_nHigh  + 1 );
 			}
+			return true;
 		}
 		void EncodeFinish()
 		{

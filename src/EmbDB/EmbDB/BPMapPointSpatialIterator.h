@@ -235,7 +235,7 @@ namespace embDB
 			}
 
 			TBTreeNodePtr pParentNode = m_pTree->getNode(m_pCurNode->parentAddr(), false, false, true);
-			if(/*pParentNode.get() && */(m_pCurNode->foundIndex()  == -1 || (m_pCurNode->foundIndex() + 1) < (int32)pParentNode->count()))
+			if(/*pParentNode.get() && */(m_pCurNode->foundIndex()  == -1 || (m_pCurNode->foundIndex() + 1) < (uint32)pParentNode->count()))
 			{
 				int nIndex = m_pCurNode->foundIndex()  == -1 ? 0 : m_pCurNode->foundIndex() + 1;
 				TBTreeNodePtr pNextNode = m_pTree->getNode(pParentNode->link(nIndex), false, false, true);

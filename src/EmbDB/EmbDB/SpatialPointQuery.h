@@ -127,10 +127,26 @@ namespace embDB
 		{		 
 			return IsZPointOrdertInRect<uint16, ZOrderPoint2DU16, CommonLib::TRect2Du16>(rect, *this);
 		}
+
+		ZOrderPoint2DU16 operator - (const ZOrderPoint2DU16&  zOrder) const
+		{
+			return ZOrderPoint2DU16(m_nZValue - zOrder.m_nZValue);
+		}
+		ZOrderPoint2DU16 operator + (const ZOrderPoint2DU16&  zOrder) const
+		{
+			return ZOrderPoint2DU16(m_nZValue + zOrder.m_nZValue);
+		}
+		ZOrderPoint2DU16& operator += (const ZOrderPoint2DU16&  zOrder)
+		{
+			m_nZValue += zOrder.m_nZValue;
+			return *this;
+		}
 				
 		void getXY(uint16& x,  uint16& y) const;
 		void getXY(TPoint& point) const;
 		uint32 m_nZValue;
+
+		
 	};
 	//typename ZOrderPoint2D<uint16> PointZOrderU16;
 	
@@ -219,6 +235,21 @@ namespace embDB
 		{		 
 			return IsZPointOrdertInRect<uint32, ZOrderPoint2DU32, CommonLib::TRect2Du32>(rect, *this);
 		}
+
+		ZOrderPoint2DU32 operator - (const ZOrderPoint2DU32&  zOrder) const
+		{
+			return ZOrderPoint2DU32(m_nZValue - zOrder.m_nZValue);
+		}
+		ZOrderPoint2DU32 operator + (const ZOrderPoint2DU32&  zOrder) const
+		{
+			return ZOrderPoint2DU32(m_nZValue + zOrder.m_nZValue);
+		}
+		ZOrderPoint2DU32& operator += (const ZOrderPoint2DU32&  zOrder)
+		{
+			m_nZValue += zOrder.m_nZValue;
+			return *this;
+		}
+
 		uint64 m_nZValue;
 	};
 
@@ -312,6 +343,10 @@ namespace embDB
 		{		 
 			return IsZPointOrdertInRect<uint64, ZOrderPoint2DU64, CommonLib::TRect2Du64>(rect, *this);
 		}
+
+		ZOrderPoint2DU64 operator - (const ZOrderPoint2DU64&  zOrder) const;
+		ZOrderPoint2DU64 operator + (const ZOrderPoint2DU64&  zOrder) const;
+		ZOrderPoint2DU64& operator += (const ZOrderPoint2DU64&  zOrder);
 	};
 
 

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SpatialPointQuery.h"
 #include "BackTableZPoint16Bit.h"
+#include "MathUtils.h"
 namespace embDB
 {
 	void ZOrderPoint2DU16::getXY(uint16& x, uint16& y)  const
@@ -97,5 +98,35 @@ namespace embDB
 			uint64 bit = uint64 (1) << uint64 (idx & 0x3f);
 			m_nZValue[0] |=  bit;
 		}
+	}
+
+
+	ZOrderPoint2DU64 ZOrderPoint2DU64::operator - (const ZOrderPoint2DU64&  zOrder) const
+	{
+		ZOrderPoint2DU64 result;
+		bool bCarry = true;
+
+		result.m_nZValue[0] = mathUtils::UI64_Add(m_nZValue[0], ~zOrder.m_nZValue[0], bCarry, &bCarry);
+		result.m_nZValue[1] = mathUtils::UI64_Add(m_nZValue[1], ~zOrder.m_nZValue[1], bCarry, &bCarry);
+
+		return result;
+	}
+	ZOrderPoint2DU64 ZOrderPoint2DU64::operator + (const ZOrderPoint2DU64&  zOrder) const
+	{
+		ZOrderPoint2DU64 result;
+		bool bCarry = false;
+
+		result.m_nZValue[0] = mathUtils::UI64_Add(m_nZValue[0], zOrder.m_nZValue[0], bCarry, &bCarry);
+		result.m_nZValue[1] = mathUtils::UI64_Add(m_nZValue[1], zOrder.m_nZValue[1], bCarry, &bCarry);
+
+		return result;
+	}
+	ZOrderPoint2DU64& ZOrderPoint2DU64::operator += (const ZOrderPoint2DU64&  zOrder)
+	{
+		bool bCarry = false;
+
+		m_nZValue[0] = mathUtils::UI64_Add(m_nZValue[0], zOrder.m_nZValue[0], bCarry, &bCarry);
+		m_nZValue[1] = mathUtils::UI64_Add(m_nZValue[1], zOrder.m_nZValue[1], bCarry, &bCarry);
+		return *this;
 	}
 }

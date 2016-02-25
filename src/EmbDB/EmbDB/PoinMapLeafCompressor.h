@@ -4,6 +4,7 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CompressorParams.h"
 #include "BPVector.h"
+#include "SpatialPointCompressor.h"
 namespace embDB
 {
 
