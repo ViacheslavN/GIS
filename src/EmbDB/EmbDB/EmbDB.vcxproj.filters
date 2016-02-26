@@ -202,6 +202,12 @@
     <Filter Include="utils\compress">
       <UniqueIdentifier>{046c345b-17e3-41f1-98fb-47665bf81d58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\Fields\Index\spatial\point">
+      <UniqueIdentifier>{f2806348-b06d-4fe1-8dee-eff5dc524b30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Fields\Index\spatial\rect">
+      <UniqueIdentifier>{1da75630-edf6-4989-8598-e5b9a30065a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -915,11 +921,11 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpatialPointCompressor.h">
-      <Filter>DB\Fields\Index\spatial</Filter>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpatialRectCompressor.h">
-      <Filter>DB\Fields\Index\spatial</Filter>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -927,22 +933,37 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RectZOrderCompressor.h">
-      <Filter>DB\Fields\Index\spatial</Filter>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PointZOrderCompressor.h">
-      <Filter>DB\Fields\Index\spatial</Filter>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PointSpatialInnerCompress.h">
-      <Filter>DB\Fields\Index\spatial</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeStatistics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>Header Files</Filter>
+      <Filter>DB\Fields\Index\spatial\point</Filter>
     </ClInclude>
     <ClInclude Include="PointSpatialLeafCompress.h">
+      <Filter>DB\Fields\Index\spatial\point</Filter>
+    </ClInclude>
+    <ClInclude Include="PointZOrderCompressor.h">
+      <Filter>DB\Fields\Index\spatial\point</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialPointCompressor.h">
+      <Filter>DB\Fields\Index\spatial\point</Filter>
+    </ClInclude>
+    <ClInclude Include="RectZOrderCompressor.h">
+      <Filter>DB\Fields\Index\spatial\rect</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialRectCompressor.h">
+      <Filter>DB\Fields\Index\spatial\rect</Filter>
+    </ClInclude>
+    <ClInclude Include="RectSpatialLeafCompress.h">
+      <Filter>DB\Fields\Index\spatial\rect</Filter>
+    </ClInclude>
+    <ClInclude Include="RectSpatialInnerCompress.h">
+      <Filter>DB\Fields\Index\spatial\rect</Filter>
+    </ClInclude>
+    <ClInclude Include="ZOrderCompressBase.h">
       <Filter>DB\Fields\Index\spatial</Filter>
     </ClInclude>
   </ItemGroup>

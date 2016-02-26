@@ -41,7 +41,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	CommonLib::CString sSrcFile;
 	//sSrcFile = L"D:\\1\\jscript.dll";
 	//sSrcFile = L"D:\\2\\1.log";
-	sSrcFile = L"D:\\test\\files\\bib";
+	sSrcFile = L"D:\\test\\files\\zOrder";
 	//sSrcFile = L"D:\\2\\CALC_FUTOPT";
 
 	/*uint32 nOutSize = compressFile(sSrcFile.cwstr(), L"D:\\test\\files\\bib.compress");
@@ -50,8 +50,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	compressStaticFile(sSrcFile.cwstr(), L"D:\\test\\files\\bib.static.compress");
 	DecompressStaticFile(nOutSize, L"D:\\test\\files\\bib.static.compress", L"D:\\test\\files\\bib.static.compress.decompress");
 	*/
-	//CTestCompess test;
-	//test.compressFile(L"D:\\test\\files\\adigit", L"D:\\test\\files\\adigit.compress");
+	CTestCompess test;
+	test.compressFile(L"D:\\test\\files\\zOrder", L"D:\\test\\files\\zOrder.compress");
 	//test.TestCompress(L"D:\\test\\files");
 
 	//TestNumLen();

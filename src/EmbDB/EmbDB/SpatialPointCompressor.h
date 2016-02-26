@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_SPATIAL_INDEX_H_
-#define _EMBEDDED_DATABASE_SPATIAL_INDEX_H_
+#ifndef _EMBEDDED_DATABASE_SPATIAL_POINT_COMPRESSOR_H_
+#define _EMBEDDED_DATABASE_SPATIAL_POINT_COMPRESSOR_H_
  
 #include "BPVector.h"
 #include "CommonLibrary/stream.h"
@@ -25,7 +25,7 @@ namespace embDB
 
 
 		 typedef TPointZOrderCompressor<_TCoordType, TRangeEncoder, TACEncoder, 
-			 TRangeDecoder, TACDecoder, TZorderType, sizeof(TCoordType) * 8> TZOrderCompressor;
+			 TRangeDecoder, TACDecoder, TZorderType, sizeof(TCoordType) * 8, 2> TZOrderCompressor;
 
 
 

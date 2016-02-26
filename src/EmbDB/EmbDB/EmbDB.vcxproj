@@ -585,6 +585,8 @@
     <ClInclude Include="PointSpatialInnerCompress.h" />
     <ClInclude Include="PointSpatialLeafCompress.h" />
     <ClInclude Include="PointZOrderCompressor.h" />
+    <ClInclude Include="RectSpatialInnerCompress.h" />
+    <ClInclude Include="RectSpatialLeafCompress.h" />
     <ClInclude Include="RectZOrderCompressor.h" />
     <ClInclude Include="RowIDCounter.h" />
     <ClInclude Include="ShapeComp.h" />
@@ -665,6 +667,7 @@
     <ClInclude Include="VariantField.h" />
     <ClInclude Include="PageVector.h" />
     <ClInclude Include="WriteStreamPage.h" />
+    <ClInclude Include="ZOrderCompressBase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseRBMultiTree.cpp">

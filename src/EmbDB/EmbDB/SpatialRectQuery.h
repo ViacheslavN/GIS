@@ -6,75 +6,6 @@
 namespace embDB
 {
 
-	/*
-	class Int128
-	{
-	public:
-	...
-	Int128 operator+(const Int128 & rhs)
-	{
-	Int128 sum;
-	sum.high = high + rhs.high;
-	sum.low = low + rhs.low;
-	// check for overflow of low 64 bits, add carry to high
-	if (sum.low < low)
-	++sum.high;
-	return sum;
-	}
-	Int128 operator-(const Int128 & rhs)
-	{
-	Int128 difference;
-	difference.high = high - rhs.high;
-	difference.low = low - rhs.low;
-	// check for underflow of low 64 bits, subtract carry to high
-	if (difference.low > low)
-	--difference.high;
-	return difference;
-	}
-
-	private:
-	INT64  high;
-	UINT64 low;
-	};
-	*/
-
-	/*
-	public static Int256 operator +(Int256 left, Int256 right)
-	{
-	left._a += right._a;
-	left._b += right._b;
-	if (left._b < right._b)
-	{
-	left._a++;
-	}
-	left._c += right._c;
-	if (left._c < right._c)
-	{
-	left._b++;
-	if (left._b < left._b - 1)
-	{
-	left._a++;
-	}
-	}
-	left._d += right._d;
-	if (left._d < right._d)
-	{
-	left._c++;
-	if (left._c < left._c - 1)
-	{
-	left._b++;
-	if (left._b < left._b - 1)
-	{
-	left._a++;
-	}
-	}
-	}
-
-	return left;
-	}
-	
-	*/
-
 	template <class TPoint, class TZOrder, class TRect>
 	bool IsZRectOrdertInRect(const TRect& rect, const TZOrder& zOrder)   
 	{
@@ -91,6 +22,7 @@ namespace embDB
 		typedef  uint64 ZValueType;		
 		typedef CommonLib::TRect2D<uint16> TRect;
 		static const TPointType coordMax = 0xFFFF;
+		static const uint16 SizeInByte = 8;
 		ZOrderRect2DU16();
 		ZOrderRect2DU16(ZValueType zValue);
 		ZOrderRect2DU16(const TRect& rect);

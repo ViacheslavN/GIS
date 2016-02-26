@@ -252,11 +252,22 @@ public:
 			i++;
 		}
 
+		uint64 nMinByteSize = (uint64)(dMinSize + 7)/8;
 
+
+		uint64 nMinByteSizeError = nMinByteSize + nMinByteSize/200;
+
+		uint32 nBeginPos = m_pWriteStream.pos();
 		for (uint32 i = 0; i < nFileSize; ++i)
 		{
 			byte ch= m_pReadStream.readByte();
 			coder.EncodeSymbol(FreqPrev[ch], FreqPrev[ch+1], nFileSize);
+
+			if((m_pWriteStream.pos() - nBeginPos) >  nMinByteSizeError)
+			{
+				int dd = 0;
+				dd++;
+			}
 		}
 		coder.EncodeFinish();
 		dstFile.write(m_pWriteStream.buffer(), m_pWriteStream.pos());
@@ -266,7 +277,7 @@ public:
 		srcFile.close();
 		dstFile.close();
 		
-		uint64 nMinByteSize = (uint64)(dMinSize + 7)/8;
+	
 		int64 nError = nOutFileSize - nMinByteSize;
 		double dErr = (double)nError * 100/nMinByteSize;
 

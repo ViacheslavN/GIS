@@ -1,10 +1,10 @@
-#ifndef _EMBEDDED_DATABASE_SPATIAL_POINT_BTREE_PLUS_LEAF_NODE_COMPRESSOR_H_
-#define _EMBEDDED_DATABASE_SPATIAL_POINT_BTREE_PLUS_LEAF_NODE_COMPRESSOR_H_
+#ifndef _EMBEDDED_DATABASE_SPATIAL_RECT_BTREE_PLUS_LEAF_NODE_COMPRESSOR_H_
+#define _EMBEDDED_DATABASE_SPATIAL_RECT_BTREE_PLUS_LEAF_NODE_COMPRESSOR_H_
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CompressorParams.h"
 #include "BPVector.h"
-#include "SpatialPointCompressor.h"
+#include "SpatialRectCompressor.h"
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CommonLibrary/RangeCoder.h"
 #include "LinkCompress.h"
@@ -12,7 +12,7 @@ namespace embDB
 {
 
 	template<typename _ZOrderType, typename _TValue, class _Transaction = IDBTransaction>
-	class BPSpatialPointLeafCompressor  
+	class BPSpatialRectLeafCompressor  
 	{
 	public:
 
@@ -22,7 +22,7 @@ namespace embDB
 		typedef  TBPVector<ZOrderType> TKeyMemSet;
 		typedef  TBPVector<TValue> TValueMemSet;
 		typedef CompressorParamsBaseImp TLeafCompressorParams;
-		typedef TSpatialPointCompress<ZOrderType, TPointType> TZOrderCompressor;
+		typedef TSpatialRectCompress<ZOrderType, TPointType> TZOrderCompressor;
 
 
 		typedef CommonLib::TRangeEncoder<uint64, 64> TRangeEncoder;
@@ -45,13 +45,13 @@ namespace embDB
 		}
 
 
-		
 
-		BPSpatialPointLeafCompressor(uint32 nPageSize, _Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
+
+		BPSpatialRectLeafCompressor(uint32 nPageSize, _Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
 			TKeyMemSet *pKeyMemset = NULL, TValueMemSet *pValueMemSet = NULL) : m_nCount(0),
 			m_nPageSize(nPageSize), m_pKeyMemSet(pKeyMemset), m_pValueMemSet(pValueMemSet)
 		{}
-		virtual ~BPSpatialPointLeafCompressor(){}
+		virtual ~BPSpatialRectLeafCompressor(){}
 
 		virtual bool Load(TKeyMemSet& keySet, TValueMemSet& valueSet, CommonLib::FxMemoryReadStream& stream)
 		{
@@ -112,12 +112,12 @@ namespace embDB
 
 		virtual bool insert(int32 nIndex, const ZOrderType& key, TValue value )
 		{
-		 
+
 			m_nCount++;
 			m_ZOrderCompressor.AddSymbol(m_nCount, nIndex, key, *m_pKeyMemSet);
 			m_ValueCompressor.AddSymbol(value);
 
-	 
+
 			return true;
 		}
 		virtual bool add(const TKeyMemSet& keySet, const TValueMemSet& valueSet)
@@ -193,7 +193,7 @@ namespace embDB
 		{
 			return  (ZOrderType::SizeInByte + sizeof(TValue));
 		}
-		void SplitIn(uint32 nBegin, uint32 nEnd, BPSpatialPointLeafCompressor *pCompressor)
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPSpatialRectLeafCompressor *pCompressor)
 		{
 			uint32 nSize = nEnd- nBegin;
 
@@ -204,7 +204,7 @@ namespace embDB
 			pCompressor->recalc(*pCompressor->m_pKeyMemSet, *pCompressor->m_pValueMemSet);
 		}
 
-		bool IsHaveUnion(BPSpatialPointLeafCompressor *pCompressor) const
+		bool IsHaveUnion(BPSpatialRectLeafCompressor *pCompressor) const
 		{
 			uint32 nNoCompSize = m_nCount * (sizeof(ZValueType) + sizeof(TValue));
 			uint32 nNoCompSizeUnion = pCompressor->m_nCount * (sizeof(ZValueType) + sizeof(TValue));
@@ -213,7 +213,7 @@ namespace embDB
 
 
 		}
-		bool IsHaveAlignment(BPSpatialPointLeafCompressor *pCompressor) const
+		bool IsHaveAlignment(BPSpatialRectLeafCompressor *pCompressor) const
 		{
 			uint32 nNoCompSize = m_nCount * (sizeof(ZValueType) + sizeof(TValue));
 			return nNoCompSize < (m_nPageSize - headSize());

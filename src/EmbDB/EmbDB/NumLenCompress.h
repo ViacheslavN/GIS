@@ -231,7 +231,7 @@ namespace embDB
 				if(dBitRowSize < 64)
 					dBitRowSize = 64;
 
-				dBitRowSize += (dBitRowSize/m_nError); 
+				dBitRowSize += (dBitRowSize/m_nError)   + 8 /*code  finish*/; 
 
 				return dBitRowSize;
 			}

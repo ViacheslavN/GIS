@@ -402,6 +402,7 @@ namespace embDB
 			{
 				if( pDelNode->getFlags() & CHANGE_NODE)
 				{
+
 					pDelNode->Save(m_pTransaction);
 					if(m_pBPTreeStatistics)
 						m_pBPTreeStatistics->SaveNode(pDelNode->isLeaf());

@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_POINT_ZORDER_COMPRESOR_H_
 
 #include "NumLenCompress.h"
-
+//#include "CommonLibrary/FileStream.h"
 
 
 namespace embDB
@@ -12,7 +12,7 @@ namespace embDB
 	class _TACEncoder,
 	class _TRangeDecoder,
 	class _TACDecoder,		
-	class _ZOrder, uint32 _nMaxBitsLens>
+	class _ZOrder, uint32 _nMaxBitsLens, uint32 _nPointNum>
 	class TPointZOrderCompressor : public TUnsignedNumLenCompressor<_TCoord, TFindMostSigBit, _TRangeEncoder,
 		_TACEncoder, _TRangeDecoder, _TACDecoder, _nMaxBitsLens>
 	
@@ -76,7 +76,7 @@ namespace embDB
 			bool compress(const TBPVector<ZOrder>& vecValues, CommonLib::IWriteStream* pStream)
 			{
 
-				assert(m_nCount == (vecValues.size() - 1) * 2);
+				assert(m_nCount == (vecValues.size() - 1) * _nPointNum);
 			 
 				uint32 nBeginPos = pStream->pos();
 				byte nFlag = 0;
@@ -109,6 +109,28 @@ namespace embDB
 				pStream->seek(nBitSize, CommonLib::soFromCurrent);
 				uint32 nBeginCompressPos = pStream->pos();
 				bool bRangeCode = true;
+
+				/*bool bSaveFile = false;
+				if(bSaveFile)
+				{
+					CommonLib::CWriteFileStream fs;
+
+					fs.open(L"D:\\test\\files\\zOrder", CommonLib::ofmCreateAlways, CommonLib::arWrite, CommonLib::smNoMode);
+					for (uint32 i = 1; i < vecValues.size(); ++i)
+					{
+						ZOrder zOrder = vecValues[i] - vecValues[i-1];
+						TCoord x, y;
+
+						zOrder.getXY(x, y);
+						uint16 XBitLen =  m_FindBit.FMSB(x);
+						uint16 YBitLen =  m_FindBit.FMSB(y);
+
+						fs.write((byte)XBitLen);
+						fs.write((byte)YBitLen);
+					}
+					
+				}
+				*/
 
 				if(!CompressRangeCode(vecValues, pStream, FreqPrev, nByteSize, &bitStream))
 				{
@@ -223,7 +245,7 @@ namespace embDB
 		}
 
 		template<class TDecoder>
-		void decompressCoord(TDecoder& decoder, CommonLib::FxBitReadStream *pBitStream, TCoord coord, uint32 *FreqPrev)
+		void decompressCoord(TDecoder& decoder, CommonLib::FxBitReadStream *pBitStream, TCoord& coord, uint32 *FreqPrev)
 		{
 
 			TCoord value = 0;
@@ -232,6 +254,8 @@ namespace embDB
 			int32 nBitLen = CommonLib::upper_bound(FreqPrev, _nMaxBitsLens, freq);
 			if(nBitLen != 0)
 				nBitLen--;
+
+			
 			
 			pBitStream->readBits(coord, nBitLen);
 			decoder.DecodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], m_nCount);
@@ -269,7 +293,7 @@ namespace embDB
 			TDecoder decoder(pStream);
 			decoder.StartDecode();
 			ZOrder zValue;
-			for (size_t i = 0; i < m_nCount/2; ++i)
+			for (uint32 i = 0, sz = m_nCount/_nPointNum; i < sz; ++i)
 			{
 				DecompressZOrder(decoder, pBitStream,zValue,  FreqPrev);
 				zBegin += zValue;
