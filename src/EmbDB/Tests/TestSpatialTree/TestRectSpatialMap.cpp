@@ -9,8 +9,11 @@
 #include <iostream>
 #include <set>
 
-#include "../../EmbDB/RectSpatialInnerCompress.h"
-#include "../../EmbDB/RectSpatialLeafCompress.h"
+#include "../../EmbDB/BaseInnerNodeDIffCompress.h"
+#include "../../EmbDB/BaseLeafNodeCompDiff.h"
+#include "../../EmbDB/PointZOrderCompressor.h"
+#include "../../EmbDB/RectZOrderCompressor.h"
+#include "../../EmbDB/TBaseSpatialCompressor.h" 
 
 #define  INSERT 1
 #define  SEARCH 2
@@ -19,14 +22,20 @@ void TestRectZorder(int Xmax, int Ymax, int qXmin, int qYmin, int qXmax, int qYm
 
 
 
-typedef embDB::BPSpatialRectInnerCompressor<embDB::ZOrderRect2DU16> TRect16InnerCompress;
-typedef embDB::BPSpatialRectLeafCompressor<embDB::ZOrderRect2DU16, uint64> TRect16LeafCompress;
+typedef embDB::TBaseSpatialCompress<embDB::ZOrderRect2DU16, embDB::TRectZOrderCompressor<embDB::ZOrderRect2DU16, uint16, 16> > TRectSpatialCompress16;
+typedef embDB::TBaseSpatialCompress<embDB::ZOrderRect2DU32, embDB::TRectZOrderCompressor<embDB::ZOrderRect2DU32, uint32, 32> > TRectSpatialCompress32;
+typedef embDB::TBaseSpatialCompress<embDB::ZOrderRect2DU64, embDB::TRectZOrderCompressor<embDB::ZOrderRect2DU64, uint64, 64> > TRectSpatialCompress64;
 
-typedef embDB::BPSpatialRectInnerCompressor<embDB::ZOrderRect2DU32> TRect32InnerCompress;
-typedef embDB::BPSpatialRectLeafCompressor<embDB::ZOrderRect2DU32, uint64> TRect32LeafCompress;
+ 
+typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderRect2DU16, TRectSpatialCompress16 > TRect16InnerCompress;
+typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderRect2DU16, uint64, embDB::IDBTransaction, TRectSpatialCompress16 > TRect16LeafCompress;
 
-typedef embDB::BPSpatialRectInnerCompressor<embDB::ZOrderRect2DU64> TRect64InnerCompress;
-typedef embDB::BPSpatialRectLeafCompressor<embDB::ZOrderRect2DU64, uint64> TRect64LeafCompress;
+
+typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderRect2DU32, TRectSpatialCompress32 > TRect32InnerCompress; 
+typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderRect2DU32, uint64, embDB::IDBTransaction, TRectSpatialCompress32> TRect32LeafCompress;
+
+typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderRect2DU64, TRectSpatialCompress64 > TRect64InnerCompress; 
+typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderRect2DU64, uint64, embDB::IDBTransaction, TRectSpatialCompress64 > TRect64LeafCompress;
 
 
 typedef embDB::TBPRectSpatialMap<embDB::ZOrderRect2DU16, uint64,
@@ -444,8 +453,8 @@ void TestRectSpatial(const CommonLib::CString& sFileName,  int nCacheStorageSize
 
 void TestRectSpatialTree()
 {
-	// TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransaction, embDB::ZOrderRect2DU16>("d:\\db\\dbspatialrect16.data", 50, 8192, 0, 1000, 10,  0, 0, 100, 100, INSERT);
-	// TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransaction, embDB::ZOrderRect2DU16>("d:\\db\\dbspatialrect16.data", 50, 8192, 0, 2000, 10, 333, 444, 999, 1245, SEARCH);
+	 TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransaction, embDB::ZOrderRect2DU16>("d:\\db\\dbspatialrect16.data", 50, 8192, 0, 1000, 10,  0, 0, 100, 100, INSERT);
+	 TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransaction, embDB::ZOrderRect2DU16>("d:\\db\\dbspatialrect16.data", 50, 8192, 0, 2000, 10, 333, 444, 999, 1245, SEARCH);
 	// TestRectSpatial<TBPMapRect16, uint16, embDB::CDirectTransaction, embDB::ZOrderRect2DU16>("d:\\dbspatialrect16.data", 50, 8192, 0, 0xFFFF,100, 1000, IDENTIFY);
 	 // TestRectZorder(2000, 2000, 333, 444, 999, 1245);
 	//TestRectSpatial<TBPMapRect32Ugd, uint32, embDB::CDirectTransaction, ugdRectKey>("d:\\db\\dbspatialrect32Ugd.data", 50, 8192, 0, 0xFFFF, 10, 0, INSERT);
@@ -454,11 +463,11 @@ void TestRectSpatialTree()
 	
 
 
-	 //TestRectSpatial<TBPMapRect32, uint32, embDB::CDirectTransaction, embDB::ZOrderRect2DU32>("d:\\db\\dbspatialrect32.data", 50, 8192,  0 ,1000, 10,  0, 0, 100, 100,  INSERT);
+	// TestRectSpatial<TBPMapRect32, uint32, embDB::CDirectTransaction, embDB::ZOrderRect2DU32>("d:\\db\\dbspatialrect32.data", 50, 8192,  0 ,1000, 10,  0, 0, 100, 100,  INSERT);
 	 //TestRectSpatial<TBPMapRect32, uint32, embDB::CDirectTransaction, embDB::ZOrderRect2DU32>("d:\\db\\dbspatialrect32.data", 50, 8192, 0,  2000, 10, 333, 444, 999, 1245, SEARCH);
 	// TestRectSpatial<TBPMapRect32, uint32, embDB::CDirectTransactions, embDB::ZOrderRect2DU32>("d:\\db\\dbspatialrect32.data", 50, 8192, 0, 0xFFFF,10, 10, IDENTIFY);
 	
-	TestRectSpatial<TBPMapRect64, uint64, embDB::CDirectTransaction, embDB::ZOrderRect2DU64>("d:\\db\\dbspatialrect64.data", 50, 8192, 0 ,1000, 10,  0, 0, 100, 100,  INSERT);
-	TestRectSpatial<TBPMapRect64, uint64, embDB::CDirectTransaction, embDB::ZOrderRect2DU64>("d:\\db\\dbspatialrect64.data", 50, 8192,0,  2000, 10, 333, 444, 999, 1245, SEARCH);
+	//TestRectSpatial<TBPMapRect64, uint64, embDB::CDirectTransaction, embDB::ZOrderRect2DU64>("d:\\db\\dbspatialrect64.data", 50, 8192, 0 ,1000, 10,  0, 0, 100, 100,  INSERT);
+	//TestRectSpatial<TBPMapRect64, uint64, embDB::CDirectTransaction, embDB::ZOrderRect2DU64>("d:\\db\\dbspatialrect64.data", 50, 8192,0,  2000, 10, 333, 444, 999, 1245, SEARCH);
 	//TestRectSpatial<TBPMapRect64, uint64, embDB::CDirectTransaction, embDB::ZOrderRect2DU64>("d:\\db\\dbspatialrect64.data", 50, 8192, 0, 0xFFFF,10, 10, IDENTIFY);
 }

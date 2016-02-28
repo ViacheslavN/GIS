@@ -7,15 +7,15 @@ namespace embDB
 {
 
 
-	OIDCompress::OIDCompress(uint32 nError) : m_NumLenComp(nError), m_DiffComp(nError)
+	OIDCompressor::OIDCompressor(uint32 nError) : m_NumLenComp(nError), m_DiffComp(nError)
 	{
 
 	}
-	OIDCompress::~OIDCompress()
+	OIDCompressor::~OIDCompressor()
 	{
 
 	}
-	uint32 OIDCompress::GetComressSize() const
+	uint32 OIDCompressor::GetComressSize() const
 	{
 		 uint32 nByteDiffComp = m_DiffComp.GetCompressSize();
 		 uint32 nByteNumlenComp = m_NumLenComp.GetCompressSize();
@@ -25,13 +25,13 @@ namespace embDB
 	}
 	 
 
-	void OIDCompress::AddDiffSymbol(int64 nDiff)
+	void OIDCompressor::AddDiffSymbol(int64 nDiff)
 	{
 		m_DiffComp.AddSymbol(nDiff); 
 		m_NumLenComp.AddSymbol(nDiff);
 	}
 	
-	void OIDCompress::AddSymbol(uint32 nSize,  int nIndex, int64 nOID, const embDB::TBPVector<int64>& vecOIDs)
+	void OIDCompressor::AddSymbol(uint32 nSize,  int nIndex, int64 nOID, const embDB::TBPVector<int64>& vecOIDs)
 	{
 		if(nSize > 1)
 		{
@@ -64,9 +64,9 @@ namespace embDB
 	
 	}
 
-	void OIDCompress::RemoveSymbol(uint32 nSize,  int nIndex, int64 nOID, const embDB::TBPVector<int64>& vecOIDs)
+	void OIDCompressor::RemoveSymbol(uint32 nSize,  int nIndex, int64 nOID, const embDB::TBPVector<int64>& vecOIDs)
 	{
-		if(nSize > 1)
+		if(vecOIDs.size() > 1)
 		{
 			if(nIndex == 0)
 			{
@@ -75,7 +75,7 @@ namespace embDB
 			else
 			{
 				
-				if(nIndex == nSize)
+				if(nIndex == vecOIDs.size() - 1)
 				{
 
 					RemoveDiffSymbol(nOID - vecOIDs[nIndex - 1]); 
@@ -96,13 +96,13 @@ namespace embDB
 			}
 		}
 	}
-	void OIDCompress::RemoveDiffSymbol(int64 nDiff)
+	void OIDCompressor::RemoveDiffSymbol(int64 nDiff)
 	{
 		m_DiffComp.RemoveSymbol(nDiff);
 		m_NumLenComp.RemoveSymbol(nDiff);
 	}
 
-	bool OIDCompress::compress( const embDB::TBPVector<int64>& oids, CommonLib::IWriteStream *pStream)
+	bool OIDCompressor::compress( const embDB::TBPVector<int64>& oids, CommonLib::IWriteStream *pStream)
 	{
 		if(oids.empty())
 			return true;
@@ -126,7 +126,7 @@ namespace embDB
 
 	 
 
-	bool OIDCompress::decompress(uint32 nSize, TBPVector<int64>& oids, CommonLib::IReadStream* pStream)
+	bool OIDCompressor::decompress(uint32 nSize, TBPVector<int64>& oids, CommonLib::IReadStream* pStream)
 	{
 		if(nSize == 0)
 			return true;
@@ -160,7 +160,7 @@ namespace embDB
 
 		return bRet;
 	}
-	void OIDCompress::clear()
+	void OIDCompressor::clear()
 	{
 		m_DiffComp.clear();
 		m_NumLenComp.clear();

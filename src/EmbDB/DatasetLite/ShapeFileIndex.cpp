@@ -5,8 +5,6 @@
 #include "../EmbDB/SpatialPointQuery.h"
 #include "../EmbDB/Transactions.h"
 #include "../EmbDB/DirectTransactions.h"
-#include "../EmbDB/PoinMapInnerCompressor64.h"
-#include "../EmbDB/PoinMapLeafCompressor64.h"
 #include "../EmbDB/RectSpatialBPMapTree.h"
 #include "../EmbDB/SpatialRectQuery.h"
 #include "../EmbDB/storage.h"

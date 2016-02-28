@@ -228,10 +228,7 @@ namespace embDB
 			double GetCodeBitSize() const
 			{
 				double dBitRowSize = m_bOnlineCalcSize ? m_dBitRowSize :  CalcRowBitSize();
-				if(dBitRowSize < 64)
-					dBitRowSize = 64;
-
-				dBitRowSize += (dBitRowSize/m_nError)   + 8 /*code  finish*/; 
+				dBitRowSize += (dBitRowSize/m_nError)   + 64 /*code  finish*/; 
 
 				return dBitRowSize;
 			}

@@ -11,20 +11,31 @@
 #include "CommonLibrary/DebugTime.h"
 #include <iostream>
 #include <set>
-#include "../../EmbDB/PointSpatialInnerCompress.h"
-#include "../../EmbDB/PointSpatialLeafCompress.h"
+/*#include "../../EmbDB/PointSpatialInnerCompress.h"
+#include "../../EmbDB/PointSpatialLeafCompress.h"*/
 
 
-
-typedef embDB::BPSpatialPointInnerCompressor<embDB::ZOrderPoint2DU16> TPoint16InnerCompress;
-typedef embDB::BPSpatialPointLeafCompressor<embDB::ZOrderPoint2DU16, uint64> TPoint16LeafCompress;
-
-typedef embDB::BPSpatialPointInnerCompressor<embDB::ZOrderPoint2DU32> TPoint32InnerCompress;
-typedef embDB::BPSpatialPointLeafCompressor<embDB::ZOrderPoint2DU32, uint64> TPoint32LeafCompress;
+#include "../../EmbDB/BaseInnerNodeDIffCompress.h"
+#include "../../EmbDB/BaseLeafNodeCompDiff.h"
+#include "../../EmbDB/PointZOrderCompressor.h"
+#include "../../EmbDB/TBaseSpatialCompressor.h"
 
 
-typedef embDB::BPSpatialPointInnerCompressor<embDB::ZOrderPoint2DU64> TPoint64InnerCompress;
-typedef embDB::BPSpatialPointLeafCompressor<embDB::ZOrderPoint2DU64, uint64> TPoint64LeafCompress;
+typedef embDB::TBaseSpatialCompress<embDB::ZOrderPoint2DU16, embDB::TPointZOrderCompressor<embDB::ZOrderPoint2DU16, uint16, 16> > TPointSpatialCompress16;
+typedef embDB::TBaseSpatialCompress<embDB::ZOrderPoint2DU32, embDB::TPointZOrderCompressor<embDB::ZOrderPoint2DU32, uint32, 32> > TPointSpatialCompress32;
+typedef embDB::TBaseSpatialCompress<embDB::ZOrderPoint2DU64, embDB::TPointZOrderCompressor<embDB::ZOrderPoint2DU64, uint64, 64> > TPointSpatialCompress64;
+
+typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderPoint2DU16, TPointSpatialCompress16 > TPoint16InnerCompress;
+typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU16, uint64, embDB::IDBTransaction, TPointSpatialCompress16 > TPoint16LeafCompress;
+
+
+typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderPoint2DU32, TPointSpatialCompress32 > TPoint32InnerCompress;
+typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU32, uint64, embDB::IDBTransaction, TPointSpatialCompress32> TPoint32LeafCompress;
+
+
+typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderPoint2DU64, TPointSpatialCompress64 > TPoint64InnerCompress;
+typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU64, uint64, embDB::IDBTransaction, TPointSpatialCompress64 > TPoint64LeafCompress;
+
 
 
 typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU16, uint64,
@@ -32,22 +43,22 @@ typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU16, uint64,
 
 
 typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU32, uint64,
-	embDB::ZPointComp<embDB::ZOrderPoint2DU32>, embDB::IDBTransaction/*, TPoint32InnerCompress, TPoint32LeafCompress*/> TBPMapPOint32;
+	embDB::ZPointComp<embDB::ZOrderPoint2DU32>, embDB::IDBTransaction, TPoint32InnerCompress, TPoint32LeafCompress> TBPMapPOint32;
 
 
-/*
+
 typedef embDB::TBPPointSpatialMap<
 	embDB::ZOrderPoint2DU64, 	uint64,	embDB::ZPointComp64, 
 	embDB::IDBTransaction,
 	TPoint64InnerCompress, TPoint64LeafCompress
-> TBPMapPOint64;*/
+> TBPMapPOint64;
 
-typedef embDB::TBPPointSpatialMap<
+/*typedef embDB::TBPPointSpatialMap<
 	embDB::ZOrderPoint2DU64, 	uint64,	embDB::ZPointComp64, 
 	embDB::IDBTransaction ,embDB::BPSpatialPointInnerNodeSimpleCompressor64,
 	embDB::BPSpatialPointLeafNodeMapSimpleCompressor64<uint64> 
 > TBPMapPOint64;
-
+*/
 
 template <class TSparialTree, class TCoodType, class Tran>
 void TestPointSpatialInsert(int32 nCacheBPTreeSize, uint64 nStart, uint64 nEndStart, uint64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, uint32 nPageNodeSize, int64& nTreeRootPage)
@@ -393,13 +404,13 @@ void TestPointSpatialTree()
 	uint64 yMin = 0;
 	uint64 yMax = 100;*/
 
-//	TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransaction, embDB::ZOrderPoint2DU16>("d:\\db\\dbspatialpoint16.data", 50, 8192, 0, 500, 1, 0, 0, 100, 100, false);
-//	TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransaction, embDB::ZOrderPoint2DU16>("d:\\db\\dbspatialpoint16.data", 50, 8192, 0, 1000, 1, 0, 0, 100, 100, true);
+	TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransaction, embDB::ZOrderPoint2DU16>("d:\\db\\dbspatialpoint16.data", 50, 8192, 0, 500, 1, 0, 0, 100, 100, false);
+	TestPointSpatial<TBPMapPOint16, uint16, embDB::CDirectTransaction, embDB::ZOrderPoint2DU16>("d:\\db\\dbspatialpoint16.data", 50, 8192, 0, 1000, 1, 0, 0, 100, 100, true);
 
 
 //	TestPointSpatial<TBPMapPOint32, uint32, embDB::CDirectTransaction, embDB::ZOrderPoint2DU32>("d:\\db\\dbspatialpoint32.data", 50, 8192, 0, 2000, 1, 0, 0, 100, 100, false);
 //	TestPointSpatial<TBPMapPOint32, uint32, embDB::CDirectTransaction, embDB::ZOrderPoint2DU32>("d:\\db\\dbspatialpoint32.data", 50, 8192, 0, 10000, 1, 100, 0, 1000, 1000, true);
 
-	TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransaction, embDB::ZOrderPoint2DU64>("d:\\db\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 0, 0, 100, 100, false);
-    TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransaction, embDB::ZOrderPoint2DU64>("d:\\db\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-500, 0xFFFFFFFFFFFFFFFF-500, true);
+//	TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransaction, embDB::ZOrderPoint2DU64>("d:\\db\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 0, 0, 100, 100, false);
+ //   TestPointSpatial<TBPMapPOint64, uint64, embDB::CDirectTransaction, embDB::ZOrderPoint2DU64>("d:\\db\\dbspatialpoint64.data", 50, 8192, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF, 1, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-1000, 0xFFFFFFFFFFFFFFFF-500, 0xFFFFFFFFFFFFFFFF-500, true);
 }

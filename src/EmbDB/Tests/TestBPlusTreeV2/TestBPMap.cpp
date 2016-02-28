@@ -5,12 +5,16 @@
 #include "../../EmbDB/Transactions.h"
 #include "../../EmbDB/DirectTransactions.h"
 #include "CommonLibrary/DebugTime.h"
-#include "../../EmbDB//InnerNodeCompress.h"
-#include "../../EmbDB/MapLeafNodeOIDComp.h"
+#include "../../EmbDB/BaseInnerNodeDIffCompress.h"
+#include "../../EmbDB/BaseLeafNodeCompDiff.h"
 
 typedef embDB::TBPMapV2 <int64,  uint64, embDB::comp<uint64>, embDB::IDBTransaction, 
-	embDB::BPInnerNodeFieldCompressor, embDB::TMapLeafNodeOIDComp<uint64> > TBInt64Map;
+	embDB::TBPBaseInnerNodeDiffCompressor<int64, embDB::OIDCompressor, embDB::InnerLinkCompress>, 
+	
+	embDB::TBaseLeafNodeDiffComp<int64, uint64, embDB::IDBTransaction, embDB::OIDCompressor> > TBInt64Map;
 
+
+//embDB::TBaseLeafNodeComp<int64, uint64, embDB::IDBTransaction, embDB::OIDCompressor>
 //typedef embDB::TBPMapV2 <int64,  uint64, embDB::comp<uint64>, embDB::IDBTransaction> TBInt64Map;
 
 template<class TBtree, class Tran, class TKey, class TValue>
@@ -427,7 +431,7 @@ void TestBRteeMap()
 	//__int64 nCount = 1531;
 
 	//__int64 nCount = 6748900;
-	int64 nCount = 100000000;
+	int64 nCount = 1000000;
 		size_t nPageSize = 8192;
 
 	testBPTreeMapImpl<TBInt64Map,  embDB::CDirectTransaction, int64, int64>(nCount, nPageSize, 50, 10);

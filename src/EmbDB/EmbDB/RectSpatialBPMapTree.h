@@ -2,14 +2,12 @@
 #define _EMBEDDED_DATABASE_BP_MAP_RECT_SPATIAL_H_
 #include "CommonLibrary/SpatialKey.h"
 #include "PointSpatialBPMapTree.h"
-#include "RectMapLeafCompressor.h"
-#include "RectMapInnerCompressor.h"
 namespace embDB
 {
 	template<class _TCoord, class _TValue, class _TComp, 
-	class _Transaction = IDBTransaction,
-	class _TInnerCompess =  BPSpatialPointInnerNodeSimpleCompressor<_TCoord> ,	
-	class _TLeafCompess = BPSpatialPointLeafNodeMapSimpleCompressor<_TCoord, _TValue>
+	class _Transaction,
+	class _TInnerCompess ,	
+	class _TLeafCompess 
 	>
     class TBPRectSpatialMap : public TBPPointSpatialMap<_TCoord, _TValue,  _TComp, _Transaction,
 		_TInnerCompess, _TLeafCompess>

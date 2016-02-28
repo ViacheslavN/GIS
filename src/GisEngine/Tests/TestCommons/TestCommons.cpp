@@ -34,8 +34,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//TestTableWks();
 	//testLoadXML1();
 	//return 1;
-	//TestShapeIndex();
-	TestEmbDBWks();
+	TestShapeIndex();
+	//TestEmbDBWks();
 
 	/*CommonLib::CString s1(L"vfdgggf");
 	CommonLib::CString s2(s1);

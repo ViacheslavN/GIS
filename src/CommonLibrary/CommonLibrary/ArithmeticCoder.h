@@ -2,10 +2,11 @@
 #define _EMBEDDED_DATABASE_ARITHMETIC_CODER_H_
 
 #include "stream.h"
+#include "BaseACCoder.h"
 namespace CommonLib
 {
 	template<class _TCodeValue, uint16 _nValueBits>
-	class TACEncoder
+	class TACEncoder : public BaseACEncoder<_TCodeValue>
 	{
 	public:
 
@@ -35,7 +36,7 @@ namespace CommonLib
 
 
 		}
-		bool EncodeSymbol(TCodeValue nLowCount, TCodeValue nHightCount, TCodeValue nTotalCount)
+		virtual bool EncodeSymbol(TCodeValue nLowCount, TCodeValue nHightCount, TCodeValue nTotalCount)
 		{
 			TCodeValue range = m_nHigh - m_nLow + 1; 
 
@@ -67,7 +68,7 @@ namespace CommonLib
 			}
 			return true;
 		}
-		void EncodeFinish()
+		virtual bool EncodeFinish()
 		{
 			m_nScale += 1;  
 			if (m_nLow < _FirstQuarter) 
@@ -79,6 +80,8 @@ namespace CommonLib
 			{
 				m_pStream->write(m_nBitsBuf);
 			}
+			return true;
+				 
 		}
 
 		void writeBit(bool bBit)
@@ -110,7 +113,7 @@ namespace CommonLib
 	};
 
 	template<class _TCodeValue, uint16 _nValueBits>
-	class TACDecoder
+	class TACDecoder : public BaseACDecoder<_TCodeValue>
 	{
 	public:
 
@@ -141,7 +144,7 @@ namespace CommonLib
 			m_nCurrBit++;
 			return nBit;
 		}
-		void StartDecode()
+		virtual void StartDecode()
 		{
 			for (int i = 1; i<= _nValueBits; i++)
 			{
@@ -151,12 +154,12 @@ namespace CommonLib
 			}
 		}
 
-		TCodeValue GetFreq(TCodeValue nTotalCount)
+		virtual TCodeValue GetFreq(TCodeValue nTotalCount)
 		{
 			return ((m_nValue - m_nLow + 1) * nTotalCount -1)/(m_nHigh - m_nLow + 1);
 		}
 
-		void DecodeSymbol(TCodeValue lowCount, TCodeValue highCount, TCodeValue nTotal)
+		virtual void DecodeSymbol(TCodeValue lowCount, TCodeValue highCount, TCodeValue nTotal)
 		{
 			TCodeValue nRange = m_nHigh - m_nLow + 1; 
 			m_nHigh = m_nLow + (nRange* highCount)/nTotal - 1;

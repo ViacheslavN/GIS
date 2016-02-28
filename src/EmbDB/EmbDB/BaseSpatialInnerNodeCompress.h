@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_SPATIAL_RECT_BTREE_PLUS_INNER_NODE_COMPRESSOR_H_
-#define _EMBEDDED_DATABASE_SPATIAL_RECT_BTREE_PLUS_INNER_NODE_COMPRESSOR_H_
+#ifndef _EMBEDDED_DATABASE_SPATIAL_BASE_BTREE_PLUS_INNER_NODE_COMPRESSOR_H_
+#define _EMBEDDED_DATABASE_SPATIAL_BASE_BTREE_PLUS_INNER_NODE_COMPRESSOR_H_
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CompressorParams.h"
@@ -11,8 +11,8 @@
 namespace embDB
 {
 
-	template<typename _ZOrderType>
-	class BPSpatialRectInnerCompressor  
+	template<typename _ZOrderType, typename _TZOrderCompressor>
+	class BPSpatialBaseInnerCompressor  
 	{
 	public:
 
@@ -22,14 +22,9 @@ namespace embDB
 		typedef  TBPVector<ZOrderType> TKeyMemSet;
 		typedef  TBPVector<TLink> TLinkMemSet;
 		typedef CompressorParamsBaseImp TInnerCompressorParams;
-		typedef TSpatialRectCompress<ZOrderType, TPointType> TZOrderCompressor;
+		typedef _TZOrderCompressor TZOrderCompressor;
 
-
-		typedef CommonLib::TRangeEncoder<uint64, 64> TRangeEncoder;
-		typedef CommonLib::TRangeDecoder<uint64, 64> TRangeDecoder;
-
-		typedef CommonLib::TACEncoder<uint64, 32> TACEncoder;
-		typedef CommonLib::TACDecoder<uint64, 32> TACDecoder;
+ 
 
 
 
@@ -40,10 +35,10 @@ namespace embDB
 			return NULL;
 		}
 
-		BPSpatialRectInnerCompressor(uint32 nPageSize, TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParms = NULL) : m_nCount(0),
+		BPSpatialBaseInnerCompressor(uint32 nPageSize, TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParms = NULL) : m_nCount(0),
 			m_nPageSize(nPageSize), m_pKeyMemSet(pKeyMemset), m_pLinkMemSet(pLinkMemSet)
 		{}
-		virtual ~BPSpatialRectInnerCompressor(){}
+		virtual ~BPSpatialBaseInnerCompressor(){}
 
 		virtual bool Load(TKeyMemSet& keySet, TLinkMemSet& linkSet, CommonLib::FxMemoryReadStream& stream)
 		{

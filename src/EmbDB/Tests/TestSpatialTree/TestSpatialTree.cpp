@@ -22,7 +22,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//testZRect1();
 	//testZPoint();
 //	testZPoint1();
-//	TestPointSpatialTree();
+	//TestPointSpatialTree();
 	//WriteZorderTable(0, 10);
    TestRectSpatialTree();
 	//TestPointZorder();

@@ -17,15 +17,10 @@ namespace embDB
 		 typedef _TCoordType TCoordType;
 
 
-		 typedef CommonLib::TRangeEncoder<uint64, 64> TRangeEncoder;
-		 typedef CommonLib::TRangeDecoder<uint64, 64> TRangeDecoder;
-
-		 typedef CommonLib::TACEncoder<uint64, 32> TACEncoder;
-		 typedef CommonLib::TACDecoder<uint64, 32> TACDecoder;
+		 typedef TPointZOrderCompressor<TZorderType, TCoordType, sizeof(TCoordType) * 8> TZOrderCompressor;
 
 
-		 typedef TPointZOrderCompressor<_TCoordType, TRangeEncoder, TACEncoder, 
-			 TRangeDecoder, TACDecoder, TZorderType, sizeof(TCoordType) * 8, 2> TZOrderCompressor;
+
 
 
 

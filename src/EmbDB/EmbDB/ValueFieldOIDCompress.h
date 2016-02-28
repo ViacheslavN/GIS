@@ -163,7 +163,7 @@ namespace embDB
 		}
 	private:
 		size_t m_nSize;
-		OIDCompress m_OIDCompressor;
+		OIDCompressor m_OIDCompressor;
 		TOIDMemSet* m_pOIDMemSet;
 
 	};

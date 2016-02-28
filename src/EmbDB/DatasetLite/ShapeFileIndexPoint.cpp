@@ -8,28 +8,34 @@
 #include "../EmbDB/SpatialPointQuery.h"
 #include "../EmbDB/Transactions.h"
 #include "../EmbDB/DirectTransactions.h"
-#include "../EmbDB/PoinMapInnerCompressor64.h"
-#include "../EmbDB/PoinMapLeafCompressor64.h"
 #include "../EmbDB/RectSpatialBPMapTree.h"
 #include "../EmbDB/SpatialRectQuery.h"
 #include "../EmbDB/storage.h"
+#include "../EmbDB/BaseInnerNodeDIffCompress.h"
+#include "../EmbDB/BaseLeafNodeCompDiff.h"
+#include "../EmbDB/PointZOrderCompressor.h"
+#include "../EmbDB/RectZOrderCompressor.h"
+#include "../EmbDB/TBaseSpatialCompressor.h"
 
 
+typedef embDB::TBaseSpatialCompress<embDB::ZOrderPoint2DU16, embDB::TPointZOrderCompressor<embDB::ZOrderPoint2DU16, uint16, 16> > TPointSpatialCompress16;
+typedef embDB::TBaseSpatialCompress<embDB::ZOrderPoint2DU32, embDB::TPointZOrderCompressor<embDB::ZOrderPoint2DU32, uint32, 32> > TPointSpatialCompress32;
+typedef embDB::TBaseSpatialCompress<embDB::ZOrderPoint2DU64, embDB::TPointZOrderCompressor<embDB::ZOrderPoint2DU64, uint64, 64> > TPointSpatialCompress64;
 
-typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU16, uint32,
-	embDB::ZPointComp<embDB::ZOrderPoint2DU16>, embDB::IDBTransaction > TBPMapPoint16;
+typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderPoint2DU16, TPointSpatialCompress16 > TPoint16InnerCompress;
+typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU16, uint32, embDB::IDBTransaction, TPointSpatialCompress16 > TPoint16LeafCompress;
 
 
-typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU32, uint32,
-	embDB::ZPointComp<embDB::ZOrderPoint2DU32>, embDB::IDBTransaction  > TBPMapPoint32;
+typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderPoint2DU32, TPointSpatialCompress32 > TPoint32InnerCompress;
+typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU32, uint32, embDB::IDBTransaction, TPointSpatialCompress32> TPoint32LeafCompress;
 
 
-typedef embDB::TBPPointSpatialMap<
-	embDB::ZOrderPoint2DU64, 	uint32,	embDB::ZPointComp64, 
-	embDB::IDBTransaction,
-	embDB::BPSpatialPointInnerNodeSimpleCompressor64,
-	embDB::BPSpatialPointLeafNodeMapSimpleCompressor64<uint32> 
-> TBPMapPoint64;
+typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderPoint2DU64, TPointSpatialCompress64 > TPoint64InnerCompress;
+typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU64, uint32, embDB::IDBTransaction, TPointSpatialCompress64 > TPoint64LeafCompress;
+
+typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU16, uint32,	embDB::ZPointComp<embDB::ZOrderPoint2DU16>, embDB::IDBTransaction, TPoint16InnerCompress, TPoint16LeafCompress> TBPMapPoint16;	
+typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU32, uint32,	embDB::ZPointComp<embDB::ZOrderPoint2DU32>, embDB::IDBTransaction, TPoint32InnerCompress, TPoint32LeafCompress> TBPMapPoint32;
+typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU64, uint32,	embDB::ZPointComp64, embDB::IDBTransaction, TPoint64InnerCompress, TPoint64LeafCompress> TBPMapPoint64;
 
 namespace DatasetLite
 {

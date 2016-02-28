@@ -176,9 +176,7 @@ template<class _TValue,
 				
 				double dBitRowSize = m_bOnlineCalcSize ? m_dBitRowSize :  CalcRowBitSize();
 				
-				if(dBitRowSize < 64)
-					dBitRowSize = 64;
-				dBitRowSize  += (dBitRowSize /m_nError); 
+				dBitRowSize  += (dBitRowSize /m_nError)  + 64; 
 				return dBitRowSize;
 			}
 		

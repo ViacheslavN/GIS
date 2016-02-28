@@ -441,6 +441,7 @@
     <ClInclude Include="alloc_t.h" />
     <ClInclude Include="ArithmeticCoder.h" />
     <ClInclude Include="AutoPtr.h" />
+    <ClInclude Include="BaseACCoder.h" />
     <ClInclude Include="BitStream.h" />
     <ClInclude Include="blob.h" />
     <ClInclude Include="BoundaryBox.h" />

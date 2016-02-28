@@ -471,12 +471,6 @@
     <ClInclude Include="SpatialPointQuery.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
     </ClInclude>
-    <ClInclude Include="PoinMapLeafCompressor.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClInclude>
-    <ClInclude Include="PoinMapInnerCompressor.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClInclude>
     <ClInclude Include="BackTableZPoint16Bit.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
     </ClInclude>
@@ -485,12 +479,6 @@
     </ClInclude>
     <ClInclude Include="RectSpatialBPMapTree.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
-    </ClInclude>
-    <ClInclude Include="PoinMapInnerCompressor64.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClInclude>
-    <ClInclude Include="PoinMapLeafCompressor64.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeSPLeafNodeMap.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
@@ -507,17 +495,8 @@
     <ClInclude Include="tableZRect8Bit.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
     </ClInclude>
-    <ClInclude Include="RectMapInnerCompressor.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
-    </ClInclude>
-    <ClInclude Include="RectMapLeafCompressor.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
-    </ClInclude>
     <ClInclude Include="SpatialKey.h">
       <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="Shape.h">
-      <Filter>DB\BPTrees\spatial</Filter>
     </ClInclude>
     <ClInclude Include="CompressorParams.h">
       <Filter>DB\BPTrees\BTreePlus\Compressors</Filter>
@@ -677,9 +656,6 @@
     </ClInclude>
     <ClInclude Include="StringCompressorParams.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="LeafSetCompBase.h">
-      <Filter>DB\BPTrees\BtreePlusv2\Compressors</Filter>
     </ClInclude>
     <ClInclude Include="PageAlloc.h">
       <Filter>utils\alloc</Filter>
@@ -855,9 +831,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InnerNodeCompress.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
     <ClInclude Include="OIDCompress.h">
       <Filter>DB\Fields\compress</Filter>
     </ClInclude>
@@ -900,9 +873,6 @@
     <ClInclude Include="NumLenDiffCompress.h">
       <Filter>utils\compress</Filter>
     </ClInclude>
-    <ClInclude Include="MapLeafNodeOIDComp.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -939,32 +909,47 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PointSpatialInnerCompress.h">
-      <Filter>DB\Fields\Index\spatial\point</Filter>
-    </ClInclude>
-    <ClInclude Include="PointSpatialLeafCompress.h">
-      <Filter>DB\Fields\Index\spatial\point</Filter>
-    </ClInclude>
     <ClInclude Include="PointZOrderCompressor.h">
-      <Filter>DB\Fields\Index\spatial\point</Filter>
-    </ClInclude>
-    <ClInclude Include="SpatialPointCompressor.h">
       <Filter>DB\Fields\Index\spatial\point</Filter>
     </ClInclude>
     <ClInclude Include="RectZOrderCompressor.h">
       <Filter>DB\Fields\Index\spatial\rect</Filter>
     </ClInclude>
-    <ClInclude Include="SpatialRectCompressor.h">
-      <Filter>DB\Fields\Index\spatial\rect</Filter>
-    </ClInclude>
-    <ClInclude Include="RectSpatialLeafCompress.h">
-      <Filter>DB\Fields\Index\spatial\rect</Filter>
-    </ClInclude>
-    <ClInclude Include="RectSpatialInnerCompress.h">
-      <Filter>DB\Fields\Index\spatial\rect</Filter>
-    </ClInclude>
     <ClInclude Include="ZOrderCompressBase.h">
       <Filter>DB\Fields\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseInnerNodeCompress.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseLeafNodeComp.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="EmptyValueDIffCompress.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="EmptyValueCompress.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseInnerNodeDIffCompress.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseLeafNodeCompDiff.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="TBaseSpatialCompressor.h">
+      <Filter>DB\Fields\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>DB\BPTrees\BtreePlusv2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1028,9 +1013,6 @@
     <ClCompile Include="SpatialRectQuery.cpp">
       <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
     </ClCompile>
-    <ClCompile Include="Shape.cpp">
-      <Filter>DB\BPTrees\spatial</Filter>
-    </ClCompile>
     <ClCompile Include="CRC.cpp">
       <Filter>utils</Filter>
     </ClCompile>
@@ -1087,9 +1069,6 @@
     </ClCompile>
     <ClCompile Include="DeleteCursor.cpp">
       <Filter>DB\transactions\Cursors</Filter>
-    </ClCompile>
-    <ClCompile Include="InneNodeCompress.cpp">
-      <Filter>DB\Fields\compress</Filter>
     </ClCompile>
     <ClCompile Include="OIDCompress.cpp">
       <Filter>DB\Fields\compress</Filter>

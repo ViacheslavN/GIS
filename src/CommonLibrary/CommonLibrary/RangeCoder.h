@@ -1,10 +1,11 @@
 #ifndef _EMBEDDED_DATABASE_RANGE_CODER_H_
 #define _EMBEDDED_DATABASE_RANGE_CODER_H_
 #include "stream.h"
+#include "BaseACCoder.h"
 namespace CommonLib
 {
 	template<class _TCodeValue, uint16 _nValueBits>
-	class TRangeEncoder
+	class TRangeEncoder : public BaseACEncoder<_TCodeValue>
 	{
 	
 			typedef _TCodeValue TCodeValue;
@@ -21,7 +22,7 @@ namespace CommonLib
 					assert(m_pStream);
 
 				}
-				bool EncodeSymbol(_TCodeValue SymbolLow, _TCodeValue SymbolHigh,_TCodeValue TotalRange)
+				virtual bool EncodeSymbol(_TCodeValue SymbolLow, _TCodeValue SymbolHigh,_TCodeValue TotalRange)
 				{
 
 					Low += SymbolLow*(Range/=TotalRange);
@@ -60,7 +61,7 @@ namespace CommonLib
 
 					 return true;
 				}
-				bool EncodeFinish()
+				virtual bool EncodeFinish()
 				{
 
 
@@ -83,7 +84,7 @@ namespace CommonLib
 
 
 	template<class _TCodeValue, uint16 _nValueBits>
-	class TRangeDecoder
+	class TRangeDecoder : public BaseACDecoder<_TCodeValue>
 	{
 
 		static const uint16 nValueBits	= _nValueBits - 8;
@@ -99,7 +100,7 @@ namespace CommonLib
 
 		}
 
-		void StartDecode()
+		virtual void StartDecode()
 		{
 			for(int i=0;i<_nValueBits/8;i++)
 			{
@@ -107,7 +108,7 @@ namespace CommonLib
 			}
 		}
 
-		void DecodeSymbol(_TCodeValue SymbolLow, _TCodeValue SymbolHigh,_TCodeValue TotalRange)
+		virtual void DecodeSymbol(_TCodeValue SymbolLow, _TCodeValue SymbolHigh,_TCodeValue TotalRange)
 		{
 			Low += SymbolLow*Range;
 			Range *= SymbolHigh-SymbolLow;
@@ -118,7 +119,7 @@ namespace CommonLib
 			}
 		}
 
-		TCodeValue GetFreq(TCodeValue nTotalCount)
+		virtual TCodeValue GetFreq(TCodeValue nTotalCount)
 		{
 			return (m_nValue-Low)/(Range/=nTotalCount);
 		}

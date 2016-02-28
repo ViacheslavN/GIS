@@ -4,16 +4,14 @@
  
 //#include "PointSpatialBPMaTraits.h"
 #include "CommonLibrary/SpatialKey.h"
-#include "PoinMapInnerCompressor.h"
-#include "PoinMapLeafCompressor.h"
 #include "BPMapPointSpatialIterator.h"
 
 namespace embDB
 {
 	template<class _TCoord, class _TValue, class _TComp, 
-	class _Transaction = IDBTransaction,
-	class _TInnerCompess =  BPSpatialPointInnerNodeSimpleCompressor<_TCoord > ,	
-	class _TLeafCompess = BPSpatialPointLeafNodeMapSimpleCompressor<_TCoord, _TValue>,
+	class _Transaction,
+	class _TInnerCompess,	
+	class _TLeafCompess,
 	class _TInnerNode = BPTreeInnerNodeSetv2<_TCoord,/* _TComp,*/ _Transaction, _TInnerCompess>,
 	class _TLeafNode =  BPTreeLeafNodeMapv2<_TCoord, _TValue, /* _TComp, */_Transaction, _TLeafCompess>, 
 	class _TBTreeNode = BPTreeNodeMapv2<_TCoord, _TValue, /* _TComp,*/ _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode>

@@ -14,7 +14,7 @@
 #include "BPVector.h"
 namespace embDB
 {
-	class OIDCompress
+	class OIDCompressor
 	{
  
 		enum eSchemeCompress
@@ -40,8 +40,8 @@ namespace embDB
 	 
 		public:
 
-			OIDCompress(uint32 nError = 200);
-			~OIDCompress();
+			OIDCompressor(uint32 nError = 200);
+			~OIDCompressor();
 
 			void AddSymbol(uint32 nSize,  int nIndex, int64 nOID, const embDB::TBPVector<int64>& vecOIDs);
 			void RemoveSymbol(uint32 nSize,  int nIndex, int64 nOID, const embDB::TBPVector<int64>& vecOIDs);

@@ -3,35 +3,22 @@
 
 
 #include "BPVector.h"
-#include "CommonLibrary/stream.h"
-#include "CommonLibrary/ArithmeticCoder.h"
-#include "CommonLibrary/RangeCoder.h"
+ 
 #include "RectZOrderCompressor.h"
 
 namespace embDB
 {
-	template <class _TZorderType, class _TCoordType>
-	class TSpatialRectCompress
+	template <class _TZorderType, class _TZOrderCompressor>
+	class TBaseSpatialCompress
 	{
 	public:
 		typedef _TZorderType TZorderType;
-		typedef _TCoordType TCoordType;
-
-
-		typedef CommonLib::TRangeEncoder<uint64, 64> TRangeEncoder;
-		typedef CommonLib::TRangeDecoder<uint64, 64> TRangeDecoder;
-
-		typedef CommonLib::TACEncoder<uint64, 32> TACEncoder;
-		typedef CommonLib::TACDecoder<uint64, 32> TACDecoder;
-
-
-		typedef TRectZOrderCompressor<_TCoordType, TRangeEncoder, TACEncoder, 
-			TRangeDecoder, TACDecoder, TZorderType, sizeof(TCoordType) * 8> TZOrderCompressor;
+		typedef _TZOrderCompressor TZOrderCompressor;
 
 
 
-		TSpatialRectCompress(){}
-		~TSpatialRectCompress()
+		TBaseSpatialCompress(){}
+		~TBaseSpatialCompress()
 		{
 
 		}
