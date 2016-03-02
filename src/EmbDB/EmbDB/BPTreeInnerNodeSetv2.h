@@ -235,6 +235,10 @@ namespace embDB
 
 	
 				m_pCompressor->remove(nSplitIndex, m_innerKeyMemSet[nSplitIndex], m_innerLinkMemSet[nSplitIndex]);
+
+				m_innerKeyMemSet.resize(nNewSize + 1);
+				m_innerLinkMemSet.resize(nNewSize + 1);
+
 				m_pCompressor->remove(nLessIndex, m_innerKeyMemSet[nLessIndex],  m_innerLinkMemSet[nLessIndex]);
 				
 

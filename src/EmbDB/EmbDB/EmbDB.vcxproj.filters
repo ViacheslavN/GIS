@@ -690,9 +690,6 @@
     <ClInclude Include="FixedStringTree.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
-    <ClInclude Include="StringTree.h">
-      <Filter>DB\Fields\string\StringField</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringBPLeafNode.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
@@ -876,9 +873,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ValueFieldOIDCompress.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -950,6 +944,60 @@
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>DB\BPTrees\BtreePlusv2</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="StringTree.h">
+      <Filter>DB\Fields</Filter>
+    </ClInclude>
+    <ClInclude Include="UnsignedIntegerNumLenComp.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StringACCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressDouble.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SignedNumLenDiffCompress.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseInnerNodeDIffCompress2.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseValueDiffCompressor.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="LinkDiffCompress.h">
+      <Filter>DB\Fields\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseLeafNodeCompDiff2.h">
+      <Filter>DB\Fields\compress</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

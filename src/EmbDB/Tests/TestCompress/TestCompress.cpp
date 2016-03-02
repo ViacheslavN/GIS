@@ -51,11 +51,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	DecompressStaticFile(nOutSize, L"D:\\test\\files\\bib.static.compress", L"D:\\test\\files\\bib.static.compress.decompress");
 	*/
 	CTestCompess test;
-	test.compressFile(L"D:\\test\\files\\zOrder", L"D:\\test\\files\\zOrder.compress");
+	//test.compressFile(L"D:\\test\\files\\zOrder", L"D:\\test\\files\\zOrder.compress");
 	//test.TestCompress(L"D:\\test\\files");
-
+	test.compressFile(L"D:\\db\\1", L"D:\\db\\2");
 	//TestNumLen();
-	TestDiffComp();
+	//TestDiffComp();
 	return 0;
 }
 

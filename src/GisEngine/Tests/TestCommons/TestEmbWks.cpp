@@ -31,6 +31,8 @@ void TestEmbDBWks()
 	if(!pEmbDBFC.get())
 	{
 
+		//pShapeFC->DeleteField(L"ObjectID");
+
 
 		pEmbDBFC = pWks->CreateFeatureClass(L"building", pShapeFC->GetFields().get(), true/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
 

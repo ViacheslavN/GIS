@@ -14,6 +14,7 @@ void TestPODTypeVector();
 void testCompKey();
 void TestBPStringTree();
 void TestTreeBlob();
+void TestBPFixedStringTree();
 int _tmain(int argc, _TCHAR* argv[])
 {
 
@@ -28,7 +29,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//testRedo();
 
 
-
+	//TestBPFixedStringTree();
 	//TestBPStringTree();
 	//TestTreeBlob();
 	return 0;

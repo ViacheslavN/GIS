@@ -139,6 +139,13 @@ namespace CommonLib
 	};
 
 
+	typedef TRangeEncoder<uint64, 64> TRangeEncoder64;
+	typedef TRangeDecoder<uint64, 64> TRangeDecoder64;
+ 
+	typedef TRangeEncoder<uint32, 32> TRangeEncoder32;
+	typedef TRangeDecoder<uint32, 32> TRangeDecoder32;
+
+
 }
 
 #endif

@@ -392,15 +392,15 @@ namespace embDB
 	typedef embDB::TBaseSpatialCompress<embDB::ZOrderPoint2DU64, embDB::TPointZOrderCompressor<embDB::ZOrderPoint2DU64, uint64, 64> > TPointSpatialCompress64;
 
 	typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderPoint2DU16, TPointSpatialCompress16 > TPoint16InnerCompress;
-	typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU16, int64, embDB::IDBTransaction, TPointSpatialCompress16 > TPoint16LeafCompress;
+	typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU16, int64, embDB::IDBTransaction, TPointSpatialCompress16, TUnsignedNumLenNodeCompressor<int64, 64> > TPoint16LeafCompress;
 
 
 	typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderPoint2DU32, TPointSpatialCompress32 > TPoint32InnerCompress;
-	typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU32, int64, embDB::IDBTransaction, TPointSpatialCompress32> TPoint32LeafCompress;
+	typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU32, int64, embDB::IDBTransaction, TPointSpatialCompress32, TUnsignedNumLenNodeCompressor<int64, 64> > TPoint32LeafCompress;
 
 
 	typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderPoint2DU64, TPointSpatialCompress64 > TPoint64InnerCompress;
-	typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU64, int64, embDB::IDBTransaction, TPointSpatialCompress64 > TPoint64LeafCompress;
+	typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU64, int64, embDB::IDBTransaction, TPointSpatialCompress64, TUnsignedNumLenNodeCompressor<int64, 64>  > TPoint64LeafCompress;
 
 
 
@@ -410,14 +410,14 @@ namespace embDB
 
 
 	typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderRect2DU16, TRectSpatialCompress16 > TRect16InnerCompress;
-	typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderRect2DU16, int64, embDB::IDBTransaction, TRectSpatialCompress16 > TRect16LeafCompress;
+	typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderRect2DU16, int64, embDB::IDBTransaction, TRectSpatialCompress16 , TUnsignedNumLenNodeCompressor<int64, 64>  > TRect16LeafCompress;
 
 
 	typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderRect2DU32, TRectSpatialCompress32 > TRect32InnerCompress; 
-	typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderRect2DU32, int64, embDB::IDBTransaction, TRectSpatialCompress32> TRect32LeafCompress;
+	typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderRect2DU32, int64, embDB::IDBTransaction, TRectSpatialCompress32, TUnsignedNumLenNodeCompressor<int64, 64>  > TRect32LeafCompress;
 
 	typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderRect2DU64, TRectSpatialCompress64 > TRect64InnerCompress; 
-	typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderRect2DU64, int64, embDB::IDBTransaction, TRectSpatialCompress64 > TRect64LeafCompress;
+	typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderRect2DU64, int64, embDB::IDBTransaction, TRectSpatialCompress64, TUnsignedNumLenNodeCompressor<int64, 64>   > TRect64LeafCompress;
 
 
 

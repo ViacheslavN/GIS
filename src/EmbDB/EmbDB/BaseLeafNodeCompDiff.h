@@ -5,17 +5,20 @@
 namespace embDB
 {
 
-	template<class _TKey, class _TValue, class _Transaction = IDBTransaction, class _TKeyCommpressor = TEmptyValueCompress<_TKey>, class _TValueCompressor  = TEmptyValueCompress<_TValue> >
-	class TBaseLeafNodeDiffComp : public TBaseLeafNodeComp<_TKey, _TValue, _Transaction, _TKeyCommpressor>
+	template<class _TKey, class _TValue, class _Transaction = IDBTransaction, class _TKeyCommpressor = TEmptyValueCompress<_TKey>, class _TValueCompressor  = TEmptyValueCompress<_TValue> ,
+	class _TLeafCompressorParams = CompressorParamsBaseImp>
+	class TBaseLeafNodeDiffComp : public TBaseLeafNodeComp<_TKey, _TValue, _Transaction, _TKeyCommpressor, _TValueCompressor, _TLeafCompressorParams>
 	{
 		public:
 
-			typedef TBaseLeafNodeComp<_TKey, _TValue, _Transaction, _TKeyCommpressor> TBase;
+			typedef TBaseLeafNodeComp<_TKey, _TValue, _Transaction, _TKeyCommpressor, _TValueCompressor, _TLeafCompressorParams> TBase;
 			typedef typename TBase::TKey TKey;
 			typedef typename TBase::TValue TValue;
 			typedef typename TBase::TKeyCommpressor TKeyCommpressor;
 			typedef typename TBase::TValueCompressor TValueCompressor;
 			typedef typename TBase::Transaction Transaction;
+			typedef typename TBase::TKeyMemSet TKeyMemSet;
+			typedef typename TBase::TValueMemSet TValueMemSet;
 			 
 			typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
 

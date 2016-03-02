@@ -3,7 +3,7 @@
 
 namespace embDB
 {
-	InnerLinkCompress::InnerLinkCompress()
+	InnerLinkCompress::InnerLinkCompress(CommonLib::alloc_t *pAlloc, CompressorParamsBaseImp *pParams  )
 	{
 
 	}
@@ -12,11 +12,11 @@ namespace embDB
 
 	}
 
-	void InnerLinkCompress::AddLink(int64 nLink)
+	void InnerLinkCompress::AddSymbol(uint32 nSize,  int nIndex, int64 nLink, const embDB::TBPVector<int64>& vecLinks)
 	{
 		m_compressor.AddSymbol(nLink);
 	}
-	void InnerLinkCompress::RemoveLink(int64 nLink)
+	void InnerLinkCompress::RemoveSymbol(uint32 nSize,  int nIndex, int64 nLink, const embDB::TBPVector<int64>& vecLinks)
 	{
 		m_compressor.RemoveSymbol(nLink);
 	}
@@ -31,7 +31,7 @@ namespace embDB
 	}
 	void InnerLinkCompress::decompress(uint32 nSize, embDB::TBPVector<int64>& vecLinks, CommonLib::IReadStream *pStream)
 	{
-		m_compressor.decompress(vecLinks, pStream);
+		m_compressor.decompress(nSize,vecLinks, pStream);
 	}
 	void InnerLinkCompress::clear()
 	{

@@ -5,7 +5,8 @@
 #include "BPVector.h"
  
 #include "RectZOrderCompressor.h"
-
+#include "CompressorParams.h"
+#include "UnsignedIntegerNumLenComp.h"
 namespace embDB
 {
 	template <class _TZorderType, class _TZOrderCompressor>
@@ -17,7 +18,7 @@ namespace embDB
 
 
 
-		TBaseSpatialCompress(){}
+		TBaseSpatialCompress(CommonLib::alloc_t *pAlloc, CompressorParamsBaseImp *pParams){}
 		~TBaseSpatialCompress()
 		{
 

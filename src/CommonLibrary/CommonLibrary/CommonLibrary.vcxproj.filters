@@ -222,6 +222,9 @@
     <ClInclude Include="BaseACCoder.h">
       <Filter>compress</Filter>
     </ClInclude>
+    <ClInclude Include="ShapeCompressor.h">
+      <Filter>SpatialData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

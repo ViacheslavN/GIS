@@ -4,14 +4,24 @@
 #include "BaseBPMapv2.h"
 #include "FixedStringBPNode.h"
 #include "PageAlloc.h"
+
+#include "BaseInnerNodeDIffCompress.h"
+#include "BaseLeafNodeCompDiff.h"
+#include "BaseInnerNodeDIffCompress2.h"
+#include "BaseValueDiffCompressor.h"
+#include "SignedNumLenDiffCompress.h"
+
 namespace embDB
 {
+ 
 
+typedef TBaseValueDiffCompress<int64, SignedDiffNumLenCompressor64i> TInnerLinkCompress;
 
+	
 template<class _TKey, class _Transaction>
 class TBPFixedString : public TBPMapV2<_TKey, sFixedStringVal, comp<_TKey>, _Transaction, 
-		 BPInnerNodeSimpleCompressorV2<_TKey> ,
-		 BPFixedStringLeafNodeCompressor<_TKey,  _Transaction>, 
+		 embDB::TBPBaseInnerNodeDiffCompressor2<_TKey, embDB::OIDCompressor, TInnerLinkCompress> ,
+		 TBPFixedStringLeafCompressor<_TKey, _Transaction> /*BPFixedStringLeafNodeCompressor<_TKey, _Transaction>*/, 
 		 BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
 		 TFixedStringLeafNode<_TKey, _Transaction>,
 		 BPFixedStringTreeNodeMapv2<_TKey, _Transaction>	>
@@ -19,8 +29,8 @@ class TBPFixedString : public TBPMapV2<_TKey, sFixedStringVal, comp<_TKey>, _Tra
 public:
 
 	typedef TBPMapV2<_TKey, sFixedStringVal, comp<_TKey>, _Transaction, 
-		BPInnerNodeSimpleCompressorV2<_TKey> ,
-		BPFixedStringLeafNodeCompressor<_TKey,  _Transaction>, 
+		embDB::TBPBaseInnerNodeDiffCompressor2<_TKey, embDB::OIDCompressor, TInnerLinkCompress>  ,
+		TBPFixedStringLeafCompressor<_TKey, _Transaction> /*BPFixedStringLeafNodeCompressor<_TKey, _Transaction>*/, 
 		BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
 		TFixedStringLeafNode<_TKey, _Transaction>,
 		BPFixedStringTreeNodeMapv2<_TKey, _Transaction>	> TBase;

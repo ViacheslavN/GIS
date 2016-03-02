@@ -7,11 +7,25 @@
 #include "CommonLibrary/DebugTime.h"
 #include "../../EmbDB/BaseInnerNodeDIffCompress.h"
 #include "../../EmbDB/BaseLeafNodeCompDiff.h"
+#include "../../EmbDB/BaseInnerNodeDIffCompress2.h"
+#include "../../EmbDB/BaseValueDiffCompressor.h"
+#include "../../EmbDB/SignedNumLenDiffCompress.h"
+
+
+
+
+typedef embDB::TBaseValueDiffCompress<int64, embDB::SignedDiffNumLenCompressor64i> TInnerLinkCompress;
+
+typedef embDB::TBPMapV2 <int64,  uint64, embDB::comp<uint64>, embDB::IDBTransaction, 
+	embDB::TBPBaseInnerNodeDiffCompressor2<int64, embDB::OIDCompressor, TInnerLinkCompress>, 
+
+	embDB::TBaseLeafNodeDiffComp<int64, uint64, embDB::IDBTransaction, embDB::OIDCompressor> > TBInt64Map;
+/*
 
 typedef embDB::TBPMapV2 <int64,  uint64, embDB::comp<uint64>, embDB::IDBTransaction, 
 	embDB::TBPBaseInnerNodeDiffCompressor<int64, embDB::OIDCompressor, embDB::InnerLinkCompress>, 
 	
-	embDB::TBaseLeafNodeDiffComp<int64, uint64, embDB::IDBTransaction, embDB::OIDCompressor> > TBInt64Map;
+	embDB::TBaseLeafNodeDiffComp<int64, uint64, embDB::IDBTransaction, embDB::OIDCompressor> > TBInt64Map;*/
 
 
 //embDB::TBaseLeafNodeComp<int64, uint64, embDB::IDBTransaction, embDB::OIDCompressor>
@@ -38,6 +52,7 @@ void insertINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 		int64 nCount = nEndStart - nStart;
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
+
 			if(!tree.insert(TKey(i), TValue(i)))
 			{
 				std::cout   << "Error Insert key:  " << i << std::endl;
@@ -332,7 +347,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 			storage.close();
 		}
-		/*{
+		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
 			storage.open(L"d:\\dbplus.data", false, false,  false, false);
 			storage.setStoragePageInfo(nStorageInfoPage);
@@ -341,7 +356,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 			tran1.begin();
 			searchINBTreeMap <TBtree, TTran, TKey, TValue>(nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage);
 			storage.close();
-		}*/
+		}
 		
 /*
 		{
@@ -431,7 +446,7 @@ void TestBRteeMap()
 	//__int64 nCount = 1531;
 
 	//__int64 nCount = 6748900;
-	int64 nCount = 1000000;
+	int64 nCount = 10000000;
 		size_t nPageSize = 8192;
 
 	testBPTreeMapImpl<TBInt64Map,  embDB::CDirectTransaction, int64, int64>(nCount, nPageSize, 50, 10);

@@ -12,13 +12,13 @@ namespace embDB
 
 	template<class _TKey, class _Transaction>
 	class BPFixedStringTreeNodeMapv2 : public BPTreeNodeMapv2<_TKey, sFixedStringVal, _Transaction, 	BPInnerNodeSimpleCompressorV2<_TKey>,
-		BPFixedStringLeafNodeCompressor<_TKey,  _Transaction>, 
+		TBPFixedStringLeafCompressor<_TKey, _Transaction> /*BPFixedStringLeafNodeCompressor<_TKey, _Transaction>*/, 
 		BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >,
 		TFixedStringLeafNode<_TKey, _Transaction> >
 	{
 	public:
 		typedef BPInnerNodeSimpleCompressorV2<_TKey> TInnerCompressor;
-		typedef BPFixedStringLeafNodeCompressor<_TKey,  _Transaction> TLeafCompressor;
+		typedef TBPFixedStringLeafCompressor<_TKey, _Transaction> /*BPFixedStringLeafNodeCompressor<_TKey, _Transaction>*/ TLeafCompressor;
 		typedef BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> > TInnerNode;
 		typedef TFixedStringLeafNode<_TKey, _Transaction>	TLeafNode;
 

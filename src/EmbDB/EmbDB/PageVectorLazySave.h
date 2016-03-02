@@ -66,7 +66,7 @@ namespace embDB
 			}
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-			sFilePageHeader header(stream, m_nObjectPage, m_nSubObjectPage);
+			sFilePageHeader header(stream, m_nObjectPage, m_nSubObjectPage, pPage->getPageSize());
 			stream.write(pNextPage != NULL? pNextPage->getAddr() : (int64)-1);
 			stream.write((int32)m_values.size());
 
@@ -136,7 +136,7 @@ namespace embDB
 
 				CommonLib::FxMemoryReadStream stream;
 				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-				sFilePageHeader header(stream);
+				sFilePageHeader header(stream, pPage->getPageSize());
 				if(!header.isValid())
 				{
 					//TO DO Logs

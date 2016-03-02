@@ -11,6 +11,10 @@
 #include "FieldIteratorBase.h"
 #include "BaseInnerNodeDIffCompress.h"
 #include "BaseLeafNodeCompDiff.h"
+#include "BaseInnerNodeDIffCompress.h"
+#include "BaseInnerNodeDIffCompress2.h"
+#include "BaseValueDiffCompressor.h"
+#include "SignedNumLenDiffCompress.h"
 namespace embDB
 {
 
@@ -366,7 +370,11 @@ namespace embDB
 		public:
 
 			typedef _FType FType;
-			typedef embDB::TBPBaseInnerNodeDiffCompressor<int64, embDB::OIDCompressor, embDB::InnerLinkCompress>	TInnerCompressor;
+
+			typedef TBaseValueDiffCompress<int64, SignedDiffNumLenCompressor64i> TInnerLinkCompress;
+			typedef embDB::TBPBaseInnerNodeDiffCompressor2<int64, embDB::OIDCompressor, TInnerLinkCompress>  TInnerCompressor;
+
+			//typedef embDB::TBPBaseInnerNodeDiffCompressor<int64, embDB::OIDCompressor, embDB::InnerLinkCompress>	TInnerCompressor;
 			typedef _TLeafCompressor TLeafCompressor;
 
 

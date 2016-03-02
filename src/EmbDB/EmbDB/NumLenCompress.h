@@ -6,6 +6,8 @@
 #include "MathUtils.h"
 #include "BPVector.h"
 #include "CommonLibrary/algorithm.h"
+#include "CommonLibrary/RangeCoder.h"
+#include "CommonLibrary/ArithmeticCoder.h"
 namespace embDB
 {
 	
@@ -188,9 +190,31 @@ namespace embDB
 				assert(m_BitsLensFreq[nBitLen] );				
 
 				m_BitsLensFreq[nBitLen] -= 1;
+				if(m_BitsLensFreq[nBitLen] == 65535 || m_BitsLensFreq[nBitLen] == 255)
+				{
+
+					m_nTypeFreq = etfByte;
+					for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+					{
+						if(m_BitsLensFreq[i] > 65535)
+						{
+							m_nTypeFreq = etfInt32;
+							break;
+						}
+						if(m_nTypeFreq != etfInt32)
+						{
+							if(m_BitsLensFreq[nBitLen] > 255)
+								m_nTypeFreq = etfShort;
+						}
+					}
+				}
 				if(!m_BitsLensFreq[nBitLen])
 					m_nDiffsLen--;
 				
+
+
+
+
 
 				if(!m_bOnlineCalcSize)
 					return;
@@ -326,7 +350,7 @@ namespace embDB
 				pStream->seek(nEndPos, CommonLib::soFromBegin);
 				return true;
 			}
-			bool decompress(TBPVector<_TValue>& vecValues, CommonLib::IReadStream* pStream)
+			bool decompress(uint32 nSize,  TBPVector<_TValue>& vecValues, CommonLib::IReadStream* pStream)
 			{
 				clear();
 				byte nFlag = pStream->readByte();
@@ -586,5 +610,11 @@ namespace embDB
 			bool m_bOnlineCalcSize;
 
 	};
+
+	typedef TUnsignedNumLenCompressor<int64, TFindMostSigBit, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 64> UnsignedNumLenCompressor64i;
+
+	typedef TUnsignedNumLenCompressor<int32, TFindMostSigBit, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 32> UnsignedNumLenCompressor32i;
 }
 #endif

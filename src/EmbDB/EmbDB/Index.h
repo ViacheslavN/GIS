@@ -60,7 +60,7 @@ public:
 			  return false;
 		  CommonLib::FxMemoryReadStream stream;
 		  stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-		  sFilePageHeader header(stream);
+		  sFilePageHeader header(stream, pPage->getPageSize());
 		  if(!header.isValid())
 		  {
 			  m_pDBTransactions->error(L"IndexField: Page %I64d Error CRC for node page", pPage->getAddr()); //TO DO log error

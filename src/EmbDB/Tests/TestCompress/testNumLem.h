@@ -15,8 +15,12 @@ class CTestNumLem
 		typedef CommonLib::TACEncoder<uint64, 32> TACEncoder;
 		typedef CommonLib::TACDecoder<uint64, 32> TACDecoder;
 
-		typedef embDB::TUnsignedNumLenCompressor<int64, embDB::TFindMostSigBit, TRangeEncoder, TACEncoder, 
-			TRangeDecoder, TACDecoder, 64> TCompressor;
+	//	typedef embDB::TUnsignedNumLenCompressor<int64, embDB::TFindMostSigBit, TRangeEncoder, TACEncoder, 
+	//		TRangeDecoder, TACDecoder, 64> TCompressor;
+
+ 
+
+		typedef embDB::UnsignedNumLenCompressor64i TCompressor;
 
 		CTestNumLem();
 		~CTestNumLem();

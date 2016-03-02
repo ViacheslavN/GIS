@@ -311,6 +311,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 
 	
 	int fieldCount = ShapeLib::DBFGetFieldCount(dbf.file);
+	int nCreateField = 0;
 	for(int fieldNum = 0; fieldNum < fieldCount; ++fieldNum)
 	{
 		char name[33];
@@ -339,11 +340,11 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 		case ShapeLib::FTDate:
 			break;
 		}
-
 		pDBTable->createField(fp);
+		
 	}
 
-	pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), false, 65536 );
+	//pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), true, 65536 );
 
 
 	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_MODIFY);
@@ -365,6 +366,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 	uint32 nShapeRowSize = 0;
 	uint32 nStringRowSize = 0;
 	uint32 nDigSize = 0;
+	uint32 nDblSize = 0;
 	for(size_t row = 0; row < objectCount; ++row)
 	{
 		for (size_t i = 0; i < pFields->GetFieldCount(); ++i)
@@ -387,7 +389,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 			case embDB::dtDouble:
 				dblVal = ShapeLib::DBFReadDoubleAttribute(dbf.file, row, i);
 				value  = dblVal;
-				nDigSize +=8;
+				nDblSize +=8;
 				break;
 			case embDB::dtGeometry:
 						{

@@ -63,11 +63,7 @@ namespace embDB
 			return this->m_LeafNode.value(nIndex);
 		}
 
-
-		 
-
-
-		 
+	 
 	};
 }
 #endif

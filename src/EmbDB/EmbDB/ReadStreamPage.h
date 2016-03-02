@@ -37,7 +37,7 @@ namespace embDB
 
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
-				  sFilePageHeader header(m_stream, !m_pPage->isCheck());
+				  sFilePageHeader header(m_stream, m_pPage->getPageSize(), !m_pPage->isCheck());
 				  if(!m_pPage->isCheck() && !header.isValid())
 				  {
 					  //TO DO Logs
@@ -75,7 +75,7 @@ namespace embDB
 
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
-				  sFilePageHeader header(m_stream, !m_pPage->isCheck());
+				  sFilePageHeader header(m_stream, m_pPage->getPageSize(), !m_pPage->isCheck());
 				  if(!header.isValid())
 				  {
 					  //TO DO Logs
@@ -213,7 +213,7 @@ namespace embDB
 
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
-				  sFilePageHeader header(m_stream, !m_pPage->isCheck());
+				  sFilePageHeader header(m_stream, m_pPage->getPageSize(), !m_pPage->isCheck());
 				  if(!header.isValid())
 				  {
 					  //TO DO Logs

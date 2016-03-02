@@ -17,6 +17,27 @@ namespace CommonLib
 	public:
 
 
+
+		enum ePointType
+		{
+			ptUnknown,
+			ptPoint16,
+			ptPoint32,
+			ptPoint64,
+		};
+
+		struct compress_params
+		{
+			ePointType m_PointType;
+			double m_dOffsetX;
+			double m_dOffsetY;
+			double m_dScaleX;
+			double m_dScaleY;
+
+
+		};
+
+
 		CGeoShape(alloc_t *pAlloc = 0);
 
 		CGeoShape(const CGeoShape& shp);

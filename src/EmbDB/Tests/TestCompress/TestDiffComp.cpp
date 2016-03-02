@@ -26,7 +26,7 @@ void CTestDiffComp::compress( const embDB::TBPVector<uint64>& vecLinks,  CommonL
 }
 void CTestDiffComp::decompress(embDB::TBPVector<uint64>& vecLinks,  CommonLib::IReadStream *pStream)
 {
-	m_compressor.decompress(vecLinks, pStream);
+	m_compressor.decompress(10, vecLinks, pStream);
 }
 void CTestDiffComp::RemoveDiff(int64 nDiff)
 {

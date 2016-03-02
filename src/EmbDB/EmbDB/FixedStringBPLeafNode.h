@@ -6,13 +6,16 @@
 #include "StringVal.h"
 #include "FixedStringLeafCompressor.h"
 #include "PageAlloc.h"
+#include "FixedStringCompressor.h"
 namespace embDB
 {
 	template<typename _TKey, typename _Transaction>
-	class TFixedStringLeafNode : public  BPTreeLeafNodeMapv2<_TKey, sFixedStringVal, _Transaction, BPFixedStringLeafNodeCompressor<_TKey, _Transaction> >
+	class TFixedStringLeafNode : public  BPTreeLeafNodeMapv2<_TKey, sFixedStringVal, _Transaction, 
+		TBPFixedStringLeafCompressor<_TKey, _Transaction> /*BPFixedStringLeafNodeCompressor<_TKey, _Transaction>*/ >
 	{
 	public:
-		typedef   BPTreeLeafNodeMapv2<_TKey, sFixedStringVal, _Transaction, BPFixedStringLeafNodeCompressor<_TKey,  _Transaction> > TBase;
+		typedef   BPTreeLeafNodeMapv2<_TKey, sFixedStringVal, _Transaction, 
+			 TBPFixedStringLeafCompressor<_TKey, _Transaction> /*BPFixedStringLeafNodeCompressor<_TKey, _Transaction>*/ > TBase;
 		typedef sFixedStringVal TValue;
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;

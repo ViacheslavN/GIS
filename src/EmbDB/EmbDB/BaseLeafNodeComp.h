@@ -5,7 +5,8 @@
 namespace embDB
 {
 
-	template<class _TKey, class _TValue, class _Transaction = IDBTransaction, class _TKeyCommpressor = TEmptyValueCompress<_TKey>, class _TValueCompressor  = TEmptyValueCompress<_TValue> >
+	template<class _TKey, class _TValue, class _Transaction = IDBTransaction, class _TKeyCommpressor = TEmptyValueCompress<_TKey>, class _TValueCompressor  = TEmptyValueCompress<_TValue>
+	,class _TLeafCompressorParams = CompressorParamsBaseImp>
 	class TBaseLeafNodeComp
 	{
 		public:
@@ -18,12 +19,12 @@ namespace embDB
 
 			typedef  TBPVector<TKey> TKeyMemSet;
 			typedef  TBPVector<TValue> TValueMemSet;
-			typedef CompressorParamsBaseImp TLeafCompressorParams;
+			typedef _TLeafCompressorParams TLeafCompressorParams;
 
 
 			TBaseLeafNodeComp(uint32 nPageSize, Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
 					TKeyMemSet *pOIDMemset= NULL, TValueMemSet *pValueMemSet = NULL) : m_nCount(0), m_pKeyMemSet(pOIDMemset), m_pValueMemSet(pValueMemSet),
-				m_nPageSize(nPageSize)
+				m_nPageSize(nPageSize), m_KeyCompressor(pAlloc, pParams), m_ValueCompressor(pAlloc, pParams)
 			{
 
 				assert(m_pKeyMemSet);
@@ -155,14 +156,7 @@ namespace embDB
 		}
 		virtual bool isNeedSplit() const
 		{
-
-
-			uint32 nRowNoCompSize = m_nCount * (sizeof(TValue) + sizeof(TKey));
-			if(nRowNoCompSize < (m_nPageSize - sizeof(uint32)))
-				return false;
-
-
-			return m_nPageSize < size();
+			return !(m_nPageSize > size());
 		}
 		virtual size_t count() const
 		{
@@ -191,7 +185,7 @@ namespace embDB
  
 		}
 
-		void recalc()
+		virtual void recalc()
 		{
 			m_nCount = m_pKeyMemSet->size();
 			m_KeyCompressor.clear();
@@ -229,7 +223,12 @@ namespace embDB
 			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(TValue));
 			return nNoCompSize < (m_nPageSize - headSize())/2;
 		}
-
+		void clear()
+		{
+			m_nCount = 0;
+			m_KeyCompressor.clear();
+			m_ValueCompressor.clear();
+		}
 	protected:
 
 		uint32 m_nCount;

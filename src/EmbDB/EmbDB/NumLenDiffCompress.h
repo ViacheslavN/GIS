@@ -102,7 +102,7 @@ namespace embDB
 				pStream->seek(nEndPos, CommonLib::soFromBegin);
 				return true;
 			}
-			bool decompress(TBPVector<_TValue>& vecValues, CommonLib::IReadStream* pStream)
+			bool decompress(uint32 nSize,  TBPVector<_TValue>& vecValues, CommonLib::IReadStream* pStream)
 			{
 				
 				byte nFlag = pStream->readByte();
@@ -219,5 +219,11 @@ namespace embDB
 				return true;
 			}
 	};
+
+	typedef TUnsignedDiffNumLenCompressor<int64, TFindMostSigBit, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder32, 64> UnsignedDiffNumLenCompressor64i;
+
+	typedef TUnsignedDiffNumLenCompressor<int32, TFindMostSigBit, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder32, 32>  UnsignedDiffNumLenCompressor32i;
 }
 #endif

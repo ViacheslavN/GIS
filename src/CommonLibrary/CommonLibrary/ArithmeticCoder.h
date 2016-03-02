@@ -17,8 +17,8 @@ namespace CommonLib
 		static const TCodeValue  _ThirdQuarter = (3 * _FirstQuarter);
 		static const _TCodeValue MaxRange = _FirstQuarter - 1;
 
-		TACEncoder(IWriteStream* pStream) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue), m_nScale(0),
-			m_nBitsBuf(0), m_nCurrBit(0)
+		TACEncoder(IWriteStream* pStream, uint32 nMaxSize = 0) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue), m_nScale(0),
+			m_nBitsBuf(0), m_nCurrBit(0), m_nMaxSize(nMaxSize)
 #ifdef _DEBUG
 			, m_nBitsWrite(0)
 #endif
@@ -110,6 +110,7 @@ namespace CommonLib
 #endif
 		byte	   m_nBitsBuf;
 		uint32	   m_nCurrBit;
+		uint32	   m_nMaxSize;
 	};
 
 	template<class _TCodeValue, uint16 _nValueBits>
@@ -202,6 +203,13 @@ namespace CommonLib
 		byte	   m_nBitsBuf;
 		uint32	   m_nCurrBit;
 	};
+
+
+	typedef TACEncoder<uint64, 32> TACEncoder64;
+	typedef TACDecoder<uint64, 32> TACDecoder64;
+
+	typedef TACEncoder<uint32, 16> TACEncoder32;
+	typedef TACDecoder<uint32, 16> TACDecoder32;
 }
 
 #endif

@@ -182,7 +182,7 @@ namespace embDB
 			}
 			bool decompress(TBPVector<ZOrder>& vecValues, CommonLib::IReadStream* pStream)
 			{
-
+				clear();
 				byte nFlag = pStream->readByte();
 				bool bRangeCode = nFlag & 0x01;
 				m_nTypeFreq = (eTypeFreq)(nFlag>>1);

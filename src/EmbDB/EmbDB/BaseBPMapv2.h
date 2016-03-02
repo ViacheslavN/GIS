@@ -44,6 +44,11 @@ public:
 		{}
 
 
+
+	
+
+
+
 	bool insert( const TKey& key, const TValue& value, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL )
 	{
 		bool bRet = false;
@@ -57,7 +62,7 @@ public:
 		{
 			pNode = this->findLeafNodeForInsert(key);
 			if(pNode.get())
-			{
+			{							
 				bRet = InsertInLeafNode(pNode.get(), key, value, nIndex) != NULL;
 			}
 		}

@@ -12,6 +12,7 @@
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CommonLibrary/RangeCoder.h"
 #include "BPVector.h"
+#include "CompressorParams.h"
 namespace embDB
 {
 	class OIDCompressor
@@ -40,7 +41,7 @@ namespace embDB
 	 
 		public:
 
-			OIDCompressor(uint32 nError = 200);
+			OIDCompressor(CommonLib::alloc_t *pAlloc, CompressorParamsBaseImp *pParams , uint32 nError = 200);
 			~OIDCompressor();
 
 			void AddSymbol(uint32 nSize,  int nIndex, int64 nOID, const embDB::TBPVector<int64>& vecOIDs);

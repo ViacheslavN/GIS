@@ -252,7 +252,7 @@ template<class _TValue,
 				pStream->seek(nEndPos, CommonLib::soFromBegin);
 				return true;
 			}
-			bool decompress(TBPVector<_TValue>& vecValues, CommonLib::IReadStream* pStream)
+			bool decompress(uint32 nSize, TBPVector<_TValue>& vecValues, CommonLib::IReadStream* pStream)
 			{
 				
 				clear();

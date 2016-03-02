@@ -13,7 +13,9 @@ namespace embDB
 {
 
 
-	template<class _TKey = int64, class _TKeyCommpressor = TEmptyValueCompress<int64>, class _TLinkCOmpressor = InnerLinkCompress>
+	template<class _TKey = int64, class _TKeyCompressor = TEmptyValueCompress<int64>, class _TLinkCompressor = InnerLinkCompress,
+	class _TInnerCompressorParams = CompressorParamsBaseImp
+	>
 	class TBPBaseInnerNodeCompressor
 	{
 	public:
@@ -22,9 +24,9 @@ namespace embDB
 		typedef  int64 TLink;
 		typedef  TBPVector<TKey> TKeyMemSet;
 		typedef  TBPVector<int64> TLinkMemSet;
-		typedef _TKeyCommpressor	TKeyCommpressor;
-		typedef _TLinkCOmpressor TLinkCOmpressor;
-		typedef CompressorParamsBaseImp TInnerCompressorParams;
+		typedef _TKeyCompressor	TKeyCompressor;
+		typedef _TLinkCompressor TLinkCompressor;
+		typedef _TInnerCompressorParams TInnerCompressorParams;
 
 
 
@@ -36,7 +38,7 @@ namespace embDB
 
 
 		TBPBaseInnerNodeCompressor(uint32 nPageSize,  TKeyMemSet* pKeyMemSet, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = NULL) : 
-		m_pKeyMemSet(pKeyMemSet), m_pLinkMemSet(pLinkMemSet), m_nCount(0), m_nPageSize(nPageSize)
+		m_pKeyMemSet(pKeyMemSet), m_pLinkMemSet(pLinkMemSet), m_nCount(0), m_nPageSize(nPageSize), m_KeyCompressor(pAlloc, pParams), m_LinkCompressor(pAlloc, pParams)
 		{
 
 		}
@@ -58,6 +60,9 @@ namespace embDB
 			CommonLib::FxMemoryReadStream OIDStreams;
 			CommonLib::FxMemoryReadStream LinkStreams;
 
+
+		
+
 			m_nCount = stream.readInt32();
 			if(!m_nCount)
 				return true;
@@ -68,51 +73,15 @@ namespace embDB
 
 
 			bool bNoComp = IsNoComp();
-			uint32 nOIDSize =   0;
-			uint32 nLinkSize = 0;
-
-
-
-
-			if(bNoComp)
-			{
-				nOIDSize =   m_nCount * (sizeof(TKey));
-				nLinkSize =  m_nCount * (sizeof(TLink));
-			}
-			else
-			{
-				nOIDSize =   stream.readInt32();
-				nLinkSize =  stream.readInt32();
-			}
-
+			uint32 nOIDSize =   stream.readInt32();
+			uint32 nLinkSize = stream.readInt32();
 
 			OIDStreams.attachBuffer(stream.buffer() + stream.pos(), nOIDSize);
 			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nOIDSize, nLinkSize);
 
 
-			if(bNoComp)
-			{
-				TKey key;
-				TLink nlink;
-
-				for (uint32 nIndex = 0; nIndex < m_nCount; ++nIndex)
-				{
-					OIDStreams.read(key);
-					LinkStreams.read(nlink);
-
-					keySet.push_back(key);
-					linkSet.push_back(nlink);
-
-					m_KeyCompressor.AddSymbol(keySet.size(), nIndex, key, keySet);
-					m_LinkCompressor.AddLink(nlink);
-				}
-			}
-			else
-			{
-				m_KeyCompressor.decompress(m_nCount, keySet, &OIDStreams);
-				m_LinkCompressor.decompress(m_nCount, linkSet, &LinkStreams);
-			}
-
+			m_KeyCompressor.decompress(m_nCount, keySet, &OIDStreams);
+			m_LinkCompressor.decompress(m_nCount, linkSet, &LinkStreams);
 			stream.seek(stream.pos() + nOIDSize + nLinkSize, CommonLib::soFromBegin);		
 			return true;
 		}
@@ -120,6 +89,8 @@ namespace embDB
 		{
 			uint32 nSize = (uint32)keySet.size();
 			assert(m_nCount == nSize);
+			assert(!((stream.size() - stream.pos()) < size()));
+
 			stream.write(nSize);
 			if(!nSize)
 				return true;
@@ -158,7 +129,7 @@ namespace embDB
 			m_nCount++;
 
 			m_KeyCompressor.AddSymbol(m_nCount, nIndex, key, *m_pKeyMemSet);
-			m_LinkCompressor.AddLink(link);
+			m_LinkCompressor.AddSymbol(m_nCount, nIndex, link, *m_pLinkMemSet);
 
 			return true;
 		}
@@ -179,8 +150,8 @@ namespace embDB
 			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
 			
-				m_KeyCompressor.AddSymbol(i + 1, i, keySet[i], *m_pKeyMemSet);
-				m_LinkCompressor.AddLink(linkSet[i]);
+				m_KeyCompressor.AddSymbol(i + 1, i, keySet[i], keySet);
+				m_LinkCompressor.AddSymbol(i + 1, i, linkSet[i], linkSet);
 			}
 
 			return true;
@@ -189,18 +160,18 @@ namespace embDB
 		{
 			m_nCount--;
 			m_KeyCompressor.RemoveSymbol(m_nCount, nIndex, key, *m_pKeyMemSet);
-			m_LinkCompressor.RemoveLink(link);
+			m_LinkCompressor.RemoveSymbol(m_nCount, nIndex, link, *m_pLinkMemSet);
 
 			return true;
 		}
 		virtual bool update(int nIndex, const TKey& key, TLink link)
 		{
 			m_KeyCompressor.RemoveSymbol(m_nCount, nIndex, (*m_pKeyMemSet)[nIndex], *m_pKeyMemSet);
-			m_LinkCompressor.RemoveLink((*m_pLinkMemSet)[nIndex]);
+			m_LinkCompressor.RemoveSymbol(m_nCount, nIndex, (*m_pLinkMemSet)[nIndex], *m_pLinkMemSet);
 
 
 			m_KeyCompressor.AddSymbol(m_nCount, nIndex, key, *m_pKeyMemSet);
-			m_LinkCompressor.AddLink(link);
+			m_LinkCompressor.AddSymbol(m_nCount, nIndex, link, *m_pLinkMemSet);
 			return true;
 		}
 		virtual uint32 size() const
@@ -280,8 +251,8 @@ namespace embDB
 		uint32 m_nCount;
 		TKeyMemSet* m_pKeyMemSet;
 		TLinkMemSet* m_pLinkMemSet;
-		TKeyCommpressor m_KeyCompressor;
-		TLinkCOmpressor m_LinkCompressor;
+		TKeyCompressor m_KeyCompressor;
+		TLinkCompressor m_LinkCompressor;
 		uint32 m_nPageSize;
 	};
 }

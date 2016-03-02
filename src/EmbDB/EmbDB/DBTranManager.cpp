@@ -71,7 +71,7 @@ namespace embDB
 	{
 		CommonLib::FxMemoryWriteStream stream;
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-		sFilePageHeader header(stream, TRAN_MANAGE_PAGE, TM_HEADER_PAGE);
+		sFilePageHeader header(stream, TRAN_MANAGE_PAGE, TM_HEADER_PAGE, pPage->getPageSize());
 		stream.write(m_Info.nRootPageTree);
 		stream.write(m_nTranID);
 		header.writeCRC32(stream);
@@ -83,7 +83,7 @@ namespace embDB
 	{
 		CommonLib::FxMemoryReadStream stream;
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-		sFilePageHeader header(stream);
+		sFilePageHeader header(stream, pPage->getPageSize());
 		if(!header.isValid())
 			return false;//TO DO Log
 		if(header.m_nObjectPageType != TRAN_MANAGE_PAGE || header.m_nSubObjectPageType != TM_HEADER_PAGE)

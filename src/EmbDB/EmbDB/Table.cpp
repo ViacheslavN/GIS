@@ -105,7 +105,7 @@ namespace embDB
 		if(!pPage.get())
 			return false;
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-		sFilePageHeader header(stream);
+		sFilePageHeader header(stream, pPage->getPageSize());
 		if(!header.isValid())
 			return false;//TO DO DB LOg
 		if(header.m_nObjectPageType != TABLE_PAGE || header.m_nSubObjectPageType != TABLE_HEADER_PAGE)
@@ -170,7 +170,7 @@ namespace embDB
 			return false;
 		CommonLib::FxMemoryWriteStream stream;
 		stream.attachBuffer(pFPage->getRowData(), pFPage->getPageSize());
-		sFilePageHeader header(stream, TABLE_PAGE, TABLE_HEADER_PAGE);
+		sFilePageHeader header(stream, TABLE_PAGE, TABLE_HEADER_PAGE, pFPage->getPageSize());
 		stream.write((int64)-1);	
 		stream.write((int64)-1);	
 	 
@@ -771,7 +771,7 @@ namespace embDB
 			return false;
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		SIndexProp ip;
-		sFilePageHeader header (stream);
+		sFilePageHeader header (stream, pPage->getPageSize());
 		if(!header.isValid())
 		{
 			//TO DO log

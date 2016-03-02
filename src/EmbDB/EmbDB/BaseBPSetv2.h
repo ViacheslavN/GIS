@@ -671,7 +671,7 @@ namespace embDB
 			TBTreeNodePtr pRetNode(pNode);
 			if(pNode->isNeedSplit())
 			{
-
+	
 				//uint32 nSize = pNode->size();
 				TBTreeNodePtr pParentNode = getNode(pNode->parentAddr());
 				bool bNewRoot = false;
@@ -702,7 +702,6 @@ namespace embDB
 					}
 				}*/
 				pRetNode = splitLeafNode(pNode, pNewLeafNode.get(), pParentNode.get(), pInIndex);
-
 				pNewLeafNode->setFlags(CHANGE_NODE, true);
 				pParentNode->setFlags(CHANGE_NODE, true);
 
@@ -722,6 +721,7 @@ namespace embDB
 					return pRetNode;
 				}
 
+				
 				if(pParentNode->isNeedSplit())
 				{
 					if(!splitInnerNode(pParentNode.get()))
@@ -771,8 +771,6 @@ namespace embDB
 
 				return   pRetNode; 
 			}
-
-
 			TKey splitKey;
 			int nSplitIndex = pNode->splitIn(pNewNode, &splitKey);
 			if(pNode->parentAddr() == -1)

@@ -474,6 +474,7 @@
     <ClInclude Include="GeoShape.h" />
     <ClInclude Include="PodVector.h" />
     <ClInclude Include="RangeCoder.h" />
+    <ClInclude Include="ShapeCompressor.h" />
     <ClInclude Include="SpatialKey.h" />
     <ClInclude Include="sprintf.h" />
     <ClInclude Include="stdafx.h" />

@@ -9,18 +9,19 @@ namespace embDB
 {
 
 
-	template<class _TKey = int64, class _TKeyCommpressor = OIDCompressor, class _TLinkCOmpressor = InnerLinkCompress>
-	class TBPBaseInnerNodeDiffCompressor : public TBPBaseInnerNodeCompressor<_TKey, _TKeyCommpressor, _TLinkCOmpressor>
+	template<class _TKey = int64, class _TKeyCompressor = OIDCompressor, class _TLinkCompressor = InnerLinkCompress,
+	class _TInnerCompressorParams = CompressorParamsBaseImp>
+	class TBPBaseInnerNodeDiffCompressor : public TBPBaseInnerNodeCompressor<_TKey, _TKeyCompressor, _TLinkCompressor, _TInnerCompressorParams>
 	{
 	public:
 
-		typedef TBPBaseInnerNodeCompressor<_TKey, _TKeyCommpressor, _TLinkCOmpressor> TBase;
+		typedef TBPBaseInnerNodeCompressor<_TKey, _TKeyCompressor, _TLinkCompressor> TBase;
 		typedef  typename TBase::TKey TKey;
 		typedef  int64 TLink;
 		typedef  typename TBase::TKeyMemSet TKeyMemSet;
 		typedef  typename TBase::TLinkMemSet TLinkMemSet;
-		typedef  typename TBase::TKeyCommpressor	TKeyCommpressor;
-		typedef  typename TBase::TLinkCOmpressor TLinkCOmpressor;
+		typedef  typename TBase::TKeyCompressor	TKeyCompressor;
+		typedef  typename TBase::TLinkCompressor TLinkCompressor;
 		typedef  typename TBase::TInnerCompressorParams TInnerCompressorParams;
 
 
@@ -76,11 +77,13 @@ namespace embDB
 			{
 				if(i != 0)
 					this->m_KeyCompressor.AddDiffSymbol(keySet[i] - keySet[i-1]); 
-				this->m_LinkCompressor.AddLink(linkSet[i]);
+				this->m_LinkCompressor.AddSymbol(i + 1, i, linkSet[i], linkSet);
 			}
 
 			return true;
 		}
+
+	
 	};
 }
 

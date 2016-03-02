@@ -89,6 +89,7 @@ namespace embDB
 		}
 		bool Save(Transaction* pTransactions)
 		{
+		
 			FilePagePtr pFilePage(NULL);
 			if(m_nPageAddr != -1)
 				pFilePage = pTransactions->getFilePage(m_nPageAddr, m_nPageSize, false);
@@ -97,11 +98,12 @@ namespace embDB
 
 			if(!pFilePage.get())
 				return false;
- 
-					
+
+
+						
 			CommonLib::FxMemoryWriteStream stream;
 
-			sFilePageHeader header;
+			sFilePageHeader header( pFilePage->getPageSize());
 			header.m_nObjectPageType = BTREE_PAGE;
 			if(getFlags() & ROOT_NODE)
 				header.m_nSubObjectPageType = BTREE_ROOT_PAGE;
@@ -115,6 +117,7 @@ namespace embDB
 			//stream.write(m_bMulti);
 			assert(m_pBaseNode);
 			m_pBaseNode->Save(stream);
+
 			if(m_bCheckCRC32)
 				header.writeCRC32(stream);
 			pFilePage->setCheck(true);
@@ -125,11 +128,9 @@ namespace embDB
 		}
 		bool LoadFromPage(CFilePage* pFilePage, Transaction* pTransactions)
 		{
-
-		
 			CommonLib::FxMemoryReadStream stream;
 			stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
-			sFilePageHeader header(stream, m_bCheckCRC32 && !pFilePage->isCheck());
+			sFilePageHeader header(stream, pFilePage->getPageSize(), m_bCheckCRC32 && !pFilePage->isCheck());
 			if( m_bCheckCRC32 && !pFilePage->isCheck() && !header.isValid())
 			{
 				pTransactions->error(L"BTREE: Page %I64d Error CRC for node page (crc page: %ud, calc crc %ud)", pFilePage->getAddr(), header.m_nCRC32, header.m_nCalcCRC32);
@@ -152,7 +153,8 @@ namespace embDB
 					return false;
 			}
 		 
-			return m_pBaseNode->Load(stream);
+			bool bRet = m_pBaseNode->Load(stream);
+			return bRet;
 
 
 		}
@@ -519,7 +521,7 @@ namespace embDB
 		TLeafCompressorParams *m_pLeafCompParams;
 
 		bool m_bCheckCRC32;
-	private:
+	protected:
 		//for removing
 		TParentNodePtr m_pParent;
 		int32 m_nFoundIndex;

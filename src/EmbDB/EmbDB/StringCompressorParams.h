@@ -8,7 +8,7 @@ namespace embDB
 {
 
 
-	class StringFieldCompressorParams
+	class StringFieldCompressorParams : public CompressorParamsBaseImp
 	{
 	public:
 		StringFieldCompressorParams(int64 nRootPage = -1) : m_StringCoding(scUTF8), m_nLen(0),

@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_EMPTY_VALUE_DIFF_COMPRESS_H_
 #define _EMBEDDED_DATABASE_EMPTY_VALUE_DIFF_COMPRESS_H_
-
+#include "CompressorParams.h"
 namespace embDB
 {
 	template <class _TValue>
@@ -10,7 +10,7 @@ namespace embDB
 
 		typedef _TValue TValue;
 		typedef  TBPVector<TValue> TValueMemSet;
-		TEmptyValueCompress() : m_nCount(0)
+		TEmptyValueCompress(CommonLib::alloc_t* pAlloc, CompressorParamsBaseImp *pParams) : m_nCount(0)
 		{
 
 		}

@@ -20,7 +20,7 @@ typedef embDB::BPTreeNodeMapv2<int64, embDB::sFixedStringVal, embDB::IDBTransact
 
 typedef embDB::TBPMapV2 <int64,  embDB::sFixedStringVal, embDB::comp<int64>, embDB::IDBTransaction,
 embDB::BPInnerNodeSimpleCompressorV2<int64>,
-embDB::BPFixedStringLeafNodeCompressor<int64>, TInnerNode, TLeafNode, TBPTreeNode> TBMapString;
+embDB::BPFixedStringLeafNodeCompressor<int64>, TInnerNode, TLeafNode, TBPTreeNode> TBFixedMapString;
 
 
 /*class TBPString : public TBMapString
@@ -83,8 +83,8 @@ private:
 template<class Tran>
 void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, int64& nTreeRootPage, Tran* pTran)
 {
-
-	typedef embDB::TBPStringTree<int64, Tran> TBPString;
+	
+	typedef embDB::TBPFixedString<int64, Tran> TBPString;
 	std::cout << "Insert Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
 	double tmInsert = 0;
@@ -98,14 +98,14 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 	CBufAlloc alloc;
 	 
 	CommonLib::CString sString(&alloc);
-	CommonLib::CString sBigString;
+/*	CommonLib::CString sBigString;
 
 	sBigString += L"begin";
 	for (size_t i =0; i < 10000; ++i)
 	{
 
 		sBigString += _T("ST");
-	}
+	}*/
 	
 
 	
@@ -116,14 +116,14 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
 			
-			sString.format(L"Строка_Строка_Строка_Строка_%I64d", i);
+			sString.format(L"Cтрока_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_%I64d", i);
 
-			if(i%10000 == 0)
+		/*	if(i%10000 == 0)
 			{
 				sBigString += sString;
 			}
-
-			if(!tree.insert(i, i%10000 == 0 ? sBigString : sString))
+			*/
+			if(!tree.insert(i, /*i%10000 == 0 ? sBigString : */sString))
 			{
 				std::cout   << "Error Insert key:  " << i << std::endl;
 			}
@@ -179,28 +179,19 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 	double tmInsert = 0;
 	double treeCom = 0;
 	double tranCom  = 0;
-	typedef embDB::TBPStringTree<int64, Tran> TBPString;
+	typedef embDB::TBPFixedString<int64, Tran> TBPString;
 	TBPString tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo(); 
 	time.start();
 	int64 n = 0;
 	CommonLib::CString sString(pAlloc);
-	int64 nNotFound = 0;
-
-	CommonLib::CString sBigString;
-
-	sBigString += L"begin";
-	for (size_t i =0; i < 10000; ++i)
-	{
-
-		sBigString += _T("ST");
-	}
+	int64 nNotFound = 0;	
 	if(nStart < nEndStart)
 	{
 		int64 nCount = nEndStart - nStart;
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
-			sString.format(L"Строка_Строка_Строка_Строка_%I64d", i);
+			sString.format(L"Cтрока_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_%I64d", i);
 
 			TBPString::iterator it = tree.find(i);
 			if(it.isNull())
@@ -215,35 +206,7 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 			}
 			else /*if( sString != it.value())*/
 			{
-				const embDB::sStringVal& val = it.value();
-				if(i%10000 == 0)
-				{
-					if(2990000 == i)
-					{
-						int d = 0;
-						d++;
-					}
-					sBigString += sString;
-					embDB::ReadStreamPage readStream(pTran, 1024*1024);
-					readStream.open(val.m_nPage, val.m_nPos);
-					CommonLib::CBlob blob(val.m_nLen);
-					readStream.read(blob.buffer(), val.m_nLen);
-					CommonLib::CString sFoundStr;
-					if(sCode == embDB::scASCII)
-						sFoundStr.loadFromASCII((const char*)blob.buffer());
-					else
-						sFoundStr.loadFromUTF8((const char*)blob.buffer());
-
-					if(sBigString != sFoundStr)
-					{
-						std::cout << "String not found search string" << sString.cstr() << " found " << sFoundStr.cstr() <<std::endl;
-						nNotFound++;
-					}
-
-				}
-				else
-				{
-				
+					const embDB::sFixedStringVal& val = it.value();	
 					CommonLib::CString sFoundStr;
 					if(sCode == embDB::scASCII)
 						sFoundStr.loadFromASCII((const char*)val.m_pBuf);
@@ -255,10 +218,6 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 						std::cout << "String not found search string" << sString.cstr() << " found " << sFoundStr.cstr() <<std::endl;
 						nNotFound++;
 					}
-				}
-
-			
-			
 			}
 		
 			n++;
@@ -301,7 +260,7 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 	}
 	tmInsert = time.stop();
 	time.start();
-	tree.commit();
+	//tree.commit();
 
 	treeCom = time.stop();
 	time.start();
@@ -320,6 +279,7 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 template<class TTransaction>
 int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPageSize, embDB::eStringCoding sc, uint32 nLen)
 {
+ 
 	embDB::CStorage storage( pAlloc, 10000);
 	if(!storage.open(pszName, false, false,  true, false))
 		return -1;
@@ -328,10 +288,17 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 	storage.initStorage(pPage->getAddr());
 	storage.saveStorageInfo();
 
+	storage.AddRef();
+
+
 	TTransaction tran(pAlloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\db\\tran.data", &storage, 1);
 	tran.begin();
 
 	embDB::FilePagePtr pTreeRootPage = tran.getNewPage(256);
+
+	uint64 nTreeRootPage = pTreeRootPage->getAddr();
+
+	
 
 	embDB::FilePagePtr pLeafCompRootPage = tran.getNewPage(256);
 	TLeafCompressor::TLeafCompressorParams compParams;
@@ -341,17 +308,19 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 	//compParams.SetMaxPageStringSize(400);
 	//compParams.save(&tran);
 
-
-
-
-	TBMapString tree(-1, &tran, pAlloc, 100, 8192);
+	typedef embDB::TBPFixedString<int64, TTransaction> TBPString;
+	TBFixedMapString tree(-1, (embDB::IDBTransaction*)&tran, pAlloc, 100, 8192);
 	
 //	tree.saveBTreeInfo(); 
-	tree.init(pTreeRootPage->getAddr(), NULL, &compParams); 
+	tree.init(nTreeRootPage, NULL, &compParams); 
 	tree.commit();
+
+	pTreeRootPage.release();
+	pLeafCompRootPage.release();
 	tran.commit();
 
-	return pTreeRootPage->getAddr();
+
+	return nTreeRootPage;
 }
 template<class Transactions>
 void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, uint32 nBPCache,embDB::eStringCoding coding )
@@ -365,21 +334,24 @@ void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, 
 		embDB::CStorage storage( pAlloc, 10000);
 		if(!storage.open(L"d:\\db\\BPTreeString.data", false, false,  false, false))
 			return;
+
+		storage.AddRef();
 		storage.setStoragePageInfo(0);
 		storage.loadStorageInfo();
-		Transactions InsertTran(pAlloc, embDB::rtUndo, embDB::eTT_UNDEFINED, L"d:\\db\\inserttran.data", &storage, 1);
-
+		Transactions InsertTran(pAlloc, embDB::rtUndo, embDB::eTT_MODIFY, L"d:\\db\\inserttran.data", &storage, 1);
+		InsertTran.begin();
 
 		insertINBTreeMapString<embDB::IDBTransaction>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran);
 	}
 
 	{
 		embDB::CStorage storage(pAlloc, 10000);
+		storage.AddRef();
 		if(!storage.open(L"d:\\db\\BPTreeString.data", false, false,  false, false))
 			return;
 		storage.setStoragePageInfo(0);
 		storage.loadStorageInfo();
-		Transactions InsertTran(pAlloc, embDB::rtUndo, embDB::eTT_UNDEFINED, L"d:\\db\\inserttran.data", &storage, 1);
+		Transactions InsertTran(pAlloc, embDB::rtUndo, embDB::eTT_SELECT, L"d:\\db\\inserttran.data", &storage, 1);
 
 
 		searchINBTreeMapString<embDB::IDBTransaction>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran, coding);
@@ -388,8 +360,8 @@ void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, 
 }
 
 
-void TestBPStringTree()
+void TestBPFixedStringTree()
 {
 		CommonLib::simple_alloc_t alloc;
-		TestBPStringTreeImpl<embDB::CDirectTransaction>(&alloc, 0, 3000000, 10, embDB::scUTF8);
+		TestBPStringTreeImpl<embDB::CTransaction>(&alloc, 0, 1000000, 10, embDB::scUTF8);
 };

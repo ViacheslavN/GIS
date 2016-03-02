@@ -7,7 +7,7 @@ namespace embDB
 {
 
 
-	OIDCompressor::OIDCompressor(uint32 nError) : m_NumLenComp(nError), m_DiffComp(nError)
+	OIDCompressor::OIDCompressor(CommonLib::alloc_t *pAlloc, CompressorParamsBaseImp *pParams , uint32 nError) : m_NumLenComp(nError), m_DiffComp(nError)
 	{
 
 	}
@@ -134,7 +134,7 @@ namespace embDB
 		bool bRet = false;
 		if(nCompSchema == (byte)eCompressDiff)
 		{
-			 bRet =  m_DiffComp.decompress(oids, pStream);
+			 bRet =  m_DiffComp.decompress(nSize, oids, pStream);
 
 			 if(bRet)
 			 {
@@ -147,7 +147,7 @@ namespace embDB
 		}
 		else
 		{
-			 bRet = m_NumLenComp.decompress(oids, pStream);
+			 bRet = m_NumLenComp.decompress(nSize, oids, pStream);
 			 if(bRet)
 			 {
 				 for (uint32 i = 1; i < nSize; ++i )
