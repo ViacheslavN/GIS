@@ -527,6 +527,7 @@
       <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <ClCompile Include="multibyte.cpp" />
+    <ClCompile Include="ShapeCompressor.cpp" />
     <ClCompile Include="sprintf.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

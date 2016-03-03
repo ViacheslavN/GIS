@@ -20,14 +20,19 @@ namespace CommonLib
 
 		enum ePointType
 		{
-			ptUnknown,
 			ptPoint16,
 			ptPoint32,
-			ptPoint64,
+			ptPoint64
 		};
 
 		struct compress_params
 		{
+
+			compress_params() : m_PointType(ptPoint64), m_dOffsetX(0), m_dOffsetY(0), m_dScaleX(0.00000001), m_dScaleY(0.00000001)
+			{
+
+			}
+
 			ePointType m_PointType;
 			double m_dOffsetX;
 			double m_dOffsetY;
@@ -140,6 +145,8 @@ namespace CommonLib
 		eShapeType m_type;
 		eShapeType m_general_type;
 		bbox m_bbox;
+
+		friend class ShapeCompressor;
 
 	};
 

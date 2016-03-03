@@ -317,5 +317,8 @@
     <ClCompile Include="FilePosix.cpp">
       <Filter>file</Filter>
     </ClCompile>
+    <ClCompile Include="ShapeCompressor.cpp">
+      <Filter>SpatialData</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
