@@ -3,13 +3,18 @@
 #include "IGeoShape.h"
 #include "PodVector.h"
 #include "GeoShape.h"
+#include "stream.h"
 namespace CommonLib
 {
 
 	class CGeoShape;
 
+	
+
 	class ShapeCompressor
 	{
+
+	
 		public:
 			ShapeCompressor(CommonLib::alloc_t *pAlloc);
 			~ShapeCompressor();
@@ -17,6 +22,8 @@ namespace CommonLib
 
 			bool compress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
 			bool decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream);
+		private:
+			CGeoShape::eDataType GetType(uint32 nValue) const;
 		private:
 			CommonLib::alloc_t *m_pAlloc;
 	};

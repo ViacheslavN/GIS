@@ -18,22 +18,23 @@ namespace CommonLib
 
 
 
-		enum ePointType
+		enum eDataType
 		{
-			ptPoint16,
-			ptPoint32,
-			ptPoint64
+			ptType8 =  0,
+			ptType16 = 1,
+			ptType32 = 2,
+			ptType64 = 3
 		};
 
 		struct compress_params
 		{
 
-			compress_params() : m_PointType(ptPoint64), m_dOffsetX(0), m_dOffsetY(0), m_dScaleX(0.00000001), m_dScaleY(0.00000001)
+			compress_params() : m_PointType(ptType64), m_dOffsetX(0), m_dOffsetY(0), m_dScaleX(0.00000001), m_dScaleY(0.00000001)
 			{
 
 			}
 
-			ePointType m_PointType;
+			eDataType m_PointType;
 			double m_dOffsetX;
 			double m_dOffsetY;
 			double m_dScaleX;

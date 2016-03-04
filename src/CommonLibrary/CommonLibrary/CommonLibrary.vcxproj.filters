@@ -52,6 +52,9 @@
     <Filter Include="compress">
       <UniqueIdentifier>{7653650c-6e10-42d0-add4-b2aff5a3dbac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SpatialData\shapeCompressor">
+      <UniqueIdentifier>{96b22ca1-ff81-4307-861a-96f8b16d3c34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -223,7 +226,10 @@
       <Filter>compress</Filter>
     </ClInclude>
     <ClInclude Include="ShapeCompressor.h">
-      <Filter>SpatialData</Filter>
+      <Filter>SpatialData\shapeCompressor</Filter>
+    </ClInclude>
+    <ClInclude Include="NumLenCompressor.h">
+      <Filter>SpatialData\shapeCompressor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -318,7 +324,7 @@
       <Filter>file</Filter>
     </ClCompile>
     <ClCompile Include="ShapeCompressor.cpp">
-      <Filter>SpatialData</Filter>
+      <Filter>SpatialData\shapeCompressor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

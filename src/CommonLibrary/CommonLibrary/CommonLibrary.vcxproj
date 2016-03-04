@@ -472,6 +472,7 @@
     <ClInclude Include="Nocopy.h" />
     <ClInclude Include="FixedBitStream.h" />
     <ClInclude Include="GeoShape.h" />
+    <ClInclude Include="NumLenCompressor.h" />
     <ClInclude Include="PodVector.h" />
     <ClInclude Include="RangeCoder.h" />
     <ClInclude Include="ShapeCompressor.h" />
