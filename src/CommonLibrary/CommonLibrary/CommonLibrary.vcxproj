@@ -441,12 +441,14 @@
     <ClInclude Include="alloc_t.h" />
     <ClInclude Include="ArithmeticCoder.h" />
     <ClInclude Include="AutoPtr.h" />
+    <ClInclude Include="BackTableZPoint16Bit.h" />
     <ClInclude Include="BaseACCoder.h" />
     <ClInclude Include="BitStream.h" />
     <ClInclude Include="blob.h" />
     <ClInclude Include="BoundaryBox.h" />
     <ClInclude Include="caseutils.h" />
     <ClInclude Include="CommonLib_lib.h" />
+    <ClInclude Include="compressutils.h" />
     <ClInclude Include="crc.h" />
     <ClInclude Include="CSSection.h" />
     <ClInclude Include="DebugTime.h" />
@@ -466,6 +468,7 @@
     <ClInclude Include="Interlocked.h" />
     <ClInclude Include="IRefCnt.h" />
     <ClInclude Include="log.h" />
+    <ClInclude Include="MathUtils.h" />
     <ClInclude Include="MemoryStream.h" />
     <ClInclude Include="multibyte.h" />
     <ClInclude Include="Mutex.h" />
@@ -473,6 +476,7 @@
     <ClInclude Include="FixedBitStream.h" />
     <ClInclude Include="GeoShape.h" />
     <ClInclude Include="NumLenCompressor.h" />
+    <ClInclude Include="PartCompressor.h" />
     <ClInclude Include="PodVector.h" />
     <ClInclude Include="RangeCoder.h" />
     <ClInclude Include="ShapeCompressor.h" />
@@ -491,6 +495,8 @@
     <ClInclude Include="VartTypeList.h" />
     <ClInclude Include="WaitForGraph.h" />
     <ClInclude Include="WriteBitStream.h" />
+    <ClInclude Include="XYCompress.h" />
+    <ClInclude Include="PointZOrder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="alloc_t.cpp" />
@@ -528,6 +534,7 @@
       <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <ClCompile Include="multibyte.cpp" />
+    <ClCompile Include="PointZOrder.cpp" />
     <ClCompile Include="ShapeCompressor.cpp" />
     <ClCompile Include="sprintf.cpp" />
     <ClCompile Include="stdafx.cpp">

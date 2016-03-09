@@ -2,6 +2,7 @@
 #define _LIB_COMMON_GEO_SHAPE_H_
 #include "IGeoShape.h"
 #include "PodVector.h"
+#include "compressutils.h"
 namespace CommonLib
 {
 	class IWriteStream;
@@ -18,18 +19,12 @@ namespace CommonLib
 
 
 
-		enum eDataType
-		{
-			ptType8 =  0,
-			ptType16 = 1,
-			ptType32 = 2,
-			ptType64 = 3
-		};
+	
 
 		struct compress_params
 		{
 
-			compress_params() : m_PointType(ptType64), m_dOffsetX(0), m_dOffsetY(0), m_dScaleX(0.00000001), m_dScaleY(0.00000001)
+			compress_params() : m_PointType(dtType64), m_dOffsetX(0), m_dOffsetY(0), m_dScaleX(0.00000001), m_dScaleY(0.00000001)
 			{
 
 			}

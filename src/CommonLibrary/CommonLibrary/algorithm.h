@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_ALGORITHM_H_
-#define _EMBEDDED_DATABASE_ALGORITHM_H_
+#ifndef _LIB_COMMON_ALGORITHM_H_
+#define _LIB_COMMON_ALGORITHM_H_
 #include "general.h"
  
 

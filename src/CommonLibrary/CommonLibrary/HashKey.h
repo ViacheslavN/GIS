@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_HASH_KEY_H_
-#define _EMBEDDED_DATABASE_HASH_KEY_H_
+#ifndef _LIB_COMMON_HASH_KEY_H_
+#define _LIB_COMMON_HASH_KEY_H_
 #include "general.h"
 #include "String.h"
 

@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_BASE_AC_CODER_H_
-#define _EMBEDDED_DATABASE_BASE_AC_CODER_H_
+#ifndef _LIB_COMMON_BASE_AC_CODER_H_
+#define _LIB_COMMON_BASE_AC_CODER_H_
 
 namespace CommonLib
 {

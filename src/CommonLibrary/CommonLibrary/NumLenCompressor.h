@@ -1,49 +1,258 @@
-#ifndef _LIB_COMMON_GEO_SHAPE_COMPRESSOR_H_
-#define _LIB_COMMON_GEO_SHAPE_COMPRESSOR_H_
+#ifndef _LIB_COMMON_GEO_SHAPE_NUMLEN_COMPRESSOR_H_
+#define _LIB_COMMON_GEO_SHAPE_NUMLEN_COMPRESSOR_H_
 #include "stream.h"
 #include "RangeCoder.h"
-
+#include "compressutils.h"
+#include "MathUtils.h"
+#include "FixedBitStream.h"
 namespace CommonLib
 {
 
 
-	template <class TValue, uint32 _nMaxBitLens>
+	template <class _TValue, class _TFindBit, uint32 _nMaxBitsLens>
 	class TNumLemCompressor
 	{
 		public:
-			TNumLemCompressor(){}
+			typedef _TValue TValue;
+			typedef _TFindBit TFindBit;
+
+			TNumLemCompressor()  
+			{
+				 clear();
+			}
 			~TNumLemCompressor(){}
 
-			void PreAddSympol(TValue value)
+			uint16 PreAddSympol(TValue value)
 			{
+				uint16 nBitLen =  m_FindBit.FMSB(value);
+
+				assert(nBitLen < _nMaxBitsLens);
+				m_BitsLensFreq[nBitLen] += 1;
+
+				if(m_FreqType != dtType32)
+				{
+					if(m_BitsLensFreq[nBitLen] > 255)
+						m_FreqType = dtType16;
+					if(m_BitsLensFreq[nBitLen] > 65535)
+						m_FreqType = dtType32;
+				}
+
+				m_nBitLen += nBitLen;
+				return nBitLen;
 
 			}
 
+		 
 
-			void BeginCompreess()
+			void BeginCompreess(CommonLib::IWriteStream* pStream)
 			{
+				byte nFlag = m_FreqType;
+				pStream->write(nFlag);
+				byte LensMask[(_nMaxBitsLens)/8];
+
+				memset(LensMask, 0, _nMaxBitsLens/8);
+				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				{
+					uint32 nByte = i/8;
+					uint32 nBit =  i - (nByte * 8);
+					if(m_BitsLensFreq[i] != 0)
+						LensMask[nByte] |= (0x01 << nBit);
+				}
+				for (uint32 i = 0; i < _nMaxBitsLens/8; ++i)
+				{
+					pStream->write((byte)LensMask[i]);
+				}
+				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				{
+					if(m_BitsLensFreq[i] == 0)
+						continue;
+
+					switch(m_FreqType)
+					{
+					case dtType8:
+						pStream->write((byte)m_BitsLensFreq[i]);
+						break;
+					case dtType16:
+						pStream->write((uint16)m_BitsLensFreq[i]);
+						break;
+					case dtType32:
+						pStream->write((uint32)m_BitsLensFreq[i]);
+						break;
+					}
+
+				}
+
+				m_pEncoder.reset(new TRangeEncoder64(pStream));
+				memset(m_FreqPrev, 0, sizeof(m_FreqPrev));
+
+				int32 nPrevF = 0;
+				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				{
+
+					m_FreqPrev[i + 1] = m_BitsLensFreq[i] + nPrevF;
+					nPrevF = m_FreqPrev[i + 1];
+				}
+			}
+
+			void EncodeSymbol(TValue value, CommonLib::FxBitWriteStream *pBitStream)
+			{
+				uint16 nBitLen =  m_FindBit.FMSB(value);
+				assert(m_BitsLensFreq[nBitLen] != 0);
+				assert(m_pEncoder.get());
+				
+				m_pEncoder->EncodeSymbol(m_FreqPrev[nBitLen], m_FreqPrev[nBitLen + 1],  m_nCount);
+				pBitStream->writeBits(value, nBitLen);
 
 			}
 
-			void EncodeSymbol(TValue value)
+			void EncodeFinish()
 			{
-
+				m_pEncoder->EncodeFinish();
 			}
 
-			void BeginDecode()
-			{
 
+			void BeginDecode(CommonLib::IReadStream* pStream)
+			{
+				clear();
+				byte nFlag = pStream->readByte();
+
+				m_FreqType = (eDataType)nFlag;
+
+				byte LensMask[(_nMaxBitsLens)/8];
+
+				for (uint32 i = 0; i < _nMaxBitsLens/8; ++i)
+				{
+					LensMask[i] = pStream->readByte();
+				}
+
+				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				{
+
+					uint32 nByte = i/8;
+					uint32 nBit  =  i - (nByte * 8);
+
+					if(!(LensMask[nByte] & (0x01 << nBit)))
+					{
+						m_BitsLensFreq[i] = 0;
+						continue;
+					}
+					switch(m_FreqType)
+					{
+					case dtType8:
+						m_BitsLensFreq[i] = pStream->readByte();
+						m_nCount += m_BitsLensFreq[i];
+						break;
+					case dtType16:
+						m_BitsLensFreq[i] = pStream->readintu16();
+						m_nCount += m_BitsLensFreq[i];
+						break;
+					case dtType32:
+						m_BitsLensFreq[i] = pStream->readIntu32();
+						m_nCount += m_BitsLensFreq[i];
+						break;
+					}
+
+					m_nBitLen +=m_BitsLensFreq[i] * i;
+				}
+
+				int32 nPrevF = 0;
+				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				{
+
+					m_FreqPrev[i + 1] = m_BitsLensFreq[i] + nPrevF;
+					nPrevF = m_FreqPrev[i + 1];
+				}
+
+			
+			}
+
+			void StartDecode(CommonLib::IReadStream* pStream)
+			{
+				m_pDecoder.reset(new TRangeDecoder64(pStream));
+				m_pDecoder->StartDecode();
 			}
 
 			bool DecodeSymbol(TValue& value)
 			{
+				uint32 freq = decoder.GetFreq(m_nCount);
+				value = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens, freq);
+				if(value != 0)
+					value--;
 
+
+				m_pDecoder->DecodeSymbol(m_FreqPrev[nBitLen], m_FreqPrev[nBitLen+1], m_nCount);
 			}
 
+			void clear()
+			{
+				memset(m_BitsLensFreq, 0, sizeof(m_BitsLensFreq));
+				memset(m_FreqPrev, 0, sizeof(m_FreqPrev));
+				m_nCount = 0;
+				m_FreqType = dtType8;
+				m_nBitLen = 0;
+			}
 
+			uint32 GetLenBits() const
+			{
+				return m_nBitLen;
+			}
+			uint32 GetCount() const
+			{
+				return m_nCount;
+			}
+
+			double CalcRowBitSize() const
+			{
+				double dBitRowSize  = 0;
+				if(m_nDiffsLen > 1)
+				{
+					for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+					{
+						if(m_BitsLensFreq[i] == 0)
+							continue;
+						double dFreq = m_BitsLensFreq[i];
+						double dLog2 = mathUtils::Log2((double)m_nCount/dFreq); 
+						dBitRowSize += (dFreq* dLog2);
+
+					}
+				}
+
+				return dBitRowSize;
+			}
+			uint32 GetHeaderSize() const
+			{
+				uint32 nSize = _nMaxBitsLens/8;
+				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				{
+					if(m_BitsLensFreq[i] != 0)
+						nSize += GetSizeTypeValue(m_FreqType);
+				}
+				return nSize;
+			}
+			uint32 GetCompressSize() const
+			{
+				uint32 nByteBitsLen =  (m_nBitLen + 7)/8;
+				double dBitRowSize = CalcRowBitSize();
+				uint32 nHeaderSize = GetHeaderSize();
+				dBitRowSize += (dBitRowSize/200)   + 64 /*code  finish*/; 
+
+				return  (uint32)(dBitRowSize +7)/8  + nHeaderSize + nByteBitsLen;
+			}
 	private:
 
-		uint32 m_nFreqLen[_nMaxBitLens];
+		uint32 m_BitsLensFreq[_nMaxBitsLens];
+		uint32 m_FreqPrev[_nMaxBitsLens + 1];
+		TFindBit m_FindBit;
+		uint32 m_nCount;
+		uint32	m_nBitLen;
+		eDataType m_FreqType;
+		typedef std::auto_ptr<TRangeEncoder64> TEncoderPtr;
+		typedef std::auto_ptr<TRangeDecoder64> TDecoderPtr;
 
+		TEncoderPtr m_pEncoder;
 	};
+
+	
 }
+
+#endif

@@ -89,6 +89,7 @@
     </ClCompile>
     <ClCompile Include="TestCommons.cpp" />
     <ClCompile Include="TestEmbWks.cpp" />
+    <ClCompile Include="TestShapeCompress.cpp" />
     <ClCompile Include="TestShapeIndex.cpp" />
     <ClCompile Include="TestSQLiteWks.cpp" />
     <ClCompile Include="TestTmpWKS.cpp" />

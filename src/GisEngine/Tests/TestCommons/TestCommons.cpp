@@ -11,6 +11,7 @@ void TestShapeIndex();
 void TestSQLiteWks();
 void TestEmbDBWks();
 void TestTableWks();
+void CompressShape();
 class ITest : public CommonLib::AutoRefCounter
 {
 public:
@@ -30,11 +31,11 @@ typedef std::map<ITestPtr, int> TtestMap;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-
+	 CompressShape();
 //	TestTableWks();
 	//testLoadXML1();
 	//return 1;
-	TestShapeIndex();
+//	TestShapeIndex();
 //	TestEmbDBWks();
 
 	/*CommonLib::CString s1(L"vfdgggf");

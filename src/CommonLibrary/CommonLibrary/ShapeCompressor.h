@@ -23,7 +23,17 @@ namespace CommonLib
 			bool compress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
 			bool decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream);
 		private:
-			CGeoShape::eDataType GetType(uint32 nValue) const;
+			void compressPart(eDataType nPartType, CGeoShape *pShp, CommonLib::IWriteStream *pStream);
+
+
+			template<class TPartCompress>
+			void CompressPart(TPartCompress& partCompress, uint32 *pParts, uint32 nCount, CommonLib::IWriteStream *pStream)
+			{
+				partCompress.compress(pParts, nCount,  pStream);
+			}
+
+			void CompressXY(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
+
 		private:
 			CommonLib::alloc_t *m_pAlloc;
 	};

@@ -233,7 +233,6 @@ namespace embDB
 		template <class TEncoder>
 		bool Compress(TEncoder& encoder, const TBPVector<_TValue>& vecValues, CommonLib::IWriteStream* pStream, uint32 *FreqPrev, CommonLib::FxBitWriteStream *pBitStream)
 		{		 
-			memset(nMass, 0, sizeof(nMass));
 			for (uint32 i = 1, sz = vecValues.size(); i< sz; ++i)
 			{
 

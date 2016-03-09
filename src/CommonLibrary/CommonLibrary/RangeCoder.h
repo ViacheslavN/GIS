@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_RANGE_CODER_H_
-#define _EMBEDDED_DATABASE_RANGE_CODER_H_
+#ifndef _LIB_COMMON_RANGE_CODER_H_
+#define _LIB_COMMON_RANGE_CODER_H_
 #include "stream.h"
 #include "BaseACCoder.h"
 namespace CommonLib

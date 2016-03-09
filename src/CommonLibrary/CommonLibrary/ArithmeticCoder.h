@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_ARITHMETIC_CODER_H_
-#define _EMBEDDED_DATABASE_ARITHMETIC_CODER_H_
+#ifndef __LIB_COMMON_ARITHMETIC_CODER_H_
+#define __LIB_COMMON_ARITHMETIC_CODER_H_
 
 #include "stream.h"
 #include "BaseACCoder.h"
