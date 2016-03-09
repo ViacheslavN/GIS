@@ -27,7 +27,7 @@ namespace CommonLib
 		}
 		~TXYCompressor(){}
 
-		void PreCompressPart(GisXYPoint *pPoint, uint32 nCount)
+		void PreCompressPart(const GisXYPoint *pPoint, uint32 nCount)
 		{
 
 
@@ -59,7 +59,7 @@ namespace CommonLib
 		}
 
 
-		bool compress(GisXYPoint *pPoint, uint32 nCount, IWriteStream *pStream)
+		bool compress(const GisXYPoint *pPoint, uint32 nCount, IWriteStream *pStream)
 		{
 
 			PreCompressPart(pPoint, nCount);

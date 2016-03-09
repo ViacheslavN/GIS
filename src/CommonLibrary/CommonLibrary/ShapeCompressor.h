@@ -20,10 +20,10 @@ namespace CommonLib
 			~ShapeCompressor();
 
 
-			bool compress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
+			bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
 			bool decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream);
 		private:
-			void compressPart(eDataType nPartType, CGeoShape *pShp, CommonLib::IWriteStream *pStream);
+			void compressPart(eDataType nPartType, const CGeoShape *pShp, CommonLib::IWriteStream *pStream);
 
 
 			template<class TPartCompress>
@@ -32,7 +32,7 @@ namespace CommonLib
 				partCompress.compress(pParts, nCount,  pStream);
 			}
 
-			void CompressXY(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
+			void CompressXY(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
 
 		private:
 			CommonLib::alloc_t *m_pAlloc;

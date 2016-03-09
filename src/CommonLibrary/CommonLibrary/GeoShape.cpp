@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GeoShape.h"
 #include "stream.h"
+#include "ShapeCompressor.h"
 namespace CommonLib
 {
 
@@ -595,5 +596,16 @@ namespace CommonLib
 		 m_vecPoints.clear();
 		 m_vecZs.clear();
 		 m_vecMs.clear();
+	 }
+
+	 bool  CGeoShape::compress(IWriteStream *pStream, compress_params* pParams) const
+	 {
+		 ShapeCompressor compressor(m_pAlloc);
+		 return compressor.compress(this, pParams, pStream);
+	 }
+	 bool  CGeoShape::decompress(IReadStream *pStream, compress_params* pParams)
+	 {
+		 ShapeCompressor compressor(m_pAlloc);
+		 return compressor.decompress(this, pParams, pStream);
 	 }
 }
