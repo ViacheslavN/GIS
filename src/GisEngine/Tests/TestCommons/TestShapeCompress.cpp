@@ -8,7 +8,9 @@
 
 void CompressShape()
 {
-	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
+	
+	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
+	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData");
 	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"building.shp");
 	if(!pShapeFC.get())
 		return;
@@ -30,11 +32,35 @@ void CompressShape()
 	GisEngine::GeoDatabase::ICursorPtr pCursor = pShapeFC->Search(&filter, true);
 	GisEngine::GeoDatabase::IRowPtr pRow;
 
+
+	CommonLib::CWriteMemoryStream writeStream;
+	CommonLib::CWriteMemoryStream compressStream;
+	CommonLib::CGeoShape::compress_params params;
+	params.m_PointType = CommonLib::dtType32;
+	params.m_dScaleX = 0.0000001;
+	params.m_dScaleY = 0.0000001;
+
+	GisEngine::GisBoundingBox bbox = pShapeFC->GetExtent()->GetBoundingBox();
+
+	if(bbox.xMin < 0)
+		params.m_dOffsetX = fabs(bbox.xMin);
+	else
+		params.m_dOffsetX = -1 *bbox.xMin;
+
+	if(bbox.yMin < 0)
+		params.m_dOffsetY = fabs(bbox.yMin);
+	else
+		params.m_dOffsetY = -1 *bbox.yMin;
+
+
+
 	while(pCursor->NextRow(&pRow))
 	{
 	  GisEngine::GeoDatabase::IFeature *pFeature = (GisEngine::GeoDatabase::IFeature*)pRow.get();
 	 CommonLib::IGeoShapePtr pShape= pFeature->GetShape();
-	 pShape->getBB();
+	 pShape->write(&writeStream);
+	 pShape->compress(&compressStream, &params);
+	
 
 
 	}

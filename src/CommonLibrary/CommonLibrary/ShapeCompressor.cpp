@@ -4,6 +4,7 @@
 #include "NumLenCompressor.h"
 #include "PartCompressor.h"
 #include "XYCompress.h"
+#include "MemoryStream.h"
 namespace CommonLib
 {
 
@@ -56,10 +57,15 @@ namespace CommonLib
 
 
 	 
-	bool ShapeCompressor::compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream)
+	bool ShapeCompressor::compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CommonLib::CWriteMemoryStream *pCacheStream)
 	{
 		
 
+
+		CWriteMemoryStream streamCache(m_pAlloc);
+		CommonLib::CWriteMemoryStream *pCache = &streamCache;
+		if(pCacheStream) 
+			pCache = pCacheStream;
 		 CGeoShape::compress_params CompressParams;
 		CompressParams.m_PointType = dtType64;
 		CompressParams.m_dOffsetX = 0.00000001;
@@ -147,7 +153,9 @@ namespace CommonLib
 		}
 		else
 		{
-			compressPart(partType, pShp, pStream);
+			compressPart(partType, pShp, pCache);
+			pStream->write(pCache->buffer(), pCache->pos());
+
 		}
 		if(pShp->getPointCnt() < 5)
 		{
@@ -162,7 +170,8 @@ namespace CommonLib
 		{
 			bPointCompress = true;
 
-			CompressXY(pShp, &CompressParams, pStream);
+			CompressXY(pShp, &CompressParams, pCache);
+			pStream->write(pCache->buffer(), pCache->pos());
 		}
 
 		eShapeType genType;

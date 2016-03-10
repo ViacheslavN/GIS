@@ -37,7 +37,8 @@ namespace CommonLib
 						m_FreqType = dtType32;
 				}
 
-				m_nBitLen += nBitLen;
+		 
+				m_nCount += 1;
 				return nBitLen;
 
 			}
@@ -231,12 +232,12 @@ namespace CommonLib
 			}
 			uint32 GetCompressSize() const
 			{
-				uint32 nByteBitsLen =  (m_nBitLen + 7)/8;
+			//	uint32 nByteBitsLen =  (m_nBitLen + 7)/8;
 				double dBitRowSize = CalcRowBitSize();
 				uint32 nHeaderSize = GetHeaderSize();
 				dBitRowSize += (dBitRowSize/200)   + 64 /*code  finish*/; 
 
-				return  (uint32)(dBitRowSize +7)/8  + nHeaderSize + nByteBitsLen;
+				return  (uint32)(dBitRowSize +7)/8  + nHeaderSize;
 			}
 	private:
 
@@ -244,7 +245,6 @@ namespace CommonLib
 		uint32 m_FreqPrev[_nMaxBitsLens + 1];
 		TFindBit m_FindBit;
 		uint32 m_nCount;
-		uint32	m_nBitLen;
 		eDataType m_FreqType;
 		typedef std::auto_ptr<TRangeEncoder64> TEncoderPtr;
 		typedef std::auto_ptr<TRangeDecoder64> TDecoderPtr;

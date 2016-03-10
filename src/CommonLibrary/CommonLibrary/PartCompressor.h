@@ -15,9 +15,10 @@ namespace CommonLib
 	{
 	public:
 		typedef _TNumLenCompressor TNumLenCompressor;
+		static const nMinCompressPartNum = 50;
 	
 
-		TPartCompressor(eDataType dateType) : m_dateType(dateType)
+		TPartCompressor(eDataType dateType) : m_dateType(dateType), m_nBitsLen(0)
 		{
 			clear();
 		}
@@ -30,8 +31,9 @@ namespace CommonLib
 				assert(pParts[i] >= pParts[i - 1]);
 				uint32 nDiff = pParts[i] - pParts[i - 1];
 
-				m_Compressor.PreAddSympol(nDiff);
+				m_nBitsLen += m_Compressor.PreAddSympol(nDiff);
 			}
+
 		}
 
 
@@ -65,6 +67,7 @@ namespace CommonLib
 
 		void clear()
 		{
+			m_nBitsLen = 0;
 			m_Compressor.clear();
 		}
 
@@ -108,8 +111,7 @@ namespace CommonLib
 
 		 TNumLenCompressor m_Compressor;
 		 eDataType m_dateType;
-
-
+		 uint32 m_nBitsLen;
 	};
 
 	typedef TPartCompressor<TPartNumLen8> TPartCompressor8;

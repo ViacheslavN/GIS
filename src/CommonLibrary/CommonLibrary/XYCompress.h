@@ -55,6 +55,7 @@ namespace CommonLib
 				zOrderDiff.getXY(xDiff, yDiff);
 				m_Compressor.PreAddSympol(xDiff);
 				m_Compressor.PreAddSympol(yDiff);
+ 
 			}
 		}
 
@@ -63,7 +64,7 @@ namespace CommonLib
 		{
 
 			PreCompressPart(pPoint, nCount);
-
+	
 			uint32 nBitLen = m_Compressor.GetLenBits() + nCount;
 			uint32 nByteSize = (nBitLen + 7)/8;
 			CommonLib::FxBitWriteStream bitStream;
@@ -108,7 +109,7 @@ namespace CommonLib
 				m_Compressor.EncodeSymbol(xDiff, &bitStream);
 				m_Compressor.EncodeSymbol(yDiff, &bitStream);
 
-				zOrderPrev = zOrderNext;
+				//zOrderPrev = zOrderNext;
 			}
 
 			m_Compressor.EncodeFinish();
