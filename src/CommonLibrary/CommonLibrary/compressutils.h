@@ -24,6 +24,7 @@ namespace CommonLib
 		return dtType64;
 	}
 
+
 	template<class TValue>
 	void WriteValue(TValue nValue, eDataType type, CommonLib::IWriteStream *pStream)
 	{

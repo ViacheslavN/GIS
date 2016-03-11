@@ -14,7 +14,9 @@ namespace CommonLib
 	#define BIT_OFFSET_PARTS_COMPRESS 5
 	#define BIT_OFFSET_XY_COMPRESS 6
 
-	ShapeCompressor::ShapeCompressor(CommonLib::alloc_t *pAlloc)
+	ShapeCompressor::ShapeCompressor(CommonLib::alloc_t *pAlloc) : m_bWriteParams(true), m_bNullPart(false),
+		m_bCompressPart(false), m_bCompressPoint(false), m_partType(dtType8), m_pAlloc(pAlloc)
+
 	{
 	}
 	ShapeCompressor::~ShapeCompressor()
@@ -51,7 +53,110 @@ namespace CommonLib
 	*/
 
 
+	uint32 ShapeCompressor::CalcCompressSize(const CGeoShape *pShp, CGeoShape::compress_params *pParams)
+	{
 
+		uint32 nCompressSize = sizeof(byte) + sizeof(uint32); //shape type + flags
+
+		m_CompressParams.m_PointType = dtType64;
+		m_CompressParams.m_dOffsetX = 0.00000001;
+		m_CompressParams.m_dOffsetY = 0.00000001;
+		m_CompressParams.m_dScaleX = 0.00000001;
+		m_CompressParams.m_dScaleY = 0.00000001;
+
+		if(pParams)
+		{
+			m_bWriteParams = false;
+			m_CompressParams = *pParams;
+		}
+		else
+		{
+			bbox bb = pShp->getBB();
+			m_bWriteParams = true;
+
+			if(bb.xMin < 0)
+				m_CompressParams.m_dOffsetX = fabs(bb.xMin);
+			else
+				m_CompressParams.m_dOffsetX = -1 *bb.xMin;
+			if(bb.yMin < 0)
+				m_CompressParams.m_dOffsetX = fabs(bb.yMin);
+			else
+				m_CompressParams.m_dOffsetX = -1 *bb.yMin;
+
+		}
+	
+
+		uint32 nPartCount = pShp->getPartCount();
+		m_partType = GetType(nPartCount);
+		if(m_partType != dtType32)
+		{
+			for (uint32 i = 0; i < nPartCount; i++ )
+			{
+				uint32 nPart = pShp->getPart(i);
+				eDataType type = GetType(nPartCount);
+				if(m_partType < type)
+				{
+					m_partType = type;
+					if(m_partType == dtType32)
+					{				 
+						break;
+					}
+				}
+			}
+		}
+		if(nPartCount == 1)
+		{
+			m_bNullPart = true;
+		}
+		else if(nPartCount == 0 || nPartCount < 10)
+		{
+
+			m_bCompressPart = false;
+			nCompressSize += (GetSizeTypeValue(m_partType) * (nPartCount + 1));
+		}
+		else
+		{
+			CreatePartCompressor(m_partType);
+			m_PartCompressor->PreCompress(pShp->getParts(), nPartCount);
+			nCompressSize += m_PartCompressor->GetCompressSize();
+		}
+		if(pShp->getPointCnt() < 5)
+		{
+			m_bCompressPoint = false;
+			m_bWriteParams = false;
+			nCompressSize += (pShp->getPointCnt() * (2 * sizeof(double)) + 1);
+		}
+		else
+		{
+			m_bCompressPoint = true;
+			CreateCompressXY(&m_CompressParams);
+			m_xyCompressor->PreCompress(pShp->getPoints(), pShp->getPointCnt());
+			nCompressSize += m_xyCompressor->GetCompressSize();
+		}
+		if(m_bWriteParams)
+			nCompressSize += sizeof(m_CompressParams);
+
+
+		eShapeType genType;
+		bool has_z;
+		bool has_m;
+		bool has_curve;
+		bool has_id;
+		pShp->getTypeParams(pShp->m_type, &genType, &has_z, &has_m, &has_curve, &has_id);
+
+		if(has_z)
+		{
+			nCompressSize += (pShp->m_vecZs.size() * sizeof(double))  + sizeof(uint32);
+
+		}
+
+		if(has_m)
+		{
+			nCompressSize += (pShp->m_vecMs.size() * sizeof(double))  + sizeof(uint32);
+		}
+
+		return nCompressSize;
+	}
 
 	 
 	bool ShapeCompressor::compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CommonLib::CWriteMemoryStream *pCacheStream)
@@ -63,121 +168,78 @@ namespace CommonLib
 		CommonLib::CWriteMemoryStream *pCache = &streamCache;
 		if(pCacheStream) 
 			pCache = pCacheStream;
-		 CGeoShape::compress_params CompressParams;
-		CompressParams.m_PointType = dtType64;
-		CompressParams.m_dOffsetX = 0.00000001;
-		CompressParams.m_dOffsetY = 0.00000001;
-		CompressParams.m_dScaleX = 0.00000001;
-		CompressParams.m_dScaleY = 0.00000001;
 
-		eDataType partType = dtType8;
-		bool bPartCompress = true;
-		bool bPartNull = false;
-		bool bPointCompress = false;
+		uint32 nCompressSize = CalcCompressSize(pShp, pParams);
+		pCache->seek(0, soFromBegin);
+		pCache->resize(nCompressSize);
 
-		pStream->write((byte)pShp->m_type);
-		uint32 nFlagPos = pStream->pos();
-
-		uint32 nFlag = 0;
-		pStream->write(nFlag);
-
-		if(pParams)
+		pCache->write((byte)pShp->type());
+		uint32 nFlag = m_CompressParams.m_PointType;
+		nFlag |= (((uint32)m_partType) << BIT_OFFSET_TYPE_PARTS);
+		if(m_bWriteParams)
+			nFlag |= (((uint32)1) << BIT_OFFSET_COMPRESS_PARAMS);
+		if(m_bNullPart)
 		{
-			CompressParams  = *pParams;
-
-
+			nFlag |= (((uint32)1) << BIT_OFFSET_PARTS_NULL);
 		}
-		else
+		else if(m_bCompressPart)
 		{
-			bbox bb = pShp->getBB();
-
-
-			if(bb.xMin < 0)
-				CompressParams.m_dOffsetX = fabs(bb.xMin);
-			else
-				CompressParams.m_dOffsetX = -1 *bb.xMin;
-			if(bb.yMin < 0)
-				CompressParams.m_dOffsetX = fabs(bb.yMin);
-			else
-				CompressParams.m_dOffsetX = -1 *bb.yMin;
-
-			pStream->write((byte)CompressParams.m_PointType); 
-			pStream->write(CompressParams.m_dOffsetX); 
-			pStream->write(CompressParams.m_dOffsetY); 
-			pStream->write(CompressParams.m_dScaleX); 
-			pStream->write(CompressParams.m_dScaleY); 
+			nFlag |= (((uint32)1) << BIT_OFFSET_PARTS_COMPRESS);
 		}
+
+		if(m_bCompressPoint)
+			nFlag |= (((uint32)1) << BIT_OFFSET_XY_COMPRESS);
+
+		pCache->write(nFlag);
 
 		
-
-		uint32 nPartCount = pShp->getPartCount();
-		partType = GetType(nPartCount);
-		if(partType != dtType32)
+		if(m_bWriteParams)
 		{
+			pCache->write((byte)m_CompressParams.m_PointType); 
+			pCache->write(m_CompressParams.m_dOffsetX); 
+			pCache->write(m_CompressParams.m_dOffsetY); 
+			pCache->write(m_CompressParams.m_dScaleX); 
+			pCache->write(m_CompressParams.m_dScaleY); 
+		}
+
+		if(!m_bNullPart)
+		{
+			if(m_bCompressPart)
+			{
+				m_PartCompressor->WriteHeader(pCache);
+			}
+		}
+
+		if(m_bCompressPoint)
+		{
+			m_xyCompressor->WriteHeader(pCache);
+		}
+		if(m_bCompressPart)
+		{
+			m_PartCompressor->compress(pShp->getParts(), pShp->getPartCount(), pCache);
+		}
+		else if(!m_bNullPart)
+		{
+			uint32 nPartCount = pShp->getPartCount();
+			WriteValue(nPartCount, m_partType, pCache);
 			for (uint32 i = 0; i < nPartCount; i++ )
 			{
-				uint32 nPart = pShp->getPart(i);
-
-				eDataType type = GetType(nPartCount);
-				if(partType < type)
-				{
-					partType = type;
-					if(partType == dtType32)
-					{				 
-						break;
-					}
-				}
+				WriteValue(pShp->getPart(i), m_partType, pCache);
 			}
-			
-
 		}
-		if(nPartCount < 50)
+		if(m_bCompressPoint)
 		{
-			bPartCompress = false;
-			 int npp = pShp->getPart(0);
-			if(nPartCount == 1 && pShp->getPart(0) == 0)
-			{
-				bPartNull = true;
-			}
-			else
-			{
-				WriteValue(nPartCount, partType, pStream);
-				for (uint32 i = 0; i < nPartCount; i++ )
-				{
-					WriteValue(pShp->getPart(i), partType, pStream);
-				}
-			}
-			
-		}
-		//else
-		//{
-		//	compressPart(partType, pShp, pCache);
-		//	pStream->write(pCache->buffer(), pCache->pos());
-
-		//}
-		if(pShp->getPointCnt() < 5)
-		{
-			pStream->write((byte)pShp->m_vecPoints.size());
-			for (uint32 i = 0, sz = pShp->m_vecPoints.size(); i < sz; ++i)
-			{
-				pStream->write(pShp->m_vecPoints[i].x);
-				pStream->write(pShp->m_vecPoints[i].y);
-			}
+			m_xyCompressor->compress(pShp->getPoints(), pShp->getPointCnt(), pCache);
 		}
 		else
 		{
-			bPointCompress = true;
-
-			//CompressXY(pShp, &CompressParams, pCache);
-			//pStream->write(pCache->buffer(), pCache->pos());
+			pCache->write((byte)pShp->m_vecPoints.size());
+			for (uint32 i = 0, sz = pShp->m_vecPoints.size(); i < sz; ++i)
+			{
+				pCache->write(pShp->m_vecPoints[i].x);
+				pCache->write(pShp->m_vecPoints[i].y);
+			}
 		}
-		uint32 nCompressSize;
-		if(bPartCompress)
-		{
-			CreatePartCompressor(partType);
-			 
-		}
-
 		eShapeType genType;
 		bool has_z;
 		bool has_m;
@@ -187,45 +249,26 @@ namespace CommonLib
 
 		if(has_z)
 		{
-			pStream->write(pShp->m_vecZs.size());
+			pCache->write(pShp->m_vecZs.size());
 			for (uint32 i = 0, sz = pShp->m_vecZs.size(); i < sz; ++i)
 			{
-				pStream->write(pShp->m_vecZs[i]);
+				pCache->write(pShp->m_vecZs[i]);
 			}
 		
 		}
 
 		if(has_m)
 		{
-			pStream->write(pShp->m_vecMs.size());
+			pCache->write(pShp->m_vecMs.size());
 			for (uint32 i = 0, sz = pShp->m_vecZs.size(); i < sz; ++i)
 			{
-				pStream->write(pShp->m_vecMs[i]);
+				pCache->write(pShp->m_vecMs[i]);
 			}
 		}
 
 
-		uint32 endPos = pStream->pos();
-
-		pStream->seek(nFlagPos, soFromBegin);
-		nFlag = CompressParams.m_PointType;
-		nFlag |= (((uint32)partType) << BIT_OFFSET_TYPE_PARTS);
-		if(pParams)
-			nFlag |= (((uint32)1) << BIT_OFFSET_COMPRESS_PARAMS);
-		if(bPartNull)
-		{
-			nFlag |= (((uint32)1) << BIT_OFFSET_PARTS_NULL);
-		}
-		else if(bPartCompress)
-		{
-			nFlag |= (((uint32)1) << BIT_OFFSET_PARTS_COMPRESS);
-		}
-
-		if(bPointCompress)
-			nFlag |= (((uint32)1) << BIT_OFFSET_XY_COMPRESS);
-		
-		pStream->write(nFlag);
-		pStream->seek(endPos, soFromBegin);
+		 
+		pStream->write(pCache->buffer(), pCache->pos());
 		return true;
 	}
 	void ShapeCompressor::compressPart(eDataType nPartType, const CGeoShape *pShp, CommonLib::IWriteStream *pStream)

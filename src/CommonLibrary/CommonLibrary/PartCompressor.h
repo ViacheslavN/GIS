@@ -18,7 +18,7 @@ namespace CommonLib
 		IPartComressor(){}
 
 		virtual void PreCompress(const uint32 *pParts, uint32 nCount) = 0;
-		virtual uint32 GetCompressSize(const uint32 *pParts, uint32 nCount) = 0;
+		virtual uint32 GetCompressSize() const = 0;
 		virtual uint32 GetCount() const = 0;
 		virtual uint32 WriteHeader(IWriteStream *pStream) = 0;
 		virtual bool  compress(const uint32 *pParts, uint32 nCount, IWriteStream *pStream) = 0;

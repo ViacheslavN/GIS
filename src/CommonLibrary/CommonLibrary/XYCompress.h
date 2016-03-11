@@ -90,7 +90,7 @@ namespace CommonLib
 
 			m_Compressor.BeginCompreess(pStream);
 	 
-			uint32 nByteSize = (m_Compressor.GetBitsLen() + nCount + 7)/8;
+			uint32 nByteSize = (m_Compressor.GetBitsLen() + m_Compressor.GetCount()/2 + 7)/8;
 			CommonLib::FxBitWriteStream bitStream;
 
 			

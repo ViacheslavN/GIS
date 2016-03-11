@@ -219,7 +219,7 @@ namespace CommonLib
 			}
 			uint32 GetHeaderSize() const
 			{
-				uint32 nSize = _nMaxBitsLens/8;
+				uint32 nSize = _nMaxBitsLens/8  + 1;
 				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
 				{
 					if(m_BitsLensFreq[i] != 0)

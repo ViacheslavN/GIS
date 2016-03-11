@@ -52,6 +52,7 @@ namespace CommonLib
 			bool m_bCompressPart;
 			bool m_bCompressPoint;
 			eDataType m_partType;
+			CGeoShape::compress_params m_CompressParams;
 	};
 
 }
