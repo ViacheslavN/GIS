@@ -4,11 +4,15 @@
 #include "PodVector.h"
 #include "GeoShape.h"
 #include "stream.h"
+#include "MemoryStream.h"
 namespace CommonLib
 {
 
 	class CGeoShape;
+	class IXYComressor;
+	class IPartComressor;
 
+	
 	
 
 	class ShapeCompressor
@@ -20,7 +24,7 @@ namespace CommonLib
 			~ShapeCompressor();
 
 
-			bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CommonLib::CWriteMemoryStream *pCacheStream = 0);
+			bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CWriteMemoryStream *pCacheStream = 0);
 			bool decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream);
 		private:
 			void compressPart(eDataType nPartType, const CGeoShape *pShp, CommonLib::IWriteStream *pStream);
@@ -33,9 +37,21 @@ namespace CommonLib
 			}
 
 			void CompressXY(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
+			void CreateCompressXY( CGeoShape::compress_params *pParams);
+			void CreatePartCompressor(eDataType nPartType);
 
+
+			uint32 CalcCompressSize(const CGeoShape *pShp, CGeoShape::compress_params *pParams);
 		private:
 			CommonLib::alloc_t *m_pAlloc;
+			std::auto_ptr<IXYComressor> m_xyCompressor;
+			std::auto_ptr<IPartComressor> m_PartCompressor;
+
+			bool m_bWriteParams;
+			bool m_bNullPart;
+			bool m_bCompressPart;
+			bool m_bCompressPoint;
+			eDataType m_partType;
 	};
 
 }

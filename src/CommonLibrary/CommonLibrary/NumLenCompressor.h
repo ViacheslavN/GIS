@@ -5,6 +5,7 @@
 #include "compressutils.h"
 #include "MathUtils.h"
 #include "FixedBitStream.h"
+#include "algorithm.h"
 namespace CommonLib
 {
 
@@ -16,7 +17,7 @@ namespace CommonLib
 			typedef _TValue TValue;
 			typedef _TFindBit TFindBit;
 
-			TNumLemCompressor()  
+			TNumLemCompressor(uint32 nError = 100)  : m_nError(nError)
 			{
 				 clear();
 			}
@@ -37,15 +38,13 @@ namespace CommonLib
 						m_FreqType = dtType32;
 				}
 
-		 
+				m_nBitLen += nBitLen;
 				m_nCount += 1;
 				return nBitLen;
 
 			}
 
-		 
-
-			void BeginCompreess(CommonLib::IWriteStream* pStream)
+			void WriteHeader(CommonLib::IWriteStream* pStream)
 			{
 				byte nFlag = m_FreqType;
 				pStream->write(nFlag);
@@ -82,17 +81,19 @@ namespace CommonLib
 					}
 
 				}
-
-				m_pEncoder.reset(new TRangeEncoder64(pStream));
 				memset(m_FreqPrev, 0, sizeof(m_FreqPrev));
-
 				int32 nPrevF = 0;
 				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
 				{
-
 					m_FreqPrev[i + 1] = m_BitsLensFreq[i] + nPrevF;
 					nPrevF = m_FreqPrev[i + 1];
 				}
+			}
+
+			
+			void BeginCompreess(CommonLib::IWriteStream* pStream)
+			{
+				m_pEncoder.reset(new TRangeEncoder64(pStream));
 			}
 
 			void EncodeSymbol(TValue value, CommonLib::FxBitWriteStream *pBitStream)
@@ -112,7 +113,7 @@ namespace CommonLib
 			}
 
 
-			void BeginDecode(CommonLib::IReadStream* pStream)
+			void ReadHeader(CommonLib::IReadStream* pStream)
 			{
 				clear();
 				byte nFlag = pStream->readByte();
@@ -173,15 +174,16 @@ namespace CommonLib
 				m_pDecoder->StartDecode();
 			}
 
-			bool DecodeSymbol(TValue& value)
+			bool DecodeSymbol(uint32& value)
 			{
-				uint32 freq = decoder.GetFreq(m_nCount);
+				uint32 freq = m_pDecoder->GetFreq(m_nCount);
 				value = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens, freq);
 				if(value != 0)
 					value--;
 
 
-				m_pDecoder->DecodeSymbol(m_FreqPrev[nBitLen], m_FreqPrev[nBitLen+1], m_nCount);
+				m_pDecoder->DecodeSymbol(m_FreqPrev[value], m_FreqPrev[value+1], m_nCount);
+				return true;
 			}
 
 			void clear()
@@ -193,10 +195,7 @@ namespace CommonLib
 				m_nBitLen = 0;
 			}
 
-			uint32 GetLenBits() const
-			{
-				return m_nBitLen;
-			}
+		
 			uint32 GetCount() const
 			{
 				return m_nCount;
@@ -205,18 +204,16 @@ namespace CommonLib
 			double CalcRowBitSize() const
 			{
 				double dBitRowSize  = 0;
-				if(m_nDiffsLen > 1)
+				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
 				{
-					for (uint32 i = 0; i < _nMaxBitsLens; ++i)
-					{
-						if(m_BitsLensFreq[i] == 0)
-							continue;
-						double dFreq = m_BitsLensFreq[i];
-						double dLog2 = mathUtils::Log2((double)m_nCount/dFreq); 
-						dBitRowSize += (dFreq* dLog2);
-
-					}
+					if(m_BitsLensFreq[i] == 0)
+						continue;
+					double dFreq = m_BitsLensFreq[i];
+					double dLog2 = mathUtils::Log2((double)m_nCount/dFreq); 
+					dBitRowSize += (dFreq* dLog2);
 				}
+				dBitRowSize += 64;
+				dBitRowSize += (dBitRowSize/m_nError);
 
 				return dBitRowSize;
 			}
@@ -230,13 +227,15 @@ namespace CommonLib
 				}
 				return nSize;
 			}
+			uint32 GetBitsLen() const
+			{
+				return m_nBitLen;
+			}
 			uint32 GetCompressSize() const
 			{
-			//	uint32 nByteBitsLen =  (m_nBitLen + 7)/8;
+			
 				double dBitRowSize = CalcRowBitSize();
 				uint32 nHeaderSize = GetHeaderSize();
-				dBitRowSize += (dBitRowSize/200)   + 64 /*code  finish*/; 
-
 				return  (uint32)(dBitRowSize +7)/8  + nHeaderSize;
 			}
 	private:
@@ -245,11 +244,14 @@ namespace CommonLib
 		uint32 m_FreqPrev[_nMaxBitsLens + 1];
 		TFindBit m_FindBit;
 		uint32 m_nCount;
+		uint32 m_nBitLen;
 		eDataType m_FreqType;
 		typedef std::auto_ptr<TRangeEncoder64> TEncoderPtr;
 		typedef std::auto_ptr<TRangeDecoder64> TDecoderPtr;
 
 		TEncoderPtr m_pEncoder;
+		TDecoderPtr m_pDecoder;
+		uint32 m_nError;
 	};
 
 	

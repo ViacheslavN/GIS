@@ -12,8 +12,26 @@ namespace CommonLib
 	typedef TNumLemCompressor<uint32, TFindMostSigBit, 32> TPointNumLen32;
 	typedef TNumLemCompressor<uint64, TFindMostSigBit, 64> TPointNumLen64;
 
+
+	class IXYComressor
+	{
+	public:
+		virtual ~IXYComressor() {}
+		IXYComressor(){}
+
+		virtual void PreCompress(const GisXYPoint *pPoint, uint32 nCount) = 0;
+		virtual uint32 GetCompressSize() const= 0;
+		virtual uint32 GetCount() const = 0;
+		virtual void WriteHeader(IWriteStream *pStream) = 0;
+		virtual bool  compress(const GisXYPoint *pPoint, uint32 nCount, IWriteStream *pStream) = 0;
+
+		virtual void ReadHeader(IReadStream *pStream) = 0;
+		virtual bool  decompress(GisXYPoint *pPoint, uint32 nCount, IReadStream *pStream) = 0;
+	};
+
+
 	template <class _TValue, class _TPointLenCompressor, class _ZOrder>
-	class TXYCompressor
+	class TXYCompressor : public IXYComressor
 	{
 	public:
 		typedef _TPointLenCompressor TPointLenCompressor;
@@ -21,13 +39,13 @@ namespace CommonLib
 		typedef _ZOrder ZOrder;
 
 
-		TXYCompressor(const CGeoShape::compress_params& params) : m_params(params), m_nSignBits(0)
+		TXYCompressor(const CGeoShape::compress_params& params) : m_params(params)
 		{
 			
 		}
 		~TXYCompressor(){}
 
-		void PreCompressPart(const GisXYPoint *pPoint, uint32 nCount)
+		virtual void PreCompress(const GisXYPoint *pPoint, uint32 nCount)
 		{
 
 
@@ -55,21 +73,27 @@ namespace CommonLib
 				zOrderDiff.getXY(xDiff, yDiff);
 				m_Compressor.PreAddSympol(xDiff);
 				m_Compressor.PreAddSympol(yDiff);
- 
 			}
 		}
 
+		virtual uint32 GetCompressSize() const
+		{
+			return m_Compressor.GetCompressSize() + (m_Compressor.GetBitsLen() + m_Compressor.GetCount()/2 +7)/8 ;
+		}
+		virtual void WriteHeader(IWriteStream *pStream)
+		{
+			m_Compressor.WriteHeader(pStream);
+		}
 
-		bool compress(const GisXYPoint *pPoint, uint32 nCount, IWriteStream *pStream)
+		virtual bool compress(const GisXYPoint *pPoint, uint32 nCount, IWriteStream *pStream)
 		{
 
-			PreCompressPart(pPoint, nCount);
-	
-			uint32 nBitLen = m_Compressor.GetLenBits() + nCount;
-			uint32 nByteSize = (nBitLen + 7)/8;
+			m_Compressor.BeginCompreess(pStream);
+	 
+			uint32 nByteSize = (m_Compressor.GetBitsLen() + nCount + 7)/8;
 			CommonLib::FxBitWriteStream bitStream;
 
-			m_Compressor.BeginCompreess(pStream);
+			
 			bitStream.attach(pStream, pStream->pos(), nByteSize);
 			pStream->seek(nByteSize, soFromCurrent);
 
@@ -121,29 +145,32 @@ namespace CommonLib
 		void clear()
 		{
 			m_Compressor.clear();
-			m_nSignBits = 0;
+			m_nBitLen = 0;
 		}
 
-
+		virtual void ReadHeader(IReadStream *pStream)
+		{
+			m_Compressor.ReadHeader(pStream);
+		}
 		bool BeginDecompress(IWriteStream *pStream)
 		{
 			m_Compressor.BeginDecode(pStream);
 			return true;
 		}
 
-		uint32 GetCount() const
+		virtual uint32 GetCount() const
 		{
-			return m_Compressor.count()/2;
+			return m_Compressor.GetCount()/2;
 		}
-		bool decompress(GisXYPoint *pPoint, uint32 nCount, IReadStream *pStream)
+		virtual bool decompress(GisXYPoint *pPoint, uint32 nCount, IReadStream *pStream)
 		{
-			uint32 nBitLen = m_Compressor.GetLenBits() + nCount;
+			uint32 nBitLen = m_Compressor.GetBitsLen() + nCount;
 			uint32 nByteSize = (nBitLen + 7)/8;
 			CommonLib::FxBitReadStream bitStream;
 
-			m_Compressor.BeginCompreess(pStream);
+			m_Compressor.StartDecode(pStream);
 			bitStream.attach(pStream, pStream->pos(), nByteSize);
-			pStream->seek(soFromCurrent, nByteSize);
+			pStream->seek(nByteSize, soFromCurrent);
 
 			TValue X = 0;
 			TValue Y = 0;
@@ -175,7 +202,7 @@ namespace CommonLib
 				bitStream.readBits(xDiff, nBitY);
 				bitStream.readBits(yDiff, nBitY);
 
-				zOrderDiff.setXY(xDiff, yDiff);
+				zOrderDiff.setZOrder(xDiff, yDiff);
 
 				if(bSign)
 					zOrderNext = zOrderPrev - zOrderDiff;
@@ -188,12 +215,12 @@ namespace CommonLib
 				pPoint[i].y =  ((double)Y *m_params.m_dScaleY) - m_params.m_dOffsetY;
 
 			}
+			return true;
 		}
 	private:
 
 		TPointLenCompressor m_Compressor;
 		CGeoShape::compress_params m_params;
-		uint32 m_nSignBits;
 	};
 
 	typedef TXYCompressor<uint16, TPointNumLen16, ZOrderPoint2DU16> TXYCompressor16;

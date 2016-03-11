@@ -10,15 +10,33 @@ namespace CommonLib
 	typedef TNumLemCompressor<uint32, TFindMostSigBit, 16> TPartNumLen16;
 	typedef TNumLemCompressor<uint32, TFindMostSigBit, 32> TPartNumLen32;
 
+
+	class IPartComressor
+	{
+	public:
+		virtual ~IPartComressor() {}
+		IPartComressor(){}
+
+		virtual void PreCompress(const uint32 *pParts, uint32 nCount) = 0;
+		virtual uint32 GetCompressSize(const uint32 *pParts, uint32 nCount) = 0;
+		virtual uint32 GetCount() const = 0;
+		virtual uint32 WriteHeader(IWriteStream *pStream) = 0;
+		virtual bool  compress(const uint32 *pParts, uint32 nCount, IWriteStream *pStream) = 0;
+
+		virtual uint32 ReadHeader(IReadStream *pStream) = 0;
+		virtual bool  decompress(uint32 *pParts, uint32 nCount, IReadStream *pStream) = 0;
+	};
+
+
+
 	template <class _TNumLenCompressor>
 	class TPartCompressor
 	{
 	public:
 		typedef _TNumLenCompressor TNumLenCompressor;
-		static const nMinCompressPartNum = 50;
-	
+	 
 
-		TPartCompressor(eDataType dateType) : m_dateType(dateType), m_nBitsLen(0)
+		TPartCompressor(eDataType dateType) : m_dateType(dateType)
 		{
 			clear();
 		}
@@ -31,7 +49,7 @@ namespace CommonLib
 				assert(pParts[i] >= pParts[i - 1]);
 				uint32 nDiff = pParts[i] - pParts[i - 1];
 
-				m_nBitsLen += m_Compressor.PreAddSympol(nDiff);
+				m_Compressor.PreAddSympol(nDiff);
 			}
 
 		}
@@ -62,12 +80,12 @@ namespace CommonLib
 
 		uint32 GetCompressSize() const
 		{
-			m_Compressor.GetCompressSize();
+			  return m_Compressor.GetCompressSize() + (m_Compressor.GetBitLen() +7)/8 ;
 		}
 
 		void clear()
 		{
-			m_nBitsLen = 0;
+		 
 			m_Compressor.clear();
 		}
 
@@ -111,7 +129,6 @@ namespace CommonLib
 
 		 TNumLenCompressor m_Compressor;
 		 eDataType m_dateType;
-		 uint32 m_nBitsLen;
 	};
 
 	typedef TPartCompressor<TPartNumLen8> TPartCompressor8;

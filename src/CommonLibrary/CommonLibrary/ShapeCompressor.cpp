@@ -35,22 +35,19 @@ namespace CommonLib
 	5 			bit parts null
 	6 			bit compress parts
 	7 			bit compress points
-	-----------------
-	type part count parts
-	-----------------
+	---------------------
+	part Compress Header
+	---------------------
+	point Compress Header
+	---------------------
 	parts
-	----------------
-	type parts
-	count
-	---
-	---
-	----------------
-	compress numlen points
-	----------------
-	not compressed
+	---------------------
+	point
+	---------------------
 	Z
+	---------------------
 	M
-
+	---------------------
 	*/
 
 
@@ -137,6 +134,7 @@ namespace CommonLib
 		if(nPartCount < 50)
 		{
 			bPartCompress = false;
+			 int npp = pShp->getPart(0);
 			if(nPartCount == 1 && pShp->getPart(0) == 0)
 			{
 				bPartNull = true;
@@ -151,12 +149,12 @@ namespace CommonLib
 			}
 			
 		}
-		else
-		{
-			compressPart(partType, pShp, pCache);
-			pStream->write(pCache->buffer(), pCache->pos());
+		//else
+		//{
+		//	compressPart(partType, pShp, pCache);
+		//	pStream->write(pCache->buffer(), pCache->pos());
 
-		}
+		//}
 		if(pShp->getPointCnt() < 5)
 		{
 			pStream->write((byte)pShp->m_vecPoints.size());
@@ -170,8 +168,14 @@ namespace CommonLib
 		{
 			bPointCompress = true;
 
-			CompressXY(pShp, &CompressParams, pCache);
-			pStream->write(pCache->buffer(), pCache->pos());
+			//CompressXY(pShp, &CompressParams, pCache);
+			//pStream->write(pCache->buffer(), pCache->pos());
+		}
+		uint32 nCompressSize;
+		if(bPartCompress)
+		{
+			CreatePartCompressor(partType);
+			 
 		}
 
 		eShapeType genType;
@@ -228,7 +232,32 @@ namespace CommonLib
 	{
 
 	}
+	void ShapeCompressor::CreatePartCompressor(eDataType nPartType)
+	{
 
+	}
+	void ShapeCompressor::CreateCompressXY( CGeoShape::compress_params *pParams)
+	{
+		switch(pParams->m_PointType)
+		{
+		case dtType16:
+			{
+				m_xyCompressor.reset(new TXYCompressor16(*pParams));
+			}
+			break;
+		case dtType32:
+			{
+				m_xyCompressor.reset(new TXYCompressor32(*pParams));
+			}
+			break;
+		case dtType64:
+			{
+				m_xyCompressor.reset(new TXYCompressor64(*pParams));
+			}
+			break;
+		}
+		
+	}
 	void ShapeCompressor::CompressXY(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream)
 	{
 		switch(pParams->m_PointType)
