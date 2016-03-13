@@ -51,9 +51,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	DecompressStaticFile(nOutSize, L"D:\\test\\files\\bib.static.compress", L"D:\\test\\files\\bib.static.compress.decompress");
 	*/
 	CTestCompess test;
-	//test.compressFile(L"D:\\test\\files\\zOrder", L"D:\\test\\files\\zOrder.compress");
-	//test.TestCompress(L"D:\\test\\files");
-	test.compressFile(L"D:\\db\\1", L"D:\\db\\2");
+	//test.compressFile(L"D:\\test\\files\\world_adm0.shp", L"D:\\test\\files\\world_adm0.compress");
+	test.TestCompress(L"D:\\xml");
+	//test.compressFile(L"D:\\db\\1", L"D:\\db\\2");
 	//TestNumLen();
 	//TestDiffComp();
 	return 0;

@@ -3,6 +3,7 @@
 #include "IGeoShape.h"
 #include "PodVector.h"
 #include "compressutils.h"
+#include "blob.h"
 namespace CommonLib
 {
 	class IWriteStream;
@@ -52,6 +53,31 @@ namespace CommonLib
 		}
 		bool operator !=(const CGeoShape& shp) const
 		{
+			if(type() != shp.type())
+				return true;
+
+			if(getPartCount() != shp.getPartCount())
+				return true;
+
+			for(uint32 i = 0, sz = getPartCount(); i < sz; ++i)
+			{
+				uint32 nPart1 = getPart(i);
+				uint32 nPart2 = shp.getPart(i);
+				if(getPart(i) != shp.getPart(i) )
+					return true;
+			}
+			if(getPointCnt() != shp.getPointCnt())
+				return true;
+
+			for(uint32 i = 0, sz = getPointCnt(); i < sz; ++i)
+			{
+
+				GisXYPoint pt1 = getPoints()[i];
+				GisXYPoint pt2 = shp.getPoints()[i];
+				if(ptX(i) != shp.ptX(i) || ptY(i) != shp.ptY(i))
+					return true;
+			}
+
 			return false;
 		}
 		bool operator <(const CGeoShape& shp) const
@@ -146,6 +172,9 @@ namespace CommonLib
 		eShapeType m_type;
 		eShapeType m_general_type;
 		bbox m_bbox;
+
+
+		CBlob m_blob;
 
 		friend class ShapeCompressor;
 

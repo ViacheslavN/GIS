@@ -6,6 +6,7 @@
 #include "MathUtils.h"
 #include "FixedBitStream.h"
 #include "algorithm.h"
+#include "ArithmeticCoder.h"
 namespace CommonLib
 {
 
@@ -17,6 +18,12 @@ namespace CommonLib
 			typedef _TValue TValue;
 			typedef _TFindBit TFindBit;
 
+			typedef TRangeEncoder64 TEncoder;
+			typedef TRangeDecoder64 TDecoder;
+
+			//typedef TACEncoder64 TEncoder;
+			//typedef TACDecoder64 TDecoder;
+
 			TNumLemCompressor(uint32 nError = 100)  : m_nError(nError)
 			{
 				 clear();
@@ -25,7 +32,13 @@ namespace CommonLib
 
 			uint16 PreAddSympol(TValue value)
 			{
-				uint16 nBitLen =  m_FindBit.FMSB(value);
+				uint16 nBitLen =  m_FindBit.FMSB(value) - 1;
+
+				if(nBitLen >= _nMaxBitsLens)
+				{
+					int dd = 0;
+					dd++;
+				}
 
 				assert(nBitLen < _nMaxBitsLens);
 				m_BitsLensFreq[nBitLen] += 1;
@@ -38,7 +51,7 @@ namespace CommonLib
 						m_FreqType = dtType32;
 				}
 
-				m_nBitLen += nBitLen;
+				m_nBitLen += nBitLen + 1;
 				m_nCount += 1;
 				return nBitLen;
 
@@ -93,17 +106,19 @@ namespace CommonLib
 			
 			void BeginCompreess(CommonLib::IWriteStream* pStream)
 			{
-				m_pEncoder.reset(new TRangeEncoder64(pStream));
+				m_pEncoder.reset(new TEncoder(pStream));
 			}
 
-			void EncodeSymbol(TValue value, CommonLib::FxBitWriteStream *pBitStream)
+			uint32 EncodeSymbol(TValue value, CommonLib::FxBitWriteStream *pBitStream)
 			{
-				uint16 nBitLen =  m_FindBit.FMSB(value);
+				uint16 nBitLen =  m_FindBit.FMSB(value) -1;
 				assert(m_BitsLensFreq[nBitLen] != 0);
 				assert(m_pEncoder.get());
 				
 				m_pEncoder->EncodeSymbol(m_FreqPrev[nBitLen], m_FreqPrev[nBitLen + 1],  m_nCount);
-				pBitStream->writeBits(value, nBitLen);
+				pBitStream->writeBits(value, nBitLen + 1);
+
+				return nBitLen+ 1;
 
 			}
 
@@ -154,7 +169,7 @@ namespace CommonLib
 						break;
 					}
 
-					m_nBitLen +=m_BitsLensFreq[i] * i;
+					m_nBitLen +=m_BitsLensFreq[i] * (i + 1);
 				}
 
 				int32 nPrevF = 0;
@@ -170,7 +185,7 @@ namespace CommonLib
 
 			void StartDecode(CommonLib::IReadStream* pStream)
 			{
-				m_pDecoder.reset(new TRangeDecoder64(pStream));
+				m_pDecoder.reset(new TDecoder(pStream));
 				m_pDecoder->StartDecode();
 			}
 
@@ -183,6 +198,8 @@ namespace CommonLib
 
 
 				m_pDecoder->DecodeSymbol(m_FreqPrev[value], m_FreqPrev[value+1], m_nCount);
+
+				value += 1;
 				return true;
 			}
 
@@ -246,8 +263,8 @@ namespace CommonLib
 		uint32 m_nCount;
 		uint32 m_nBitLen;
 		eDataType m_FreqType;
-		typedef std::auto_ptr<TRangeEncoder64> TEncoderPtr;
-		typedef std::auto_ptr<TRangeDecoder64> TDecoderPtr;
+		typedef std::auto_ptr<TEncoder> TEncoderPtr;
+		typedef std::auto_ptr<TDecoder> TDecoderPtr;
 
 		TEncoderPtr m_pEncoder;
 		TDecoderPtr m_pDecoder;

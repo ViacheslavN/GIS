@@ -58,6 +58,9 @@
     <Filter Include="SpatialData\shapeCompressor\pointcompress">
       <UniqueIdentifier>{cb5ef8d8-cef3-4981-b3a9-5481224a2a13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SpatialData\shapeCompressor\dynamic">
+      <UniqueIdentifier>{035c5060-360d-4be9-8567-d5bfd3aa73d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -243,14 +246,17 @@
     <ClInclude Include="MathUtils.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="XYCompress.h">
-      <Filter>SpatialData\shapeCompressor</Filter>
-    </ClInclude>
     <ClInclude Include="PointZOrder.h">
       <Filter>SpatialData\shapeCompressor\pointcompress</Filter>
     </ClInclude>
     <ClInclude Include="BackTableZPoint16Bit.h">
       <Filter>SpatialData\shapeCompressor\pointcompress</Filter>
+    </ClInclude>
+    <ClInclude Include="NumLenCompressorDynamic.h">
+      <Filter>SpatialData\shapeCompressor\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="XYCompressDiff.h">
+      <Filter>SpatialData\shapeCompressor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

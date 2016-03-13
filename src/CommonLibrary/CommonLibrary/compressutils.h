@@ -61,10 +61,10 @@ namespace CommonLib
 			return (TValue)pStream->readintu16();
 			break;
 		case dtType32:
-			return (TValue)pStream->readintu32();
+			return (TValue)pStream->readIntu32();
 			break;
 		case dtType64:
-			return (TValue)pStream->readintu64();
+			return (TValue)pStream->readIntu64();
 			break;
 		}
 

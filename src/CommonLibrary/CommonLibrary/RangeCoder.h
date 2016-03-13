@@ -20,7 +20,6 @@ namespace CommonLib
 				m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1), m_nMaxSize(nMaxSize), m_WriteSize(0)
 				{
 					assert(m_pStream);
-
 				}
 				virtual bool EncodeSymbol(_TCodeValue SymbolLow, _TCodeValue SymbolHigh,_TCodeValue TotalRange)
 				{

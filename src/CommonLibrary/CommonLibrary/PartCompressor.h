@@ -20,17 +20,18 @@ namespace CommonLib
 		virtual void PreCompress(const uint32 *pParts, uint32 nCount) = 0;
 		virtual uint32 GetCompressSize() const = 0;
 		virtual uint32 GetCount() const = 0;
-		virtual uint32 WriteHeader(IWriteStream *pStream) = 0;
+		virtual uint32 GetPartCount() const = 0;
+		virtual void WriteHeader(IWriteStream *pStream) = 0;
 		virtual bool  compress(const uint32 *pParts, uint32 nCount, IWriteStream *pStream) = 0;
 
-		virtual uint32 ReadHeader(IReadStream *pStream) = 0;
+		virtual void ReadHeader(IReadStream *pStream) = 0;
 		virtual bool  decompress(uint32 *pParts, uint32 nCount, IReadStream *pStream) = 0;
 	};
 
 
 
 	template <class _TNumLenCompressor>
-	class TPartCompressor
+	class TPartCompressor : public IPartComressor
 	{
 	public:
 		typedef _TNumLenCompressor TNumLenCompressor;
@@ -42,7 +43,7 @@ namespace CommonLib
 		}
 		~TPartCompressor(){}
 
-		void PreCompressPart(uint32 *pParts, uint32 nCount)
+		virtual void PreCompress(const uint32 *pParts, uint32 nCount)
 		{
 			for (uint32 i = 1; i < nCount; ++i)
 			{
@@ -54,19 +55,22 @@ namespace CommonLib
 
 		}
 
-
-		bool compress(uint32 *pParts, uint32 nCount, IWriteStream *pStream)
+		virtual void WriteHeader(IWriteStream *pStream)
 		{
-			uint32 nBitLen = m_Compressor.GetLenBits();
+			m_Compressor.WriteHeader(pStream);
+		}
+		virtual bool compress(const uint32 *pParts, uint32 nCount, IWriteStream *pStream)
+		{
+			uint32 nBitLen = m_Compressor.GetBitsLen();
 			uint32 nByteSize = (nBitLen + 7)/8;
 			CommonLib::FxBitWriteStream bitStream;
 			
-			m_Compressor.BeginCompreess(pStream);
+		
 			bitStream.attach(pStream, pStream->pos(), nByteSize);
-			pStream->seek(soFromCurrent, nByteSize);
+			pStream->seek(nByteSize, soFromCurrent);
 
 			WriteValue(pParts[0], m_dateType, pStream);
-
+			m_Compressor.BeginCompreess(pStream);
 			for (uint32 i = 1; i < nCount; ++i)
 			{
 				assert(pParts[i] >= pParts[i - 1]);
@@ -76,44 +80,49 @@ namespace CommonLib
 			}
 
 			m_Compressor.EncodeFinish();
+			return true;
 		}
 
-		uint32 GetCompressSize() const
+		virtual uint32 GetCompressSize() const
 		{
-			  return m_Compressor.GetCompressSize() + (m_Compressor.GetBitLen() +7)/8 ;
+			  return m_Compressor.GetCompressSize() + (m_Compressor.GetBitsLen() +7)/8 + GetSizeTypeValue(m_dateType);
 		}
 
-		void clear()
+		virtual void clear()
 		{
 		 
 			m_Compressor.clear();
 		}
 
 
-		bool BeginDecompress(IWriteStream *pStream)
+		 
+		virtual uint32 GetCount() const
 		{
-			m_Compressor.BeginDecode(pStream);
-			return true;
+			return m_Compressor.GetCount();
 		}
-
-		uint32 GetPartCount() const
+		virtual uint32 GetPartCount() const
 		{
-			return m_Compressor.count();
+			return m_Compressor.GetCount() + 1;
 		}
-		bool decompress(uint32 *pParts, uint32 nCount, IWriteStream *pStream)
+		virtual void ReadHeader(IReadStream *pStream)
 		{
-			uint32 nBitLen = m_Compressor.GetLenBits();
+			m_Compressor.ReadHeader(pStream);
+		}
+		virtual bool decompress(uint32 *pParts, uint32 nCount, IReadStream *pStream)
+		{
+			uint32 nBitLen = m_Compressor.GetBitsLen();
 			uint32 nByteSize = (nBitLen + 7)/8;
 			CommonLib::FxBitReadStream bitStream;
 
-			m_Compressor.BeginCompreess(pStream);
+			
 			bitStream.attach(pStream, pStream->pos(), nByteSize);
-			pStream->seek(soFromCurrent, nByteSize);
+			pStream->seek(nByteSize, soFromCurrent);
 
 			pParts[0] = ReadValue<uint32>(m_dateType, pStream);
 
 			uint32 nBitPart = 0;
 			uint32 nPartDiff = 0;
+			m_Compressor.StartDecode(pStream);
 			for (uint32 i = 1; i < nCount; ++i)
 			{
 
@@ -124,6 +133,8 @@ namespace CommonLib
 
 		
 			}
+
+			return true;
 		}
 	private:
 

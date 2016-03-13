@@ -3,16 +3,15 @@
 #include "compressutils.h"
 #include "NumLenCompressor.h"
 #include "PartCompressor.h"
-#include "XYCompress.h"
+#include "XYCompressDiff.h"
 #include "MemoryStream.h"
 namespace CommonLib
 {
 
-	#define BIT_OFFSET_TYPE_PARTS 2
-	#define BIT_OFFSET_COMPRESS_PARAMS 3
-	#define BIT_OFFSET_PARTS_NULL 4
-	#define BIT_OFFSET_PARTS_COMPRESS 5
-	#define BIT_OFFSET_XY_COMPRESS 6
+	#define BIT_OFFSET_COMPRESS_PARAMS 2
+	#define BIT_OFFSET_PARTS_NULL 3
+	#define BIT_OFFSET_PARTS_COMPRESS 4
+	#define BIT_OFFSET_XY_COMPRESS 5
 
 	ShapeCompressor::ShapeCompressor(CommonLib::alloc_t *pAlloc) : m_bWriteParams(true), m_bNullPart(false),
 		m_bCompressPart(false), m_bCompressPoint(false), m_partType(dtType8), m_pAlloc(pAlloc)
@@ -31,12 +30,11 @@ namespace CommonLib
 	compress flags
 	bit nums		desc
 
-	0			2 bit type coord
-	2			2 bit type parts
-	4			bit compress params
-	5 			bit parts null
-	6 			bit compress parts
-	7 			bit compress points
+	0			2 bit type parts
+	2			bit compress params
+	3 			bit parts null
+	4 			bit compress parts
+	5 			bit compress points
 	---------------------
 	part Compress Header
 	---------------------
@@ -116,6 +114,7 @@ namespace CommonLib
 		}
 		else
 		{
+			m_bCompressPart = true;
 			CreatePartCompressor(m_partType);
 			m_PartCompressor->PreCompress(pShp->getParts(), nPartCount);
 			nCompressSize += m_PartCompressor->GetCompressSize();
@@ -174,8 +173,7 @@ namespace CommonLib
 		pCache->resize(nCompressSize);
 
 		pCache->write((byte)pShp->type());
-		uint32 nFlag = m_CompressParams.m_PointType;
-		nFlag |= (((uint32)m_partType) << BIT_OFFSET_TYPE_PARTS);
+		uint32 nFlag = (uint32)m_partType;
 		if(m_bWriteParams)
 			nFlag |= (((uint32)1) << BIT_OFFSET_COMPRESS_PARAMS);
 		if(m_bNullPart)
@@ -208,11 +206,19 @@ namespace CommonLib
 			{
 				m_PartCompressor->WriteHeader(pCache);
 			}
+			else
+			{
+				WriteValue(pShp->getPartCount(), m_partType, pCache);
+			}
 		}
 
 		if(m_bCompressPoint)
 		{
 			m_xyCompressor->WriteHeader(pCache);
+		}
+		else
+		{
+			pCache->write((byte)pShp->m_vecPoints.size());
 		}
 		if(m_bCompressPart)
 		{
@@ -221,10 +227,12 @@ namespace CommonLib
 		else if(!m_bNullPart)
 		{
 			uint32 nPartCount = pShp->getPartCount();
-			WriteValue(nPartCount, m_partType, pCache);
+			//WriteValue(nPartCount, m_partType, pCache);
+			const uint32 *pParts = pShp->getParts();
 			for (uint32 i = 0; i < nPartCount; i++ )
 			{
-				WriteValue(pShp->getPart(i), m_partType, pCache);
+			 
+				WriteValue(pParts[i], m_partType, pCache);
 			}
 		}
 		if(m_bCompressPoint)
@@ -233,12 +241,27 @@ namespace CommonLib
 		}
 		else
 		{
-			pCache->write((byte)pShp->m_vecPoints.size());
-			for (uint32 i = 0, sz = pShp->m_vecPoints.size(); i < sz; ++i)
+			if(m_CompressParams.m_PointType != dtType64)
 			{
-				pCache->write(pShp->m_vecPoints[i].x);
-				pCache->write(pShp->m_vecPoints[i].y);
+				for (uint32 i = 0, sz = pShp->m_vecPoints.size(); i < sz; ++i)
+				{
+					uint64 X = (uint64)((pShp->m_vecPoints[i].x + m_CompressParams.m_dOffsetX)/m_CompressParams.m_dScaleX);
+					uint64 Y = (uint64)((pShp->m_vecPoints[i].y + m_CompressParams.m_dOffsetY)/m_CompressParams.m_dScaleY);
+
+					WriteValue(X, m_CompressParams.m_PointType, pCache);
+					WriteValue(Y, m_CompressParams.m_PointType, pCache);
+				}
 			}
+			else
+			{
+				for (uint32 i = 0, sz = pShp->m_vecPoints.size(); i < sz; ++i)
+				{
+					pCache->write(pShp->m_vecPoints[i].x);
+					pCache->write(pShp->m_vecPoints[i].y);
+				}
+			}
+		
+			
 		}
 		eShapeType genType;
 		bool has_z;
@@ -249,7 +272,6 @@ namespace CommonLib
 
 		if(has_z)
 		{
-			pCache->write(pShp->m_vecZs.size());
 			for (uint32 i = 0, sz = pShp->m_vecZs.size(); i < sz; ++i)
 			{
 				pCache->write(pShp->m_vecZs[i]);
@@ -259,7 +281,7 @@ namespace CommonLib
 
 		if(has_m)
 		{
-			pCache->write(pShp->m_vecMs.size());
+			 
 			for (uint32 i = 0, sz = pShp->m_vecZs.size(); i < sz; ++i)
 			{
 				pCache->write(pShp->m_vecMs[i]);
@@ -278,6 +300,24 @@ namespace CommonLib
 	void ShapeCompressor::CreatePartCompressor(eDataType nPartType)
 	{
 
+		switch(nPartType)
+		{
+		case dtType8:
+			{
+				m_PartCompressor.reset(new TPartCompressor8(nPartType));
+			}
+			break;
+		case dtType16:
+			{
+				m_PartCompressor.reset(new TPartCompressor16(nPartType));
+			}
+			break;
+		case dtType32:
+			{
+				m_PartCompressor.reset(new TPartCompressor32(nPartType));
+			}
+			break;
+		}
 	}
 	void ShapeCompressor::CreateCompressXY( CGeoShape::compress_params *pParams)
 	{
@@ -301,33 +341,126 @@ namespace CommonLib
 		}
 		
 	}
-	void ShapeCompressor::CompressXY(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream)
-	{
-		switch(pParams->m_PointType)
-		{
-			case dtType16:
-				{
-					TXYCompressor16 compressor(*pParams);
-					compressor.compress(pShp->getPoints(), pShp->getPointCnt(), pStream);
-				}
-				break;
-			case dtType32:
-				{
-					TXYCompressor32 compressor(*pParams);
-					compressor.compress(pShp->getPoints(), pShp->getPointCnt(), pStream);
-				}
-				break;
-			case dtType64:
-				{
-					TXYCompressor64 compressor(*pParams);
-					compressor.compress(pShp->getPoints(), pShp->getPointCnt(), pStream);
-				}
-				break;
-		}
-	}
+	
 
 	bool ShapeCompressor::decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream)
 	{
+
+		  pShp->m_type = (eShapeType)pStream->readByte();
+		 uint32 nFlag = pStream->readIntu32();
+
+		 m_partType = (eDataType)(nFlag & 3);
+		 m_bWriteParams = ((nFlag >> BIT_OFFSET_COMPRESS_PARAMS) & 1) ? true : false;
+		 m_bNullPart = ((nFlag >> BIT_OFFSET_PARTS_NULL) & 1) ? true : false;
+		 m_bCompressPart = ((nFlag >> BIT_OFFSET_PARTS_COMPRESS) & 1) ? true : false;
+		 m_bCompressPoint = ((nFlag >> BIT_OFFSET_XY_COMPRESS) & 1) ? true : false;
+
+		 if(m_bWriteParams && pParams == NULL)
+			 return false;
+
+		 if(!m_bWriteParams)
+			 m_CompressParams = *pParams;
+		 else
+		 {
+			m_CompressParams.m_PointType =  (eDataType)pStream->readByte(); 
+			m_CompressParams.m_dOffsetX = pStream->readDouble();
+			m_CompressParams.m_dOffsetY = pStream->readDouble();
+			m_CompressParams.m_dScaleX = pStream->readDouble();
+			m_CompressParams.m_dScaleY = pStream->readDouble();
+		 }
+
+		 uint32 nParts = 0;
+		 uint32 nPoints = 0;
+
+		 eShapeType genType;
+		 bool has_z;
+		 bool has_m;
+		 bool has_curve;
+		 bool has_id;
+		 pShp->getTypeParams(pShp->m_type, &genType, &has_z, &has_m, &has_curve, &has_id);
+
+		 if(m_bCompressPart)
+		 {
+			 CreatePartCompressor(m_partType);
+			 m_PartCompressor->ReadHeader(pStream);
+			 nParts = m_PartCompressor->GetPartCount();
+		 }
+		 else if(m_bNullPart)
+		 {
+			 nParts = 1;
+		 }
+		 else
+		 {
+			 nParts = (uint32)pStream->readByte();
+		 }
+		 if(m_bCompressPoint)
+		 {
+			 CreateCompressXY(&m_CompressParams);
+			 m_xyCompressor->ReadHeader(pStream);
+			 nPoints = m_xyCompressor->GetPointCount();
+		 }
+		 else
+		 {
+			 nPoints = (uint32)pStream->readByte();
+		 }
+		 pShp->m_vecParts.resize(nParts);
+		 pShp->m_vecPoints.resize(nPoints);
+
+
+		 if(has_z)
+		 {
+			 pShp->m_vecZs.resize(nPoints);
+		 }
+
+		 if(has_m)
+		 {
+			  pShp->m_vecMs.resize(nPoints);
+		 }
+
+		if(m_bNullPart)
+		{
+			pShp->getParts()[0] = 0;
+		}
+		else if(m_bCompressPart)
+		{
+			m_PartCompressor->decompress(pShp->getParts(), pShp->getPartCount(), pStream);
+		}
+		else
+		{
+
+			for (uint32 i = 0; i < nParts; ++i)
+			{
+				pShp->getParts()[i] = (uint32)pStream->readByte();
+			}
+		}
+
+		if(m_bCompressPoint)
+		{
+			m_xyCompressor->decompress(pShp->getPoints(), pShp->getPointCnt(), pStream);
+		}
+		else
+		{
+			if(m_CompressParams.m_PointType != dtType64)
+			{
+				for (uint32 i = 0, sz = pShp->m_vecPoints.size(); i < sz; ++i)
+				{
+					uint64 X = ReadValue<uint64>(m_CompressParams.m_PointType, pStream);
+					uint64 Y = ReadValue<uint64>(m_CompressParams.m_PointType, pStream);
+ 
+					pShp->getPoints()[i].x =  ((double)X *m_CompressParams.m_dScaleX) - m_CompressParams.m_dOffsetX;  
+					pShp->getPoints()[i].y  =  ((double)Y *m_CompressParams.m_dScaleY) - m_CompressParams.m_dOffsetY;
+				}
+			}
+			else
+			{
+				for (uint32 i = 0; i < nPoints; ++i)
+				{
+					pShp->getPoints()[i].x =  pStream->readDouble();
+					pShp->getPoints()[i].y =  pStream->readDouble();
+				}
+			}
+		}
+
 		return true;
 	}
 

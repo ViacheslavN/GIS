@@ -476,6 +476,7 @@
     <ClInclude Include="FixedBitStream.h" />
     <ClInclude Include="GeoShape.h" />
     <ClInclude Include="NumLenCompressor.h" />
+    <ClInclude Include="NumLenCompressorDynamic.h" />
     <ClInclude Include="PartCompressor.h" />
     <ClInclude Include="PodVector.h" />
     <ClInclude Include="RangeCoder.h" />
@@ -495,7 +496,7 @@
     <ClInclude Include="VartTypeList.h" />
     <ClInclude Include="WaitForGraph.h" />
     <ClInclude Include="WriteBitStream.h" />
-    <ClInclude Include="XYCompress.h" />
+    <ClInclude Include="XYCompressDiff.h" />
     <ClInclude Include="PointZOrder.h" />
   </ItemGroup>
   <ItemGroup>

@@ -36,7 +36,6 @@ namespace CommonLib
 				partCompress.compress(pParts, nCount,  pStream);
 			}
 
-			void CompressXY(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
 			void CreateCompressXY( CGeoShape::compress_params *pParams);
 			void CreatePartCompressor(eDataType nPartType);
 
