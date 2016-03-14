@@ -45,7 +45,7 @@ namespace CommonLib
 
 		virtual void PreCompress(const uint32 *pParts, uint32 nCount)
 		{
-			for (uint32 i = 1; i < nCount; ++i)
+			for (uint32 i = 2; i < nCount; ++i)
 			{
 				assert(pParts[i] >= pParts[i - 1]);
 				uint32 nDiff = pParts[i] - pParts[i - 1];
@@ -69,9 +69,9 @@ namespace CommonLib
 			bitStream.attach(pStream, pStream->pos(), nByteSize);
 			pStream->seek(nByteSize, soFromCurrent);
 
-			WriteValue(pParts[0], m_dateType, pStream);
+			WriteValue(pParts[1], m_dateType, pStream);
 			m_Compressor.BeginCompreess(pStream);
-			for (uint32 i = 1; i < nCount; ++i)
+			for (uint32 i = 2; i < nCount; ++i)
 			{
 				assert(pParts[i] >= pParts[i - 1]);
 				uint32 nDiff = pParts[i] - pParts[i - 1];
@@ -102,7 +102,7 @@ namespace CommonLib
 		}
 		virtual uint32 GetPartCount() const
 		{
-			return m_Compressor.GetCount() + 1;
+			return m_Compressor.GetCount() + 2;
 		}
 		virtual void ReadHeader(IReadStream *pStream)
 		{
@@ -117,13 +117,13 @@ namespace CommonLib
 			
 			bitStream.attach(pStream, pStream->pos(), nByteSize);
 			pStream->seek(nByteSize, soFromCurrent);
-
-			pParts[0] = ReadValue<uint32>(m_dateType, pStream);
+			pParts[0] = 0;
+			pParts[1] = ReadValue<uint32>(m_dateType, pStream);
 
 			uint32 nBitPart = 0;
 			uint32 nPartDiff = 0;
 			m_Compressor.StartDecode(pStream);
-			for (uint32 i = 1; i < nCount; ++i)
+			for (uint32 i = 2; i < nCount; ++i)
 			{
 
 				m_Compressor.DecodeSymbol(nPartDiff);

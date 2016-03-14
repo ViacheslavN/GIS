@@ -1,5 +1,5 @@
-#ifndef _LIB_COMMON_GEO_SHAPE_NUMLEN_COMPRESSOR_H_
-#define _LIB_COMMON_GEO_SHAPE_NUMLEN_COMPRESSOR_H_
+#ifndef _LIB_COMMON_GEO_SHAPE_NUMLEN_COMPRESSOR_DYNAMIC_H_
+#define _LIB_COMMON_GEO_SHAPE_NUMLEN_COMPRESSOR_DYNAMIC_H_
 #include "stream.h"
 #include "RangeCoder.h"
 #include "compressutils.h"
@@ -11,89 +11,22 @@ namespace CommonLib
 
 
 	template <class _TValue, class _TFindBit, uint32 _nMaxBitsLens>
-	class TNumLemCompressor
+	class TNumLemCompressorDynamic
 	{
 	public:
 		typedef _TValue TValue;
 		typedef _TFindBit TFindBit;
 
-		TNumLemCompressor(uint32 nError = 100)  : m_nError(nError)
+		TNumLemCompressorDynamic( eDataType nDataType, uint32 nError = 100)  : m_nError(nError), m_nDataType(nDataType)
 		{
 			clear();
 		}
-		~TNumLemCompressor(){}
+		~TNumLemCompressorDynamic(){}
 
-		uint16 PreAddSympol(TValue value)
-		{
-			uint16 nBitLen =  m_FindBit.FMSB(value) - 1;
-
-			if(nBitLen >= _nMaxBitsLens)
-			{
-				int dd = 0;
-				dd++;
-			}
-
-			assert(nBitLen < _nMaxBitsLens);
-			m_BitsLensFreq[nBitLen] += 1;
-
-			if(m_FreqType != dtType32)
-			{
-				if(m_BitsLensFreq[nBitLen] > 255)
-					m_FreqType = dtType16;
-				if(m_BitsLensFreq[nBitLen] > 65535)
-					m_FreqType = dtType32;
-			}
-
-			m_nBitLen += nBitLen + 1;
-			m_nCount += 1;
-			return nBitLen;
-
-		}
-
+	 
 		void WriteHeader(CommonLib::IWriteStream* pStream)
 		{
-			byte nFlag = m_FreqType;
-			pStream->write(nFlag);
-			byte LensMask[(_nMaxBitsLens)/8];
-
-			memset(LensMask, 0, _nMaxBitsLens/8);
-			for (uint32 i = 0; i < _nMaxBitsLens; ++i)
-			{
-				uint32 nByte = i/8;
-				uint32 nBit =  i - (nByte * 8);
-				if(m_BitsLensFreq[i] != 0)
-					LensMask[nByte] |= (0x01 << nBit);
-			}
-			for (uint32 i = 0; i < _nMaxBitsLens/8; ++i)
-			{
-				pStream->write((byte)LensMask[i]);
-			}
-			for (uint32 i = 0; i < _nMaxBitsLens; ++i)
-			{
-				if(m_BitsLensFreq[i] == 0)
-					continue;
-
-				switch(m_FreqType)
-				{
-				case dtType8:
-					pStream->write((byte)m_BitsLensFreq[i]);
-					break;
-				case dtType16:
-					pStream->write((uint16)m_BitsLensFreq[i]);
-					break;
-				case dtType32:
-					pStream->write((uint32)m_BitsLensFreq[i]);
-					break;
-				}
-
-			}
-			memset(m_FreqPrev, 0, sizeof(m_FreqPrev));
-			int32 nPrevF = 0;
-			for (uint32 i = 0; i < _nMaxBitsLens; ++i)
-			{
-				m_FreqPrev[i + 1] = m_BitsLensFreq[i] + nPrevF;
-				nPrevF = m_FreqPrev[i + 1];
-			}
+			WriteValue(m_nCount, m_nDataType, pStream);
 		}
 
 
@@ -249,7 +182,7 @@ namespace CommonLib
 			return  (uint32)(dBitRowSize +7)/8  + nHeaderSize;
 		}
 	private:
-
+		eDataType m_nDataType;
 		uint32 m_BitsLensFreq[_nMaxBitsLens];
 		uint32 m_FreqPrev[_nMaxBitsLens + 1];
 		TFindBit m_FindBit;

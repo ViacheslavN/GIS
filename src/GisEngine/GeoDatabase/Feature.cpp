@@ -2,6 +2,7 @@
 #include "Feature.h"
 #include "GeoDatabase/FieldSet.h"
 #include "CommonLibrary/Variant.h"
+#include "CommonLibrary/FixedMemoryStream.h"
 namespace GisEngine
 {
 	namespace GeoDatabase
@@ -174,10 +175,10 @@ namespace GisEngine
 			if(m_nShapeFieldIndex < 0)
 				return;
 
+
 			m_pShape = pShape;
 
 			//CommonLib::IRefObjectPtr ptr((IRefCnt*)pShape);
-
 			m_vecValues[m_nShapeFieldIndex] = m_pShape;
 		}
 	}

@@ -181,7 +181,6 @@ namespace GisEngine
 						{
 							m_pStmt->ColumnShape(fi.m_nRowIndex, m_pCacheShape.get());
 							m_pCacheShape->calcBB();
-							
 						}
 						break;
 					case dtUInteger8:

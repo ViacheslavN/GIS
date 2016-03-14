@@ -74,6 +74,8 @@ namespace CommonLib
 				zOrderDiff.getXY(xDiff, yDiff);
 				m_Compressor.PreAddSympol(xDiff);
 				m_Compressor.PreAddSympol(yDiff);
+
+				zOrderPrev = zOrderNext;
 			}
 		}
 
@@ -140,7 +142,7 @@ namespace CommonLib
 				uint32 yLen =  m_Compressor.EncodeSymbol(yDiff, &bitStream);
 
 		
-				//zOrderPrev = zOrderNext;
+				zOrderPrev = zOrderNext;
 			}
 
 			m_Compressor.EncodeFinish();
@@ -192,8 +194,8 @@ namespace CommonLib
 			pPoint[0].x =  ((double)X *m_params.m_dScaleX) - m_params.m_dOffsetX;  
 			pPoint[0].y =  ((double)Y *m_params.m_dScaleY) - m_params.m_dOffsetY;
 
-			ZOrder zOrderPrev(X, Y);
-			ZOrder zOrderNext;
+			ZOrder zOrderNext(X, Y);
+			//ZOrder zOrderNext;
 			ZOrder zOrderDiff;
 
 			TValue xDiff = 0;
@@ -212,22 +214,23 @@ namespace CommonLib
 
 
 				bool bSign = bitStream.readBit();
-				bitStream.readBits(xDiff, nBitY);
-				bitStream.readBits(yDiff, nBitX);
+				bitStream.readBits(xDiff, nBitX);
+				bitStream.readBits(yDiff, nBitY);
 
 			
 				zOrderDiff.setZOrder(xDiff, yDiff);
 
 				if(bSign)
-					zOrderNext = zOrderPrev - zOrderDiff;
+					zOrderNext = zOrderNext - zOrderDiff;
 				else
-					zOrderNext = zOrderPrev + zOrderDiff;
+					zOrderNext = zOrderNext + zOrderDiff;
 
 
 				zOrderNext.getXY(X, Y);
 				pPoint[i].x =  ((double)X *m_params.m_dScaleX) - m_params.m_dOffsetX;  
 				pPoint[i].y =  ((double)Y *m_params.m_dScaleY) - m_params.m_dOffsetY;
 
+				//zOrderPrev = zOrderNext;
 			}
 			return true;
 		}

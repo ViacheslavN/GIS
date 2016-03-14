@@ -110,7 +110,7 @@ namespace CommonLib
 		{
 
 			m_bCompressPart = false;
-			nCompressSize += (GetSizeTypeValue(m_partType) * (nPartCount + 1));
+			nCompressSize += (GetSizeTypeValue(m_partType) * (nPartCount));
 		}
 		else
 		{
@@ -229,7 +229,7 @@ namespace CommonLib
 			uint32 nPartCount = pShp->getPartCount();
 			//WriteValue(nPartCount, m_partType, pCache);
 			const uint32 *pParts = pShp->getParts();
-			for (uint32 i = 0; i < nPartCount; i++ )
+			for (uint32 i = 1; i < nPartCount; i++ )
 			{
 			 
 				WriteValue(pParts[i], m_partType, pCache);
@@ -427,8 +427,8 @@ namespace CommonLib
 		}
 		else
 		{
-
-			for (uint32 i = 0; i < nParts; ++i)
+			pShp->getParts()[0] = 0; 
+			for (uint32 i = 1; i < nParts; ++i)
 			{
 				pShp->getParts()[i] = (uint32)pStream->readByte();
 			}

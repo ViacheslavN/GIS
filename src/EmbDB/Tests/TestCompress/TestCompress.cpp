@@ -52,7 +52,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	*/
 	CTestCompess test;
 	//test.compressFile(L"D:\\test\\files\\world_adm0.shp", L"D:\\test\\files\\world_adm0.compress");
-	test.TestCompress(L"D:\\xml");
+	test.TestCompress(L"D:\\test\\files");
 	//test.compressFile(L"D:\\db\\1", L"D:\\db\\2");
 	//TestNumLen();
 	//TestDiffComp();
