@@ -85,8 +85,8 @@ namespace CommonLib
 	
 
 		uint32 nPartCount = pShp->getPartCount();
-		m_partType = GetType(nPartCount);
-		if(m_partType != dtType32)
+		m_partType = GetType(pShp->getPointCnt());
+		/*if(m_partType != dtType32)
 		{
 			for (uint32 i = 0; i < nPartCount; i++ )
 			{
@@ -101,7 +101,7 @@ namespace CommonLib
 					}
 				}
 			}
-		}
+		}*/
 		if(nPartCount == 1)
 		{
 			m_bNullPart = true;
