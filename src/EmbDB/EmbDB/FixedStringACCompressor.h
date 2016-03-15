@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_UNSIGNED_INTEGER_NUMLEN_COMPRESS_H_
-#define _EMBEDDED_DATABASE_UNSIGNED_INTEGER_NUMLEN_COMPRESS_H_
+#ifndef _EMBEDDED_DATABASE_FIXED_STRING_AC_COMPRESSOR_H_
+#define _EMBEDDED_DATABASE_FIXED_STRING_AC_COMPRESSOR_H_
 #include <map>
 #include <vector>
 #include "CommonLibrary/FixedMemoryStream.h"
@@ -13,10 +13,12 @@
 namespace embDB
 {
 
-	template<class _TStringVal>
-	class TStringACCompressor
+	template<class _TStringVal = sFixedStringVal>
+	class TFixedStringACCompressor
 	{
 		public:
+
+			static const uint32 ___nNullTerminatedSymbol = 256;
 			typedef _TStringVal TStringVal;
 			typedef embDB::TBPVector<TStringVal> TValueMemSet;
 
@@ -33,41 +35,47 @@ namespace embDB
 				etfInt32 = 2
 			};
 
-			TStringACCompressor(CommonLib::alloc_t *pAlloc, CompressorParamsBaseImp *pParams, uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : m_nDiffs(0), m_dBitRowSize(0),
-				m_nError(nError), m_bOnlineCalcSize(bOnlineCalcSize), m_nTypeFreq(etfByte), m_nCount(0), m_nFlags(0)
+			TFixedStringACCompressor(CommonLib::alloc_t *pAlloc, CompressorParamsBaseImp *pParams, uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) :  m_dBitRowSize(0),
+				m_nError(nError), m_bOnlineCalcSize(bOnlineCalcSize), m_nTypeFreq(etfByte), m_nCount(0), m_nFlags(0), m_nLetters(0), m_nStrings(0)
 			{
 				memset(m_nCharFreq, 0, sizeof(m_nCharFreq));
+	
 			}
 
-			~TStringACCompressor()
+			~TFixedStringACCompressor()
 			{
 
 			}
-
+			void init(TValueMemSet* pVecValues)
+			{
+				 
+			}
 			void AddSymbol(uint32 nSize,  int nIndex, const TStringVal& stringValue, const TValueMemSet& vecValues)
 			{
+				m_nStrings++;
 				byte *pBuf = stringValue.m_pBuf;
 				for (uint32 i = 0; i < stringValue.m_nLen; ++i)
 				{
 					AddByte(pBuf[i]);
 				}
-				AddByte('\0');
 
+				AddByte(___nNullTerminatedSymbol);
 			}
 
 			void RemoveSymbol(uint32 nSize,  int nIndex, const TStringVal& stringValue, const TValueMemSet& vecValues)
 			{
+				m_nStrings--;
 				byte *pBuf = stringValue.m_pBuf;
 				for (uint32 i = 0; i < stringValue.m_nLen; ++i)
 				{
 					RemoveByte(pBuf[i]);
 				}
-				RemoveByte('\0');
+				RemoveByte(___nNullTerminatedSymbol);
 			}
 
-			void AddByte(byte ch)
+			void AddByte(uint32 ch)
 			{				
-				if(++m_nCharFreq[ch] == 0)
+				if(++m_nCharFreq[ch] == 1)
 					m_nLetters++;
 
 
@@ -180,56 +188,31 @@ namespace embDB
 				return nSize;
 			}
 
-
-			uint32 GetCompressSize() const
+				   
+			uint32 GetComressSize() const
 			{
 				double dRowBitsLen = GetCodeBitSize();
 				uint32 nByteSize = (dRowBitsLen + 7)/8;
 				uint32 nLenSize =  GetLenSymbolsFreq();
 				return 1 /*flag*/ + nByteSize + nLenSize;
 			}
-
-			bool compress(const TBPVector<TValue>& vecValues, CommonLib::IWriteStream* pStream)
+			void Clear()
 			{
 
+			}
+			void clear()
+			{
 
-				TBPVector<TValue> vec;
-				uint32 nBeginPos = pStream->pos();
-				byte nFlag = 0;
-				pStream->write(nFlag);
-
-				WriteSymbolsFreq(pStream);
-
-				double dRowBitsLen = GetCodeBitSize();
-				uint32 nByteSize = (dRowBitsLen + 7)/8;
-
-				uint32 nBeginCompressPos = pStream->pos();
-				bool bRangeCode = true;
-				if(m_nLetters > 1)
-				{
-					if(!CompressRangeCode(vecValues, pStream, nByteSize))
-					{
-						pStream->seek(nBeginCompressPos, CommonLib::soFromBegin);
-						CompressAcCode(vecValues, pStream);
-						bRangeCode = false;
-					}
-				}
-
-				uint32 nEndPos = pStream->pos();
-
-				uint32 nCompressSize= nEndPos - nBeginCompressPos;
-
-				if(bRangeCode)
-					nFlag |= 0x1;
-
-				pStream->seek(nBeginPos, CommonLib::soFromBegin);
-
-				nFlag |= (((byte)m_nTypeFreq) << 1);
-				pStream->write(nFlag);
-				pStream->seek(nEndPos, CommonLib::soFromBegin);
+			}
+			bool compress(const TValueMemSet& vecValues, CommonLib::IWriteStream* pStream)
+			{			
 				return true;
 			}
-
+			bool decompress(uint32 nSize, TValueMemSet& vecValues, CommonLib::FxMemoryReadStream *pStream)
+			{
+			
+				return true;
+			}
 	protected:
 		void WriteSymbolsFreq(CommonLib::IWriteStream* pStream)
 		{
@@ -287,6 +270,10 @@ namespace embDB
 					if(!encoder.EncodeSymbol(FreqPrev[ch], FreqPrev[ch + 1], m_nCount))
 						return false;
 				}
+
+				byte ch = '\0';
+				if(!encoder.EncodeSymbol(FreqPrev[ch], FreqPrev[ch + 1], m_nCount))
+					return false;
 							
 			}
 			return encoder.EncodeFinish();
@@ -295,16 +282,16 @@ namespace embDB
 
 
 	protected:
-			uint64 m_nCharFreq[257];
+			uint32 m_nCharFreq[257];
 			uint32 m_nLetters;
 			double m_dBitRowSize;
 			uint32 m_nError;
 			bool m_bOnlineCalcSize;
 			uint32 m_nCount;
 			uint16 m_nFlags;
+			uint32 m_nStrings;
 			eTypeFreq m_nTypeFreq;
-
-
+	 
 	};
 
 }

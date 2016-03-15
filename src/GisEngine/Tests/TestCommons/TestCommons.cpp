@@ -29,8 +29,13 @@ typedef std::map<ITestPtr, int> TtestMap;
 
 
 
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+	char utf8Buf[256];
+	 CommonLib::CString str = "string";
+
+	 str.exportToUTF8(utf8Buf, 255);
 	 CompressShape();
 //	TestTableWks();
 	//testLoadXML1();

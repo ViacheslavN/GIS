@@ -66,9 +66,14 @@ namespace CommonLib
 		clear(true);
 	}
 
-	void CBlob::attach(const byte* pBuf, uint32 nSize)
+	void CBlob::attach(byte* pBuf, uint32 nSize)
 	{
 		clear(true);
+		m_bAttach = true;
+		m_pBuffer = pBuf;
+		m_nSize = nSize;
+		m_nCapacity = m_nSize;
+
 	}
 	byte* CBlob::deattach()
 	{
@@ -76,6 +81,7 @@ namespace CommonLib
 		m_nCapacity = 0;
 		m_nSize = 0;
 		m_pBuffer = NULL;
+		m_bAttach = false;
 
 
 		return pBuf;

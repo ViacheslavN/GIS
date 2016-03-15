@@ -8,10 +8,20 @@
 #include "CommonLibrary/DebugTime.h"
 #include "../../EmbDB/FixedStringTree.h"
 #include "../../EmbDB/StringTree.h"
+#include "../../EmbDB/FixedStringACCompressor.h"
+#include "../../EmbDB/BaseInnerNodeDIffCompress.h"
+#include "../../EmbDB/BaseLeafNodeCompDiff.h"
+#include "../../EmbDB/BaseInnerNodeDIffCompress2.h"
+#include "../../EmbDB/BaseValueDiffCompressor.h"
+#include "../../EmbDB/SignedNumLenDiffCompress.h"
 
 
-typedef embDB::BPInnerNodeSimpleCompressorV2<int64> TInnerCompressor;
+//typedef embDB::BPInnerNodeSimpleCompressorV2<int64> TInnerCompressor;
 typedef embDB::BPFixedStringLeafNodeCompressor<int64> TLeafCompressor;
+
+typedef embDB::TBaseValueDiffCompress<int64, embDB::SignedDiffNumLenCompressor64i> TInnerLinkCompress;
+typedef embDB::TBPBaseInnerNodeDiffCompressor2<int64, embDB::OIDCompressor, TInnerLinkCompress> TInnerCompressor;
+	 
 
 typedef embDB::BPTreeInnerNodeSetv2<int64, embDB::IDBTransaction, TInnerCompressor> TInnerNode;
 typedef embDB::BPTreeLeafNodeMapv2<int64, embDB::sFixedStringVal, embDB::IDBTransaction, TLeafCompressor> TLeafNode;
@@ -97,6 +107,9 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 	int64 n = 0;
 	CBufAlloc alloc;
 	 
+	embDB::CBPTreeStatistics statInfo;
+	tree.SetBPTreeStatistics(&statInfo);
+
 	CommonLib::CString sString(&alloc);
 /*	CommonLib::CString sBigString;
 
@@ -113,16 +126,24 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 	{
 		
 		int64 nCount = nEndStart - nStart;
+		CommonLib::CWriteFileStream stream;
+		stream.open(L"D:\\test\\files\\1str.txt", CommonLib::ofmCreateAlways, CommonLib::arWrite, CommonLib::smNoMode);
+
+		char mUtf8Buf[2148];
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
 			
-			sString.format(L"Cтрока_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_%I64d", i);
+			sString.format(L"Cтрока_Строка_Строка__%I64d", i);
 
 		/*	if(i%10000 == 0)
 			{
 				sBigString += sString;
 			}
 			*/
+			uint32 nUft8Len = sString.calcUTF8Length()  + 1;
+			sString.exportToUTF8(mUtf8Buf, nUft8Len);
+			stream.write((byte*)mUtf8Buf, nUft8Len);
+
 			if(!tree.insert(i, /*i%10000 == 0 ? sBigString : */sString))
 			{
 				std::cout   << "Error Insert key:  " << i << std::endl;
@@ -166,6 +187,12 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 
 	std::cout << "Insert end key start: " << nStart << " key end: " << nEndStart << " Total time: " << (tmInsert + treeCom + tranCom) <<
 		" time insert: " << tmInsert << " time tree commit: " << treeCom << " Tran commit: " << tranCom <<	std::endl;
+
+	std::cout << "Create Inner Nodes: " << statInfo.GetCreateNode(false) << " Create Leaf Nodes: " <<  statInfo.GetCreateNode(true) <<	std::endl;
+	std::cout << "Load Inner Nodes: " << statInfo.GetLoadNode(false) << " Load Leaf Nodes: " <<  statInfo.GetLoadNode(true) <<	std::endl;
+	std::cout << "Save Inner Nodes: " << statInfo.GetSaveNode(false) << " Save Leaf Nodes: " <<  statInfo.GetSaveNode(true) <<	std::endl;
+
+
 }
 
 
@@ -191,7 +218,7 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 		int64 nCount = nEndStart - nStart;
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
-			sString.format(L"Cтрока_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_Строка_%I64d", i);
+			sString.format(L"Cтрока_Строка_Строка__%I64d", i);
 
 			TBPString::iterator it = tree.find(i);
 			if(it.isNull())
@@ -342,6 +369,8 @@ void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, 
 		InsertTran.begin();
 
 		insertINBTreeMapString<embDB::IDBTransaction>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran);
+
+		std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 	}
 
 	{

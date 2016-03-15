@@ -35,7 +35,7 @@ namespace CommonLib
 		int  compare(const unsigned char *buffer, size_t _size = (size_t)-1) const;
 		int  compare(const CBlob& blob) const;
 
-		void attach(const byte* pBuf, uint32 nSize);
+		void attach(byte* pBuf, uint32 nSize);
 		byte* deattach();
 		void copy(const byte* pBuf, uint32 nSize);
 

@@ -521,7 +521,6 @@
     <ClInclude Include="CounterField.h" />
     <ClInclude Include="CRC.h" />
     <ClInclude Include="CreateFields.h" />
-    <ClInclude Include="ACIntegerDiffComp.h" />
     <ClInclude Include="DeleteCursor.h" />
     <ClInclude Include="embDB.h" />
     <ClInclude Include="embDBInternal.h" />
@@ -604,7 +603,7 @@
     <ClInclude Include="StreamPageIngo.h" />
     <ClInclude Include="FixedStringBPLeafNode.h" />
     <ClInclude Include="FixedStringBPNode.h" />
-    <ClInclude Include="StringACCompressor.h" />
+    <ClInclude Include="FixedStringACCompressor.h" />
     <ClInclude Include="StringBPLeafNode.h" />
     <ClInclude Include="StringBPNode.h" />
     <ClInclude Include="StringCompressorParams.h" />

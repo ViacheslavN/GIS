@@ -106,7 +106,10 @@ namespace CommonLib
 		
 		bool create(eShapeType shapeType);
 		bool create(eShapeType shapeType, uint32 npoints, uint32 nparts = 1, uint32 ncurves = 0, uint32 mpatchSpecificSize = 0);
-		
+		bool attach(byte *pBuf, uint32 nSize, bool bCopy = false);
+		bool attach(const CBlob *pBlob, bool bCopy = false);
+
+
 		bool write(IWriteStream *pStream) const;
 		bool read(IReadStream *pStream);
 

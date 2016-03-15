@@ -4,6 +4,7 @@
 #include "StringVal.h"
 #include "StringCompressorParams.h"
 #include "BaseLeafNodeCompDiff.h"
+#include "FixedStringACCompressor.h"
 namespace embDB
 {
 	class TFixedCompress
@@ -102,10 +103,10 @@ namespace embDB
 
 
 	template<class _TKey, class _Transaction>
-	class TBPFixedStringLeafCompressor : public TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor, TFixedCompress, StringFieldCompressorParams> 
+	class TBPFixedStringLeafCompressor : public TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor, TFixedStringACCompressor<sFixedStringVal>, StringFieldCompressorParams> 
 	{
 		public:
-			typedef TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor, TFixedCompress, StringFieldCompressorParams>  TBase;
+			typedef TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor,  TFixedStringACCompressor<sFixedStringVal>, StringFieldCompressorParams>  TBase;
 
 			TBPFixedStringLeafCompressor(uint32 nPageSize, Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
 				TKeyMemSet *pKeyMemset= NULL, TValueMemSet *pValueMemSet = NULL) : TBase(nPageSize, pTran, pAlloc, pParams, pKeyMemset, pValueMemSet)
