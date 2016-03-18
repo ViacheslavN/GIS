@@ -179,33 +179,7 @@ namespace CommonLib
 
 		m_bbox.type = bbox_type_normal;
 	}
-	/*CGeoShape::CGeoShape(eShapeType shapeType, alloc_t *pAlloc) :
-		m_pAlloc(pAlloc),
-		m_vecParts(0, pAlloc),
-		m_vecPoints(0,pAlloc),
-		m_vecZs(0, pAlloc),
-		m_vecMs(0, pAlloc),
-		m_type(shapeType),
-		m_bbox(bbox_type_normal)
-	{
-		if(!m_pAlloc)
-			m_pAlloc = &m_alloc;
-		create(shapeType);
-	}
-	CGeoShape::CGeoShape(eShapeType shapeType, size_t npoints, size_t nparts, size_t ncurves, size_t mpatchSpecificSize, alloc_t *pAlloc) :
-		m_pAlloc(pAlloc),
-		m_vecParts(0, pAlloc),
-		m_vecPoints(0,pAlloc),
-		m_vecZs(0, pAlloc),
-		m_vecMs(0, pAlloc),
-		m_type(shapeType),
-		m_bbox(bbox_type_normal)
-	{
-		if(!m_pAlloc)
-			m_pAlloc = &m_alloc;
-		create(shapeType, npoints, nparts, ncurves, mpatchSpecificSize);
-	}*/
-	 
+
 
 	CGeoShape::~CGeoShape()
 	{
@@ -225,7 +199,6 @@ namespace CommonLib
 		m_type =		shp.m_type;
 		m_vecPartTypes = shp.m_vecPartTypes;
 		m_general_type = shp.m_general_type;
-
 	}
 	CGeoShape& CGeoShape::operator = (const CGeoShape& shp)
 	{
@@ -245,7 +218,7 @@ namespace CommonLib
 		m_general_type = shp.m_general_type;
 		return *this;
 	}
-	CGeoShape& CGeoShape::operator += (const CGeoShape& shp)
+	/*CGeoShape& CGeoShape::operator += (const CGeoShape& shp)
 	{
 		if(	m_type != shp.m_type)
 		{
@@ -268,12 +241,11 @@ namespace CommonLib
 
 
 		return *this;
-	}
+	}*/
 	bool CGeoShape::create(eShapeType shapeType)
 	{
 		m_type = shapeType;
 		m_general_type = generalType(shapeType);
-		
 		return true;
 
 	}

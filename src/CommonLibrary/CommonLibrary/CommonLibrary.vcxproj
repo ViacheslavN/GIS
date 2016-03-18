@@ -462,6 +462,7 @@
     <ClInclude Include="general.h" />
     <ClInclude Include="GeneralTypes.h" />
     <ClInclude Include="GeoPoint.h" />
+    <ClInclude Include="GeoShapeBuf.h" />
     <ClInclude Include="guid.h" />
     <ClInclude Include="HashKey.h" />
     <ClInclude Include="IGeoShape.h" />
@@ -527,6 +528,7 @@
     <ClCompile Include="FixedBitStream.cpp" />
     <ClCompile Include="FixedMemoryStream.cpp" />
     <ClCompile Include="GeoShape.cpp" />
+    <ClCompile Include="GeoShapeBuf.cpp" />
     <ClCompile Include="guit.cpp" />
     <ClCompile Include="IGeoShape.cpp" />
     <ClCompile Include="Interlocked.cpp" />

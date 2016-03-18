@@ -5,60 +5,8 @@
 namespace CommonLib
 {
 	
-	struct segment_circular_arc_t
-	{
-		union
-		{
-			GisXYPoint   centerPoint;
-			double angles[2];
-		};
-
-		circular_arc_flags flags;
-	};
-
-	struct segment_bezier_curve_t
-	{
-		GisXYPoint controlPoints[2];
-	};
-
-	struct segment_elliptic_arc_t
-	{
-		union
-		{
-			GisXYPoint center;
-			double vs[2];
-		};
-
-		union
-		{
-			double rotation;
-			double fromV;
-		};
-
-		double semiMajor;
-
-		union
-		{
-			double minorMajorRatio;
-		};
-
-		elliptic_arc_flags flags;
-	};
-
-	struct segment_modifier_t
-	{
-		long         fromPoint;
-		segment_type segmentType;
-		union
-		{
-			segment_circular_arc_t circularArc;
-			segment_bezier_curve_t bezierCurve;
-			segment_elliptic_arc_t ellipticArc;
-		} segmentParams;
-	};
-
-
-	class CGeoShapeBuf : public IGeoShape
+ 
+	class CGeoShapeBuf 
 	{
 		public:
 			CGeoShapeBuf(alloc_t *pAlloc = NULL);
@@ -88,15 +36,18 @@ namespace CommonLib
 			virtual const double* getMs() const;
 
 
-			void create(size_t nSize);
+			void create(uint32 nSize);
 			virtual bool create(eShapeType shapeType);
-			virtual bool  create(eShapeType shapeType, size_t npoints, size_t nparts = 1, size_t ncurves = 0, size_t mpatchSpecificSize = 0);
-			void create(unsigned char* pBuf, size_t nSize, eShapeType shapeType, size_t npoints, size_t nparts = 1, size_t ncurves = 0);
-			void import(const unsigned char* extBuf, size_t extBufSize);
-			void attach(unsigned char* extBuf, size_t extBufSize);
+			virtual bool  create(eShapeType shapeType, uint32 npoints, uint32 nparts = 1, uint32 ncurves = 0, uint32 mpatchSpecificSize = 0);
+			void create(unsigned char* pBuf, uint32 nSize, eShapeType shapeType, uint32 npoints, uint32 nparts = 1, uint32 ncurves = 0);
+			void import(const unsigned char* extBuf, uint32 extBufSize);
+			void attach(unsigned char* extBuf, uint32 extBufSize);
 			unsigned char* detach();
 			bool validate();
 			void setNull(eShapeType shapeType = shape_type_null);
+
+
+			static void getTypeParams(eShapeType shapeType, eShapeType* pGenType, bool* has_z, bool* has_m, bool* has_curve, bool* has_id);
 
 
 			uint32  size() const;
@@ -108,8 +59,8 @@ namespace CommonLib
 
 			uint32 pointCount() const;
 
-			static void initShapeBufferBuffer(unsigned char* buf, eShapeType shapeType, size_t npoints, size_t nparts, size_t ncurves);
-			static size_t calcSize(eShapeType shapeType, size_t npoints = 1, size_t nparts = 1, size_t ncurves = 0, size_t mpatchSpecificSize = 0);
+			static void initShapeBufferBuffer(unsigned char* buf, eShapeType shapeType, uint32 npoints, uint32 nparts, uint32 ncurves);
+			static uint32 calcSize(eShapeType shapeType, uint32 npoints = 1, uint32 nparts = 1, uint32 ncurves = 0, uint32 mpatchSpecificSize = 0);
 
 			static uint32      pointCount(const unsigned char* buf);
 			static uint32      pointCount(const unsigned char* buf, eShapeType general_type);

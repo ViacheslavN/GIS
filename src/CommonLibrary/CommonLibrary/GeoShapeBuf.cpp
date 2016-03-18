@@ -4,40 +4,65 @@
 namespace CommonLib
 {
 
-
-	inline double nan()
+	bool isTypeSimple(eShapeType shapeType);
+	eShapeType GetGeneralType(eShapeType _general_type)
 	{
-		double res = 0;
-		unsigned short* res2 = reinterpret_cast<unsigned short*>(&res);
-		res2[3] = 0x7FFF;
-		return res;
+		eShapeType shapeType = _general_type;
+
+		if(isTypeSimple(shapeType))
+		{
+			switch(shapeType)
+			{
+			case shape_type_null:
+				return shape_type_null;
+
+			case shape_type_point:
+			case shape_type_point_z:
+			case shape_type_point_m:
+			case shape_type_point_zm:
+				return shape_type_general_point;
+
+			case shape_type_multipoint:
+			case shape_type_multipoint_z:
+			case shape_type_multipoint_m:
+			case shape_type_multipoint_zm:
+				return shape_type_general_multipoint;
+
+			case shape_type_polyline:
+			case shape_type_polyline_z:
+			case shape_type_polyline_m:
+			case shape_type_polyline_zm:
+				return shape_type_general_polyline;
+
+			case shape_type_polygon:
+			case shape_type_polygon_z:
+			case shape_type_polygon_m:
+			case shape_type_polygon_zm:
+				return shape_type_general_polygon;
+
+			case shape_type_multipatch:
+			case shape_type_multipatch_m:
+				return shape_type_general_multipatch;
+			}
+		}
+
+		return (eShapeType)(shapeType & shape_basic_type_mask);
 	}
 
-	inline bool isNan(double v)
+	uint32 CGeoShapeBuf::calcSize(eShapeType shapeType, uint32 npoints, uint32 nparts, uint32 ncurves, uint32 mpatchSpecificSize)
 	{
-#ifdef ANDROID
-		return isnan(v) != 0;
-#else
-		return _isnan(v) != 0;
-#endif
-	}
-
-	
-
-	size_t CGeoShapeBuf::calcSize(eShapeType shapeType, size_t npoints, size_t nparts, size_t ncurves, size_t mpatchSpecificSize)
-	{
-		 size_t nSize = 0;
-		 size_t size = 0;
+		 uint32 nSize = 0;
+		 uint32 size = 0;
 		 eShapeType genType;
 		 bool has_z;
 		 bool has_m;
 		 bool has_curve;
 		 bool has_id;
-		 IGeoShape::getTypeParams(shapeType, &genType, &has_z, &has_m, &has_curve, &has_id);
-		 size_t flag_z = has_z ? 1 : 0;
-		 size_t flag_m = has_m ? 1 : 0;
-		 size_t flag_curve = has_curve ? 1 : 0;
-		 size_t flag_id = has_id ? 1 : 0;
+		 getTypeParams(shapeType, &genType, &has_z, &has_m, &has_curve, &has_id);
+		 uint32 flag_z = has_z ? 1 : 0;
+		 uint32 flag_m = has_m ? 1 : 0;
+		 uint32 flag_curve = has_curve ? 1 : 0;
+		 uint32 flag_id = has_id ? 1 : 0;
 
 		 size += 4; // type
 		 if(shapeType != shape_type_null)
@@ -56,7 +81,7 @@ namespace CommonLib
 				 break;
 			 case shape_type_general_multipatch:
 				 size += 8 * (2 * (2 + 1 + flag_m)) + 4 + 4 + nparts * 4 + nparts * 4 + npoints * (8 * (2 + 1 + flag_m) + 4 * flag_id);
-				 if(!IGeoShape::isTypeSimple(shapeType))
+				 if(!isTypeSimple(shapeType))
 					 size += 4 + 4; 
 				 size += mpatchSpecificSize;
 				 break;
@@ -65,7 +90,7 @@ namespace CommonLib
 
 		 return size;
 	}
-	void CGeoShapeBuf::initShapeBufferBuffer(unsigned char* buf, eShapeType shapeType, size_t npoints, size_t nparts, size_t ncurves)
+	void CGeoShapeBuf::initShapeBufferBuffer(unsigned char* buf, eShapeType shapeType, uint32 npoints, uint32 nparts, uint32 ncurves)
 	{
 		eShapeType genType;
 		bool has_z;
@@ -74,7 +99,7 @@ namespace CommonLib
 		bool has_id;
 		double* dbuf;
 
-		IGeoShape::getTypeParams(shapeType, &genType, &has_z, &has_m, &has_curve, &has_id);
+		getTypeParams(shapeType, &genType, &has_z, &has_m, &has_curve, &has_id);
 
 		// Type
 		*reinterpret_cast<long*>(buf) = shapeType;
@@ -84,16 +109,16 @@ namespace CommonLib
 
 		if(genType == shape_type_general_point)
 		{
-			*reinterpret_cast<double*>(buf) = nan();
+			*reinterpret_cast<double*>(buf) = 0;
 			return;
 		}
 
 		// Bounding box
 		dbuf = reinterpret_cast<double*>(buf);
-		*dbuf++ = nan();
-		*dbuf++ = nan();
-		*dbuf++ = nan();
-		*dbuf++ = nan();
+		*dbuf++ = 0.;
+		*dbuf++ = 0.;
+		*dbuf++ = 0.;
+		*dbuf++ = 0.;
 		buf += 8 * 4;
 
 		// part count
@@ -122,14 +147,14 @@ namespace CommonLib
 		{
 			// range of z
 			dbuf = reinterpret_cast<double*>(buf);
-			*dbuf++ = nan();
-			*dbuf++ = nan();
+			*dbuf++ = 0.;
+			*dbuf++ = 0.;
 			buf += 8 * 2;
 
 			// z of points
 			buf += 8 * npoints;
 		}
-		if((genType == shape_type_general_multipatch) && (!IGeoShape::isTypeSimple(shapeType))) //numM's
+		if((genType == shape_type_general_multipatch) && (!isTypeSimple(shapeType))) 
 		{
 			if(has_m)
 				*reinterpret_cast<long*>(buf) = static_cast<long>(npoints);
@@ -140,13 +165,12 @@ namespace CommonLib
 
 		if(has_m)
 		{
-			// range of m
 			dbuf = reinterpret_cast<double*>(buf);
-			*dbuf++ = nan();
-			*dbuf++ = nan();
+			*dbuf++ = 0.;
+			*dbuf++ =  0.;
 			buf += 8 * 2;
 
-			// m of points
+	
 			buf += 8 * npoints;
 		}
 
@@ -155,7 +179,7 @@ namespace CommonLib
 			*reinterpret_cast<long*>(buf) = static_cast<long>(ncurves);
 			buf += 4;
 		}
-		if((genType == shape_type_general_multipatch) && (!IGeoShape::isTypeSimple(shapeType))) //numIds
+		if((genType == shape_type_general_multipatch) && (!isTypeSimple(shapeType))) //numIds
 		{
 			if(has_id)
 				*reinterpret_cast<long*>(buf) = static_cast<long>(npoints);
@@ -245,7 +269,7 @@ namespace CommonLib
 	eShapeType CGeoShapeBuf::generalType(const unsigned char* buf)
 	{
 		eShapeType shapeType = type(buf);
-		return IGeoShape::generalType(shapeType);
+		return GetGeneralType(shapeType);
 	}
 	uint32  CGeoShapeBuf::size() const
 	{
@@ -268,9 +292,9 @@ namespace CommonLib
 		 const uint32* partStarts = getParts();
 
 		if(idx == nparts - 1)
-			return pointCount() - (size_t)partStarts[idx];
+			return pointCount() - (uint32)partStarts[idx];
 		else
-			return (size_t)partStarts[idx + 1] - (uint32)partStarts[idx];
+			return (uint32)partStarts[idx + 1] - (uint32)partStarts[idx];
 	}
 	const uint32*  CGeoShapeBuf::getParts() const 
 	{
@@ -328,7 +352,7 @@ namespace CommonLib
 		return pointCount(m_pBuffer);
 	}
 
-	void CGeoShapeBuf::create(size_t nSize)
+	void CGeoShapeBuf::create(uint32 nSize)
 	{
 		if(!m_bAttach && m_pBuffer)
 			m_pAlloc->free(m_pBuffer);
@@ -353,13 +377,13 @@ namespace CommonLib
 		return true;
 		
 	}
-	void CGeoShapeBuf::create(unsigned char* pBuf, size_t nSize, eShapeType shapeType, size_t npoints, size_t nparts, size_t ncurves)
+	void CGeoShapeBuf::create(unsigned char* pBuf, uint32 nSize, eShapeType shapeType, uint32 npoints, uint32 nparts, uint32 ncurves)
 	{
 		initShapeBufferBuffer(pBuf, shapeType, npoints, nparts, ncurves);
 		m_params.set(pBuf);
 	}
 
-	bool CGeoShapeBuf::create(eShapeType shapeType, size_t npoints, size_t nparts, size_t ncurves, size_t mpatchSpecificSize)
+	bool CGeoShapeBuf::create(eShapeType shapeType, uint32 npoints, uint32 nparts, uint32 ncurves, uint32 mpatchSpecificSize)
 	{
 		if(m_pBuffer)
 			m_pAlloc->free(m_pBuffer);
@@ -376,7 +400,7 @@ namespace CommonLib
 		return true;
 	}
 
-	void CGeoShapeBuf::import(const unsigned char* extBuf, size_t extBufSize)
+	void CGeoShapeBuf::import(const unsigned char* extBuf, uint32 extBufSize)
 	{
 		if(m_bAttach)
 			detach();
@@ -389,7 +413,7 @@ namespace CommonLib
 		m_params.set(m_pBuffer);
 	}
 
-	void CGeoShapeBuf::attach(unsigned char* extBuf, size_t extBufSize)
+	void CGeoShapeBuf::attach(unsigned char* extBuf, uint32 extBufSize)
 	{
 		if(m_bAttach)
 			detach();
@@ -439,7 +463,7 @@ namespace CommonLib
 		case shape_type_general_polygon:
 		case shape_type_general_multipatch:
 			{
-				return *reinterpret_cast<const size_t*>(buf + 4 + 8 * 4 + 4 * flag_has_parts);
+				return *reinterpret_cast<const uint32*>(buf + 4 + 8 * 4 + 4 * flag_has_parts);
 			}
 		}
 
@@ -449,7 +473,7 @@ namespace CommonLib
 	const GisXYPoint* CGeoShapeBuf::getXYs(const unsigned char* buf)
 	{
 		eShapeType genType = generalType(buf);
-		size_t nparts = partCount(buf);
+		uint32 nparts = partCount(buf);
 		return getXYs(buf, genType, nparts);
 	}
 
@@ -481,20 +505,20 @@ namespace CommonLib
 	}
 	double* CGeoShapeBuf::getZs()
 	{
-		return m_vecZ.begin();
+		return NULL;
 	}
 	const double* CGeoShapeBuf::getZs() const
 	{
-		return m_vecZ.begin();
+		return NULL;
 	}
 
 	double* CGeoShapeBuf::getMs()
 	{
-		return m_vecM.begin();
+		return NULL;
 	}
 	const double* CGeoShapeBuf::getMs() const
 	{
-		return m_vecM.begin();
+		return NULL;
 	}
 
 	////////////////////////////////////////////////////////
@@ -518,7 +542,7 @@ namespace CommonLib
 		m_bIsValid = true;
  		// shape type
 		m_type = CGeoShapeBuf::type(buf);
-		m_general_type = IGeoShape::generalType(m_type);
+		m_general_type = GetGeneralType(m_type);
 		m_nPointCount = CGeoShapeBuf::pointCount(buf, m_general_type);
 		m_nPartCount = CGeoShapeBuf::partCount(buf, m_general_type);
 		m_pPoints = CGeoShapeBuf::getXYs(buf, m_general_type, m_nPartCount);

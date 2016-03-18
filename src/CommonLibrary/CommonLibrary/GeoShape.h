@@ -44,7 +44,7 @@ namespace CommonLib
 
 		CGeoShape(const CGeoShape& shp);
 		CGeoShape& operator = (const CGeoShape& shp);
-		CGeoShape& operator += (const CGeoShape& shp);
+		//CGeoShape& operator += (const CGeoShape& shp);
 
 
 		bool operator ==(const CGeoShape& shp) const
@@ -97,10 +97,7 @@ namespace CommonLib
 			return false;
 		}
 
-		/*
-		CGeoShape(eShapeType shapeType, alloc_t *pAlloc = 0);
-		CGeoShape(eShapeType shapeType, size_t npoints, size_t nparts = 1, size_t ncurves = 0, size_t mpatchSpecificSize = 0, alloc_t *pAlloc = 0);
-		 */
+		
 
 		~CGeoShape();
 		
@@ -113,7 +110,7 @@ namespace CommonLib
 		bool write(IWriteStream *pStream) const;
 		bool read(IReadStream *pStream);
 
-
+		static uint32 CalcSize(eShapeType shapeType, uint32 npoints, uint32 nparts, uint32 ncurves , uint32 mpatchSpecificSize);
 
 		bool compress(IWriteStream *pStream, compress_params* pParams = NULL) const;
 		bool decompress(IReadStream *pStream, compress_params* pParams = NULL);
@@ -175,10 +172,6 @@ namespace CommonLib
 		eShapeType m_type;
 		eShapeType m_general_type;
 		bbox m_bbox;
-
-
-		CBlob m_blob;
-
 		friend class ShapeCompressor;
 
 	};

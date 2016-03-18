@@ -258,6 +258,9 @@
     <ClInclude Include="XYCompressDiff.h">
       <Filter>SpatialData\shapeCompressor</Filter>
     </ClInclude>
+    <ClInclude Include="GeoShapeBuf.h">
+      <Filter>SpatialData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -355,6 +358,9 @@
     </ClCompile>
     <ClCompile Include="PointZOrder.cpp">
       <Filter>SpatialData\shapeCompressor\pointcompress</Filter>
+    </ClCompile>
+    <ClCompile Include="GeoShapeBuf.cpp">
+      <Filter>SpatialData</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

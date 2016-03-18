@@ -104,6 +104,59 @@ namespace CommonLib
 	};
 
 
+	struct segment_circular_arc_t
+	{
+		union
+		{
+			GisXYPoint   centerPoint;
+			double angles[2];
+		};
+
+		circular_arc_flags flags;
+	};
+
+	struct segment_bezier_curve_t
+	{
+		GisXYPoint controlPoints[2];
+	};
+
+	struct segment_elliptic_arc_t
+	{
+		union
+		{
+			GisXYPoint center;
+			double vs[2];
+		};
+
+		union
+		{
+			double rotation;
+			double fromV;
+		};
+
+		double semiMajor;
+
+		union
+		{
+			double minorMajorRatio;
+		};
+
+		elliptic_arc_flags flags;
+	};
+
+	struct segment_modifier_t
+	{
+		long         fromPoint;
+		segment_type segmentType;
+		union
+		{
+			segment_circular_arc_t circularArc;
+			segment_bezier_curve_t bezierCurve;
+			segment_elliptic_arc_t ellipticArc;
+		} segmentParams;
+	};
+
+
 /*	class IGeoShape : public AutoRefCounter
 	{
 		public:
