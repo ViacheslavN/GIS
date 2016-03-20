@@ -3,7 +3,7 @@
 
 namespace embDB
 {
-CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, size_t nSize, int64 nAddr) :
+CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, uint32 nSize, int64 nAddr) :
 	m_nSize(nSize)
 	,m_nAddr(nAddr)
 	,m_pAlloc(m_pAlloc)
@@ -15,7 +15,7 @@ CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, size_t nSize, int64 nAddr) :
 	m_pData =  (byte*)m_pAlloc->alloc(sizeof(byte) * m_nSize);
 
 }
-CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, size_t nSize, int64 nAddr) :
+CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, uint32 nSize, int64 nAddr) :
 	m_nSize(nSize)
 	,m_nAddr(nAddr)
 	,m_pAlloc(m_pAlloc)
@@ -28,7 +28,7 @@ CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, size_t nSize, in
 	memcpy(m_pData, pData, nSize);
 }
 
-	CFilePage::CFilePage(byte *pData, size_t nSize, int64 nAddr) :
+	CFilePage::CFilePage(byte *pData, uint32 nSize, int64 nAddr) :
 	m_nSize(nSize)
 	,m_nAddr(nAddr)
 	,m_pAlloc(0)
@@ -50,7 +50,7 @@ byte* CFilePage::getRowData() const
 {
 	return m_pData;
 }
-size_t CFilePage::getPageSize() const
+uint32 CFilePage::getPageSize() const
 {
 	return m_nSize;
 }

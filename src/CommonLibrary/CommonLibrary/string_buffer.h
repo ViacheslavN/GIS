@@ -46,8 +46,8 @@ class string_buffer
     void safeRelease();
 
     bool     isEmpty() const;
-    size_t   length() const;
-    size_t   capacity() const;
+    uint32   length() const;
+    uint32   capacity() const;
     bool     isExclusive() const;
     bool     isShareable() const;
 
@@ -76,7 +76,7 @@ class string_buffer
   
   private:
     wchar_t* m_pBuffer;
-    size_t   m_nCapacity;
+    uint32   m_nCapacity;
     char*    m_pCharBuffer;
 #ifdef _WIN32
     BSTR     m_bstr;
@@ -316,7 +316,7 @@ inline bool string_buffer::isEmpty() const
   return length() == 0;
 }
 
-inline size_t string_buffer::length() const
+inline uint32 string_buffer::length() const
 {
   if(m_pBuffer == NULL)
     return 0;
@@ -324,10 +324,10 @@ inline size_t string_buffer::length() const
   if(m_pBuffer[0] == 0)
     return 0;
 
-  return wcslen(m_pBuffer);
+  return (uint32)wcslen(m_pBuffer);
 }
 
-inline size_t string_buffer::capacity() const
+inline uint32 string_buffer::capacity() const
 {
   return m_nCapacity;
 }
@@ -348,7 +348,7 @@ inline const char* string_buffer::charBegin()
     return m_pCharBuffer;
 
   begin();
-  size_t len = wcslen(m_pBuffer);
+  uint32 len = wcslen(m_pBuffer);
   
   if(m_pCharBuffer != NULL)
     DeleteCharBuffer(m_pCharBuffer);

@@ -121,19 +121,19 @@ namespace embDB
 			m_nSize--;
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			return (sizeof(TKey) + sizeof(TLink) ) *  m_nSize + 3* sizeof(uint32) ;
 		}
-		virtual size_t count() const
+		virtual uint32 count() const
 		{
 			return m_nSize;
 		}
-		size_t headSize() const
+		uint32 headSize() const
 		{
 			return  3 * sizeof(uint32);
 		}
-		size_t rowSize()
+		uint32 rowSize()
 		{
 			return (sizeof(TKey) + sizeof(TLink)) *  m_nSize;
 		}
@@ -141,12 +141,12 @@ namespace embDB
 		{
 			m_nSize = 0;
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return  (sizeof(TKey) + sizeof(TLink));
 		}
 	private:
-		size_t m_nSize;
+		uint32 m_nSize;
 	};
 }
 

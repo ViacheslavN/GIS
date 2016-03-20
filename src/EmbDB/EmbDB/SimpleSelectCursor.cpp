@@ -26,7 +26,7 @@ namespace embDB
 			m_pFieldSet = new CFieldSet();
 		if(m_pFieldSet->GetCount() == 0)
 		{
-			for (size_t i = 0, sz = m_pFields->GetFieldCount(); i < sz; ++i)
+			for (uint32 i = 0, sz = m_pFields->GetFieldCount(); i < sz; ++i)
 			{
 				IFieldPtr pField = m_pFields->GetField(i);
 				m_pFieldSet->Add(pField->getName());
@@ -105,7 +105,7 @@ namespace embDB
 
 
 		uint64 nMinOID = 0;
-		for (size_t i = 0, sz = m_vecFields.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecFields.size(); i < sz; ++i)
 		{
 			IFieldIteratorPtr& iter = m_vecFields[i];
 			if(iter->isNull())
@@ -125,7 +125,7 @@ namespace embDB
 		}
 		if(pRow)
 			m_pCacheRow->SetRow(nMinOID);
-		for (size_t i = 0, sz = m_vecFields.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecFields.size(); i < sz; ++i)
 		{
 			IFieldIteratorPtr& iter = m_vecFields[i];
 			
@@ -159,7 +159,7 @@ namespace embDB
 		}
 
 		m_pCacheRow->SetRow(m_vecFields[0]->getRowID());
-		for (size_t i = 0, sz = m_vecFields.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecFields.size(); i < sz; ++i)
 		{
 			IFieldIteratorPtr& iter = m_vecFields[i];
 			if(pRow)
@@ -181,7 +181,7 @@ namespace embDB
 		uint64 nCurrRowID = m_pIterField->getRowID();
 		if(pRow)
 			m_pCacheRow->SetRow(nCurrRowID);
-		for (size_t i = 0, sz = m_vecFields.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecFields.size(); i < sz; ++i)
 		{
 			IFieldIteratorPtr& iter = m_vecFields[i];
 			uint64 nRowID = iter->isNull() ? 0 : iter->getRowID();

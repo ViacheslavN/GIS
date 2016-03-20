@@ -81,7 +81,7 @@ namespace embDB
 	{
 		m_mapFieldIndex.clear();
 
-		for(size_t i = 0; i < m_vecFields.size(); ++i)
+		for(uint32 i = 0; i < m_vecFields.size(); ++i)
 		{
 			IFieldPtr field = m_vecFields[i];
 			if(!field.get())

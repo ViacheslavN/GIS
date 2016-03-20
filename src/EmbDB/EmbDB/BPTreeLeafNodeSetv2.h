@@ -41,7 +41,7 @@ namespace embDB
 	
 
 		virtual bool isLeaf() const {return true;}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			assert(m_pCompressor);
 			return  2 * sizeof(TLink) +  m_pCompressor->size();
@@ -51,12 +51,12 @@ namespace embDB
 			assert(m_pCompressor);
 			return m_pCompressor->isNeedSplit(/*nPageSize - 2 *sizeof(TLink)*/);
 		}
-		virtual size_t headSize() const
+		virtual uint32 headSize() const
 		{
 			assert(m_pCompressor);
 			return 2 * sizeof(TLink) +  m_pCompressor->headSize(); 
 		}
-		virtual size_t rowSize() const
+		virtual uint32 rowSize() const
 		{
 			assert(m_pCompressor);
 			return m_pCompressor->rowSize();
@@ -185,7 +185,7 @@ namespace embDB
 		template<class TVector, class TVecVal>
 		int SplitInVec(TVector& src, TVector& dst, TVecVal* pSplitVal)
 		{
-			size_t nSize = src.size()/2;
+			uint32 nSize = src.size()/2;
 			dst.copy(src, 0, nSize, src.size());
 			src.resize(nSize);
 			if(pSplitVal)
@@ -204,7 +204,7 @@ namespace embDB
 		template<class TVector, class TVecVal>
 		int SplitOne(TVector& src, TVector& dst, TVecVal* pSplitVal)
 		{
-			size_t nSize = src.size() - 1;
+			uint32 nSize = src.size() - 1;
 			dst.push_back(src[nSize]);
 			src.resize(nSize);
 			if(pSplitVal)
@@ -268,11 +268,11 @@ namespace embDB
 
 		}
 
-		size_t count() const 
+		uint32 count() const 
 		{
 			return m_leafKeyMemSet.size();
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return m_pCompressor->tupleSize();
 		}
@@ -336,7 +336,7 @@ namespace embDB
 				if(nCheckIndex)
 					*nCheckIndex += nCnt;
 
-				size_t newSize = srcVec.size() - nCnt;
+				uint32 newSize = srcVec.size() - nCnt;
 				dstVec.insert(srcVec, 0, newSize, srcVec.size());
 				srcVec.resize(newSize);
 			}

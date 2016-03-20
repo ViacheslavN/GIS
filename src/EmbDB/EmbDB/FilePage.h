@@ -75,7 +75,7 @@ struct sFilePageHeader
 		m_nSize = stream.pos() - 2 *sizeof(uint32);
 		assert(m_nSize <= (m_nPageSize - 2 *sizeof(uint32)));
 		uint32 nCRC = Crc32(stream.buffer() + 2 *sizeof(uint32), m_nSize);
-		size_t pos = stream.pos();
+		uint32 pos = stream.pos();
 		stream.seek(0, CommonLib::soFromBegin);
 		stream.write(nCRC);
 		stream.write(m_nSize);
@@ -105,12 +105,12 @@ struct sFilePageHeader
 class CFilePage : public CommonLib::RefCounter
 {
 public: 
-	CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, size_t nSize, int64 nAddr);
-	CFilePage(CommonLib::alloc_t *m_pAlloc, size_t nSize, int64 nAddr);
-	CFilePage( byte *pData, size_t nSize, int64 nAddr);
+	CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, uint32 uint32, int64 nAddr);
+	CFilePage(CommonLib::alloc_t *m_pAlloc, uint32 nSize, int64 nAddr);
+	CFilePage( byte *pData, uint32 nSize, int64 nAddr);
 	~CFilePage();
 	byte* getRowData() const;
-	size_t getPageSize() const;
+	uint32 getPageSize() const;
 	int64 getAddr() const;
 	uint32 getFlags() const;
 	void setFlag(uint32 nFlag, bool bSet);
@@ -125,7 +125,7 @@ public:
 	void setNeedEncrypt(bool bEncrypt);
 protected:
 	byte *m_pData;
-	size_t m_nSize;
+	uint32 m_nSize;
 	int64 m_nAddr;
 	CommonLib::alloc_t *m_pAlloc;
 	uint32 m_nFlags;

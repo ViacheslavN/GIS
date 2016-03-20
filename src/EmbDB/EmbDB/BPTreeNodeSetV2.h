@@ -184,7 +184,7 @@ namespace embDB
 		{
 			return RefCounter::isRemovable();
 		}
-		size_t size()
+		uint32 size()
 		{
 			assert(m_pBaseNode);
 			return sFilePageHeader::size() + 1 + /*3 * sizeof(int16) */+ m_pBaseNode->size();
@@ -196,12 +196,12 @@ namespace embDB
 			return m_pBaseNode->isNeedSplit();
 		}
 
-		size_t headSize()
+		uint32 headSize()
 		{
 			assert(m_pBaseNode);
 			return sFilePageHeader::size() + 1 + /*3 * sizeof(int16)*/ + m_pBaseNode->headSize();
 		}
-		size_t rowSize()
+		uint32 rowSize()
 		{
 			assert(m_pBaseNode);
 			return  m_pBaseNode->rowSize();
@@ -228,7 +228,7 @@ namespace embDB
 			assert(m_pBaseNode);
 			return m_pBaseNode->getFlags();
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			assert(m_pBaseNode);
 			return m_pBaseNode->tupleSize();
@@ -311,7 +311,7 @@ namespace embDB
 			assert(m_bIsLeaf);
 			m_LeafNode.m_nPrev = nPrevAddr;
 		}
-		size_t count() const
+		uint32 count() const
 		{
 			if(m_bIsLeaf)
 				return m_LeafNode.count();

@@ -147,7 +147,7 @@ namespace embDB
 			{
 				return m_nSize/* + (2 * sizeof(int64) /*+ sizeof(key.val))*/; //что бы не делать преинсерт и премувж
 			}
-			virtual uint32 cnt_size(size_t nCnt)
+			virtual uint32 cnt_size(uint32 nCnt)
 			{
 				return (2 * sizeof(int64) + sizeof(TVal)) * nCnt + 4 * sizeof(uint32);
 			}

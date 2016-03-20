@@ -13,7 +13,7 @@ namespace embDB
 	void CompositeIndexKey::clear()
 	{
 /*
-		for (size_t i = 0, sz = m_vecVariants.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecVariants.size(); i < sz; ++i)
 		{
 			m_vecVariants[i]->~IVariant();
 			m_pAlloc->free(m_vecVariants[i]);
@@ -29,7 +29,7 @@ namespace embDB
 			return;
 
 		m_vecVariants.reserve(key.getSize());
-		for (size_t i = 0, sz = key.getSize(); i < sz; ++i)
+		for (uint32 i = 0, sz = key.getSize(); i < sz; ++i)
 		{
 			addValue(key.getValue(i));
 		}
@@ -47,7 +47,7 @@ namespace embDB
 		{
 			if(key.getSize() != getSize())
 				m_vecVariants.resize(key.getSize());
-			for (size_t i = 0, sz = key.getSize(); i < sz; ++i)
+			for (uint32 i = 0, sz = key.getSize(); i < sz; ++i)
 			{
 				setValue(i, key.getValue(i));
 			}
@@ -58,7 +58,7 @@ namespace embDB
 		m_pAlloc = key.m_pAlloc;
 		m_vecVariants.setAlloc(m_pAlloc);
 		m_vecVariants.reserve(key.getSize());
-		for (size_t i = 0, sz = key.getSize(); i < sz; ++i)
+		for (uint32 i = 0, sz = key.getSize(); i < sz; ++i)
 		{
 			addValue(key.getValue(i));
 		}
@@ -116,14 +116,14 @@ namespace embDB
 
 	void CompositeIndexKey::write(CommonLib::FxMemoryWriteStream& stream)
 	{
-		for (size_t i = 0, sz = m_vecVariants.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecVariants.size(); i < sz; ++i)
 		{
 			//m_vecVariants[i]->save(&stream);
 		}
 	}
 	bool CompositeIndexKey::load(const std::vector<uint16>& vecScheme,  CommonLib::FxMemoryReadStream& stream)
 	{
-		/*for (size_t i = 0, sz = vecScheme.size(); i < sz; ++i)
+		/*for (uint32 i = 0, sz = vecScheme.size(); i < sz; ++i)
 		{
 			IVariant *pVariant = createVariant(vecScheme[i]);
 			if(!pVariant)

@@ -107,7 +107,7 @@ namespace embDB
 			  }
 		  }
 
-		  size_t size() const {return m_CacheMap.size();}
+		  uint32 size() const {return m_CacheMap.size();}
 		  void clear()
 		  {
 			  if(!m_pFirst)

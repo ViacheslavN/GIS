@@ -83,7 +83,7 @@ namespace embDB
 			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);			 
-			for(size_t i = 0, sz = keySet.size(); i < sz; ++i)
+			for(uint32 i = 0, sz = keySet.size(); i < sz; ++i)
 			{
 				keySet[i].write(KeyStreams);
 				LinkStreams.write(linkSet[i]);
@@ -116,7 +116,7 @@ namespace embDB
 		{
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			return (m_pCompParams->getRowSize() + sizeof(TLink) ) *  m_nSize + sizeof(uint32) ;
 		}
@@ -124,15 +124,15 @@ namespace embDB
 		{
 			return nPageSize < size();
 		}
-		virtual size_t count() const
+		virtual uint32 count() const
 		{
 			return m_nSize;
 		}
-		size_t headSize() const
+		uint32 headSize() const
 		{
 			return  sizeof(uint32);
 		}
-		size_t rowSize()
+		uint32 rowSize()
 		{
 			return (m_pCompParams->getRowSize() + sizeof(TLink)) *  m_nSize;
 		}
@@ -140,7 +140,7 @@ namespace embDB
 		{
 			m_nSize = 0;
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return  (m_pCompParams->getRowSize() + sizeof(TLink));
 		}
@@ -152,7 +152,7 @@ namespace embDB
 			pCompressor->m_nSize += nSize;
 		}
 	private:
-		size_t m_nSize;
+		uint32 m_nSize;
 		CommonLib::alloc_t* m_pAlloc;
 		TInnerCompressorParams* m_pCompParams;
 	};

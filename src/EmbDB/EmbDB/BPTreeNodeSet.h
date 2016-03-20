@@ -142,17 +142,17 @@ namespace embDB
 		{
 			return m_pBaseNode->IsFree();
 		}
-		size_t size()
+		uint32 size()
 		{
 			assert(m_pBaseNode);
 			return sFilePageHeader::size() + 1 + 3 * sizeof(int16) + m_pBaseNode->size();
 		}
-		size_t headSize()
+		uint32 headSize()
 		{
 			assert(m_pBaseNode);
 			return sFilePageHeader::size() + 1 + 3 * sizeof(int16) + m_pBaseNode->headSize();
 		}
-		size_t rowSize()
+		uint32 rowSize()
 		{
 			assert(m_pBaseNode);
 			return  m_pBaseNode->rowSize();
@@ -179,7 +179,7 @@ namespace embDB
 			assert(m_pBaseNode);
 			return m_pBaseNode->getFlags();
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			assert(m_pBaseNode);
 			return m_pBaseNode->tupleSize();
@@ -320,7 +320,7 @@ namespace embDB
 				return m_LeafNode.UnionWith(&pNode->m_LeafNode);
 			return m_InnerNode.UnionWith(&pNode->m_InnerNode);
 		}
-		size_t count() const
+		uint32 count() const
 		{
 			if(m_bIsLeaf)
 				return m_LeafNode.count();

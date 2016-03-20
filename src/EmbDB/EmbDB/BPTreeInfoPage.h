@@ -83,7 +83,7 @@ namespace embDB
 			valueStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValSize);
 			stream.seek(stream.pos() + nKeySize + nValSize, CommonLib::soFromBegin);			 
 
-			for(size_t i = 0, sz = vecKeys.size(); i < sz; ++i)
+			for(uint32 i = 0, sz = vecKeys.size(); i < sz; ++i)
 			{
 				KeyStreams.write(vecKeys[i]);
 				valueStreams.write(vecValues[i].m_nFileAddr);
@@ -116,7 +116,7 @@ namespace embDB
 			m_nSize--;
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			return ( (2 * sizeof(int64) + sizeof(int32)) *  m_nSize) +sizeof(uint32);
 		}
@@ -124,24 +124,24 @@ namespace embDB
 		{
 			return nPageSize < size();
 		}
-		size_t headSize() const
+		uint32 headSize() const
 		{
 			return   sizeof(uint32);
 		}
-		 size_t rowSize() const
+		 uint32 rowSize() const
 		{
 			return (2 * sizeof(int64) + sizeof(int32)) *  m_nSize;
 		}
-		size_t count()
+		uint32 count()
 		{
 			return m_nSize;
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return  (sizeof(int64) + sizeof(int32));
 		}
 	private:
-		size_t m_nSize;
+		uint32 m_nSize;
 	};
 
 	/*class  BPNewPageStorage
@@ -149,16 +149,16 @@ namespace embDB
 	public:	
 		BPNewPageStorage(CTranStorage *pTranStorage, CommonLib::alloc_t *pAlloc);
 		~BPNewPageStorage();
-		int64 saveFilePage(FilePagePtr pPage, size_t pos = 0);
+		int64 saveFilePage(FilePagePtr pPage, uint32 pos = 0);
 		FilePagePtr getFilePage(int64 nAddr, bool bRead = true);
 		FilePagePtr getNewPage();
 		void error(const CommonLib::CString& sError){}
-		size_t getPageSize(){return m_pTranStorage->getPageSize();}
+		uint32 getPageSize(){return m_pTranStorage->getPageSize();}
 		bool dropFilePage(FilePagePtr pPage){return true;}
 		bool dropFilePage(int64 pAddrPage){return true;}
 	private:
 		CTranStorage *m_pTranStorage;
-		size_t m_nMaxPageBuf;
+		uint32 m_nMaxPageBuf;
 		typedef TSimpleCache<int64, CFilePage> TNodesCache;
 		TNodesCache m_Chache;
 

@@ -275,7 +275,7 @@ namespace embDB
 			decoder.StartDecode();
 			TValue value = 0;
 
-			for (size_t i = 0; i < m_nCount; ++i)
+			for (uint32 i = 0; i < m_nCount; ++i)
 			{
 				uint32 freq = decoder.GetFreq(m_nCount);
 

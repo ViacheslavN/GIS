@@ -49,15 +49,15 @@ class CString
     CString& operator =(const CString& _str);
 
     bool   isEmpty() const;
-    size_t length() const;
+    uint32 length() const;
 	const char* cstr() const;
     const twchar* cwstr() const;
-    size_t capacity() const;
+    uint32 capacity() const;
     
     int loadFromUTF8 (const char *utf);
-    int exportToUTF8 (char *utf, int maxbuf) const;
+    int exportToUTF8 (char *utf, uint32 maxbuf) const;
     int calcUTF8Length (void) const;
-	int loadFromASCII(const char *pBuf, int nSize = 0);
+	int loadFromASCII(const char *pBuf, uint32 nSize = 0);
 
 
 
@@ -76,11 +76,11 @@ class CString
 #endif
     void finishExternalChanges();
 
-    const wchar_t& operator [](size_t _index) const;
-    wchar_t& operator [](size_t _index);
+    const wchar_t& operator [](uint32 _index) const;
+    wchar_t& operator [](uint32 _index);
 
-    wchar_t   wcharAt(size_t _index) const;
-    char     charAt(size_t _index) const;
+    wchar_t   wcharAt(uint32 _index) const;
+    char     charAt(uint32 _index) const;
 
 #ifdef _UNICODE
     #define tcharAt wcharAt
@@ -120,38 +120,38 @@ class CString
     int  compare(const wchar_t *_str, bool _caseSensitive = true) const;
     int  compare(const CString& _str, bool _caseSensitive = true) const;
 
-    int  find(const char *_str, size_t _nStart = 0) const;
-    int  find(const wchar_t *_str, size_t _nStart = 0) const;
-    int  find(const CString& _str, size_t _nStart = 0) const;
+    int  find(const char *_str, uint32 _nStart = 0) const;
+    int  find(const wchar_t *_str, uint32 _nStart = 0) const;
+    int  find(const CString& _str, uint32 _nStart = 0) const;
 
-    int  findEOL(size_t _nStart = 0) const;
+    int  findEOL(uint32 _nStart = 0) const;
 #ifdef _WIN32
-    int  find(char _chr, size_t _nStart = 0) const;
+    int  find(char _chr, uint32 _nStart = 0) const;
 #endif
-    int  find(wchar_t _chr, size_t _nStart = 0) const;
+    int  find(wchar_t _chr, uint32 _nStart = 0) const;
 #ifdef _WIN32
     int  reverseFind(char _chr) const;
 #endif
     int  reverseFind(wchar_t _chr) const;
 
-    bool isFound(size_t* _pnPos, const char *_str, size_t _nStart = 0) const;
-    bool isFound(size_t* _pnPos, const wchar_t *_str, size_t _nStart = 0) const;
-    bool isFound(size_t* _pnPos, const CString& _str, size_t _nStart = 0) const;
-    bool isEOLFound(size_t* _pnPos, size_t _nStart = 0) const;
+    bool isFound(uint32* _pnPos, const char *_str, uint32 _nStart = 0) const;
+    bool isFound(uint32* _pnPos, const wchar_t *_str, uint32 _nStart = 0) const;
+    bool isFound(uint32* _pnPos, const CString& _str, uint32 _nStart = 0) const;
+    bool isEOLFound(uint32* _pnPos, uint32 _nStart = 0) const;
 
-    bool isFound(size_t* _pnPos, char _chr, size_t _nStart = 0) const;
-    bool isFound(size_t* _pnPos, wchar_t _chr, size_t _nStart = 0) const;
+    bool isFound(uint32* _pnPos, char _chr, uint32 _nStart = 0) const;
+    bool isFound(uint32* _pnPos, wchar_t _chr, uint32 _nStart = 0) const;
 
-    bool isReverseFound(size_t* _pnPos, char _chr) const;
-    bool isReverseFound(size_t* _pnPos, wchar_t _chr) const;
+    bool isReverseFound(uint32* _pnPos, char _chr) const;
+    bool isReverseFound(uint32* _pnPos, wchar_t _chr) const;
 
     void clear();
-    void reserve(size_t _len);
+    void reserve(uint32 _len);
     void exclusive();
 
-    CString mid(size_t _nFirst, size_t _nCount = ((size_t)-1)) const;
-    CString left(size_t _nCount) const;
-    CString right(size_t _nCount) const;
+    CString mid(uint32 _nFirst, uint32 _nCount = ((uint32)-1)) const;
+    CString left(uint32 _nCount) const;
+    CString right(uint32 _nCount) const;
 
     CString spanInclude(const CString& _str) const;
     CString spanExclude(const CString& _str) const;
@@ -173,10 +173,10 @@ class CString
     CString& trimAll();
 
 #ifdef _WIN32
-    size_t replace(char _chFind, char _chReplace);
+    uint32 replace(char _chFind, char _chReplace);
 #endif
-    size_t replace(wchar_t _chFind, wchar_t _chReplace);
-    size_t replace(const CString& _strFind, const CString& _strReplace);
+    uint32 replace(wchar_t _chFind, wchar_t _chReplace);
+    uint32 replace(const CString& _strFind, const CString& _strReplace);
 
     CString& operator += (wchar_t _chr);
     CString& operator += (const char* _str);
@@ -216,18 +216,18 @@ class CString
 
 namespace stdext
 {
-  inline size_t hash_value(const CommonLib::CString& _Str)
+  inline uint32 hash_value(const CommonLib::CString& _Str)
   {
-    typedef size_t _Strsize;
+    typedef uint32 _Strsize;
 
-    size_t _Val = _HASH_SEED;
-    _Strsize _Size = ::wcslen(_Str.cwstr());
+    uint32 _Val = _HASH_SEED;
+    _Strsize _Size = (uint32)::wcslen(_Str.cwstr());
     if (0 < _Size)
       {	// add one or more elements
       _Strsize _Stride = (_Size / 16) + 1;
       _Size -= _Stride;	// protect against _Size near _Str.max_size()
       for(_Strsize _Idx = 0; _Idx <= _Size; _Idx += _Stride)
-        _Val += (size_t)_Str.cwstr()[_Idx];
+        _Val += (uint32)_Str.cwstr()[_Idx];
       }
     return (_Val);
   }

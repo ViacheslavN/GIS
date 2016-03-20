@@ -15,12 +15,12 @@ enum enSeekOffset
 class IStream
 {
 public:
-	virtual int32 size() const = 0;
-	virtual int64 size64() const = 0;
+	virtual uint32 size() const = 0;
+	virtual uint64 size64() const = 0;
 	virtual bool seek(uint32 position, enSeekOffset offset ) = 0;
 	virtual bool seek64(uint64 position, enSeekOffset offset ) = 0;
-	virtual int32 pos() const = 0;
-	virtual int64 pos64() const = 0;
+	virtual uint32 pos() const = 0;
+	virtual uint64 pos64() const = 0;
 	virtual void reset() = 0;
 	virtual void close() = 0;
 
@@ -336,13 +336,13 @@ public:
 
 	
 	
-	virtual int32 size() const 
+	virtual uint32 size() const 
 	{
 		return m_nSize;
 	}
-	virtual int64 size64() const 
+	virtual uint64 size64() const 
 	{
-		return (int64)m_nSize;
+		return (uint64)m_nSize;
 	}
 	virtual bool seek(uint32 position, enSeekOffset offset )
 	{
@@ -376,13 +376,13 @@ public:
 	{
 		return seek((uint32)position, offset);
 	}
-	virtual int32 pos() const
+	virtual uint32 pos() const
 	{
 		return m_nPos;
 	}
-	virtual int64 pos64() const
+	virtual uint64 pos64() const
 	{
-		return (int64)m_nPos;
+		return (uint64)m_nPos;
 	}
 	virtual void reset()
 	{
@@ -394,8 +394,8 @@ public:
 		if(!pMemStream)
 			return false;
 
-		  int32 _nPos = (nPos != -1 ? nPos : 0);
-		  int32 _nSize= (nSize != -1 ? nSize : pStream->size());
+		  uint32 _nPos = (nPos != -1 ? nPos : 0);
+		  uint32 _nSize= (nSize != -1 ? nSize : pStream->size());
 
 		 if(!attachBuffer(pMemStream->buffer() + _nPos, _nSize, false))
 			 return false;

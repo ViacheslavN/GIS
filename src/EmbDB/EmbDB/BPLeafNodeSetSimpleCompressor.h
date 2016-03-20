@@ -70,28 +70,28 @@ namespace embDB
 			m_nSize--;
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			return sizeof(TKey) *  m_nSize +  2*sizeof(uint32);
 		}
-		virtual size_t count() const
+		virtual uint32 count() const
 		{
 			return m_nSize;
 		}
-		size_t headSize() const
+		uint32 headSize() const
 		{
 			return  sizeof(uint32);
 		}
-		size_t rowSize() const
+		uint32 rowSize() const
 		{
 			return sizeof(TKey) *  m_nSize;
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return  sizeof(TKey);
 		}
 	private:
-		size_t m_nSize;
+		uint32 m_nSize;
 	};
 }
 

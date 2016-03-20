@@ -32,7 +32,7 @@ namespace embDB
 		virtual bool find(int64 nOID, CommonLib::CVariant* pFieldVal) = 0;
 	};
 
-	//TBaseBPlusTree(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false) :
+	//TBaseBPlusTree(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, bool bMulti = false) :
 	
 
 	template<class FType, class _TBTree, class TFieldIterator>

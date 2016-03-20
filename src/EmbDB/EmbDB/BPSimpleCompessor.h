@@ -189,7 +189,7 @@ namespace embDB
 		}
 
 
-		virtual size_t cnt_size(size_t nCnt, bool bLeaf) const 
+		virtual uint32 cnt_size(uint32 nCnt, bool bLeaf) const 
 		{
 			if(bLeaf)
 			{
@@ -199,7 +199,7 @@ namespace embDB
 			return (2 *sizeof(TLink)) * nCnt;
 		}
 
-		virtual size_t size(bool bLeaf) const
+		virtual uint32 size(bool bLeaf) const
 		{
 			assert(0);
 			return 0;

@@ -50,7 +50,7 @@ namespace embDB
 		{
 			clear();
 		}
-		size_t size() const {return size_;}
+		uint32 size() const {return size_;}
 		void clear()
 		{
 			if(data_)
@@ -75,7 +75,7 @@ namespace embDB
 			data_[size_] = obj;
 			size_++;
 		}
-		void reserve(size_t nSize)
+		void reserve(uint32 nSize)
 		{
 			if(capacity_ > nSize)
 				return;
@@ -162,13 +162,13 @@ namespace embDB
 			return nLastLessIndex;
 		}
 		
-		const TVecObj& operator [](size_t nIndex) const
+		const TVecObj& operator [](uint32 nIndex) const
 		{
 			assert(nIndex < size_);
 			return data_[nIndex];
 		}
 
-		 TVecObj& operator [](size_t nIndex) 
+		 TVecObj& operator [](uint32 nIndex) 
 		{
 			assert(nIndex < size_);
 			return data_[nIndex];
@@ -178,8 +178,8 @@ namespace embDB
 	private:
 		TVecObj*  data_;
 		CommonLib::alloc_t* alloc_;
-		size_t capacity_;
-		size_t size_;
+		uint32 capacity_;
+		uint32 size_;
 		TComp  m_comp;
 	};
 }

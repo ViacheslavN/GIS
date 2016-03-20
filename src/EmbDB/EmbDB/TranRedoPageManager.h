@@ -63,7 +63,7 @@ namespace embDB
 				stream.read(value.nFlags);
 			}
 
-			size_t rowSize()
+			uint32 rowSize()
 			{
 				return 2 * sizeof(int64) + sizeof(uint32);
 			}
@@ -73,7 +73,7 @@ namespace embDB
 	private:
 		IDBTransaction *m_pTran;
 		CTranStorage *m_pStorage;
-		size_t m_nLastPos;
+		uint32 m_nLastPos;
 		TRedoPageList m_RedoPages;
 		TRedoPageList m_UndoPages;
 		int64 m_nRootPage;

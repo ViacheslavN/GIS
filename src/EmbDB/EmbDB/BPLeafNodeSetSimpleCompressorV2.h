@@ -57,7 +57,7 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream KeyStreams;
 			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
-			for(size_t i = 0, sz = Set.size(); i < sz; ++i)
+			for(uint32 i = 0, sz = Set.size(); i < sz; ++i)
 			{
 				KeyStreams.write(Set[i]);
 			}
@@ -89,7 +89,7 @@ namespace embDB
 			m_nCount--;
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			return sizeof(TKey) *  m_nCount +  sizeof(uint32);
 		}
@@ -97,19 +97,19 @@ namespace embDB
 		{
 			return m_nPageSize < size();
 		}
-		virtual size_t count() const
+		virtual uint32 count() const
 		{
 			return m_nCount;
 		}
-		size_t headSize() const
+		uint32 headSize() const
 		{
 			return  sizeof(uint32);
 		}
-		size_t rowSize() const
+		uint32 rowSize() const
 		{
 			return sizeof(TKey) *  m_nCount;
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return  sizeof(TKey);
 		}
@@ -140,7 +140,7 @@ namespace embDB
 			return nNoCompSize  < (m_nPageSize - headSize())/2;
 		}
 	private:
-		size_t m_nCount;
+		uint32 m_nCount;
 		uint32 m_nPageSize;
 	};
 }

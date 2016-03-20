@@ -32,7 +32,7 @@
 	typedef int64_t int64;
   typedef uint64_t uint64;
 	typedef unsigned int UINT;
-#elif defined(WIN32) || defined(_WIN32_WCE)
+#elif defined(_WIN32) || defined(_WIN32_WCE)
 
   typedef __int8  int8;
   typedef unsigned __int8 byte;

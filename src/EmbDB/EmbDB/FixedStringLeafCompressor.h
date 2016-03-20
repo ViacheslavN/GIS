@@ -64,7 +64,7 @@ namespace embDB
 			if(!m_pValueMemset)
 				return;
 
-			for (size_t i = 0; i < m_pValueMemset->size(); ++i )
+			for (uint32 i = 0; i < m_pValueMemset->size(); ++i )
 			{
 				sFixedStringVal& val = (*m_pValueMemset)[i];
 				m_pAlloc->free(val.m_pBuf);
@@ -138,7 +138,7 @@ namespace embDB
 			stream.seek(stream.pos() + nKeySize + m_nStringDataSize, CommonLib::soFromBegin);		
 
 			
-			/*for (size_t i = 0, sz = keySet.size(); i < sz; ++i )
+			/*for (uint32 i = 0, sz = keySet.size(); i < sz; ++i )
 			{
 				KeyStream.write(keySet[i]);
 				//ValueStream.write(valueSet[i].m_pBuf, valueSet[i].m_nLen);
@@ -179,7 +179,7 @@ namespace embDB
 			m_Compress.clear();
 			m_OIDCompressor.clear();
 
-			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
+			for (uint32 i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
 				m_nCount++;
 				if(i != 0)
@@ -190,7 +190,7 @@ namespace embDB
 				m_nStringDataSize += valueSet[i].m_nLen;
 			}
 
-			/*for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
+			/*for (uint32 i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
 				insert(i, keySet[i], valueSet[i]);
 			}*/
@@ -222,7 +222,7 @@ namespace embDB
 			m_Compress.AddSymbol(m_nCount, nIndex, sStr, *m_pValueMemset);
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			//return (sizeof(TKey) *  m_nCount )  + sizeof(uint32) +  m_nStringDataSize*/;
 
@@ -232,15 +232,15 @@ namespace embDB
 		{
 			return !(m_nPageSize > size());
 		}
-		virtual size_t count() const
+		virtual uint32 count() const
 		{
 			return m_nCount;
 		}
-		size_t headSize() const
+		uint32 headSize() const
 		{
 			return  3 * sizeof(uint32);
 		}
-		size_t rowSize() const
+		uint32 rowSize() const
 		{
 			//return (sizeof(TKey) *  m_nCount ) + /*m_nStringDataSize*/ m_Compress.GetComressSize();
 			return m_Compress.GetComressSize() + m_OIDCompressor.GetComressSize();//(sizeof(TKey) *  m_nCount ) + m_nStringDataSize;
@@ -249,14 +249,14 @@ namespace embDB
 		{
 			m_nCount = 0;
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return  (m_pLeafCompParams->GetStringLen() + sizeof(TKey));
 		}
 		void SplitIn(uint32 nBegin, uint32 nEnd, BPFixedStringLeafNodeCompressor *pCompressor)
 		{
 			uint32 nSplitStringDataSize = 0;
-			for (size_t i  = nBegin; i < nEnd; ++i)
+			for (uint32 i  = nBegin; i < nEnd; ++i)
 			{
 				nSplitStringDataSize += (*m_pValueMemset)[i].m_nLen;
 			}

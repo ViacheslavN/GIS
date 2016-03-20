@@ -85,7 +85,7 @@ namespace embDB
 			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			LinkStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nLinkSize);
 			stream.seek(stream.pos() + nKeySize + nLinkSize, CommonLib::soFromBegin);			 
-			for(size_t i = 0, sz = keySet.size(); i < sz; ++i)
+			for(uint32 i = 0, sz = keySet.size(); i < sz; ++i)
 			{
 				KeyStreams.write(keySet[i].m_key);
 				KeyStreams.write(keySet[i].m_nObjectID);
@@ -119,7 +119,7 @@ namespace embDB
 		{
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			return (sizeof(TKey) + 2 * sizeof(TLink) ) *  m_nCount + sizeof(uint32) ;
 		}
@@ -127,15 +127,15 @@ namespace embDB
 		{
 			return m_nPageSize < size();
 		}
-		virtual size_t count() const
+		virtual uint32 count() const
 		{
 			return m_nCount;
 		}
-		size_t headSize() const
+		uint32 headSize() const
 		{
 			return  sizeof(uint32);
 		}
-		size_t rowSize()
+		uint32 rowSize()
 		{
 			return (sizeof(TKey) + 2 *sizeof(TLink)) *  m_nCount;
 		}
@@ -143,7 +143,7 @@ namespace embDB
 		{
 			m_nCount = 0;
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return  (sizeof(TKey) + 2* sizeof(TLink));
 		}
@@ -174,7 +174,7 @@ namespace embDB
 			return nNoCompSize < (m_nPageSize - headSize())/2;
 		}
 	private:
-		size_t m_nCount;
+		uint32 m_nCount;
 		uint32 m_nPageSize;
 	};
 }

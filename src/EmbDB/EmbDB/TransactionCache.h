@@ -46,7 +46,7 @@ namespace embDB
 		  }
 		  void AddPage(int64 nAddr, int64 nTranAddr, CFilePage* pPage, bool bAddBack = false);
 		  void DropPage(int64 nAddr, CFilePage* pAddPage) {  }
-		   size_t size() const {return m_nPageInMemory;}
+		   uint32 size() const {return m_nPageInMemory;}
 		  CFilePage* GetPage(int64 nAddr, bool bNotMove = false, bool bRead = true, uint32 nSize = 0);
 		
 		  void saveChange(IDBStorage *pStorage);
@@ -62,8 +62,8 @@ namespace embDB
 		typedef TCacheLRU<int64, CFilePage> TNodesCache;
 		TNodesCache m_Chache; //страницы в памяти
 		CTranStorage * m_pFileStorage;
-		size_t m_nPageInMemory;
-		size_t m_nMaxPageBuf;
+		uint32 m_nPageInMemory;
+		uint32 m_nMaxPageBuf;
 		CommonLib::alloc_t* m_pAlloc;
 		CTransaction* m_pTransaction;
 		CTranPerfCounter *m_pCounter;

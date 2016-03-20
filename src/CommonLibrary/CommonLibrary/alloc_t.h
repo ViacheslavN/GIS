@@ -7,7 +7,7 @@ namespace CommonLib
 class alloc_t
 {
 public:
-  virtual void* alloc(size_t size) = 0;
+  virtual void* alloc(uint32 size) = 0;
   virtual void  free(void* buf) = 0;
 public:
   virtual ~alloc_t(){}
@@ -17,7 +17,7 @@ public:
 class simple_alloc_t : public alloc_t
 {
 public:
-  virtual void* alloc(size_t size);
+  virtual void* alloc(uint32 size);
   virtual void  free(void* buf);
   ~simple_alloc_t();
    simple_alloc_t();

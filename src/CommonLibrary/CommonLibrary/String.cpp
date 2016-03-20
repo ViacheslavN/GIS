@@ -181,7 +181,7 @@ bool CString::isEmpty() const
   return m_pBuffer->isEmpty();
 }
 
-size_t CString::length() const
+uint32 CString::length() const
 {
   if(m_pBuffer == NULL)
     return 0;
@@ -194,7 +194,7 @@ const twchar* CString::cwstr() const
 
   return m_pBuffer->begin();
 }
-size_t CString::capacity() const
+uint32 CString::capacity() const
 {
   if(m_pBuffer == NULL)
     return 0;
@@ -256,25 +256,25 @@ void CString::finishExternalChanges()
   m_pBuffer->enableSharing(true);
 }
 
-const wchar_t& CString::operator [](size_t _index) const
+const wchar_t& CString::operator [](uint32 _index) const
 {
   assert (_index < capacity ());
   return *(cwstr() + _index);
 }
 
-wchar_t& CString::operator [](size_t _index)
+wchar_t& CString::operator [](uint32 _index)
 {
   assert (_index < capacity ());
   return *(wstr() + _index);
 }
 
-wchar_t CString::wcharAt(size_t _index) const
+wchar_t CString::wcharAt(uint32 _index) const
 {
   return (wchar_t)operator [](_index);
 }
 
 #ifdef _WIN32
-char CString::charAt(size_t _index) const
+char CString::charAt(uint32 _index) const
 {
   assert (_index < capacity ());
   char chr;
@@ -463,7 +463,7 @@ int CString::compare(const CString& _str, bool _caseSensitive) const
   return compare(_str.cwstr(), _caseSensitive);
 }
 
-int CString::find(const char *_str, size_t nStart) const
+int CString::find(const char *_str, uint32 nStart) const
 {
   if(_str == 0 || _str[0] == 0 || isEmpty())
     return -1;
@@ -473,7 +473,7 @@ int CString::find(const char *_str, size_t nStart) const
   return find(str.cwstr(), nStart);
 }
 
-int CString::find(const wchar_t *_str, size_t nStart) const
+int CString::find(const wchar_t *_str, uint32 nStart) const
 {
   if(_str == NULL || _str[0] == 0 || isEmpty())
     return -1;
@@ -485,7 +485,7 @@ int CString::find(const wchar_t *_str, size_t nStart) const
   return (int)(str - cwstr());
 }
 
-int CString::find(const CString& _str, size_t nStart) const
+int CString::find(const CString& _str, uint32 nStart) const
 {
   if(_str.isEmpty() || isEmpty())
     return -1;
@@ -494,7 +494,7 @@ int CString::find(const CString& _str, size_t nStart) const
 }
 
 #ifdef _WIN32
-int CString::find(char _chr, size_t nStart) const
+int CString::find(char _chr, uint32 nStart) const
 {
   wchar_t chr;
 #ifdef _WIN32_WCE
@@ -509,7 +509,7 @@ int CString::find(char _chr, size_t nStart) const
 }
 #endif
 
-int CString::find(wchar_t _chr, size_t nStart) const
+int CString::find(wchar_t _chr, uint32 nStart) const
 {
   if(isEmpty())
     return -1;
@@ -521,7 +521,7 @@ int CString::find(wchar_t _chr, size_t nStart) const
   return (int)(str - cwstr());
 }
 
-int CString::findEOL(size_t _nStart) const
+int CString::findEOL(uint32 _nStart) const
 {
   wchar_t eol[3] = {0x0D, 0x0A, 0x00};
   int res = find(eol, _nStart);
@@ -554,74 +554,74 @@ int CString::reverseFind(wchar_t _chr) const
   return (p != NULL) ? (int)(p - cwstr()) : -1;
 }
 
-bool CString::isFound(size_t* _pnPos, const char *_str, size_t _nStart) const
+bool CString::isFound(uint32* _pnPos, const char *_str, uint32 _nStart) const
 {
   int n = find(_str, _nStart);
   if(n >= 0)
-    *_pnPos = (size_t)n;
+    *_pnPos = (uint32)n;
 
   return n >= 0;
 }
 
-bool CString::isFound(size_t* _pnPos, const wchar_t *_str, size_t _nStart) const
+bool CString::isFound(uint32* _pnPos, const wchar_t *_str, uint32 _nStart) const
 {
   int n = find(_str, _nStart);
   if(n >= 0)
-    *_pnPos = (size_t)n;
+    *_pnPos = (uint32)n;
 
   return n >= 0;
 }
 
-bool CString::isFound(size_t* _pnPos, const CString& _str, size_t _nStart) const
+bool CString::isFound(uint32* _pnPos, const CString& _str, uint32 _nStart) const
 {
   int n = find(_str, _nStart);
   if(n >= 0)
-    *_pnPos = (size_t)n;
+    *_pnPos = (uint32)n;
 
   return n >= 0;
 }
 
-bool CString::isEOLFound(size_t* _pnPos, size_t _nStart) const
+bool CString::isEOLFound(uint32* _pnPos, uint32 _nStart) const
 {
   int n = findEOL(_nStart);
   if(n >= 0)
-    *_pnPos = (size_t)n;
+    *_pnPos = (uint32)n;
 
   return n >= 0;
 }
 
-bool CString::isFound(size_t* _pnPos, char _chr, size_t _nStart) const
+bool CString::isFound(uint32* _pnPos, char _chr, uint32 _nStart) const
 {
   int n = find(_chr, _nStart);
   if(n >= 0)
-    *_pnPos = (size_t)n;
+    *_pnPos = (uint32)n;
 
   return n >= 0;
 }
 
-bool CString::isFound(size_t* _pnPos, wchar_t _chr, size_t _nStart) const
+bool CString::isFound(uint32* _pnPos, wchar_t _chr, uint32 _nStart) const
 {
   int n = find(_chr, _nStart);
   if(n >= 0)
-    *_pnPos = (size_t)n;
+    *_pnPos = (uint32)n;
 
   return n >= 0;
 }
 
-bool CString::isReverseFound(size_t* _pnPos, char _chr) const
+bool CString::isReverseFound(uint32* _pnPos, char _chr) const
 {
   int n = reverseFind(_chr);
   if(n >= 0)
-    *_pnPos = (size_t)n;
+    *_pnPos = (uint32)n;
 
   return n >= 0;
 }
 
-bool CString::isReverseFound(size_t* _pnPos, wchar_t _chr) const
+bool CString::isReverseFound(uint32* _pnPos, wchar_t _chr) const
 {
   int n = reverseFind(_chr);
   if(n >= 0)
-    *_pnPos = (size_t)n;
+    *_pnPos = (uint32)n;
 
   return n >= 0;
 }
@@ -640,7 +640,7 @@ void CString::clear()
   }
 }
 
-void CString::reserve(size_t _len)
+void CString::reserve(uint32 _len)
 {
   if(_len == 0 || capacity() >= _len)
     return;
@@ -666,11 +666,11 @@ void CString::exclusive()
   m_pBuffer = buffer;
 }
 
-CString CString::mid(size_t _nFirst, size_t _nCount) const
+CString CString::mid(uint32 _nFirst, uint32 _nCount) const
 {
-  size_t len = length();
+  uint32 len = length();
 
-  if(_nCount == ((size_t)-1)) 
+  if(_nCount == ((uint32)-1)) 
     _nCount = len - _nFirst;
   
   if(_nFirst == 0 && _nCount >= len)
@@ -693,16 +693,16 @@ CString CString::mid(size_t _nFirst, size_t _nCount) const
   return str;
 }
 
-CString CString::left(size_t _nCount) const
+CString CString::left(uint32 _nCount) const
 {
   return mid(0, _nCount);
 }
 
-CString CString::right(size_t _nCount) const
+CString CString::right(uint32 _nCount) const
 {
-  size_t len = length();
+  uint32 len = length();
   
-  if(len > (size_t)_nCount)
+  if(len > (uint32)_nCount)
     return mid(len - _nCount, _nCount);
   
   return *this;
@@ -710,14 +710,14 @@ CString CString::right(size_t _nCount) const
 
 CString CString::spanInclude(const CString& _str) const
 {
-  size_t len = wcsspn(cwstr(), _str.cwstr());
+  uint32 len = wcsspn(cwstr(), _str.cwstr());
 
   return (len != 0) ? mid(0, len) : CString();
 }
 
 CString CString::spanExclude(const CString& _str) const
 {
-  size_t len = wcscspn(cwstr(), _str.cwstr());
+  uint32 len = wcscspn(cwstr(), _str.cwstr());
   
   return len ? mid(0, len) : CString();
 }
@@ -726,7 +726,7 @@ std::vector<CString> CString::split(const CString& _spliter, int flags) const
 {
   std::vector<CString> v;
 
-  size_t spliter_length = (flags & SM_BYCHARS) ? 1 : _spliter.length();
+  uint32 spliter_length = (flags & SM_BYCHARS) ? 1 : _spliter.length();
   const wchar_t* p = cwstr();
   const wchar_t* pend = cwstr() + length();
     
@@ -736,7 +736,7 @@ std::vector<CString> CString::split(const CString& _spliter, int flags) const
       
     if(flags & SM_BYCHARS)
     {
-      size_t i = wcscspn(p, _spliter.cwstr());
+      uint32 i = wcscspn(p, _spliter.cwstr());
       if((p + i) >= pend)
         s = 0;
       else
@@ -817,7 +817,7 @@ CString& CString::reverse()
 #endif
 
 #ifdef _WIN32
-size_t CString::replace(char _chFind, char _chReplace)
+uint32 CString::replace(char _chFind, char _chReplace)
 {
   if(_chFind == _chReplace)
     return 0;
@@ -837,14 +837,14 @@ size_t CString::replace(char _chFind, char _chReplace)
 }
 #endif
 
-size_t CString::replace(wchar_t _chFind, wchar_t _chReplace)
+uint32 CString::replace(wchar_t _chFind, wchar_t _chReplace)
 {
   if(_chFind == _chReplace)
     return 0;
 
   bool share = m_pBuffer == NULL ? false : m_pBuffer->isShareable();
 
-  size_t nCount = 0;
+  uint32 nCount = 0;
 
   for(wchar_t* p = wcschr(wstr(), _chFind); p != NULL; p = wcschr(p, _chFind), ++nCount)
     *p = _chReplace;
@@ -852,16 +852,16 @@ size_t CString::replace(wchar_t _chFind, wchar_t _chReplace)
   return nCount;
 }
 
-size_t CString::replace(const CString& _strFind, const CString& _strReplace)
+uint32 CString::replace(const CString& _strFind, const CString& _strReplace)
 {
   if(_strFind == _strReplace)
     return 0;
 
   bool share = m_pBuffer == NULL ? false : m_pBuffer->isShareable();
 
-  size_t nCount = 0;
-  size_t lenFind = _strFind.length();
-  size_t lenReplace = _strReplace.length();
+  uint32 nCount = 0;
+  uint32 lenFind = _strFind.length();
+  uint32 lenReplace = _strReplace.length();
 
   if(lenFind == lenReplace)
   {
@@ -902,7 +902,7 @@ size_t CString::replace(const CString& _strFind, const CString& _strReplace)
 
 CString& CString::operator +=(wchar_t _chr)
 {
-  size_t len = length();
+  uint32 len = length();
   reserve(len + 1);
 
   bool share = m_pBuffer == NULL ? false : m_pBuffer->isShareable();
@@ -927,8 +927,8 @@ CString& CString::operator +=(const wchar_t* _str)
   if(_str == 0)
     return *this;
   
-  size_t len = length();
-  size_t len2 = wcslen(_str);
+  uint32 len = length();
+  uint32 len2 = wcslen(_str);
 
   if(len + len2 == 0 || len2 == 0)
     return *this;
@@ -955,8 +955,8 @@ CString& CString::operator +=(const CString& _str)
     return *this;
 
   return operator +=(_str.cwstr());
-  //size_t len = length();
-  //size_t len2 = _str.length();
+  //uint32 len = length();
+  //uint32 len2 = _str.length();
   //
   //if(len + len2 == 0)
   //  return *this;
@@ -987,7 +987,7 @@ CString CString::operator +(const char* _str) const
 CString CString::operator +(const wchar_t* _str) const
 {
   CString res;
-  size_t len = 0;
+  uint32 len = 0;
   if(!_str)
     len = wcslen(_str);
   res.reserve(length() + len);
@@ -1103,7 +1103,7 @@ str_t& str_t::trimLeft()
 {
   exclusive();
   int idx = 0;
-  size_t max = length();
+  uint32 max = length();
   while (idx < ((int)max) && _istspace(tcharAt(idx)))
     idx++;
 
@@ -1139,9 +1139,9 @@ CString& CString::trimLeft()
   exclusive();
 
   wchar_t *pstr = m_pBuffer->begin();
-  size_t len = wcslen (pstr);
-  size_t nbefore = 0;
-  size_t nafter = 0;
+  uint32 len = (uint32)wcslen (pstr);
+  uint32 nbefore = 0;
+  uint32 nafter = 0;
   wchar_t *ptmp = pstr;
   for (; iswspace (*ptmp++);)
     nbefore++;
@@ -1162,9 +1162,9 @@ CString& CString::trimRight()
   exclusive();
 
   wchar_t *pstr = m_pBuffer->begin();
-  size_t len = wcslen (pstr);
-  size_t nafter = 0;
-  for (size_t ix = len - 1; ix >= 0; ix --)
+  uint32 len = (uint32)wcslen (pstr);
+  uint32 nafter = 0;
+  for (uint32 ix = len - 1; ix >= 0; ix --)
     {
       if (iswspace(pstr[ix]))
         nafter++;
@@ -1185,13 +1185,13 @@ CString& CString::trimAll()
   exclusive();
 
   wchar_t *pstr = m_pBuffer->begin();
-  size_t len = wcslen (pstr);
-  size_t nbefore = 0;
-  size_t nafter = 0;
+  uint32 len = (uint32)wcslen (pstr);
+  uint32 nbefore = 0;
+  uint32 nafter = 0;
   wchar_t *ptmp = pstr;
   for (; iswspace (*ptmp++);)
     nbefore++;
-  for (size_t ix = len - 1; ix > nbefore; ix --)
+  for (uint32 ix = len - 1; ix > nbefore; ix --)
     {
       if (iswspace(pstr[ix]))
         nafter++;
@@ -1232,7 +1232,7 @@ bool CString::split(const char* _separator, CString& _left, CString& _right) con
     return false;
 
   _left = left(n);
-  _right = mid(n + strlen(_separator));
+  _right = mid(n + (uint32)strlen(_separator));
 
   return true;
 }
@@ -1253,7 +1253,7 @@ int CString::loadFromUTF8 (const char *utf)
 {
   if (NULL == utf)
     return false;
-  size_t srcByteCount = strlen (utf);
+  uint32 srcByteCount = (uint32)strlen (utf);
 
   if(srcByteCount > 2 && utf[0] == 0xEF && utf[1] == 0xBB && utf[2] == 0xBF)
   {
@@ -1277,7 +1277,7 @@ int CString::loadFromUTF8 (const char *utf)
   return srcByteCount;
 }
 
-int CString::exportToUTF8 (char *utf, int maxbuf) const 
+int CString::exportToUTF8 (char *utf, uint32 maxbuf) const 
 {
   assert (maxbuf > 0);
   const wchar_t *tmp = cwstr ();
@@ -1297,7 +1297,7 @@ CString::calcUTF8Length (void) const
   return (int)dest_wcsmblen (tmp);
 }
 
-int CString::loadFromASCII(const char *pBuf, int nSize)
+int CString::loadFromASCII(const char *pBuf, uint32 nSize)
 {
 	if(pBuf == NULL)
 		return 0;

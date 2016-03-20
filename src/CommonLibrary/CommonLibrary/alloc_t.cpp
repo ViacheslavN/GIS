@@ -21,13 +21,13 @@ simple_alloc_t::simple_alloc_t()
 
 }
 
-void* simple_alloc_t::alloc(size_t size)
+void* simple_alloc_t::alloc(uint32 size)
 {
 #ifdef _DEBUG
 #ifdef _CHECK_MEM
-	byte* pBuf =  (byte*)::malloc(size + 3 *sizeof(size_t));
+	byte* pBuf =  (byte*)::malloc(size + 3 *sizeof(uint32));
 #else
-	byte* pBuf =  (byte*)::malloc(size + sizeof(size_t));
+	byte* pBuf =  (byte*)::malloc(size + sizeof(uint32));
 #endif
 	assert(pBuf);
 	m_nTotalBalanceAllocMemory += size;
@@ -37,38 +37,38 @@ void* simple_alloc_t::alloc(size_t size)
 	if(m_nSizeMax < size)
 		m_nSizeMax = size;
 #ifdef _CHECK_MEM
-	  memcpy(pBuf, &nMemSymbol, sizeof(size_t));
-	  memcpy(pBuf + sizeof(size_t), &size, sizeof(size_t));
+	  memcpy(pBuf, &nMemSymbol, sizeof(uint32));
+	  memcpy(pBuf + sizeof(uint32), &size, sizeof(uint32));
 	  size_t nSym = nMemSymbol + size;
-	  memcpy(pBuf + 2 *sizeof(size_t) + size, &nSym, sizeof(size_t));
-	  return pBuf + 2 * sizeof(size_t);
+	  memcpy(pBuf + 2 *sizeof(uint32) + size, &nSym, sizeof(uint32));
+	  return pBuf + 2 * sizeof(uint32);
 #else
-	  memcpy(pBuf, &size, sizeof(size_t));
-	  return pBuf + sizeof(size_t);
+	  memcpy(pBuf, &size, sizeof(uint32));
+	  return pBuf + sizeof(uint32);
 #endif
 	
 
 #else
-	return ::malloc(size + sizeof(size_t));
+	return ::malloc(size + sizeof(uint32));
 #endif
 }
 void  simple_alloc_t::free(void* ptr)
 {
 	byte* pBuf = (byte*)ptr;
 #ifdef _DEBUG
-	size_t size = 0;
+	uint32 size = 0;
 #ifdef _CHECK_MEM
-	size_t nSymbol = 0;
-	pBuf -= 2* sizeof(size_t);
-	memcpy(&nSymbol, pBuf, sizeof(size_t));
+	uint32 nSymbol = 0;
+	pBuf -= 2* sizeof(uint32);
+	memcpy(&nSymbol, pBuf, sizeof(uint32));
 	assert(nSymbol == nMemSymbol);
-	memcpy(&size, pBuf +  sizeof(size_t), sizeof(size_t));
+	memcpy(&size, pBuf +  sizeof(uint32), sizeof(uint32));
 	assert(size > 0 && size <= m_nSizeMax);
-	memcpy(&nSymbol, pBuf +  2* sizeof(size_t) + size, sizeof(size_t));
+	memcpy(&nSymbol, pBuf +  2* sizeof(uint32) + size, sizeof(uint32));
 	assert((nSymbol - size) == nMemSymbol);
 #else
-	pBuf -= sizeof(size_t);
-	memcpy(&size, pBuf, sizeof(size_t));
+	pBuf -= sizeof(uint32);
+	memcpy(&size, pBuf, sizeof(uint32));
 #endif
 	m_nTotalBalanceAllocMemory -= size;
 	m_nTotalFree += size;

@@ -302,7 +302,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj464ds-4.9.1.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibProj464ds-4.9.1.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -421,7 +421,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)\Proj464rs-4.9.1.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibProj464rs-4.9.1.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>

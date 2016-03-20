@@ -78,7 +78,7 @@ namespace embDB
 			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			valueStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValuesSize);
 			stream.seek(stream.pos() + nKeySize + nValuesSize, CommonLib::soFromBegin);			 
-			for(size_t i = 0, sz = vecKeys.size(); i < sz; ++i)
+			for(uint32 i = 0, sz = vecKeys.size(); i < sz; ++i)
 			{
 				KeyStreams.write(vecKeys[i]);
 				valueStreams.write(vecValues[i]);
@@ -110,7 +110,7 @@ namespace embDB
 			m_nCount--;
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			return (sizeof(TKey) + sizeof(TValue)) *  m_nCount +  sizeof(uint32);
 		}
@@ -118,19 +118,19 @@ namespace embDB
 		{
 			return m_nPageSize < size();
 		}
-		virtual size_t count() const
+		virtual uint32 count() const
 		{
 			return m_nCount;
 		}
-		size_t headSize() const
+		uint32 headSize() const
 		{
 			return  sizeof(uint32);
 		}
-		size_t rowSize() const
+		uint32 rowSize() const
 		{
 			return  (sizeof(TKey) + sizeof(TValue)) *  m_nCount ;
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return  (sizeof(TKey) + sizeof(TValue)) ;
 		}

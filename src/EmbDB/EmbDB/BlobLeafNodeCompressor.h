@@ -68,7 +68,7 @@ namespace embDB
 			if(!m_pValueMemset)
 				return;
 
-			for (size_t i = 0; i < m_pValueMemset->size(); ++i )
+			for (uint32 i = 0; i < m_pValueMemset->size(); ++i )
 			{
 				sBlobVal& val = (*m_pValueMemset)[i];
 				if(val.m_pBuf)
@@ -144,7 +144,7 @@ namespace embDB
  
 
 
-		 	for (size_t i = 0, sz = keySet.size(); i < sz; ++i )
+		 	for (uint32 i = 0, sz = keySet.size(); i < sz; ++i )
 			{
 				KeyStream.write(keySet[i]);
 				sBlobVal& blob = valueSet[i];
@@ -196,7 +196,7 @@ namespace embDB
 		}
 		virtual bool add(const TLeafKeyMemSet& keySet, const TLeafValueMemSet& valuekSet)
 		{
-			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
+			for (uint32 i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
 				insert(i, keySet[i], valuekSet[i]);
 			}
@@ -209,7 +209,7 @@ namespace embDB
 		
 			m_nCount = 0;
 			m_nBlobDataSize = 0;
-			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
+			for (uint32 i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
 				insert(i, keySet[i], valueSet[i]);
 			}
@@ -233,7 +233,7 @@ namespace embDB
 			m_nBlobDataSize  += (newSize - oldSize);
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			return (sizeof(TKey) *  m_nCount )  + sizeof(uint32) + m_nBlobDataSize;
 		}
@@ -241,15 +241,15 @@ namespace embDB
 		{
 			return m_nPageSize < size();
 		}
-		virtual size_t count() const
+		virtual uint32 count() const
 		{
 			return m_nCount;
 		}
-		size_t headSize() const
+		uint32 headSize() const
 		{
 			return  sizeof(uint32);
 		}
-		size_t rowSize() const
+		uint32 rowSize() const
 		{
 			return (sizeof(TKey) *  m_nCount ) + m_nBlobDataSize;
 		}
@@ -257,14 +257,14 @@ namespace embDB
 		{
 			m_nCount = 0;
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return  (m_nMaxPageLen  + sizeof(uint32) + sizeof(TKey));
 		}
 		void SplitIn(uint32 nBegin, uint32 nEnd, BlobLeafNodeCompressor *pCompressor)
 		{
 			uint32 nSplitBlobDataSize = 0;
-			for (size_t i  = nBegin; i < nEnd; ++i)
+			for (uint32 i  = nBegin; i < nEnd; ++i)
 			{
 				nSplitBlobDataSize += GetBlobSize((*m_pValueMemset)[i]);
 			}

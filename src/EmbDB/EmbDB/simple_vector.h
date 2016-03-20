@@ -21,7 +21,7 @@ public:
 	{
 		clear();
 	}
-	size_t size() const {return size_;}
+	uint32 size() const {return size_;}
 	void clear()
 	{
 		if(data_)
@@ -39,7 +39,7 @@ public:
 		data_[size_] = val;
 		size_++;
 	}
-	void reserve(size_t nSize)
+	void reserve(uint32 nSize)
 	{
 		if(capacity_ > nSize)
 			return;
@@ -225,13 +225,13 @@ public:
 		return nLastLessIndex;
 	}
 
-	const TValue& operator [](size_t nIndex) const
+	const TValue& operator [](uint32 nIndex) const
 	{
 		assert(nIndex < size_);
 		return data_[nIndex];
 	}
 
-	TValue& operator [](size_t nIndex) 
+	TValue& operator [](uint32 nIndex) 
 	{
 		assert(nIndex < size_);
 		return data_[nIndex];
@@ -240,8 +240,8 @@ public:
 		private:
 			TValue*  data_;
 			CommonLib::alloc_t* alloc_;
-			size_t capacity_;
-			size_t size_;
+			uint32 capacity_;
+			uint32 size_;
 			//TComp  m_comp;
 			CommonLib::simple_alloc_t m_simple_alloc;
 	};

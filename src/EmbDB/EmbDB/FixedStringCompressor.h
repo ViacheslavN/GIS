@@ -62,7 +62,7 @@ namespace embDB
 			{
 				
 
-				sString.m_nLen  = strlen((const char*)pStream->buffer() + pStream->pos()) + 1;
+				sString.m_nLen  = (uint32)strlen((const char*)pStream->buffer() + pStream->pos()) + 1;
 				m_nStringDataSize += sString.m_nLen;
 				sString.m_pBuf = (byte*)m_pAlloc->alloc(sString.m_nLen);
 				memcpy(sString.m_pBuf, pStream->buffer() + pStream->pos(), sString.m_nLen);
@@ -87,7 +87,7 @@ namespace embDB
 		}
 		void Clear()
 		{
-			for (size_t i = 0; i < m_pValueMemset->size(); ++i )
+			for (uint32 i = 0; i < m_pValueMemset->size(); ++i )
 			{
 				sFixedStringVal& val = (*m_pValueMemset)[i];
 				m_pAlloc->free(val.m_pBuf);
@@ -103,10 +103,10 @@ namespace embDB
 
 
 	template<class _TKey, class _Transaction>
-	class TBPFixedStringLeafCompressor : public TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor, TFixedStringACCompressor<sFixedStringVal>, StringFieldCompressorParams> 
+	class TBPFixedStringLeafCompressor : public TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor, /*TFixedStringACCompressor*/TFixedCompress, StringFieldCompressorParams> 
 	{
 		public:
-			typedef TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor,  TFixedStringACCompressor<sFixedStringVal>, StringFieldCompressorParams>  TBase;
+			typedef TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor,  /*TFixedStringACCompressor*/TFixedCompress, StringFieldCompressorParams>  TBase;
 
 			TBPFixedStringLeafCompressor(uint32 nPageSize, Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
 				TKeyMemSet *pKeyMemset= NULL, TValueMemSet *pValueMemSet = NULL) : TBase(nPageSize, pTran, pAlloc, pParams, pKeyMemset, pValueMemSet)

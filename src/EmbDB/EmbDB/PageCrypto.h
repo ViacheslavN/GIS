@@ -10,11 +10,11 @@ namespace embDB
 		public:
 			IPageCrypto(){}
 			virtual ~IPageCrypto(){}
-			virtual bool encrypt(byte* pBuf, size_t len) = 0;
-			virtual bool decrypt(byte* pBuf, size_t len) = 0;
+			virtual bool encrypt(byte* pBuf, uint32 len) = 0;
+			virtual bool decrypt(byte* pBuf, uint32 len) = 0;
 
-			virtual bool encrypt(byte* inBuf, size_t inLen, byte* outBuf, size_t outLen) = 0;
-			virtual bool decrypt(byte* inBuf, size_t inLen, byte* outBuf, size_t outLen) = 0;
+			virtual bool encrypt(byte* inBuf, uint32 inLen, byte* outBuf, uint32 outLen) = 0;
+			virtual bool decrypt(byte* inBuf, uint32 inLen, byte* outBuf, uint32 outLen) = 0;
 
 	};
 }

@@ -23,8 +23,8 @@ namespace embDB
 			virtual bool close();
 			virtual bool addTable(const wchar_t*  pszTableName, ITransaction *Tran = NULL);
  			virtual bool save(IDBTransaction *pTran);
-			virtual size_t getTableCnt() const;
-			virtual ITablePtr getTable(size_t nIndex) const;
+			virtual uint32 getTableCnt() const;
+			virtual ITablePtr getTable(uint32 nIndex) const;
 			virtual ITablePtr getTableByName(const wchar_t* pszTableName) const;
 			virtual ITablePtr getTableByID(int64 nID) const;
 
@@ -50,11 +50,11 @@ namespace embDB
 			{
 				return false;
 			}
-			virtual size_t getLinkCnt() const
+			virtual uint32 getLinkCnt() const
 			{
 				return 0;
 			}
-			virtual ILinkPtr getLink(size_t nIndex) const
+			virtual ILinkPtr getLink(uint32 nIndex) const
 			{
 				return ILinkPtr();
 			}

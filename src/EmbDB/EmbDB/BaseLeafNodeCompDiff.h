@@ -59,7 +59,7 @@ namespace embDB
 			m_nCount = vecKeys.size();
 			m_KeyCompressor.clear();
 			m_ValueCompressor.clear();
-			for (size_t i = 0, sz = vecKeys.size(); i < sz; 	++i)
+			for (uint32 i = 0, sz = vecKeys.size(); i < sz; 	++i)
 			{
 				if(i != 0)
 					m_KeyCompressor.AddDiffSymbol(vecKeys[i] - vecKeys[i - 1]); 
@@ -74,7 +74,7 @@ namespace embDB
 			m_nCount = m_pKeyMemSet->size();
 			m_KeyCompressor.clear();
 			m_ValueCompressor.clear();
-			for (size_t i = 0, sz = m_pKeyMemSet->size(); i < sz; 	++i)
+			for (uint32 i = 0, sz = m_pKeyMemSet->size(); i < sz; 	++i)
 			{
 				if(i != 0)
 					m_KeyCompressor.AddDiffSymbol((*m_pKeyMemSet)[i] - (*m_pKeyMemSet)[i - 1]); 

@@ -26,7 +26,7 @@ public:
 		stream.read(value);
 	}
 
-	size_t rowSize()
+	uint32 rowSize()
 	{
 		return sizeof(TValue);
 	}
@@ -59,13 +59,13 @@ public:
 		{
 			m_vec.push_back(val);
 		}
-		size_t size() {return m_vec.size();}
+		uint32 size() {return m_vec.size();}
 		void save(TReaderWriter& rw, CommonLib::FxMemoryWriteStream& stream)
 		{
 			uint32 nSize = m_vec.size();
 			stream.write(nSize);
 		
-			for (size_t idx = 0, sz = m_vec.size(); idx < m_vec.size(); ++idx)
+			for (uint32 idx = 0, sz = m_vec.size(); idx < m_vec.size(); ++idx)
 			{
 				//stream.write(m_vec[idx]);
 				rw.write(m_vec[idx], stream);
@@ -323,7 +323,7 @@ public:
 
 	}
 	private:
-		size_t m_nPageIDx;
+		uint32 m_nPageIDx;
 		SPageValues *m_pPageNode;
 	};
 

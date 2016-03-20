@@ -147,7 +147,7 @@ namespace embDB
 			m_nCount = keySet.size();
 			m_LinkCompressor.clear();
 			m_KeyCompressor.clear();
-			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
+			for (uint32 i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
 			
 				m_KeyCompressor.AddSymbol(i + 1, i, keySet[i], keySet);

@@ -111,7 +111,7 @@ namespace embDB
 		void remove(const TypeKey& key);
 		TTreeNode* findNode(const TypeKey& key);
 		TTreeNode* findNodeForBTreeInsert(const TypeKey& key);
-		size_t size() const {return m_nSize;}
+		uint32 size() const {return m_nSize;}
 		bool isEmpty() const {return m_nSize == 0}
 
 	protected:
@@ -131,7 +131,7 @@ namespace embDB
 	protected:
 		TTreeNode *m_pRoot;
 		CommonLib::alloc_t *m_pAlloc;
-		size_t m_nSize;
+		uint32 m_nSize;
 		TComporator m_Cmp;
 	};
 	#include "BaseRBMultiTree.cpp"

@@ -31,7 +31,7 @@ namespace embDB
 
 			virtual bool insert(const TNodeElem& key) = 0;
 			virtual bool remove(const TNodeElem& key) = 0;
-			virtual uint32 cnt_size(size_t nCnt) = 0;
+			virtual uint32 cnt_size(uint32 nCnt) = 0;
 			virtual uint32 size() const = 0;
 	};
 }

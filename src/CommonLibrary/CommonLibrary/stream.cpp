@@ -114,7 +114,7 @@ void IReadStreamBase::read(CommonLib::CString& str)
 	if(nUtf8Len)
 	{
 		std::vector<char> buf(nUtf8Len + 1);
-		read((byte*)&buf[0], buf.size());
+		read((byte*)&buf[0], (uint32)buf.size());
 		str.loadFromUTF8(&buf[0]);
 	}
 
@@ -198,7 +198,7 @@ bool IReadStreamBase::save_read(CommonLib::CString& str)
 	if(nUtf8Len)
 	{
 		std::vector<char> buf(nUtf8Len + 1);
-		read((byte*)&buf[0], buf.size());
+		read((byte*)&buf[0], (uint32)buf.size());
 		str.loadFromUTF8(&buf[0]);
 	}
 
@@ -279,11 +279,11 @@ void IWriteStreamBase::write(const CommonLib::CString& str)
 
 void IWriteStreamBase::write(const char* pszStr)
 {
-	write((byte*)pszStr, strlen(pszStr));
+	write((byte*)pszStr, (uint32)strlen(pszStr));
 }
 void IWriteStreamBase::write(const wchar_t* pszStr)
 {
-	write((byte*)pszStr, 2* wcslen(pszStr));
+	write((byte*)pszStr, 2* (uint32)wcslen(pszStr));
 }
 
 void IWriteStreamBase::write(IStream *pStream, int32 nPos, int32 nSize)

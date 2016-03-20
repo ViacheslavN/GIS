@@ -297,7 +297,7 @@ namespace embDB
 		CFilePage* pPage = m_PageChache.GetPage(nAddr, false, bRead, nSize);
 	 	return FilePagePtr(pPage);
 	}
-	void CTransaction::saveTranFilePage(FilePagePtr pPage,  size_t nSize,  bool bChandgeInCache)
+	void CTransaction::saveTranFilePage(FilePagePtr pPage,  uint32 nSize,  bool bChandgeInCache)
 	{
 		m_TranStorage.saveFilePage(pPage.get(), pPage->getAddr());
 	}
@@ -337,18 +337,18 @@ namespace embDB
 		m_PageChache.AddPage(nAddr, nTranAddr, pFilePage);
 		return FilePagePtr(pFilePage);
 	}
-	bool CTransaction::saveFilePage(FilePagePtr pPage,  size_t nSize, bool bChangeInCache )
+	bool CTransaction::saveFilePage(FilePagePtr pPage,  uint32 nSize, bool bChangeInCache )
 	{
 		m_PageChache.savePage(pPage.get());
 		return true;
 	}
-	bool CTransaction::saveFilePage(CFilePage* pPage, size_t nDataSize,  bool ChandgeInCache)
+	bool CTransaction::saveFilePage(CFilePage* pPage, uint32 nDataSize,  bool ChandgeInCache)
 	{
 		m_PageChache.savePage(pPage);
 		return true;
 	}
 
-	/*size_t CTransaction::getPageSize() const
+	/*uint32 CTransaction::getPageSize() const
 	{
 		return m_pDBStorage->getPageSize();
 	}*/
@@ -413,7 +413,7 @@ namespace embDB
 	
 	bool CTransaction::commit_undo()
 	{
-		for (size_t i = 0, sz = m_InnerTran.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_InnerTran.size(); i < sz; ++i)
 		{
 			m_InnerTran[i]->commit();
 		}
@@ -438,11 +438,11 @@ namespace embDB
 		m_TranStorage.Flush();
 
 
-		for (size_t i = 0, sz = m_vecFreePages.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecFreePages.size(); i < sz; ++i)
 		{
 			m_pDBStorage->removeFromFreePage(m_vecFreePages[i]);
 		}
-		for (size_t i = 0, sz = m_vecRemovePages.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecRemovePages.size(); i < sz; ++i)
 		{
 			m_TranPerfCounter.RemoveDBPage();
 			m_pDBStorage->dropFilePage(m_vecRemovePages[i]);
@@ -461,7 +461,7 @@ namespace embDB
 	}
 	bool CTransaction::commit_redo()
 	{
-		for (size_t i = 0, sz = m_InnerTran.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_InnerTran.size(); i < sz; ++i)
 		{
 			m_InnerTran[i]->commit();
 		}
@@ -489,11 +489,11 @@ namespace embDB
 		m_TranStorage.Flush();
 
 
-		for (size_t i = 0, sz = m_vecFreePages.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecFreePages.size(); i < sz; ++i)
 		{
 			m_pDBStorage->removeFromFreePage(m_vecFreePages[i]);
 		}
-		for (size_t i = 0, sz = m_vecRemovePages.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecRemovePages.size(); i < sz; ++i)
 		{
 			m_TranPerfCounter.RemoveDBPage();
 			m_pDBStorage->dropFilePage(m_vecRemovePages[i]);
@@ -517,11 +517,11 @@ namespace embDB
 	{
 		return m_bError;
 	}
-	size_t  CTransaction::getErrorMessageSize() const
+	uint32  CTransaction::getErrorMessageSize() const
 	{
 		return 0;
 	}
-	size_t  CTransaction::getErroMessage(wchar_t * pBuf, size_t nSize) const
+	uint32  CTransaction::getErroMessage(wchar_t * pBuf, uint32 nSize) const
 	{
 		return 0;
 	}

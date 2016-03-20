@@ -10,7 +10,7 @@ template <class Type>
 class TSimpleStack
 {
   public:
-    TSimpleStack(CommonLib::alloc_t* alloc = NULL, size_t capacity = 0):alloc_(alloc), capacity_(capacity), size_(0), data_(0)
+    TSimpleStack(CommonLib::alloc_t* alloc = NULL, uint32 capacity = 0):alloc_(alloc), capacity_(capacity), size_(0), data_(0)
     {
       if(!alloc_)
 		  alloc_ = &m_alloc;
@@ -71,23 +71,23 @@ class TSimpleStack
         data_ = tmp;
       }
     }
-	void set_size(size_t nsize)
+	void set_size(uint32 nsize)
 	{
 		assert(capacity_ > size_);
 		size_ = nsize;
 	}
-    size_t size() const { return size_; }
-	Type& operator [](size_t nIndex)
+    uint32 size() const { return size_; }
+	Type& operator [](uint32 nIndex)
 	{
 		return data_[nIndex];
 	}
-	const Type& operator [](size_t nIndex) const
+	const Type& operator [](uint32 nIndex) const
 	{
 		return data_[nIndex];
 	}
-	size_t capacity() const { return capacity_; }
+	uint32 capacity() const { return capacity_; }
 	bool empty(){return size_ == 0;}
-	void reserve(size_t nSize)
+	void reserve(uint32 nSize)
 	{
 		if(capacity_ > nSize)
 			return;
@@ -110,8 +110,8 @@ class TSimpleStack
   private:
     Type*  data_;
     CommonLib::alloc_t* alloc_;
-    size_t capacity_;
-    size_t size_;
+    uint32 capacity_;
+    uint32 size_;
 	CommonLib::simple_alloc_t  m_alloc;
 
 };

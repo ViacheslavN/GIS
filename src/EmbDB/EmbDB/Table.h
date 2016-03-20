@@ -69,8 +69,8 @@ namespace embDB
 		
 			
 			virtual IFieldPtr getField(const CommonLib::CString& sName) const ;
-			virtual size_t getFieldCnt() const;
-			virtual IFieldPtr getField(size_t nIdx) const;
+			virtual uint32 getFieldCnt() const;
+			virtual IFieldPtr getField(uint32 nIdx) const;
 			virtual IFieldsPtr getFields() const {return m_pFields;}
 			
 

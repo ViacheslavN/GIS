@@ -13,7 +13,7 @@ namespace embDB
 		if(nBeginPageCnt == 0)
 			nBeginPageCnt = 1;
 
-		for (size_t i = 0; i < nBeginPageCnt; ++i)
+		for (uint32 i = 0; i < nBeginPageCnt; ++i)
 		{
 			SMemPage* memPage = new  SMemPage();
 			memPage->m_pBuf = m_pAlloc->alloc(m_nMemPageSize);
@@ -39,7 +39,7 @@ namespace embDB
 		m_mapPage.clear();
 	}
 
-	void* CPageAlloc::alloc(size_t size)
+	void* CPageAlloc::alloc(uint32 size)
 	{
  
 		if(size >= m_nMemPageSize)
@@ -90,8 +90,8 @@ namespace embDB
  
 		/*uint32 nPageID = 0;
 		byte* pBuf = (byte*)ptr;
-		pBuf -= sizeof(size_t);
-		memcpy(&nPageID, pBuf, sizeof(size_t));
+		pBuf -= sizeof(uint32);
+		memcpy(&nPageID, pBuf, sizeof(uint32));
 		assert(nPageID < m_mapPage.size());*/
 
 		std::map<void*, SMemPage*>::iterator it = m_mapPage.lower_bound(ptr);

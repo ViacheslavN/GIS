@@ -113,8 +113,8 @@ namespace embDB
 		int64 nPrev = stream.readInt64();
 		int64  nNext = stream.readInt64();
 		//m_nTableID = stream.readInt64();
-		size_t nlenStr = stream.readInt32();
-		if(nlenStr <= 0 || nlenStr > size_t(stream.size() - stream.pos()))
+		uint32 nlenStr = stream.readInt32();
+		if(nlenStr <= 0 || nlenStr > uint32(stream.size() - stream.pos()))
 			return false;
 		std::vector<wchar_t> buf(nlenStr + 1, L'\0');
 		stream.read((byte*)&buf[0], nlenStr * 2);
@@ -222,8 +222,8 @@ namespace embDB
 	
 	bool CTable::readHeader(CommonLib::FxMemoryReadStream& stream)
 	{
-		size_t nlenStr = stream.readInt32();
-		if(nlenStr <= 0 || nlenStr > size_t(stream.size() - stream.pos()))
+		uint32 nlenStr = stream.readInt32();
+		if(nlenStr <= 0 || nlenStr > uint32(stream.size() - stream.pos()))
 		 return false;
 		std::vector<wchar_t> buf(nlenStr + 1, L'\0');
 		stream.read((byte*)&buf[0], nlenStr * 2);
@@ -352,8 +352,8 @@ namespace embDB
 			return false;//TO DO DB LOg
 		if(header.m_nObjectPageType != TABLE_PAGE || header.m_nSubObjectPageType != TABLE_STORAGE_PAGE)
 			return false;
-		size_t nlenStr = stream.readInt32();
-		if(nlenStr <= 0 || nlenStr > size_t(stream.size() - stream.pos()))
+		uint32 nlenStr = stream.readInt32();
+		if(nlenStr <= 0 || nlenStr > uint32(stream.size() - stream.pos()))
 			return false;
 		std::vector<wchar_t> buf(nlenStr + 1, L'\0');
 		stream.read((byte*)&buf[0], nlenStr * 2);
@@ -843,11 +843,11 @@ namespace embDB
 	{
 		return m_pFields->GetField(sName);
 	}
-	size_t  CTable::getFieldCnt() const
+	uint32  CTable::getFieldCnt() const
 	{
 		return m_pFields->GetFieldCount();
 	}
-	IFieldPtr CTable::getField(size_t nIdx) const
+	IFieldPtr CTable::getField(uint32 nIdx) const
 	{
 		return m_pFields->GetField(nIdx);
 	}

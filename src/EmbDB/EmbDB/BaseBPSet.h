@@ -50,7 +50,7 @@ namespace embDB
 		};
 
 
-		TBPlusTreeSet(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
+		TBPlusTreeSet(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, bool bMulti = false, bool bCheckCRC32 = true) :
 		  m_nPageBTreeInfo(nPageBTreeInfo), m_pTransaction(pTransaction), m_pAlloc(pAlloc), m_nChacheSize(nChacheSize)
 		 ,m_bChangeRoot(false), m_nRootAddr(-1), m_bMulti(bMulti)
 		 ,m_Chache(pAlloc)
@@ -368,7 +368,7 @@ namespace embDB
 	{
 		if(m_Chache.size() <= m_nChacheSize)
 			return;
-		for (size_t i = 0, sz = m_Chache.size(); i < sz - m_nChacheSize; i++)
+		for (uint32 i = 0, sz = m_Chache.size(); i < sz - m_nChacheSize; i++)
 		{
 			TBTreeNode* pDelNode = m_Chache.remove_back();//remove(pChNode->m_nPageAddr);
 			if(pDelNode)
@@ -1193,8 +1193,8 @@ namespace embDB
 							pCheckNode = getNode(pCheckNode->m_nParent);
 							continue;
 						}
-						size_t nLeftsize =  pLeftNode ? pLeftNode->rowSize() : 0;
-						size_t nRightSize = pRightNode ? pRightNode->rowSize() : 0;
+						uint32 nLeftsize =  pLeftNode ? pLeftNode->rowSize() : 0;
+						uint32 nRightSize = pRightNode ? pRightNode->rowSize() : 0;
 						if(nLeftsize > nRightSize)
 						{
 							pDonorNode = pLeftNode;
@@ -1218,7 +1218,7 @@ namespace embDB
 					}
 					bool bUnion = false;
 					bool bAlignment = false;
-					size_t nSumSize = pCheckNode->rowSize() + pDonorNode->rowSize() + pDonorNode->headSize();
+					uint32 nSumSize = pCheckNode->rowSize() + pDonorNode->rowSize() + pDonorNode->headSize();
 
 
 					if(bLeft)
@@ -1341,7 +1341,7 @@ namespace embDB
 			return true;
 		}
 		pLeafNode->UnionWith(pDonorNode);
-		size_t nNodeSize = pLeafNode->size() ;
+		uint32 nNodeSize = pLeafNode->size() ;
 		if(nNodeSize > m_pTransaction->getPageSize())
 		{
 			AlignmentLeafNode(pDonorNode, pDonorParentKeyNode, pLeafNode, pParentKeyNode, bLeft);
@@ -1639,7 +1639,7 @@ namespace embDB
 			}
 		}
 			assert(pDonorNode);
-			size_t nSumSize = pDonorNode->rowSize() + pLeafNode->rowSize() + pLeafNode->headSize();
+			uint32 nSumSize = pDonorNode->rowSize() + pLeafNode->rowSize() + pLeafNode->headSize();
 			int nCnt = ((pLeafNode->count() + pDonorNode->count()))/2 - pLeafNode->count();
 			
 			bool bUnion = false;
@@ -1817,7 +1817,7 @@ namespace embDB
 		Transaction* m_pTransaction;
 		typedef RBSet<TBTreeNode*> TChangeNode;
 		TChangeNode m_ChangeNode;
-		size_t m_nChacheSize;
+		uint32 m_nChacheSize;
 		typedef TCacheLRU<TLink, TBTreeNode> TNodesCache;
 		TNodesCache m_Chache;
 		bool m_bChangeRoot;
@@ -1852,7 +1852,7 @@ namespace embDB
 			BPTreeNodeSet< _Transaction, _TInnerNode, _TLeafNode> > TBase;
 		
 		
-		TBPSet(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false) :
+		TBPSet(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, bool bMulti = false) :
 		  TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, bMulti)
 		  {
 

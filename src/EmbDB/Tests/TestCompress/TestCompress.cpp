@@ -8,6 +8,7 @@
 #include "Test.h"
 #include "testNumLem.h"
 #include "TestDiffComp.h"
+#include "BWTSort.h"
 
 uint32 compressFile(const wchar_t *pszFileNameIn, const wchar_t* pszCompressFile);
 uint32 compressStaticFile(const wchar_t *pszFileNameIn, const wchar_t* pszCompressFile);
@@ -15,6 +16,10 @@ void DecompressFile(uint32 nFileSize, const wchar_t *pszCompressFile, const wcha
 void DecompressStaticFile(uint32 nFileSize, const wchar_t *pszCompressFile, const wchar_t* pszFileOut);
 int _tmain(int argc, _TCHAR* argv[])
 {
+
+	TestBWTSort();
+	return 0;
+
 
 /*	ACComp comp;
 	CommonLib::MemoryStream stream;

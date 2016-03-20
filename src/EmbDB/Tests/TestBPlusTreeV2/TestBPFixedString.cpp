@@ -71,7 +71,7 @@ public:
 	{
 
 	}
-	virtual void* alloc(size_t size)
+	virtual void* alloc(uint32 size)
 	{
 		byte *pBuf =  buf + pos;
 		pos += size;

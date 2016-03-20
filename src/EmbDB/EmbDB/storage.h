@@ -31,8 +31,8 @@ namespace embDB
 		virtual bool dropFilePage(FilePagePtr pPage);
 		virtual  bool dropFilePage(int64 nAddr);
 		virtual  FilePagePtr getNewPage(uint32 nSize, bool bWrite = false);
-		virtual  bool saveFilePage(CFilePage* pPage, size_t nDataSize = 0,  bool bChandgeInCache = false);
-		virtual  bool saveFilePage(FilePagePtr pPage, size_t nDataSize = 0,  bool bChandgeInCache = false);
+		virtual  bool saveFilePage(CFilePage* pPage, uint32 nDataSize = 0,  bool bChandgeInCache = false);
+		virtual  bool saveFilePage(FilePagePtr pPage, uint32 nDataSize = 0,  bool bChandgeInCache = false);
 		virtual bool saveNewPage(FilePagePtr pPage);
 		virtual int64 getNewPageAddr(uint32 nSize/*, uint32* nType = NULL*/);
 		//virtual FilePagePtr createPage(int64 nAddr);
@@ -56,10 +56,10 @@ namespace embDB
 
 		virtual bool saveState();
 
-		virtual bool open(const wchar_t* pszName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways/*, size_t nPageSize*/);
+		virtual bool open(const wchar_t* pszName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways/*, uint32 nPageSize*/);
 		virtual bool close();
-		//virtual void setPageSize(size_t nPageSize);
-		//virtual size_t getPageSize() const;
+		//virtual void setPageSize(uint32 nPageSize);
+		//virtual uint32 getPageSize() const;
 		virtual int64 getFileSize();
 		virtual int64 getBeginFileSize() const;
 		virtual bool isDirty() const;
@@ -83,7 +83,7 @@ namespace embDB
 		// typedef TSimpleCache<int64, CFilePage> TNodesCache;
 		 TNodesCache m_Chache;
 		 //TPageList   m_FreePageDisk;
-		 size_t m_nBasePageSize;
+		 uint32 m_nBasePageSize;
 		 int64 m_nLastAddr;
 #ifdef USE_FREE_PAGES
 		 CFreePageManager m_FreePageManager;

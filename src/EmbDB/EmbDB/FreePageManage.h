@@ -97,7 +97,7 @@ namespace embDB
 					m_BitMap.setBits(stream.buffer() + stream.pos(), m_nAddrLen/8);
 					//assert(m_nAddrLen == m_BitMap.getBitSize());
 					uint64 nPageAddr = m_nBlockNum * m_nAddrLen;
-					for (size_t i = 0; i < m_nAddrLen/8; ++i )
+					for (uint32 i = 0; i < m_nAddrLen/8; ++i )
 					{
 
 						stream.read(nbyte);
@@ -106,7 +106,7 @@ namespace embDB
 							nPageAddr += 8;
 							continue;
 						}
-						for (size_t b = 0; b < 8; ++b)
+						for (uint32 b = 0; b < 8; ++b)
 						{
 							if(nbyte & (0x01 << b))
 								m_FreePages.push(nPageAddr);
@@ -157,7 +157,7 @@ namespace embDB
 					stream.read(undoPageInfo.m_nBitMapAddInTran);
 				}
 
-				size_t rowSize()
+				uint32 rowSize()
 				{
 					return 2*sizeof(int64);
 				}

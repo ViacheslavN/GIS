@@ -46,12 +46,12 @@ namespace embDB
 			CMemPageCache(CommonLib::alloc_t *pAlloc);
 			~CMemPageCache();
 
-			virtual void* alloc(size_t size);
+			virtual void* alloc(uint32 size);
 			virtual void  free(void* buf);
 
 			void* getMemPage();
 			void  clear();
-			void init(size_t nPageSize, size_t nPagePoolSize);
+			void init(uint32 nPageSize, uint32 nPagePoolSize);
 		private:
 		
 
@@ -60,8 +60,8 @@ namespace embDB
 			CommonLib::alloc_t *m_pAlloc;
 			CommonLib::simple_alloc_t m_simple_alloc;
 			
-			size_t m_nPagePoolSize;
-			size_t m_nPageSize;
+			uint32 m_nPagePoolSize;
+			uint32 m_nPageSize;
 			TMemPages m_MemPages;
 			TFreeMemPages m_FreePages;
 

@@ -16,7 +16,7 @@ namespace embDB
 	bool CDeleteCursor::Init()
 	{
 
-		for (size_t i = 0, sz = m_pTable->getFieldCnt(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_pTable->getFieldCnt(); i < sz; ++i)
 		{
 			embDB::IFieldPtr pField = m_pTable->getField(i);
 			IValueFieldPtr pValueField = m_pTran->GetField(m_pTable->getName().cwstr(), pField->getName().cwstr());
@@ -33,7 +33,7 @@ namespace embDB
 	}
 	bool CDeleteCursor::remove(int64 nRowID)
 	{
-		for (size_t i = 0, sz = m_vecFields.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecFields.size(); i < sz; ++i)
 		{
 			m_vecFields[i]->remove(nRowID);
 		}

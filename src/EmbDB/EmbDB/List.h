@@ -117,7 +117,7 @@ public:
 		return iterator(pElem);
 	}
 
-	size_t size() const{return m_nSize;}
+	uint32 size() const{return m_nSize;}
 	void clear()
 	{
 		TNode *pNode = m_pBack;

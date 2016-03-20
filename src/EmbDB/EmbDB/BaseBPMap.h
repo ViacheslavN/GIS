@@ -35,7 +35,7 @@ namespace embDB
 
 		typedef TBPlusTreeSet<_TKey, _TLink, _TComp,_Transaction, _TInnerMemSet, _TLeafMemSet, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode, _TBTreeNode> TBase;
 
-		TBPlusTreeMap(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false, bool bCheckCRC32 = true):
+		TBPlusTreeMap(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, bool bMulti = false, bool bCheckCRC32 = true):
 			TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, bMulti, bCheckCRC32)
 		{}
 		~TBPlusTreeMap()
@@ -341,7 +341,7 @@ namespace embDB
 			BPTreeNodeMap< _Transaction, _TInnerNode, _TLeafNode> > TMapBase;
 
 
-		TBPMap(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false) :
+		TBPMap(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, bool bMulti = false) :
 			TMapBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, bMulti)
 		{
 

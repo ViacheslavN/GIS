@@ -42,8 +42,8 @@ namespace embDB
 		virtual void dropFilePage(FilePagePtr pPage);
 		virtual void dropFilePage(int64 nAddr, uint32 nSize);
 		virtual FilePagePtr getNewPage(uint32 nSize, bool bWrite = false);
-		virtual bool saveFilePage(FilePagePtr pPage,  size_t nSize = 0, bool bChandgeInCache = false);
-		virtual bool saveFilePage(CFilePage* pPage, size_t nDataSize = 0,  bool ChandgeInCache = false);
+		virtual bool saveFilePage(FilePagePtr pPage,  uint32 nSize = 0, bool bChandgeInCache = false);
+		virtual bool saveFilePage(CFilePage* pPage, uint32 nDataSize = 0,  bool ChandgeInCache = false);
  
 
  
@@ -56,11 +56,11 @@ namespace embDB
 		{
 			return m_bError;
 		}
-		virtual size_t getErrorMessageSize() const
+		virtual uint32 getErrorMessageSize() const
 		{
 			return 0;
 		}
-		virtual size_t getErroMessage(wchar_t * pBuf, size_t nSize) const
+		virtual uint32 getErroMessage(wchar_t * pBuf, uint32 nSize) const
 		{
 			return 0;
 		}
@@ -92,7 +92,7 @@ namespace embDB
 		{
 			return getFilePage(nAddr, nSize, bRead);
 		}
-		virtual void saveTranFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false) 
+		virtual void saveTranFilePage(FilePagePtr pPage,  uint32 nSize = 0,  bool bChandgeInCache = false) 
 		{
 			return saveTranFilePage(pPage, nSize, bChandgeInCache);
 		}

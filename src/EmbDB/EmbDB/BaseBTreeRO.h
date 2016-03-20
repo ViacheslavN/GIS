@@ -14,7 +14,7 @@ namespace embDB
 		typedef typename TMemSet::TTreeNode TTreeNode;
 		typedef _TBreeNode TBTreeNode;
 
-		TBaseBTreeRO(int64 nPageBTreeInfo, IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize) :
+		TBaseBTreeRO(int64 nPageBTreeInfo, IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize) :
 			m_nPageBTreeInfo(nPageBTreeInfo)
 			,m_pTransaction(pTransaction)
 			,m_pAlloc(pAlloc)
@@ -128,7 +128,7 @@ namespace embDB
 		}
 	private:
 		TBTreeNode *m_pRoot; 
-		size_t m_nChacheSize;
+		uint32 m_nChacheSize;
 		int64 m_nRootAddr;
 		int64 m_nPageBTreeInfo;
 

@@ -13,10 +13,11 @@
 
 #if defined(_WIN32_WCE)
 # define EMB_DB_TMP_PLATFORM "wce_"
-#elif defined(_WIN32)
-# define  EMB_DB_TMP_PLATFORM "32"
 #elif defined(WIN64)
 # define  EMB_DB_TMP_PLATFORM "64"
+#elif defined(_WIN32)
+# define  EMB_DB_TMP_PLATFORM "32"
+
 #else
 # error Unknown platform
 #endif

@@ -162,7 +162,7 @@ namespace embDB
 			m_pLeafCompressor = new TLeafCompressor();
 			return m_pLeafCompressor->Load(m_leafMemset, stream);
 		}
-		const TLeafObj* getLeafNode(size_t nIndex)
+		const TLeafObj* getLeafNode(uint32 nIndex)
 		{
 			assert(m_bIsLeaf);
 			if(nIndex< m_leafMemset.size())

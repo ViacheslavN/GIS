@@ -25,7 +25,7 @@ namespace embDB
 			return false; //TO DO log error
 
 		uint32 nCount = stream.readIntu32();
-		for (size_t i = 0; i < nCount; ++i)
+		for (uint32 i = 0; i < nCount; ++i)
 		{
 			short nType = stream.readintu16();
 			assert(nType >= dtUnknown && nType <= _countof(arrTypeSizes));
@@ -49,7 +49,7 @@ namespace embDB
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream, INDEX_PAGE, COMP_INDEX_INFO_PAGE);
 		stream.write(uint32(m_vecScheme.size()));
-		for (size_t i = 0, sz = m_vecScheme.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecScheme.size(); i < sz; ++i)
 		{
 			stream.write(m_vecScheme[i]);
 			if(m_vecScheme[i] == dtString)

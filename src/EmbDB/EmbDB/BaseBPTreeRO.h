@@ -20,7 +20,7 @@ namespace embDB
 	class TBaseBPlusTreeRO
 	{
 	public:
-		TBaseBPlusTreeRO(int64 nPageBTreeInfo, IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, bool bMulti = false) :
+		TBaseBPlusTreeRO(int64 nPageBTreeInfo, IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, bool bMulti = false) :
 		  m_nPageBTreeInfo(nPageBTreeInfo), m_pTransaction(pTransaction), m_pAlloc(pAlloc), m_nChacheSize(nChacheSize)
 		 ,m_bChangeRoot(false), m_nRootAddr(-1), m_bMulti(bMulti)
 		 ,m_Chache(pAlloc)
@@ -129,7 +129,7 @@ namespace embDB
 		{
 			if(m_Chache.size() <= m_nChacheSize)
 				return;
-			for (size_t i = 0, sz = m_Chache.size(); i < sz - m_nChacheSize; i++)
+			for (uint32 i = 0, sz = m_Chache.size(); i < sz - m_nChacheSize; i++)
 			{
 				TBTreeNode* pDelNode = m_Chache.remove_back();//remove(pChNode->m_nPageAddr);
 				if(pDelNode)
@@ -345,7 +345,7 @@ namespace embDB
 		Transaction* m_pTransaction;
 		typedef RBSet<TBTreeNode*> TChangeNode;
 		TChangeNode m_ChangeNode;
-		size_t m_nChacheSize;
+		uint32 m_nChacheSize;
 		typedef TCacheLRU<int64, TBTreeNode> TNodesCache;
 		TNodesCache m_Chache;
 		bool m_bChangeRoot;

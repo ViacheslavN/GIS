@@ -26,7 +26,7 @@ namespace embDB
 	{
 		
 	}
-	bool CStorage::open(const wchar_t* pszName, bool bReadOnly, bool bNew, bool bCreate, bool bOpenAlways/*, size_t nPageSize*/)
+	bool CStorage::open(const wchar_t* pszName, bool bReadOnly, bool bNew, bool bCreate, bool bOpenAlways/*, uint32 nPageSize*/)
 	{
 		CommonLib::enOpenFileMode nOpenMode;
 		CommonLib::enAccesRights nReadWrite;
@@ -65,12 +65,12 @@ namespace embDB
 		m_pBufPageCrypto.reset( new CFilePage(m_pAlloc, m_nBasePageSize, -1));
 		return bRet;
 	}
-	/*void CStorage::setPageSize(size_t nPageSize)
+	/*void CStorage::setPageSize(uint32 nPageSize)
 	{
 		m_nBasePageSize = nPageSize;
 		//m_nLastAddr = m_pFile.getFileSize();
 	}
-	size_t CStorage::getPageSize() const
+	uint32 CStorage::getPageSize() const
 	{
 		return m_nBasePageSize;
 	}*/
@@ -163,7 +163,7 @@ namespace embDB
 			assert(false);
 			m_nLastAddr =  nAddr + nCount;
 		}
-		if(m_Chache.size() > (size_t)m_nMaxPageBuf)
+		if(m_Chache.size() > (uint32)m_nMaxPageBuf)
 		{
 			CFilePage* pPage = m_Chache.remove_back();
 			delete pPage;
@@ -277,7 +277,7 @@ namespace embDB
 			}
 
 		}
-		if(m_Chache.size() > (size_t)m_nMaxPageBuf)
+		if(m_Chache.size() > (uint32)m_nMaxPageBuf)
 		{
 			 CFilePage* pBackPage = m_Chache.remove_back();
 			 if(pBackPage)
@@ -312,11 +312,11 @@ namespace embDB
 		m_nLastAddr += nCount;
 		return nAddr;
 	}
-	bool CStorage::saveFilePage(FilePagePtr pPage, size_t nDataSize,  bool bChandgeInCache)
+	bool CStorage::saveFilePage(FilePagePtr pPage, uint32 nDataSize,  bool bChandgeInCache)
 	{
 		return saveFilePage(pPage.get(), nDataSize, bChandgeInCache);
 	}
-	bool CStorage::saveFilePage(CFilePage* pPage, size_t nDataSize,  bool bChandgeInCache)
+	bool CStorage::saveFilePage(CFilePage* pPage, uint32 nDataSize,  bool bChandgeInCache)
 	{
 
 		if(bChandgeInCache)
@@ -444,8 +444,8 @@ namespace embDB
 		if(m_bDirty)
 		{
 			m_nBeginSize = stream.readInt64();
-			size_t nlenStr = stream.readInt32();
-			if(nlenStr <= 0 || nlenStr > size_t(stream.size() - stream.pos()))
+			uint32 nlenStr = stream.readInt32();
+			if(nlenStr <= 0 || nlenStr > uint32(stream.size() - stream.pos()))
 				return false;
 			std::vector<wchar_t> buf(nlenStr + 1, L'\0');
 			stream.read((byte*)&buf[0], nlenStr * 2);

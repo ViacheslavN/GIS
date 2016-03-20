@@ -148,14 +148,14 @@ namespace embDB
 	}
 	bool CSchema::readTablePage(CommonLib::IReadStream* pStream)
 	{
-		size_t nSize = pStream->readInt32();
+		uint32 nSize = pStream->readInt32();
 		if(nSize == 0)
 			return true;
 		//int nPageSize = m_pStorage->getPageSize();
 		//if(nSize > (nPageSize/sizeof(int64)) - 2)
 		//	return false;
 
-		for(size_t i = 0; i < nSize; ++i)
+		for(uint32 i = 0; i < nSize; ++i)
 		{
 			int64 nPageAddr = pStream->readInt64();
 			
@@ -260,11 +260,11 @@ namespace embDB
 		return dropTable(it->second.get(), Tran);
 	}
 
-	size_t CSchema::getTableCnt() const
+	uint32 CSchema::getTableCnt() const
 	{
 		return m_vecTables.size();
 	}
-	ITablePtr CSchema::getTable(size_t nIndex) const
+	ITablePtr CSchema::getTable(uint32 nIndex) const
 	{
 		if(nIndex < m_vecTables.size())
 			return m_vecTables[nIndex];

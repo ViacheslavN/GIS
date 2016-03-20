@@ -568,7 +568,7 @@ namespace embDB
 				TDecoder decoder(pStream);
 				decoder.StartDecode();
 
-				for (size_t i = 0; i < m_nCount; ++i)
+				for (uint32 i = 0; i < m_nCount; ++i)
 				{
 					unsigned int freq = decoder.GetFreq(m_nCount);
 

@@ -273,7 +273,7 @@ template<class _TValue,
 				if(m_SymbolsFreq.size() == 1)
 				{
 					int64 nDiff = m_SymbolsFreq.begin()->first;
-					for (size_t i = 0; i < m_nCount; ++i)
+					for (uint32 i = 0; i < m_nCount; ++i)
 					{ 
 						nBegin += nDiff;
 						vecValues.push_back(nBegin);
@@ -311,7 +311,7 @@ template<class _TValue,
 				assert((vecValues.size() - 1) == m_nCount);
 								
 
-				for (size_t i = 1, sz = vecValues.size(); i < sz; ++i)
+				for (uint32 i = 1, sz = vecValues.size(); i < sz; ++i)
 				{
 				 
 					TValue nDiff = vecValues[i] - vecValues[i - 1];
@@ -332,7 +332,7 @@ template<class _TValue,
 
 				assert((vecValues.size() - 1) == m_nCount);
 
-				for (size_t i = 1, sz = vecValues.size(); i < sz; ++i)
+				for (uint32 i = 1, sz = vecValues.size(); i < sz; ++i)
 				{
 					int64 nDiff = vecValues[i] - vecValues[i - 1];
 					TSymbolsFreq::iterator it =  m_SymbolsFreq.find(nDiff);
@@ -448,7 +448,7 @@ template<class _TValue,
 				decoder.StartDecode();
 				Symbol sysInfo;
 								
-				for (size_t i = 0; i < m_nCount; ++i)
+				for (uint32 i = 0; i < m_nCount; ++i)
 				{ 
 					uint32 freq = decoder.GetFreq(m_nCount);
 

@@ -25,20 +25,20 @@ namespace embDB
 			this->m_nSize = 0;
 			this->m_nCapacity = 0;
 		}
-		size_t size() const {return this->m_nSize;}
+		uint32 size() const {return this->m_nSize;}
 
-		void _clear(TValue*  pData, size_t nSize)
+		void _clear(TValue*  pData, uint32 nSize)
 		{
-			for (size_t i = 0; i < nSize; ++i)
+			for (uint32 i = 0; i < nSize; ++i)
 			{
 				pData[i].~TValue();
 				
 			}
 			this->m_pAlloc->free(pData);
 		}
-		void _move(TValue*  pDataSrc, size_t nSizeSrc, TValue* pDataDst, size_t nSizeDst)
+		void _move(TValue*  pDataSrc, uint32 nSizeSrc, TValue* pDataDst, uint32 nSizeDst)
 		{
-			size_t i = 0;
+			uint32 i = 0;
 			for (; i < nSizeSrc; ++i)
 			{
 				new ((TValue*)&pDataDst[i]) TValue(pDataSrc[i]);
@@ -48,9 +48,9 @@ namespace embDB
 				new ((TValue*)&pDataDst[i]) TValue();
 			}*/
 		}
-		void _init(TValue*  pData, size_t nSize)
+		void _init(TValue*  pData, uint32 nSize)
 		{	
-			for (size_t i = 0; i < nSize; ++i)
+			for (uint32 i = 0; i < nSize; ++i)
 			{
 				new ((TValue*)&pData[i]) TValue();
 			}
@@ -104,7 +104,7 @@ namespace embDB
 		{
 			return copy(vec, this->m_nSize, 0, vec.size());
 		}
-		bool insert(const TValue& value, size_t idx)
+		bool insert(const TValue& value, uint32 idx)
 		{
 			if(idx > this->m_nSize)
 				return false;
@@ -127,9 +127,9 @@ namespace embDB
 		}
 
 
-		bool insert(const TBPVectorNoPOD& vec, size_t nPos, size_t nBegin, size_t nEnd)
+		bool insert(const TBPVectorNoPOD& vec, uint32 nPos, uint32 nBegin, uint32 nEnd)
 		{		 
-			size_t nLen = nEnd - nBegin;
+			uint32 nLen = nEnd - nBegin;
 			if(this->m_nSize + nPos + nLen >= this->m_nCapacity)
 			{
 				if(!reserve((2 * this->m_nCapacity) > (this->m_nSize + nPos + nLen) ? 2 * this->m_nCapacity :  2 * (this->m_nSize + nPos + nLen) ))
@@ -147,12 +147,12 @@ namespace embDB
 		}
 
 
-		bool remove(size_t idx)
+		bool remove(uint32 idx)
 		{
 			if(idx > this->m_nSize - 1)
 				return false;
 			
-			for (size_t i = idx; i < this->m_nSize - 1; ++i )
+			for (uint32 i = idx; i < this->m_nSize - 1; ++i )
 			{
 				this->m_pData[i] = this->m_pData[i + 1];
 			}
@@ -162,7 +162,7 @@ namespace embDB
 			return true;
 		}
 
-		bool reserve(size_t nSize)
+		bool reserve(uint32 nSize)
 		{
 			if(this->m_nCapacity > nSize)
 				return true;
@@ -184,7 +184,7 @@ namespace embDB
 			this->m_pData = tmp;
 			return true;
 		}
-		bool resize(size_t nSize)
+		bool resize(uint32 nSize)
 		{
 			if(this->m_nSize > nSize)
 			{
@@ -196,9 +196,9 @@ namespace embDB
 			this->m_nSize = nSize;
 			return true;
 		}
-		bool copy(const TBPVectorNoPOD& vec, size_t nPos, size_t nBegin, size_t nEnd)
+		bool copy(const TBPVectorNoPOD& vec, uint32 nPos, uint32 nBegin, uint32 nEnd)
 		{
-			size_t nLen = nEnd - nBegin;
+			uint32 nLen = nEnd - nBegin;
 			if(this->m_nSize + nPos + nLen >= this->m_nCapacity)
 			{
 				if(!reserve((2 * this->m_nCapacity) > (this->m_nSize + nPos + nLen) ? 2 * this->m_nCapacity :  2 * (this->m_nSize + nPos + nLen) ))
@@ -208,7 +208,7 @@ namespace embDB
 
 			TValue* pDstData = this->m_pData + nPos;
 			TValue* pSrcData = vec.m_pData + nBegin;
-			for (size_t i = 0; i < nLen; ++i)
+			for (uint32 i = 0; i < nLen; ++i)
 			{
 				if((i + nPos) < this->m_nSize)
 					pDstData[i] = pSrcData[i];
@@ -220,7 +220,7 @@ namespace embDB
 				this->m_nSize += (nPos + nLen) - this->m_nSize;
 			return true;
 		}
-		bool mover(size_t nPos, size_t nCnt)
+		bool mover(uint32 nPos, uint32 nCnt)
 		{
 			if(nCnt > this->m_nSize)
 			{
@@ -237,14 +237,14 @@ namespace embDB
 			//TValue* pSrcData = m_pData + nPos;
 			//TValue* pDstData = m_pData + nNewSize -1;
 
-			size_t nNewSize = this->m_nSize + nCnt;
+			uint32 nNewSize = this->m_nSize + nCnt;
 
-			size_t nDstIdx = nNewSize - 1;
-			size_t nSrcIdx = nDstIdx  -nCnt;
+			uint32 nDstIdx = nNewSize - 1;
+			uint32 nSrcIdx = nDstIdx  -nCnt;
 
-			size_t nLen = this->m_nSize - nPos + nCnt;
+			uint32 nLen = this->m_nSize - nPos + nCnt;
 			
-			for (size_t i = 0; i < nLen; ++i)
+			for (uint32 i = 0; i < nLen; ++i)
 			{
 				//m_pData[nDstIdx - i] = m_pData[nSrcIdx - i];
 				if(nDstIdx - i < this->m_nSize)
@@ -259,13 +259,13 @@ namespace embDB
 			return true;
 		}
 
-		bool movel(size_t nPos, size_t nCnt)
+		bool movel(uint32 nPos, uint32 nCnt)
 		{
 			//memmove(m_pData + nPos - nCnt,  m_pData + nPos, (m_nSize  - nCnt)* sizeof(TValue));
 
 			TValue* pDstData = this->m_pData + nPos - nCnt;
 			TValue* pSrcData = this->m_pData + nPos;
-			for (size_t i = 0, sz = this->m_nSize  - nCnt; i < sz; ++i )
+			for (uint32 i = 0, sz = this->m_nSize  - nCnt; i < sz; ++i )
 			{
 				//pDstData[i].~TValue();
 				//new ((TValue*)&pDstData[i]) TValue(pSrcData[i]);
@@ -273,7 +273,7 @@ namespace embDB
 				pDstData[i] = pSrcData[i];
 			}
 
-			for (size_t i = this->m_nSize - nCnt; i < this->m_nSize; ++i )
+			for (uint32 i = this->m_nSize - nCnt; i < this->m_nSize; ++i )
 				this->m_pData[i].~TValue();
 	
 			this->m_nSize -= nCnt;
@@ -345,12 +345,12 @@ namespace embDB
 
 
 
-		const TValue& operator [](size_t nIndex) const
+		const TValue& operator [](uint32 nIndex) const
 		{
 			assert(nIndex < this->m_nSize);
 			return this->m_pData[nIndex];
 		}
-		TValue& operator [](size_t nIndex) 
+		TValue& operator [](uint32 nIndex) 
 		{
 			assert(nIndex < this->m_nSize);
 			return this->m_pData[nIndex];

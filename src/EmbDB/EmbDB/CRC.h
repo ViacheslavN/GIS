@@ -3,7 +3,7 @@
 #include "CommonLibrary/general.h"
 namespace embDB
 {
-	uint32 Crc32(const unsigned char * buf, size_t len);
+	uint32 Crc32(const unsigned char * buf, uint32 len);
 }
 
 

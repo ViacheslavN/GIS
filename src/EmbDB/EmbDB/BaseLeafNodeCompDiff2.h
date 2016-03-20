@@ -72,7 +72,7 @@ namespace embDB
 			m_nCount = m_pKeyMemSet->size();
 			m_KeyCompressor.clear();
 			m_ValueCompressor.clear();
-			for (size_t i = 1, sz = m_pKeyMemSet->size(); i < sz; 	++i)
+			for (uint32 i = 1, sz = m_pKeyMemSet->size(); i < sz; 	++i)
 			{
 				m_KeyCompressor.AddDiffSymbol((*m_pKeyMemSet)[i] - (*m_pKeyMemSet)[i - 1]); 
 				m_ValueCompressor.AddDiffSymbol((*m_pValueMemSet)[i] - (*m_pValueMemSet)[i - 1]); 

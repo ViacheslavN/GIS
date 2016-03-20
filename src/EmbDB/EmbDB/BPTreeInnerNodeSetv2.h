@@ -51,7 +51,7 @@ namespace embDB
 		}
 
 		virtual bool isLeaf() const {return false;}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			assert(m_pCompressor);
 			return sizeof(TLink) +  m_pCompressor->size();
@@ -61,12 +61,12 @@ namespace embDB
 			assert(m_pCompressor);
 			return m_pCompressor->isNeedSplit();
 		}
-		virtual size_t headSize() const
+		virtual uint32 headSize() const
 		{
 			assert(m_pCompressor);
 			return sizeof(TLink) +  m_pCompressor->headSize(); 
 		}
-		virtual size_t rowSize() const
+		virtual uint32 rowSize() const
 		{
 			assert(m_pCompressor);
 			return m_pCompressor->rowSize();
@@ -87,7 +87,7 @@ namespace embDB
 			 assert(m_nLess != -1);
 			return m_pCompressor->Load(m_innerKeyMemSet, m_innerLinkMemSet,  stream);
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return m_pCompressor->tupleSize();
 		}
@@ -221,7 +221,7 @@ namespace embDB
 
 			if(m_bOneSplit)
 			{
-				size_t nNewSize = m_innerKeyMemSet.size() - 2;
+				uint32 nNewSize = m_innerKeyMemSet.size() - 2;
 				uint32 nLessIndex = m_innerKeyMemSet.size() - 2;
 				uint32 nSplitIndex = m_innerKeyMemSet.size() - 1;
 
@@ -251,14 +251,14 @@ namespace embDB
 			}
 			else
 			{
-				size_t nSize = m_innerKeyMemSet.size()/2;
+				uint32 nSize = m_innerKeyMemSet.size()/2;
 
 				newNodeKeySet.copy(m_innerKeyMemSet, 0,  nSize + 1,  m_innerKeyMemSet.size());
 				newNodeLinkSet.copy(m_innerLinkMemSet, 0, nSize + 1,  m_innerLinkMemSet.size());
 
 				m_pCompressor->SplitIn(nSize + 1, m_innerKeyMemSet.size(), pNewNodeComp);
 
-				size_t nNewSize = nSize;
+				uint32 nNewSize = nSize;
 
 
 				*pSplitKey = m_innerKeyMemSet[nNewSize];
@@ -315,7 +315,7 @@ namespace embDB
 			m_pCompressor->clear();
 			return true;
 		}
-		size_t count() const
+		uint32 count() const
 		{
 			return m_innerLinkMemSet.size();
 		}
@@ -404,7 +404,7 @@ namespace embDB
 			{
 				
 
-				size_t oldSize = m_innerKeyMemSet.size();
+				uint32 oldSize = m_innerKeyMemSet.size();
 
 				m_innerKeyMemSet.mover(0, nCnt );
 				m_innerLinkMemSet.mover(0, nCnt);
@@ -414,7 +414,7 @@ namespace embDB
 
 				//m_pCompressor->insert(nCnt - 1, LessMin, m_nLess);
 
-				size_t newSize = pNode->m_innerLinkMemSet.size() -nCnt;
+				uint32 newSize = pNode->m_innerLinkMemSet.size() -nCnt;
 
 
 				m_innerKeyMemSet.copy(pNode->m_innerKeyMemSet, 0, newSize + 1, pNode->m_innerKeyMemSet.size());

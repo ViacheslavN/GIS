@@ -87,14 +87,14 @@ void TestPointZorder()
 
 	embDB::TBPVector<embDB::ZOrderPoint2DU16> vecPoint;
 
-	int Xmax = 1000;
-	int Ymax =1000;
+	int Xmax = 5;
+	int Ymax =5;
 
-	int qXmin = 200;
-	int qXmax = 800;
+	int qXmin = 2;
+	int qXmax = 4;
 
-	int qYmin = 400;
-	int qYmax = 800;
+	int qYmin = 1;
+	int qYmax = 5;
 
 	for (short x = 0; x < Xmax + 1; ++x)
 	{

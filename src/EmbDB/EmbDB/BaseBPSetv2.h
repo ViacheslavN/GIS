@@ -69,7 +69,7 @@ namespace embDB
 		};
 
 
-		TBPlusTreeSetV2(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, uint32 nNodesPageSize, bool bMulti = false, bool bCheckCRC32 = true) :
+		TBPlusTreeSetV2(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, uint32 nNodesPageSize, bool bMulti = false, bool bCheckCRC32 = true) :
 		  m_nPageBTreeInfo(nPageBTreeInfo), m_pTransaction(pTransaction), m_pAlloc(pAlloc), m_nChacheSize(nChacheSize)
 		 ,m_bChangeRoot(false), m_nRootAddr(-1), m_bMulti(bMulti)
 		 ,m_Cache(pAlloc)
@@ -393,7 +393,7 @@ namespace embDB
 	
 		if(m_Cache.size() <= m_nChacheSize)
 			return;
-		for (size_t i = 0, sz = m_Cache.size(); i < sz - m_nChacheSize; i++)
+		for (uint32 i = 0, sz = m_Cache.size(); i < sz - m_nChacheSize; i++)
 		{
 			TBTreeNode* pDelNode = m_Cache.remove_back();//remove(pChNode->m_nPageAddr);
 			if(!pDelNode)
@@ -938,7 +938,7 @@ namespace embDB
 		TBTreeNode *pLessNode = m_Cache.GetElem(pNode->less(), false);
 		if(pLessNode)
 			pLessNode->setParent(pNode, -1);
-		for (size_t i = 0,  sz = pNode->count(); i < sz; ++i)
+		for (uint32 i = 0,  sz = pNode->count(); i < sz; ++i)
 		{
 			TBTreeNode *pChildNode = m_Cache.GetElem(pNode->link(i), false);
 			if(pChildNode)
@@ -1620,7 +1620,7 @@ namespace embDB
 		 }
 		 assert(pDonorNode.get());
 
-		 size_t nSumSize = pDonorNode->rowSize() + pLeafNode->rowSize() + pNode->headSize();
+		 uint32 nSumSize = pDonorNode->rowSize() + pLeafNode->rowSize() + pNode->headSize();
 		 int nCnt = ((pLeafNode->count() + pDonorNode->count()))/2 - pLeafNode->count();
 
 		 bool bUnion = false;
@@ -2104,7 +2104,7 @@ namespace embDB
 
 		CommonLib::alloc_t* m_pAlloc;
 		Transaction* m_pTransaction;
-		size_t m_nChacheSize;
+		uint32 m_nChacheSize;
 		typedef TCacheLRU<TLink, TBTreeNode> TNodesCache;
 		TNodesCache m_Cache;
 		bool m_bChangeRoot;
@@ -2148,7 +2148,7 @@ namespace embDB
 		typedef TBPSetIteratorV2<TKey, TComp,Transaction, TInnerCompess, TLeafCompess,
 			TInnerNode, TLeafNode, TBTreeNode> iterator;
 
-		TBPSetV2(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, size_t nNodePageSize, bool bMulti = false, bool bCheckCRC32 = true) :
+		TBPSetV2(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, uint32 nNodePageSize, bool bMulti = false, bool bCheckCRC32 = true) :
 			TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nNodePageSize, bMulti, bCheckCRC32 )
 			{
 

@@ -48,7 +48,7 @@ namespace embDB
 		m_bOpen =  readRootPage(pFile.get());
 		return m_bOpen;
 	}
-	bool CDatabase::create(const wchar_t* pszName, /*size_t nPageSize,*/ DBTransactionMode mode, const wchar_t* pszWorkingPath, const wchar_t* pszPassword)
+	bool CDatabase::create(const wchar_t* pszName, /*uint32 nPageSize,*/ DBTransactionMode mode, const wchar_t* pszWorkingPath, const wchar_t* pszPassword)
 	{
 		close();
 		/*if(nPageSize <= 0 )

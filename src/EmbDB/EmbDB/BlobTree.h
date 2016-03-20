@@ -30,7 +30,7 @@ namespace embDB
 		typedef typename TBase::iterator	iterator;
 		typedef typename TBase::TKey	TKey;
 
-		TBPBlobTree(int64 nPageBTreeInfo, embDB::IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, size_t nChacheSize, uint32 nPageSize, bool bMulti = false, bool bCheckCRC32 = true) :
+		TBPBlobTree(int64 nPageBTreeInfo, embDB::IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, uint32 nPageSize, bool bMulti = false, bool bCheckCRC32 = true) :
 		TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nPageSize, bMulti, bCheckCRC32), m_PageAlloc(pAlloc, 1024*1024, 2)
 		{
 

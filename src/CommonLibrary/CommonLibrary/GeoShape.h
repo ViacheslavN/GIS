@@ -44,7 +44,7 @@ namespace CommonLib
 
 		CGeoShape(const CGeoShape& shp);
 		CGeoShape& operator = (const CGeoShape& shp);
-		//CGeoShape& operator += (const CGeoShape& shp);
+		CGeoShape& operator += (const CGeoShape& shp);
 
 
 		bool operator ==(const CGeoShape& shp) const

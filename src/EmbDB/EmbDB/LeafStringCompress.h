@@ -66,7 +66,7 @@ namespace embDB
 			if(!m_pValueMemset)
 				return;
 
-			for (size_t i = 0; i < m_pValueMemset->size(); ++i )
+			for (uint32 i = 0; i < m_pValueMemset->size(); ++i )
 			{
 				sStringVal& val = (*m_pValueMemset)[i];
 				if(val.m_pBuf)
@@ -161,7 +161,7 @@ namespace embDB
 
 
 			CommonLib::CBlob bufForUff8;
-		 	for (size_t i = 0, sz = keySet.size(); i < sz; ++i )
+		 	for (uint32 i = 0, sz = keySet.size(); i < sz; ++i )
 			{
 				KeyStream.write(keySet[i]);
 
@@ -216,7 +216,7 @@ namespace embDB
 		}
 		virtual bool add(const TLeafKeyMemSet& keySet, const TLeafValueMemSet& valuekSet)
 		{
-			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
+			for (uint32 i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
 				insert(i, keySet[i], valuekSet[i]);
 			}
@@ -229,7 +229,7 @@ namespace embDB
 		
 			m_nCount = 0;
 			m_nStringDataSize = 0;
-			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
+			for (uint32 i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
 				insert(i, keySet[i], valueSet[i]);
 			}
@@ -253,7 +253,7 @@ namespace embDB
 			m_nStringDataSize += (newSize - oldSize);
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			return (sizeof(TKey) *  m_nCount )  + sizeof(uint32) + m_nStringDataSize;
 		}
@@ -261,15 +261,15 @@ namespace embDB
 		{
 			return m_nPageSize < size();
 		}
-		virtual size_t count() const
+		virtual uint32 count() const
 		{
 			return m_nCount;
 		}
-		size_t headSize() const
+		uint32 headSize() const
 		{
 			return  sizeof(uint32);
 		}
-		size_t rowSize() const
+		uint32 rowSize() const
 		{
 			return (sizeof(TKey) *  m_nCount ) + m_nStringDataSize;
 		}
@@ -277,14 +277,14 @@ namespace embDB
 		{
 			m_nCount = 0;
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return  (m_nMaxPageLen  + sizeof(uint32) + sizeof(TKey));
 		}
 		void SplitIn(uint32 nBegin, uint32 nEnd, BPStringLeafNodeCompressor *pCompressor)
 		{
 			uint32 nSplitStringDataSize = 0;
-			for (size_t i  = nBegin; i < nEnd; ++i)
+			for (uint32 i  = nBegin; i < nEnd; ++i)
 			{
 				nSplitStringDataSize += GetStingSize((*m_pValueMemset)[i]);
 			}

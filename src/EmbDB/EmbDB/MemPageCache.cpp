@@ -18,13 +18,13 @@ namespace embDB
 	}
 	void  CMemPageCache::clear()
 	{
-		for (size_t i = 0, sz = m_MemPages.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_MemPages.size(); i < sz; ++i)
 		{
 			m_pAlloc->free(m_MemPages[i].m_pBuf);
 		}
 		m_MemPages.clear(); 
 	}
-	void* CMemPageCache::alloc(size_t size)
+	void* CMemPageCache::alloc(uint32 size)
 	{
 		//assert(size == m_nPageSize);
 		if(size != m_nPageSize)
@@ -43,7 +43,7 @@ namespace embDB
 		return m_pAlloc->alloc(m_nPageSize);
 	}
 
-	void CMemPageCache::init(size_t nPageSize, size_t nPagePoolSize)
+	void CMemPageCache::init(uint32 nPageSize, uint32 nPagePoolSize)
 	{
 		if(m_nInit)
 			return;
@@ -52,7 +52,7 @@ namespace embDB
 		m_nPagePoolSize = nPagePoolSize;
 		m_MemPages.resize(m_nPagePoolSize);
 		m_FreePages.reserve(m_nPagePoolSize);
-		for (size_t i = 0, sz = m_MemPages.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_MemPages.size(); i < sz; ++i)
 		{
 			sMemPage& memPage = m_MemPages[i];
 			memPage.m_pBuf = m_pAlloc->alloc(m_nPageSize);

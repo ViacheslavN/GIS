@@ -191,7 +191,7 @@ namespace CommonLib
 
 			bool DecodeSymbol(uint32& value)
 			{
-				uint32 freq = m_pDecoder->GetFreq(m_nCount);
+				uint32 freq = (uint32)m_pDecoder->GetFreq(m_nCount);
 				value = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens, freq);
 				if(value != 0)
 					value--;

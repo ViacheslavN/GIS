@@ -53,17 +53,17 @@ namespace embDB
 		}
 
 		virtual bool isLeaf() const {return false;}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			assert(m_pCompressor);
 			return sizeof(TLink) +  m_pCompressor->size();
 		}
-		virtual size_t headSize() const
+		virtual uint32 headSize() const
 		{
 			assert(m_pCompressor);
 			return sizeof(TLink) +  m_pCompressor->headSize(); 
 		}
-		virtual size_t rowSize() const
+		virtual uint32 rowSize() const
 		{
 			assert(m_pCompressor);
 			return m_pCompressor->rowSize();
@@ -113,7 +113,7 @@ namespace embDB
 			TInnerMemSet& nodeNewTree = pNode->m_innerMemSet;
 			TMemSetNode* pCurr = m_innerMemSet.tree_maximim(m_innerMemSet.root());
 			TCompressor* pNewNodeComp = pNode->m_pCompressor;
-			size_t nSize = m_innerMemSet.size()/2;
+			uint32 nSize = m_innerMemSet.size()/2;
 			if(m_innerMemSet.size() < 3)
 			{
 
@@ -310,7 +310,7 @@ namespace embDB
 		bool UnionWith(BPTreeInnerNodeSet* pNode)
 		{
 			TInnerMemSet& nodeTree = pNode->m_innerMemSet;
-			size_t nSize = nodeTree.size();
+			uint32 nSize = nodeTree.size();
 			TMemSetNode* pCurr = nodeTree.minimumNode();
 			while(nSize)
 			{
@@ -342,11 +342,11 @@ namespace embDB
 			assert(!m_innerMemSet.isEmpty());
 			return m_innerMemSet.minimumNode()->m_key;
 		}
-		size_t count() const 
+		uint32 count() const 
 		{
 			return m_innerMemSet.size();
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return m_pCompressor->tupleSize();
 		}

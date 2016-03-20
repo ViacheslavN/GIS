@@ -259,7 +259,7 @@ namespace embDB
 		{		 
 
 			assert(vecValues.size() == m_nCount);
-			for (size_t i = 1, sz = vecValues.size(); i < sz; ++i)
+			for (uint32 i = 1, sz = vecValues.size(); i < sz; ++i)
 			{
 
 				const TStringVal& strVal = vecValues[i];

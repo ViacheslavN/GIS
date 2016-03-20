@@ -101,13 +101,13 @@ public:
 	void insert_aw(const TypeKey& key);
 	void remove(const TypeKey& key);
 	void remove_erase_val(const TypeKey& key);
-	void reserve(size_t nSize){}
+	void reserve(uint32 nSize){}
 	TTreeNode* findNode(const TypeKey& key, TTreeNode* pFromNode = NULL);
 	TTreeNode* findNodeForBTree(const TypeKey& key, short& nTypeRet);
 	TTreeNode* findLessOrEQNode(const TypeKey& key, short& nTypeRet, TTreeNode* pFromNode);
 	TTreeNode* findNodeForBIter(const TypeKey& key); //»щем первый  элемент который минимально больше ключа
 
-	size_t size() const {return m_nSize;}
+	uint32 size() const {return m_nSize;}
 	bool isEmpty() const {return m_nSize == 0;}
 	bool isNull(TTreeNode *pNode) const {return pNode == &m_NullHeadNode;}
 	
@@ -183,7 +183,7 @@ public:
 	//TTreeNode *m_pRoot;
 	CommonLib::simple_alloc_t m_simple_alloc;
 	CommonLib::alloc_t *m_pAlloc;
-	size_t m_nSize;
+	uint32 m_nSize;
 	TComporator m_Cmp;
 	bool m_bMulti;
 	TTreeNode m_NullHeadNode;

@@ -90,7 +90,7 @@ namespace embDB
 			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			valueStreams.attachBuffer(stream.buffer() + stream.pos() + nKeySize, nValuesSize);
 			stream.seek(stream.pos() + nKeySize + nValuesSize, CommonLib::soFromBegin);			 
-			for(size_t i = 0, sz = vecKeys.size(); i < sz; ++i)
+			for(uint32 i = 0, sz = vecKeys.size(); i < sz; ++i)
 			{
 				vecKeys[i].write(KeyStreams);
 				valueStreams.write(vecValues[i]);
@@ -123,7 +123,7 @@ namespace embDB
 			m_nSize--;
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			return (m_pCompParams->getRowSize() + sizeof(TValue))*  m_nSize +  sizeof(uint32);
 		}
@@ -131,19 +131,19 @@ namespace embDB
 		{
 			return nPageSize < size();
 		}
-		virtual size_t count() const
+		virtual uint32 count() const
 		{
 			return m_nSize;
 		}
-		size_t headSize() const
+		uint32 headSize() const
 		{
 			return  sizeof(uint32);
 		}
-		size_t rowSize() const
+		uint32 rowSize() const
 		{
 			return (m_pCompParams->getRowSize() + sizeof(TValue)) *  m_nSize;
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return  m_pCompParams->getRowSize() + sizeof(TValue);
 		}
@@ -155,7 +155,7 @@ namespace embDB
 			pCompressor->m_nSize += nSize;
 		}
 	private:
-		size_t m_nSize;
+		uint32 m_nSize;
 		CommonLib::alloc_t* m_pAlloc;
 		TLeafCompressorParams* m_pCompParams;
 

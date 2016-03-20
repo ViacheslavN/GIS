@@ -218,7 +218,7 @@ namespace CommonLib
 		m_general_type = shp.m_general_type;
 		return *this;
 	}
-	/*CGeoShape& CGeoShape::operator += (const CGeoShape& shp)
+	CGeoShape& CGeoShape::operator += (const CGeoShape& shp)
 	{
 		if(	m_type != shp.m_type)
 		{
@@ -241,7 +241,7 @@ namespace CommonLib
 
 
 		return *this;
-	}*/
+	}
 	bool CGeoShape::create(eShapeType shapeType)
 	{
 		m_type = shapeType;

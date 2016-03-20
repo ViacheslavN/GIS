@@ -40,7 +40,7 @@ namespace embDB
 			return true;
 		}
 	private:
-		size_t m_nSize;
+		uint32 m_nSize;
 	};
 }
 

@@ -73,7 +73,7 @@ namespace embDB
 			this->m_nCount = keySet.size();
 			this->m_LinkCompressor.clear();
 			this->m_KeyCompressor.clear();
-			for (size_t i = 0, sz = keySet.size(); i < sz; 	++i)
+			for (uint32 i = 0, sz = keySet.size(); i < sz; 	++i)
 			{
 				if(i != 0)
 				{

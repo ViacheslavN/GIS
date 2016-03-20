@@ -97,7 +97,7 @@ namespace embDB
 			else
 				m_nFlag &= ~nFlag;
 		}
-		TNodeElem* getElement(size_t nIndex)
+		TNodeElem* getElement(uint32 nIndex)
 		{
 			assert(m_memset.size() > nIndex);
 			return &m_memset[nIndex];

@@ -12,7 +12,7 @@ namespace embDB
 	{
 
 	}
-	bool CTranStorage::open(const CommonLib::CString& sTranName,/* size_t nPageSize,*/ bool bNew)
+	bool CTranStorage::open(const CommonLib::CString& sTranName,/* uint32 nPageSize,*/ bool bNew)
 	{
 		CommonLib::enOpenFileMode nOpenMode = bNew ? CommonLib::ofmCreateAlways : CommonLib::ofmOpenExisting ;
 		CommonLib::enAccesRights nReadWrite = CommonLib::aeReadWrite;;

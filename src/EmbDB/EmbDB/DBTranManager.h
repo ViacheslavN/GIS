@@ -95,31 +95,31 @@ namespace embDB
 			m_nSize--;
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			//return (sizeof(int64) + sizeof(sFileTranPageInfo)) *  m_nSize;
 			return sizeof(sTranInfo) *  m_nSize + 3 * sizeof(uint32);
 		}
-		virtual size_t headSize() const
+		virtual uint32 headSize() const
 		{
 			//return (sizeof(int64) + sizeof(sFileTranPageInfo)) *  m_nSize;
 			return  3 * sizeof(uint32);
 		}
-		virtual size_t rowSize() const
+		virtual uint32 rowSize() const
 		{
 			//return (sizeof(int64) + sizeof(sFileTranPageInfo)) *  m_nSize;
 			return (sizeof(sTranInfo)  + sizeof(int64))*  m_nSize;
 		}
-		size_t count()
+		uint32 count()
 		{
 			return m_nSize;
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return (sizeof(sTranInfo)  + sizeof(int64));
 		}
 	private:
-		size_t m_nSize;
+		uint32 m_nSize;
 	};
 	*/
 

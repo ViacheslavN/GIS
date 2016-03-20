@@ -15,7 +15,7 @@ namespace embDB
 		sHuffmanNode* m_pLeft;
 		sHuffmanNode* m_pRight;
 		sHuffmanNode* m_pParent;
-		size_t m_nWeight; 
+		uint32 m_nWeight; 
 		bool m_bLeaf;
 	};
 	class CHuffmanOIDComp
@@ -24,7 +24,7 @@ namespace embDB
 		CHuffmanOIDComp();
 		~CHuffmanOIDComp();
 	private:
-		size_t m_nLenCounts[64];
+		uint32 m_nLenCounts[64];
 		sHuffmanNode *m_pRootTree;
 
 	};

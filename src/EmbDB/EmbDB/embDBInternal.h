@@ -76,8 +76,8 @@ namespace embDB
 
 		virtual bool Read(CommonLib::FxMemoryReadStream* pStream)
 		{
-			size_t nlenStr = pStream->readInt32();
-			if(nlenStr == 0 || nlenStr > size_t(pStream->size() - pStream->pos()))
+			uint32 nlenStr = pStream->readInt32();
+			if(nlenStr == 0 || nlenStr > uint32(pStream->size() - pStream->pos()))
 				return false;
 			std::vector<wchar_t> Namebuf(nlenStr + 1, L'\0');
 			pStream->read((byte*)&Namebuf[0], nlenStr * 2);
@@ -85,7 +85,7 @@ namespace embDB
 
 
 			nlenStr = pStream->readInt32();
-			if(nlenStr > size_t(pStream->size() - pStream->pos()))
+			if(nlenStr > uint32(pStream->size() - pStream->pos()))
 				return false;
 			if(nlenStr != 0)
 			{
@@ -461,8 +461,8 @@ namespace embDB
 		virtual ILinkPtr AddLink(ITable* pTableFrom, IField* pFieldFrom, ITable* pTableTo, IField* pFieldTo,  eLinkType nLinkType) = 0;
 		virtual ILinkPtr AddLink(const CommonLib::CString& sTableFrom, const CommonLib::CString& sFieldFrom, const CommonLib::CString& sTableTo, const CommonLib::CString& sFieldTo,  eLinkType nLinkType) = 0;
 		virtual bool deleteLink(ILink *pLink) = 0;
-		virtual size_t getLinkCnt() const = 0;
-		virtual ILinkPtr getLink(size_t nIndex) const = 0;
+		virtual uint32 getLinkCnt() const = 0;
+		virtual ILinkPtr getLink(uint32 nIndex) const = 0;
 
 		virtual bool open(IDBStorage* pStorage, int64 nFileAddr, bool bNew = false) = 0;
 		virtual bool close() = 0;
@@ -478,8 +478,8 @@ namespace embDB
 
 			virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true) = 0;
 			virtual FilePagePtr getNewPage(uint32 nSize, bool bWrite = false) = 0;
-			virtual bool saveFilePage(CFilePage* pPage, size_t nDataSize = 0,  bool ChandgeInCache = false) = 0;
-			virtual bool saveFilePage(FilePagePtr pPage, size_t nDataSize = 0,  bool ChandgeInCache = false) = 0;
+			virtual bool saveFilePage(CFilePage* pPage, uint32 nDataSize = 0,  bool ChandgeInCache = false) = 0;
+			virtual bool saveFilePage(FilePagePtr pPage, uint32 nDataSize = 0,  bool ChandgeInCache = false) = 0;
 
 	};
 
@@ -489,7 +489,7 @@ namespace embDB
 		IDBStorage(){}
 		virtual ~IDBStorage(){};
 
-		virtual bool open(const wchar_t* pszName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways/*, size_t nPageSize*/) = 0;
+		virtual bool open(const wchar_t* pszName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways/*, uint32 nPageSize*/) = 0;
 		virtual bool close() = 0;
 
  
@@ -581,12 +581,12 @@ namespace embDB
 
 		virtual void dropFilePage(FilePagePtr pPage) = 0;
 		virtual void dropFilePage(int64 nAddr, uint32 nSize) = 0;
-		//virtual size_t getPageSize() const = 0;
+		//virtual uint32 getPageSize() const = 0;
 
 
 		virtual FilePagePtr getTranNewPage(uint32 nSize = 0)= 0;
 		virtual FilePagePtr getTranFilePage(int64 nAddr, uint32 nSize, bool bRead = true) = 0;
-		virtual void saveTranFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false) = 0;
+		virtual void saveTranFilePage(FilePagePtr pPage,  uint32 nSize = 0,  bool bChandgeInCache = false) = 0;
 		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false) = 0;
 
 		virtual void addInnerTransactions(IDBTransaction *pTran) = 0;

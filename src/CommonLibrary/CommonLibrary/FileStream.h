@@ -70,11 +70,11 @@ namespace CommonLib
 		}
 
 
-		virtual int32 size() const
+		virtual uint32 size() const
 		{
-			return (int32)m_File.getFileSize();
+			return (uint32)m_File.getFileSize();
 		}
-		virtual int64 size64() const
+		virtual uint64 size64() const
 		{
 			return m_File.getFileSize();
 		}
@@ -86,11 +86,11 @@ namespace CommonLib
 		{
 			return m_File.setFilePos64(position, offset);
 		}
-		virtual int32 pos() const
+		virtual uint32 pos() const
 		{
 			return (int32)m_File.getFilePos();
 		}
-		virtual int64 pos64() const
+		virtual uint64 pos64() const
 		{
 			return m_File.getFilePos();
 		}

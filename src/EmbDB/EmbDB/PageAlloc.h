@@ -30,7 +30,7 @@ namespace embDB
 			CPageAlloc(CommonLib::alloc_t *pAlloc, uint32 nMemPageSize, uint32 nBeginPageCnt);
 			~CPageAlloc();
 
-			virtual void* alloc(size_t size);
+			virtual void* alloc(uint32 size);
 			virtual void  free(void* buf);
 		private:
 			void* allocFromPage(SMemPage* page, uint32 nSize);

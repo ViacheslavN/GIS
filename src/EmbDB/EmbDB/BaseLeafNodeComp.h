@@ -126,7 +126,7 @@ namespace embDB
 			m_nCount = vecKeys.size();
 			m_KeyCompressor.clear();
 			m_ValueCompressor.clear();
-			for (size_t i = 0, sz = vecKeys.size(); i < sz; 	++i)
+			for (uint32 i = 0, sz = vecKeys.size(); i < sz; 	++i)
 			{
 
 				m_KeyCompressor.AddSymbol(m_nCount, i, vecKeys[i], vecKeys); 
@@ -150,7 +150,7 @@ namespace embDB
 			
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			return rowSize() +  headSize();
 		}
@@ -158,19 +158,19 @@ namespace embDB
 		{
 			return !(m_nPageSize > size());
 		}
-		virtual size_t count() const
+		virtual uint32 count() const
 		{
 			return m_nCount;
 		}
-		size_t headSize() const
+		uint32 headSize() const
 		{
 			return  sizeof(uint32) + sizeof(uint32)+ sizeof(uint32);
 		}
-		size_t rowSize() const
+		uint32 rowSize() const
 		{
 			return  m_ValueCompressor.GetComressSize() + m_KeyCompressor.GetComressSize();
 		}
-		size_t tupleSize() const
+		uint32 tupleSize() const
 		{
 			return  (sizeof(TKey) + sizeof(TValue)) ;
 		}
@@ -190,7 +190,7 @@ namespace embDB
 			m_nCount = m_pKeyMemSet->size();
 			m_KeyCompressor.clear();
 			m_ValueCompressor.clear();
-			for (size_t i = 0, sz = m_pKeyMemSet->size(); i < sz; 	++i)
+			for (uint32 i = 0, sz = m_pKeyMemSet->size(); i < sz; 	++i)
 			{
 				//insert(i, keySet[i], linkSet[i]);
 				if(i != 0)

@@ -48,7 +48,7 @@ namespace embDB
 	struct STypeSize
 	{
 		short nLineNo;
-		size_t nSize;
+		uint32 nSize;
 	};
 
 	static STypeSize  arrTypeSizes[] = {
@@ -376,8 +376,8 @@ namespace embDB
 		virtual bool setOIDFieldName(const CommonLib::CString& sOIDName) = 0;
 		virtual const CommonLib::CString& getName() const  = 0;
 		virtual IFieldPtr getField(const CommonLib::CString& sName) const= 0 ;
-		virtual size_t getFieldCnt() const= 0;
-		virtual IFieldPtr getField(size_t nIdx) const = 0;
+		virtual uint32 getFieldCnt() const= 0;
+		virtual IFieldPtr getField(uint32 nIdx) const = 0;
 		virtual IFieldsPtr getFields() const = 0;
 	};
 
@@ -386,8 +386,8 @@ namespace embDB
 	public:
 		ISchema(){}
 		virtual ~ISchema(){}
-		virtual size_t getTableCnt() const = 0;
-		virtual ITablePtr getTable(size_t nIndex) const = 0;
+		virtual uint32 getTableCnt() const = 0;
+		virtual ITablePtr getTable(uint32 nIndex) const = 0;
 		virtual ITablePtr getTableByID(int64 nID) const = 0;
 		virtual ITablePtr getTableByName(const wchar_t* pszTableName) const = 0;
 
@@ -459,8 +459,8 @@ namespace embDB
 		virtual bool commit() = 0;
 		virtual bool rollback() = 0;
 		virtual bool isError() const = 0 ;
-		virtual size_t getErrorMessageSize() const = 0;
-		virtual size_t getErroMessage(wchar_t * pBuf, size_t nSize) const = 0;
+		virtual uint32 getErrorMessageSize() const = 0;
+		virtual uint32 getErroMessage(wchar_t * pBuf, uint32 nSize) const = 0;
 
 		virtual IStatementPtr createStatement(const wchar_t *pszSQLQuery) = 0;
 		virtual ICursorPtr executeQuery(IStatement* pStatement) = 0;
@@ -483,7 +483,7 @@ namespace embDB
 		IDatabase(){}
 		virtual ~IDatabase(){}
 		virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL)  = 0;
-		virtual bool create(const wchar_t* pszDbName,/* size_t nPageSize, */DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL)  = 0;
+		virtual bool create(const wchar_t* pszDbName,/* uint32 nPageSize, */DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL)  = 0;
 		virtual bool close()  = 0;
 		virtual ITransactionPtr startTransaction(eTransactionType trType) = 0;
 		virtual bool closeTransaction(ITransaction* ) = 0;

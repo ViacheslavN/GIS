@@ -23,7 +23,7 @@ namespace embDB
 		if(m_pFieldSet->GetCount() == 0)
 		{
 			IFieldsPtr pFields = m_pTable->getFields();
-			for (size_t i = 0, sz = pFields->GetFieldCount(); i < sz; ++i)
+			for (uint32 i = 0, sz = pFields->GetFieldCount(); i < sz; ++i)
 			{
 				IFieldPtr pField = pFields->GetField(i);
 				m_pFieldSet->Add(pField->getName());
@@ -55,7 +55,7 @@ namespace embDB
 			return -1;
 		int64 nRowID = m_pTable->GetNextOID();
 
-		for (size_t i = 0, sz = m_vecInsertFields.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecInsertFields.size(); i < sz; ++i)
 		{
 			CommonLib::CVariant *pValue = pRow->value(i);
 			IValueFieldPtr pValueField = m_vecInsertFields[i];

@@ -60,7 +60,7 @@ namespace embDB
 				stream.read(value.nFlags);
 			}
 
-			size_t rowSize()
+			uint32 rowSize()
 			{
 				return 2 * sizeof(int64) + sizeof(uint32);
 			}
@@ -71,7 +71,7 @@ namespace embDB
 		IDBTransaction *m_pTran;
 		CTranStorage *m_pStorage;
 		int64 m_nCurPage;
-		size_t m_nLastPos;
+		uint32 m_nLastPos;
 		TUndoPageList m_undoPages;
 	};
 }

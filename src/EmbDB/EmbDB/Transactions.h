@@ -88,8 +88,8 @@ namespace embDB
 		virtual void dropFilePage(FilePagePtr pPage);
 		virtual void dropFilePage(int64 nAddr, uint32 nSize);
 		virtual FilePagePtr getNewPage(uint32 nSize, bool bWrite = false);
-		virtual bool saveFilePage(FilePagePtr pPage,  size_t nSize = 0, bool bChangeInCache = false);
-		virtual bool saveFilePage(CFilePage* pPage, size_t nDataSize = 0,  bool ChandgeInCache = false);
+		virtual bool saveFilePage(FilePagePtr pPage,  uint32 nSize = 0, bool bChangeInCache = false);
+		virtual bool saveFilePage(CFilePage* pPage, uint32 nDataSize = 0,  bool ChandgeInCache = false);
  
 
  
@@ -97,7 +97,7 @@ namespace embDB
 
 		virtual FilePagePtr getTranNewPage(uint32 nSize);
 		virtual FilePagePtr getTranFilePage(int64 nAddr, uint32 nSize, bool bRead = true);
-		virtual void saveTranFilePage(FilePagePtr pPage,  size_t nSize = 0,  bool bChandgeInCache = false);
+		virtual void saveTranFilePage(FilePagePtr pPage,  uint32 nSize = 0,  bool bChandgeInCache = false);
 
 		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false);
 		 
@@ -105,8 +105,8 @@ namespace embDB
 
 
 		virtual bool isError() const;
-		virtual size_t getErrorMessageSize() const;
-		virtual size_t getErroMessage(wchar_t * pBuf, size_t nSize) const;
+		virtual uint32 getErrorMessageSize() const;
+		virtual uint32 getErroMessage(wchar_t * pBuf, uint32 nSize) const;
 
 		virtual void error(const wchar_t *pszFormat, ...);
 		virtual uint32 getLogLevel() const ;

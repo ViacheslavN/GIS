@@ -133,19 +133,19 @@ namespace embDB
 			}
 			return true;
 		}
-		virtual size_t size() const
+		virtual uint32 size() const
 		{
 			return (sizeof(TKey) + sizeof(TLink) ) *  m_nSize + 3* sizeof(uint32) ;
 		}
-		virtual size_t count() const
+		virtual uint32 count() const
 		{
 			return m_nCnt;
 		}
 	private:
-		size_t m_nPageSize;
-		size_t m_nCnt;
-		size_t m_nRowOIDSize; //размер OID-дов без сжатия
-		size_t m_nRowLinkSize; //размер линков без сжатия
+		uint32 m_nPageSize;
+		uint32 m_nCnt;
+		uint32 m_nRowOIDSize; //размер OID-дов без сжатия
+		uint32 m_nRowLinkSize; //размер линков без сжатия
 	};
 }
 

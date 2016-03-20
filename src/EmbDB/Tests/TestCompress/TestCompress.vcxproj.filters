@@ -28,6 +28,9 @@
     <Filter Include="TestDiffComp">
       <UniqueIdentifier>{2abcf42f-cf42-45fb-92e4-c4fa1c9cbbed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BWT">
+      <UniqueIdentifier>{bb3d2373-56ba-466f-b026-f95b069f1575}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="TestAC.h">
@@ -65,6 +68,9 @@
     <ClInclude Include="TestDiffComp.h">
       <Filter>TestDiffComp</Filter>
     </ClInclude>
+    <ClInclude Include="BWTSort.h">
+      <Filter>BWT</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -96,6 +102,9 @@
     </ClCompile>
     <ClCompile Include="TestDiffComp.cpp">
       <Filter>TestDiffComp</Filter>
+    </ClCompile>
+    <ClCompile Include="BWTSort.cpp">
+      <Filter>BWT</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

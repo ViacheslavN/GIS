@@ -241,7 +241,7 @@ template<class _TValue,
 
 				
 
-				for (size_t i = 0, sz = vecCheck.size(); i < sz; ++i)
+				for (uint32 i = 0, sz = vecCheck.size(); i < sz; ++i)
 				{
 				 
 					
@@ -264,7 +264,7 @@ template<class _TValue,
 			{
 				TACEncoder acEncoder(pStream);
 
-				for (size_t i = 1, sz = vecValues.size(); i < sz; ++i)
+				for (uint32 i = 1, sz = vecValues.size(); i < sz; ++i)
 				{
 					int64 nDiff = vecValues[i] - vecValues[i - 1];
 					TSymbolsFreq::iterator it =  m_SymbolsFreq.find(nDiff);
@@ -412,7 +412,7 @@ template<class _TValue,
 				{
 					vecFreq1.push_back(FreqPrev[i]);
 				}
-				for (size_t i = 0; i < m_nCount; ++i)
+				for (uint32 i = 0; i < m_nCount; ++i)
 				{ 
 					uint32 freq = decoder.GetFreq(m_nCount);
 

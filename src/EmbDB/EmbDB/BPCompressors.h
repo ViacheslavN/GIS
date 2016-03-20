@@ -69,8 +69,8 @@ namespace embDB
 
 		virtual bool remove(TKey key) = 0;
 
-		virtual size_t cnt_size( size_t nCnt, bool bLeaf) const = 0;
-		virtual size_t size(bool bLeaf) const = 0;
+		virtual uint32 cnt_size( uint32 nCnt, bool bLeaf) const = 0;
+		virtual uint32 size(bool bLeaf) const = 0;
 	};
 
 	dsdvvds
@@ -100,8 +100,8 @@ namespace embDB
 		virtual bool insert(TTreeNode *pObj) = 0;
 		virtual bool update(TTreeNode *pObj, const TValue& nValue) = 0;
 		virtual bool remove(TTreeNode *pObj) = 0;
-		virtual size_t size() const = 0;
-		virtual size_t count() const = 0;
+		virtual uint32 size() const = 0;
+		virtual uint32 count() const = 0;
 	};
 
 
@@ -129,8 +129,8 @@ namespace embDB
 
 		virtual bool insert(TTreeNode *pObj) = 0;
 		virtual bool remove(TTreeNode *pObj) = 0;
-		virtual size_t size() const = 0;
-		virtual size_t count() const = 0;
+		virtual uint32 size() const = 0;
+		virtual uint32 count() const = 0;
 	};
 
 }

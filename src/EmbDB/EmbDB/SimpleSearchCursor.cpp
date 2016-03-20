@@ -28,7 +28,7 @@ namespace embDB
 			m_pFieldSet = new CFieldSet();
 		if(m_pFieldSet->GetCount() == 0)
 		 
-		for (size_t i = 0, sz = m_pFields->GetFieldCount(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_pFields->GetFieldCount(); i < sz; ++i)
 		{
 			IFieldPtr pField = m_pFields->GetField(i);
 			m_pFieldSet->Add(pField->getName());
@@ -62,7 +62,7 @@ namespace embDB
 	{
 		m_vecOIDs.clear();
 
-		for (size_t i = 0; i < m_nCacheCount; ++i)
+		for (uint32 i = 0; i < m_nCacheCount; ++i)
 		{
 			if(m_pIndexIterator->isNull())
 				break;
@@ -135,7 +135,7 @@ namespace embDB
 			if((nCurrID - nPrevOID) == 1)
 				bNext = true;
 		}
-		for (size_t i = 0, sz = m_vecFields.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecFields.size(); i < sz; ++i)
 		{
 			 
 
@@ -190,7 +190,7 @@ namespace embDB
 
 	void SimpleSearchCursor::SetNext(int64 nOID, bool bNext)
 	{
-		for (size_t i = 0, sz = m_vecFields.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = m_vecFields.size(); i < sz; ++i)
 		{
 			SField& field = m_vecFields[i];
 			IFieldIteratorPtr pIterator;

@@ -25,7 +25,7 @@ namespace embDB
 		{
 			clear();
 		}
-		size_t size() const {return m_nSize;}
+		uint32 size() const {return m_nSize;}
 		void clear()
 		{
 			if(m_pData)
@@ -68,7 +68,7 @@ namespace embDB
 		{
 			return copy(vec, m_nSize, 0, vec.size());
 		}
-		bool insert(const TValue& value, size_t idx)
+		bool insert(const TValue& value, uint32 idx)
 		{
 			if(idx > m_nSize)
 				return false;
@@ -90,9 +90,9 @@ namespace embDB
 		}
 
 
-		bool insert(const TBPVector& vec, size_t nPos, size_t nBegin, size_t nEnd)
+		bool insert(const TBPVector& vec, uint32 nPos, uint32 nBegin, uint32 nEnd)
 		{		 
-			size_t nLen = nEnd - nBegin;
+			uint32 nLen = nEnd - nBegin;
 			if(m_nSize + nPos + nLen >= m_nCapacity)
 			{
 				if(!reserve((2 * m_nCapacity) > (m_nSize + nPos + nLen) ? 2 * m_nCapacity :  2 * (m_nSize + nPos + nLen) ))
@@ -109,7 +109,7 @@ namespace embDB
 		}
 
 
-		bool remove(size_t idx)
+		bool remove(uint32 idx)
 		{
 			if(idx > m_nSize)
 				return false;
@@ -119,7 +119,7 @@ namespace embDB
 			return true;
 		}
 	 
-		bool reserve(size_t nSize)
+		bool reserve(uint32 nSize)
 		{
 			if(m_nCapacity > nSize)
 				return true;
@@ -140,7 +140,7 @@ namespace embDB
 			}
 			return true;
 		}
-		bool resize(size_t nSize)
+		bool resize(uint32 nSize)
 		{
 			if(m_nSize > nSize)
 			{
@@ -152,9 +152,9 @@ namespace embDB
 			m_nSize = nSize;
 			return true;
 		}
-		bool copy(const TBPVector& vec, size_t nPos, size_t nBegin, size_t nEnd)
+		bool copy(const TBPVector& vec, uint32 nPos, uint32 nBegin, uint32 nEnd)
 		{
-			size_t nLen = nEnd - nBegin;
+			uint32 nLen = nEnd - nBegin;
 			if(m_nSize + nPos + nLen >= m_nCapacity)
 			{
 				if(!reserve((2 * m_nCapacity) > (m_nSize + nPos + nLen) ? 2 * m_nCapacity :  2 * (m_nSize + nPos + nLen) ))
@@ -166,7 +166,7 @@ namespace embDB
 				m_nSize += (nPos + nLen) - m_nSize;
 			return true;
 		}
-		bool mover(size_t nPos, size_t nCnt)
+		bool mover(uint32 nPos, uint32 nCnt)
 		{
 			if( m_nSize + nCnt >= m_nCapacity)
 			{
@@ -178,7 +178,7 @@ namespace embDB
 			return true;
 		}
 
-		bool movel(size_t nPos, size_t nCnt)
+		bool movel(uint32 nPos, uint32 nCnt)
 		{
 		    memmove(m_pData + nPos - nCnt,  m_pData + nPos, (m_nSize  - nCnt)* sizeof(TValue));
 			m_nSize -= nCnt;
@@ -250,12 +250,12 @@ namespace embDB
 
 
 
-		const TValue& operator [](size_t nIndex) const
+		const TValue& operator [](uint32 nIndex) const
 		{
 			assert(nIndex < m_nSize);
 			return m_pData[nIndex];
 		}
-		TValue& operator [](size_t nIndex) 
+		TValue& operator [](uint32 nIndex) 
 		{
 			assert(nIndex < m_nSize);
 			return m_pData[nIndex];
@@ -410,8 +410,8 @@ namespace embDB
 		protected:
 			TValue*  m_pData;
 			CommonLib::alloc_t* m_pAlloc;
-			size_t m_nCapacity;
-			size_t m_nSize;
+			uint32 m_nCapacity;
+			uint32 m_nSize;
 			CommonLib::simple_alloc_t m_simple_alloc;
 		};
 }
