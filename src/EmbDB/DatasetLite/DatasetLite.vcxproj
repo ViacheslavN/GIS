@@ -120,7 +120,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">
     <OutDir>$(SolutionDir)Output\</OutDir>
     <IntDir>$(SolutionDir)Obj\$(Configuration)\</IntDir>
-    <TargetName>LibDatasetLite32_rs</TargetName>
+    <TargetName>LibDatasetLite64_rs</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">
     <ClCompile>
@@ -185,7 +185,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../CommonLibrary;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CommonLibrary;../../ThirdParty;../../GisEngine</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>

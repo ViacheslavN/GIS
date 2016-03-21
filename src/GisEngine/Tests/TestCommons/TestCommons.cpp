@@ -32,16 +32,16 @@ typedef std::map<ITestPtr, int> TtestMap;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	char utf8Buf[256];
-	 CommonLib::CString str = "string";
+//	char utf8Buf[256];
+	// CommonLib::CString str = "string";
 
-	 str.exportToUTF8(utf8Buf, 255);
-	 CompressShape();
+//	 str.exportToUTF8(utf8Buf, 255);
+	// CompressShape();
 //	TestTableWks();
 	//testLoadXML1();
 	//return 1;
 //	TestShapeIndex();
-//	TestEmbDBWks();
+	TestEmbDBWks();
 
 	/*CommonLib::CString s1(L"vfdgggf");
 	CommonLib::CString s2(s1);
