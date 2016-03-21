@@ -87,29 +87,29 @@ namespace embDB
 
 		virtual bool insert(int nIndex, const TKey& key, TLink link )
 		{
-			m_nCount++;
+			this->m_nCount++;
 
-			m_KeyCompressor.AddSymbol(m_nCount, nIndex, key, *(this->m_pKeyMemSet));
-			m_LinkCompressor.AddSymbol(m_nCount, nIndex, link, *(this->m_pLinkMemSet));
+			this->m_KeyCompressor.AddSymbol(this->m_nCount, nIndex, key, *(this->m_pKeyMemSet));
+			this->m_LinkCompressor.AddSymbol(this->m_nCount, nIndex, link, *(this->m_pLinkMemSet));
 
 			return true;
 		}
 		virtual bool remove(int nIndex, const TKey& key, TLink link)
 		{
-			m_nCount--;
-			m_KeyCompressor.RemoveSymbol(m_nCount, nIndex, key, *(this->m_pKeyMemSet));
-			m_LinkCompressor.RemoveSymbol(m_nCount, nIndex, link, *(this->m_pLinkMemSet));
+			this->m_nCount--;
+			this->m_KeyCompressor.RemoveSymbol(this->m_nCount, nIndex, key, *(this->m_pKeyMemSet));
+			this->m_LinkCompressor.RemoveSymbol(this->m_nCount, nIndex, link, *(this->m_pLinkMemSet));
 
 			return true;
 		}
 		virtual bool update(int nIndex, const TKey& key, TLink link)
 		{
-			m_KeyCompressor.RemoveSymbol(m_nCount, nIndex, (*this->m_pKeyMemSet)[nIndex], *(this->m_pKeyMemSet));
-			m_LinkCompressor.RemoveSymbol(m_nCount, nIndex, (*this->m_pLinkMemSet)[nIndex], *(this->m_pLinkMemSet));
+			this->m_KeyCompressor.RemoveSymbol(this->m_nCount, nIndex, (*this->m_pKeyMemSet)[nIndex], *(this->m_pKeyMemSet));
+			this->m_LinkCompressor.RemoveSymbol(this->m_nCount, nIndex, (*this->m_pLinkMemSet)[nIndex], *(this->m_pLinkMemSet));
 
 
-			m_KeyCompressor.AddSymbol(m_nCount, nIndex, key, *(this->m_pKeyMemSet));
-			m_LinkCompressor.AddSymbol(m_nCount, nIndex, link, *(this->m_pLinkMemSet));
+			this->m_KeyCompressor.AddSymbol(this->m_nCount, nIndex, key, *(this->m_pKeyMemSet));
+			this->m_LinkCompressor.AddSymbol(this->m_nCount, nIndex, link, *(this->m_pLinkMemSet));
 			return true;
 		}
 	};

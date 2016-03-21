@@ -53,6 +53,11 @@ LOCAL_SRC_FILES += CRC.cpp MathUtils.cpp
 LOCAL_SRC_FILES += PageAlloc.cpp MemPageCache.cpp
 #Z-Order
 LOCAL_SRC_FILES += SpatialPointQuery.cpp  SpatialRectQuery.cpp
+#compress
+LOCAL_SRC_FILES += LinkCompress.cpp OIDCompress.cpp
+#BPTRee
+LOCAL_SRC_FILES += BPTreeStatistics.cpp
+
 
 LOCAL_STATIC_LIBRARIES := libcommon
 

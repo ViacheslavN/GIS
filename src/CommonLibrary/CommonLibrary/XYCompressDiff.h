@@ -154,7 +154,7 @@ namespace CommonLib
 		void clear()
 		{
 			m_Compressor.clear();
-			m_nBitLen = 0;
+			this->m_nBitLen = 0;
 		}
 
 		virtual void ReadHeader(IReadStream *pStream)

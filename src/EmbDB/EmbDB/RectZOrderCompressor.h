@@ -77,13 +77,13 @@ namespace embDB
 			TCoord xMin = 0, yMin = 0, xMax  = 0, yMax = 0;
 			zOrder.getXY(xMin, yMin, xMax, yMax);
 
-			if(!compressCoord(pEncoder, pBitStream, xMin, FreqPrev))
+			if(!this->compressCoord(pEncoder, pBitStream, xMin, FreqPrev))
 				return false;
-			if(!compressCoord(pEncoder, pBitStream, yMin, FreqPrev))
+			if(!this->compressCoord(pEncoder, pBitStream, yMin, FreqPrev))
 				return false;
-			if(!compressCoord(pEncoder, pBitStream, xMax, FreqPrev))
+			if(!this->compressCoord(pEncoder, pBitStream, xMax, FreqPrev))
 				return false;
-			return compressCoord(pEncoder, pBitStream, yMax, FreqPrev);
+			return this->compressCoord(pEncoder, pBitStream, yMax, FreqPrev);
 		}
 
 
@@ -92,10 +92,10 @@ namespace embDB
 		virtual void DecompressZOrder(TDecoder* pDecoder, CommonLib::FxBitReadStream *pBitStream, ZOrder& zOrder, uint32 *FreqPrev)
 		{
 			TCoord xMin = 0, yMin = 0, xMax  = 0, yMax = 0;
-			decompressCoord(pDecoder, pBitStream, xMin, FreqPrev);
-			decompressCoord(pDecoder, pBitStream, yMin, FreqPrev);
-			decompressCoord(pDecoder, pBitStream, xMax, FreqPrev);
-			decompressCoord(pDecoder, pBitStream, yMax, FreqPrev);
+			this->decompressCoord(pDecoder, pBitStream, xMin, FreqPrev);
+			this->decompressCoord(pDecoder, pBitStream, yMin, FreqPrev);
+			this->decompressCoord(pDecoder, pBitStream, xMax, FreqPrev);
+			this->decompressCoord(pDecoder, pBitStream, yMax, FreqPrev);
 			zOrder.setZOrder(xMin, yMin, xMax, yMax);
 		}
 

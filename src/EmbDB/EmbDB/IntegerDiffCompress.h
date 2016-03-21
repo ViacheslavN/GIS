@@ -130,7 +130,7 @@ template<class _TValue,
 			void RemoveSymbol(TValue symbol)
 			{
 
-				TSymbolsFreq::iterator it = m_SymbolsFreq.find(symbol);
+				typename TSymbolsFreq::iterator it = m_SymbolsFreq.find(symbol);
 				assert(it != m_SymbolsFreq.end());
 				SymbolInfo& symInfo =  it->second;
 				symInfo.m_nFreq--;
@@ -185,7 +185,7 @@ template<class _TValue,
 				double dBitRowSize =0;
 				if(m_SymbolsFreq.size() > 1)
 				{
-					for (TSymbolsFreq::const_iterator it = m_SymbolsFreq.begin(); it != m_SymbolsFreq.end(); ++it)
+					for (typename TSymbolsFreq::const_iterator it = m_SymbolsFreq.begin(); it != m_SymbolsFreq.end(); ++it)
 					{
 						const SymbolInfo& info = it->second;
 						double dFreq = info.m_nFreq;
@@ -315,7 +315,7 @@ template<class _TValue,
 				{
 				 
 					TValue nDiff = vecValues[i] - vecValues[i - 1];
-					TSymbolsFreq::iterator it =  m_SymbolsFreq.find(nDiff);
+					typename TSymbolsFreq::iterator it =  m_SymbolsFreq.find(nDiff);
 					assert(it != m_SymbolsFreq.end());
 					SymbolInfo& info = it->second;
 					
@@ -335,7 +335,7 @@ template<class _TValue,
 				for (uint32 i = 1, sz = vecValues.size(); i < sz; ++i)
 				{
 					int64 nDiff = vecValues[i] - vecValues[i - 1];
-					TSymbolsFreq::iterator it =  m_SymbolsFreq.find(nDiff);
+					typename TSymbolsFreq::iterator it =  m_SymbolsFreq.find(nDiff);
 					assert(it != m_SymbolsFreq.end());
 					SymbolInfo& info = it->second;
 					acEncoder.EncodeSymbol(info.m_nLow, info.m_nHight, m_nCount);
@@ -368,7 +368,7 @@ template<class _TValue,
 
 				pStream->write(uint16(m_SymbolsFreq.size()));
 				int32 nPrevF = 0;
-				for (TSymbolsFreq::iterator it = m_SymbolsFreq.begin(); it != m_SymbolsFreq.end(); ++it)
+				for (typename TSymbolsFreq::iterator it = m_SymbolsFreq.begin(); it != m_SymbolsFreq.end(); ++it)
 				{
 					SymbolInfo& info = it->second;
 
@@ -453,7 +453,7 @@ template<class _TValue,
 					uint32 freq = decoder.GetFreq(m_nCount);
 
 					sysInfo.m_nLow = freq;
-					TVecFreq::iterator it = std::lower_bound(vecFreq.begin(), vecFreq.end(), sysInfo);
+					typename TVecFreq::iterator it = std::lower_bound(vecFreq.begin(), vecFreq.end(), sysInfo);
 					if(it == vecFreq.end())
 						it = vecFreq.end() -1;
 					else if(it != vecFreq.begin())

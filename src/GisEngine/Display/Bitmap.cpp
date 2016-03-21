@@ -182,7 +182,7 @@ namespace GisEngine
 			return m_nWidth;
 		}
 
-		inline unsigned char* CBitmap::bits()
+		unsigned char* CBitmap::bits()
 		{
 			return m_pBuf;
 		}

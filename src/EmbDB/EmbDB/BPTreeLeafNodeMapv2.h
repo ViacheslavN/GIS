@@ -140,7 +140,7 @@ namespace embDB
 			this->UnionVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, bLeft);
 
 			if(bLeft)
-				this->m_pCompressor->recalc(m_leafKeyMemSet, this->m_leafValueMemSet);
+				this->m_pCompressor->recalc(this->m_leafKeyMemSet, this->m_leafValueMemSet);
 		
 			return true;
 		}

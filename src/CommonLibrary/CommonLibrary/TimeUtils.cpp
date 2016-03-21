@@ -29,9 +29,9 @@ namespace CommonLib
 			struct tm  timeinfo;
 			time (&rawtime);
 			timeinfo = *localtime (&rawtime);
-			 nRet = tm.tm_hour;
-			 nRet *= 100; nRet += tm.tm_min;
-			 nRet *= 100; nRet += tm.tm_sec;
+			 nRet = timeinfo.tm_hour;
+			 nRet *= 100; nRet += timeinfo.tm_min;
+			 nRet *= 100; nRet += timeinfo.tm_sec;
 			 nRet *= 1000; /*nRet += st.wMilliseconds;*/
 
 #endif
@@ -61,15 +61,15 @@ namespace CommonLib
 			struct tm  timeinfo;
 			time (&rawtime);
 			timeinfo = *localtime (&rawtime);
-			nRet = tm.tm_year;
-			nRet *= 100; nRet +=tm.tm_mon;
-			nRet *= 100; nRet += tm.tm_mday;
+			nRet = timeinfo.tm_year;
+			nRet *= 100; nRet +=timeinfo.tm_mon;
+			nRet *= 100; nRet += timeinfo.tm_mday;
 			if (pnTimeMs != NULL)
 			{
 				long& nTimeMs = *pnTimeMs;
-				nTimeMs = tm.tm_hour;
-				nTimeMs *= 100; nTimeMs += tm.tm_min;
-				nTimeMs *= 100; nTimeMs += tm.tm_sec;
+				nTimeMs = timeinfo.tm_hour;
+				nTimeMs *= 100; nTimeMs += timeinfo.tm_min;
+				nTimeMs *= 100; nTimeMs += timeinfo.tm_sec;
 				nTimeMs *= 1000;  /*nRet += st.wMilliseconds;*/
 			}
 #endif

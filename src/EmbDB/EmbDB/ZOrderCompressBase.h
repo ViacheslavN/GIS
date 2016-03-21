@@ -7,8 +7,8 @@
 
 namespace embDB
 {
-	template<class _ZOrder, class TPointType, uint32 _nMaxBitsLens, uint32 _nPointNum>
-	class TBaseZOrderCompressor : public TUnsignedNumLenCompressor<TPointType, TFindMostSigBit, CommonLib::TRangeEncoder<uint64, 64>,
+	template<class _ZOrder, class _TPointType, uint32 _nMaxBitsLens, uint32 _nPointNum>
+	class TBaseZOrderCompressor : public TUnsignedNumLenCompressor<_TPointType, TFindMostSigBit, CommonLib::TRangeEncoder<uint64, 64>,
 						CommonLib::TACEncoder<uint64, 32>, CommonLib::TRangeDecoder<uint64, 64> , CommonLib::TACDecoder<uint64, 32>, _nMaxBitsLens>
 	
 	{
@@ -16,7 +16,7 @@ namespace embDB
 
 
 			typedef _ZOrder ZOrder;
-			typedef TPointType TPointType;
+			typedef _TPointType TPointType;
 
 			typedef TUnsignedNumLenCompressor<TPointType, TFindMostSigBit, CommonLib::TRangeEncoder<uint64, 64>,
 						CommonLib::TACEncoder<uint64, 32>, CommonLib::TRangeDecoder<uint64, 64> , CommonLib::TACDecoder<uint64, 32>, _nMaxBitsLens> TBase;
@@ -107,9 +107,9 @@ namespace embDB
 				byte nFlag = 0;
 				pStream->write(nFlag);
 
-				WriteDiffsLens(pStream);
+				this->WriteDiffsLens(pStream);
 
-				double dRowBitsLen = GetCodeBitSize();
+				double dRowBitsLen = this->GetCodeBitSize();
 				uint32 nByteSize = (dRowBitsLen + 7)/8;
 
 
@@ -121,7 +121,7 @@ namespace embDB
 				for (uint32 i = 0; i < _nMaxBitsLens ; ++i)
 				{
 
-					FreqPrev[i + 1] = m_BitsLensFreq[i] + nPrevF;
+					FreqPrev[i + 1] = this->m_BitsLensFreq[i] + nPrevF;
 					nPrevF = FreqPrev[i + 1];
 				}
 
@@ -175,19 +175,19 @@ namespace embDB
 
 				pStream->seek(nBeginPos, CommonLib::soFromBegin);
 
-				nFlag |= (((byte)m_nTypeFreq) << 1);
+				nFlag |= (((byte)this->m_nTypeFreq) << 1);
 				pStream->write(nFlag);
 				pStream->seek(nEndPos, CommonLib::soFromBegin);
 				return true;
 			}
 			bool decompress(TBPVector<ZOrder>& vecValues, CommonLib::IReadStream* pStream)
 			{
-				clear();
+				this->clear();
 				byte nFlag = pStream->readByte();
 				bool bRangeCode = nFlag & 0x01;
-				m_nTypeFreq = (eTypeFreq)(nFlag>>1);
-				ReadDiffsLens(pStream);
-				CalcRowBitSize();
+				this->m_nTypeFreq = (typename TBase::eTypeFreq)(nFlag>>1);
+				this->ReadDiffsLens(pStream);
+				this->CalcRowBitSize();
 
 
 
@@ -198,7 +198,7 @@ namespace embDB
 				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
 				{
 
-					FreqPrev[i + 1] = m_BitsLensFreq[i] + nPrevF;
+					FreqPrev[i + 1] = this->m_BitsLensFreq[i] + nPrevF;
 					nPrevF = FreqPrev[i + 1];
 				}
 
@@ -214,16 +214,16 @@ namespace embDB
 				pStream->seek(nBitSize, CommonLib::soFromCurrent);
 
 				if(bRangeCode)
-					return Decompress<TRangeDecoder>(vecValues, pStream, FreqPrev, &bitStream, zBegin);
+					return Decompress<typename TBase::TRangeDecoder>(vecValues, pStream, FreqPrev, &bitStream, zBegin);
 				else
-					return Decompress<TACDecoder>(vecValues, pStream, FreqPrev, &bitStream, zBegin);
+					return Decompress<typename TBase::TACDecoder>(vecValues, pStream, FreqPrev, &bitStream, zBegin);
 
 
 			}
 
 			uint32 count() const
 			{
-				return m_nCount;
+				return this->m_nCount;
 			}
 	protected:
 
@@ -231,7 +231,7 @@ namespace embDB
 			CommonLib::FxBitWriteStream *pBitStream)
 		{
 
-			TRangeEncoder rgEncoder(pStream, nMaxByteSize);
+			typename TBase::TRangeEncoder rgEncoder(pStream, nMaxByteSize);
 
 			for (uint32 i = 1, sz = vecValues.size(); i< sz; ++i)
 			{
@@ -247,7 +247,7 @@ namespace embDB
 		void CompressAcCode(const TBPVector<ZOrder>& vecValues, CommonLib::IWriteStream* pStream,
 			uint32 *FreqPrev, CommonLib::FxBitWriteStream *pBitStream)
 		{
-			TACEncoder acEncoder(pStream);
+			typename  TBase::TACEncoder acEncoder(pStream);
 
 			for (uint32 i = 1, sz = vecValues.size(); i< sz; ++i)
 			{
@@ -263,17 +263,17 @@ namespace embDB
 	 
 		bool compressCoord(TEncoder *pEncoder, CommonLib::FxBitWriteStream *pBitStream, TPointType coord, uint32 *FreqPrev)
 		{
-		 	uint16 nBitLen =  m_FindBit.FMSB(coord);
-			assert(m_BitsLensFreq[nBitLen] != 0);
+		 	uint16 nBitLen =  this->m_FindBit.FMSB(coord);
+			assert(this->m_BitsLensFreq[nBitLen] != 0);
 			pBitStream->writeBits(coord, nBitLen);
-			return pEncoder->EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], m_nCount);
+			return pEncoder->EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], this->m_nCount);
 		}
 
 	 
 		void decompressCoord(TDecoder* pDecoder, CommonLib::FxBitReadStream *pBitStream, TPointType& coord, uint32 *FreqPrev)
 		{
 
-			uint32 freq = pDecoder->GetFreq(m_nCount);
+			uint32 freq = pDecoder->GetFreq(this->m_nCount);
 
 			int32 nBitLen = CommonLib::upper_bound(FreqPrev, _nMaxBitsLens, freq);
 			if(nBitLen != 0)
@@ -282,7 +282,7 @@ namespace embDB
 			
 			
 			pBitStream->readBits(coord, nBitLen);
-			pDecoder->DecodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], m_nCount);
+			pDecoder->DecodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], this->m_nCount);
 		 
 		}
 
@@ -317,7 +317,7 @@ namespace embDB
 			TDecoder decoder(pStream);
 			decoder.StartDecode();
 			ZOrder zValue;
-			for (uint32 i = 0, sz = m_nCount/_nPointNum; i < sz; ++i)
+			for (uint32 i = 0, sz = this->m_nCount/_nPointNum; i < sz; ++i)
 			{
 				DecompressZOrder(&decoder, pBitStream,zValue,  FreqPrev);
 				zBegin += zValue;

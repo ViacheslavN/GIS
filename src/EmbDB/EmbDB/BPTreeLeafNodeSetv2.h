@@ -379,15 +379,15 @@ namespace embDB
 		bool IsHaveUnion(BPTreeLeafNodeSetv2Base *pNode)
 		{
 
-			return m_pCompressor->IsHaveUnion(pNode->m_pCompressor);
+			return this->m_pCompressor->IsHaveUnion(pNode->m_pCompressor);
 		}
 		bool IsHaveAlignment(BPTreeLeafNodeSetv2Base *pNode)
 		{
-			return m_pCompressor->IsHaveAlignment(pNode->m_pCompressor);
+			return this->m_pCompressor->IsHaveAlignment(pNode->m_pCompressor);
 		}
 		bool isHalfEmpty() const
 		{
-			return m_pCompressor->isHalfEmpty();
+			return this->m_pCompressor->isHalfEmpty();
 		}
 		
 
@@ -448,11 +448,11 @@ namespace embDB
 		bool IsHaveUnion(BPTreeLeafNodeSetv2 *pNode)
 		{
 			 
-			return m_pCompressor->IsHaveUnion(pNode->m_pCompressor);
+			return this->m_pCompressor->IsHaveUnion(pNode->m_pCompressor);
 		}
 		bool IsHaveAlignment(BPTreeLeafNodeSetv2 *pNode)
 		{
-			return m_pCompressor->IsHaveAlignment(pNode->m_pCompressor);
+			return this->m_pCompressor->IsHaveAlignment(pNode->m_pCompressor);
 		}
 	};
 	

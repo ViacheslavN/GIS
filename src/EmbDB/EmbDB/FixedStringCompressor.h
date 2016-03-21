@@ -108,26 +108,24 @@ namespace embDB
 		public:
 			typedef TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor,  /*TFixedStringACCompressor*/TFixedCompress, StringFieldCompressorParams>  TBase;
 
-			TBPFixedStringLeafCompressor(uint32 nPageSize, Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
-				TKeyMemSet *pKeyMemset= NULL, TValueMemSet *pValueMemSet = NULL) : TBase(nPageSize, pTran, pAlloc, pParams, pKeyMemset, pValueMemSet)
+			TBPFixedStringLeafCompressor(uint32 nPageSize, _Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, typename TBase::TLeafCompressorParams *pParams = NULL,
+				typename TBase::TKeyMemSet *pKeyMemset= NULL, typename TBase::TValueMemSet *pValueMemSet = NULL) : TBase(nPageSize, pTran, pAlloc, pParams, pKeyMemset, pValueMemSet)
 			{
 
-				m_ValueCompressor.init(pValueMemSet);
+				this->m_ValueCompressor.init(pValueMemSet);
 
 			}
 			~TBPFixedStringLeafCompressor()
-			
-			{
-				
-				m_ValueCompressor.Clear();
+			{				
+				this->m_ValueCompressor.Clear();
 			}
-			void TBPFixedStringLeafCompressor::Clear()
+			void Clear()
 			{
-				m_ValueCompressor.Clear();
+				this->m_ValueCompressor.Clear();
 			}
 
 			template<typename _Transactions  >
-			static TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
+			static typename TBase::TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
 			{
 				return new StringFieldCompressorParams();
 			}

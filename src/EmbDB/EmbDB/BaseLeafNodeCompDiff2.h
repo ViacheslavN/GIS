@@ -38,44 +38,44 @@ namespace embDB
 
 			if(!vecKeys.empty())
 			{
-				m_KeyCompressor.AddDiffSymbol(vecKeys[0] - (*m_pKeyMemSet)[m_nCount - 1]);
-				m_ValueCompressor.AddDiffSymbol(vecValues[0] - (*m_pValueMemSet)[m_nCount - 1]);
-				m_nCount++;
+				this->m_KeyCompressor.AddDiffSymbol(vecKeys[0] - (*this->m_pKeyMemSet)[this->m_nCount - 1]);
+				this->m_ValueCompressor.AddDiffSymbol(vecValues[0] - (*this->m_pValueMemSet)[this->m_nCount - 1]);
+				this->m_nCount++;
 			}
 
 
 			for (uint32 i = 1, sz = vecKeys.size(); i < sz; ++i)
 			{
-				m_KeyCompressor.AddDiffSymbol(vecKeys[i] - vecKeys[i - 1]);
-				m_ValueCompressor.AddDiffSymbol(vecValues[i] - vecValues[i - 1]);
+				this->m_KeyCompressor.AddDiffSymbol(vecKeys[i] - vecKeys[i - 1]);
+				this->m_ValueCompressor.AddDiffSymbol(vecValues[i] - vecValues[i - 1]);
 
-				m_nCount++;
+				this->m_nCount++;
 			}
 
 			return true;
 		}
 		virtual bool recalc(const TKeyMemSet& vecKeys, const TValueMemSet& vecValues)
 		{
-			m_nCount = vecKeys.size();
-			m_KeyCompressor.clear();
-			m_ValueCompressor.clear();
+			this->m_nCount = vecKeys.size();
+			this->m_KeyCompressor.clear();
+			this->m_ValueCompressor.clear();
 			for (uint32 i = 1, sz = vecKeys.size(); i < sz; 	++i)
 			{
-				m_KeyCompressor.AddDiffSymbol(vecKeys[i] - vecKeys[i - 1]); 
-				m_ValueCompressor.AddDiffSymbol(vecValues[i] - vecValues[i - 1]);
+				this->m_KeyCompressor.AddDiffSymbol(vecKeys[i] - vecKeys[i - 1]); 
+				this->m_ValueCompressor.AddDiffSymbol(vecValues[i] - vecValues[i - 1]);
 			}
 
 			return true;
 		}		
 		virtual void recalc()
 		{
-			m_nCount = m_pKeyMemSet->size();
-			m_KeyCompressor.clear();
-			m_ValueCompressor.clear();
-			for (uint32 i = 1, sz = m_pKeyMemSet->size(); i < sz; 	++i)
+			this->m_nCount = this->m_pKeyMemSet->size();
+			this->m_KeyCompressor.clear();
+			this->m_ValueCompressor.clear();
+			for (uint32 i = 1, sz = this->m_pKeyMemSet->size(); i < sz; 	++i)
 			{
-				m_KeyCompressor.AddDiffSymbol((*m_pKeyMemSet)[i] - (*m_pKeyMemSet)[i - 1]); 
-				m_ValueCompressor.AddDiffSymbol((*m_pValueMemSet)[i] - (*m_pValueMemSet)[i - 1]); 
+				this->m_KeyCompressor.AddDiffSymbol((*this->m_pKeyMemSet)[i] - (*this->m_pKeyMemSet)[i - 1]); 
+				this->m_ValueCompressor.AddDiffSymbol((*this->m_pValueMemSet)[i] - (*this->m_pValueMemSet)[i - 1]); 
 			}
 
 

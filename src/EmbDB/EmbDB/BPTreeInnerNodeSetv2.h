@@ -472,15 +472,15 @@ namespace embDB
 
 		bool IsHaveUnion(BPTreeInnerNodeSetv2 *pNode)
 		{
-			return m_pCompressor->IsHaveUnion(pNode->m_pCompressor);
+			return this->m_pCompressor->IsHaveUnion(pNode->m_pCompressor);
 		}
 		bool IsHaveAlignment(BPTreeInnerNodeSetv2 *pNode)
 		{
-			return m_pCompressor->IsHaveAlignment(pNode->m_pCompressor);
+			return this->m_pCompressor->IsHaveAlignment(pNode->m_pCompressor);
 		}
 		bool isHalfEmpty() const
 		{
-			return m_pCompressor->isHalfEmpty();
+			return this->m_pCompressor->isHalfEmpty();
 		}
 
 	public:
