@@ -87,13 +87,13 @@ namespace GisEngine
 				sSQL = L"CREATE TABLE "; 
 				sSQL += sTableName;
 
-				size_t nCnt = pFields->GetFieldCount();
+				uint32 nCnt = pFields->GetFieldCount();
 				if(nCnt > 0)
 					sSQL += L" ( ";
 
 				CommonLib::CString sType;
 
-				for (size_t i = 0; i < nCnt; ++i)
+				for (uint32 i = 0; i < nCnt; ++i)
 				{
 					IFieldPtr pField = pFields->GetField(i);
 					const CommonLib::CVariant& defVal = pField->GetDefaultValue();

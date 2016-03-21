@@ -12,10 +12,10 @@
 
 #if defined(_WIN32_WCE)
 # define PROJ4_TMP_PLATFORM "wce_"
-#elif defined(_WIN32)
-# define  PROJ4_TMP_PLATFORM "32"
 #elif defined(WIN64)
 # define  PROJ4_TMP_PLATFORM "64"
+#elif defined(_WIN32)
+# define  PROJ4_TMP_PLATFORM "32"
 #else
 # error Unknown platform
 #endif

@@ -39,7 +39,7 @@ namespace GisEngine
 			virtual uint32 GetDatasetCount() const
 			{
 				CommonLib::CSSection::scoped_lock lock (m_mutex);
-				return m_vecDatasets.size();
+				return (uint32)m_vecDatasets.size();
 			}
 			virtual IDatasetPtr GetDataset(uint32 nIdx) const
 			{
@@ -141,7 +141,7 @@ namespace GisEngine
 			void RebuildMap()
 			{
 				m_DataSetMap.clear();
-				for (size_t i = 0, sz = m_vecDatasets.size(); i < sz; ++i)
+				for (uint32 i = 0, sz = (uint32)m_vecDatasets.size(); i < sz; ++i)
 				{
 					m_DataSetMap[m_vecDatasets[i]->GetDatasetName()] = i;
 				}

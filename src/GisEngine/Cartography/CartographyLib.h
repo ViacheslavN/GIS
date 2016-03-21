@@ -13,10 +13,10 @@
 
 #if defined(_WIN32_WCE)
 # define CARTOGRAPHY_TMP_PLATFORM "wce_"
-#elif defined(_WIN32)
-# define  CARTOGRAPHY_TMP_PLATFORM "32"
 #elif defined(WIN64)
 # define  CARTOGRAPHY_TMP_PLATFORM "64"
+#elif defined(_WIN32)
+# define  CARTOGRAPHY_TMP_PLATFORM "32"
 #else
 # error Unknown platform
 #endif

@@ -219,7 +219,7 @@ namespace GisEngine
 			if(!pj_is_latlong((PJ*)m_prjHandle) && pj_is_latlong((PJ*)pj))
 				TestBounds(pShape);
 
-			size_t pointCount = pShape->getPointCnt();
+			uint32 pointCount = pShape->getPointCnt();
 			double *pZs = pShape->getZs();
 			CommonLib::GisXYPoint* pPt = pShape->getPoints();
 			if (pointCount > m_nBufferSize)
