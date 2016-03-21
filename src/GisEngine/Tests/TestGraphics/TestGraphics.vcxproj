@@ -138,6 +138,7 @@
     <ResourceCompile Include="TestGraphics.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\TestCommons\ReadMe.txt" />
     <None Include="res\TestGraphics.ico" />
     <None Include="res\toolbar.bmp" />
   </ItemGroup>

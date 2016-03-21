@@ -87,5 +87,6 @@
     <None Include="res\TestGraphics.ico">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\TestCommons\ReadMe.txt" />
   </ItemGroup>
 </Project>
