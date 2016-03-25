@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpatialDataServer", "SpatialDataServer.vcxproj", "{B3A842F9-C349-4BA5-B796-B3E7605C5445}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		debug_static|Win32 = debug_static|Win32
+		debug_static|x64 = debug_static|x64
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		release_static|Win32 = release_static|Win32
+		release_static|x64 = release_static|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.debug_static|Win32.ActiveCfg = debug_static|Win32
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.debug_static|Win32.Build.0 = debug_static|Win32
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.debug_static|x64.ActiveCfg = debug_static|x64
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.debug_static|x64.Build.0 = debug_static|x64
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.Debug|Win32.Build.0 = Debug|Win32
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.Debug|x64.ActiveCfg = Debug|x64
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.Debug|x64.Build.0 = Debug|x64
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.release_static|Win32.ActiveCfg = release_static|Win32
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.release_static|Win32.Build.0 = release_static|Win32
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.release_static|x64.ActiveCfg = release_static|x64
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.release_static|x64.Build.0 = release_static|x64
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.Release|Win32.ActiveCfg = Release|Win32
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.Release|Win32.Build.0 = Release|Win32
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.Release|x64.ActiveCfg = Release|x64
+		{B3A842F9-C349-4BA5-B796-B3E7605C5445}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
