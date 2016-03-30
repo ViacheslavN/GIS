@@ -30,7 +30,7 @@ public:
 	virtual void Cancel(){}
 	virtual bool Continue(){return true;}
 };
-CMapView::CMapView()
+CMapView::CMapView() : m_bLbDown(false)
 {
 
 	
@@ -126,26 +126,43 @@ LRESULT  CMapView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 }
 LRESULT CMapView::OnMouseDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
+
+	m_LbDwnPt.x = LOWORD(lParam); 
+	m_LbDwnPt.y = HIWORD(lParam);
+	m_bLbDown = true;
+	return 0;
+}
+
+LRESULT CMapView::OnMouseUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
 	if(!m_pMap.get())
 		return 0;
-	GisEngine::Display::GPoint pt;
-	GisXYPoint mapPt;
-	pt.x = LOWORD(lParam); 
-	pt.y = HIWORD(lParam);
-	GisEngine::Display::IDisplayTransformationPtr pDisplayTransformation = m_pMapDrawer->GetCalcTransformation();
 
-	pDisplayTransformation->DeviceToMap(&pt, &mapPt, 1);
-	CommonLib::bbox bbox;
-	bbox.type = CommonLib::bbox_type_normal;
+	if(m_bLbDown)
+	{
+		GisEngine::Display::GPoint pt;
+		GisXYPoint mapPt;
+		pt.x = LOWORD(lParam); 
+		pt.y = HIWORD(lParam);
+		GisEngine::Display::IDisplayTransformationPtr pDisplayTransformation = m_pMapDrawer->GetCalcTransformation();
 
-	bbox.xMin = pt.x;
-	bbox.xMax = pt.x;
+		pDisplayTransformation->DeviceToMap(&pt, &mapPt, 1);
+		CommonLib::bbox bbox;
+		bbox.type = CommonLib::bbox_type_normal;
 
-	bbox.yMin = pt.y;
-	bbox.yMax = pt.y;
+		bbox.xMin = mapPt.x;
+		bbox.xMax = mapPt.x;
 
-	 
-	m_pMap->SelectFeatures(bbox, true);
+		bbox.yMin = mapPt.y;
+		bbox.yMax = mapPt.y;
+
+
+		m_pMap->SelectFeatures(bbox, true);
+
+	}
+	
+	
+	m_bLbDown = false;
 	return 0;
 }
 LRESULT CMapView::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)

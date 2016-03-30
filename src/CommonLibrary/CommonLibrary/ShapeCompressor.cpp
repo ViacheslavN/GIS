@@ -85,7 +85,7 @@ namespace CommonLib
 	
 
 		uint32 nPartCount = pShp->getPartCount();
-		m_partType = GetType(pShp->getPointCnt());
+		m_partType = GetCompressType(pShp->getPointCnt());
 		/*if(m_partType != dtType32)
 		{
 			for (uint32 i = 0; i < nPartCount; i++ )
@@ -293,11 +293,11 @@ namespace CommonLib
 		pStream->write(pCache->buffer(), pCache->pos());
 		return true;
 	}
-	void ShapeCompressor::compressPart(eDataType nPartType, const CGeoShape *pShp, CommonLib::IWriteStream *pStream)
+	void ShapeCompressor::compressPart(eCompressDataType nPartType, const CGeoShape *pShp, CommonLib::IWriteStream *pStream)
 	{
 
 	}
-	void ShapeCompressor::CreatePartCompressor(eDataType nPartType)
+	void ShapeCompressor::CreatePartCompressor(eCompressDataType nPartType)
 	{
 
 		switch(nPartType)
@@ -349,7 +349,7 @@ namespace CommonLib
 		  pShp->m_type = (eShapeType)pStream->readByte();
 		 uint32 nFlag = pStream->readIntu32();
 
-		 m_partType = (eDataType)(nFlag & 3);
+		 m_partType = (eCompressDataType)(nFlag & 3);
 		 m_bWriteParams = ((nFlag >> BIT_OFFSET_COMPRESS_PARAMS) & 1) ? true : false;
 		 m_bNullPart = ((nFlag >> BIT_OFFSET_PARTS_NULL) & 1) ? true : false;
 		 m_bCompressPart = ((nFlag >> BIT_OFFSET_PARTS_COMPRESS) & 1) ? true : false;
@@ -362,7 +362,7 @@ namespace CommonLib
 			 m_CompressParams = *pParams;
 		 else
 		 {
-			m_CompressParams.m_PointType =  (eDataType)pStream->readByte(); 
+			m_CompressParams.m_PointType =  (eCompressDataType)pStream->readByte(); 
 			m_CompressParams.m_dOffsetX = pStream->readDouble();
 			m_CompressParams.m_dOffsetY = pStream->readDouble();
 			m_CompressParams.m_dScaleX = pStream->readDouble();

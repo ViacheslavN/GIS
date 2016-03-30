@@ -27,7 +27,7 @@ namespace CommonLib
 			bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CWriteMemoryStream *pCacheStream = 0);
 			bool decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream);
 		private:
-			void compressPart(eDataType nPartType, const CGeoShape *pShp, CommonLib::IWriteStream *pStream);
+			void compressPart(eCompressDataType nPartType, const CGeoShape *pShp, CommonLib::IWriteStream *pStream);
 
 
 			template<class TPartCompress>
@@ -37,7 +37,7 @@ namespace CommonLib
 			}
 
 			void CreateCompressXY( CGeoShape::compress_params *pParams);
-			void CreatePartCompressor(eDataType nPartType);
+			void CreatePartCompressor(eCompressDataType nPartType);
 
 
 			uint32 CalcCompressSize(const CGeoShape *pShp, CGeoShape::compress_params *pParams);
@@ -50,7 +50,7 @@ namespace CommonLib
 			bool m_bNullPart;
 			bool m_bCompressPart;
 			bool m_bCompressPoint;
-			eDataType m_partType;
+			eCompressDataType m_partType;
 			CGeoShape::compress_params m_CompressParams;
 	};
 

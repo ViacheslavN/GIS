@@ -209,20 +209,20 @@ namespace GisEngine
 		 
 			IFeatureLayer(){};
 			virtual ~IFeatureLayer(){};
-			virtual const CommonLib::CString&           GetDisplayField() const = 0;
+			virtual const CommonLib::CString&        GetDisplayField() const = 0;
 			virtual void                             SetDisplayField(const  CommonLib::CString& sField) = 0;
 			virtual GeoDatabase::IFeatureClassPtr    GetFeatureClass() const = 0;
 			virtual void                             SetFeatureClass(GeoDatabase::IFeatureClass* featureClass) = 0;
 			virtual bool                             GetSelectable() const = 0;
 			virtual void                             SetSelectable(bool flag) = 0;
-			virtual const CommonLib::CString&			 GetDefinitionQuery() const= 0;
+			virtual const CommonLib::CString&		 GetDefinitionQuery() const= 0;
 			virtual void							 SetDefinitionQuery(const CommonLib::CString& )= 0;
 			virtual int								 GetRendererCount() const = 0;
 			virtual IFeatureRendererPtr				 GetRenderer(int index) const = 0;
 			virtual void							 AddRenderer(IFeatureRenderer* renderer) = 0;
 			virtual void							 RemoveRenderer(IFeatureRenderer* renderer) = 0;
 			virtual void							 ClearRenders() = 0;
-
+			virtual void							 SelectFeatures(const GisBoundingBox& extent, ISelection *pSelection,  GisGeometry::ISpatialReference *pSpRef) = 0;
 			virtual void DrawFeatures(eDrawPhase phase, GisCommon::IEnumIDs* ids, Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel, Display::ISymbol* customSymbol) const = 0;
 		};
 

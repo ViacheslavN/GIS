@@ -93,5 +93,68 @@ namespace GisEngine
 			pEnvelope->SetSpatialReference(m_pSpatialRef.get() ? m_pSpatialRef->clone().get() : NULL);
 			return pEnvelope;
 		}
+
+		CommonLib::CGeoShape::compress_params CEnvelope::GetCompressParams() const
+		{
+			CommonLib::CGeoShape::compress_params params;
+
+			if(m_box.type == CommonLib::bbox_type_invalid || m_box.type == CommonLib::bbox_type_null ||
+				!m_pSpatialRef.get())
+				return params;
+
+			if(m_box.xMin < 0)
+				params.m_dOffsetX = fabs(m_box.xMin);
+			else
+				params.m_dOffsetX = -1 *m_box.xMin;
+
+			if(m_box.yMin < 0)
+				params.m_dOffsetY = fabs(m_box.yMin);
+			else
+				params.m_dOffsetY = -1 *m_box.yMin;
+
+
+			double dMaxX = fabs(m_box.xMax + params.m_dOffsetX);
+			double dMaxY = fabs(m_box.yMax + params.m_dOffsetY);
+			double dMaxCoord = max(dMaxX, dMaxY);
+
+
+			GisEngine::GisCommon::Units units = m_pSpatialRef->GetUnits();
+			switch(units)
+			{
+			case GisEngine::GisCommon::UnitsDecimalDegrees:
+				params.m_dScaleX = 0.0000001;
+				params.m_dScaleY = 0.0000001;
+				break;
+			case GisEngine::GisCommon::UnitsKilometers:
+			case GisEngine::GisCommon::UnitsMiles:
+				params.m_dScaleX = 0.001;
+				params.m_dScaleY = 0.001;
+				break;
+			case GisEngine::GisCommon::UnitsMeters:
+			case GisEngine::GisCommon::UnitsYards:
+			case GisEngine::GisCommon::UnitsFeet:
+			case GisEngine::GisCommon::UnitsDecimeters:
+			case GisEngine::GisCommon::UnitsInches:
+				params.m_dScaleX = 0.01;
+				params.m_dScaleY = 0.01;
+				break;
+			case GisEngine::GisCommon::UnitsMillimeters:
+				params.m_dScaleX = 1;
+				params.m_dScaleY = 1;
+				break;
+			default:
+				params.m_dScaleX  = 0.0001;
+				params.m_dScaleY  = 0.0001;
+				break;
+			}
+
+			int64 nMaxVal = int64(dMaxCoord/params.m_dScaleX);
+
+			params.m_PointType =   CommonLib::GetCompressType(nMaxVal);
+
+
+			return params;
+		
+		}
 	}
 }

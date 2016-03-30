@@ -105,7 +105,7 @@ namespace embDB
 					if(!pSpatialIndex)
 						return ICursorPtr(); //TO DO Error
 
-					IIndexIteratorPtr pIndexIterator = pSpatialIndex->find(extent);
+					IIndexIteratorPtr pIndexIterator = pSpatialIndex->find(extent, mode);
 
 					SimpleSearchCursor *pCursor = new SimpleSearchCursor(pIndexIterator.get(), this, pTable.get(), pFileds);
 					if(!pCursor->Init())

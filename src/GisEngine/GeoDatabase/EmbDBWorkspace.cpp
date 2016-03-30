@@ -232,10 +232,15 @@ namespace GisEngine
 
 		bool CEmbDBWorkspace::saveXML(GisCommon::IXMLNode* pXmlNode) const
 		{
-				return true;
+			TBase::saveXML(pXmlNode);
+			pXmlNode->AddPropertyString(L"Path", m_sPath);
+			return true;
 		}
 		bool CEmbDBWorkspace::load(const GisCommon::IXMLNode* pXmlNode)
 		{
+			if(!TBase::load(pXmlNode))
+				return false;
+			m_sPath = pXmlNode->GetPropertyString(L"Path", m_sPath);
 			return true;
 		}
 		ITransactionPtr CEmbDBWorkspace::startTransaction(eTransactionType type)

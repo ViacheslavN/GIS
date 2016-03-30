@@ -125,6 +125,8 @@ namespace GisEngine
 			virtual void                       Project(ISpatialReference* spatRef) = 0;
 
 			virtual IEnvelopePtr				  clone() const = 0; 
+
+			virtual CommonLib::CGeoShape::compress_params GetCompressParams() const = 0;
 		};
 
  

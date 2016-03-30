@@ -46,6 +46,9 @@ namespace GisEngine
 				virtual bool load(CommonLib::IReadStream* pReadStream);
 				virtual bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
 				virtual bool load(const GisCommon::IXMLNode* pXmlNode);
+
+
+				virtual void  SelectFeatures(const GisBoundingBox& extent, ISelection *pSelection,  GisGeometry::ISpatialReference *pSpRef);
 		private:
 			void CalcBB(Display::IDisplay* pDisplay, GisBoundingBox& bb);
 		private:

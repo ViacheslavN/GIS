@@ -64,7 +64,7 @@ namespace GisEngine
 						if(pShape.get())
 						{
 						 
-							pShape->write(&m_WriteShapeStream);
+							pShape->compress(&m_WriteShapeStream, &m_comp_params);
 							m_pStmt->ColumnBindBlob(i + 1, m_WriteShapeStream.buffer(), m_WriteShapeStream.pos());
 							m_WriteShapeStream.seek(0, CommonLib::soFromBegin);
 						}
@@ -224,6 +224,10 @@ namespace GisEngine
 				{
 					m_bValidCursor = false;
 				}
+							
+				GisGeometry::IEnvelopePtr pEnvelope =  pFC->GetExtent();
+				m_comp_params = pEnvelope->GetCompressParams();
+				
 			}
 			
 		}

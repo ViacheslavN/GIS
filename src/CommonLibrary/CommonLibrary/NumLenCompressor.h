@@ -133,7 +133,7 @@ namespace CommonLib
 				clear();
 				byte nFlag = pStream->readByte();
 
-				m_FreqType = (eDataType)nFlag;
+				m_FreqType = (eCompressDataType)nFlag;
 
 				byte LensMask[(_nMaxBitsLens)/8];
 
@@ -262,7 +262,7 @@ namespace CommonLib
 		TFindBit m_FindBit;
 		uint32 m_nCount;
 		uint32 m_nBitLen;
-		eDataType m_FreqType;
+		eCompressDataType m_FreqType;
 		typedef std::auto_ptr<TEncoder> TEncoderPtr;
 		typedef std::auto_ptr<TDecoder> TDecoderPtr;
 

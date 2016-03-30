@@ -17,7 +17,7 @@ namespace CommonLib
 		typedef _TValue TValue;
 		typedef _TFindBit TFindBit;
 
-		TNumLemCompressorDynamic( eDataType nDataType, uint32 nError = 100)  : m_nError(nError), m_nDataType(nDataType)
+		TNumLemCompressorDynamic( eCompressDataType nDataType, uint32 nError = 100)  : m_nError(nError), m_nDataType(nDataType)
 		{
 			clear();
 		}
@@ -59,7 +59,7 @@ namespace CommonLib
 			clear();
 			byte nFlag = pStream->readByte();
 
-			m_FreqType = (eDataType)nFlag;
+			m_FreqType = (eCompressDataType)nFlag;
 
 			byte LensMask[(_nMaxBitsLens)/8];
 
@@ -182,13 +182,13 @@ namespace CommonLib
 			return  (uint32)(dBitRowSize +7)/8  + nHeaderSize;
 		}
 	private:
-		eDataType m_nDataType;
+		eCompressDataType m_nDataType;
 		uint32 m_BitsLensFreq[_nMaxBitsLens];
 		uint32 m_FreqPrev[_nMaxBitsLens + 1];
 		TFindBit m_FindBit;
 		uint32 m_nCount;
 		uint32 m_nBitLen;
-		eDataType m_FreqType;
+		eCompressDataType m_FreqType;
 		typedef std::auto_ptr<TRangeEncoder64> TEncoderPtr;
 		typedef std::auto_ptr<TRangeDecoder64> TDecoderPtr;
 

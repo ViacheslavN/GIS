@@ -37,7 +37,7 @@ namespace CommonLib
 		typedef _TNumLenCompressor TNumLenCompressor;
 	 
 
-		TPartCompressor(eDataType dateType) : m_dateType(dateType)
+		TPartCompressor(eCompressDataType dateType) : m_dateType(dateType)
 		{
 			clear();
 		}
@@ -139,7 +139,7 @@ namespace CommonLib
 	private:
 
 		 TNumLenCompressor m_Compressor;
-		 eDataType m_dateType;
+		 eCompressDataType m_dateType;
 	};
 
 	typedef TPartCompressor<TPartNumLen8> TPartCompressor8;

@@ -30,7 +30,7 @@ namespace CommonLib
 
 			}
 
-			eDataType m_PointType;
+			eCompressDataType m_PointType;
 			double m_dOffsetX;
 			double m_dOffsetY;
 			double m_dScaleX;

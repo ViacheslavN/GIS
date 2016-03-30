@@ -18,9 +18,22 @@ namespace GisEngine
 
 		}
 
-		void CFeatureLayer::DrawFeatures(eDrawPhase phase, GisCommon::IEnumIDs* ids, Display::IDisplay* display, GisCommon::ITrackCancel* trackCancel, Display::ISymbol* customSymbol) const
+		void CFeatureLayer::DrawFeatures(eDrawPhase phase, GisCommon::IEnumIDs* ids, Display::IDisplay* pDisplay, GisCommon::ITrackCancel* trackCancel, Display::ISymbol* customSymbol) const
 		{
+			if(!IsValid())
+				return;
 
+			double oldRefScale = pDisplay->GetTransformation()->GetReferenceScale();
+			if(m_hasReferenceScale)
+				pDisplay->GetTransformation()->SetReferenceScale(m_hasReferenceScale);
+
+			if((phase & DrawPhaseGeography))
+			{
+			}
+
+
+			if(m_hasReferenceScale)
+				pDisplay->GetTransformation()->SetReferenceScale(oldRefScale);
 		}
 
 		void CFeatureLayer::DrawEx(eDrawPhase phase, Display::IDisplay* pDisplay, GisCommon::ITrackCancel* pTrackCancel)
@@ -243,7 +256,68 @@ namespace GisEngine
 		{
 			m_sQuery = sQuery;
 		}
+		void  CFeatureLayer::SelectFeatures(const GisBoundingBox& extent, ISelection *pSelection,  GisGeometry::ISpatialReference *pOutSpatRef)
+		{
+			if(!GetSelectable())
+				return;
+			if(!m_pFeatureClass.get())
+				return;
 
+
+			 
+
+			GisGeometry::IEnvelopePtr fullEnv  = m_pFeatureClass->GetExtent();
+			GisGeometry::ISpatialReferencePtr spatRefFC = fullEnv->GetSpatialReference();
+
+
+			GisGeometry::CEnvelope env(extent, pOutSpatRef);
+			if(!env.Intersect(fullEnv.get()))
+			{
+			
+				return;
+			}
+ 
+
+			GeoDatabase::CQueryFilter filter;
+			filter.AddRef();
+			filter.SetOutputSpatialReference(pOutSpatRef);
+			filter.SetSpatialRel(GeoDatabase::srlIntersects);
+			filter.SetBB(extent);
+			filter.GetFieldSet()->Add(m_pFeatureClass->GetShapeFieldName());
+			filter.GetFieldSet()->Add(m_pFeatureClass->GetOIDFieldName());
+		/*	double precision = pDisplay->GetTransformation()->DeviceToMapMeasure(0.25);
+
+			if(spatRefFC.get() && outSpatRef.get())
+			{
+				GisBoundingBox box = pDisplay->GetTransformation()->GetFittedBounds();
+				box.xMin = (box.xMin + box.xMax) / 2;
+				box.yMin = (box.yMin + box.yMax) / 2;
+				box.xMax = box.xMin + precision;
+				box.yMax = box.yMin + precision;
+				if(!outSpatRef->Project(spatRefFC.get(), box))
+					precision = 0.0;
+				else
+					precision = min(box.xMax - box.xMin, box.yMax - box.yMin);
+			}
+
+			filter.SetPrecision(precision);*/
+
+		
+
+			GeoDatabase::ICursorPtr pCursor = m_pFeatureClass->Search(&filter, true);
+			if(!pCursor.get())
+			{
+				return;
+			}
+
+			GeoDatabase::IRowPtr pRow;
+			uint32 nRow = 0;
+		 
+			while(pCursor->NextRow(&pRow))
+			{
+				pSelection->AddFeature(this, pRow->GetOID());
+			}
+		}
 		bool CFeatureLayer::save(CommonLib::IWriteStream *pWriteStream) const
 		{
 

@@ -53,7 +53,16 @@ namespace GisEngine
 			 for(int i = 0; i < layerCount; ++i)
 			 {
 				 ILayerPtr pLayer = m_pLayers->GetLayer(i);
+				 if(!pLayer->GetVisible() || !pLayer->IsValid() || pLayer->GetLayerID() != FeatureLayerID)
+					 continue;
+
+			    IFeatureLayer *pFeatureLayer = dynamic_cast< IFeatureLayer *>(pLayer.get());
+				assert(pFeatureLayer);
+
+				if(!pFeatureLayer->GetSelectable())
+					 continue;
 				 
+				 pFeatureLayer->SelectFeatures(extent, m_pSelection.get(), m_pSpatialRef.get());
 			 }
 		 }
 		ISelectionPtr   CMap::GetSelection() const
@@ -542,7 +551,7 @@ namespace GisEngine
 			{	
 				for (int i = 0, nCount = pLayersNode->GetChildCnt();  i< nCount; ++i)
 				{
-					GisCommon::IXMLNodePtr pLayerNode = pLayersNode->GetChild(L"Layer");
+					GisCommon::IXMLNodePtr pLayerNode = pLayersNode->GetChild(i);
 					ILayerPtr pLayer  =  LoaderLayers::LoadLayer(pLayerNode.get());
 					m_pLayers->AddLayer(pLayer.get());
 				}

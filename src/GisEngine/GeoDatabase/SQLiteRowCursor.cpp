@@ -99,6 +99,14 @@ namespace GisEngine
 					sWhere += L")";
 				}
 			}
+
+			CSQLiteFeatureClass *pFeatureClass = dynamic_cast<CSQLiteFeatureClass *>(pTable);
+			if(pFeatureClass)
+			{
+				GisGeometry::IEnvelopePtr pEnvelope =  pFeatureClass->GetExtent();
+				m_comp_params = pEnvelope->GetCompressParams();
+			}
+
 			sSQL += sWhere;
 			m_pStmt = pDB->prepare_query(sSQL);
 		}
@@ -122,6 +130,14 @@ namespace GisEngine
 
 			sWhere.format(L" where %s = %I64d", pTable->HasOIDField() ? pTable->GetOIDFieldName().cwstr() : L"rowid", nOId);
 			sSQL+= sWhere;
+
+			CSQLiteFeatureClass *pFeatureClass = dynamic_cast<CSQLiteFeatureClass *>(pTable);
+			if(pFeatureClass)
+			{
+				GisGeometry::IEnvelopePtr pEnvelope =  pFeatureClass->GetExtent();
+				m_comp_params = pEnvelope->GetCompressParams();
+			}
+
 			m_pStmt = pDB->prepare_query(sSQL);
 		}
 		CSQLiteRowCursor::~CSQLiteRowCursor()
@@ -179,7 +195,7 @@ namespace GisEngine
 						break;
 					case dtGeometry:
 						{
-							m_pStmt->ColumnShape(fi.m_nRowIndex, m_pCacheShape.get());
+							m_pStmt->ColumnShape(fi.m_nRowIndex, m_pCacheShape.get(), &m_comp_params);
 							m_pCacheShape->calcBB();
 						}
 						break;

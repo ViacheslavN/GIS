@@ -21,6 +21,7 @@ namespace GisEngine
 			virtual const GisBoundingBox& GetBoundingBox() const;
 			virtual ISpatialReferencePtr  GetSpatialReference() const;
 
+
 	
 			virtual GisBoundingBox& GetBoundingBox();
 			virtual void SetBoundingBox(const GisBoundingBox& box);
@@ -28,6 +29,7 @@ namespace GisEngine
 			virtual void Expand(IEnvelope* envelope);
 			virtual bool Intersect(IEnvelope* envelope);
 			virtual void Project(ISpatialReference* spatRef);
+			virtual CommonLib::CGeoShape::compress_params GetCompressParams() const;
 
 			virtual IEnvelopePtr	clone() const; 
 		private:

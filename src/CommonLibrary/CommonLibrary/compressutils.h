@@ -4,7 +4,7 @@
 namespace CommonLib
 {
 
-	enum eDataType
+	enum eCompressDataType
 	{
 		dtType8 =  0,
 		dtType16 = 1,
@@ -13,20 +13,20 @@ namespace CommonLib
 	};
 
 	template<class TValue>
-	eDataType GetType(TValue nValue)
+	eCompressDataType GetCompressType(TValue nValue)
 	{
-		if(nValue < 256)
+		if(nValue < 0xFF)
 			return dtType8;
-		else if(nValue < 65536)
+		else if(nValue < 0xFFFF)
 			return dtType16;
-		else if(nValue < 4294967296)
+		else if(nValue < 0xFFFFFFFF)
 			return dtType32;
 		return dtType64;
 	}
 
 
 	template<class TValue>
-	void WriteValue(TValue nValue, eDataType type, CommonLib::IWriteStream *pStream)
+	void WriteValue(TValue nValue, eCompressDataType type, CommonLib::IWriteStream *pStream)
 	{
 		switch(type)
 		{
@@ -50,7 +50,7 @@ namespace CommonLib
 	}
 
 	template<class TValue>
-	TValue ReadValue(eDataType type, CommonLib::IReadStream *pStream)
+	TValue ReadValue(eCompressDataType type, CommonLib::IReadStream *pStream)
 	{
 		switch(type)
 		{
@@ -72,7 +72,7 @@ namespace CommonLib
 		return TValue();
 	}
 
-	static uint32 GetSizeTypeValue(eDataType type)
+	static uint32 GetSizeTypeValue(eCompressDataType type)
 	{
 		switch(type)
 		{
