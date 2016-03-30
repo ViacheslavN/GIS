@@ -43,7 +43,7 @@ namespace embDB
 		}
 
 
-		CommonLib::eDataType SpatialDataToCompressData(embDB::eSpatialType spatialType)
+		CommonLib::eCompressDataType SpatialDataToCompressData(embDB::eSpatialType spatialType)
 		{
 			switch(spatialType)
 			{

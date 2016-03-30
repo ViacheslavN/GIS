@@ -98,6 +98,7 @@ namespace embDB
 			
 			m_pCurNode = pCurNode;
 			SetNode(m_pCurNode.get());
+			CheckIndex();
 		}
 
 		void SetNode(TBTreeNode *pCurNode)
@@ -204,6 +205,54 @@ namespace embDB
 
 		}
 
+		bool CheckIndex()
+		{
+			while(true)
+			{
+				while(m_nIndex <  (int32)m_pCurLeafNode->count())
+				{
+
+					TPointKey& zVal = m_pCurNode->key(m_nIndex);
+					if(zVal.IsInRect(m_QueryRect))
+						break;
+					m_nIndex++;
+				}
+
+				if(m_nIndex < (int32)m_pCurLeafNode->count())
+					return true;
+
+				if(m_pCurNode->next() == -1)
+				{
+					m_nIndex = -1;
+					return false;
+				}
+
+				TBTreeNodePtr pParentNode = m_pTree->getNode(m_pCurNode->parentAddr(), false, false, true);
+				if(/*pParentNode.get() && */(m_pCurNode->foundIndex()  == -1 || (m_pCurNode->foundIndex() + 1) < (uint32)pParentNode->count()))
+				{
+					int nIndex = m_pCurNode->foundIndex()  == -1 ? 0 : m_pCurNode->foundIndex() + 1;
+					TBTreeNodePtr pNextNode = m_pTree->getNode(pParentNode->link(nIndex), false, false, true);
+
+					TPointKey& zNextVal = pParentNode->key(nIndex);
+
+					pNextNode->setParent(pParentNode.get(), nIndex);
+					if(!findNext(zNextVal, pNextNode->addr()))
+						return false;
+				}
+				else
+				{ 
+					TBTreeNodePtr pNextNode = m_pTree->getNode(m_pCurNode->next(), false, false, true);
+					if(!pNextNode.get())
+						return false;
+					m_pTree->SetParentNext(m_pCurNode.get(), pNextNode.get());
+					if(!findNext(pNextNode->key(0), pNextNode->addr()))
+						return false;
+				}
+
+			}
+
+		}
+
 		bool next()
 		{
 			if(!m_pCurNode.get())
@@ -211,50 +260,7 @@ namespace embDB
 		
 			m_pTree->ClearChache();
 			m_nIndex++;
-			while(m_nIndex <  (int32)m_pCurLeafNode->count())
-			{
-				/*int Val = m_pCurNode->value(m_nIndex);
-				if(Val == 85)
-				{
-					int i = 0;
-					i++;
-				}*/
-				TPointKey& zVal = m_pCurNode->key(m_nIndex);
-				if(zVal.IsInRect(m_QueryRect))
-					break;
-				m_nIndex++;
-			}
-
-			if(m_nIndex < (int32)m_pCurLeafNode->count())
-			   return true;
-
-			if(m_pCurNode->next() == -1)
-			{
-				m_nIndex = -1;
-				return false;
-			}
-
-			TBTreeNodePtr pParentNode = m_pTree->getNode(m_pCurNode->parentAddr(), false, false, true);
-			if(/*pParentNode.get() && */(m_pCurNode->foundIndex()  == -1 || (m_pCurNode->foundIndex() + 1) < (uint32)pParentNode->count()))
-			{
-				int nIndex = m_pCurNode->foundIndex()  == -1 ? 0 : m_pCurNode->foundIndex() + 1;
-				TBTreeNodePtr pNextNode = m_pTree->getNode(pParentNode->link(nIndex), false, false, true);
-				
-				TPointKey& zNextVal = pParentNode->key(nIndex);
-
-				 pNextNode->setParent(pParentNode.get(), nIndex);
-				return findNext(zNextVal, pNextNode->addr());
-			}
-			else
-			{ 
-				TBTreeNodePtr pNextNode = m_pTree->getNode(m_pCurNode->next(), false, false, true);
-				if(!pNextNode.get())
-					return false;
-				m_pTree->SetParentNext(m_pCurNode.get(), pNextNode.get());
-				 return findNext(pNextNode->key(0), pNextNode->addr());
-			}
-
-			return true;
+			return CheckIndex();
 		}
 		void update()
 		{

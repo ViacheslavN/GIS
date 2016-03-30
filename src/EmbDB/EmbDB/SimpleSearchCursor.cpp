@@ -56,7 +56,7 @@ namespace embDB
 
 		SetCacheObj();
 		m_pCacheRow = new CRow(m_pFields.get(), m_pFieldSet.get());
-		return true;
+		return !m_vecOIDs.empty();
 	}
 	void SimpleSearchCursor::SetCacheObj()
 	{
@@ -112,6 +112,10 @@ namespace embDB
 	}
 	bool SimpleSearchCursor::NextRow(IRowPtr* pRow)
 	{
+		if(m_bEnd)
+			return false;
+
+
 		if(m_vecOIDs.size() == m_nCurrObj)
 		{
 			SetCacheObj();

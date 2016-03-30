@@ -230,7 +230,7 @@ namespace embDB
 				}
 
 				typename  TBTree::iterator it = m_tree.find(nOID, pFromIterator, true);
-				TFieldIterator *pFiledIterator = new TFieldIterator(it, this);
+				TFieldIterator *pFiledIterator = new TFieldIterator(it, this); //TO DO reuse
 				return IFieldIteratorPtr(pFiledIterator);
 			}
 	
