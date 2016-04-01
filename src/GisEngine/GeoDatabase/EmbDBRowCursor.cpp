@@ -49,10 +49,19 @@ namespace GisEngine
 
 		bool CEmbDBRowCursor::NextRow(IRowPtr* row)
 		{
-			if(m_bInvalidCursor || !m_pCursor.get())
+
+			if(!m_pCursor.get())
 				return false;
 
-		 
+			if(m_bInvalidCursor)
+				return false;
+
+			m_bInvalidCursor = !m_pCursor->NextRow();
+
+
+			if(m_bInvalidCursor)
+				return false;
+
 
 			if(!m_pCurrentRow.get())
 			{
@@ -92,7 +101,7 @@ namespace GisEngine
 			
 			}
 			*row = m_pCurrentRow;
-			m_bInvalidCursor = !m_pCursor->NextRow();
+		
 			return true;
 		}
 	}

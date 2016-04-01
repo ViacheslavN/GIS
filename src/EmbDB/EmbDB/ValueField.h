@@ -233,6 +233,31 @@ namespace embDB
 				TFieldIterator *pFiledIterator = new TFieldIterator(it, this); //TO DO reuse
 				return IFieldIteratorPtr(pFiledIterator);
 			}
+
+			void find(int64 nOID, IFieldIteratorPtr& retPtr, IFieldIterator* pFromIter = NULL)
+			{
+
+				iterator *pFromIterator = NULL;
+				if(pFromIter)
+				{
+					//TFieldIterator *pFieldIterator = dynamic_cast<TFieldIterator*>(pFromIter);
+					//assert(pFieldIterator);
+					TFieldIterator *pFieldIterator = (TFieldIterator*)pFromIter;
+					pFromIterator = &pFieldIterator->m_ParentIt;
+				}
+
+				typename  TBTree::iterator it = m_tree.find(nOID, pFromIterator, true);
+				if(!retPtr.get())
+				{
+					retPtr =  new TFieldIterator(it, this);  
+				}
+				else
+				{
+					TFieldIterator *pFieldIterator =(TFieldIterator*)retPtr.get();
+					pFieldIterator->setParentIt(it);
+				}
+				 
+			}  
 	
 			virtual IFieldIteratorPtr upper_bound(int64 nRowID,  IFieldIterator* pFromIter = NULL)
 			{

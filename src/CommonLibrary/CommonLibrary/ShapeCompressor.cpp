@@ -460,7 +460,7 @@ namespace CommonLib
 				}
 			}
 		}
-
+		pShp->calcBB();
 		return true;
 	}
 

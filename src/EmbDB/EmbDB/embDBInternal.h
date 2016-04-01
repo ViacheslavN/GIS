@@ -344,6 +344,10 @@ namespace embDB
 		virtual bool update (int64 nRowID, CommonLib::CVariant* pFieldVal) = 0;
 		virtual bool remove (int64 nRowID, IFieldIterator **pRetIter = NULL) = 0;
 		virtual bool find(int64 nOID, CommonLib::CVariant* pFieldVal) = 0;
+
+
+		virtual void  find(int64 nRowID, IFieldIteratorPtr& retPtr, IFieldIterator* pFrom = NULL) = 0;
+
 		virtual IFieldIteratorPtr find(int64 nRowID,  IFieldIterator* pFrom = NULL) = 0;
 		virtual IFieldIteratorPtr upper_bound(int64 nRowID,  IFieldIterator* pFrom = NULL) = 0;
 		virtual IFieldIteratorPtr lower_bound(int64 nRowID,  IFieldIterator* pFrom = NULL) = 0;

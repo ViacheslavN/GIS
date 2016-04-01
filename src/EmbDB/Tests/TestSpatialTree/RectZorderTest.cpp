@@ -10,7 +10,7 @@
 #include <iostream>
 #include <set>
 
-
+#include <vector>
 
 template<class TZVal>
 bool FindRectMinZVal(const TZVal& zVal, 
@@ -40,8 +40,8 @@ bool FindRectMinZVal(const TZVal& zVal,
 			nBits--;
 			if(nBits < 0)
 			{
-				uint16 xMin, yMin, xMax, yMax;
-				zRes.getXY(xMin, yMin, xMax, yMax);
+			//	uint16 xMin, yMin, xMax, yMax;
+			//	zRes.getXY(xMin, yMin, xMax, yMax);
 
 				int i = 0;
 				i++;
@@ -52,7 +52,7 @@ bool FindRectMinZVal(const TZVal& zVal,
 		}
 		qMin.clearLowBits(nBits);
 		qMax.setLowBits(nBits);
-
+		--nBits;
 		if(qMin < qMax)
 		{
 
@@ -67,15 +67,99 @@ bool FindRectMinZVal(const TZVal& zVal,
 		}
 		else /*if(zVal > qMin && zVal < right)*/
 		{
+			zRes = qMin;
 			if(qMin > zVal)
 			{
-				zRes = qMin;
-				break;
-			}
-			left = qMin;
-			zRes = qMin;
 
+				if(qMax < zVal)
+					break;
+			}
+			else
+			{
+				left = qMin;
+				
+			}
+		
+			
 		}
+
+	}
+
+	return true;
+}
+
+
+template<class TZVal>
+struct sQuery
+{
+	TZVal zMin;
+	TZVal zMax;
+	long nBits;
+};
+
+template<class TZVal>
+bool FindRectMinZVal1(const TZVal& zVal, 
+	const TZVal& zMin, const TZVal& zMax, TZVal& zRes)
+{
+	if(zVal < zMin || zVal > zMax)
+	{
+		assert(false);
+		return false;
+	}
+
+	//short nBits = zRes.getBits();
+
+	TZVal left = zMin;
+	TZVal right = zMax;
+	zRes = zMax;
+
+	sQuery<TZVal> curQ;
+	curQ.zMin = zMin;
+	curQ.zMax = zMax;
+	curQ.nBits = zRes.getBits();
+	std::vector<sQuery<TZVal>> vecQ;
+	while(zVal <curQ.zMax )
+	{
+
+
+		TZVal qMin = left;
+		TZVal qMax = right;
+
+		while (curQ.zMin.getBit (curQ.nBits) == curQ.zMax.getBit (curQ.nBits))
+		{
+
+			curQ.nBits--;
+			if(curQ.nBits < 0)
+			{
+				//	uint16 xMin, yMin, xMax, yMax;
+				//	zRes.getXY(xMin, yMin, xMax, yMax);
+
+				int i = 0;
+				i++;
+				return true;
+
+			}
+			//assert(nBits >= 0);
+		}
+
+
+
+		sQuery<TZVal> nNexSubQuery;
+		nNexSubQuery.zMin = curQ.zMin;
+		nNexSubQuery.zMax = curQ.zMax;
+		nNexSubQuery.zMin.clearLowBits (curQ.nBits);
+
+		curQ.zMax.setLowBits(curQ.nBits);
+
+		nNexSubQuery.nBits = --curQ.nBits;
+ 		vecQ.push_back(nNexSubQuery);
+
+		if(!(zVal <curQ.zMax))
+		{
+			int dd = 0;
+			dd++;
+		}
+ 
 	}
 
 	return true;
@@ -87,6 +171,43 @@ void TestRectWithSubQuery(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, Com
 
 void TestRectZorder()
 {
+
+	embDB::ZOrderRect2DU32 zMin, zMax, zNext, zRes, zRes1;
+
+
+	CommonLib::TRect2D<uint32> rect;
+	rect.m_minX = 2551553;
+	rect.m_minY	= 2734546;
+	rect.m_maxX	= 2558215;
+	rect.m_maxY	= 2738573;
+
+
+
+
+	zMin.m_nZValue[0] = 14179799259754791044;
+	zMin.m_nZValue[1] = 12616776;
+
+
+	zMax.m_nZValue[0] = 17207406246237106143;
+	zMax.m_nZValue[1] = 14757395258970795487;
+
+	zNext.m_nZValue[0] = 6503758189072004739;
+	zNext.m_nZValue[1] = 15770975;
+
+	zRes1.m_nZValue[0] = 12114932510826323909;
+	zRes1.m_nZValue[1] = 15770975;
+	
+	if(zRes1.IsInRect(rect))
+	{
+		int dd = 0;
+		dd++;
+	}
+
+	FindRectMinZVal1(zNext, zMin, zMax, zRes);
+
+
+
+
 	embDB::TBPVector<embDB::ZOrderRect2DU16> vecRect;
 
 	int Xmax = 14;

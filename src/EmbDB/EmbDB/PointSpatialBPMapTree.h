@@ -5,7 +5,7 @@
 //#include "PointSpatialBPMaTraits.h"
 #include "CommonLibrary/SpatialKey.h"
 #include "BPMapPointSpatialIterator.h"
-
+//#include "BPMapPointSpatialIteratorOld.h"
 namespace embDB
 {
 	template<class _TCoord, class _TValue, class _TComp, 

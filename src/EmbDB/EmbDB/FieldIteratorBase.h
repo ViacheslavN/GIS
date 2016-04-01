@@ -60,6 +60,10 @@ namespace embDB
 			m_ParentIt = it;
 			m_pField = pField;
 		}
+		void setParentIt(iterator it)
+		{
+			m_ParentIt = it;
+		}
 		virtual IValueFieldPtr getField() 
 		{
 			return m_pField;

@@ -196,7 +196,6 @@ namespace GisEngine
 					case dtGeometry:
 						{
 							m_pStmt->ColumnShape(fi.m_nRowIndex, m_pCacheShape.get(), &m_comp_params);
-							m_pCacheShape->calcBB();
 						}
 						break;
 					case dtUInteger8:

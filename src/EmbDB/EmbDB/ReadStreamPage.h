@@ -60,11 +60,10 @@ namespace embDB
 
 		  bool open(int64 nPageHeader, uint32 nBeginPos, bool bReopen = false)
 		  {
-		 
+			 m_nBeginPos = nBeginPos;
 			  if(!m_pPage.get() || m_pPage->getAddr() != nPageHeader || bReopen)
 			  {
 				  m_nPageHeader = nPageHeader;
-				  m_nBeginPos = nBeginPos;
 				  m_pPage = m_pTran->getFilePage(m_nPageHeader, m_nPageSize, true);
 				  if(!m_pPage.get())
 					  return false; //TO DO Log;

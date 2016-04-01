@@ -120,6 +120,8 @@ namespace GisEngine
 				pDisplay->Lock();
 				while(pCursor->NextRow(&pRow))
 				{
+
+				 
 				
 					if(!(nRow % GetCheckCancelStep()))
 					{
@@ -132,6 +134,10 @@ namespace GisEngine
 					GeoDatabase::IFeature *pFeature = (GeoDatabase::IFeature*)pRow.get();
 					if(!pFeature)
 						continue;
+
+
+					int64 nOID = pRow->GetOID();
+					CommonLib::bbox bb = pFeature->GetShape()->getBB();
 
 					for (size_t i = 0, sz = vecRenderes.size(); i < sz; ++i)
 					{

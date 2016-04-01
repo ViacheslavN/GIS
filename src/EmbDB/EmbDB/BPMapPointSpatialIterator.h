@@ -176,7 +176,10 @@ namespace embDB
 		{
 			
 		}
-		bool findNext( const TPointKey& zNextVal, int64 nAddr )
+
+		 
+
+		bool findNext( const TPointKey& zNextVal, int64 nAddr)
 		{
 			if(zNextVal > m_zMax)
 				return false;
@@ -189,9 +192,11 @@ namespace embDB
 					return true;
 						
 				}
+				
 				TPointKey zRes;
 				FindRectMinZVal(zNextVal, m_zMin, m_zMax, zRes);
 				typename TBTree::iterator it = m_pTree->lower_bound(zRes);
+				
 				if(it.isNull())
 				{
 					m_nIndex = -1;
@@ -209,12 +214,16 @@ namespace embDB
 		{
 			while(true)
 			{
+				bool bFindNext = true;
 				while(m_nIndex <  (int32)m_pCurLeafNode->count())
 				{
 
 					TPointKey& zVal = m_pCurNode->key(m_nIndex);
 					if(zVal.IsInRect(m_QueryRect))
+					{						
+					 
 						break;
+					}
 					m_nIndex++;
 				}
 
@@ -228,7 +237,7 @@ namespace embDB
 				}
 
 				TBTreeNodePtr pParentNode = m_pTree->getNode(m_pCurNode->parentAddr(), false, false, true);
-				if(/*pParentNode.get() && */(m_pCurNode->foundIndex()  == -1 || (m_pCurNode->foundIndex() + 1) < (uint32)pParentNode->count()))
+				if((m_pCurNode->foundIndex()  == -1 || (m_pCurNode->foundIndex() + 1) < (uint32)pParentNode->count()))
 				{
 					int nIndex = m_pCurNode->foundIndex()  == -1 ? 0 : m_pCurNode->foundIndex() + 1;
 					TBTreeNodePtr pNextNode = m_pTree->getNode(pParentNode->link(nIndex), false, false, true);
@@ -308,8 +317,10 @@ namespace embDB
 		int32 m_nIndex;
 		TPointKey m_zMin;
 		TPointKey m_zMax;
+		TPointKey m_zLastIn;
 		TRect m_QueryRect;
 		int64 m_nReq;
+		//TComp m_comp;
 	};
 }
 
