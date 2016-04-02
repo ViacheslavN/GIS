@@ -16,6 +16,9 @@
     <Filter Include="exportFromShape">
       <UniqueIdentifier>{4745cc24-84da-4f6f-9b5c-73ed0d6ea142}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TestSpIndex">
+      <UniqueIdentifier>{9bb30868-bd67-4d29-ac45-f32727f0cf3e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -56,6 +59,9 @@
     </ClCompile>
     <ClCompile Include="testAddFieldDB.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSpIndex.cpp">
+      <Filter>TestSpIndex</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

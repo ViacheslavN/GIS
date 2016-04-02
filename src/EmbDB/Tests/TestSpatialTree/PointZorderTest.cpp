@@ -74,28 +74,28 @@ void TestWithSubQuery(embDB::TBPVector<embDB::ZOrderPoint2DU32>& vecPoint, Commo
 void TestPointZorder()
 {
 	 
-	embDB::ZOrderPoint2DU16 nLow(0, 0);
-	embDB::ZOrderPoint2DU16 nHigh(3, 3);
+	embDB::ZOrderPoint2DU16 nLow(2, 1);
+	embDB::ZOrderPoint2DU16 nHigh(4, 4);
 	
-	embDB::ZOrderPoint2DU16 nVal(2, 3);
+	embDB::ZOrderPoint2DU16 nVal(5, 3);
 
-	nLow.m_nZValue = 0;
-	nHigh.m_nZValue = 51;
+	nLow.m_nZValue = 9;
+	nHigh.m_nZValue = 48;
 
-	nVal.m_nZValue = 46;
+	nVal.m_nZValue = 27;
 	embDB::ZOrderPoint2DU16 nRes;
 	FindMinZVal(nVal, nLow, nHigh, nRes);
 
 	embDB::TBPVector<embDB::ZOrderPoint2DU32> vecPoint;
 
-	int Xmax = 2000;
-	int Ymax =2000;
+	int Xmax = 6;
+	int Ymax =6;
 
 	int qXmin = 700;
 	int qXmax = 800;
 
-	int qYmin = 550;
-	int qYmax = 630;
+	int qYmin = 5;
+	int qYmax = 5;
 
 	for (uint32 x = 0; x < Xmax + 1; ++x)
 	{

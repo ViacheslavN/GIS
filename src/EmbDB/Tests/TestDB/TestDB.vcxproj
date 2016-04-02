@@ -163,6 +163,7 @@
     </ClCompile>
     <ClCompile Include="testAddFieldDB.cpp" />
     <ClCompile Include="TestDB.cpp" />
+    <ClCompile Include="TestSpIndex.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

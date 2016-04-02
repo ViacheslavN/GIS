@@ -25,8 +25,8 @@ int _tmain(int argc, _TCHAR* argv[])
 //	TestPointSpatialTree();
 	//WriteZorderTable(0, 10);
   // TestRectSpatialTree();
-	TestPointZorder();
-//	TestRectZorder();
+//	TestPointZorder();
+	TestRectZorder();
 	return 0;
 }
 

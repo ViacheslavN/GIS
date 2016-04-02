@@ -11,7 +11,7 @@
 #include <set>
 
 #include <vector>
-
+#include <fstream>
 template<class TZVal>
 bool FindRectMinZVal(const TZVal& zVal, 
 	const TZVal& zMin, const TZVal& zMax, TZVal& zRes)
@@ -22,11 +22,14 @@ bool FindRectMinZVal(const TZVal& zVal,
 		return false;
 	}
 
+
 	short nBits = zRes.getBits();
 
 	TZVal left = zMin;
 	TZVal right = zMax;
 	zRes = zMax;
+
+
 	while(nBits >= 0)
 	{
 
@@ -65,7 +68,7 @@ bool FindRectMinZVal(const TZVal& zVal,
 			right = qMax;
 			zRes = qMax;
 		}
-		else /*if(zVal > qMin && zVal < right)*/
+		else 
 		{
 			zRes = qMin;
 			if(qMin > zVal)
@@ -85,6 +88,104 @@ bool FindRectMinZVal(const TZVal& zVal,
 
 	}
 
+	return true;
+}
+
+
+
+
+template<class TZVal>
+bool FindRectMinZValFile(const TZVal& zVal, 
+	const TZVal& zMin, const TZVal& zMax, TZVal& zRes)
+{
+	if(zVal < zMin || zVal > zMax)
+	{
+		assert(false);
+		return false;
+	}
+
+	std::ofstream fileZOrder;
+	fileZOrder.open("D:\\zOrderSplit");
+
+	short nBits = zRes.getBits();
+
+	TZVal left = zMin;
+	TZVal right = zMax;
+	zRes = zMax;
+
+
+	fileZOrder << "zMin" << "                            zMax" << "\n";
+
+	fileZOrder << zMin.m_nZValue[1] << "  " << zMin.m_nZValue[0] <<"  ";
+	fileZOrder << zMax.m_nZValue[1] << "  " << zMax.m_nZValue[0] << "\n" ;
+	while(nBits >= 0)
+	{
+
+
+		TZVal qMin = left;
+		TZVal qMax = right;
+
+		while (qMin.getBit (nBits) == qMax.getBit (nBits))
+		{
+
+			nBits--;
+			if(nBits < 0)
+			{
+				//	uint16 xMin, yMin, xMax, yMax;
+				//	zRes.getXY(xMin, yMin, xMax, yMax);
+
+				int i = 0;
+				i++;
+				return true;
+
+			}
+			//assert(nBits >= 0);
+		}
+		qMin.clearLowBits(nBits);
+		qMax.setLowBits(nBits);
+		--nBits;
+
+		fileZOrder <<"Split Query   ";
+		fileZOrder << "L: " << left.m_nZValue[1] << "  " << left.m_nZValue[0] << "    ";
+		fileZOrder << "Qmax: "<< qMax.m_nZValue[1] << "  " << qMax.m_nZValue[0] << "    ";
+		fileZOrder << "Qmin: "<<qMin.m_nZValue[1] << "  " << qMin.m_nZValue[0] << "    ";
+		fileZOrder << "R: " <<right.m_nZValue[1] << "  " << right.m_nZValue[0] << "\n";
+		if(qMin < qMax)
+		{
+
+			int d = 0;
+			d++;
+		}
+
+		if(zVal < qMax)
+		{
+			right = qMax;
+			zRes = qMax;
+		}
+		else 
+		{
+			zRes = qMin;
+			if(qMin > zVal)
+			{
+
+				if(qMax < zVal)
+					break;
+			}
+			else
+			{
+				left = qMin;
+
+			}
+
+
+		}
+
+		fileZOrder <<"New Query     ";
+		fileZOrder << "L: "<< left.m_nZValue[1] << "  " << left.m_nZValue[0] << "    ";
+		fileZOrder << "R: "<<right.m_nZValue[1] << "  " << right.m_nZValue[0] << "\n";
+
+	}
+	fileZOrder.close();
 	return true;
 }
 
@@ -118,6 +219,8 @@ bool FindRectMinZVal1(const TZVal& zVal,
 	curQ.zMax = zMax;
 	curQ.nBits = zRes.getBits();
 	std::vector<sQuery<TZVal>> vecQ;
+
+	sQuery<TZVal> nNexSubQuery;
 	while(zVal <curQ.zMax )
 	{
 
@@ -144,7 +247,7 @@ bool FindRectMinZVal1(const TZVal& zVal,
 
 
 
-		sQuery<TZVal> nNexSubQuery;
+		
 		nNexSubQuery.zMin = curQ.zMin;
 		nNexSubQuery.zMax = curQ.zMax;
 		nNexSubQuery.zMin.clearLowBits (curQ.nBits);
@@ -161,7 +264,8 @@ bool FindRectMinZVal1(const TZVal& zVal,
 		}
  
 	}
-
+	FindRectMinZVal(zVal, nNexSubQuery.zMin, nNexSubQuery.zMax, zRes);
+	FindRectMinZVal1(zVal, nNexSubQuery.zMin, nNexSubQuery.zMax, zRes);
 	return true;
 }
 
@@ -202,7 +306,7 @@ void TestRectZorder()
 		int dd = 0;
 		dd++;
 	}
-
+	FindRectMinZVal(zNext, zMin, zMax, zRes);
 	FindRectMinZVal1(zNext, zMin, zMax, zRes);
 
 

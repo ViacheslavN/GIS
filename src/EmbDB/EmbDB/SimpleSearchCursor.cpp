@@ -141,7 +141,7 @@ namespace embDB
 			if((nCurrID - nPrevOID) == 1)
 				bNext = true;
 		}
-		for (uint32 i = 0, sz = m_vecFields.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = (uint32)m_vecFields.size(); i < sz; ++i)
 		{
 			 
 
@@ -153,24 +153,24 @@ namespace embDB
 				{
 					field.m_pFieldIterator->next();
 					if(field.m_pFieldIterator->isNull())
-						field.m_pFieldIterator  = field.m_pValueField->find(nCurrID,  field.m_pFieldIterator.get());//field.m_pFieldIterator = field.m_pValueField->find(nCurrID, field.m_pFieldIterator.get());
+						field.m_pValueField->find(nCurrID,  field.m_pFieldIterator, field.m_pFieldIterator.get());//field.m_pFieldIterator = field.m_pValueField->find(nCurrID, field.m_pFieldIterator.get());
 					else
 					{
 						int64 nOID = field.m_pFieldIterator->getRowID();
 						if(nOID != nCurrID)
-							field.m_pFieldIterator  = field.m_pValueField->find(nCurrID, field.m_pFieldIterator.get());
+							field.m_pValueField->find(nCurrID, field.m_pFieldIterator, field.m_pFieldIterator.get());
 					}
 				}
 				else
 				{
-					field.m_pFieldIterator  =  field.m_pValueField->find(nCurrID, field.m_pFieldIterator.get());
+					field.m_pValueField->find(nCurrID, field.m_pFieldIterator, field.m_pFieldIterator.get());
 				}
 
 				
 				
 			}
 			else
-				field.m_pFieldIterator  =  field.m_pValueField->find(nCurrID, field.m_pFieldIterator.get());
+				field.m_pValueField->find(nCurrID, field.m_pFieldIterator, field.m_pFieldIterator.get());
 		
 			if(pRow)
 			{
@@ -195,7 +195,7 @@ namespace embDB
 
 	void SimpleSearchCursor::SetNext(int64 nOID, bool bNext)
 	{
-		for (uint32 i = 0, sz = m_vecFields.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = (uint32)m_vecFields.size(); i < sz; ++i)
 		{
 			SField& field = m_vecFields[i];
 			IFieldIteratorPtr pIterator;
@@ -206,24 +206,24 @@ namespace embDB
 				{
 					field.m_pFieldIterator->next();
 					if(field.m_pFieldIterator->isNull())
-						 field.m_pFieldIterator  = field.m_pValueField->find(nOID,  field.m_pFieldIterator.get());
+						field.m_pValueField->find(nOID,  field.m_pFieldIterator, field.m_pFieldIterator.get());
 					else
 					{
 						int64 nOID = field.m_pFieldIterator->getRowID();
 						if(nOID != nOID)
-							field.m_pFieldIterator  = field.m_pValueField->find(nOID,  field.m_pFieldIterator.get());
+							field.m_pValueField->find(nOID,  field.m_pFieldIterator, field.m_pFieldIterator.get());
 					}
 				}
 				else
 				{
-					field.m_pFieldIterator  = field.m_pValueField->find(nOID,  field.m_pFieldIterator.get());
+					field.m_pValueField->find(nOID,  field.m_pFieldIterator, field.m_pFieldIterator.get());
 				}
 
 
 
 			}
 			else
-				field.m_pFieldIterator  = field.m_pValueField->find(nOID, field.m_pFieldIterator.get());
+				field.m_pValueField->find(nOID, field.m_pFieldIterator, field.m_pFieldIterator.get());
 		}
 	}
 }

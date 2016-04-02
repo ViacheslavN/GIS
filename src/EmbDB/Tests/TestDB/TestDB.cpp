@@ -9,12 +9,12 @@
 
 void TestSpatialField(embDB::CDatabase& db);
 void TestAddFieldDB();
-
+void TestSpIndexFromShapeFile();
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//TestAddFieldDB();
-
-	testDBFromShape();
+	TestSpIndexFromShapeFile();
+	//testDBFromShape();
 	return 0;
 	
 /*	embDB::TVarINT32 int32key;

@@ -199,7 +199,7 @@ namespace embDB
 			m_nZValue[1] |= (bitMask& (bit - 1));
 	
 			bitMask = 0x8888888888888888 >> (3 - subIndex % 4);
-			m_nZValue[0] |= (bitMask& (bit - 1));
+			m_nZValue[0] |= (bitMask/*& (bit - 1)*/);
 		}
 		else
 		{
@@ -224,7 +224,7 @@ namespace embDB
 			uint64 bit = uint64 (1) << uint64 (subIndex & 0x3f);
 			m_nZValue[1] |=  bit;
 			bitMask = 0x8888888888888888 >> (3 - subIndex % 4);
-			m_nZValue[0] &= ~(bitMask& (bit - 1));
+			m_nZValue[0] &= ~(bitMask/*& (bit - 1)*/);
 		}
 		else
 		{
@@ -360,7 +360,7 @@ namespace embDB
 		bitMask = 0x8888888888888888 >> (3 - nSubIndex % 4);
 		for (int i = nBlock - 1; i >= 0; --i)
 		{
-			m_nZValue[i] |= (bitMask & (bit - 1));
+			m_nZValue[i] |= (bitMask /*& (bit - 1)*/);
 		}
 	}
 
@@ -377,7 +377,7 @@ namespace embDB
 		bitMask = 0x8888888888888888 >> (3 - nSubIndex % 4);
 		for (int i = nBlock - 1; i >= 0; --i)
 		{
-			m_nZValue[i] &= ~(bitMask & (bit - 1));
+			m_nZValue[i] &= ~(bitMask /*& (bit - 1)*/);
 		}
 	}
 
