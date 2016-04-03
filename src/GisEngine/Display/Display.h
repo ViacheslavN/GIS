@@ -24,8 +24,8 @@ namespace GisEngine
 		{
 			UndefineSymbolID,
 			SimpleLineSymbolID,
-			MarkerLineSymboID,
 			HashLineSymbolID,
+			SimpleMarketSymbolID,
 			MarkerLineSymbolID,
 			PictureLineSymbol,
 			SimpleFillSymbolID,

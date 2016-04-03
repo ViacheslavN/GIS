@@ -477,6 +477,7 @@
     <ClInclude Include="DisplayUtils.h" />
     <ClInclude Include="MarkerSymbolBase.h" />
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="SimpleMarketSymbol.h" />
     <ClInclude Include="SymbolFillBase.h" />
     <ClInclude Include="LoaderSymbols.h" />
     <ClInclude Include="RectClipper.h" />
@@ -527,6 +528,7 @@
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="SimpleFillSymbol.cpp" />
     <ClCompile Include="SimpleLineSymbol.cpp" />
+    <ClCompile Include="SimpleMarketSymbol.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugShared|Win32'">Create</PrecompiledHeader>

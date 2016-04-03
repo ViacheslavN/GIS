@@ -154,6 +154,9 @@
     <ClInclude Include="MarkerSymbolBase.h">
       <Filter>symbols</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleMarketSymbol.h">
+      <Filter>symbols</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -224,6 +227,9 @@
     </ClCompile>
     <ClCompile Include="Screen.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleMarketSymbol.cpp">
+      <Filter>symbols</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

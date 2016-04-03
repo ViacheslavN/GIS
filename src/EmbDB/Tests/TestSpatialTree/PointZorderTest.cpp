@@ -82,7 +82,7 @@ void TestPointZorder()
 	nLow.m_nZValue = 9;
 	nHigh.m_nZValue = 48;
 
-	nVal.m_nZValue = 27;
+	nVal.m_nZValue = 19;
 	embDB::ZOrderPoint2DU16 nRes;
 	FindMinZVal(nVal, nLow, nHigh, nRes);
 
