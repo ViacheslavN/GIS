@@ -41,7 +41,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//testLoadXML1();
 	//return 1;
 //	TestShapeIndex();
-//	TestEmbDBWks();
+//	
 
 	/*CommonLib::CString s1(L"vfdgggf");
 	CommonLib::CString s2(s1);
@@ -49,8 +49,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	ITest *pTest = new ITest(s1);
 	delete pTest;*/
 	//TestShapeIndex();
-	TestSQLiteWks();
- 
+	//TestSQLiteWks();
+ TestEmbDBWks();
 	//TestXML();
 	/*for(int i =0; i < 100000000; ++i)
 	{

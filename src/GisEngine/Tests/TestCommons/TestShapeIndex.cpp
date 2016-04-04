@@ -19,7 +19,7 @@ void TestShapeIndex()
 	{
 		//DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::open(L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\world_adm0.shapeidx");
 		//DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::open(L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shapeidx");
-		DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::open(L"d:\\db\\building.shapeidx");
+		DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::open(L"d:\\db\\building.shapeidx", 5);
 		CommonLib::bbox bbox;
 		bbox.type = CommonLib::bbox_type_normal;
 		/*bbox.xMin = 10;
