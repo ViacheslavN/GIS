@@ -75,6 +75,9 @@
     <ClCompile Include="GeneratedFiles\qrc_geoconvertor.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="geoconvertor.h">
@@ -94,6 +97,9 @@
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_geoconvertor.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

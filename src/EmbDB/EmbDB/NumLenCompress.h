@@ -552,7 +552,7 @@ namespace embDB
 						break;
 					}
 
-					m_nLenBitSize += (m_BitsLensFreq[i] + 1) * i;
+					m_nLenBitSize += (m_BitsLensFreq[i]) * (i + 1);
 				}
 
 			}

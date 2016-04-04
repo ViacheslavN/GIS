@@ -36,7 +36,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	// CommonLib::CString str = "string";
 
 //	 str.exportToUTF8(utf8Buf, 255);
-	// CompressShape();
+	CompressShape();
 //	TestTableWks();
 	//testLoadXML1();
 	//return 1;
@@ -49,8 +49,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	ITest *pTest = new ITest(s1);
 	delete pTest;*/
 	//TestShapeIndex();
-	//TestSQLiteWks();
- TestEmbDBWks();
+//	TestSQLiteWks();
+ //TestEmbDBWks();
 	//TestXML();
 	/*for(int i =0; i < 100000000; ++i)
 	{

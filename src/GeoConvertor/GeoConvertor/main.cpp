@@ -1,9 +1,9 @@
 #include "geoconvertor.h"
-#include <QtWidgets/QApplication>
 
+#include "Application.h"
 int main(int argc, char *argv[])
 {
-	QApplication a(argc, argv);
+	CApplication a(argc, argv);
 	GeoConvertor w;
 	w.show();
 	return a.exec();
