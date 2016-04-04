@@ -112,8 +112,8 @@ namespace GisEngine
 			GisCommon::IXMLNodePtr pBrushNode = pXmlNode->CreateChildNode(pszName);
 
 			pBrushNode->AddPropertyInt16U(L"Type", m_type);
-			m_color.saveXML(pBrushNode.get());
-			m_bgColor.saveXML(pBrushNode.get());
+			m_color.saveXML(pBrushNode.get(), L"color");
+			m_bgColor.saveXML(pBrushNode.get(), L"BgColor");
 			if(m_pTexture && m_bRelease) 
 			{
 				pBrushNode->AddPropertyBool(L"Release", m_bRelease);
@@ -128,8 +128,8 @@ namespace GisEngine
 			GisCommon::IXMLNodePtr pBrushNode = pXmlNode->GetChild(pszName);
 			if(!pBrushNode.get())
 				return false;
-			m_color.load(pBrushNode.get());
-			m_bgColor.load(pBrushNode.get());
+			m_color.load(pBrushNode.get(), L"color");
+			m_bgColor.load(pBrushNode.get(), L"BgColor");
 			m_type = (eBrushType)pBrushNode->GetPropertyInt16(L"Type", BrushTypeNull);
 			m_bRelease = pBrushNode->GetPropertyBool(L"Release", false);
 			if(m_bRelease)

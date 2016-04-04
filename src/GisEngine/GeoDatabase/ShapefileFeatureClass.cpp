@@ -159,7 +159,7 @@ namespace GisEngine
 			 m_pFields->AddField(pOidField.get());
 
 			 m_pShapeIndex.release();
-			 m_pShapeIndex = DatasetLite::IShapeFileIndex::open(shpIdxFilePath);
+			 m_pShapeIndex = DatasetLite::IShapeFileIndex::open(shpIdxFilePath, shapeType);
 			 return true;
 		}
 

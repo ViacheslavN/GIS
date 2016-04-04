@@ -63,7 +63,7 @@ namespace DatasetLite
 		virtual bool insert(ShapeLib::SHPObject* pObject, int nRow = -1) = 0;
 		virtual bool commit() = 0;
 
- 		static IShapeFileIndexPtr open(const CommonLib::CString& sDbName);
+ 		static IShapeFileIndexPtr open(const CommonLib::CString& sDbName, int32 nShapeType);
 		static IShapeFileIndexPtr create(const CommonLib::CString& sDbName, size_t nPageSize,
 			const CommonLib::CString& sShapeFileName, GisEngine::GisCommon::Units units = GisEngine::GisCommon::UnitsUnknown, 
 			double dOffsetX = 0, double dOffsetY = 0, double dScaleX = 0, double dScaleY = 0, CommonLib::bbox bbox = CommonLib::bbox());

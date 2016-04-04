@@ -159,7 +159,7 @@ namespace embDB
 					assert(this->m_BitsLensFreq[nBitLen] != 0);
 
 
-					pBitStream->writeBits(nDiff, nBitLen);
+					pBitStream->writeBits(nDiff, nBitLen + 1);
 					if(!rgEncoder.EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], this->m_nCount))
 						return false;
 				}
@@ -179,7 +179,7 @@ namespace embDB
 					uint16 nBitLen =  this->m_FindBit.FMSB(nDiff);
 			 
 
-					pBitStream->writeBits(nDiff, nBitLen);
+					pBitStream->writeBits(nDiff, nBitLen + 1);
 					acEncoder.EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], this->m_nCount);
 						
 				}
@@ -208,7 +208,7 @@ namespace embDB
 						nBitLen--;
 
 					
-					pBitStream->readBits(value, nBitLen);
+					pBitStream->readBits(value, nBitLen + 1);
 					nBegin += value;
 					vecValues.push_back(nBegin);
 

@@ -83,10 +83,15 @@ namespace DatasetLite
 
 		virtual  CommonLib::bbox extent() const
 		{
+			CommonLib::bbox bbox;
+			if(this->m_Iterator.isNull())
+			{
+				return bbox;
+			}
 			const TZOrderVal& zVal = this->m_Iterator.key();
 			TPointType X = 0, Y = 0;
 			zVal.getXY(X, Y);
-			CommonLib::bbox bbox;
+			
 			bbox.xMax = bbox.xMin = (X*this->m_dScaleX) - this->m_dOffsetX;
 			bbox.yMax = bbox.yMin = (Y*this->m_dScaleY) - this->m_dOffsetY;
 			return bbox;

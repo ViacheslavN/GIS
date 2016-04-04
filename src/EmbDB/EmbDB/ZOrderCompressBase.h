@@ -265,7 +265,7 @@ namespace embDB
 		{
 		 	uint16 nBitLen =  this->m_FindBit.FMSB(coord);
 			assert(this->m_BitsLensFreq[nBitLen] != 0);
-			pBitStream->writeBits(coord, nBitLen);
+			pBitStream->writeBits(coord, nBitLen + 1);
 			return pEncoder->EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], this->m_nCount);
 		}
 
@@ -281,7 +281,7 @@ namespace embDB
 
 			
 			
-			pBitStream->readBits(coord, nBitLen);
+			pBitStream->readBits(coord, nBitLen + 1);
 			pDecoder->DecodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], this->m_nCount);
 		 
 		}

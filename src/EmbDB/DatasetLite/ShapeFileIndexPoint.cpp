@@ -172,13 +172,13 @@ namespace DatasetLite
 		bool bBaseCreate =  TBase::Create(sDbName);
 		switch(m_Type)
 		{
-		case embDB::stRect16:
+		case embDB::stPoint16:
 			m_SpTree.reset(new TPointSpatialTreeU16(m_pAlloc, m_pStorage.get(), -1, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 			break;
-		case embDB::stRect32:
+		case embDB::stPoint32:
 			m_SpTree.reset(new TPointSpatialTreeU32(m_pAlloc, m_pStorage.get(), -1, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 			break;
-		case embDB::stRect64:
+		case embDB::stPoint64:
 			m_SpTree.reset(new TPointSpatialTreeU64(m_pAlloc, m_pStorage.get(), -1, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
 			break;
 		}

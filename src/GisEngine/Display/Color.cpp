@@ -115,14 +115,14 @@ namespace GisEngine
 			return true;
 		}
 
-		bool Color::saveXML(GisCommon::IXMLNode* pXmlNode) const
+		bool Color::saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName) const
 		{
-			pXmlNode->AddPropertyInt32U(L"color", m_rgba);
+			pXmlNode->AddPropertyInt32U(pszName, m_rgba);
 			return true;
 		}
-		bool Color::load(const GisCommon::IXMLNode* pXmlNode)
+		bool Color::load(const GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName)
 		{
-			m_rgba = pXmlNode->GetPropertyInt32U(L"color", m_rgba);
+			m_rgba = pXmlNode->GetPropertyInt32U(pszName, m_rgba);
 			return true;
 		}
 	}

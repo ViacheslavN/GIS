@@ -124,7 +124,7 @@ namespace GisEngine
 			bool load(CommonLib::IReadStream* pReadStream)
 			{
 				CommonLib::FxMemoryReadStream stream;
-				SAFE_READ(pReadStream->save_read(&stream, pReadStream->readIntu32()))
+				SAFE_READ(pReadStream->save_read(&stream, true))
 				
 				SAFE_READ(stream.save_read(m_bScaleDependent))
 				SAFE_READ(stream.save_read(m_bDrawToBuffers))

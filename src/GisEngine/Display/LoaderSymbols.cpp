@@ -2,6 +2,7 @@
 #include "LoaderSymbols.h"
 #include "SimpleLineSymbol.h"
 #include "SimpleFillSymbol.h"
+#include "SimpleMarketSymbol.h"
 #include "TextSymbol.h"
 #include "CommonLibrary/stream.h"
 
@@ -59,6 +60,13 @@ namespace GisEngine
 					CTextSymbol *pTextSymbol = new CTextSymbol();
 					pTextSymbol->load(pSerealizer);
 					pSymbol = pTextSymbol;
+				}
+				break;
+			case SimpleMarketSymbolID:
+				{
+					CSimpleMarketSymbol *pMarketSymbol = new CSimpleMarketSymbol();
+					pMarketSymbol->load(pSerealizer);
+					pSymbol = pMarketSymbol;
 				}
 				break;
 			}

@@ -15,6 +15,7 @@
 #include "../../Cartography/FeatureRenderer.h"
 #include "../../Display/SimpleLineSymbol.h"
 #include "../../Display/SimpleFillSymbol.h"
+#include "../../Display/SimpleMarketSymbol.h"
 #include "../../Display/Screen.h"
 #include "../../Cartography/Map.h"
 #include "../../GisFramework/MapDrawer.h"
@@ -396,7 +397,17 @@ void CMapView::AddFeatureClass(GisEngine::GeoDatabase::IFeatureClass *pFC)
 	switch(type)
 	{
 	case CommonLib::shape_type_point:
-		pSymbol = new GisEngine::Display::CSimpleLineSymbol(GisEngine::Display::Color(0, 255, 255, 255), 0.5);
+	case CommonLib::shape_type_multipoint:
+		{
+			GisEngine::Display::CSimpleMarketSymbol* pMarketSymbol = new GisEngine::Display::CSimpleMarketSymbol();
+			pMarketSymbol->SetOutline(true);
+			pMarketSymbol->SetColor(GisEngine::Display::Color(255, 0, 0, 255));
+			pMarketSymbol->SetOutlineColor(GisEngine::Display::Color(123,123, 123, 255));
+			pMarketSymbol->SetOutlineSize(0.1);
+			pMarketSymbol->SetSize(1.0);
+			pSymbol = pMarketSymbol;
+		}
+		
 		break;
 	case CommonLib::shape_type_polyline:
 		pSymbol = new GisEngine::Display::CSimpleLineSymbol(GisEngine::Display::Color(0, 255, 255, 255), 0.5);

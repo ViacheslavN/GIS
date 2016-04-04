@@ -166,11 +166,11 @@ namespace embDB
 			if(m_nIndex < (int32)m_pCurNode->count())
 			{
 				const TPointKey& zPage = m_pCurNode->key(m_nIndex);
-				if(m_zMax < zPage)
-					return true;
+				if(zPage < m_zMax)
+					return false;
 			}
 		
-			return false;
+			return true;
 		}
 		bool CheckKey( TPointKey& zVal )
 		{

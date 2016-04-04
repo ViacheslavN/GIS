@@ -12,7 +12,7 @@ namespace embDB
 {
 	
 	//						  0	 1  2  3  4  5  6  7  8....................15
-	static int bits_lens[] = {1, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4};
+	static int bits_lens[] = {0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3};
 	struct TFindMostSigBit
 	{
 
@@ -133,7 +133,7 @@ namespace embDB
 
 				assert(nBitLen < _nMaxBitsLens);
 
-				m_nLenBitSize += nBitLen;
+				m_nLenBitSize += (nBitLen + 1);
 				m_nCount++;
 
 				if(!m_BitsLensFreq[nBitLen])
@@ -184,7 +184,7 @@ namespace embDB
 			{
 				uint16 nBitLen =  m_FindBit.FMSB(symbol);
 				assert(m_nLenBitSize >= nBitLen);
-				m_nLenBitSize -= nBitLen;
+				m_nLenBitSize -= (nBitLen + 1);
 				m_nCount--;
 
 				assert(m_BitsLensFreq[nBitLen] );				
@@ -417,7 +417,7 @@ namespace embDB
 					assert(m_BitsLensFreq[nBitLen] != 0);
 
 
-					pBitStream->writeBits(value, nBitLen);
+					pBitStream->writeBits(value, nBitLen + 1);
 					if(!rgEncoder.EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], m_nCount))
 						return false;
 				}
@@ -436,7 +436,7 @@ namespace embDB
 					TValue value = vecValues[i];
 					uint16 nBitLen =  m_FindBit.FMSB(value);
 
-					pBitStream->writeBits(value, nBitLen);
+					pBitStream->writeBits(value, nBitLen + 1);
 					acEncoder.EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], m_nCount);
 						
 				}
@@ -552,7 +552,7 @@ namespace embDB
 						break;
 					}
 
-					m_nLenBitSize += m_BitsLensFreq[i] * i;
+					m_nLenBitSize += (m_BitsLensFreq[i] + 1) * i;
 				}
 
 			}
@@ -579,7 +579,7 @@ namespace embDB
 						nBitLen--;
 
 					TValue value = 0;
-					pBitStream->readBits(value, nBitLen);
+					pBitStream->readBits(value, nBitLen + 1);
 					vecValues.push_back(value);
 
 					decoder.DecodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen+1], m_nCount);

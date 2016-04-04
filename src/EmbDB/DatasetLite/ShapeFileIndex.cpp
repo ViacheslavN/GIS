@@ -25,16 +25,32 @@ namespace DatasetLite
 
 	
 
-	IShapeFileIndexPtr IShapeFileIndex::open(const CommonLib::CString& sDbName)
+	IShapeFileIndexPtr IShapeFileIndex::open(const CommonLib::CString& sDbName, int32 nShapeType)
 	{ 
-		CShapeFileIndexRect *pShapeFileIndexRect = new CShapeFileIndexRect();
-
-		if(!pShapeFileIndexRect->Open(sDbName))
+		if(nShapeType == SHPT_POINT || nShapeType == SHPT_POINTZ || nShapeType == SHPT_POINTM)
 		{
-			delete pShapeFileIndexRect;
-			pShapeFileIndexRect = NULL;
+			CShapeFileIndexPoint *pShapeFileIndexPoint = new CShapeFileIndexPoint();
+
+			if(!pShapeFileIndexPoint->Open(sDbName))
+			{
+				delete pShapeFileIndexPoint;
+				pShapeFileIndexPoint = NULL;
+			}
+			return IShapeFileIndexPtr(pShapeFileIndexPoint);
 		}
-		return IShapeFileIndexPtr(pShapeFileIndexRect);
+		else
+		{
+			CShapeFileIndexRect *pShapeFileIndexRect = new CShapeFileIndexRect();
+
+			if(!pShapeFileIndexRect->Open(sDbName))
+			{
+				delete pShapeFileIndexRect;
+				pShapeFileIndexRect = NULL;
+			}
+			return IShapeFileIndexPtr(pShapeFileIndexRect);
+		}
+
+		
 	}
 	struct SHPGuard
 	{

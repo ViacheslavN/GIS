@@ -52,8 +52,8 @@ namespace GisEngine
 			bool load(CommonLib::IReadStream *pStream);
 
 
-			bool saveXML(GisCommon::IXMLNode* pXmlNode) const;
-			bool load(const GisCommon::IXMLNode* pXmlNode);
+			bool saveXML(GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"color") const;
+			bool load(const GisCommon::IXMLNode* pXmlNode, const wchar_t *pszName = L"color");
 			
 
 		private:

@@ -187,6 +187,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>../../../ThirdParty/freetype/lib;../../Output;../../../ThirdParty/zlib/lib;../../../ThirdParty/jpeg/lib;../../../ThirdParty/PNG/lib;../../../CommonLibrary/Output;../../../ThirdParty/ShapeLib/lib;../../../ThirdParty/proj4/lib;../../../EmbDB/Output;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <ResourceCompile>
       <Culture>0x0409</Culture>
