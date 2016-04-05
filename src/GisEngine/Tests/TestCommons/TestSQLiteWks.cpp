@@ -10,31 +10,33 @@ void TestSQLiteWks()
 {
 																													 
 	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData");
-	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
-	
-	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"building.shp");
+	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
+	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\db\\10m_cultural\\");
+	//GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"building.shp");
+	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"ne_10m_roads_north_america.shp");
 	if(!pShapeFC.get())
 		return;
 
 	
 	//GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CSQLiteWorkspace::Open( L"TestSpatialDB.sqlite", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData", true, false);
 		
-	GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CSQLiteWorkspace::Open( L"building.sqlite", L"d:\\db", true, true);
-
+	//GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CSQLiteWorkspace::Open( L"building.sqlite", L"d:\\db", true, true);
+	GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CSQLiteWorkspace::Open( L"ne_10m_roads_north_america.sqlite", L"d:\\db", true, true);
 	if(!pWks.get())
 	{
 		//pWks = GisEngine::GeoDatabase::CSQLiteWorkspace::Create( L"TestSpatialDB.sqlite", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
-		pWks = GisEngine::GeoDatabase::CSQLiteWorkspace::Create( L"building.sqlite", L"d:\\db");
+		//pWks = GisEngine::GeoDatabase::CSQLiteWorkspace::Create( L"building.sqlite", L"d:\\db");
+		pWks = GisEngine::GeoDatabase::CSQLiteWorkspace::Create( L"ne_10m_roads_north_america.sqlite", L"d:\\db");
 	}
 
-	GisEngine::GeoDatabase::IFeatureClassPtr pSQLFC = pWks->OpenFeatureClass(L"building");
+	GisEngine::GeoDatabase::IFeatureClassPtr pSQLFC = pWks->OpenFeatureClass(L"ne_10m_roads_north_america");
 	if(!pSQLFC.get())
 	{
 		GisEngine::GeoDatabase::ITransactionPtr pTran = pWks->startTransaction(GisEngine::GeoDatabase::ttModify);
 		if(!pTran.get())
 			return;
 
-		pSQLFC = pWks->CreateFeatureClass(L"building", pShapeFC->GetFields().get(), true/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
+		pSQLFC = pWks->CreateFeatureClass(L"ne_10m_roads_north_america", pShapeFC->GetFields().get(), true/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
 
 
 

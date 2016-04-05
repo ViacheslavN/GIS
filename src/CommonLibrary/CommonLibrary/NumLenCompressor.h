@@ -32,7 +32,7 @@ namespace CommonLib
 
 			uint16 PreAddSympol(TValue value)
 			{
-				uint16 nBitLen =  m_FindBit.FMSB(value) - 1;
+				uint16 nBitLen =  m_FindBit.FMSB(value);
 
 				if(nBitLen >= _nMaxBitsLens)
 				{
@@ -111,7 +111,7 @@ namespace CommonLib
 
 			uint32 EncodeSymbol(TValue value, CommonLib::FxBitWriteStream *pBitStream)
 			{
-				uint16 nBitLen =  m_FindBit.FMSB(value) -1;
+				uint16 nBitLen =  m_FindBit.FMSB(value);
 				assert(m_BitsLensFreq[nBitLen] != 0);
 				assert(m_pEncoder.get());
 				

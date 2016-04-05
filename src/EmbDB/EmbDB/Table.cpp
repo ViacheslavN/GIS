@@ -597,8 +597,8 @@ namespace embDB
 		switch(CoordUnits)
 		{
 			case scuDecimalDegrees:
-				dScaleX = 0.0000001;
-				dScaleY = 0.0000001;
+				dScaleX = 0.00000001;
+				dScaleY = 0.00000001;
 				break;
 			case scuKilometers:
 			case scuMiles:

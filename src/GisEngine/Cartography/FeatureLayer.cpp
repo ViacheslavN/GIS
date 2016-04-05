@@ -136,8 +136,8 @@ namespace GisEngine
 						continue;
 
 
-					int64 nOID = pRow->GetOID();
-					CommonLib::bbox bb = pFeature->GetShape()->getBB();
+				//	int64 nOID = pRow->GetOID();
+				//	CommonLib::bbox bb = pFeature->GetShape()->getBB();
 
 					for (size_t i = 0, sz = vecRenderes.size(); i < sz; ++i)
 					{

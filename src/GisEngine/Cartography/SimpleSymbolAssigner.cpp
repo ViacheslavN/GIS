@@ -27,7 +27,7 @@ namespace GisEngine
 			if(!CanAssign(cls) || !filter)
 				return;
 
-			filter->GetFieldSet()->Add(cls->GetOIDFieldName());
+			//filter->GetFieldSet()->Add(cls->GetOIDFieldName());
 		}
 		Display::ISymbolPtr	   CSimpleSymbolAssigner::GetSymbolByFeature(GeoDatabase::IFeature* feature) const
 		{

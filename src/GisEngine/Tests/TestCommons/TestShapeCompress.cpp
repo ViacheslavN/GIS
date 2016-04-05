@@ -22,7 +22,7 @@ double inline Round(double dValue, unsigned int uiScale = 0)
 }
 bool inline IsEqual(double dVal1, double dVal2)
 {
-	return fabs(dVal1 - dVal2) < 0.000000001;
+	return fabs(dVal1 - dVal2) < 0.000001;
 }
 bool CompareShape(CommonLib::CGeoShape* pShp1, CommonLib::CGeoShape* pShp2, uint32 nScale = 2)
 {
@@ -98,9 +98,9 @@ void CompressShape()
 	CommonLib::CWriteMemoryStream compressStream;
 	CommonLib::CWriteMemoryStream compressStreamTmp;
 	CommonLib::CGeoShape::compress_params params;
-	params.m_PointType = CommonLib::dtType32;
-	params.m_dScaleX = 0.001;
-	params.m_dScaleY = 0.001;
+	params.m_PointType = CommonLib::dtType64;
+	params.m_dScaleX = 0.00000001;
+	params.m_dScaleY = 0.00000001;
 
 	GisEngine::GisBoundingBox bbox = pShapeFC->GetExtent()->GetBoundingBox();
 
@@ -122,12 +122,13 @@ void CompressShape()
 	while(pCursor->NextRow(&pRow))
 	{
 
+
 	 compressStreamTmp.seek(0, CommonLib::soFromBegin);
 	  GisEngine::GeoDatabase::IFeature *pFeature = (GisEngine::GeoDatabase::IFeature*)pRow.get();
 	 CommonLib::IGeoShapePtr pShape= pFeature->GetShape();
 	 pShape->write(&writeStream);
 
-	if(ii == 14399)
+	if(ii == 3661)
 	 {
 		 int dd =0;
 		 dd++;

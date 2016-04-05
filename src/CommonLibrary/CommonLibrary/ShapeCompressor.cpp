@@ -85,7 +85,22 @@ namespace CommonLib
 	
 
 		uint32 nPartCount = pShp->getPartCount();
-		m_partType = GetCompressType(pShp->getPointCnt());
+		m_partType = dtType8;
+		for (uint32 i = i; i < nPartCount; i++ )
+		{
+			uint32 nPart = pShp->getPart(i) - pShp->getPart(i - 1);
+			eCompressDataType type  = GetCompressType(nPart);
+			if(m_partType < type)
+			{
+				m_partType = type;
+				if(m_partType == dtType32)
+				{				 
+					break;
+				}
+			}
+		}
+
+		
 		/*if(m_partType != dtType32)
 		{
 			for (uint32 i = 0; i < nPartCount; i++ )
@@ -232,7 +247,7 @@ namespace CommonLib
 			for (uint32 i = 1; i < nPartCount; i++ )
 			{
 			 
-				WriteValue(pParts[i], m_partType, pCache);
+				WriteValue(pParts[i] - pParts[i - 1], m_partType, pCache);
 			}
 		}
 		if(m_bCompressPoint)
@@ -391,7 +406,7 @@ namespace CommonLib
 		 }
 		 else
 		 {
-			 nParts = (uint32)pStream->readByte();
+			 nParts = ReadValue<uint32>(m_partType, pStream);
 		 }
 		 if(m_bCompressPoint)
 		 {
@@ -430,7 +445,7 @@ namespace CommonLib
 			pShp->getParts()[0] = 0; 
 			for (uint32 i = 1; i < nParts; ++i)
 			{
-				pShp->getParts()[i] = (uint32)pStream->readByte();
+				pShp->getParts()[i] = (uint32)ReadValue<uint32>(m_partType, pStream) + pShp->getParts()[i - 1];
 			}
 		}
 

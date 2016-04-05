@@ -122,8 +122,8 @@ namespace GisEngine
 			switch(units)
 			{
 			case GisEngine::GisCommon::UnitsDecimalDegrees:
-				params.m_dScaleX = 0.0000001;
-				params.m_dScaleY = 0.0000001;
+				params.m_dScaleX = 0.00000001;
+				params.m_dScaleY = 0.00000001;
 				break;
 			case GisEngine::GisCommon::UnitsKilometers:
 			case GisEngine::GisCommon::UnitsMiles:
