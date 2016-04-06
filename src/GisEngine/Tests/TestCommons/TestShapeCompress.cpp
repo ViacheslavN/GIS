@@ -21,8 +21,8 @@ double inline Round(double dValue, unsigned int uiScale = 0)
 	return (dFloor/dPow) * dSign;
 }
 bool inline IsEqual(double dVal1, double dVal2)
-{
-	return fabs(dVal1 - dVal2) < 0.000001;
+{								 
+	return fabs(dVal1 - dVal2) < 0.0000001;
 }
 bool CompareShape(CommonLib::CGeoShape* pShp1, CommonLib::CGeoShape* pShp2, uint32 nScale = 2)
 {
@@ -51,12 +51,28 @@ bool CompareShape(CommonLib::CGeoShape* pShp1, CommonLib::CGeoShape* pShp2, uint
 	{
 		CommonLib::GisXYPoint pt1 = pShp1->getPoints()[i];
 		CommonLib::GisXYPoint pt2 = pShp2->getPoints()[i];
-		double dX1 = Round(pt1.x, 2);
-		double dY1 = Round(pt1.y, 2);
+		/*double dX1 = Round(pt1.x, 6);
+		double dY1 = Round(pt1.y, 6);
 
 
-		double dX2 = Round(pt2.x, 2);
-		double dY2 = Round(pt2.y, 2);
+		double dX2 = Round(pt2.x, 6);
+		double dY2 = Round(pt2.y, 6);*/
+
+
+		double dX1 = pt1.x;
+		double dY1 = pt1.y;
+
+
+		double dX2 = pt2.x;
+		double dY2 = pt1.y;
+
+
+	/*	dX1 = Round(pt1.x, 6);
+		dY1 = Round(pt1.y, 6);
+
+
+		dX2 = Round(pt2.x, 6);
+		dY2 = Round(pt2.y, 6);*/
 
 		if(!IsEqual(dX1, dX2) || !IsEqual(dY1, dY2) )
 			return false;
@@ -64,7 +80,7 @@ bool CompareShape(CommonLib::CGeoShape* pShp1, CommonLib::CGeoShape* pShp2, uint
 
 	return true;
 }
-
+std::string polylineEncode(CommonLib::GisXYPoint* pPoint, int32 nPointCnt, double dOffsetX, double dOffsetY, double dScale);
 void CompressShape()
 {
 	
@@ -98,9 +114,9 @@ void CompressShape()
 	CommonLib::CWriteMemoryStream compressStream;
 	CommonLib::CWriteMemoryStream compressStreamTmp;
 	CommonLib::CGeoShape::compress_params params;
-	params.m_PointType = CommonLib::dtType64;
-	params.m_dScaleX = 0.00000001;
-	params.m_dScaleY = 0.00000001;
+	params.m_PointType = CommonLib::dtType32;
+	params.m_dScaleX = 0.0000001;
+	params.m_dScaleY = 0.0000001;
 
 	GisEngine::GisBoundingBox bbox = pShapeFC->GetExtent()->GetBoundingBox();
 
@@ -119,6 +135,10 @@ void CompressShape()
 	CommonLib::FxMemoryReadStream readCompressStream;
 
 	int ii = 0;
+
+	int nError = 0;
+
+	int nSize = 0;
 	while(pCursor->NextRow(&pRow))
 	{
 
@@ -128,23 +148,54 @@ void CompressShape()
 	 CommonLib::IGeoShapePtr pShape= pFeature->GetShape();
 	 pShape->write(&writeStream);
 
-	if(ii == 3661)
+	if(ii == 6144)
 	 {
+
+		// std::string sStr = polylineEncode(pShape->getPoints(), pShape->getPointCnt(), params.m_dOffsetX, params.m_dOffsetY, params.m_dScaleX);
 		 int dd =0;
 		 dd++;
 	 }
 	 pShape->compress(&compressStreamTmp, &params);
 	 compressStream.write(compressStreamTmp.buffer(), compressStreamTmp.pos());
 
+	 if(nSize < compressStreamTmp.pos())
+		 nSize = compressStreamTmp.pos();
 
+	 if(nSize == 20183)
+	 {
+		 int dd = 0;
+		 dd++;
+	 }
 	 readCompressStream.attachBuffer(compressStreamTmp.buffer(), compressStreamTmp.pos());
 
 	 shape.decompress(&readCompressStream, &params);
 	 ii++;
 	 if(!CompareShape(pShape.get(), &shape))
 	 {
-		 int dd = 0;
-		 dd++;
+		 nError++;
+
+		 for (uint32 i = 0; i < pShape->getPointCnt(); ++i)
+		 {
+
+			 GisXYPoint pt = pShape->getPoints()[i];
+
+			 int32 X = (int32)((pt.x + params.m_dOffsetX)/params.m_dScaleX);
+			 int32 Y = (int32)((pt.y + params.m_dOffsetY)/params.m_dScaleY);
+
+
+			 double dX = ((double)X *params.m_dScaleX) - params.m_dOffsetX;  
+			 double dY = ((double)Y *params.m_dScaleY) - params.m_dOffsetY;
+
+			 if(!IsEqual(dX, pt.x) || !IsEqual(dY, pt.y) )
+			 {
+				 int dd = 0;
+				 dd++;
+			 }
+
+
+		 }
+
+
 	 }
 
 	}

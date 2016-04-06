@@ -50,5 +50,8 @@
     <ClCompile Include="TestShapeCompress.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CompresPoints.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

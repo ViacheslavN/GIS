@@ -4,6 +4,7 @@
 #include "BitStream.h"
 #include "GeoShape.h"
 #include "PointZOrder.h"
+#include <set>
 namespace CommonLib
 {
 
@@ -146,6 +147,8 @@ namespace CommonLib
 			}
 
 			m_Compressor.EncodeFinish();
+			
+						
 			return true;
 		}
 

@@ -163,8 +163,8 @@ namespace DatasetLite
 			switch(units)
 			{
 				case GisEngine::GisCommon::UnitsDecimalDegrees:
-					dScaleX = 0.00000001;
-					dScaleY = 0.00000001;
+					dScaleX = 0.0000001;
+					dScaleY = 0.0000001;
 					break;
 				case GisEngine::GisCommon::UnitsKilometers:
 				case GisEngine::GisCommon::UnitsMiles:
