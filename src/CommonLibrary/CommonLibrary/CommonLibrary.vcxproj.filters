@@ -261,6 +261,9 @@
     <ClInclude Include="GeoShapeBuf.h">
       <Filter>SpatialData</Filter>
     </ClInclude>
+    <ClInclude Include="ByteCompressor.h">
+      <Filter>compress</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

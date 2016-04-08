@@ -5,6 +5,7 @@
 #include "GeoShape.h"
 #include "PointZOrder.h"
 #include <set>
+#include "ByteCompressor.h"
 namespace CommonLib
 {
 
@@ -13,6 +14,7 @@ namespace CommonLib
 	typedef TNumLemCompressor<uint32, TFindMostSigBit, 32> TPointNumLen32;
 	typedef TNumLemCompressor<uint64, TFindMostSigBit, 64> TPointNumLen64;
 
+//#define _CALC_STATISTIC_
 
 	class IXYComressor
 	{
@@ -148,6 +150,66 @@ namespace CommonLib
 
 			m_Compressor.EncodeFinish();
 			
+
+#ifdef		_CALC_STATISTIC_
+			byte nBytes[256];
+			uint32 nLens[20000];
+			memset(nBytes, 0, sizeof(nBytes));
+			memset(nLens, 0, sizeof(nLens));
+		    byte* pByte = bitStream.buffer();
+
+			byte nCurrByte;
+			int nCurrLen = 0;
+			int nDiff = 0;
+			int nCountByte = 0;
+			for (uint32 i = 0; i < bitStream.pos(); ++i)
+			{
+
+				
+				nBytes[pByte[i]] += 1;
+
+				if(nBytes[pByte[i]] == 1)
+				{
+					nDiff +=1;
+				}
+				nCountByte += 1;
+				if(i == 0)
+				{
+					nCurrByte = pByte[i];
+				}
+				else
+				{
+					if(nCurrByte != pByte[i])
+					{
+						nCurrByte = pByte[i];
+						nLens[nCurrLen] += 1;
+						nCurrLen = 0;
+					}
+					else
+					{
+						nCurrLen++;
+					}
+				}
+
+			}
+
+
+			if(nCountByte > 1024)
+			{
+				CWriteMemoryStream writeDynamicStream;
+				CWriteMemoryStream writeStaticStream;
+				CByteCompressor bytecompress;
+
+				bytecompress.encodeDynamic(pByte, bitStream.pos(), &writeDynamicStream);
+				bytecompress.encodeStatic(pByte, bitStream.pos(), &writeStaticStream);
+				int dynamicSize =writeDynamicStream.pos();
+				int staticSize =writeStaticStream.pos();
+
+				int dd = 0;
+				dd++;
+			}
+
+#endif
 						
 			return true;
 		}

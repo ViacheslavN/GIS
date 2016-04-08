@@ -446,6 +446,7 @@
     <ClInclude Include="BitStream.h" />
     <ClInclude Include="blob.h" />
     <ClInclude Include="BoundaryBox.h" />
+    <ClInclude Include="ByteCompressor.h" />
     <ClInclude Include="caseutils.h" />
     <ClInclude Include="CommonLib_lib.h" />
     <ClInclude Include="compressutils.h" />
