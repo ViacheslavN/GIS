@@ -31,6 +31,9 @@
     <Filter Include="BWT">
       <UniqueIdentifier>{bb3d2373-56ba-466f-b026-f95b069f1575}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DoubleCompress">
+      <UniqueIdentifier>{5058a9ff-1274-498a-a9e6-f92e02d91a8c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="TestAC.h">
@@ -105,6 +108,9 @@
     </ClCompile>
     <ClCompile Include="BWTSort.cpp">
       <Filter>BWT</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDoubleCompress.cpp">
+      <Filter>DoubleCompress</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -332,7 +332,7 @@ Global
 		{168C6F5A-2D24-4426-947A-7B67868F5DA4}.debug_shared|x64.ActiveCfg = Debug|Win32
 		{168C6F5A-2D24-4426-947A-7B67868F5DA4}.debug_static|Win32.ActiveCfg = Debug|Win32
 		{168C6F5A-2D24-4426-947A-7B67868F5DA4}.debug_static|Win32.Build.0 = Debug|Win32
-		{168C6F5A-2D24-4426-947A-7B67868F5DA4}.debug_static|x64.ActiveCfg = Debug|Win32
+		{168C6F5A-2D24-4426-947A-7B67868F5DA4}.debug_static|x64.ActiveCfg = Debug|x64
 		{168C6F5A-2D24-4426-947A-7B67868F5DA4}.Debug|Win32.ActiveCfg = Debug|Win32
 		{168C6F5A-2D24-4426-947A-7B67868F5DA4}.Debug|Win32.Build.0 = Debug|Win32
 		{168C6F5A-2D24-4426-947A-7B67868F5DA4}.Debug|x64.ActiveCfg = Debug|Win32

@@ -532,6 +532,7 @@
     <ClInclude Include="FieldSet.h" />
     <ClInclude Include="FixedStringCompressor.h" />
     <ClInclude Include="FixedStringField.h" />
+    <ClInclude Include="FormatDouble.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IndexIteratorBase.h" />
     <ClInclude Include="InsertCursor.h" />
