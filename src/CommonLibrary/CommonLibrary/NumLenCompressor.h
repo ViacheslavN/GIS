@@ -32,13 +32,16 @@ namespace CommonLib
 
 			uint16 PreAddSympol(TValue value)
 			{
-				uint16 nBitLen =  m_FindBit.FMSB(value);
 
-				if(nBitLen >= _nMaxBitsLens)
-				{
-					int dd = 0;
-					dd++;
-				}
+				uint16 nBitLen =  0;
+				if(value == 0)
+					nBitLen = 0;
+				else if(value == 1)
+					nBitLen = 1;
+				else  nBitLen = m_FindBit.FMSB(value);
+ 
+
+			 
 
 				assert(nBitLen < _nMaxBitsLens);
 				m_BitsLensFreq[nBitLen] += 1;
@@ -51,7 +54,7 @@ namespace CommonLib
 						m_FreqType = dtType32;
 				}
 
-				m_nBitLen += nBitLen + 1;
+				m_nBitLen += nBitLen > 1 ? nBitLen - 1 : 0;
 				m_nCount += 1;
 				return nBitLen;
 
@@ -61,17 +64,17 @@ namespace CommonLib
 			{
 				byte nFlag = m_FreqType;
 				pStream->write(nFlag);
-				byte LensMask[(_nMaxBitsLens)/8];
+				byte LensMask[(_nMaxBitsLens + 8)/8];
 
 				memset(LensMask, 0, _nMaxBitsLens/8);
-				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 				{
 					uint32 nByte = i/8;
 					uint32 nBit =  i - (nByte * 8);
 					if(m_BitsLensFreq[i] != 0)
 						LensMask[nByte] |= (0x01 << nBit);
 				}
-				for (uint32 i = 0; i < _nMaxBitsLens/8; ++i)
+				for (uint32 i = 0; i < (_nMaxBitsLens + 8)/8; ++i)
 				{
 					pStream->write((byte)LensMask[i]);
 				}
@@ -111,14 +114,21 @@ namespace CommonLib
 
 			uint32 EncodeSymbol(TValue value, CommonLib::FxBitWriteStream *pBitStream)
 			{
-				uint16 nBitLen =  m_FindBit.FMSB(value);
+				uint16 nBitLen =  0;
+				if(value == 0)
+					nBitLen = 0;
+				else if(value == 1)
+					nBitLen = 1;
+				else  nBitLen = m_FindBit.FMSB(value);
+
 				assert(m_BitsLensFreq[nBitLen] != 0);
 				assert(m_pEncoder.get());
 				
 				m_pEncoder->EncodeSymbol(m_FreqPrev[nBitLen], m_FreqPrev[nBitLen + 1],  m_nCount);
-				pBitStream->writeBits(value, nBitLen + 1);
+				if(nBitLen > 1)
+					pBitStream->writeBits(value, nBitLen - 1);
 
-				return nBitLen+ 1;
+				return nBitLen;
 
 			}
 
@@ -135,14 +145,14 @@ namespace CommonLib
 
 				m_FreqType = (eCompressDataType)nFlag;
 
-				byte LensMask[(_nMaxBitsLens)/8];
+				byte LensMask[(_nMaxBitsLens + 8)/8];
 
-				for (uint32 i = 0; i < _nMaxBitsLens/8; ++i)
+				for (uint32 i = 0; i < (_nMaxBitsLens + 8)/8; ++i)
 				{
 					LensMask[i] = pStream->readByte();
 				}
 
-				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 				{
 
 					uint32 nByte = i/8;
@@ -168,12 +178,12 @@ namespace CommonLib
 						m_nCount += m_BitsLensFreq[i];
 						break;
 					}
-
-					m_nBitLen +=m_BitsLensFreq[i] * (i + 1);
+					if(i > 1)
+					 m_nBitLen +=m_BitsLensFreq[i] * (i - 1);
 				}
 
 				int32 nPrevF = 0;
-				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 				{
 
 					m_FreqPrev[i + 1] = m_BitsLensFreq[i] + nPrevF;
@@ -199,7 +209,7 @@ namespace CommonLib
 
 				m_pDecoder->DecodeSymbol(m_FreqPrev[value], m_FreqPrev[value+1], m_nCount);
 
-				value += 1;
+				//value += 1;
 				return true;
 			}
 

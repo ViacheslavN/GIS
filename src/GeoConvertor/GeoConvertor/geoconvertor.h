@@ -4,7 +4,9 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_geoconvertor.h"
 
-class GeoConvertor : public QMainWindow
+class CLegendView;
+class CMapView;
+class GeoConvertor : public QMainWindow, private Ui::GeoConvertorClass 
 {
 	Q_OBJECT
 
@@ -13,7 +15,10 @@ public:
 	~GeoConvertor();
 
 private:
-	Ui::GeoConvertorClass ui;
+	CLegendView *m_pLegendView;
+	CMapView *m_pMapView;
+private:
+	 
 };
 
 #endif // GEOCONVERTOR_H

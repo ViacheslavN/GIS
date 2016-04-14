@@ -55,6 +55,12 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="map">
+      <UniqueIdentifier>{43646e7d-41c3-4cdc-91f0-3f61db1b97bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Legend">
+      <UniqueIdentifier>{6f57ee7d-6f6b-40d9-943b-e3f381959694}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="geoconvertor.cpp">
@@ -78,10 +84,40 @@
     <ClCompile Include="Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_MapView.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_MapView.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="MapView.cpp">
+      <Filter>map</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_legend.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_legend.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="legend.cpp">
+      <Filter>Legend</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="MapView.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
     <CustomBuild Include="geoconvertor.h">
       <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="MapView.h">
+      <Filter>map</Filter>
+    </CustomBuild>
+    <CustomBuild Include="legend.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="legend.h">
+      <Filter>Legend</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +136,12 @@
     </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_MapView.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_legend.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
