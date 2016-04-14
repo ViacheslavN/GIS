@@ -1,6 +1,6 @@
 #include "stdafx.h"
+#include "../../EmbDB/CompressDoubleDiff.h"
 #include "../../EmbDB/CompressDouble.h"
-
 
 
 struct SDoubleCast 
@@ -21,56 +21,76 @@ union doublebits {
 	};
 };
 
+
 void TestDoubleCompress()
 {
-	/*
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-# if    __FLOAT_WORD_ORDER == __BIG_ENDIAN
-	unsigned int mantissa0:20;
-	unsigned int exponent:11;
-	unsigned int negative:1;
-	unsigned int mantissa1:32;
-# else
-	 /*Together these comprise the mantissa.  
-	unsigned int mantissa1:32;
-	unsigned int mantissa0:20;
-	unsigned int exponent:11;
-	unsigned int negative:1;
-# endif*/
+
+	embDB::double_cast dVal, dVal1;
+
+	dVal.val = 2.00000000001;
+	uint64 nMat = dVal.parts.mantisa;
+	uint64 nExp = dVal.parts.exponent;
+
+	uint64 nDiv = (((uint64)2) << 51);
+	dVal.parts.exponent = 2;
+
+	uint32 nBits = embDB::TFindMostSigBit::FMSB(nMat);
+
+	uint64 nMat1 = nMat/nDiv;
+
+	uint64 n1 = nDiv/nMat;
+	uint64 n2 = nDiv%nMat;
 
 
-	bool bIsBigEndign = CommonLib::IStream::isBigEndian();
+	uint32 nBits1 = embDB::TFindMostSigBit::FMSB(n1);
+	uint32 nBits2 = embDB::TFindMostSigBit::FMSB(n2);
 
-	int n = 1;
-	// little endian if true
-	bool blittleEndian = false;
-	if(*(char *)&n == 1) 
+
+	double dVal2 = (1 + (double)nMat/nDiv) * pow((double)2, (double)nExp - 1023);
+
+
+
+	embDB::TDoubleDiffCompreessor doubleCompressorDiff;
+	embDB::TDoubleCompreessor doubleCompressor;
+
+	embDB::TBPVector<double> vec;
+	double dd = 1;
+	for (int32 i = 1; i < 100000; ++i)
 	{
-		blittleEndian = true;
+		vec.push_back(dd);
+		doubleCompressorDiff.AddSymbol(vec.size(), vec.size() - 1, dd, vec);
+
+		uint32 nSize = doubleCompressorDiff.GetComressSize();
+		if(nSize > 8192)
+		{
+			int dd = 0;
+			dd++;
+			break;
+		}
+
+		dd += i;
+
+
 	}
 
-	 embDB::double_cast dc, dc1;
-	 dc.d = 0;
-	 dc1.d = 0;
-	 dc.d = -1.456766778;
-	 dc1.d = 1.0;
 
-	 double dd = 112564.0;
-	
+	dd = 1;
+	for (int32 i = 1; i < 100000; ++i)
+	{
+		vec.push_back(dd);
+		doubleCompressor.AddSymbol(vec.size(), vec.size() - 1, dd, vec);
 
-	 boolean isNegative = ((uint64&)dd & 0x8000000000000000L) != 0; 
-	 long exponent      = ((uint64&)dd & 0x7ff0000000000000L) >> 52;
-	 uint64 mantissa      =  (uint64&)dd & 0x000fffffffffffffL;
+		uint32 nSize = doubleCompressor.GetComressSize();
+		if(nSize > 8192)
+		{
+			int dd = 0;
+			dd++;
+			break;
+		}
 
-	 dc1.d = dd;
-
-	 doublebits db;
-	 db.d = dd;
+		dd += i *10.3254;
 
 
-	 db.mantissa1 = 12;
-
-	 int dd1 = 0;
-	 dd1++;
+	}
 
 }

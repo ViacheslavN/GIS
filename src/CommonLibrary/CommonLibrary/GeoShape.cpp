@@ -570,6 +570,24 @@ namespace CommonLib
 		 m_vecMs.clear();
 	 }
 
+
+	 uint32 CGeoShape::getRowSize() const
+	 {
+		 uint32 nSize = 1;
+		 nSize += sizeof(uint32);
+		 nSize += 2 *sizeof(double) * m_vecPoints.size();
+
+		 nSize += sizeof(uint32);
+		 nSize += sizeof(uint32) * m_vecParts.size();
+
+		 nSize += sizeof(uint32);
+		 nSize += sizeof(uint32) * m_vecPartTypes.size();
+
+		 nSize += sizeof(double) * m_vecZs.size();
+		 nSize += sizeof(double) * m_vecMs.size();
+		 return nSize;
+	 }
+
 	 bool  CGeoShape::compress(IWriteStream *pStream, compress_params* pParams) const
 	 {
 		 ShapeCompressor compressor(m_pAlloc);

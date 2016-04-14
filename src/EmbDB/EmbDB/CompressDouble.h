@@ -4,58 +4,73 @@
 #include <map>
 #include "MathUtils.h"
 #include "BPVector.h"
-
-
-
+#include "SignCompressor.h"
+#include "DoublePartCompress.h"
+#include "CompressDoubleDiff.h"
+#include "NumLenCompress.h"
 namespace embDB
 {
-	typedef union {
-		float f;
-		struct {
-			uint32 mantisa : 23;
-			uint32 exponent : 8;
-			uint32 sign : 1;
-		} parts;
-	} float_cast;
 
 
-	typedef union {
-		double d;
-		struct {
-	
-			uint64 mantisa : 52;
-			uint64 exponent : 11;
-			uint64 sign : 1;
-			
-		
-		} parts;
-	} double_cast;
-
-	template <class TDouble, class TDoubleCast, uint32 nMantisaLen, uint32 nExponentLen>
+	template <class _TDoubleValue, class _TDoubleCast, class _TSignedValue, uint32 _nMantisaLen, uint32 _nExponentLen>
 	class TDoubleCompress
 	{
+	public:
+
+		typedef _TDoubleValue TValue ;
+		typedef _TDoubleCast TDoubleCast;
+		typedef _TSignedValue TSignedValue;
+		typedef  TBPVector<TValue > TValueMemSet;
+
+		void AddSymbol(uint32 nSize,  int nIndex, TValue nValue, const TValueMemSet& vecValues)
+		{
+			 
+			TDoubleCast dVal; 
+			dVal.val = nValue;
+
+
+			m_MantisaCompressor.AddSymbol(dVal.parts.mantisa);
+			m_ExponentCompressor.AddSymbol(dVal.parts.exponent);
+
+			m_SignCompressor.AddSymbol(nValue < 0);
+
+		}
+		void RemoveSymbol(uint32 nSize,  int nIndex, TValue nValue, const TValueMemSet& vecValues)
+		{
+			TDoubleCast dVal; 
+			dVal.val = nValue;
+			m_MantisaCompressor.RemoveSymbol(dVal.parts.mantisa);
+			m_ExponentCompressor.RemoveSymbol(dVal.parts.exponent);
+			m_SignCompressor.RemoveSymbol(nValue < 0);
+		}
+
+	 
+
+
+		uint32 GetComressSize() const
+		{
+
+			uint32 nSignSize = m_SignCompressor.GetCompressSize();
+			uint32 nExpSize = m_ExponentCompressor.GetCompressSize();
+			uint32 nManSize = m_MantisaCompressor.GetCompressSize();
+			return nSignSize + nExpSize + nManSize;
+		}
+	private:
+	 
+
+		typedef TUnsignedNumLenCompressor<uint16, TFindMostSigBit, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+			CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 16> TExponentCompressor;
+
+		UnsignedNumLenCompressor64 m_MantisaCompressor;
+		TExponentCompressor  m_ExponentCompressor;
+
+		TSignCompressor m_SignCompressor;
 
 	};
+
+
+	typedef TDoubleCompress<double, double_cast, int64, 52, 11> TDoubleCompreessor;
+	typedef TDoubleCompress<float, float_cast, int32, 23, 8> TFloatCompreessor;
 }
 
 #endif
-
-
-/*#include <stdio.h>
-typedef union {
-	float f;
-	struct {
-		unsigned int mantisa : 23;
-		unsigned int exponent : 8;
-		unsigned int sign : 1;
-	} parts;
-} double_cast;
-
-int main() {
-	double_cast d1;
-	d1.f = 0.15625;
-	printf("sign = %x\n",d1.parts.sign);
-	printf("exponent = %x\n",d1.parts.exponent);
-	printf("mantisa = %x\n",d1.parts.mantisa);
-	return 0;
-}*/

@@ -8,11 +8,13 @@
 #include "CommonLibrary/algorithm.h"
 #include "CommonLibrary/RangeCoder.h"
 #include "CommonLibrary/ArithmeticCoder.h"
+#include "CompressUtils.h"
 namespace embDB
 {
 	
 	//						  0	 1  2  3  4  5  6  7  8....................15
-	static int bits_lens[] = {0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3};
+	//static int bits_lens[] = {0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3};
+	  static int bits_lens[] = {0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4};
 	struct TFindMostSigBit
 	{
 
@@ -29,7 +31,7 @@ namespace embDB
 			return (uint16)y;
 		}
 #endif*/
-		int FMSB(uint16 val16)
+		static uint32 FMSB(uint16 val16)
 		{
 			int bits = 0;
 			if(val16 > 0xff){
@@ -45,9 +47,9 @@ namespace embDB
 		}
 
 
-		int FMSB(uint32 val32)
+		static uint32 FMSB(uint32 val32)
 		{
-			int bits = 0;
+			uint32 bits = 0;
 		 
 			if(val32 > 0xffff){
 				bits = 16;
@@ -66,9 +68,9 @@ namespace embDB
 		}
 
 
-		int FMSB(uint64 val64)
+		static uint32 FMSB(uint64 val64)
 		{
-			int bits = 0;
+			uint32 bits = 0;
 			uint32 val32;
 
 			if(val64 > 0xffffffff)
@@ -82,7 +84,7 @@ namespace embDB
 			return bits;
 		}
 
-		int FMSB(int64 val64)
+		static uint32 FMSB(int64 val64)
 		{
 			 return FMSB(uint64(val64) );
 		}
@@ -113,12 +115,7 @@ namespace embDB
 			//type freq value  1-byte, 2-short, 3-int32     2 bit
 			 
 
-			enum eTypeFreq
-			{
-				etfByte = 0,
-				etfShort = 1,
-				etfInt32 = 2
-			};
+			
 	 
 
 			TUnsignedNumLenCompressor(uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : m_nLenBitSize(0), m_nCount(0), m_nDiffsLen(0), m_nFlags(0),
@@ -129,11 +126,18 @@ namespace embDB
 
 			uint16 AddSymbol(TValue symbol)
 			{
-				uint16 nBitLen =  m_FindBit.FMSB(symbol);
+
+
+				uint16 nBitLen =  0;
+				if(symbol == 0)
+					nBitLen = 0;
+				else if(symbol == 1)
+					nBitLen = 1;
+				else  nBitLen = m_FindBit.FMSB(symbol);
 
 				assert(nBitLen < _nMaxBitsLens);
 
-				m_nLenBitSize += (nBitLen + 1);
+				m_nLenBitSize +=  nBitLen > 1 ? nBitLen - 1 : 0;
 				m_nCount++;
 
 				if(!m_BitsLensFreq[nBitLen])
@@ -251,7 +255,7 @@ namespace embDB
 			 
 			double GetCodeBitSize() const
 			{
-				double dBitRowSize = m_bOnlineCalcSize ? m_dBitRowSize :  CalcRowBitSize();
+				double dBitRowSize = m_bOnlineCalcSize ? m_dBitRowSize :  CalcRowBitSize<uint32>(m_BitsLensFreq, _nMaxBitsLens, m_nDiffsLen, m_nCount);
 				dBitRowSize += (dBitRowSize/m_nError)   + 64 /*code  finish*/; 
 
 				return dBitRowSize;
@@ -268,11 +272,11 @@ namespace embDB
 
 
 
-				return nByteSize + 1 + (_nMaxBitsLens)/8 + GetLenForDiffLen() + (m_nLenBitSize +7)/8 + sizeof(uint16); //Type comp (rang or ac) + 4 +
+				return nByteSize + 1 + (_nMaxBitsLens)/8 + GetLenForDiffLen(m_nTypeFreq, m_nDiffsLen) + (m_nLenBitSize +7)/8 + sizeof(uint16); //Type comp (rang or ac) + 4 +
 
 			}
 
-			double CalcRowBitSize() const
+			/*double CalcRowBitSize() const
 			{
 				double dBitRowSize  = 0;
 				if(m_nDiffsLen > 1)
@@ -289,7 +293,7 @@ namespace embDB
 				}
 				
 				return dBitRowSize;
-			}
+			}*/
 		
 			bool compress(const TBPVector<TValue>& vecValues, CommonLib::IWriteStream* pStream)
 			{
@@ -359,7 +363,7 @@ namespace embDB
 				ReadDiffsLens(pStream);
 
 				if(m_bOnlineCalcSize)
-					m_dBitRowSize = CalcRowBitSize();
+					m_dBitRowSize = CalcRowBitSize<uint32>(m_BitsLensFreq, _nMaxBitsLens, m_nDiffsLen, m_nCount);
 
 				
 		 
@@ -416,8 +420,8 @@ namespace embDB
 
 					assert(m_BitsLensFreq[nBitLen] != 0);
 
-
-					pBitStream->writeBits(value, nBitLen + 1);
+					if(nBitLen > 1)
+						pBitStream->writeBits(value, nBitLen - 1);
 					if(!rgEncoder.EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], m_nCount))
 						return false;
 				}
@@ -435,8 +439,8 @@ namespace embDB
 				{
 					TValue value = vecValues[i];
 					uint16 nBitLen =  m_FindBit.FMSB(value);
-
-					pBitStream->writeBits(value, nBitLen + 1);
+					if(nBitLen > 1)
+						pBitStream->writeBits(value, nBitLen - 1);
 					acEncoder.EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], m_nCount);
 						
 				}
@@ -445,7 +449,7 @@ namespace embDB
 				acEncoder.EncodeFinish();
 			}
 
-			uint32 GetLenForDiffLen() const 
+			/*uint32 GetLenForDiffLen() const 
 			{
 				switch(m_nTypeFreq)
 				{
@@ -461,7 +465,7 @@ namespace embDB
 				}
 				assert(false);
 				return m_nDiffsLen;
-			}
+			}*/
 
 			void WriteDiffsLens(CommonLib::IWriteStream* pStream)
 			{
@@ -579,7 +583,15 @@ namespace embDB
 						nBitLen--;
 
 					TValue value = 0;
-					pBitStream->readBits(value, nBitLen + 1);
+					if(nBitLen == 0)
+						value = 0;
+					else if(nBitLen == 1)
+						value = 1;
+					else
+						pBitStream->readBits(value, nBitLen);
+
+					value |= ((TValue)1 << nBitLen);
+
 					vecValues.push_back(value);
 
 					decoder.DecodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen+1], m_nCount);
@@ -610,6 +622,13 @@ namespace embDB
 			bool m_bOnlineCalcSize;
 
 	};
+
+	typedef TUnsignedNumLenCompressor<uint64, TFindMostSigBit, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 64> UnsignedNumLenCompressor64;
+
+	typedef TUnsignedNumLenCompressor<uint32, TFindMostSigBit, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 32> UnsignedNumLenCompressor32;
+
 
 	typedef TUnsignedNumLenCompressor<int64, TFindMostSigBit, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
 		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 64> UnsignedNumLenCompressor64i;

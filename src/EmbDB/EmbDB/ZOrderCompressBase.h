@@ -185,9 +185,9 @@ namespace embDB
 				this->clear();
 				byte nFlag = pStream->readByte();
 				bool bRangeCode = nFlag & 0x01;
-				this->m_nTypeFreq = (typename TBase::eTypeFreq)(nFlag>>1);
+				this->m_nTypeFreq = (eTypeFreq)(nFlag>>1);
 				this->ReadDiffsLens(pStream);
-				this->CalcRowBitSize();
+				//this->CalcRowBitSize();
 
 
 

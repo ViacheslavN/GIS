@@ -516,8 +516,10 @@
     <ClInclude Include="CompIndexLeafCompressor.h" />
     <ClInclude Include="CompositeIndexKey.h" />
     <ClInclude Include="CompressDouble.h" />
+    <ClInclude Include="CompressDoubleDiff.h" />
     <ClInclude Include="CompressorParams.h" />
     <ClInclude Include="CompressCompIndexParams.h" />
+    <ClInclude Include="CompressUtils.h" />
     <ClInclude Include="CounterField.h" />
     <ClInclude Include="CRC.h" />
     <ClInclude Include="CreateFields.h" />
@@ -527,6 +529,7 @@
     <ClInclude Include="embDBLib.h" />
     <ClInclude Include="EmptyValueCompress.h" />
     <ClInclude Include="EmptyValueDIffCompress.h" />
+    <ClInclude Include="DoublePartCompress.h" />
     <ClInclude Include="FieldIteratorBase.h" />
     <ClInclude Include="Fields.h" />
     <ClInclude Include="FieldSet.h" />
@@ -594,6 +597,7 @@
     <ClInclude Include="ShapeCompressorParams.h" />
     <ClInclude Include="ShapeField.h" />
     <ClInclude Include="ShapeTree.h" />
+    <ClInclude Include="SignCompressor.h" />
     <ClInclude Include="SignedNumLenDiffCompress.h" />
     <ClInclude Include="SimpleSearchCursor.h" />
     <ClInclude Include="SimpleSelectCursor.h" />

@@ -10,6 +10,7 @@ namespace CommonLib
 		WriteBitStream(alloc_t *pAlloc = NULL);
 		~WriteBitStream();
 		virtual void writeBit(bool bBit);
+		virtual bool resize(uint32 nSize);
 	private:
 
 

@@ -159,6 +159,8 @@ namespace CommonLib
 		double&       ptM(uint32 idx);
 		const double& ptM(uint32 idx) const;
 
+		uint32 getRowSize() const;
+
 	private:
 		simple_alloc_t m_alloc;
 		alloc_t *m_pAlloc;

@@ -208,6 +208,12 @@
     <Filter Include="DB\Fields\Index\spatial\rect">
       <UniqueIdentifier>{1da75630-edf6-4989-8598-e5b9a30065a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="utils\compress\DoubleCompress">
+      <UniqueIdentifier>{3dff7309-705b-41fb-81f5-e43ea8b8dbf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Fields\double">
+      <UniqueIdentifier>{d0da8880-b75a-4c53-a4ee-a12b9e383353}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -969,9 +975,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CompressDouble.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1014,8 +1017,41 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="FormatDouble.h">
+      <Filter>utils\compress\DoubleCompress</Filter>
+    </ClInclude>
+    <ClInclude Include="SignCompressor.h">
+      <Filter>utils\compress\DoubleCompress</Filter>
+    </ClInclude>
+    <ClInclude Include="DoublePartCompress.h">
+      <Filter>utils\compress\DoubleCompress</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressUtils.h">
       <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressDoubleDiff.h">
+      <Filter>utils\compress\DoubleCompress</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressDouble.h">
+      <Filter>utils\compress\DoubleCompress</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

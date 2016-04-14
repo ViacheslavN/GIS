@@ -86,7 +86,7 @@ namespace CommonLib
 
 		uint32 nPartCount = pShp->getPartCount();
 		m_partType = dtType8;
-		for (uint32 i = i; i < nPartCount; i++ )
+		for (uint32 i = 1; i < nPartCount; i++ )
 		{
 			uint32 nPart = pShp->getPart(i) - pShp->getPart(i - 1);
 			eCompressDataType type  = GetCompressType(nPart);
@@ -307,6 +307,82 @@ namespace CommonLib
 		 
 		pStream->write(pCache->buffer(), pCache->pos());
 		return true;
+	}
+
+	bool ShapeCompressor::compress1(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CWriteMemoryStream *pCacheStream )
+	{
+		uint32 nRowShapeSize = pShp->getRowSize() + sizeof(uint32);
+
+
+		m_CompressParams.m_PointType = dtType64;
+		m_CompressParams.m_dOffsetX = 0.00000001;
+		m_CompressParams.m_dOffsetY = 0.00000001;
+		m_CompressParams.m_dScaleX = 0.00000001;
+		m_CompressParams.m_dScaleY = 0.00000001;
+
+		if(pParams)
+		{
+			m_bWriteParams = false;
+			m_CompressParams = *pParams;
+		}
+		else
+		{
+
+			nRowShapeSize += sizeof(m_CompressParams);
+
+			bbox bb = pShp->getBB();
+			m_bWriteParams = true;
+
+			if(bb.xMin < 0)
+				m_CompressParams.m_dOffsetX = fabs(bb.xMin);
+			else
+				m_CompressParams.m_dOffsetX = -1 *bb.xMin;
+			if(bb.yMin < 0)
+				m_CompressParams.m_dOffsetX = fabs(bb.yMin);
+			else
+				m_CompressParams.m_dOffsetX = -1 *bb.yMin;
+
+		}
+
+
+		CWriteMemoryStream streamCache(m_pAlloc);
+		CommonLib::CWriteMemoryStream *pCache = &streamCache;
+		if(pCacheStream) 
+			pCache = pCacheStream;
+
+		uint32 nFlag = 0;
+		uint32 nFlagPos = 0;
+		pCache->seek(0, soFromBegin);
+		pCache->resize(nRowShapeSize);
+		pCache->write((byte)pShp->type());
+		nFlagPos = pCache->pos();
+
+		pCache->write(nFlag);
+
+
+
+
+		uint32 nPartCount = pShp->getPartCount();
+		m_partType = dtType8;
+		for (uint32 i = 1; i < nPartCount; i++ )
+		{
+			uint32 nPart = pShp->getPart(i) - pShp->getPart(i - 1);
+			eCompressDataType type  = GetCompressType(nPart);
+			if(m_partType < type)
+			{
+				m_partType = type;
+				if(m_partType == dtType32)
+				{				 
+					break;
+				}
+			}
+		}
+
+
+
+		return true;
+
+
 	}
 	void ShapeCompressor::compressPart(eCompressDataType nPartType, const CGeoShape *pShp, CommonLib::IWriteStream *pStream)
 	{

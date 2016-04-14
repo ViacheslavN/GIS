@@ -264,6 +264,9 @@
     <ClInclude Include="ByteCompressor.h">
       <Filter>compress</Filter>
     </ClInclude>
+    <ClInclude Include="SignCompressor.h">
+      <Filter>compress</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

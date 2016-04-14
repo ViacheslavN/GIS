@@ -6,3 +6,4 @@
 6. установка parent-a через соседнею ноду
 7. string, blob, shapes
 8. work copmress in remove operation union, alignment
+ 
