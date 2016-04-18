@@ -7,7 +7,7 @@ namespace CommonLib
 {
 
 	template<class TValue>
-	int32 lower_bound(TValue* pData, uint32 nSize, const TValue& key)
+	int32 lower_bound(const TValue* pData, uint32 nSize, const TValue& key)
 	{
 		if(nSize == 0)
 			return -1;
@@ -33,7 +33,7 @@ namespace CommonLib
 
 
 	template<class TValue>
-	int32 upper_bound(TValue* pData, uint32 nSize, const TValue& key)  
+	int32 upper_bound(const TValue* pData, uint32 nSize, const TValue& key)  
 	{
 
 		if(nSize == 0)
@@ -56,6 +56,18 @@ namespace CommonLib
 			else nCount = nStep;
 		}
 		return nFirst;
+	}
+
+	template<class TValue >
+	int32 binary_search(const TValue* pData, uint32 nSize, const TValue& key)
+	{
+		if(nSize == 0)
+			return -1;
+
+		int32 nIndex = lower_bound(pData, nSize, key);
+		if(nIndex != nSize && key == pData[nIndex])
+			return nIndex;
+		return - 1;
 	}
 }
 

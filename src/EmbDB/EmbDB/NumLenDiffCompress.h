@@ -58,11 +58,11 @@ namespace embDB
 
 				
 
-				uint32 FreqPrev[_nMaxBitsLens + 1];
+				uint32 FreqPrev[_nMaxBitsLens + 1 + 1];
 				memset(&FreqPrev, 0, sizeof(uint32) * _nMaxBitsLens);
 
 				int32 nPrevF = 0;
-				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 				{
 
 					FreqPrev[i + 1] = this->m_BitsLensFreq[i] + nPrevF;
@@ -107,17 +107,17 @@ namespace embDB
 				
 				byte nFlag = pStream->readByte();
 				bool bRangeCode = nFlag & 0x01;
-				this->m_nTypeFreq = (eTypeFreq)(nFlag>>1);
+				this->m_nTypeFreq = (eCompressDataType)(nFlag>>1);
 				this->ReadDiffsLens(pStream);
 				//this->CalcRowBitSize();
 
 		 
 
-				uint32 FreqPrev[_nMaxBitsLens + 1];
+				uint32 FreqPrev[_nMaxBitsLens + 1 + 1];
 				memset(&FreqPrev, 0, sizeof(uint32) * _nMaxBitsLens);
 
 				int32 nPrevF = 0;
-				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 				{
 
 					FreqPrev[i + 1] = this->m_BitsLensFreq[i] + nPrevF;
@@ -158,8 +158,8 @@ namespace embDB
 
 					assert(this->m_BitsLensFreq[nBitLen] != 0);
 
-
-					pBitStream->writeBits(nDiff, nBitLen + 1);
+					if(nBitLen > 1)
+						pBitStream->writeBits(nDiff, nBitLen - 1);
 					if(!rgEncoder.EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], this->m_nCount))
 						return false;
 				}
@@ -178,8 +178,8 @@ namespace embDB
 					_TValue nDiff = vecValues[i] - vecValues[i - 1];
 					uint16 nBitLen =  this->m_FindBit.FMSB(nDiff);
 			 
-
-					pBitStream->writeBits(nDiff, nBitLen + 1);
+					if(nBitLen > 1)
+						pBitStream->writeBits(nDiff, nBitLen - 1);
 					acEncoder.EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], this->m_nCount);
 						
 				}
@@ -207,8 +207,17 @@ namespace embDB
 					if(nBitLen != 0)
 						nBitLen--;
 
-					
-					pBitStream->readBits(value, nBitLen + 1);
+
+					TValue value = 0;
+					if(nBitLen == 0)
+						value = 0;
+					else if(nBitLen == 1)
+						value = 1;
+					else
+					{
+						pBitStream->readBits(value, nBitLen - 1);
+						value |= ((TValue)1 << nBitLen - 1);
+					}
 					nBegin += value;
 					vecValues.push_back(nBegin);
 

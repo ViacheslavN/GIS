@@ -47,9 +47,9 @@ void TestNumLen()
 	vec1.push_back(129);
 	test.AddLink(65);
 	test.AddLink(129);
-	test.compress(vec1, &WriteStream);
+	/*test.compress(vec1, &WriteStream);
 	ReadStream.attachBuffer(WriteStream.buffer(), WriteStream.pos(), false);
-	test1.decompress(vec2, &ReadStream);
+	test1.decompress(vec2, &ReadStream);*/
 
 	for (uint64 i = 0; i < 0xFFFFFFFFFFFF; i += 1024)
 	{

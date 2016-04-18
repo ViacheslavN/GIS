@@ -10,6 +10,8 @@
 #include "CommonLibrary/RangeCoder.h"
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CommonLibrary/FileStream.h"
+#include "SignedNumLenDiffCompress.h"
+#include "SignCompressor.h"
 namespace embDB
 {
 
@@ -30,7 +32,7 @@ namespace embDB
 				val16 >>= 4;
 			}
 			bits += bits_lens[val16];
-			return bits + 1;
+			return bits;
 		}
 
 
@@ -51,7 +53,7 @@ namespace embDB
 				val32 >>= 4;
 			}
 			bits += bits_lens[val32];
-			return bits + 1;
+			return bits;
 		}
 
 
@@ -114,16 +116,19 @@ namespace embDB
 		}
 		uint16 AddSymbol(TValue symbol)
 		{
+			m_SignCompressor.AddSymbol(symbol);
 	 		return TBase::AddSymbol(symbol);
 		}
 		void RemoveSymbol(TValue symbol)
 		{
+			m_SignCompressor.RemoveSymbol(symbol);
 			TBase::RemoveSymbol(symbol);
 		}
 		uint32 GetCompressSize() const
 		{ 
 			uint32 nBaseSize = TBase::GetCompressSize();
-			return nBaseSize +  sizeof(TValue);
+			
+			return nBaseSize +  sizeof(TValue) + m_SignCompressor.GetCompressSize();
 		}
 
 		bool compress(const TBPVector<TValue>& vecValues, CommonLib::IWriteStream* pStream)
@@ -141,11 +146,11 @@ namespace embDB
 
 
 
-			uint32 FreqPrev[_nMaxBitsLens + 1];
+			uint32 FreqPrev[_nMaxBitsLens + 1 + 1];
 			memset(&FreqPrev, 0, sizeof(uint32) * _nMaxBitsLens);
 
 			int32 nPrevF = 0;
-			for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+			for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 			{
 
 				FreqPrev[i + 1] = this->m_BitsLensFreq[i] + nPrevF;
@@ -159,6 +164,10 @@ namespace embDB
 			pStream->write((uint16)nBitSize);
 			bitStream.attach(pStream, pStream->pos(), nBitSize);
 			pStream->seek(nBitSize, CommonLib::soFromCurrent);
+
+			uint32 nSignSize = m_SignCompressor.GetCompressSize();
+			m_SignCompressor.BeginCompress(pStream);
+
 			uint32 nBeginCompressPos = pStream->pos();
 			bool bRangeCode = true;
 
@@ -190,7 +199,7 @@ namespace embDB
 			this->clear();
 			byte nFlag = pStream->readByte();
 			bool bRangeCode = nFlag & 0x01;
-			this->m_nTypeFreq = (eTypeFreq)(nFlag>>1);
+			this->m_nTypeFreq = (eCompressDataType)(nFlag>>1);
 			this->ReadDiffsLens(pStream);
 			//this->CalcRowBitSize();
 
@@ -294,7 +303,8 @@ namespace embDB
 
 			return true;
 		}
- 
+		private:
+			TSignCompressor m_SignCompressor;
 	};
 
 
