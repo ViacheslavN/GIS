@@ -18,7 +18,9 @@ void TestDoubleCompress();
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	TestDoubleCompress();
+	TestDiffComp();
+	//TestNumLen();
+	//TestDoubleCompress();
 	//TestBWTSort();
 	return 0;
 

@@ -44,12 +44,12 @@ namespace embDB
 				if(m_BitsLensFreq[nBitLen] == 1)
 					m_nDiffsLen += 1;
 
-				if(m_nTypeFreq != etfInt32)
+				if(m_nTypeFreq != ectUIInt32)
 				{
 					if(m_BitsLensFreq[nBitLen] > 255)
-						m_nTypeFreq = etfShort;
+						m_nTypeFreq = ectUInt16;
 					if(m_BitsLensFreq[nBitLen] > 65535)
-						m_nTypeFreq = etfInt32;
+						m_nTypeFreq = ectUIInt32;
 				}
 
 				m_nLenBitSize  += nBitLen > 1 ? nBitLen - 1 : 0;
@@ -69,18 +69,18 @@ namespace embDB
 				if(m_BitsLensFreq[nBitLen] == 65535 || m_BitsLensFreq[nBitLen] == 255)
 				{
 
-					m_nTypeFreq = etfByte;
+					m_nTypeFreq = ectByte;
 					for (uint32 i = 0; i < _nMaxBitsLens; ++i)
 					{
 						if(m_BitsLensFreq[i] > 65535)
 						{
-							m_nTypeFreq = etfInt32;
+							m_nTypeFreq = ectUIInt32;
 							break;
 						}
-						if(m_nTypeFreq != etfInt32)
+						if(m_nTypeFreq != ectUIInt32)
 						{
 							if(m_BitsLensFreq[nBitLen] > 255)
-								m_nTypeFreq = etfShort;
+								m_nTypeFreq = ectUInt16;
 						}
 					}
 				}
@@ -97,7 +97,7 @@ namespace embDB
 			{
 				memset(m_BitsLensFreq, 0, sizeof(m_BitsLensFreq));
 				m_nDiffsLen = 0;
-				m_nTypeFreq = etfByte;
+				m_nTypeFreq = ectByte;
 				m_nCount = 0;
 				m_nLenBitSize = 0;
 			}
@@ -129,7 +129,7 @@ namespace embDB
 			uint32 m_BitsLensFreq[_nMaxBitsLens];
 			uint32 m_nDiffsLen;
 			uint32 m_nLenBitSize;
-			eTypeFreq m_nTypeFreq;
+			eCompressDataType m_nTypeFreq;
 			uint32 m_nCount;
 			uint32 m_nError;
 
