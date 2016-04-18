@@ -72,6 +72,8 @@ namespace CommonLib
 				 m_nFlags = ONE_SIGN;
 				 if(m_nSigns[1] == 0)
 					 m_nFlags |= (1 << 2);
+
+				 pStream->write(m_nFlags);
 			}
 			else 
 			{
@@ -87,24 +89,42 @@ namespace CommonLib
 
 					 m_nFlags |= (nComType << 2);
 
+					 m_bWriteSign = (m_nSigns[1] == nMinCount);
+					 if(m_bWriteSign)
+						  m_nFlags |= (1 << 4);
+
+
+					 m_pStream = pStream;
+
+
+					 m_pStream->write(m_nFlags);
+					 WriteValue(nMinCount, eDataType, m_pStream);
 				}
 				else
 				{
 
 					 m_nFlags = NO_COMPRESS;
+					pStream->write(m_nFlags);
+					m_BitStream.attach(pStream, pStream->pos(), nByteSize);
 				}
 
 			}
 
-		//	pStream->write(m_nFlags);
+		}
+
+
+		void CompressSign()
+		{
 
 		}
 
 
-
 	private:
+		IWriteStream *m_pStream;
+		WriteBitStream m_BitStream;
 		uint32 m_nSigns[2];
 		byte m_nFlags;
+		bool m_bWriteSign;
 	
 
 	};

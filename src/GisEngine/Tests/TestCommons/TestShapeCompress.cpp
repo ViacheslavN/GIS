@@ -5,7 +5,10 @@
 #include "../../GeoDatabase/EmbDBInsertCursor.h"
 #include "../../GeoDatabase/EmbDBFeatureClass.h"
 #include "CommonLibrary/MemoryStream.h"
-
+#include "CommonLibrary/BitStream.h"
+#include "CommonLibrary/WriteBitStream.h"
+#include "CommonLibrary/compressutils.h"
+#include "CommonLibrary/FixedBitStream.h"
 
 double inline Round(double dValue, unsigned int uiScale = 0)
 {
@@ -84,6 +87,28 @@ std::string polylineEncode(CommonLib::GisXYPoint* pPoint, int32 nPointCnt, doubl
 void CompressShape()
 {
 	
+	CommonLib::WriteBitStream bits;
+	CommonLib::FxBitReadStream bitStream;
+
+	bits.resize(10);
+
+
+	uint64 val = 6330;
+
+	uint32 nLen =  CommonLib::TFindMostSigBit::FMSB(val);
+
+
+	((CommonLib::IBitWriteStream*)(&bits))->writeBits(val, nLen - 1);
+
+
+	bitStream.attachBuffer(bits.buffer(), bits.size());
+
+	uint64 val1 = 0;
+	bitStream.readBits(val1, nLen - 1);
+
+
+	val1 |= ((uint64)1 << nLen - 1);
+
 	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
 	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData");
 	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\db\\10m_cultural\\");
@@ -148,7 +173,7 @@ void CompressShape()
 	 CommonLib::IGeoShapePtr pShape= pFeature->GetShape();
 	 pShape->write(&writeStream);
 
-	if(ii == 6144)
+	if(ii == 19)
 	 {
 
 		// std::string sStr = polylineEncode(pShape->getPoints(), pShape->getPointCnt(), params.m_dOffsetX, params.m_dOffsetY, params.m_dScaleX);

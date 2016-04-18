@@ -291,12 +291,23 @@ namespace CommonLib
 
 
 				bool bSign = bitStream.readBit();
-				bitStream.readBits(xDiff, nBitX - 1);
-				bitStream.readBits(yDiff, nBitY - 1);
+				
+				xDiff = nBitX;
+				yDiff = nBitY;
+				if(xDiff > 1)
+				{
+					xDiff = 0;
+					bitStream.readBits(xDiff, nBitX - 1);
+					xDiff |= (1 << nBitX- 1);
+				}
 
-				xDiff |= (1 << nBitX);
-				yDiff |= (1 << nBitY);
-			
+				if(yDiff > 1)
+				{
+					yDiff = 0;
+					bitStream.readBits(yDiff, nBitY- 1);
+					yDiff |= (1 << nBitY- 1);
+				}
+		
 				zOrderDiff.setZOrder(xDiff, yDiff);
 
 				if(bSign)

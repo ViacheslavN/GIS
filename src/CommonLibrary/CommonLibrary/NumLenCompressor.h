@@ -99,7 +99,7 @@ namespace CommonLib
 				}
 				memset(m_FreqPrev, 0, sizeof(m_FreqPrev));
 				int32 nPrevF = 0;
-				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 				{
 					m_FreqPrev[i + 1] = m_BitsLensFreq[i] + nPrevF;
 					nPrevF = m_FreqPrev[i + 1];
@@ -267,7 +267,7 @@ namespace CommonLib
 			}
 	private:
 
-		uint32 m_BitsLensFreq[_nMaxBitsLens];
+		uint32 m_BitsLensFreq[_nMaxBitsLens + 1];
 		uint32 m_FreqPrev[_nMaxBitsLens + 1];
 		TFindBit m_FindBit;
 		uint32 m_nCount;

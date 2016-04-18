@@ -24,6 +24,7 @@ namespace CommonLib
 			assert(!m_bAttach);
 			m_nSize = newSize;
 			byte* buffer =  (byte*)this->m_pAlloc->alloc(sizeof(byte) * newSize);
+			memset(buffer, 0, newSize);
 			if(this->m_pBuffer)
 			{
 				memcpy(buffer, this->m_pBuffer, this->m_nPos);

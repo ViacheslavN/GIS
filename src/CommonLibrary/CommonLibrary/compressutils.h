@@ -93,7 +93,8 @@ namespace CommonLib
 	}
 
  //   static int bits_lens[] = {0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4};
-     static int bits_lens[] = {0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3};
+    // static int bits_lens[] = {0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3};
+	 static int bits_lens[] = {0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4};
 	struct TFindMostSigBit
 	{
 
@@ -110,7 +111,7 @@ namespace CommonLib
 			return (uint16)y;
 		}
 #endif*/
-		int FMSB(uint16 val16)
+	static	int FMSB(uint16 val16)
 		{
 			int bits = 0;
 			if(val16 > 0xff){
@@ -126,7 +127,7 @@ namespace CommonLib
 		}
 
 
-		int FMSB(uint32 val32)
+	static	int FMSB(uint32 val32)
 		{
 			int bits = 0;
 		 
@@ -147,7 +148,7 @@ namespace CommonLib
 		}
 
 
-		int FMSB(uint64 val64)
+	static	int FMSB(uint64 val64)
 		{
 			int bits = 0;
 			uint32 val32;
@@ -163,7 +164,7 @@ namespace CommonLib
 			return bits;
 		}
 
-		int FMSB(int64 val64)
+	static	int FMSB(int64 val64)
 		{
 			 return FMSB(uint64(val64) );
 		}
