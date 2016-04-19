@@ -93,7 +93,7 @@ namespace CommonLib
 		virtual uint32 GetCompressSize() const
 		{
 			uint32 nSignSize = m_SignCompressor.GetCompressSize();
-			return m_Compressor.GetCompressSize() + (m_Compressor.GetBitsLen() + m_Compressor.GetCount()/2 +7)/8 + 2 * sizeof(TValue);
+			return m_Compressor.GetCompressSize() + (m_Compressor.GetBitsLen() +7)/8 + 2 * sizeof(TValue) + nSignSize;
 		}
 		virtual void WriteHeader(IWriteStream *pStream)
 		{

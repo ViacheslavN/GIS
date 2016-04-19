@@ -206,6 +206,26 @@ namespace CommonLib
 		}
 	};
 
+	static uint32 GetLenForDiffLen(eCompressDataType nTypeFreq, uint32 nDiffsLen) 
+	{
+		switch(nTypeFreq)
+		{
+		case dtType8:
+			return nDiffsLen;
+			break;
+		case dtType16:
+			return nDiffsLen * sizeof(uint16);
+			break;
+		case dtType32:
+			return nDiffsLen * sizeof(uint32);
+			break;
+		case dtType64:
+			return nDiffsLen * sizeof(uint64);
+			break;
+		}
+		assert(false);
+		return nDiffsLen;
+	}
 
 }
 

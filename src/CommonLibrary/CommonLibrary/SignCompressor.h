@@ -2,6 +2,7 @@
 #define _COMMON_LIB_SIGN_COMPRESSOR_H_
 #include "compressutils.h"
 #include "WriteBitStream.h"
+#include "FixedMemoryStream.h"
 namespace CommonLib
 {
 
@@ -9,16 +10,16 @@ namespace CommonLib
 	class TSignCompressor
 	{
 	public:
-		enum eFlag
+		enum eCompressType
 		{
 			ONE_SIGN = 0,
-			POS_SIGN = 1,
-			NO_COMPRESS =2,
-			COMPRESS = 3
+			COMPRESS_POS = 1,
+			NO_COMPRESS =2
 
 
 		};
-	 
+
+
 		TSignCompressor()
 		{
 			clear();
@@ -30,20 +31,21 @@ namespace CommonLib
 		{
 			m_nSigns[0] = 0;
 			m_nSigns[1] = 0;
-		}
-
-		void Init(uint32 nSize)
-		{
-
+			m_compreesType = NO_COMPRESS;
+			m_DataType = ectUInt64;
+			m_bSign = false;
+			m_nVecPos.clear();
 		}
 
 
 		void AddSymbol(bool bSign)
 		{
 			m_nSigns[bSign ? 1 : 0] += 1;
-
 		}
-		 
+		void RemoveSymbol(bool bSign)
+		{
+			m_nSigns[bSign ? 1 : 0] -= 1;
+		}
 		uint32 GetCompressSize() const
 		{
 			if(m_nSigns[0] == 0 || m_nSigns[1] == 0)
@@ -55,77 +57,146 @@ namespace CommonLib
 
 			uint32 nMinCount = min(m_nSigns[0], m_nSigns[1]);
 
-			eCompressDataType eDataType = GetCompressType(m_nSigns[0] + m_nSigns[1]);
-			uint32 nBytePosCodeSize =  GetSizeTypeValue(eDataType) * (nMinCount + 1);
-
-
+			eCompressDataType type = GetCompressType(m_nSigns[0] + m_nSigns[1]);
+			uint32 nBytePosCodeSize = GetLenForDiffLen(type, nMinCount + 1);
 
 			return min(nBytePosCodeSize, nByteSize);
 		}
 
-
-		void InitCompress(IWriteStream *pStream)
+		void BeginCompress(CommonLib::IWriteStream *pStream)
 		{
-			m_nFlags = 0;
+
+			byte nFlag = 0;
 			if(m_nSigns[0] == 0 || m_nSigns[1] == 0)
 			{
-				 m_nFlags = ONE_SIGN;
-				 if(m_nSigns[1] == 0)
-					 m_nFlags |= (1 << 2);
+				m_compreesType = ONE_SIGN;
+				nFlag = ONE_SIGN;
 
-				 pStream->write(m_nFlags);
+				if(m_nSigns[1] != 0)
+					nFlag |= (1 << 3);
+
+				pStream->write(nFlag);
 			}
-			else 
+			else
 			{
 				uint32 nByteSize = ((m_nSigns[0] + m_nSigns[1] + 7 )/8) + 1;
 				uint32 nMinCount = min(m_nSigns[0], m_nSigns[1]);
-				
-				eCompressDataType eDataType = GetCompressType(m_nSigns[0] + m_nSigns[1]);
-				uint32 nBytePosCodeSize =  GetSizeTypeValue(eDataType) * (nMinCount + 2);
-				if(nBytePosCodeSize < nByteSize)
+				m_DataType = GetCompressType(m_nSigns[0] + m_nSigns[1]);
+				uint32 nBytePosCodeSize = GetLenForDiffLen(m_DataType, nMinCount + 1) + 1;
+
+				if(nByteSize < nBytePosCodeSize)
 				{
-					 m_nFlags = POS_SIGN;
-					 byte nComType = (byte)eDataType;
-
-					 m_nFlags |= (nComType << 2);
-
-					 m_bWriteSign = (m_nSigns[1] == nMinCount);
-					 if(m_bWriteSign)
-						  m_nFlags |= (1 << 4);
-
-
-					 m_pStream = pStream;
-
-
-					 m_pStream->write(m_nFlags);
-					 WriteValue(nMinCount, eDataType, m_pStream);
+					m_compreesType = NO_COMPRESS;
+					pStream->write((byte)m_compreesType);
+					m_bitWriteStream.attach(pStream, pStream->pos(), nByteSize - 1);
+					pStream->seek(nByteSize - 1, CommonLib::soFromCurrent);
 				}
 				else
 				{
+					m_compreesType = COMPRESS_POS;
+					nFlag = m_compreesType;
+					if(m_nSigns[1] == nMinCount)
+						nFlag |= (1 << 3);
 
-					 m_nFlags = NO_COMPRESS;
-					pStream->write(m_nFlags);
-					m_BitStream.attach(pStream, pStream->pos(), nByteSize);
+					m_WriteStream.attach(pStream, pStream->pos(), nBytePosCodeSize);
+					m_WriteStream.write(nFlag);
+					WriteValue(nMinCount, m_DataType, &m_WriteStream);
+
+					pStream->seek(nBytePosCodeSize, CommonLib::soFromCurrent);
+
+
+				}
+			}
+
+
+		}
+
+		void EncodeSign(bool bSign, uint32 nPos)
+		{
+			switch(m_compreesType)
+			{
+			case COMPRESS_POS:
+				{
+					if(bSign == m_bSign)
+					{
+						WriteValue(nPos, m_DataType,  &m_WriteStream);
+					}
+					break;
+				}
+			case NO_COMPRESS:
+				m_bitWriteStream.writeBit(bSign);
+				break;
+			}
+		}
+
+
+		void BeginDecompress(CommonLib::IReadStream *pStream, uint32 nCount)
+		{
+			byte nFlag = pStream->readByte();
+			m_compreesType = (eCompressType)(nFlag & 0x03);
+			if(m_compreesType == ONE_SIGN)
+			{
+				m_bSign = nFlag & (1 << 3);
+			}
+			else if(m_compreesType == COMPRESS_POS)
+			{
+
+
+				m_DataType = GetCompressType(nCount);
+
+				uint32 nCount = ReadValue<uint32>(m_DataType, pStream);
+				m_nVecPos.reserve(nCount);
+				for (size_t i = 0; i < nCount; ++i)
+				{
+					uint32 nPos = ReadValue<uint32>(m_DataType, pStream);
+					m_nVecPos.push_back(nPos);
 				}
 
 			}
+			else if(m_compreesType == NO_COMPRESS)
+			{
+				m_bitReadStream.attach(pStream, pStream->pos(), (nCount + 7)/8);
+				pStream->seek((nCount + 7)/8, CommonLib::soFromCurrent);
+			}
+
+
 
 		}
 
-
-		void CompressSign()
+		bool DecodeSign(uint32 nPos)
 		{
+			switch(m_compreesType)
+			{
+			case ONE_SIGN:
+				return m_bSign;
+				break;
+			case COMPRESS_POS:
+				{
 
+					int nIndex = CommonLib::binary_search(m_nVecPos.begin(), m_nVecPos.size(), nPos);
+					return nIndex != -1 ? m_bSign : !m_bSign;
+					break;
+				}
+			case NO_COMPRESS:
+				return m_bitReadStream.readBit();
+				break;
+			}
 		}
-
 
 	private:
-		IWriteStream *m_pStream;
-		WriteBitStream m_BitStream;
 		uint32 m_nSigns[2];
-		byte m_nFlags;
-		bool m_bWriteSign;
-	
+		eCompressType m_compreesType;
+		FxMemoryWriteStream m_WriteStream;
+		FxBitReadStream m_bitReadStream;
+		FxBitWriteStream m_bitWriteStream;
+		eCompressDataType m_DataType;
+		bool m_bSign;
+
+		CommonLib::TPodVector<uint32> m_nVecPos;
+
+		//	uint32 m_nFreq[257];
+		//	uint32 m_nDiff;
+		//CommonLib::WriteBitStream 
 
 	};
 }

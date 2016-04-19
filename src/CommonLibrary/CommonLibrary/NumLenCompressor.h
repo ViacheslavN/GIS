@@ -231,7 +231,7 @@ namespace CommonLib
 			double CalcRowBitSize() const
 			{
 				double dBitRowSize  = 0;
-				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 				{
 					if(m_BitsLensFreq[i] == 0)
 						continue;
@@ -247,7 +247,7 @@ namespace CommonLib
 			uint32 GetHeaderSize() const
 			{
 				uint32 nSize = _nMaxBitsLens/8  + 1;
-				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 				{
 					if(m_BitsLensFreq[i] != 0)
 						nSize += GetSizeTypeValue(m_FreqType);
@@ -268,7 +268,7 @@ namespace CommonLib
 	private:
 
 		uint32 m_BitsLensFreq[_nMaxBitsLens + 1];
-		uint32 m_FreqPrev[_nMaxBitsLens + 1];
+		uint32 m_FreqPrev[_nMaxBitsLens + 1 + 1];
 		TFindBit m_FindBit;
 		uint32 m_nCount;
 		uint32 m_nBitLen;
