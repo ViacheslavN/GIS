@@ -100,7 +100,6 @@ namespace embDB
 				return false;
 
 
-						
 			CommonLib::FxMemoryWriteStream stream;
 
 			sFilePageHeader header( pFilePage->getPageSize());
@@ -128,6 +127,8 @@ namespace embDB
 		}
 		bool LoadFromPage(CFilePage* pFilePage, Transaction* pTransactions)
 		{
+
+	
 			CommonLib::FxMemoryReadStream stream;
 			stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 			sFilePageHeader header(stream, pFilePage->getPageSize(), m_bCheckCRC32 && !pFilePage->isCheck());

@@ -79,7 +79,7 @@ namespace embDB
 				uint32 nBitSize = (this->m_nLenBitSize +7)/8;
 
 				WriteZorder(vecValues[0], pStream);
-				pStream->write((uint16)nBitSize);
+			//	pStream->write((uint16)nBitSize);
 				bitStream.attach(pStream, pStream->pos(), nBitSize);
 				pStream->seek(nBitSize, CommonLib::soFromCurrent);
 				uint32 nBeginCompressPos = pStream->pos();
@@ -134,8 +134,8 @@ namespace embDB
 				ZOrder zBegin;
 				ReadZorder(zBegin, pStream);
 				vecValues.push_back(zBegin);
-				uint16 nBitSize = pStream->readintu16();
-
+				//uint16 nBitSize = pStream->readintu16();
+				uint32 nBitSize = (this->m_nLenBitSize +7)/8;
 				CommonLib::FxBitReadStream bitStream;
 
 

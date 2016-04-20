@@ -83,6 +83,10 @@ public:
         menuFile->addAction(actionSave_project);
         menuFile->addAction(actionSave_project_as);
         menuFile->addSeparator();
+        toolBar->addAction(actionNew);
+        toolBar->addAction(actionOpen_project);
+        toolBar->addAction(actionSave_project);
+        toolBar->addAction(actionSave_project_as);
         toolBar->addSeparator();
 
         retranslateUi(GeoConvertorClass);

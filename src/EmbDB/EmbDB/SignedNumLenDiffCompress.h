@@ -116,12 +116,12 @@ namespace embDB
 		}
 		uint16 AddSymbol(TValue symbol)
 		{
-			m_SignCompressor.AddSymbol(symbol);
+			m_SignCompressor.AddSymbol(symbol < 0);
 	 		return TBase::AddSymbol(symbol);
 		}
 		void RemoveSymbol(TValue symbol)
 		{
-			m_SignCompressor.RemoveSymbol(symbol);
+			m_SignCompressor.RemoveSymbol(symbol< 0);
 			TBase::RemoveSymbol(symbol);
 		}
 		uint32 GetCompressSize() const
@@ -131,7 +131,11 @@ namespace embDB
 			
 			return nBaseSize +  sizeof(TValue) + m_SignCompressor.GetCompressSize() + nSignSize;
 		}
-
+		void clear()
+		{
+			TBase::clear();
+			m_SignCompressor.clear();
+		}
 		bool compress(const TBPVector<TValue>& vecValues, CommonLib::IWriteStream* pStream)
 		{
 
