@@ -5,6 +5,8 @@
 #include "PartCompressor.h"
 #include "XYCompressDiff.h"
 #include "MemoryStream.h"
+#include "XYCompressDiff2.h"
+#include "XYCompressZOrderDiff.h"
 namespace CommonLib
 {
 
@@ -88,7 +90,7 @@ namespace CommonLib
 		m_partType = dtType8;
 		for (uint32 i = 1; i < nPartCount; i++ )
 		{
-			uint32 nPart = pShp->getPart(i) - pShp->getPart(i - 1);
+			uint32 nPart = pShp->getPart(i);
 			eCompressDataType type  = GetCompressType(nPart);
 			if(m_partType < type)
 			{
@@ -145,7 +147,8 @@ namespace CommonLib
 			m_bCompressPoint = true;
 			CreateCompressXY(&m_CompressParams);
 			m_xyCompressor->PreCompress(pShp->getPoints(), pShp->getPointCnt());
-			nCompressSize += m_xyCompressor->GetCompressSize();
+			uint32 nCompSize = m_xyCompressor->GetCompressSize();
+			nCompressSize += nCompSize;
 		}
 		if(m_bWriteParams)
 			nCompressSize += sizeof(m_CompressParams);
@@ -412,6 +415,17 @@ namespace CommonLib
 	}
 	void ShapeCompressor::CreateCompressXY( CGeoShape::compress_params *pParams)
 	{
+
+		if(m_xyCompressor.get())
+		{
+			if(m_xyCompressor->GeteCompressDataType() == pParams->m_PointType)
+			{
+				m_xyCompressor->clear(pParams);
+				return;
+			}
+		}
+
+
 		switch(pParams->m_PointType)
 		{
 		case dtType16:

@@ -11,7 +11,7 @@ namespace CommonLib
 	class CGeoShape;
 	class IXYComressor;
 	class IPartComressor;
-
+	class IXYComressor2;
 	
 	
 

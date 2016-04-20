@@ -127,8 +127,9 @@ namespace embDB
 		uint32 GetCompressSize() const
 		{ 
 			uint32 nBaseSize = TBase::GetCompressSize();
+			uint32 nSignSize = m_SignCompressor.GetCompressSize();
 			
-			return nBaseSize +  sizeof(TValue) + m_SignCompressor.GetCompressSize();
+			return nBaseSize +  sizeof(TValue) + m_SignCompressor.GetCompressSize() + nSignSize;
 		}
 
 		bool compress(const TBPVector<TValue>& vecValues, CommonLib::IWriteStream* pStream)
@@ -161,12 +162,15 @@ namespace embDB
 			uint32 nBitSize = (this->m_nLenBitSize +7)/8;
 
 			pStream->write(vecValues[0]);
-			pStream->write((uint16)nBitSize);
+			//pStream->write((uint16)nBitSize);
+
+
+			m_SignCompressor.BeginCompress(pStream);
+
 			bitStream.attach(pStream, pStream->pos(), nBitSize);
 			pStream->seek(nBitSize, CommonLib::soFromCurrent);
 
-			uint32 nSignSize = m_SignCompressor.GetCompressSize();
-			m_SignCompressor.BeginCompress(pStream);
+			
 
 			uint32 nBeginCompressPos = pStream->pos();
 			bool bRangeCode = true;
@@ -219,10 +223,13 @@ namespace embDB
 			TValue nBegin = 0;
 			pStream->read(nBegin);
 			vecValues.push_back(nBegin);
-			uint16 nBitSize = pStream->readintu16();
+			//uint16 nBitSize = pStream->readintu16();
+			uint32 nBitSize = (this->m_nLenBitSize +7)/8;
 
 			CommonLib::FxBitReadStream bitStream;
 
+
+			m_SignCompressor.BeginDecompress(pStream, nSize - 1);
 
 			bitStream.attach(pStream, pStream->pos(), nBitSize);
 			pStream->seek(nBitSize, CommonLib::soFromCurrent);
@@ -248,8 +255,9 @@ namespace embDB
 
 				assert(this->m_BitsLensFreq[nBitLen] != 0);
 
-				pBitStream->writeBit(nDiff > 0 ? false : true);
-				pBitStream->writeBits(nDiff > 0 ? nDiff : -nDiff, nBitLen);
+				m_SignCompressor.EncodeSign(nDiff < 0 , i - 1);
+				if(nBitLen > 1)
+					pBitStream->writeBits(nDiff > 0 ? nDiff : -nDiff, nBitLen - 1);
 				if(!encoder.EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], this->m_nCount))
 					return false;
 			}
@@ -292,9 +300,19 @@ namespace embDB
 				if(nBitLen != 0)
 					nBitLen--;
 
-				bool bSign = pBitStream->readBit();
-				pBitStream->readBits(value, nBitLen);
+				//bool bSign = pBitStream->readBit();
+
+
+				bool bSign = m_SignCompressor.DecodeSign( i - 1);
+				value = nBitLen;
+				if(value > 1)
+				{
+					pBitStream->readBits(value, nBitLen - 1);
+					value |= 1 << (nBitLen - 1);
+				}
+					 
 				nBegin +=  (bSign ? -1 *value : value);
+
 				vecValues.push_back(nBegin);
 			 
 				decoder.DecodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen+1], this->m_nCount);

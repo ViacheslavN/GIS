@@ -32,7 +32,7 @@ namespace CommonLib
 			m_nSigns[0] = 0;
 			m_nSigns[1] = 0;
 			m_compreesType = NO_COMPRESS;
-			m_DataType = ectUInt64;
+			m_DataType = dtType64;
 			m_bSign = false;
 			m_nVecPos.clear();
 		}
@@ -73,7 +73,7 @@ namespace CommonLib
 				nFlag = ONE_SIGN;
 
 				if(m_nSigns[1] != 0)
-					nFlag |= (1 << 3);
+					nFlag |= (1 << 2);
 
 				pStream->write(nFlag);
 			}
@@ -95,8 +95,12 @@ namespace CommonLib
 				{
 					m_compreesType = COMPRESS_POS;
 					nFlag = m_compreesType;
+					m_bSign = false;
 					if(m_nSigns[1] == nMinCount)
-						nFlag |= (1 << 3);
+					{
+						nFlag |= (1 << 2);
+						m_bSign = true;
+					}
 
 					m_WriteStream.attach(pStream, pStream->pos(), nBytePosCodeSize);
 					m_WriteStream.write(nFlag);
@@ -136,12 +140,12 @@ namespace CommonLib
 			m_compreesType = (eCompressType)(nFlag & 0x03);
 			if(m_compreesType == ONE_SIGN)
 			{
-				m_bSign = nFlag & (1 << 3);
+				m_bSign = nFlag & (1 << 2);
 			}
 			else if(m_compreesType == COMPRESS_POS)
 			{
 
-
+				m_bSign = nFlag & (1 << 2);
 				m_DataType = GetCompressType(nCount);
 
 				uint32 nCount = ReadValue<uint32>(m_DataType, pStream);

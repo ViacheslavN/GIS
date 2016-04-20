@@ -73,7 +73,7 @@ namespace embDB
 				uint32 nBitSize = (this->m_nLenBitSize +7)/8;
 				
 				pStream->write(vecValues[0]);
-				pStream->write((uint16)nBitSize);
+				//pStream->write((uint16)nBitSize);
 				bitStream.attach(pStream, pStream->pos(), nBitSize);
 				pStream->seek(nBitSize, CommonLib::soFromCurrent);
 				uint32 nBeginCompressPos = pStream->pos();
@@ -127,8 +127,8 @@ namespace embDB
 				TValue nBegin = 0;
 				pStream->read(nBegin);
 				vecValues.push_back(nBegin);
-				uint16 nBitSize = pStream->readintu16();
-
+				//uint16 nBitSize = pStream->readintu16();
+				uint32 nBitSize = (this->m_nLenBitSize +7)/8;
 				CommonLib::FxBitReadStream bitStream;
 
 		 

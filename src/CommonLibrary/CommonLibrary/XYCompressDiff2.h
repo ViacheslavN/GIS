@@ -1,5 +1,5 @@
-#ifndef _LIB_COMMON_GEO_SHAPE_XY_COMPRESSOR_H_
-#define _LIB_COMMON_GEO_SHAPE_XY_COMPRESSOR_H_
+#ifndef _LIB_COMMON_GEO_SHAPE_XY_COMPRESSOR_2_H_
+#define _LIB_COMMON_GEO_SHAPE_XY_COMPRESSOR_2_H_
 #include "NumLenCompressor.h"
 #include "BitStream.h"
 #include "GeoShape.h"
@@ -7,33 +7,36 @@
 #include <set>
 #include "ByteCompressor.h"
 #include "SignCompressor.h"
-#include "XYCompressZOrderDiff.h"
+#include "XYCompressDiff.h"
 namespace CommonLib
 {
- 
 
+ 
 //#define _CALC_STATISTIC_
 
 
 
 
 	template <class _TValue, class _TPointLenCompressor>
-	class TXYCompressorDiff : public IXYComressor
+	class TXYCompressorDiff2 : public IXYComressor
 	{
 	public:
 		typedef _TPointLenCompressor TPointLenCompressor;
 		typedef _TValue TValue;
-		TXYCompressorDiff(const CGeoShape::compress_params& params) : m_params(params)
+
+
+		TXYCompressorDiff2(const CGeoShape::compress_params& params) : m_params(params)
 		{
-
+			m_nXBitLen = 0;
+			m_nYBitLen = 0;
 		}
-		~TXYCompressorDiff(){}
-
+		~TXYCompressorDiff2(){}
 
 		virtual eCompressDataType GeteCompressDataType() const
 		{
 			return m_params.m_PointType;
 		}
+
 		uint32 PreAddCoord(TValue prev, TValue next, TSignCompressor &signCpmrpessor)
 		{
 			TValue nDiff = 0;
@@ -79,6 +82,11 @@ namespace CommonLib
 			TValue X = (TValue)((pPoint[0].x + m_params.m_dOffsetX)/m_params.m_dScaleX);
 			TValue Y = (TValue)((pPoint[0].y + m_params.m_dOffsetY)/m_params.m_dScaleY);
 
+			/*ZOrder zOrderPrev(X, Y);
+			ZOrder zOrderNext;
+			ZOrder zOrderDiff;*/
+
+
 			TValue xPrev = X;
 			TValue yPrev = Y;
 
@@ -89,12 +97,33 @@ namespace CommonLib
 
 				X = (TValue)((pPoint[i].x + m_params.m_dOffsetX)/m_params.m_dScaleX);
 				Y = (TValue)((pPoint[i].y + m_params.m_dOffsetY)/m_params.m_dScaleY);
-							 
-				PreAddCoord(xPrev, X, m_SignCompressorX);
-				PreAddCoord(yPrev, Y, m_SignCompressorY);
-				
+
+			 
+				m_nXBitLen += PreAddCoord(xPrev, X, m_SignCompressorX);
+				m_nYBitLen += PreAddCoord(yPrev, Y, m_SignCompressorY);
+
+
 				xPrev = X;
 				yPrev = Y;
+
+				/*zOrderNext.setZOrder(X, Y);
+
+				if(zOrderPrev <  zOrderNext)
+				{
+					zOrderDiff = zOrderNext - zOrderPrev;
+					m_SignCompressor.AddSymbol(false);
+				}
+				else
+				{
+					zOrderDiff = zOrderPrev - zOrderNext;
+					m_SignCompressor.AddSymbol(true);
+				}
+
+				zOrderDiff.getXY(xDiff, yDiff);
+				m_Compressor.PreAddSympol(xDiff);
+				m_Compressor.PreAddSympol(yDiff);
+
+				zOrderPrev = zOrderNext;*/
 			}
 		}
 
@@ -103,7 +132,7 @@ namespace CommonLib
 			uint32 nSignSizeX = m_SignCompressorX.GetCompressSize();
 			uint32 nSignSizeY = m_SignCompressorY.GetCompressSize();
 			//uint32 nSize = m_PointCompressor.GetCompressSize() + (m_PointCompressor.GetBitsLen() +7)/8;
-			uint32 nSize = m_PointCompressor.GetCompressSize() + (m_PointCompressor.GetBitsLen() +7)/8;
+			uint32 nSize = m_PointCompressor.GetCompressSize() + (m_nXBitLen +7)/8 + (m_nYBitLen +7)/8 + 2*sizeof(uint32); 
 
 			return  nSize +  2 * sizeof(TValue) + nSignSizeX + nSignSizeY;
 		}
@@ -115,17 +144,22 @@ namespace CommonLib
 		virtual bool compress(const GisXYPoint *pPoint, uint32 nCount, IWriteStream *pStream)
 		{
 
+			uint32 nByteSizeX = (m_nXBitLen + 7)/8;
+			uint32 nByteSizeY = (m_nYBitLen + 7)/8;
 
-			uint32 nBitSize = m_PointCompressor.GetBitsLen();
-			uint32 nByteSize = (nBitSize + 7)/8;
 
- 
+			pStream->write(nByteSizeX);
+			pStream->write(nByteSizeY);
 
-			CommonLib::FxBitWriteStream bitStream;
+			CommonLib::FxBitWriteStream bitStreamX;
+			CommonLib::FxBitWriteStream bitStreamY;
 
-			bitStream.attach(pStream, pStream->pos(), nByteSize);
-			pStream->seek(nByteSize, soFromCurrent);
+			bitStreamX.attach(pStream, pStream->pos(), nByteSizeX);
+			pStream->seek(nByteSizeX, soFromCurrent);
 
+
+			bitStreamY.attach(pStream, pStream->pos(), nByteSizeY);
+			pStream->seek(nByteSizeY, soFromCurrent);
 		
 			m_SignCompressorX.BeginCompress(pStream);
 			m_SignCompressorY.BeginCompress(pStream);
@@ -133,6 +167,9 @@ namespace CommonLib
 			TValue X = (TValue)((pPoint[0].x + m_params.m_dOffsetX)/m_params.m_dScaleX);
 			TValue Y = (TValue)((pPoint[0].y + m_params.m_dOffsetY)/m_params.m_dScaleY);
 
+			/*ZOrder zOrderPrev(X, Y);
+			ZOrder zOrderNext;
+			ZOrder zOrderDiff;*/
 
 			TValue xPrev = X;
 			TValue yPrev = Y;
@@ -152,8 +189,8 @@ namespace CommonLib
 				Y = (TValue)((pPoint[i].y + m_params.m_dOffsetY)/m_params.m_dScaleY);
 
 
-				CompreessCoord(i -1, xPrev, X, bitStream, m_SignCompressorX);
-				CompreessCoord(i -1, yPrev, Y, bitStream, m_SignCompressorY);
+				CompreessCoord(i -1, xPrev, X, bitStreamX, m_SignCompressorX);
+				CompreessCoord(i -1, yPrev, Y, bitStreamY, m_SignCompressorY);
 
 				xPrev = X;
 				yPrev = Y;
@@ -184,62 +221,39 @@ namespace CommonLib
 			m_PointCompressor.EncodeFinish();
 
 #ifdef		_CALC_STATISTIC_
-			byte nBytes[256];
-			uint32 nLens[20000];
-			memset(nBytes, 0, sizeof(nBytes));
-			memset(nLens, 0, sizeof(nLens));
-			byte* pByte = bitStream.buffer();
-
-			byte nCurrByte;
-			int nCurrLen = 0;
-			int nDiff = 0;
-			int nCountByte = 0;
-			for (uint32 i = 0; i < bitStream.pos(); ++i)
-			{
-
-
-				nBytes[pByte[i]] += 1;
-
-				if(nBytes[pByte[i]] == 1)
-				{
-					nDiff +=1;
-				}
-				nCountByte += 1;
-				if(i == 0)
-				{
-					nCurrByte = pByte[i];
-				}
-				else
-				{
-					if(nCurrByte != pByte[i])
-					{
-						nCurrByte = pByte[i];
-						nLens[nCurrLen] += 1;
-						nCurrLen = 0;
-					}
-					else
-					{
-						nCurrLen++;
-					}
-				}
-
-			}
-
-
-			if(nCountByte > 1024)
+		
+			if(bitStreamX.size() > 512)
 			{
 				CWriteMemoryStream writeDynamicStream;
 				CWriteMemoryStream writeStaticStream;
 				CByteCompressor bytecompress;
-
-				bytecompress.encodeDynamic(pByte, bitStream.pos(), &writeDynamicStream);
-				bytecompress.encodeStatic(pByte, bitStream.pos(), &writeStaticStream);
+				uint32 nPos = bitStreamX.pos();
+				bytecompress.encodeDynamic(bitStreamX.buffer(), bitStreamX.pos(), &writeDynamicStream);
+				bytecompress.encodeStatic(bitStreamX.buffer(), bitStreamX.pos(), &writeStaticStream);
 				int dynamicSize =writeDynamicStream.pos();
 				int staticSize =writeStaticStream.pos();
 
 				int dd = 0;
 				dd++;
 			}
+
+
+			if(bitStreamY.pos() > 512)
+			{
+				CWriteMemoryStream writeDynamicStream;
+				CWriteMemoryStream writeStaticStream;
+				CByteCompressor bytecompress;
+
+				uint32 nPos = bitStreamY.pos();
+				bytecompress.encodeDynamic(bitStreamY.buffer(), bitStreamY.pos(), &writeDynamicStream);
+				bytecompress.encodeStatic(bitStreamY.buffer(), bitStreamY.pos(), &writeStaticStream);
+				int dynamicSize =writeDynamicStream.pos();
+				int staticSize =writeStaticStream.pos();
+
+				int dd = 0;
+				dd++;
+			}
+
 
 #endif
 
@@ -248,10 +262,13 @@ namespace CommonLib
 
 
 
-		virtual void clear(const CGeoShape::compress_params* pParams = NULL)
+		void clear(const CGeoShape::compress_params* pParams = NULL)
 		{
 			m_PointCompressor.clear();
-			 
+			this->m_nBitLen = 0;
+			m_nXBitLen = 0;
+			m_nYBitLen = 0;
+
 			m_SignCompressorX.clear();
 			m_SignCompressorY.clear();
 
@@ -280,12 +297,19 @@ namespace CommonLib
 
 		virtual bool decompress(GisXYPoint *pPoint, uint32 nCount, IReadStream *pStream)
 		{
-			uint32 nBitLen = m_PointCompressor.GetBitsLen();
-			uint32 nByteSize = (nBitLen + 7)/8;
-			CommonLib::FxBitReadStream bitStream;
 
-			bitStream.attach(pStream, pStream->pos(), nByteSize);
-			pStream->seek(nByteSize, soFromCurrent);
+
+			uint32 nByteSizeX = pStream->readIntu32();
+			uint32 nByteSizeY = pStream->readIntu32();
+
+			CommonLib::FxBitReadStream bitStreamX, bitStreamY;
+
+			bitStreamX.attach(pStream, pStream->pos(), nByteSizeX);
+			pStream->seek(nByteSizeX, soFromCurrent);
+
+
+			bitStreamY.attach(pStream, pStream->pos(), nByteSizeY);
+			pStream->seek(nByteSizeY, soFromCurrent);
 
 
 			m_SignCompressorX.BeginDecompress(pStream, nCount - 1);
@@ -327,14 +351,14 @@ namespace CommonLib
 				if(xDiff > 1)
 				{
 					xDiff = 0;
-					bitStream.readBits(xDiff, nBitX - 1);
+					bitStreamX.readBits(xDiff, nBitX - 1);
 					xDiff |= (1 << nBitX- 1);
 				}
 
 				if(yDiff > 1)
 				{
 					yDiff = 0;
-					bitStream.readBits(yDiff, nBitY- 1);
+					bitStreamY.readBits(yDiff, nBitY- 1);
 					yDiff |= (1 << nBitY- 1);
 				}
 
@@ -362,13 +386,15 @@ namespace CommonLib
 
 		TSignCompressor m_SignCompressorY;
 		CGeoShape::compress_params m_params;
- 
+
+		uint32 m_nXBitLen;
+		uint32 m_nYBitLen;
 		
 	};
 
-	typedef TXYCompressorDiff<uint16, TPointNumLen16> TXYCompressor16;
-	typedef TXYCompressorDiff<uint32, TPointNumLen32> TXYCompressor32;
-	typedef TXYCompressorDiff<uint64, TPointNumLen64> TXYCompressor64;
+	typedef TXYCompressorDiff2<uint16, TPointNumLen16> TXYCompressor16_2;
+	typedef TXYCompressorDiff2<uint32, TPointNumLen32> TXYCompressor32_2;
+	typedef TXYCompressorDiff2<uint64, TPointNumLen64> TXYCompressor64_2;
 }
 
 #endif

@@ -34,13 +34,13 @@ namespace embDB
 	}
 
 	template<class T>
-	eCompressDataType GetCompressTypeFromValue(T nValue)
+	eCompressDataType GetCompressType(T nValue)
 	{
 		if(nValue < 0xFF)
 			return ectByte;
-		else if(nValue < 0xFFFF)
+		else if(nValue - 1 < 0xFFFF)
 			return ectUInt16;
-		else if(nValue < 0xFFFFFFFF)
+		else if(nValue - 1 < 0xFFFFFFFF)
 			return ectUIInt32;
 		return ectUInt64;
 

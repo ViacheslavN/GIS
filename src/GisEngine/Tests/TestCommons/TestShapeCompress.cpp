@@ -25,7 +25,7 @@ double inline Round(double dValue, unsigned int uiScale = 0)
 }
 bool inline IsEqual(double dVal1, double dVal2)
 {								 
-	return fabs(dVal1 - dVal2) < 0.0000001;
+	return fabs(dVal1 - dVal2) < 0.01;
 }
 bool CompareShape(CommonLib::CGeoShape* pShp1, CommonLib::CGeoShape* pShp2, uint32 nScale = 2)
 {
@@ -70,12 +70,12 @@ bool CompareShape(CommonLib::CGeoShape* pShp1, CommonLib::CGeoShape* pShp2, uint
 		double dY2 = pt1.y;
 
 
-	/*	dX1 = Round(pt1.x, 6);
+		dX1 = Round(pt1.x, 6);
 		dY1 = Round(pt1.y, 6);
 
 
 		dX2 = Round(pt2.x, 6);
-		dY2 = Round(pt2.y, 6);*/
+		dY2 = Round(pt2.y, 6);
 
 		if(!IsEqual(dX1, dX2) || !IsEqual(dY1, dY2) )
 			return false;
@@ -110,10 +110,10 @@ void CompressShape()
 	val1 |= ((uint64)1 << nLen - 1);
 
 	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
-	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData");
-	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\db\\10m_cultural\\");
-	//GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"building.shp");
-	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"ne_10m_roads_north_america.shp");
+	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData");
+	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\db\\10m_cultural\\");
+	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"building.shp");
+	//GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"ne_10m_roads_north_america.shp");
 	if(!pShapeFC.get())
 		return;
 
@@ -139,9 +139,13 @@ void CompressShape()
 	CommonLib::CWriteMemoryStream compressStream;
 	CommonLib::CWriteMemoryStream compressStreamTmp;
 	CommonLib::CGeoShape::compress_params params;
-	params.m_PointType = CommonLib::dtType32;
+	/*params.m_PointType = CommonLib::dtType32;
 	params.m_dScaleX = 0.0000001;
-	params.m_dScaleY = 0.0000001;
+	params.m_dScaleY = 0.0000001;*/
+
+	params.m_PointType = CommonLib::dtType32;
+	params.m_dScaleX = 0.001;
+	params.m_dScaleY = 0.001;
 
 	GisEngine::GisBoundingBox bbox = pShapeFC->GetExtent()->GetBoundingBox();
 
@@ -173,7 +177,7 @@ void CompressShape()
 	 CommonLib::IGeoShapePtr pShape= pFeature->GetShape();
 	 pShape->write(&writeStream);
 
-	if(ii == 19)
+	if(ii == 14399)
 	 {
 
 		// std::string sStr = polylineEncode(pShape->getPoints(), pShape->getPointCnt(), params.m_dOffsetX, params.m_dOffsetY, params.m_dScaleX);
@@ -186,7 +190,7 @@ void CompressShape()
 	 if(nSize < compressStreamTmp.pos())
 		 nSize = compressStreamTmp.pos();
 
-	 if(nSize == 20183)
+	 if(nSize == 18955)
 	 {
 		 int dd = 0;
 		 dd++;
@@ -194,7 +198,7 @@ void CompressShape()
 	 readCompressStream.attachBuffer(compressStreamTmp.buffer(), compressStreamTmp.pos());
 
 	 shape.decompress(&readCompressStream, &params);
-	 ii++;
+	
 	 if(!CompareShape(pShape.get(), &shape))
 	 {
 		 nError++;
@@ -222,7 +226,7 @@ void CompressShape()
 
 
 	 }
-
+	  ii++;
 	}
 
 	int dd = 0;

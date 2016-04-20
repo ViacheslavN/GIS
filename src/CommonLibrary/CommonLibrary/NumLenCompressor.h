@@ -56,7 +56,7 @@ namespace CommonLib
 
 				m_nBitLen += nBitLen > 1 ? nBitLen - 1 : 0;
 				m_nCount += 1;
-				return nBitLen;
+				return nBitLen > 1 ? nBitLen - 1 : 0;
 
 			}
 

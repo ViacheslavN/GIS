@@ -127,8 +127,15 @@ namespace CommonLib
 			{
 
 				m_Compressor.DecodeSymbol(nPartDiff);
-				bitStream.readBits(nBitPart, nPartDiff);
 
+				nBitPart = nPartDiff;
+				if(nBitPart > 1)
+				{
+					nBitPart = 0;
+					bitStream.readBits(nBitPart, nPartDiff - 1);
+					nBitPart |= (1 << nPartDiff- 1);
+				}
+				
 				pParts[i] = pParts[i - 1] + nBitPart;
 
 		

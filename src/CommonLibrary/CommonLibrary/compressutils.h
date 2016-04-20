@@ -15,11 +15,11 @@ namespace CommonLib
 	template<class TValue>
 	eCompressDataType GetCompressType(TValue nValue)
 	{
-		if(nValue < 0xFF)
+		if(nValue < 0xFF + 1)
 			return dtType8;
-		else if(nValue < 0xFFFF)
+		else if(nValue - 1 < 0xFFFF)
 			return dtType16;
-		else if(nValue < 0xFFFFFFFF)
+		else if(nValue - 1 < 0xFFFFFFFF)
 			return dtType32;
 		return dtType64;
 	}

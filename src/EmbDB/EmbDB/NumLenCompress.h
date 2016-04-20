@@ -84,9 +84,19 @@ namespace embDB
 			return bits;
 		}
 
+		static uint32 FMSB(int16 val16)
+		{
+			return FMSB((uint16)abs(val16) );
+		}
+
+		static uint32 FMSB(int32 val32)
+		{
+			return FMSB((uint32)abs(val32) );
+		}
+
 		static uint32 FMSB(int64 val64)
 		{
-			 return FMSB(uint64(val64) );
+			 return FMSB((uint64)abs(val64) );
 		}
 
 	};
@@ -287,7 +297,7 @@ namespace embDB
 
 
 
-				return nByteSize + 1 + (_nMaxBitsLens + 1 + 7)/8 + GetLenForDiffLen(m_nTypeFreq, m_nDiffsLen) + (m_nLenBitSize +7)/8 + sizeof(uint16); //Type comp (rang or ac) + 4 +
+				return nByteSize + 1 + (_nMaxBitsLens + 1 + 7)/8 + GetLenForDiffLen(m_nTypeFreq, m_nDiffsLen) + (m_nLenBitSize +7)/8; //Type comp (rang or ac) + 4 +
 
 			}
 
@@ -323,7 +333,7 @@ namespace embDB
 				CommonLib::FxBitWriteStream bitStream;
 				uint32 nBitSize = (m_nLenBitSize +7)/8;
 				
-				pStream->write((uint16)nBitSize);
+				//pStream->write((uint16)nBitSize);
 				bitStream.attach(pStream, pStream->pos(), nBitSize);
 				pStream->seek(nBitSize, CommonLib::soFromCurrent);
 				uint32 nBeginCompressPos = pStream->pos();
@@ -376,8 +386,8 @@ namespace embDB
 					FreqPrev[i + 1] = m_BitsLensFreq[i] + nPrevF;
 					nPrevF = FreqPrev[i + 1];
 				}
-				uint16 nBitSize = pStream->readintu16();
-
+			//	uint16 nBitSize = pStream->readintu16();
+				uint32 nBitSize = (m_nLenBitSize +7)/8;
 				CommonLib::FxBitReadStream bitStream;
 
 		 

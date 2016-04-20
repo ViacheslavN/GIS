@@ -4,7 +4,7 @@
 #include "NumLenCompress.h"
 #include "CommonLibrary/RangeCoder.h"
 #include "CommonLibrary/ArithmeticCoder.h"
-
+#include "SignCompressor.h"
 namespace embDB
 {
 	template<class _ZOrder, class _TPointType, uint32 _nMaxBitsLens, uint32 _nPointNum>
@@ -32,24 +32,6 @@ namespace embDB
 			}
 
 
-
-			//virtual void AddZOrder(const ZOrder& zOrder) = 0;	
-			//virtual void RemoveZOrder(const ZOrder& zOrder) = 0;
-		/*	virtual void AddZOrder(const ZOrder& zOrder);
-			{
-				TCoord x = 0, y = 0;
-				zOrder.getXY(x, y);
-				this->AddSymbol(x);
-				this->AddSymbol(y);
-			}
-
-			void RemoveZOrder(const ZOrder& zOrder)
-			{
-				TCoord x = 0, y = 0;
-				zOrder.getXY(x, y);
-				this->RemoveSymbol(x);
-				this->RemoveSymbol(y);
-			}*/
 			uint32 GetCompressSize() const
 			{ 
 				uint32 nBaseSize = TBase::GetCompressSize();
@@ -65,39 +47,7 @@ namespace embDB
 			virtual void DecompressZOrder(TDecoder* pDecoder, CommonLib::FxBitReadStream *pBitStream, ZOrder& zOrder, uint32 *FreqPrev)= 0;
 
 
-			/*template<class TCompressor>
-		bool compressZOrder(TCompressor& compressor, CommonLib::FxBitWriteStream *pBitStream, const ZOrder& zOrder, uint32 *FreqPrev)
-		{
-			TCoord x = 0, y = 0;
-			zOrder.getXY(x, y);
-
-			if(!compressCoord(compressor, pBitStream, x, FreqPrev))
-				return false;
-
-			return compressCoord(compressor, pBitStream, y, FreqPrev);
-		}
-
-
-
-		template<class TCompressor>
-		void DecompressZOrder(TCompressor& compressor, CommonLib::FxBitReadStream *pBitStream, ZOrder& zOrder, uint32 *FreqPrev)
-		/*	void WriteZorder(const ZOrder& zOrder, CommonLib::IWriteStream* pStream)
-			{
-				TCoord x = 0, y = 0;
-				zOrder.getXY(x, y);
-				pStream->write(x);
-				pStream->write(y);
-			}
-
-			void ReadZorder(ZOrder& zOrder, CommonLib::IReadStream* pStream)
-			{
-				TCoord x = 0, y = 0;
-				pStream->read(x);
-				pStream->read(y);
-
-				zOrder.setZOrder(x, y);
-			}*/
-
+		
 			bool compress(const TBPVector<ZOrder>& vecValues, CommonLib::IWriteStream* pStream)
 			{
 
@@ -135,28 +85,7 @@ namespace embDB
 				uint32 nBeginCompressPos = pStream->pos();
 				bool bRangeCode = true;
 
-				/*bool bSaveFile = false;
-				if(bSaveFile)
-				{
-					CommonLib::CWriteFileStream fs;
-
-					fs.open(L"D:\\test\\files\\zOrder", CommonLib::ofmCreateAlways, CommonLib::arWrite, CommonLib::smNoMode);
-					for (uint32 i = 1; i < vecValues.size(); ++i)
-					{
-						ZOrder zOrder = vecValues[i] - vecValues[i-1];
-						TCoord x, y;
-
-						zOrder.getXY(x, y);
-						uint16 XBitLen =  m_FindBit.FMSB(x);
-						uint16 YBitLen =  m_FindBit.FMSB(y);
-
-						fs.write((byte)XBitLen);
-						fs.write((byte)YBitLen);
-					}
-					
-				}
-				*/
-
+			
 				if(!CompressRangeCode(vecValues, pStream, FreqPrev, nByteSize, &bitStream))
 				{
 					bitStream.seek(0, CommonLib::soFromBegin);
@@ -265,7 +194,8 @@ namespace embDB
 		{
 		 	uint16 nBitLen =  this->m_FindBit.FMSB(coord);
 			assert(this->m_BitsLensFreq[nBitLen] != 0);
-			pBitStream->writeBits(coord, nBitLen + 1);
+			if(nBitLen > 1)
+				pBitStream->writeBits(coord, nBitLen - 1);
 			return pEncoder->EncodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], this->m_nCount);
 		}
 
@@ -279,36 +209,19 @@ namespace embDB
 			if(nBitLen != 0)
 				nBitLen--;
 
+			coord = nBitLen;
+
+			if(coord > 1)
+			{
+				pBitStream->readBits(coord, nBitLen - 1);
+				coord |= 1 << nBitLen - 1;
+			}
 			
-			
-			pBitStream->readBits(coord, nBitLen + 1);
+		
 			pDecoder->DecodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen + 1], this->m_nCount);
 		 
 		}
 
-
-		/*template<class TCompressor>
-		bool compressZOrder(TCompressor& compressor, CommonLib::FxBitWriteStream *pBitStream, const ZOrder& zOrder, uint32 *FreqPrev)
-		{
-			TCoord x = 0, y = 0;
-			zOrder.getXY(x, y);
-
-			if(!compressCoord(compressor, pBitStream, x, FreqPrev))
-				return false;
-
-			return compressCoord(compressor, pBitStream, y, FreqPrev);
-		}
-
-
-
-		template<class TCompressor>
-		void DecompressZOrder(TCompressor& compressor, CommonLib::FxBitReadStream *pBitStream, ZOrder& zOrder, uint32 *FreqPrev)
-		{
-			TCoord x = 0, y = 0;
-			decompressCoord(compressor, pBitStream, x, FreqPrev);
-			decompressCoord(compressor, pBitStream, y, FreqPrev);
-			zOrder.setZOrder(x, y);
-		}*/
 
 		template<class TDecoder>
 		bool Decompress(TBPVector<ZOrder>& vecValues, CommonLib::IReadStream* pStream, uint32 *FreqPrev, 
