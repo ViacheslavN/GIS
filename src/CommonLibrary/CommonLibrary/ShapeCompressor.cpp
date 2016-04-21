@@ -87,10 +87,11 @@ namespace CommonLib
 	
 
 		uint32 nPartCount = pShp->getPartCount();
+		const uint32 *pParts = pShp->getParts();
 		m_partType = dtType8;
 		for (uint32 i = 1; i < nPartCount; i++ )
 		{
-			uint32 nPart = pShp->getPart(i);
+			uint32 nPart = pParts[i] - pParts[i - 1];
 			eCompressDataType type  = GetCompressType(nPart);
 			if(m_partType < type)
 			{

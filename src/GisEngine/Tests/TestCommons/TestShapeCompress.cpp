@@ -110,10 +110,13 @@ void CompressShape()
 	val1 |= ((uint64)1 << nLen - 1);
 
 	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
-	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData");
-	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\db\\10m_cultural\\");
-	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"building.shp");
+	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData");
+	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\db\\10m_cultural\\");
+
+
+	//GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"building.shp");
 	//GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"ne_10m_roads_north_america.shp");
+	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"ne_10m_urban_areas_landscan.shp");
 	if(!pShapeFC.get())
 		return;
 
@@ -144,8 +147,8 @@ void CompressShape()
 	params.m_dScaleY = 0.0000001;*/
 
 	params.m_PointType = CommonLib::dtType32;
-	params.m_dScaleX = 0.001;
-	params.m_dScaleY = 0.001;
+	params.m_dScaleX = 0.0000001;
+	params.m_dScaleY = 0.0000001;
 
 	GisEngine::GisBoundingBox bbox = pShapeFC->GetExtent()->GetBoundingBox();
 
@@ -177,7 +180,7 @@ void CompressShape()
 	 CommonLib::IGeoShapePtr pShape= pFeature->GetShape();
 	 pShape->write(&writeStream);
 
-	if(ii == 14399)
+	if(ii == 564)
 	 {
 
 		// std::string sStr = polylineEncode(pShape->getPoints(), pShape->getPointCnt(), params.m_dOffsetX, params.m_dOffsetY, params.m_dScaleX);

@@ -205,7 +205,7 @@ namespace embDB
 
 			uint32 freq = pDecoder->GetFreq(this->m_nCount);
 
-			int32 nBitLen = CommonLib::upper_bound(FreqPrev, _nMaxBitsLens, freq);
+			int32 nBitLen = CommonLib::upper_bound(FreqPrev, _nMaxBitsLens + 1, freq);
 			if(nBitLen != 0)
 				nBitLen--;
 
@@ -213,6 +213,7 @@ namespace embDB
 
 			if(coord > 1)
 			{
+				coord = 0;
 				pBitStream->readBits(coord, nBitLen - 1);
 				coord |= 1 << nBitLen - 1;
 			}

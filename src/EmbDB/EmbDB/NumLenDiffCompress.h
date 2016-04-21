@@ -203,7 +203,7 @@ namespace embDB
 
 					//uint32 nBitLen;
 					//for(nBitLen = _nMaxBitsLens;FreqPrev[nBitLen] > freq;nBitLen--);
-					int32 nBitLen = CommonLib::upper_bound(FreqPrev, _nMaxBitsLens, freq);
+					int32 nBitLen = CommonLib::upper_bound(FreqPrev, _nMaxBitsLens + 1, freq);
 					if(nBitLen != 0)
 						nBitLen--;
 

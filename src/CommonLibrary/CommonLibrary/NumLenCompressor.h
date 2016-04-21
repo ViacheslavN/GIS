@@ -43,7 +43,7 @@ namespace CommonLib
 
 			 
 
-				assert(nBitLen < _nMaxBitsLens);
+				assert(nBitLen < _nMaxBitsLens + 1);
 				m_BitsLensFreq[nBitLen] += 1;
 
 				if(m_FreqType != dtType32)
@@ -64,9 +64,9 @@ namespace CommonLib
 			{
 				byte nFlag = m_FreqType;
 				pStream->write(nFlag);
-				byte LensMask[(_nMaxBitsLens + 8)/8];
+				byte LensMask[(_nMaxBitsLens)/8 + 1];
 
-				memset(LensMask, 0, _nMaxBitsLens/8);
+				memset(LensMask, 0, (_nMaxBitsLens)/8 + 1);
 				for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 				{
 					uint32 nByte = i/8;
@@ -74,11 +74,11 @@ namespace CommonLib
 					if(m_BitsLensFreq[i] != 0)
 						LensMask[nByte] |= (0x01 << nBit);
 				}
-				for (uint32 i = 0; i < (_nMaxBitsLens + 8)/8; ++i)
+				for (uint32 i = 0; i < (_nMaxBitsLens)/8 + 1; ++i)
 				{
 					pStream->write((byte)LensMask[i]);
 				}
-				for (uint32 i = 0; i < _nMaxBitsLens; ++i)
+				for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 				{
 					if(m_BitsLensFreq[i] == 0)
 						continue;
@@ -145,9 +145,9 @@ namespace CommonLib
 
 				m_FreqType = (eCompressDataType)nFlag;
 
-				byte LensMask[(_nMaxBitsLens + 8)/8];
+				byte LensMask[(_nMaxBitsLens)/8 + 1];
 
-				for (uint32 i = 0; i < (_nMaxBitsLens + 8)/8; ++i)
+				for (uint32 i = 0; i < (_nMaxBitsLens)/8 + 1; ++i)
 				{
 					LensMask[i] = pStream->readByte();
 				}
@@ -202,7 +202,7 @@ namespace CommonLib
 			bool DecodeSymbol(uint32& value)
 			{
 				uint32 freq = (uint32)m_pDecoder->GetFreq(m_nCount);
-				value = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens, freq);
+				value = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens + 1, freq);
 				if(value != 0)
 					value--;
 

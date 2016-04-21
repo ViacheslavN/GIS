@@ -123,14 +123,17 @@ namespace CommonLib
 			uint32 nBitPart = 0;
 			uint32 nPartDiff = 0;
 			m_Compressor.StartDecode(pStream);
+
 			for (uint32 i = 2; i < nCount; ++i)
 			{
 
 				m_Compressor.DecodeSymbol(nPartDiff);
 
 				nBitPart = nPartDiff;
+
 				if(nBitPart > 1)
 				{
+
 					nBitPart = 0;
 					bitStream.readBits(nBitPart, nPartDiff - 1);
 					nBitPart |= (1 << nPartDiff- 1);

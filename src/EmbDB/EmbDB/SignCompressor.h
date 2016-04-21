@@ -64,7 +64,10 @@ namespace embDB
 
 			return min(nBytePosCodeSize, nByteSize);
 		}
-
+		uint32 count() const 
+		{
+			return m_nSigns[0] + m_nSigns[1] ;
+		}
 		void BeginCompress(CommonLib::IWriteStream *pStream)
 		{
 
@@ -171,25 +174,29 @@ namespace embDB
 
 		bool DecodeSign(uint32 nPos)
 		{
+			bool bSign = false;
 			switch(m_compreesType)
 			{
 			case ONE_SIGN:
-				return m_bSign;
+				bSign = m_bSign;
 				break;
 			case COMPRESS_POS:
 				{
 
 					int nIndex = CommonLib::binary_search(m_nVecPos.begin(), m_nVecPos.size(), nPos);
-					return nIndex != -1 ? m_bSign : !m_bSign;
+					bSign=   nIndex != -1 ? m_bSign : !m_bSign;
 					break;
 				}
 			case NO_COMPRESS:
-				return m_bitReadStream.readBit();
+				 bSign=  m_bitReadStream.readBit();
+				break;
+			default:
+				assert(false);
 				break;
 			}
 
-			assert(false);
-			return false;
+			m_nSigns[bSign ? 1 : 0] += 1;
+			return bSign;
 		}
 
 	private:

@@ -116,11 +116,14 @@ namespace embDB
 		}
 		uint16 AddSymbol(TValue symbol)
 		{
+
+			assert(m_SignCompressor.count() == this->m_nCount);
 			m_SignCompressor.AddSymbol(symbol < 0);
 	 		return TBase::AddSymbol(symbol);
 		}
 		void RemoveSymbol(TValue symbol)
 		{
+			assert(m_SignCompressor.count() == this->m_nCount);
 			m_SignCompressor.RemoveSymbol(symbol< 0);
 			TBase::RemoveSymbol(symbol);
 		}
@@ -129,7 +132,7 @@ namespace embDB
 			uint32 nBaseSize = TBase::GetCompressSize();
 			uint32 nSignSize = m_SignCompressor.GetCompressSize();
 			
-			return nBaseSize +  sizeof(TValue) + m_SignCompressor.GetCompressSize() + nSignSize;
+			return nBaseSize +  sizeof(TValue) + nSignSize;
 		}
 		void clear()
 		{
@@ -140,6 +143,7 @@ namespace embDB
 		{
 
 			assert(this->m_nCount == (vecValues.size() - 1));
+			assert(m_SignCompressor.count() == this->m_nCount);
 			uint32 nBeginPos = pStream->pos();
 			byte nFlag = 0;
 			pStream->write(nFlag);
@@ -169,6 +173,7 @@ namespace embDB
 			//pStream->write((uint16)nBitSize);
 
 
+			
 			m_SignCompressor.BeginCompress(pStream);
 
 			bitStream.attach(pStream, pStream->pos(), nBitSize);
@@ -300,7 +305,7 @@ namespace embDB
 
 				//uint32 nBitLen;
 				//for(nBitLen = _nMaxBitsLens;FreqPrev[nBitLen] > freq;nBitLen--);
-				int32 nBitLen = CommonLib::upper_bound(FreqPrev, _nMaxBitsLens, freq);
+				int32 nBitLen = CommonLib::upper_bound(FreqPrev, _nMaxBitsLens + 1, freq);
 				if(nBitLen != 0)
 					nBitLen--;
 
@@ -311,6 +316,7 @@ namespace embDB
 				value = nBitLen;
 				if(value > 1)
 				{
+					value = 0;
 					pBitStream->readBits(value, nBitLen - 1);
 					value |= 1 << (nBitLen - 1);
 				}

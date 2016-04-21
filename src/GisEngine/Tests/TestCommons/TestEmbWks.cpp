@@ -14,32 +14,38 @@ void TestEmbDBWks()
 	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\db\\10m_cultural\\");
 	
 	//GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"building.shp");
-	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"ne_10m_roads_north_america.shp");
+	//GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"ne_10m_roads_north_america.shp");
+	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"ne_10m_urban_areas_landscan.shp");
 	if(!pShapeFC.get())
 		return;
 
 	
 	//GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CSQLiteWorkspace::Open( L"TestSpatialDB.sqlite", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData", true, false);
 		
-	GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CEmbDBWorkspace::Open( L"ne_10m_roads_north_america.embdb", L"d:\\db", true, true);
-
+	//GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CEmbDBWorkspace::Open( L"ne_10m_roads_north_america.embdb", L"d:\\db", true, true);
+	//GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CEmbDBWorkspace::Open( L"building.embdb", L"d:\\db", true, true);
+	GisEngine::GeoDatabase::IWorkspacePtr pWks  = GisEngine::GeoDatabase::CEmbDBWorkspace::Open( L"ne_10m_urban_areas_landscan.embdb", L"d:\\db", true, true);
 	if(!pWks.get())
 	{
 		//pWks = GisEngine::GeoDatabase::CSQLiteWorkspace::Create( L"TestSpatialDB.sqlite", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
-		pWks = GisEngine::GeoDatabase::CEmbDBWorkspace::Create( L"ne_10m_roads_north_america.embdb", L"d:\\db");
+		//pWks = GisEngine::GeoDatabase::CEmbDBWorkspace::Create( L"ne_10m_roads_north_america.embdb", L"d:\\db");
+		//pWks = GisEngine::GeoDatabase::CEmbDBWorkspace::Create( L"building.embdb", L"d:\\db");
+		pWks = GisEngine::GeoDatabase::CEmbDBWorkspace::Create( L"ne_10m_urban_areas_landscan.embdb", L"d:\\db");
 	}
 
-	GisEngine::GeoDatabase::IFeatureClassPtr pEmbDBFC = pWks->OpenFeatureClass(L"ne_10m_roads_north_america");
+	//GisEngine::GeoDatabase::IFeatureClassPtr pEmbDBFC = pWks->OpenFeatureClass(L"ne_10m_roads_north_america");
+	//GisEngine::GeoDatabase::IFeatureClassPtr pEmbDBFC = pWks->OpenFeatureClass(L"building");
+	GisEngine::GeoDatabase::IFeatureClassPtr pEmbDBFC = pWks->OpenFeatureClass(L"ne_10m_urban_areas_landscan");
 	if(!pEmbDBFC.get())
 	{
 
 		//pShapeFC->DeleteField(L"ObjectID");
 
 
-		pEmbDBFC = pWks->CreateFeatureClass(L"ne_10m_roads_north_america", pShapeFC->GetFields().get(), true/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
-
-
-
+		//pEmbDBFC = pWks->CreateFeatureClass(L"ne_10m_roads_north_america", pShapeFC->GetFields().get(), true/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
+		//pEmbDBFC = pWks->CreateFeatureClass(L"building", pShapeFC->GetFields().get(), true/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
+		pEmbDBFC = pWks->CreateFeatureClass(L"ne_10m_urban_areas_landscan", pShapeFC->GetFields().get(), true/*, pShapeFC->GetOIDFieldName(), 	pShapeFC->GetShapeFieldName()*/);
+		
 		/*GisEngine::GeoDatabase::IShapeField *pShapeField = (GisEngine::GeoDatabase::IShapeField*)pShapeFC->GetFields()->GetField(pShapeFC->GetShapeFieldName()).get();
 		GisEngine::GeoDatabase::IShapeField *pSQLLiteShapeField = (GisEngine::GeoDatabase::IShapeField*)pSQLFC->GetFields()->GetField(pShapeFC->GetShapeFieldName()).get();
 
