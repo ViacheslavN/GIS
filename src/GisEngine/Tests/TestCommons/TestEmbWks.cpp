@@ -105,6 +105,8 @@ void TestEmbDBWks()
 	{
 		std::set<int64> setSQLLiteRow, setShapeRow;
 		CommonLib::bbox ShapeBB, SQLiteBB; 
+		int nRowDB = 0;
+		uint32 nRowShape = 0;
 		{
 
 			SQLiteBB = pEmbDBFC->GetExtent()->GetBoundingBox();
@@ -128,13 +130,13 @@ void TestEmbDBWks()
 			{
 				pFieldSet->Add(pEmbDBFC->GetFields()->GetField(i)->GetName());
 			}
-			int nRow = 0;
+			
 			int nError = 0;
 			GisEngine::GeoDatabase::ICursorPtr pCursor = pEmbDBFC->Search(&filter, true);
 			GisEngine::GeoDatabase::IRowPtr pRow;
 			while(pCursor->NextRow(&pRow))
 			{
-				nRow++;
+				nRowDB++;
 				setSQLLiteRow.insert(pRow->GetOID());
 			}
 		}
@@ -155,10 +157,10 @@ void TestEmbDBWks()
 			GisEngine::GeoDatabase::ICursorPtr pCursor = pShapeFC->Search(&filter, true);
 			GisEngine::GeoDatabase::IRowPtr pRow;
 
-			uint32 nRow = 0;
+		
 			while(pCursor->NextRow(&pRow))
 			{
-				nRow++;
+				nRowShape++;
 				setShapeRow.insert(pRow->GetOID());
 			}
 		}

@@ -80,15 +80,13 @@ namespace embDB
 			if(it.isNull())
 				return false;
 
-			CommonLib::IGeoShapePtr shape( new CommonLib::CGeoShape(this->m_pAlloc));
+			CommonLib::IGeoShapePtr shape( new CommonLib::CGeoShape(this->m_pAlloc)); //TO DO use shape cache
 			this->m_tree.convert(it.value(), shape);
 
 			pFieldVal->setVal(shape);
 			return true;
 		}
-
-
-
+ 
 	};
 
 

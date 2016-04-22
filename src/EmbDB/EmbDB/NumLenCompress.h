@@ -320,7 +320,7 @@ namespace embDB
 				
 
 				uint32 FreqPrev[_nMaxBitsLens + 1 + 1];
-				memset(&FreqPrev, 0, sizeof(uint32) * _nMaxBitsLens + 1);
+				memset(FreqPrev, 0, sizeof(FreqPrev));
 
 				int32 nPrevF = 0;
 				for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
@@ -377,7 +377,7 @@ namespace embDB
 		 
 
 				uint32 FreqPrev[_nMaxBitsLens + 1 + 1];
-				memset(&FreqPrev, 0, sizeof(uint32) * (_nMaxBitsLens + 1));
+				memset(FreqPrev, 0, sizeof(FreqPrev));
 
 				int32 nPrevF = 0;
 				for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
@@ -462,7 +462,7 @@ namespace embDB
 				uint32 nCount = (_nMaxBitsLens + 1 +7)/8;
 				byte LensMask[(_nMaxBitsLens + 1 +7)/8];
 
-				memset(LensMask, 0, nCount);
+				memset(LensMask, 0, sizeof(LensMask));
 				for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 				{
 					uint32 nByte = i/8;

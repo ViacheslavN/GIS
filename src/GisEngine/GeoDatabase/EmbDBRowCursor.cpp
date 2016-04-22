@@ -39,7 +39,7 @@ namespace GisEngine
 			CEmbDBRowCursor::CEmbDBRowCursor(int64 nOId, IFieldSet *pFieldSet, ITable* pTable, embDB::IDatabase *pDB):
 					TBase(nOId, pFieldSet, pTable), m_pDB(pDB)
 		{
-			 m_bInvalidCursor = true;
+			m_bInvalidCursor = true;
 		}
 
 		CEmbDBRowCursor::~CEmbDBRowCursor()

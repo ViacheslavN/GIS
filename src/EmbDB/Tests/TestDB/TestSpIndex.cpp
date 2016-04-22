@@ -6,6 +6,7 @@
 #include "importFromShape.h"
 #include "../../EmbDB/SpatialRectQuery.h"
 #include <vector>
+#include "ZRectU32.h"
 
 
 typedef embDB::TBPVector<embDB::ZOrderRect2DU32> TVecZOrder;
@@ -15,7 +16,7 @@ template<class TZVal>
 bool FindRectMinZVal(const TZVal& zVal, 
 	const TZVal& zMin, const TZVal& zMax, TZVal& zRes)
 {
-	if(zVal < zMin || zVal > zMax)
+	if(zVal < zMin || !(zVal < zMax))
 	{
 		assert(false);
 		return false;
@@ -67,7 +68,7 @@ bool FindRectMinZVal(const TZVal& zVal,
 		else /*if(zVal > qMin && zVal < right)*/
 		{
 			zRes = qMin;
-			if(qMin > zVal)
+			if(!(qMin < zVal))
 			{
 
 				if(qMax < zVal)
@@ -87,8 +88,8 @@ bool FindRectMinZVal(const TZVal& zVal,
 	return true;
 }
 
-
-void ReadShape(TVecZOrder& vec, const wchar_t* pszShapeFileName)
+template<class ZOrder, class zOrderComp, class TUnits>
+void ReadShape(embDB::TBPVector<ZOrder>& vec, const wchar_t* pszShapeFileName)
 {
 
 	SHPGuard shp;
@@ -143,7 +144,7 @@ void ReadShape(TVecZOrder& vec, const wchar_t* pszShapeFileName)
 
 
 
-	double dScale = 0.01;
+	double dScale = 0.0000001;
 	CommonLib::CGeoShape shape;
 	shape.AddRef();
 	ShapeLib::SHPObject*   pCacheObject = NULL;
@@ -164,26 +165,41 @@ void ReadShape(TVecZOrder& vec, const wchar_t* pszShapeFileName)
 
 		CommonLib::bbox bb = shape.getBB();
 
-		uint32 xMin = uint32((bb.xMin + dOffsetX) / dScale);
-		uint32 yMin = uint32((bb.yMin + dOffsetY) / dScale);
-		uint32 xMax = uint32((bb.xMax + dOffsetX) / dScale);
-		uint32 yMax = uint32((bb.yMax + dOffsetY) / dScale);
+		TUnits xMin = TUnits((bb.xMin + dOffsetX) / dScale);
+		TUnits yMin = TUnits((bb.yMin + dOffsetY) / dScale);
+		TUnits xMax = TUnits((bb.xMax + dOffsetX) / dScale);
+		TUnits yMax = TUnits((bb.yMax + dOffsetY) / dScale);
 
-		embDB::ZOrderRect2DU32 zOrder(xMin, yMin, xMax, yMax);
+		ZOrder zOrder(xMin, yMin, xMax, yMax);
+
+		TUnits xMin1 = 0;
+		TUnits yMin1 = 0;
+		TUnits xMax1 = 0;
+		TUnits yMax1 = 0;
+
+
+		zOrder.getXY(xMin1, yMin1, xMax1, yMax1);
+
+		if(xMin != xMin1 || yMin != yMin1 || xMax != xMax1 || yMax != yMax1)
+		{
+			int dd = 0;
+			dd++;
+		}
 
 		vec.push_back(zOrder);
 	}
-	embDB::ZRect32Comp comp;
+	zOrderComp comp;
 	vec.quick_sort(comp);
 
 }
-
-void TestFullRectScan(TVecZOrder& vecRect, CommonLib::TRect2D<uint32>& extent, std::set<int> *pSet = NULL)
+template<class ZOrder, class zOrderComp, class TUnits>
+void TestFullRectScan(embDB::TBPVector<ZOrder>& vecRect, CommonLib::TRect2D<TUnits>& extent, std::set<uint32> *pSet = NULL)
 {
-	embDB::ZOrderRect2DU32 zKeyMin(extent.m_minX, extent.m_minY, 0, 0);
-	embDB::ZOrderRect2DU32 zKeyMax(extent.m_maxX, extent.m_maxY, 0xFFFFFFFF, 0xFFFFFFFF);
+	ZOrder zKeyMin(extent.m_minX, extent.m_minY, 0, 0);
+	ZOrder zKeyMax(extent.m_maxX, extent.m_maxY, 0xFFFFFFFF, 0xFFFFFFFF);
 
-	embDB::ZRect32Comp comp;
+	//embDB::ZRect32Comp comp;
+	zOrderComp   comp;
 	short nType;
 	int nIndex = vecRect.lower_bound(zKeyMin,nType, comp);
 
@@ -195,10 +211,10 @@ void TestFullRectScan(TVecZOrder& vecRect, CommonLib::TRect2D<uint32>& extent, s
 		if(comp.LE(zKeyMax, vecRect[i]))
 			break;
 
-		uint32 xMin,  yMin,  xMax,  yMax;
-		embDB::ZOrderRect2DU32& zVal = vecRect[i];
+		TUnits xMin,  yMin,  xMax,  yMax;
+		ZOrder& zVal = vecRect[i];
 		zVal.getXY(xMin,yMin, xMax, yMax);
-		CommonLib::TRect2D<uint32> rectFeature;
+		CommonLib::TRect2D<TUnits> rectFeature;
 		rectFeature.set(xMin, yMin, xMax, yMax);
 		if(!extent.isIntersection(rectFeature) && !extent.isInRect(rectFeature))
 		{
@@ -215,13 +231,15 @@ void TestFullRectScan(TVecZOrder& vecRect, CommonLib::TRect2D<uint32>& extent, s
 
 	std::cout<< "TestFullScan InRect " << nInRect << " InOut " << nInOut << " Total " << nTotal << std::endl;
 }
-void TestRectWithSubQuery(TVecZOrder& vecRect, CommonLib::TRect2D<uint32>& extent, std::set<int> *pSet = NULL)
+
+template<class ZOrder, class zOrderComp, class TUnits>
+void TestRectWithSubQuery(embDB::TBPVector<ZOrder>& vecRect, CommonLib::TRect2D<TUnits>& extent, std::set<uint32> *pSet = NULL)
 {
-	embDB::ZOrderRect2DU32 zKeyMin(extent.m_minX, extent.m_minY, 0, 0);
-	embDB::ZOrderRect2DU32 zKeyMax(extent.m_maxX, extent.m_maxY, 0xFFFFFFFF, 0xFFFFFFFF);
+	ZOrder zKeyMin(extent.m_minX, extent.m_minY, 0, 0);
+	ZOrder zKeyMax(extent.m_maxX, extent.m_maxY, 0xFFFFFFFF, 0xFFFFFFFF);
 
 
-	embDB::ZRect32Comp comp;
+	zOrderComp comp;
 	short nType;
 	int nIndex = vecRect.lower_bound(zKeyMin,nType, comp);
 
@@ -231,19 +249,25 @@ void TestRectWithSubQuery(TVecZOrder& vecRect, CommonLib::TRect2D<uint32>& exten
 	for (size_t i = nIndex; i < vecRect.size();)
 	{
 
-		embDB::ZOrderRect2DU32& zVal = vecRect[i];
+		if(i == 627)
+		{
+			int d = 0;
+			d++;
+		}
+
+		ZOrder& zVal = vecRect[i];
 		if(!comp.LE(zVal, zKeyMax))
 			break;
 
-		uint32 xMin1,  yMin1,  xMax1,  yMax1;
+		TUnits xMin1,  yMin1,  xMax1,  yMax1;
 
 		zVal.getXY(xMin1,yMin1, xMax1, yMax1);
-		CommonLib::TRect2D<uint32> rectFeature;
+		CommonLib::TRect2D<TUnits> rectFeature;
 		rectFeature.set(xMin1, yMin1, xMax1, yMax1);
 		if(!extent.isIntersection(rectFeature) && !extent.isInRect(rectFeature))
 		{
 			++nInOut;
-			embDB::ZOrderRect2DU32 zQVal;
+			ZOrder zQVal;
 			FindRectMinZVal(zVal, zKeyMin, zKeyMax, zQVal);
 
 			size_t index  = vecRect.lower_bound(zQVal,nType,comp);
@@ -277,17 +301,62 @@ void TestRectWithSubQuery(TVecZOrder& vecRect, CommonLib::TRect2D<uint32>& exten
 	std::cout<< "TestWithSubQuery InRect " << nInRect << " InOut " << nInOut << " Total " << nTotal << std::endl;
 }
 
-void TestSpIndexFromShapeFile()
+template<class ZOrder, class zOrderComp, class TUnits>
+void TestSpIndexFromShapeFileTmp()
 {
-	TVecZOrder vecOrder;
-	ReadShape(vecOrder, L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
+	 embDB::TBPVector<ZOrder> vecOrder;
+	ReadShape<ZOrder, zOrderComp, TUnits>(vecOrder, L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp");
 
-	CommonLib::TRect2D<uint32> rect;
-	rect.m_minX = 2551553;
-	rect.m_minY	= 2734546;
-	rect.m_maxX	= 2558215;
-	rect.m_maxY	= 2738573;
+	CommonLib::TRect2D<TUnits> rect;
+	rect.m_minX = 579557569;
+	rect.m_minY	= 498287239;
+	rect.m_maxX	= 1738780183;
+	rect.m_maxY	= 1198956604;
 
-	TestFullRectScan(vecOrder, rect);
-	TestRectWithSubQuery(vecOrder, rect);
+
+	/*rect.m_minX = 943551389;
+	rect.m_minY	= 813411290;
+	rect.m_maxX	= 1223610195;
+	rect.m_maxY	= 982687341;*/
+
+
+	/*rect.m_minX = 1049151125;
+	rect.m_minY	= 985224683;
+	rect.m_maxX	= 1049153683;
+	rect.m_maxY	= 985226230;*/
+
+	std::set<uint32> setFullIndex, setSubQueryIndex;
+
+	TestFullRectScan<ZOrder, zOrderComp, TUnits>(vecOrder, rect, &setFullIndex);
+	TestRectWithSubQuery<ZOrder, zOrderComp, TUnits>(vecOrder, rect, &setSubQueryIndex);
+
+	for(std::set<uint32>::iterator it = setSubQueryIndex.begin(); it != setSubQueryIndex.end(); ++it)
+	{
+		setFullIndex.erase((*it));
+	}
+
+	for(std::set<uint32>::iterator it = setFullIndex.begin(); it != setFullIndex.end(); ++it)
+	{
+		ZOrder& zValue = vecOrder[(*it)];
+	//	uint32 xMin, yMin, xMax, yMax;
+	//	zValue.getXY(xMin, yMin, xMax, yMax);
+		
+	//	bool bRez = zValue.IsInRect(rect);
+		
+		int dd = 0; 
+		dd++;
+
+
+
+	}
+	
+	int dd = 0;
+	dd++;
 }
+
+void TestSpIndexFromShapeFile()
+{ 
+	//TestSpIndexFromShapeFileTmp<embDB::ZOrderRect2DU32, embDB::ZRect32Comp, uint32>();
+	TestSpIndexFromShapeFileTmp<sRectU32, ZRectU32Comp, uint32>();
+}
+

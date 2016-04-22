@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "../../EmbDB/DatasetLite/SpatialDataset.h"
-
+#include "CommonLibrary/File.h"
 
 void TestShapeIndex()
 {
@@ -12,14 +12,16 @@ void TestShapeIndex()
 	{
 		//DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::create(L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\world_adm0.shapeidx", 8192, L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\world_adm0.shp" );
 	//	DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::create(L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\world_adm0.shapeidx", 8192, L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\world_adm0.shp" );
-	DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::create(L"d:\\db\\building.shapeidx", 8192, L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp" );
+	
+	CommonLib::FileSystem::deleteFile(L"d:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shapeidx");	
+	DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::create(L"d:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shapeidx", 8192, L"d:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp" );
 	//	DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::create(L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shapeidx", 8192, L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp" );
 	}
 
 	{
 		//DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::open(L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\world_adm0.shapeidx");
 		//DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::open(L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shapeidx");
-		DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::open(L"d:\\db\\building.shapeidx", 5);
+		DatasetLite::IShapeFileIndexPtr pShapeIndex = DatasetLite::IShapeFileIndex::open(L"d:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shapeidx", 5);
 		CommonLib::bbox bbox;
 		bbox.type = CommonLib::bbox_type_normal;
 		/*bbox.xMin = 10;
@@ -35,9 +37,9 @@ void TestShapeIndex()
 		bbox.yMin = 32.753136385462348;
 		bbox.yMax = 32.918637080915680;*/
 
-		bbox.xMin = 0;
+		bbox.xMin = -10000000;
 		bbox.xMax = 10000000;
-		bbox.yMin = 0;
+		bbox.yMin = -10000000;
 		bbox.yMax = 10000000;
 
 		DatasetLite::IShapeCursorPtr pCursor = pShapeIndex->spatialQuery(bbox);
@@ -51,7 +53,8 @@ void TestShapeIndex()
 			pCursor->next();
 			nCnt++;
 		}
-		
+		int dd = 0;
+		dd++;
 	}
 	
 }

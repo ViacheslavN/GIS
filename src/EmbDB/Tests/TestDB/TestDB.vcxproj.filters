@@ -40,6 +40,9 @@
     <ClInclude Include="testDB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ZRectU32.h">
+      <Filter>TestSpIndex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

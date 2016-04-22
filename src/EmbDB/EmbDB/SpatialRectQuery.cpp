@@ -195,7 +195,17 @@ namespace embDB
 			int subIndex = idx - 64;
 			uint64 bit = uint64 (1) << uint64 (subIndex & 0x3f);
 			uint64 bitMask = 0x8888888888888888 >> (63 - subIndex);
-			m_nZValue[1] -= bit;
+
+			uint64 tmp = m_nZValue[1] - bit;
+			uint64 tmp1 = m_nZValue[1] & ~bit;
+			if(tmp != tmp1)
+			{
+				int dd = 0;
+				dd++;
+			}
+
+			//m_nZValue[1] -= bit;
+			m_nZValue[1] &= ~bit;
 			m_nZValue[1] |= (bitMask& (bit - 1));
 	
 			bitMask = 0x8888888888888888 >> (3 - subIndex % 4);
@@ -205,7 +215,8 @@ namespace embDB
 		{
 			uint64 bitMask = 0x8888888888888888 >> (63 - idx);
 			uint64 bit = uint64 (1) << uint64 (idx & 0x3f);
-			m_nZValue[0] -= bit;
+			//m_nZValue[0] -= bit;
+			m_nZValue[0] &= ~bit;
 			m_nZValue[0] |= (bitMask& (bit - 1));
 		}
 

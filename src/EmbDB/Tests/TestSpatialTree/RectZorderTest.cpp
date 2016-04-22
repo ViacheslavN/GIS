@@ -276,41 +276,43 @@ void TestRectWithSubQuery(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, Com
 void TestRectZorder()
 {
 
-	embDB::ZOrderRect2DU32 zMin, zMax, zNext, zRes, zRes1;
+	embDB::ZOrderRect2DU32 zMin, zMax, zNext, zRes, zRes1, zFeature;
 
 
 	CommonLib::TRect2D<uint32> rect;
-	rect.m_minX = 2551553;
-	rect.m_minY	= 2734546;
-	rect.m_maxX	= 2558215;
-	rect.m_maxY	= 2738573;
+	rect.m_minX = 579557569;
+	rect.m_minY	= 498287239;
+	rect.m_maxX	= 1738780183;
+	rect.m_maxY	= 1198956604;
 
 
 
 
-	zMin.m_nZValue[0] = 14179799259754791044;
-	zMin.m_nZValue[1] = 12616776;
+	zMin.m_nZValue[0] = 216471987537576483;
+	zMin.m_nZValue[1] = 5104011093086259;
 
 
-	zMax.m_nZValue[0] = 17207406246237106143;
-	zMax.m_nZValue[1] = 14757395258970795487;
+	zMax.m_nZValue[0] = 18229689332089745373;
+	zMax.m_nZValue[1] = 14978075158592278269;
 
-	zNext.m_nZValue[0] = 6503758189072004739;
-	zNext.m_nZValue[1] = 15770975;
+	zNext.m_nZValue[0] = 5576701508097437571;
+	zNext.m_nZValue[1] = 70380021616842080;
 
-	zRes1.m_nZValue[0] = 12114932510826323909;
-	zRes1.m_nZValue[1] = 15770975;
-	
-	if(zRes1.IsInRect(rect))
+	//zRes1.m_nZValue[0] = 12114932510826323909;
+	//zRes1.m_nZValue[1] = 15770975;
+
+	zFeature.m_nZValue[0] = 4414363025432870012;
+	zFeature.m_nZValue[1] = 70380054718620929;
+	if(zFeature.IsInRect(rect))
 	{
 		int dd = 0;
 		dd++;
 	}
 	FindRectMinZVal(zNext, zMin, zMax, zRes);
-	FindRectMinZVal1(zNext, zMin, zMax, zRes);
+	//FindRectMinZVal1(zNext, zMin, zMax, zRes);
 
 
-
+	return;
 
 	embDB::TBPVector<embDB::ZOrderRect2DU16> vecRect;
 

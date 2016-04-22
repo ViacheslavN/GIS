@@ -346,7 +346,7 @@ void SearchShapeFile(const wchar_t* pszDBName)
 	bbox.yMin =	6072242.5499999998;
 	bbox.xMax =  652299.90000000002;
 	bbox.yMax = 6123549.2000000002;
-	embDB::ICursorPtr pCursor = pTran->executeSpatialQuery(bbox, L"building", L"building");
+	embDB::ICursorPtr pCursor = pTran->executeSpatialQuery(bbox, L"ne_10m_urban_areas_landscan", L"ne_10m_urban_areas_landscan");
 	int nObj = 0;
 	embDB::IRowPtr pRow;
 	if(pCursor.get())
@@ -362,7 +362,7 @@ void SearchShapeFile(const wchar_t* pszDBName)
 	int  i = 0;
 	i++;
 
-	pCursor = pTran->executeSelectQuery( L"building");
+	pCursor = pTran->executeSelectQuery( L"ne_10m_urban_areas_landscan");
 	int nObj2 = 0;
 	while(pCursor->NextRow(&pRow))
 	{
@@ -376,7 +376,8 @@ void SearchShapeFile(const wchar_t* pszDBName)
 
 void testDBFromShape()
 {
-	ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
+	ImportShapeFile(L"d:\\db\\ne_10m_urban_areas_landscan1.embDB", L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp");
+	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
 	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
-	SearchShapeFile(L"d:\\db\\importShapeFile.embDB");
+	SearchShapeFile(L"d:\\db\\ne_10m_urban_areas_landscan1.embDB");
 }

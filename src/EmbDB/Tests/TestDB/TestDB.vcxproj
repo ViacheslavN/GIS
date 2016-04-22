@@ -150,6 +150,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="testDB.h" />
+    <ClInclude Include="ZRectU32.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CreateFields.cpp" />

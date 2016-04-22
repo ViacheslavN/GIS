@@ -13,8 +13,8 @@ void TestSpIndexFromShapeFile();
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//TestAddFieldDB();
-//	TestSpIndexFromShapeFile();
-	testDBFromShape();
+	TestSpIndexFromShapeFile();
+//	testDBFromShape();
 	return 0;
 	
 /*	embDB::TVarINT32 int32key;
