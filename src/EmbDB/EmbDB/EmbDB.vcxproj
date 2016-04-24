@@ -499,6 +499,7 @@
     <ClInclude Include="BPMapNodeRO.h" />
     <ClInclude Include="BaseBPSetv2.h" />
     <ClInclude Include="BPMapPointSpatialIterator.h" />
+    <ClInclude Include="BPMapRectSplitSpatialIterator.h" />
     <ClInclude Include="BPMultiIndexLeafNodeCompressor.h" />
     <ClInclude Include="BPMultiInnerIndexNodeCompressor.h" />
     <ClInclude Include="BPTreeStatistics.h" />

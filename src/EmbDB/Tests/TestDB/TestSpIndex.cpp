@@ -30,10 +30,10 @@ bool FindRectMinZVal(const TZVal& zVal,
 	while(nBits >= 0)
 	{
 
-
+		
 		TZVal qMin = left;
 		TZVal qMax = right;
-
+	 
 		while (qMin.getBit (nBits) == qMax.getBit (nBits))
 		{
 
@@ -58,6 +58,8 @@ bool FindRectMinZVal(const TZVal& zVal,
 
 			int d = 0;
 			d++;
+			zRes = qMin;
+			break;
 		}
 
 		if(zVal < qMax)
@@ -68,17 +70,14 @@ bool FindRectMinZVal(const TZVal& zVal,
 		else /*if(zVal > qMin && zVal < right)*/
 		{
 			zRes = qMin;
+			left = qMin;
 			if(!(qMin < zVal))
 			{
 
 				if(qMax < zVal)
 					break;
 			}
-			else
-			{
-				left = qMin;
-
-			}
+		 
 
 
 		}
@@ -305,25 +304,22 @@ template<class ZOrder, class zOrderComp, class TUnits>
 void TestSpIndexFromShapeFileTmp()
 {
 	 embDB::TBPVector<ZOrder> vecOrder;
-	ReadShape<ZOrder, zOrderComp, TUnits>(vecOrder, L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp");
+	///ReadShape<ZOrder, zOrderComp, TUnits>(vecOrder, L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp");
 
 	CommonLib::TRect2D<TUnits> rect;
-	rect.m_minX = 579557569;
+	/*rect.m_minX = 579557569;
 	rect.m_minY	= 498287239;
 	rect.m_maxX	= 1738780183;
-	rect.m_maxY	= 1198956604;
+	rect.m_maxY	= 1198956604;*/
 
+	ReadShape<ZOrder, zOrderComp, TUnits>(vecOrder, L"D:\\db\\10m_cultural\\ne_10m_admin_0_scale_rank.shp");
+	//ReadShape<ZOrder, zOrderComp, TUnits>(vecOrder, L"D:\\db\\10m_cultural\\ne_10m_admin_0_countries_lakes.shp");
 
-	/*rect.m_minX = 943551389;
-	rect.m_minY	= 813411290;
-	rect.m_maxX	= 1223610195;
-	rect.m_maxY	= 982687341;*/
-
-
-	/*rect.m_minX = 1049151125;
-	rect.m_minY	= 985224683;
-	rect.m_maxX	= 1049153683;
-	rect.m_maxY	= 985226230;*/
+	rect.m_minX = 1315813034;
+	rect.m_minY	= 775924124;
+	rect.m_maxX	= 2556481375;
+	rect.m_maxY	= 1308887284;
+ 
 
 	std::set<uint32> setFullIndex, setSubQueryIndex;
 
@@ -356,7 +352,7 @@ void TestSpIndexFromShapeFileTmp()
 
 void TestSpIndexFromShapeFile()
 { 
-	//TestSpIndexFromShapeFileTmp<embDB::ZOrderRect2DU32, embDB::ZRect32Comp, uint32>();
-	TestSpIndexFromShapeFileTmp<sRectU32, ZRectU32Comp, uint32>();
+	TestSpIndexFromShapeFileTmp<embDB::ZOrderRect2DU32, embDB::ZRect32Comp, uint32>();
+	//TestSpIndexFromShapeFileTmp<sRectU32, ZRectU32Comp, uint32>();
 }
 

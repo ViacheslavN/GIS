@@ -17,6 +17,8 @@ uint32 key4ToBits[16]={ 0x0000, 0x0008, 0x0080, 0x0088,
 	0x8000, 0x8008, 0x8080, 0x8088,
 	0x8800, 0x8808, 0x8880, 0x8888 };
 
+
+
 static UINT toBits5[32] = {
 	0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01,
 	0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01,
@@ -36,15 +38,14 @@ struct sRectU32
 	sRectU32(uint32 xMin, uint32 yMin, uint32 xMax, uint32 yMax)
 	{
 		int shift=0;
-		uint32 rcMaxXN=~xMax;
-		uint32 rcMaxYN=~yMax;
+
 		for(int i=0;i < 4;i++)
 		{
-			zcoords[i]=key4ToBits[(xMin>>shift)&15]|(key4ToBits[(rcMaxXN>>shift)&15]>>1)|
-				(key4ToBits[(yMin>>shift)&15]>>2)|(key4ToBits[(rcMaxYN>>shift)&15]>>3);
+			zcoords[i]=key4ToBits[(xMin>>shift)&15]|(key4ToBits[(xMax>>shift)&15]>>1)|
+				(key4ToBits[(yMin>>shift)&15]>>2)|(key4ToBits[(yMax>>shift)&15]>>3);
 			shift+=4;
-			uint32 tmp=key4ToBits[(xMin>>shift)&15]|(key4ToBits[(rcMaxXN>>shift)&15]>>1)|
-				(key4ToBits[(yMin>>shift)&15]>>2)|(key4ToBits[(rcMaxYN>>shift)&15]>>3);
+			uint32 tmp=key4ToBits[(xMin>>shift)&15]|(key4ToBits[(xMax>>shift)&15]>>1)|
+				(key4ToBits[(yMin>>shift)&15]>>2)|(key4ToBits[(yMax>>shift)&15]>>3);
 			shift+=4;
 			zcoords[i]|=tmp<<16;
 		}
@@ -122,14 +123,13 @@ struct ZRectU32Comp
 {
 	bool LE(const sRectU32& _Left, const sRectU32& _Right) const
 	{
-		for(int i = 3;i >= 0; i--)
-		{
-			if(_Left.zcoords[i]>_Right.zcoords[i])
-				return false;
-			if(_Left.zcoords[i]<_Right.zcoords[i])
-				return true;
-		}
-		return false;
+		if(_Left.zcoords[3]!=_Right.zcoords[3])
+			return (_Left.zcoords[3]<_Right.zcoords[3]);
+		if(_Left.zcoords[2]!=_Right.zcoords[2])
+			return (_Left.zcoords[2]<_Right.zcoords[2]);
+		if(_Left.zcoords[1]!=_Right.zcoords[1])
+			return (_Left.zcoords[1]<_Right.zcoords[1]);
+		return (_Left.zcoords[0]<_Right.zcoords[0]);
 	}
 	bool EQ(const sRectU32& _Left, const sRectU32& _Right) const
 	{

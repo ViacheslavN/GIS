@@ -9,9 +9,92 @@
 #include "CommonLibrary/DebugTime.h"
 #include <iostream>
 #include <set>
+#include "../../EmbDB/SpatialKey.h"
 
 #include <vector>
 #include <fstream>
+#include "../../EmbDB/simple_stack.h"
+
+
+struct TQuery
+{
+	embDB::ZOrderRect2DU32 m_zMin;
+	embDB::ZOrderRect2DU32 m_zMax;
+	embDB::TRect2Du32 minRect;
+	embDB::TRect2Du32 maxRect;
+	short m_nBits;
+	short m_ID;
+
+
+
+	TQuery() : m_ID (0)
+	{
+
+	}
+
+	void FromZ()
+	{
+		m_zMin.getXY(minRect.m_minX, minRect.m_minY, minRect.m_maxX, minRect.m_maxY);
+		m_zMax.getXY(maxRect.m_minX, maxRect.m_minY, maxRect.m_maxX, maxRect.m_maxY);
+	}
+};
+
+typedef embDB::TSimpleStack<TQuery> TSpatialQueries;
+typedef std::vector<TQuery> TVecQueries;
+
+ 
+void CreateSubQuery(const embDB::ZOrderRect2DU32& zPageLast, 
+	const embDB::ZOrderRect2DU32& zMin, const embDB::ZOrderRect2DU32& zMax,  TVecQueries& queries, TQuery& m_CurrentSpatialQuery)
+{
+
+
+		m_CurrentSpatialQuery.m_zMin = zMin;
+		m_CurrentSpatialQuery.m_zMax = zMax;
+		m_CurrentSpatialQuery.m_nBits = 127;
+		TQuery nNexSubQuery;
+		while (zPageLast < m_CurrentSpatialQuery.m_zMax)
+			{
+
+		
+				
+				assert(m_CurrentSpatialQuery.m_nBits >= 0);
+				while (m_CurrentSpatialQuery.m_zMin.getBit (m_CurrentSpatialQuery.m_nBits) == m_CurrentSpatialQuery.m_zMax.getBit (m_CurrentSpatialQuery.m_nBits))
+				{
+					
+					m_CurrentSpatialQuery.m_nBits--;
+					assert(m_CurrentSpatialQuery.m_nBits >= 0);
+				}
+				
+				
+				nNexSubQuery.m_zMin = m_CurrentSpatialQuery.m_zMin;
+				nNexSubQuery.m_zMax = m_CurrentSpatialQuery.m_zMax;
+				nNexSubQuery.m_zMin.clearLowBits (m_CurrentSpatialQuery.m_nBits);
+		
+				m_CurrentSpatialQuery.m_zMax.setLowBits(m_CurrentSpatialQuery.m_nBits);
+
+				nNexSubQuery.m_nBits = --m_CurrentSpatialQuery.m_nBits;
+				//nNexSubQuery.m_ID = ++m_ID;
+	
+	
+				/*if(nNexSubQuery.m_zMin > nNexSubQuery.m_zMax)
+				{
+					int dd =0;
+					dd++;
+				}
+				if(m_CurrentSpatialQuery.m_zMin > m_CurrentSpatialQuery.m_zMax)
+				{
+					int dd =0;
+					dd++;
+				}*/
+
+				queries.push_back(nNexSubQuery);
+			}
+
+
+		int dd = 0;
+		dd++;
+}
+
 template<class TZVal>
 bool FindRectMinZVal(const TZVal& zVal, 
 	const TZVal& zMin, const TZVal& zMax, TZVal& zRes)
@@ -59,8 +142,8 @@ bool FindRectMinZVal(const TZVal& zVal,
 		if(qMin < qMax)
 		{
 
-			int d = 0;
-			d++;
+			zRes = qMin;
+			break;
 		}
 
 		if(zVal < qMax)
@@ -70,22 +153,13 @@ bool FindRectMinZVal(const TZVal& zVal,
 		}
 		else 
 		{
+			left = qMin;
 			zRes = qMin;
 			if(qMin > zVal)
 			{
-
-				if(qMax < zVal)
-					break;
+				break;
 			}
-			else
-			{
-				left = qMin;
-				
-			}
-		
-			
 		}
-
 	}
 
 	return true;
@@ -114,10 +188,9 @@ bool FindRectMinZValFile(const TZVal& zVal,
 	zRes = zMax;
 
 
-	fileZOrder << "zMin" << "                            zMax" << "\n";
-
-	fileZOrder << zMin.m_nZValue[1] << "  " << zMin.m_nZValue[0] <<"  ";
-	fileZOrder << zMax.m_nZValue[1] << "  " << zMax.m_nZValue[0] << "\n" ;
+	fileZOrder << "zMin   " << zMin.m_nZValue[1] << "  " << zMin.m_nZValue[0] <<
+	 "zNext   " << zVal.m_nZValue[1] << "  " << zVal.m_nZValue[0] <<
+	"  zMax  " << 	zMax.m_nZValue[1] << "  " << zMax.m_nZValue[0] << "\n" ;
 	while(nBits >= 0)
 	{
 
@@ -145,7 +218,7 @@ bool FindRectMinZValFile(const TZVal& zVal,
 		qMax.setLowBits(nBits);
 		--nBits;
 
-		fileZOrder <<"Split Query   ";
+		fileZOrder <<"Split Query bits: " << nBits <<" ";
 		fileZOrder << "L: " << left.m_nZValue[1] << "  " << left.m_nZValue[0] << "    ";
 		fileZOrder << "Qmax: "<< qMax.m_nZValue[1] << "  " << qMax.m_nZValue[0] << "    ";
 		fileZOrder << "Qmin: "<<qMin.m_nZValue[1] << "  " << qMin.m_nZValue[0] << "    ";
@@ -165,6 +238,7 @@ bool FindRectMinZValFile(const TZVal& zVal,
 		else 
 		{
 			zRes = qMin;
+			left = qMin;
 			if(qMin > zVal)
 			{
 
@@ -180,7 +254,7 @@ bool FindRectMinZValFile(const TZVal& zVal,
 
 		}
 
-		fileZOrder <<"New Query     ";
+		fileZOrder <<"New Query             ";
 		fileZOrder << "L: "<< left.m_nZValue[1] << "  " << left.m_nZValue[0] << "    ";
 		fileZOrder << "R: "<<right.m_nZValue[1] << "  " << right.m_nZValue[0] << "\n";
 
@@ -309,6 +383,26 @@ void TestRectZorder()
 		dd++;
 	}
 	FindRectMinZVal(zNext, zMin, zMax, zRes);
+
+
+	TVecQueries queries;
+	TQuery nCurQ;
+	CreateSubQuery(zNext, zMin, zMax, queries, nCurQ);
+
+	TQuery query = queries.back();
+
+
+	for (size_t i = 0; i< queries.size(); ++i)
+	{
+		TQuery& query = queries[i];
+
+		if(query.m_zMin <= zFeature && !(query.m_zMax <= zFeature))
+		{
+			int dd = 0;
+			dd++;
+		}
+	}
+
 	//FindRectMinZVal1(zNext, zMin, zMax, zRes);
 
 

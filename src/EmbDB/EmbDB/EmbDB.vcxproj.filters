@@ -1059,6 +1059,15 @@
     <ClInclude Include="SignCompressor.h">
       <Filter>utils\compress</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BPMapRectSplitSpatialIterator.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
