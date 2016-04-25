@@ -2,6 +2,7 @@
 #define _EMBEDDED_DATABASE_BP_MAP_RECT_SPATIAL_H_
 #include "CommonLibrary/SpatialKey.h"
 #include "PointSpatialBPMapTree.h"
+
 namespace embDB
 {
 	template<class _TCoord, class _TValue, class _TComp, 
@@ -35,8 +36,10 @@ namespace embDB
 		/*template <class _TCoord, class _TValue, class _TComp, 	class _TInnerCompess ,	class _TLeafCompess,
 		class _Transaction,	class _TBTreeNode, class _TLeftMemset,  class _TLeftNode>*/
 	
+
 		typedef typename TBase::TSpatialIterator TSpatialIterator;
-			
+
+
 
 		iterator identify(TPointType xMin, TPointType yMin, TPointType xMax, TPointType yMax)
 		{

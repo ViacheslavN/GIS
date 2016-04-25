@@ -3,6 +3,7 @@
 //#include "PointSpatialBPMaTraits.h"
 #include "CommonLibrary/SpatialKey.h"
 #include "simple_stack.h"
+
 namespace embDB
 {
 	template<class _TCoord, class _TValue, class _TComp, 
@@ -216,7 +217,7 @@ namespace embDB
 				return false;
 			while(true)
 			{
-				bool bFindNext = true;
+		
 				while(m_nIndex <  (int32)m_pCurLeafNode->count())
 				{
 

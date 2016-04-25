@@ -5,11 +5,12 @@
 
 namespace DatasetLite
 {
-	template<class TIterator, class TZOrderVal>
+	template<class _TIterator, class TZOrderVal>
 	class TShapeCursorBase : public IShapeCursor
 	{
 	public:
 		typedef typename TZOrderVal::TPointType TPointType;
+		typedef _TIterator TIterator;
 
 		TShapeCursorBase(TIterator& iterator, double dOffsetX, double dOffsetY, double dScaleX, double dScaleY) :
 		  m_Iterator(iterator),  m_dOffsetX(dOffsetX),  m_dOffsetY(dOffsetY),  m_dScaleX(dScaleX),  m_dScaleY(dScaleY)

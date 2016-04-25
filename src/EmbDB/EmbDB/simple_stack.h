@@ -27,6 +27,44 @@ class TSimpleStack
       }
     }
 
+
+	TSimpleStack(const TSimpleStack& stack)
+	{
+		if(stack.alloc_ != &stack.m_alloc)
+			alloc_ = stack.alloc_;
+		else
+			alloc_ = &m_alloc;
+
+		size_ = stack.size_;
+		capacity_ = stack.capacity_;
+		data_ = 0;
+		if(capacity_)
+		{
+			data_ = (Type*)alloc_->alloc(capacity_ * sizeof(Type));
+			memcpy(data_, stack.data_, capacity_ * sizeof(Type));
+		}
+	 
+	}
+
+	const TSimpleStack& operator = (const TSimpleStack& stack)
+	{
+		if(stack.alloc_ != &stack.m_alloc)
+			alloc_ = stack.alloc_;
+		else
+			alloc_ = &m_alloc;
+
+		size_ = stack.size_;
+		capacity_ = stack.capacity_;
+		data_ = 0;
+		if(capacity_)
+		{
+			data_ = (Type*)alloc_->alloc(capacity_ * sizeof(Type));
+			memcpy(data_, stack.data_, capacity_ * sizeof(Type));
+		}
+
+		return *this;
+	}
+
     void push(const Type & val)
     {
 
