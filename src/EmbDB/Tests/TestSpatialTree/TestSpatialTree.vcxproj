@@ -96,13 +96,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../CommonLibrary/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../CommonLibrary/;../../../GisEngine;../../../ThirdParty</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../../CommonLibrary/Output;../../Output;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../CommonLibrary/Output;../../Output;../../../ThirdParty/ShapeLib/lib;../../../GisEngine/Output;../../../ThirdParty/proj4/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -150,10 +150,12 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="importFromShape.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="importFromShape.cpp" />
     <ClCompile Include="PointZorderTest.cpp" />
     <ClCompile Include="RectZorderTest.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -164,6 +166,7 @@
     </ClCompile>
     <ClCompile Include="TestPointSpatialMap.cpp" />
     <ClCompile Include="TestRectSpatialMap.cpp" />
+    <ClCompile Include="TestSpatialRectFromShape.cpp" />
     <ClCompile Include="TestSpatialTree.cpp" />
     <ClCompile Include="TestZPointOzder.cpp" />
     <ClCompile Include="TestZRectOzder.cpp" />

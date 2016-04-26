@@ -26,27 +26,32 @@ namespace GisEngine
 
 			return true;
 		}
-		void  CFeatureRenderer::PrepareFilter(GeoDatabase::IFeatureClass* cls, GeoDatabase::IQueryFilter* filter) const
+		void  CFeatureRenderer::PrepareFilter(GeoDatabase::IFeatureClass* pFeatureClass, GeoDatabase::IQueryFilter* filter) const
 		{
-			if(!CanRender(cls, 0) || !filter)
+			if(!CanRender(pFeatureClass, 0) || !filter)
 				return;
 
  
+		/*	if(pFeatureClass->HasOIDField())
+			{
+				filter->GetFieldSet()->Add(pFeatureClass->GetOIDFieldName());
+			}*/
+
 			if(m_sShapeField.isEmpty())
 			{
-				filter->GetFieldSet()->Add(cls->GetShapeFieldName());
-				m_nShapeFieldIndex = cls->GetFields()->FindField(cls->GetShapeFieldName());
+				filter->GetFieldSet()->Add(pFeatureClass->GetShapeFieldName());
+				m_nShapeFieldIndex = pFeatureClass->GetFields()->FindField(pFeatureClass->GetShapeFieldName());
 			}
 			else
 			{
 				if(iswdigit(m_sShapeField[0]))
 				{
 					int shpIndex = wcstol(m_sShapeField.cwstr(), 0, 10);//_wtoi(m_sShapeField.cwstr());
-					int count = cls->GetFields()->GetFieldCount();
+					int count = pFeatureClass->GetFields()->GetFieldCount();
 					int shp = -1;
 					for(int i = 0; i < count; ++i)
 					{
-						GeoDatabase::IFieldPtr field = cls->GetFields()->GetField(i);
+						GeoDatabase::IFieldPtr field = pFeatureClass->GetFields()->GetField(i);
 						if(field->GetType() == GeoDatabase::dtGeometry)
 							++shp;
 						if(shp == shpIndex)
@@ -58,10 +63,10 @@ namespace GisEngine
 				}
 
 				filter->GetFieldSet()->Add(m_sShapeField);
-				m_nShapeFieldIndex = cls->GetFields()->FindField(m_sShapeField);
+				m_nShapeFieldIndex = pFeatureClass->GetFields()->FindField(m_sShapeField);
 			}
 			if(m_pSymbolAssigner.get())
-				m_pSymbolAssigner->PrepareFilter(cls, filter);
+				m_pSymbolAssigner->PrepareFilter(pFeatureClass, filter);
 		}
 		Display::ISymbolPtr CFeatureRenderer::GetSymbolByFeature(GeoDatabase::IFeature* feature) const
 		{

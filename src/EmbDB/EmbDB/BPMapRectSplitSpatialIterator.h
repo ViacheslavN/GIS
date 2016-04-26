@@ -207,7 +207,7 @@ namespace embDB
 					return false;
 				}
 
-				if(m_nIndex == (int32)m_pCurLeafNode->count())
+			/*	if(m_nIndex == (int32)m_pCurLeafNode->count())
 				{
 					if(m_pCurNode->next() == -1)
 					{
@@ -219,7 +219,7 @@ namespace embDB
 						return false;
 
 				}			
-				else
+				else*/
 				{
 					m_CurrentSpatialQuery = m_Queries.top();
 
@@ -227,6 +227,13 @@ namespace embDB
 					int32 nIndex = m_pCurNode->leaf_lower_bound(m_pTree->getComp(), m_CurrentSpatialQuery.m_zMin,  nType);
 					if(nIndex != -1)
 					{
+
+						if(nIndex < m_nIndex || ((nIndex - m_nIndex) != 1 && (nIndex - m_nIndex) != 0) )
+						{
+							int dd =0;
+							dd++;
+						}
+
 						m_nIndex = nIndex;
 						CreateSubQuery();
 					}
@@ -269,6 +276,13 @@ namespace embDB
 						continue;
 					}
 
+				}
+
+
+				if(m_pCurLeafNode->m_nNext != it.m_pCurNode->addr())
+				{
+					int dd =0;
+					dd++;
 				}
  
 

@@ -306,15 +306,15 @@ namespace GisEngine
 
 		bool CShapefileWorkspace::saveXML(GisCommon::IXMLNode* pXmlNode) const
 		{
-			pXmlNode->AddPropertyInt32U("ID", uint32(GetWorkspaceType()));
-			pXmlNode->AddPropertyString("name", m_sName);
-			pXmlNode->AddPropertyString("path", m_sPath);
+			TBase::saveXML(pXmlNode);
+			pXmlNode->AddPropertyString(L"Path", m_sPath);
 			return true;
 		}
 		bool CShapefileWorkspace::load(const GisCommon::IXMLNode* pXmlNode)
 		{
-			m_sName = pXmlNode->GetPropertyString("name", m_sName);
-			m_sPath = pXmlNode->GetPropertyString("path", m_sPath);
+			if(!TBase::load(pXmlNode))
+				return false;
+			m_sPath = pXmlNode->GetPropertyString(L"Path", m_sPath);
 			load();
 			return true;
 		}
