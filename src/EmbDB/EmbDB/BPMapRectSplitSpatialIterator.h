@@ -221,27 +221,35 @@ namespace embDB
 				}			
 				else*/
 				{
-					m_CurrentSpatialQuery = m_Queries.top();
 
-					short nType = 0;
-					int32 nIndex = m_pCurNode->leaf_lower_bound(m_pTree->getComp(), m_CurrentSpatialQuery.m_zMin,  nType);
-					if(nIndex != -1)
+					//TPointKey& zVal = m_pCurNode->key(m_nIndex - 1);
+
+
+
+					while(true)
 					{
+						TSubQuery nPrev = m_CurrentSpatialQuery;
+						m_CurrentSpatialQuery = m_Queries.top();
 
-						if(nIndex < m_nIndex || ((nIndex - m_nIndex) != 1 && (nIndex - m_nIndex) != 0) )
+						short nType = 0;
+						int32 nIndex = m_pCurNode->leaf_lower_bound(m_pTree->getComp(), m_CurrentSpatialQuery.m_zMin,  nType);
+						if(nIndex != -1)
 						{
-							int dd =0;
-							dd++;
+							CreateSubQuery();
+							if(m_nIndex <= nIndex)
+							{
+								m_nIndex = nIndex;
+								break;
+							}
 						}
-
-						m_nIndex = nIndex;
-						CreateSubQuery();
+						else
+						{
+							if(!findNext(false))
+								return false;
+							break;
+						}
 					}
-					else
-					{
-						if(!findNext(false))
-							return false;
-					}
+					
 
 				}
 
@@ -279,12 +287,16 @@ namespace embDB
 				}
 
 
-				if(m_pCurLeafNode->m_nNext != it.m_pCurNode->addr())
+				/*if(m_pCurLeafNode->m_nNext != it.m_pCurNode->addr())
 				{
 					int dd =0;
 					dd++;
 				}
- 
+				if(it.m_nIndex != 0)
+				{
+					int dd = 0;
+					dd++;
+				}*/
 
 				m_pCurNode = it.m_pCurNode;
 				m_pCurLeafNode = &m_pCurNode->m_LeafNode;
@@ -374,14 +386,14 @@ namespace embDB
 		
 				m_CurrentSpatialQuery.m_zMax.setLowBits(m_CurrentSpatialQuery.m_nBits);
 
-				if(m_CurrentSpatialQuery.m_nBits == 0)
-				{
-					int dd =1 ;
-					dd++;
-				}
+
 				nNexSubQuery.m_nBits = --m_CurrentSpatialQuery.m_nBits;
 				//nNexSubQuery.m_ID = ++m_ID;
-	
+			/*	if(nNexSubQuery.m_zMin < m_CurrentSpatialQuery.m_zMax)
+				{
+					int dd = 0;
+					dd++;
+				}
 	
 				if(nNexSubQuery.m_zMin > nNexSubQuery.m_zMax)
 				{
@@ -392,7 +404,7 @@ namespace embDB
 				{
 					int dd =0;
 					dd++;
-				}
+				}*/
 
 				m_Queries.push(nNexSubQuery);
 			}

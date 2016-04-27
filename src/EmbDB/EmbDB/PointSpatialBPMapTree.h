@@ -41,11 +41,11 @@ namespace embDB
 		typedef CommonLib::TPoint2D<TPointType> TPoint;
 
 	
-		/*typedef TBPTSpatialPointIteratorMap<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess,
-			 TInnerNode, TLeafNode, TBTreeNode> TSpatialIterator;*/
+		typedef TBPTSpatialPointIteratorMap<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess,
+			 TInnerNode, TLeafNode, TBTreeNode> TSpatialIterator;
 
-		typedef TBPTSpatialRectSplitIterator<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess,
-					TInnerNode, TLeafNode, TBTreeNode> TSpatialIterator;
+		/*typedef TBPTSpatialRectSplitIterator<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess,
+					TInnerNode, TLeafNode, TBTreeNode> TSpatialIterator;*/
 		
 		bool insert(const TPoint& point, const TValue& val, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
 		{
@@ -67,7 +67,7 @@ namespace embDB
 			return TBase::insert(key, val, pFromIterator, pRetItertor); 
 		}
 
-		void setExtent(TRect& extent)
+		void setExtent(const TRect& extent)
 		{
 			m_Extent = extent;
 

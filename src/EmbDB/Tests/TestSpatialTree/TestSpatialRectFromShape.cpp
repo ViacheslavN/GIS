@@ -23,6 +23,7 @@
 #include "CommonLibrary/BoundaryBox.h"
 #include "../GisEngine/GisGeometry/SpatialReferenceProj4.h"
 #include "../../EmbDB/SpatialRectQuery.h"
+#include "importFromShape.h"
 
 
 
@@ -87,10 +88,10 @@ int  ReadShape(const wchar_t* pszShapeFileName, TTran* pTran, CommonLib::alloc_t
 
 	shp.file = ShapeLib::SHPOpen(shpFilePath.cstr(), "rb");
 	if(!shp.file)
-		return;
+		return 0;
 	dbf.file = ShapeLib::DBFOpen(dbfFilePath.cstr(), "rb");
 	if(!dbf.file)
-		return; 
+		return 0;
 
 
 
@@ -126,20 +127,20 @@ int  ReadShape(const wchar_t* pszShapeFileName, TTran* pTran, CommonLib::alloc_t
 		dOffsetY = -1 *bounds.yMin;
 
 
-	
+	double dScale = 0.0000001;
 
 
 
-	ExtentTree.m_minX = TUnits((bb.xMin + dOffsetX) / dScale);
-	ExtentTree.m_minY = TUnits((bb.yMin + dOffsetY) / dScale);
-	ExtentTree.m_maxX = TUnits((bb.xMax + dOffsetX) / dScale);
-	ExtentTree.m_maxY = TUnits((bb.yMax + dOffsetY) / dScale);
+	ExtentTree.m_minX = TUnits((bounds.xMin + dOffsetX) / dScale);
+	ExtentTree.m_minY = TUnits((bounds.yMin + dOffsetY) / dScale);
+	ExtentTree.m_maxX = TUnits((bounds.xMax + dOffsetX) / dScale);
+	ExtentTree.m_maxY = TUnits((bounds.yMax + dOffsetY) / dScale);
 
 
 	tree.setExtent(ExtentTree);
 
 
-	double dScale = 0.0000001;
+	
 	CommonLib::CGeoShape shape;
 	shape.AddRef();
 	ShapeLib::SHPObject*   pCacheObject = NULL;
@@ -178,19 +179,32 @@ int  ReadShape(const wchar_t* pszShapeFileName, TTran* pTran, CommonLib::alloc_t
 
 template <class TSparialTree, class TTran, class TZorderType, class TUnits>
 void TestRectSpatialSplitSearch(const CommonLib::TRect2D<TUnits>& ExtentTree, const CommonLib::TRect2D<TUnits>& SpatialQuery,
-		int nCacheStorageSize, int nPageSize, int64 nTreeRootPage, std::set<int64>& pOIDs)
+		TTran* pTran,  CommonLib::alloc_t *pAlloc, int nCacheStorageSize, int nPageNodeSize, int64 nTreeRootPage, std::vector<int64>& pOIDs)
 {
-	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, nPageNodeSize);
+	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheStorageSize, nPageNodeSize);
 	tree.loadBTreeInfo(); 
 	tree.setExtent(ExtentTree);
 
 	TSparialTree::TSpatialIterator it = tree.spatialQuery(SpatialQuery.m_minX, SpatialQuery.m_minY, SpatialQuery.m_maxX, SpatialQuery.m_maxY);
-
+	int nCount = 0;
+	std::set<int64> setOID;
 	while(!it.isNull())
 	{
 
-		pOIDs.insert(it.value());
+		if(setOID.find(it.value()) != setOID.end())
+		{
+			int dd = 0;
+			dd++;
+		}
+		else
+		{
+			setOID.insert(it.value());
+		}
+
+
+		pOIDs.push_back(it.value());
 		it.next();
+		nCount++;
 	}
 
 }
@@ -199,9 +213,9 @@ void TestRectSpatialSplitSearch(const CommonLib::TRect2D<TUnits>& ExtentTree, co
 
 template <class TSparialTree, class TTran, class TZorderType, class TUnits>
 void TestRectSpatialFullSearch(const CommonLib::TRect2D<TUnits>& ExtentTree, const CommonLib::TRect2D<TUnits>& SpatialQuery,
-	int nCacheStorageSize, int nPageSize, int64 nTreeRootPage, std::set<int64>& pOIDs)
+	TTran* pTran, CommonLib::alloc_t *pAlloc,  int nCacheStorageSize, int nPageNodeSize, int64 nTreeRootPage, std::vector<int64>& pOIDs)
 {
-	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, nPageNodeSize);
+	TSparialTree tree(nTreeRootPage, pTran, pAlloc, nCacheStorageSize, nPageNodeSize);
 	tree.loadBTreeInfo(); 
 	tree.setExtent(ExtentTree);
 
@@ -213,7 +227,7 @@ void TestRectSpatialFullSearch(const CommonLib::TRect2D<TUnits>& ExtentTree, con
 	zKeyMax.setZOrder(SpatialQuery.m_maxX, SpatialQuery.m_maxY, TZorderType::coordMax, TZorderType::coordMax);
 
 	TSparialTree::iterator it = tree.lower_bound(zKeyMin);
-
+	
 	while(!it.isNull())
 	{
 
@@ -221,8 +235,9 @@ void TestRectSpatialFullSearch(const CommonLib::TRect2D<TUnits>& ExtentTree, con
 		if(zKey < it.key())
 			break;
 
+		
 		if(zKey.IsInRect(SpatialQuery))
-			pOIDs.insert(it.value());
+			pOIDs.push_back(it.value());
 		it.next();
 	}
 
@@ -245,7 +260,7 @@ void TestRectSpatialImp(const CommonLib::CString& sFileName,  const CommonLib::C
 		int nCount =  0;
 		 CommonLib::TRect2D<TUnits> extent;
 
-		  CommonLib::TRect2D<TUnits> rectQuery;;
+		  CommonLib::TRect2D<TUnits> rectQuery;
 
 		 {
 			embDB::FilePagePtr pPage = storage.getNewPage(nPageSize);
@@ -268,11 +283,42 @@ void TestRectSpatialImp(const CommonLib::CString& sFileName,  const CommonLib::C
 
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tranUndo.data", &storage, 1);
 			tran.begin();
-			nCount = ReadShape<TSparialTree,TZorderType, TTran, TUnits>(sShapeFileName.cwstr(), &tran, alloc, 50, nPageSize, nTreeRootPage, extent);
+			nCount = ReadShape<TSparialTree, TTran, TZorderType, TUnits>(sShapeFileName.cwstr(), &tran, alloc, 50, nPageSize, nTreeRootPage, extent);
 		 }
 
 
-		 std::set<__int64> setSplitOID, setFullSearchID;
+		 std::vector<__int64> vecSplitOID, ecFullSearchID;
+
+		 {
+			 TTran tran(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tranUndo.data", &storage, 2);
+			 tran.begin();
+			 TestRectSpatialSplitSearch<TSparialTree, TTran, TZorderType, TUnits>(extent, extent, &tran, alloc,50, 8192, nTreeRootPage, vecSplitOID);
+		 }
+
+		 {
+			 TTran tran(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tranUndo.data", &storage, 2);
+			 tran.begin();
+			 TestRectSpatialFullSearch<TSparialTree, TTran, TZorderType, TUnits>(extent, extent, &tran, alloc, 50, 8192, nTreeRootPage, ecFullSearchID);
+		 }
+
+
+		 size_t szMin = min(vecSplitOID.size(), ecFullSearchID.size());
+		 for (size_t i = 0; i < szMin; ++i)
+		 {
+
+			 if(vecSplitOID[i] != ecFullSearchID[i])
+			 {
+				 uint64 nSplitOID = vecSplitOID[i];
+				  uint64 nFullSearchID = ecFullSearchID[i];
+
+				 int dd = 0;
+				 dd++;
+			 }
+		 }
+		 
+
+		 int dd = 0;
+		 dd++;
 	/*	if(nType == SEARCH)
 		{
 			storage.setStoragePageInfo(0);
@@ -296,5 +342,5 @@ void TestRectSpatialImp(const CommonLib::CString& sFileName,  const CommonLib::C
 
 void TestRectSpatialTreeFromShape()
 {
-
+	TestRectSpatialImp<TBPMapRect32, embDB::CDirectTransaction, embDB::ZOrderRect2DU32, uint32>(L"d:\\db\\dbspatialrect32.data", L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp", 50, 8192);
 }
