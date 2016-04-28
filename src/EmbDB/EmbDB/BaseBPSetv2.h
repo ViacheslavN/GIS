@@ -1206,15 +1206,19 @@ namespace embDB
 				int nLeafIndex =   pNode->leaf_lower_bound(comp, key, nType);
 				if(nLeafIndex != -1)
 					return TIterator(this, pNode.get(), pNode->leaf_lower_bound(comp, key, nType));
-				else if(pParent->count() - 1 == nIndex)
+				else if(nIndex < (pParent->count() - 1))
+				{
+					TBTreeNodePtr pNode = getNode(pParent->link(nIndex + 1));
+					pNode->setParent(pParent.get(), nIndex + 1);
+					return TIterator(this, pNode.get(), 0);
+				}
+
+				if(pNode->next() == -1)
 					return TIterator(this, NULL, -1);
 
-
-				TBTreeNodePtr pNode = getNode(pParent->link(nIndex + 1));
-				pNode->setParent(pParent.get(), nIndex + 1);
-				return TIterator(this, pNode.get(), 0);
-
-
+				TBTreeNodePtr pNodeNext = getNode(pNode->next());
+				SetParentNext(pNode.get(), pNodeNext.get());
+				return TIterator(this, pNodeNext.get(), 0);
 				break;
 			}
 			nNextAddr = pNode->inner_lower_bound(comp, key, nType, nIndex);
