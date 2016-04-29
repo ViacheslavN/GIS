@@ -413,13 +413,13 @@ namespace GisEngine
 			}
 			uint32 crc = CommonLib::Crc32(mapStream.buffer(), mapStream.pos());
 			pWriteStream->write(crc);
-			pWriteStream->write(&mapStream);
+			pWriteStream->write(&mapStream, 0, mapStream.pos());
 			return true;
 		}
 		bool CMap::load(CommonLib::IReadStream* pReadStream)
 		{
 			uint32 nCRC = pReadStream->readIntu32();
-			CommonLib::FxMemoryReadStream mapStream;
+			CommonLib::CReadMemoryStream mapStream;
 			SAFE_READ(pReadStream->save_read(&mapStream, true))
 			uint32 nCalcCRC = CommonLib::Crc32(mapStream.buffer(), mapStream.size()); 
 			if(nCalcCRC != nCRC)

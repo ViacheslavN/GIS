@@ -30,6 +30,7 @@ namespace CommonLib
 		virtual void readStream(IStream *pStream, bool bAttach = false);
 		virtual bool SaveReadStream(IStream *pStream, bool bAttach = false);
 
+		virtual bool resize(uint32 nSize);
  
 		 
 	};

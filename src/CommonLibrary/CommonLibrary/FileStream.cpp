@@ -50,11 +50,11 @@ namespace CommonLib
 
 		if(IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream))
 		{
-			if(bAttach)
+			/*if(bAttach)
 			{
 				assert(false);
 				return false;
-			}
+			}*/
 
 			uint32 nStreamSize = 0;
 			if(!save_read(nStreamSize))

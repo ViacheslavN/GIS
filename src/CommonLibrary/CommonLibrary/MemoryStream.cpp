@@ -69,6 +69,34 @@ namespace CommonLib
 		}
 
 
+		bool CReadMemoryStream::resize(uint32 nSize)
+		{
+			if(m_bAttach)
+				deattach();
+
+			uint32 newSize = nSize;
+
+			/*while(m_nPos + nSize > newSize)
+				newSize = uint32(newSize * 1.5) + 1;*/
+			if(newSize > m_nSize)
+			{
+				assert(!m_bAttach);
+				m_nSize = newSize;
+				byte* buffer =  (byte*)this->m_pAlloc->alloc(sizeof(byte) * newSize);
+				if(this->m_pBuffer)
+				{
+					memcpy(buffer, this->m_pBuffer, this->m_nPos);
+					if(!m_bAttach)
+					{
+						this->m_pAlloc->free(m_pBuffer);
+					}
+				}
+				this->m_pBuffer = buffer;
+
+			}
+
+			return this->m_pBuffer != NULL;
+		}
 
 		CWriteMemoryStream::CWriteMemoryStream(alloc_t *pAlloc): TBase(pAlloc)
 		{
@@ -134,4 +162,5 @@ namespace CommonLib
 			}
 
 		}
+
 }
