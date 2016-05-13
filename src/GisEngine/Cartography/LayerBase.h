@@ -87,8 +87,8 @@ namespace GisEngine
 			virtual bool save(CommonLib::IWriteStream *pWriteStream) const
 			{
 
+			
 				CommonLib::CWriteMemoryStream stream;
-				stream.write(GetLayerID());
 				stream.write(m_sName);
 				stream.write(m_bVisible);
 				stream.write(m_dMinimumScale);

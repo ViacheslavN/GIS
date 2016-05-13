@@ -409,6 +409,7 @@ namespace GisEngine
 			for (int i = 0, sz = m_pLayers->GetLayerCount(); i < sz; ++i)
 			{
 				ILayerPtr pLayer = m_pLayers->GetLayer(i);
+				mapStream.write(pLayer->GetLayerID());
 				pLayer->save(&mapStream);
 			}
 			uint32 crc = CommonLib::Crc32(mapStream.buffer(), mapStream.pos());

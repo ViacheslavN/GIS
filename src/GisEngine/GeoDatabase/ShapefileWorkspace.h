@@ -16,13 +16,14 @@ namespace GisEngine
 
 			//typedef Common::CSimpleEnum<IDataset, IDatasetContainer> TDatasetContainer;
 			typedef IWorkspaceBase<IWorkspace> TBase;
+			CShapefileWorkspace();
 			CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr, int32 nID);
 			CShapefileWorkspace(const wchar_t *pszName, const wchar_t *pszPath, int32 nID);
 
 			public:
 
 
-				static IWorkspacePtr Open(const wchar_t *pszName, const wchar_t *pszPath);
+				static IWorkspacePtr Open(const wchar_t *pszName, const wchar_t *pszPath, int32 nID = -1);
 				static IWorkspacePtr Open(CommonLib::IReadStream* pSteram);
 				static IWorkspacePtr Open(GisCommon::IXMLNode *pNode);
 

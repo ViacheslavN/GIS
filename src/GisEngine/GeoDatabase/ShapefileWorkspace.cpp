@@ -15,7 +15,10 @@ namespace GisEngine
 		const wchar_t CShapefileWorkspace::c_PropertyPath[] = L"PATH";
 
 
+		CShapefileWorkspace::CShapefileWorkspace() : TBase(wtShapeFile, -1)
+		{
 
+		}
 
 		CShapefileWorkspace::CShapefileWorkspace(GisCommon::IPropertySetPtr& protSetPtr, int32 nID) : TBase(wtShapeFile, nID),
 			m_bLoad(false)
@@ -255,14 +258,14 @@ namespace GisEngine
 	 
 
 
-		IWorkspacePtr CShapefileWorkspace::Open(const wchar_t *pszName, const wchar_t *pszPath)
+		IWorkspacePtr CShapefileWorkspace::Open(const wchar_t *pszName, const wchar_t *pszPath, int32 nID)
 		{
 		
 			IWorkspacePtr pWks = CWorkspaceHolder::GetWorkspace(wtShapeFile, pszPath);
 			if(pWks.get())
 				return pWks;
 
-			CShapefileWorkspace* pShapeWks = new CShapefileWorkspace(pszName, pszPath, CWorkspaceHolder::GetIDWorkspace());
+			CShapefileWorkspace* pShapeWks = new CShapefileWorkspace(pszName, pszPath, nID == -1 ? CWorkspaceHolder::GetIDWorkspace() : nID);
 			pWks = pShapeWks;
 			//pShapeWks->load();
 			CWorkspaceHolder::AddWorkspace((IWorkspace*)pShapeWks);
@@ -270,14 +273,14 @@ namespace GisEngine
 		}
 		IWorkspacePtr CShapefileWorkspace::Open(CommonLib::IReadStream* pSteram)
 		{
-			CommonLib::CString sName;
-			CommonLib::CString sPath;
-			if(!pSteram->save_read(sName))
-				return IWorkspacePtr();
-		 
-			if(!pSteram->save_read(sPath))
-				return IWorkspacePtr();	
-			return Open(sName.cwstr(), sPath.cwstr());
+			CShapefileWorkspace* pShapeWks = new CShapefileWorkspace();
+			 if(!pShapeWks->load(pSteram))
+			 {
+				 delete pShapeWks;
+				 return IWorkspacePtr();
+			 }
+
+			return IWorkspacePtr((IWorkspace*)pShapeWks);
 		}
 		IWorkspacePtr CShapefileWorkspace::Open(GisCommon::IXMLNode *pNode)
 		{
@@ -291,14 +294,14 @@ namespace GisEngine
 
 		bool CShapefileWorkspace::save(CommonLib::IWriteStream *pWriteStream) const
 		{
-			pWriteStream->write(uint32(GetWorkspaceType()));
-			pWriteStream->write(m_sName);
+			TBase::save(pWriteStream);
 			pWriteStream->write(m_sPath);
 			return true;
 		}
 		bool CShapefileWorkspace::load(CommonLib::IReadStream* pReadStream)
 		{
-			SAFE_READ(pReadStream->save_read(m_sName))
+			if(!TBase::load(pReadStream))
+				return false;
 			SAFE_READ(pReadStream->save_read(m_sPath))
 			load();
 			return true;

@@ -55,6 +55,9 @@ namespace GisEngine
 				stream.write(m_dMaximumScale);
 				stream.write(m_dMinimumScale);
 				stream.write(m_sShapeField);
+
+
+				pWriteStream->write(&stream);
 				return true;
 			}
 			virtual bool load(CommonLib::IReadStream* pReadStream)

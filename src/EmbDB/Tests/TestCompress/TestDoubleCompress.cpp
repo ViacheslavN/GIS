@@ -27,7 +27,7 @@ void TestDoubleCompress()
 
 	embDB::double_cast dVal, dVal1;
 
-	dVal.val = 2.00000000001;
+	dVal.val = 3.0000000000;
 	uint64 nMat = dVal.parts.mantisa;
 	uint64 nExp = dVal.parts.exponent;
 

@@ -146,7 +146,7 @@ namespace GisEngine
 			if(!TBase::load(&stream))
 				return false;
 			bool bSymbol = false;
-			SAFE_READ(pReadStream->save_read(bSymbol))
+			SAFE_READ(stream.save_read(bSymbol))
 			if(bSymbol)
 				m_pSymbolAssigner = LoaderSymbolAssigners::LoadSymbolAssigners(&stream);
 			return true;

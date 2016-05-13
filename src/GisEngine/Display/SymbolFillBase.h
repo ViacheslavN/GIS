@@ -54,6 +54,7 @@ namespace GisEngine
 				if(m_pBorderSymbol.get())
 				{
 					stream.write(true);
+					stream.write(m_pBorderSymbol->GetSymbolID());
 					m_pBorderSymbol->save(&stream);
 				}
 				else

@@ -338,6 +338,7 @@ namespace GisEngine
 			stream.write((uint32)m_vecRenderers.size());
 			for (size_t i = 0, sz = m_vecRenderers.size(); i < sz; ++i)
 			{
+				stream.write(m_vecRenderers[i]->GetFeatureRendererID());
 				m_vecRenderers[i]->save(&stream);
 			}
 

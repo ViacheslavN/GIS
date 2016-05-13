@@ -146,27 +146,27 @@ namespace GisEngine
 			byte type = 0;
 			byte joinType = 0;
 			byte capType = 0;
-			SAFE_READ(pStream->save_read(type))
+			SAFE_READ(stream.save_read(type))
 			m_type = (ePenType)type;
 			SAFE_READ(m_color.load(&stream))
-			SAFE_READ(pStream->save_read(joinType))
+			SAFE_READ(stream.save_read(joinType))
 			m_joinType = (eJoinType)joinType;
-			SAFE_READ(pStream->save_read(m_nWidth))
-			SAFE_READ(pStream->save_read(capType))
+			SAFE_READ(stream.save_read(m_nWidth))
+			SAFE_READ(stream.save_read(capType))
 			m_capType = (eCapType)capType;
-			SAFE_READ(pStream->save_read(m_bRelease))
+			SAFE_READ(stream.save_read(m_bRelease))
 			if(m_bRelease)
 			{
 				m_pTexture = new CBitmap();
 				m_pTexture->load(&stream);
 			}
 			uint32 nCount = 0;
-			SAFE_READ(pStream->save_read(nCount))
+			SAFE_READ(stream.save_read(nCount))
 			for (uint32 i = 0; i < nCount; ++i)
 			{
 				GUnits val1, val2;
-				SAFE_READ(pStream->save_read(val1))
-				SAFE_READ(pStream->save_read(val2))
+				SAFE_READ(stream.save_read(val1))
+				SAFE_READ(stream.save_read(val2))
 				m_vecTemplates.push_back(std::make_pair(val1, val2));
 			}
 			return true;

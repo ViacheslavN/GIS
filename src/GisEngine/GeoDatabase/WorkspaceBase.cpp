@@ -109,8 +109,10 @@ namespace GisEngine
 			for(uint32 i = 0; i < nSize; ++i)
 			{
 				IWorkspacePtr pWks = LoaderWorkspace::LoadWorkspace(&stream);
-				if(pWks.get())
-					AddWorkspace(pWks.get());
+				if(!pWks.get())
+					return false;
+
+				AddWorkspace(pWks.get());
 			}
 
 
