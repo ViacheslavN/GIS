@@ -457,10 +457,10 @@ namespace embDB
 		void setFoundIndex(int32 nFoundIndex){m_nFoundIndex = nFoundIndex;}
 		TParentNodePtr& parentNodePtr(){return m_pParent;}
 
-		void SetOneSplit(bool bOneSplit )
+		void SetMinSplit(bool bOneSplit )
 		{
-			m_LeafNode.SetOneSplit(bOneSplit);
-			m_InnerNode.SetOneSplit(bOneSplit);
+			m_LeafNode.SetMinSplit(bOneSplit);
+			m_InnerNode.SetMinSplit(bOneSplit);
 		}
 
 		virtual void clear()

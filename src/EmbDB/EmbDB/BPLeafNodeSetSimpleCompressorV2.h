@@ -113,7 +113,7 @@ namespace embDB
 		{
 			return  sizeof(TKey);
 		}
-		void SplitIn(uint32 nBegin, uint32 nEnd, BPLeafNodeSetSimpleCompressorV2 *pCompressor)
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPLeafNodeSetSimpleCompressorV2 *pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
 		{
 			uint32 nSize = nEnd- nBegin;
 

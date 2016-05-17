@@ -221,7 +221,7 @@ namespace embDB
 		{
 			return  (sizeof(TKey) + sizeof(TLink));
 		}
-		void SplitIn(uint32 nBegin, uint32 nEnd, TBPBaseInnerNodeCompressor *pCompressor)
+		void SplitIn(uint32 nBegin, uint32 nEnd, TBPBaseInnerNodeCompressor *pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
 		{
 			uint32 nSize = nEnd- nBegin;
 

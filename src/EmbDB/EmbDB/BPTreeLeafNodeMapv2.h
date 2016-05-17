@@ -65,18 +65,62 @@ namespace embDB
 				return -1;
 			return nIndex;
 		}
+
+
+	/*	int GetSplitIndex()
+		{
+			if(!this->m_bMinSplit)
+				return  this->m_leafKeyMemSet.size()/2;
+
+
+			int nIndex = this->m_leafKeyMemSet.size() - 1;
+
+			while(true)
+			{
+
+
+				this->m_pCompressor->remove(nIndex, this->m_leafKeyMemSet[nIndex], this->m_leafValueMemSet[nIndex]);
+				if(!isNeedSplit())
+					break;
+				--nIndex;
+			}
+
+			assert(nIndex > 0);
+			return nIndex;
+		}*/
+
 		int SplitIn(BPTreeLeafNodeMapv2 *pNode, TKey* pSplitKey)
 		{
  			TCompressor* pNewNodeComp = pNode->m_pCompressor;
-
-			if(this->m_bOneSplit)
+			if(this->m_bMinSplit)
 			{
 
-				this->m_pCompressor->remove(this->m_leafKeyMemSet.size() - 1, this->m_leafKeyMemSet.back(), this->m_leafValueMemSet.back());
-				int nSplitIndex = this->SplitOne(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
-				this->SplitOne(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
-			
-				pNewNodeComp->insert(0, pNode->m_leafKeyMemSet[0], pNode->m_leafValueMemSet[0]);
+				int nSplitIndex = this->m_leafKeyMemSet.size() - 1;
+				
+				while(true)
+				{
+				
+					this->m_pCompressor->remove(nSplitIndex, this->m_leafKeyMemSet[nSplitIndex], this->m_leafValueMemSet[nSplitIndex]);
+					if(!isNeedSplit())
+						break;
+					--nSplitIndex;
+				}
+
+				assert(nSplitIndex > 0);
+				int nCount = this->m_leafKeyMemSet.size() - nSplitIndex;
+				if(nCount == 1)
+				{
+					this->SplitOne(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
+					this->SplitOne(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
+					pNewNodeComp->insert(0, pNode->m_leafKeyMemSet[0], pNode->m_leafValueMemSet[0]);
+				}
+				else
+				{
+					uint32 nSize = this->m_leafValueMemSet.size();
+					this->SplitInVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey, nSplitIndex);
+					this->SplitInVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL, nSplitIndex);
+					this->m_pCompressor->SplitIn(nSplitIndex, nSize, pNewNodeComp, false, true);
+				}
 				return nSplitIndex;
 			}
 			else
@@ -87,8 +131,6 @@ namespace embDB
 				this->m_pCompressor->SplitIn(0, nSplitIndex, pNewNodeComp);
 				return nSplitIndex;
 			}
-
-	
 		}
 
 

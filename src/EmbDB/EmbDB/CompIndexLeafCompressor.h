@@ -147,7 +147,7 @@ namespace embDB
 		{
 			return  m_pCompParams->getRowSize() + sizeof(TValue);
 		}
-		void SplitIn(uint32 nBegin, uint32 nEnd, BPLeafCompIndexCompressor *pCompressor)
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPLeafCompIndexCompressor *pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
 		{
 			uint32 nSize = nEnd- nBegin;
 

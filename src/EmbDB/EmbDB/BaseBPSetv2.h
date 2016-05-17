@@ -80,7 +80,7 @@ namespace embDB
 		 ,m_bCheckCRC32(bCheckCRC32)
 	//	 ,m_BTreeInfo(bCheckCRC32)
 		 ,m_nStateTree(eBPTNoChange)
-		 ,m_bOneSplit(false)
+		 ,m_bMinSplit(false)
 		 ,m_nNodesPageSize(nNodesPageSize)
 		 ,m_pBPTreeStatistics(NULL)
 		{
@@ -149,9 +149,9 @@ namespace embDB
 			m_pTransaction  = pTransaction;
 		}
 
-		void SetMinSplit(bool bOneSplit)
+		void SetMinSplit(bool bMinSplit)
 		{
-			m_bOneSplit = bOneSplit;
+			m_bMinSplit = bMinSplit;
 			
 		}
 
@@ -301,7 +301,7 @@ namespace embDB
 		TBTreeNode *pNode = CreateNode(-1, bIsLeaf);/*new TBTreeNode(-1, m_pAlloc, -1, m_bMulti, bIsLeaf, m_bCheckCRC32,  m_InnerCompParams.get(),
 				 m_LeafCompParams.get() );*/
 			pNode->Load(m_pTransaction);
-			pNode->SetOneSplit(m_bOneSplit);
+			pNode->SetMinSplit(m_bMinSplit);
 			//m_BTreeInfo.AddNode(1, bIsLeaf);
 			if(bIsRoot)
 				pNode->setFlags(ROOT_NODE, true);
@@ -334,7 +334,7 @@ namespace embDB
 					delete pBNode;
 					return TBTreeNodePtr(NULL);
 				}
-
+				pBNode->SetMinSplit(m_bMinSplit);
 				if(m_pBPTreeStatistics)
 					m_pBPTreeStatistics->LoadNode(pBNode->isLeaf());
 
@@ -2128,7 +2128,7 @@ namespace embDB
 		std::auto_ptr<TLeafCompressorParams> m_LeafCompParams;
 		std::auto_ptr<TInnerCompressorParams> m_InnerCompParams;
 		uint32 m_nStateTree;
-		bool m_bOneSplit;
+		bool m_bMinSplit;
 
 		CBPTreeStatistics* m_pBPTreeStatistics;
 	};

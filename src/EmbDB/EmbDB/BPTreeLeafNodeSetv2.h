@@ -27,7 +27,7 @@ namespace embDB
 
 		BPTreeLeafNodeSetv2Base(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
 		m_leafKeyMemSet(pAlloc),  m_pCompressor(0),	m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti),
-			m_pAlloc(pAlloc), m_bOneSplit(false), m_nPageSize(nPageSize)
+			m_pAlloc(pAlloc), m_bMinSplit(false), m_nPageSize(nPageSize)
 
 		{
 		
@@ -183,14 +183,15 @@ namespace embDB
 			return true;
 		}
 		template<class TVector, class TVecVal>
-		int SplitInVec(TVector& src, TVector& dst, TVecVal* pSplitVal)
+		int SplitInVec(TVector& src, TVector& dst, TVecVal* pSplitVal, int32 _nBegin = -1, int32 _nEnd = -1)
 		{
-			uint32 nSize = src.size()/2;
-			dst.copy(src, 0, nSize, src.size());
-			src.resize(nSize);
+			uint32 nBegin = _nBegin == -1 ? src.size()/2 : _nBegin;
+			uint32 nEnd = _nEnd == -1 ? src.size() : _nEnd;
+			dst.copy(src, 0, nBegin, nEnd);
+			src.resize(nEnd - nBegin);
 			if(pSplitVal)
 				*pSplitVal = dst[0];
-			return (int)nSize;
+			return (int)nBegin;
 
 		}
 
@@ -213,13 +214,17 @@ namespace embDB
 
 		}
 
+
+		
+
 		int  SplitIn(BPTreeLeafNodeSetv2Base *pNode, TKey* pSplitKey)
 		{
 
 			TLeafMemSet& newNodeMemSet = pNode->m_leafKeyMemSet;
 			TCompressor* pNewNodeComp = pNode->m_pCompressor;
+
 	
-			if(m_bOneSplit)
+			if(m_bMinSplit)
 			{
 				m_pCompressor->remove(m_leafKeyMemSet.size() -1, m_leafKeyMemSet.back());
 				int nSplitIndex = SplitOne(m_leafKeyMemSet, newNodeMemSet, pSplitKey);
@@ -229,9 +234,6 @@ namespace embDB
 			}
 			else
 			{
-
-			
-
 				int nSplitIndex = SplitInVec(m_leafKeyMemSet, newNodeMemSet, pSplitKey);
 				m_pCompressor->SplitIn(0, nSplitIndex, pNewNodeComp);
 				return nSplitIndex;
@@ -239,7 +241,6 @@ namespace embDB
 
 
 		}
-
 
 
 		int  SplitIn(BPTreeLeafNodeSetv2Base *pLeftNode, BPTreeLeafNodeSetv2Base *pRightNode, TKey* pSplitKey)
@@ -365,9 +366,9 @@ namespace embDB
 			return comp.EQ(key, m_leafKeyMemSet[nIndex]);
 		}
 		
-		void SetOneSplit(bool bOneSplit )
+		void SetMinSplit(bool bMinSplit )
 		{
-			m_bOneSplit = bOneSplit;
+			m_bMinSplit = bMinSplit;
 		}
 		virtual void clear()
 		{
@@ -398,7 +399,7 @@ namespace embDB
 		TLink m_nPrev;
 		bool m_bMulti;
 		CommonLib::alloc_t *m_pAlloc;
-		bool m_bOneSplit;
+		bool m_bMinSplit;
 		uint32 m_nPageSize;
 		//TComporator m_comp;
 	};

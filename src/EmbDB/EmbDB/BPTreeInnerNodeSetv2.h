@@ -33,7 +33,7 @@ namespace embDB
 		
 		BPTreeInnerNodeSetv2( CommonLib::alloc_t *pAlloc,  bool bMulti, uint32 nPageSize) :
 		  m_pCompressor(0), m_nLess(-1),  m_innerKeyMemSet(pAlloc), m_innerLinkMemSet(pAlloc), m_bMulti(bMulti),
-			  m_pAlloc(pAlloc), m_bOneSplit(false), m_nPageSize(nPageSize)
+			  m_pAlloc(pAlloc), m_bMinSplit(false), m_nPageSize(nPageSize)
 		{
 			
 		}
@@ -219,8 +219,48 @@ namespace embDB
 			TLinkMemSet& newNodeLinkSet = pNode->m_innerLinkMemSet;
 			TCompressor* pNewNodeComp = pNode->m_pCompressor;
 
-			if(m_bOneSplit)
+			if(m_bMinSplit)
 			{
+
+				//uint32 nNewSize = m_innerKeyMemSet.size() - 2;
+				uint32 nLessIndex = m_innerKeyMemSet.size() - 2;
+				uint32 nSplitIndex = m_innerKeyMemSet.size() - 1;
+
+
+
+				newNodeKeySet.push_back(m_innerKeyMemSet[nSplitIndex]);
+				newNodeLinkSet.push_back(m_innerLinkMemSet[nSplitIndex]);
+
+				m_pCompressor->remove(nSplitIndex, m_innerKeyMemSet[nSplitIndex], m_innerLinkMemSet[nSplitIndex]);
+				pNewNodeComp->insert(0, newNodeKeySet[0], newNodeLinkSet[0]);
+				while(true)
+				{				
+
+					if(!isNeedSplit())
+						break;
+
+					m_pCompressor->remove(nLessIndex, m_innerKeyMemSet[nLessIndex],  m_innerLinkMemSet[nLessIndex]);
+
+					newNodeKeySet.push_back(m_innerKeyMemSet[nLessIndex]);
+					newNodeLinkSet.push_back(m_innerLinkMemSet[nLessIndex]);
+
+					pNewNodeComp->insert(newNodeKeySet.size() - 1, newNodeKeySet.back(), newNodeLinkSet.back());
+
+					--nLessIndex;
+				}
+				assert(nLessIndex > 0);
+
+				m_pCompressor->remove(nLessIndex, m_innerKeyMemSet[nLessIndex],  m_innerLinkMemSet[nLessIndex]);
+
+				*pSplitKey =  m_innerKeyMemSet[nLessIndex];
+				pNode->m_nLess = m_innerLinkMemSet[nLessIndex];
+
+				//nNewSize = m_innerKeyMemSet.size() - nLessIndex;
+
+				m_innerKeyMemSet.resize(nLessIndex);
+				m_innerLinkMemSet.resize(nLessIndex);
+
+				/*
 				uint32 nNewSize = m_innerKeyMemSet.size() - 2;
 				uint32 nLessIndex = m_innerKeyMemSet.size() - 2;
 				uint32 nSplitIndex = m_innerKeyMemSet.size() - 1;
@@ -246,7 +286,7 @@ namespace embDB
 
 
 				m_innerKeyMemSet.resize(nNewSize);
-				m_innerLinkMemSet.resize(nNewSize);
+				m_innerLinkMemSet.resize(nNewSize);*/
 
 			}
 			else
@@ -452,9 +492,9 @@ namespace embDB
 		{
 			return comp.EQ(key, m_innerKeyMemSet[nIndex]);
 		}
-		void SetOneSplit(bool bOneSplit )
+		void SetMinSplit(bool bMinSplit )
 		{
-			m_bOneSplit = bOneSplit;
+			m_bMinSplit = bMinSplit;
 		}
 		virtual void clear()
 		{
@@ -491,7 +531,7 @@ namespace embDB
 		//TComporator m_comp;
 		TCompressor *m_pCompressor;
 		CommonLib::alloc_t *m_pAlloc;
-		bool m_bOneSplit;
+		bool m_bMinSplit;
 		uint32 m_nPageSize;
 	};	
 }

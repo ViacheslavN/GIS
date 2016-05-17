@@ -174,14 +174,16 @@ namespace embDB
 		{
 			return  (sizeof(TKey) + sizeof(TValue)) ;
 		}
-		void SplitIn(uint32 nBegin, uint32 nEnd, TBaseLeafNodeComp *pCompressor)
+		void SplitIn(uint32 nBegin, uint32 nEnd, TBaseLeafNodeComp *pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
 		{
 			uint32 nSize = nEnd- nBegin;
 
 			m_nCount -= nSize;
 			pCompressor->m_nCount += nSize;
-			recalc();
-			pCompressor->recalc();
+			if(bRecalcSrc)
+				recalc();
+			if(bRecalcDst)
+				pCompressor->recalc();
  
 		}
 
