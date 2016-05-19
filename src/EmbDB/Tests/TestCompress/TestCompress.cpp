@@ -15,12 +15,13 @@ uint32 compressStaticFile(const wchar_t *pszFileNameIn, const wchar_t* pszCompre
 void DecompressFile(uint32 nFileSize, const wchar_t *pszCompressFile, const wchar_t* pszFileOut);
 void DecompressStaticFile(uint32 nFileSize, const wchar_t *pszCompressFile, const wchar_t* pszFileOut);
 void TestDoubleCompress();
+void ZlibTest();
 int _tmain(int argc, _TCHAR* argv[])
 {
-
+	ZlibTest();
 	//TestDiffComp();
 	//TestNumLen();
-	TestDoubleCompress();
+	//TestDoubleCompress();
 	//TestBWTSort();
 	return 0;
 

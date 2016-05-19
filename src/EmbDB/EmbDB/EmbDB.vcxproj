@@ -240,6 +240,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../CommonLibrary;../../ThirdParty</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -270,6 +271,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../CommonLibrary;../../ThirdParty</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -303,7 +305,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>../../CommonLibrary;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CommonLibrary;../../ThirdParty</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -341,6 +343,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../CommonLibrary;../../ThirdParty</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -379,6 +382,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../CommonLibrary;../../ThirdParty</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -420,7 +424,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>../../CommonLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../CommonLibrary;../../ThirdParty</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -534,8 +538,10 @@
     <ClInclude Include="FieldIteratorBase.h" />
     <ClInclude Include="Fields.h" />
     <ClInclude Include="FieldSet.h" />
+    <ClInclude Include="FixedStringBWTCompressor.h" />
     <ClInclude Include="FixedStringCompressor.h" />
     <ClInclude Include="FixedStringField.h" />
+    <ClInclude Include="FixedStringZLibCompressor.h" />
     <ClInclude Include="FormatDouble.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IndexIteratorBase.h" />
@@ -671,6 +677,7 @@
     <ClInclude Include="VariantField.h" />
     <ClInclude Include="PageVector.h" />
     <ClInclude Include="WriteStreamPage.h" />
+    <ClInclude Include="ZLibCompressor.h" />
     <ClInclude Include="ZOrderCompressBase.h" />
   </ItemGroup>
   <ItemGroup>
@@ -741,6 +748,7 @@
     <ClCompile Include="Transactions.cpp" />
     <ClCompile Include="TranStorage.cpp" />
     <ClCompile Include="TranUndoPageManager.cpp" />
+    <ClCompile Include="ZLibCompressor.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

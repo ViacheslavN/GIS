@@ -34,6 +34,9 @@
     <Filter Include="DoubleCompress">
       <UniqueIdentifier>{5058a9ff-1274-498a-a9e6-f92e02d91a8c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ZlibTest">
+      <UniqueIdentifier>{74a36aac-b02f-4d3a-9580-af920f60cf39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="TestAC.h">
@@ -111,6 +114,9 @@
     </ClCompile>
     <ClCompile Include="TestDoubleCompress.cpp">
       <Filter>DoubleCompress</Filter>
+    </ClCompile>
+    <ClCompile Include="zlibTest.cpp">
+      <Filter>ZlibTest</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

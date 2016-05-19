@@ -214,6 +214,18 @@
     <Filter Include="DB\Fields\double">
       <UniqueIdentifier>{d0da8880-b75a-4c53-a4ee-a12b9e383353}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\Fields\string\fixedStringField\compress">
+      <UniqueIdentifier>{97285942-b542-4338-934b-b3b787d28236}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Fields\string\fixedStringField\compress\BWT">
+      <UniqueIdentifier>{1b070496-43b8-41f4-b209-44aaa2f71537}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Fields\string\fixedStringField\compress\ZLIB">
+      <UniqueIdentifier>{091ddc79-5095-4ad7-9606-707ef7e3ea8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils\compress\zlib">
+      <UniqueIdentifier>{a5502783-6777-470f-9cff-33253e44634f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -1068,6 +1080,21 @@
     <ClInclude Include="BPMapRectSplitSpatialIterator.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringBWTCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField\compress\BWT</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringZLibCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField\compress\ZLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="ZLibCompressor.h">
+      <Filter>utils\compress\zlib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1198,6 +1225,9 @@
     </ClCompile>
     <ClCompile Include="BPTreeStatistics.cpp">
       <Filter>DB\BPTrees\BtreePlusv2</Filter>
+    </ClCompile>
+    <ClCompile Include="ZLibCompressor.cpp">
+      <Filter>utils\compress\zlib</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
