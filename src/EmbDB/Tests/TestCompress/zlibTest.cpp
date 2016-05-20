@@ -6,6 +6,7 @@
 
 void ZlibTest()
 {
+
 	CommonLib::CWriteMemoryStream stream, stream1, stream2;
 
 	CommonLib::CString str;

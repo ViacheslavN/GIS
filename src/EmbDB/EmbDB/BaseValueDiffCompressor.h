@@ -79,10 +79,10 @@ namespace embDB
 					}
 					else
 					{
-						int64 nPrev =  vecValues[nIndex - 1];
+						TValue nPrev =  vecValues[nIndex - 1];
 
-						int64 nNext =  vecValues[nIndex + 1];
-						int64 nNewSymbol = nNext - nPrev;
+						TValue nNext =  vecValues[nIndex + 1];
+						TValue nNewSymbol = nNext - nPrev;
 
 						AddDiffSymbol(nNewSymbol);
 

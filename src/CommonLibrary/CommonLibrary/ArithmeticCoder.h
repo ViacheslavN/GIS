@@ -125,7 +125,7 @@ namespace CommonLib
 		static const TCodeValue  _ThirdQuarter = (3 * _FirstQuarter);
 		static const _TCodeValue MaxRange = _FirstQuarter - 1;
 
-		TACDecoder(IReadStream* pStream) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue),
+		TACDecoder(IReadStream* pStream = NULL) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue),
 			m_nBitsRead(0), m_nValue(0), m_nBitsBuf(0), m_nCurrBit(8)
 		{}
 
@@ -145,9 +145,16 @@ namespace CommonLib
 			m_nCurrBit++;
 			return nBit;
 		}
+
+
+		void SetStream(IReadStream* pStream)
+		{
+			m_pStream = pStream;
+		}
+
 		virtual void StartDecode()
 		{
-			for (int i = 1; i<= _nValueBits; i++)
+	 		for (int i = 1; i<= _nValueBits; i++)
 			{
 
 				TCodeValue nBit = GetBit();

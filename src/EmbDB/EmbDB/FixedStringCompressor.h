@@ -19,7 +19,7 @@ namespace embDB
 		}
 		~TFixedCompress()
 		{
-			Clear();
+			Free();
 		}
 
 		void init(TValueMemSet* pVecValues)
@@ -85,7 +85,7 @@ namespace embDB
 		{
 			return m_nCount;
 		}
-		void Clear()
+		void Free()
 		{
 			for (uint32 i = 0; i < m_pValueMemset->size(); ++i )
 			{
@@ -117,11 +117,11 @@ namespace embDB
 			}
 			~TBPFixedStringLeafCompressor()
 			{				
-				this->m_ValueCompressor.Clear();
+				this->m_ValueCompressor.Free();
 			}
-			void Clear()
+			void Free()
 			{
-				this->m_ValueCompressor.Clear();
+				this->m_ValueCompressor.Free();
 			}
 
 			template<typename _Transactions  >

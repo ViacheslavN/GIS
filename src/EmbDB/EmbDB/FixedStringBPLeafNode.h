@@ -33,7 +33,7 @@ namespace embDB
 		~TFixedStringLeafNode()
 		{
 			if(this->m_pCompressor)
-				this->m_pCompressor->Clear();
+				this->m_pCompressor->Free();
 		}
 
 

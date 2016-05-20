@@ -217,14 +217,14 @@
     <Filter Include="DB\Fields\string\fixedStringField\compress">
       <UniqueIdentifier>{97285942-b542-4338-934b-b3b787d28236}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\Fields\string\fixedStringField\compress\BWT">
-      <UniqueIdentifier>{1b070496-43b8-41f4-b209-44aaa2f71537}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB\Fields\string\fixedStringField\compress\ZLIB">
       <UniqueIdentifier>{091ddc79-5095-4ad7-9606-707ef7e3ea8f}</UniqueIdentifier>
     </Filter>
     <Filter Include="utils\compress\zlib">
       <UniqueIdentifier>{a5502783-6777-470f-9cff-33253e44634f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Fields\string\fixedStringField\compress\BWT_DC">
+      <UniqueIdentifier>{1b070496-43b8-41f4-b209-44aaa2f71537}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1087,13 +1087,25 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringBWTCompressor.h">
-      <Filter>DB\Fields\string\fixedStringField\compress\BWT</Filter>
+      <Filter>DB\Fields\string\fixedStringField\compress\BWT_DC</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringZLibCompressor.h">
       <Filter>DB\Fields\string\fixedStringField\compress\ZLIB</Filter>
     </ClInclude>
     <ClInclude Include="ZLibCompressor.h">
       <Filter>utils\compress\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressStringLen.h">
+      <Filter>DB\Fields\string\fixedStringField\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="SignedNumLenDiffCompressor2.h">
+      <Filter>utils\compress</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1228,6 +1240,9 @@
     </ClCompile>
     <ClCompile Include="ZLibCompressor.cpp">
       <Filter>utils\compress\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="CompressStringLen.cpp">
+      <Filter>DB\Fields\string\fixedStringField\compress</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

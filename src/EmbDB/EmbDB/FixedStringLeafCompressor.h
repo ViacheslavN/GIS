@@ -52,13 +52,13 @@ namespace embDB
 
 		virtual ~BPFixedStringLeafNodeCompressor()
 		{
-			Clear();
+			Free();
 
 		}
-		void Clear()
+		void Free()
 		{
 
-			m_Compress.Clear();
+			m_Compress.Free();
 			return;
 
 			if(!m_pValueMemset)

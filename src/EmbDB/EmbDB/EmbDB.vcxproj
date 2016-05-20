@@ -524,6 +524,7 @@
     <ClInclude Include="CompressDoubleDiff.h" />
     <ClInclude Include="CompressorParams.h" />
     <ClInclude Include="CompressCompIndexParams.h" />
+    <ClInclude Include="CompressStringLen.h" />
     <ClInclude Include="CompressUtils.h" />
     <ClInclude Include="CounterField.h" />
     <ClInclude Include="CRC.h" />
@@ -606,6 +607,7 @@
     <ClInclude Include="ShapeTree.h" />
     <ClInclude Include="SignCompressor.h" />
     <ClInclude Include="SignedNumLenDiffCompress.h" />
+    <ClInclude Include="SignedNumLenDiffCompressor2.h" />
     <ClInclude Include="SimpleSearchCursor.h" />
     <ClInclude Include="SimpleSelectCursor.h" />
     <ClInclude Include="SpatialIndexBase.h" />
@@ -699,6 +701,7 @@
     <ClCompile Include="BPTreeStatistics.cpp" />
     <ClCompile Include="CompositeIndexKey.cpp" />
     <ClCompile Include="CompressCompIndexParams.cpp" />
+    <ClCompile Include="CompressStringLen.cpp" />
     <ClCompile Include="CRC.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="DBTranManager.cpp" />

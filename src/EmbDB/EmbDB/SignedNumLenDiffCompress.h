@@ -214,8 +214,6 @@ namespace embDB
 			bool bRangeCode = nFlag & 0x01;
 			this->m_nTypeFreq = (eCompressDataType)(nFlag>>1);
 			this->ReadDiffsLens(pStream);
-			//this->CalcRowBitSize();
-
 
 
 			uint32 FreqPrev[_nMaxBitsLens + 1 + 1];
@@ -250,6 +248,11 @@ namespace embDB
 
 
 		}
+
+
+
+
+
 	private:
 
 
