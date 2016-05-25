@@ -185,6 +185,9 @@ namespace CommonLib
 				return m_bitReadStream.readBit();
 				break;
 			}
+
+			assert(false);
+			return false;
 		}
 
 	private:

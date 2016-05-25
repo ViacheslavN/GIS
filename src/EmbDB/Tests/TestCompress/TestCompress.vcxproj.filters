@@ -37,6 +37,9 @@
     <Filter Include="ZlibTest">
       <UniqueIdentifier>{74a36aac-b02f-4d3a-9580-af920f60cf39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="StringCompress">
+      <UniqueIdentifier>{eb415e7b-dea5-4d90-bee3-566c763bc80e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="TestAC.h">
@@ -117,6 +120,9 @@
     </ClCompile>
     <ClCompile Include="zlibTest.cpp">
       <Filter>ZlibTest</Filter>
+    </ClCompile>
+    <ClCompile Include="StringCompress.cpp">
+      <Filter>StringCompress</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -160,37 +160,6 @@ namespace embDB
 			m_pBPTreeStatistics = pBPTreeStatistics;
 		}
 
-		/*void clear(bool bNotSetFreePage = true)
-		{
-			typename TNodesCache::TCacheSet::iterator it =	m_Cache.m_set.begin();
-			while(!it.isNull())
-			{
-				TBTreeNode* pBNode = it.value().pListEl->obj_;
-				delete pBNode;
-				it.next();
-			}
-			//m_Chache.m_set.clear();
-			//m_Chache.clear();
-			if(m_pRoot.get())
-			{
-				if(bNotSetFreePage)
-				{
-					//TO DO нужно удалять или как то пометить свободные файловые страницы
-				}
-				
-
-				deleteNode(m_pRoot.get());
-				m_pRoot = newNode(true, true);
-				m_pRoot->setParent(NULL);
-				m_pRoot->setFlags(ROOT_NODE, true);
-				m_pRoot->Save(m_pTransaction);
-			//	m_BTreeInfo.clear();
-			//	m_BTreeInfo.Save(m_pTransaction);
-				saveBTreeInfo();
-			}
-			m_nStateTree |=(eBPTDeleteLeafNode | eBPTDeleteInnerNode |  eBPTNewRootNode);
-		}*/
-
 		void setRootPage(int64 nPageBTreeInfo)
 		{
 			m_nPageBTreeInfo = nPageBTreeInfo;
@@ -253,8 +222,9 @@ namespace embDB
 				TBTreeNode* pBNode = it.object();
 				if(pBNode->getFlags() & CHANGE_NODE)
 				{
-					pBNode->Save(m_pTransaction);
-					pBNode->setFlags(CHANGE_NODE, false);
+					SaveNode(pBNode);
+					//pBNode->Save(m_pTransaction);
+					//pBNode->setFlags(CHANGE_NODE, false);
 
 					if(m_pBPTreeStatistics)
 						m_pBPTreeStatistics->SaveNode(pBNode->isLeaf());
@@ -263,8 +233,10 @@ namespace embDB
 			}
 			if(m_pRoot->getFlags() & CHANGE_NODE)
 			{
-				m_pRoot->Save(m_pTransaction);
-				m_pRoot->setFlags(CHANGE_NODE, false);
+				//m_pRoot->Save(m_pTransaction);
+				//m_pRoot->setFlags(CHANGE_NODE, false);
+
+				SaveNode(m_pRoot.get());
 
 				if(m_pBPTreeStatistics)
 					m_pBPTreeStatistics->SaveNode(m_pRoot->isLeaf());
@@ -349,7 +321,8 @@ namespace embDB
 						{
 							if(pDelNode->getFlags() & CHANGE_NODE)
 							{
-								pDelNode->Save(m_pTransaction);
+								//pDelNode->Save(m_pTransaction);
+								SaveNode(pDelNode);
 								if(m_pBPTreeStatistics)
 									m_pBPTreeStatistics->SaveNode(pDelNode->isLeaf());
 							}
@@ -403,7 +376,8 @@ namespace embDB
 				if( pDelNode->getFlags() & CHANGE_NODE)
 				{
 
-					pDelNode->Save(m_pTransaction);
+					//pDelNode->Save(m_pTransaction);
+					SaveNode(pDelNode);
 					if(m_pBPTreeStatistics)
 						m_pBPTreeStatistics->SaveNode(pDelNode->isLeaf());
 				}
@@ -626,7 +600,29 @@ namespace embDB
 		return bRet;	
 	}
 	
+
+	void SaveNode(TBTreeNode *pNode)
+	{
+		CheckNodeBeforeSave(pNode);
+		pNode->Save(m_pTransaction);
+		pNode->setFlags(CHANGE_NODE, false);
+	}
 	
+
+	void CheckNodeBeforeSave(TBTreeNode *pNode)
+	{
+		pNode->PreSave(m_pTransaction);
+		if(pNode->isLeaf())
+		{
+			CheckLeafNode(pNode);
+		}
+		else if(pNode->isNeedSplit())
+		{
+			splitInnerNode(pNode);
+		}
+	}
+
+
 	template<class TIterator, class TKeyFunctor>
 	bool insertLast(TKeyFunctor& keyFunctor, TKey* pKey = NULL,  TIterator* pRetIterator = NULL)
 		{

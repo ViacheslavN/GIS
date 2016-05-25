@@ -16,10 +16,14 @@ namespace CommonLib
 	public:
 		 
 				static const _TCodeValue MaxRange = Bottom;
-				TRangeEncoder(IWriteStream* pStream, TCodeValue nMaxSize = 0) : 
+				TRangeEncoder(IWriteStream* pStream = NULL, TCodeValue nMaxSize = 0) : 
 				m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1), m_nMaxSize(nMaxSize), m_WriteSize(0)
 				{
-					assert(m_pStream);
+					//assert(m_pStream);
+				}
+				void SetStream(IWriteStream* pStream)
+				{
+					m_pStream = pStream;
 				}
 				virtual bool EncodeSymbol(_TCodeValue SymbolLow, _TCodeValue SymbolHigh,_TCodeValue TotalRange)
 				{
@@ -94,11 +98,14 @@ namespace CommonLib
 		static const _TCodeValue MaxRange = Bottom;
 		typedef _TCodeValue TCodeValue;
 
-		TRangeDecoder(IReadStream* pStream) : m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1), m_nValue(0)
+		TRangeDecoder(IReadStream* pStream = NULL) : m_pStream(pStream) ,Low(0), Range((_TCodeValue)-1), m_nValue(0)
 		{
 
 		}
-
+		void SetStream(IReadStream* pStream)
+		{
+			m_pStream = pStream;
+		}
 		virtual void StartDecode()
 		{
 			for(int i=0;i<_nValueBits/8;i++)

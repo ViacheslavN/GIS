@@ -16,9 +16,14 @@ void DecompressFile(uint32 nFileSize, const wchar_t *pszCompressFile, const wcha
 void DecompressStaticFile(uint32 nFileSize, const wchar_t *pszCompressFile, const wchar_t* pszFileOut);
 void TestDoubleCompress();
 void ZlibTest();
+void TestStringCompress();
 int _tmain(int argc, _TCHAR* argv[])
 {
-	ZlibTest();
+
+	//CTestCompess test;
+	//test.compressFile(L"D:\\1.data", L"D:\\2.data");
+	TestStringCompress();
+	//ZlibTest();
 	//TestDiffComp();
 	//TestNumLen();
 	//TestDoubleCompress();
@@ -60,9 +65,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	compressStaticFile(sSrcFile.cwstr(), L"D:\\test\\files\\bib.static.compress");
 	DecompressStaticFile(nOutSize, L"D:\\test\\files\\bib.static.compress", L"D:\\test\\files\\bib.static.compress.decompress");
 	*/
-	CTestCompess test;
+	//CTestCompess test;
 	//test.compressFile(L"D:\\test\\files\\world_adm0.shp", L"D:\\test\\files\\world_adm0.compress");
-	test.TestCompress(L"D:\\test\\files");
+	//test.TestCompress(L"D:\\test\\files");
 	//test.compressFile(L"D:\\db\\1", L"D:\\db\\2");
 	//TestNumLen();
 	//TestDiffComp();

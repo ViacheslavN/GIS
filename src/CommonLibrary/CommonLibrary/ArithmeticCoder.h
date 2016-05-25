@@ -17,13 +17,19 @@ namespace CommonLib
 		static const TCodeValue  _ThirdQuarter = (3 * _FirstQuarter);
 		static const _TCodeValue MaxRange = _FirstQuarter - 1;
 
-		TACEncoder(IWriteStream* pStream, uint32 nMaxSize = 0) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue), m_nScale(0),
+		TACEncoder(IWriteStream* pStream = NULL, uint32 nMaxSize = 0) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue), m_nScale(0),
 			m_nBitsBuf(0), m_nCurrBit(0), m_nMaxSize(nMaxSize)
 #ifdef _DEBUG
 			, m_nBitsWrite(0)
 #endif
 
 		{}
+
+		void SetStream(IWriteStream* pStream)
+		{
+			m_pStream = pStream;
+		}
+
 
 		void BitsPlusFollow(bool bBit)
 		{

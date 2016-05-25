@@ -522,7 +522,10 @@ namespace embDB
 		{
 			return this->m_pCompressor->isHalfEmpty();
 		}
+		virtual  void PreSave()
+		{
 
+		}
 	public:
 		TLink m_nLess;
 		TKeyMemSet m_innerKeyMemSet;

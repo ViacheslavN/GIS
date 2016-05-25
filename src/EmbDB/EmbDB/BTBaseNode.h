@@ -29,6 +29,7 @@ namespace embDB
 		virtual bool isLeaf() const = 0;
 		virtual  bool Load(CommonLib::FxMemoryReadStream& stream) = 0;
 		virtual  bool Save(CommonLib::FxMemoryWriteStream& stream) = 0;
+		virtual  void PreSave() = 0;
 		virtual uint32 size() const = 0;
 		virtual uint32 headSize() const = 0;
 		virtual uint32 rowSize() const = 0;

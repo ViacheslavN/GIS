@@ -145,12 +145,12 @@ namespace embDB
 			m_compreesType = (eCompressType)(nFlag & 0x03);
 			if(m_compreesType == ONE_SIGN)
 			{
-				m_bSign = nFlag & (1 << 2);
+				m_bSign = nFlag & (1 << 2) ? true : false;
 			}
 			else if(m_compreesType == COMPRESS_POS)
 			{
 
-				m_bSign = nFlag & (1 << 2);
+				m_bSign = nFlag & (1 << 2) ? true : false;
 				m_DataType = GetCompressType(nCount);
 
 				uint32 nCount = ReadCompressValue<uint32>(m_DataType, pStream);

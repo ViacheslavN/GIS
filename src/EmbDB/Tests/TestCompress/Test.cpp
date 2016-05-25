@@ -12,7 +12,8 @@
 #include <iostream>
 #include <vector>
 #include "CommonLibrary/algorithm.h"
-
+#include "CommonLibrary/ArithmeticCoder.h"
+#include "CommonLibrary/RangeCoder.h"
 double Log2( double n );
 
 
@@ -22,10 +23,10 @@ class TestCompressor
 public:
 	static const uint32 _nFileBufSize = 5 *1024*1024;
 	typedef _TCodeValue TCodeValue;
-	typedef embDB::TACEncoder<TCodeValue, _nValueBit/2> TACEncoder;
-	typedef embDB::TACDecoder<TCodeValue, _nValueBit/2> TACDecoder;
-	typedef embDB::TRangeEncoder<TCodeValue, _nValueBit> TRangeEncoder; 
-	typedef embDB::TRangeDecoder<TCodeValue, _nValueBit> TRangeDecoder; 
+	typedef CommonLib::TACEncoder<TCodeValue, _nValueBit/2> TACEncoder;
+	typedef CommonLib::TACDecoder<TCodeValue, _nValueBit/2> TACDecoder;
+	typedef CommonLib::TRangeEncoder<TCodeValue, _nValueBit> TRangeEncoder; 
+	typedef CommonLib::TRangeDecoder<TCodeValue, _nValueBit> TRangeDecoder; 
 
 	CommonLib::CReadMemoryStream m_pReadStream;
 	CommonLib::CWriteMemoryStream m_pWriteStream;

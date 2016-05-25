@@ -390,7 +390,10 @@ namespace embDB
 		{
 			return this->m_pCompressor->isHalfEmpty();
 		}
-		
+		virtual  void PreSave()
+		{
+
+		}
 
 	public:
 		TCompressor * m_pCompressor;

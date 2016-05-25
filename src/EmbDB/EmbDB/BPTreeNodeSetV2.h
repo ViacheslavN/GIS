@@ -87,6 +87,10 @@ namespace embDB
 		
 			return LoadFromPage(pFilePage.get(), pTransactions);
 		}
+		void PreSave(Transaction* pTransactions)
+		{
+			m_pBaseNode->PreSave();
+		}
 		bool Save(Transaction* pTransactions)
 		{
 		
