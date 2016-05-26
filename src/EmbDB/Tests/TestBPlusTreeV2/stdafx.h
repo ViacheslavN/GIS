@@ -15,4 +15,5 @@
 #include <algorithm>
 #include <vector>
 #include <set>
+#include "zlib/zlib_lib.h"
 // TODO: reference additional headers your program requires here

@@ -24,12 +24,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	// TestInsert();
 	//TestBPVector();
 	//TestBRteeSet();
-	TestBRteeMap();
+	//TestBRteeMap();
 	//testUndo();
-	//testRedo();
+	////testRedo();
 
 
-	//TestBPFixedStringTree();
+	TestBPFixedStringTree();
 	//TestBPStringTree();
 	//TestTreeBlob();
 	return 0;

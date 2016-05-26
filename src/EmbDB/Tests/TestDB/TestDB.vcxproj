@@ -103,7 +103,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../../CommonLibrary/Output;../../Output;../../../ThirdParty/ShapeLib/lib;../../../GisEngine/Output;../../../ThirdParty/proj4/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../CommonLibrary/Output;../../Output;../../../ThirdParty/ShapeLib/lib;../../../GisEngine/Output;../../../ThirdParty/proj4/lib;../../../ThirdParty/zlib/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

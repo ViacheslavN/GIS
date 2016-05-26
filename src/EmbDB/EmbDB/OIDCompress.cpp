@@ -7,7 +7,7 @@ namespace embDB
 {
 
 
-	OIDCompressor::OIDCompressor(CommonLib::alloc_t *pAlloc, CompressorParamsBaseImp *pParams , uint32 nError) : m_NumLenComp(nError), m_DiffComp(nError)
+	OIDCompressor::OIDCompressor(CommonLib::alloc_t *pAlloc, uint32 nPageSize, CompressorParamsBaseImp *pParams , uint32 nError) : m_NumLenComp(nError), m_DiffComp(nError)
 	{
 
 	}

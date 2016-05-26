@@ -9,7 +9,7 @@ namespace embDB
 	public:
 
 		template _TValue TValue;
-		TEmptyValueCompress(CommonLib::alloc_t* pAlloc, CompressorParamsBaseImp *pParams) : m_nCount(0)
+		TEmptyValueCompress(CommonLib::alloc_t* pAlloc, uint32 nPageSize, CompressorParamsBaseImp *pParams) : m_nCount(0)
 		{
 			
 		}

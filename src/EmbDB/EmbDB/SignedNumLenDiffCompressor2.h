@@ -69,6 +69,8 @@ namespace embDB
 		{
 			TBase::clear();
 			m_SignCompressor.clear();
+			memset(m_FreqPrev, 0, sizeof(m_FreqPrev));
+			m_nFlag = 0;
 		}
 
 

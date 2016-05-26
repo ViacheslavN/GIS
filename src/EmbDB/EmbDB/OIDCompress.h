@@ -41,7 +41,7 @@ namespace embDB
 	 
 		public:
 
-			OIDCompressor(CommonLib::alloc_t *pAlloc, CompressorParamsBaseImp *pParams , uint32 nError = 200);
+			OIDCompressor(CommonLib::alloc_t *pAlloc, uint32 nPageSize, CompressorParamsBaseImp *pParams , uint32 nError = 200);
 			~OIDCompressor();
 
 			void AddSymbol(uint32 nSize,  int nIndex, int64 nOID, const embDB::TBPVector<int64>& vecOIDs);

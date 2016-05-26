@@ -38,7 +38,7 @@ namespace embDB
 
 		BPFixedStringLeafNodeCompressor(uint32 nPageSize, Transaction *pTran , CommonLib::alloc_t *pAlloc,	TLeafCompressorParams* pParams,
 			TLeafKeyMemSet *pKeyMemset, TLeafValueMemSet *pValueMemSet) : m_nCount(0), m_pAlloc(pAlloc), m_pLeafCompParams(pParams),
-			m_nStringDataSize(0), m_pValueMemset(pValueMemSet), m_pKeyMemSet(pKeyMemset), m_nPageSize(nPageSize), m_Compress(pAlloc, pParams), m_OIDCompressor(pAlloc, pParams)
+			m_nStringDataSize(0), m_pValueMemset(pValueMemSet), m_pKeyMemSet(pKeyMemset), m_nPageSize(nPageSize), m_Compress(pAlloc, pParams), m_OIDCompressor(pAlloc, nPageSize, pParams)
 		{
 
 			assert(m_pAlloc);

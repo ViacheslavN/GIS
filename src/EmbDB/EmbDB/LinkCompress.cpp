@@ -3,7 +3,7 @@
 
 namespace embDB
 {
-	InnerLinkCompress::InnerLinkCompress(CommonLib::alloc_t *pAlloc, CompressorParamsBaseImp *pParams  )
+	InnerLinkCompress::InnerLinkCompress(CommonLib::alloc_t *pAlloc, uint32 nPageSize,CompressorParamsBaseImp *pParams  )
 	{
 
 	}

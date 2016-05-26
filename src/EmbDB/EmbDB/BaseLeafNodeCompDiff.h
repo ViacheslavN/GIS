@@ -59,17 +59,17 @@ namespace embDB
 			this->m_nCount = vecKeys.size();
 			this->m_KeyCompressor.clear();
 			this->m_ValueCompressor.clear();
-			for (uint32 i = 0, sz = vecKeys.size(); i < sz; 	++i)
+			for (uint32 i = 0, sz = vecKeys.size(); i < sz; ++i)
 			{
 				if(i != 0)
 					this->m_KeyCompressor.AddDiffSymbol(vecKeys[i] - vecKeys[i - 1]); 
 
-				this->m_ValueCompressor.AddSymbol(this->m_nCount, i, vecValues[i], vecValues);
+				this->m_ValueCompressor.AddSymbol(/*this->m_nCount*/i + 1, i, vecValues[i], vecValues);
 			}
 	
 			return true;
 		}		
-		void recalc()
+		/*void recalc()
 		{
 			this->m_nCount =this->m_pKeyMemSet->size();
 			this->m_KeyCompressor.clear();
@@ -83,7 +83,7 @@ namespace embDB
 			}
 
 
-		}
+		}*/
 
 	};
 }

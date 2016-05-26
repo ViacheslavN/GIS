@@ -24,7 +24,7 @@ namespace embDB
 
 			TBaseLeafNodeComp(uint32 nPageSize, Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
 					TKeyMemSet *pOIDMemset= NULL, TValueMemSet *pValueMemSet = NULL) : m_nCount(0), m_pKeyMemSet(pOIDMemset), m_pValueMemSet(pValueMemSet),
-				m_nPageSize(nPageSize), m_KeyCompressor(pAlloc, pParams), m_ValueCompressor(pAlloc, pParams)
+				m_nPageSize(nPageSize), m_KeyCompressor(pAlloc, nPageSize, pParams), m_ValueCompressor(pAlloc, nPageSize, pParams)
 			{
 
 				assert(m_pKeyMemSet);

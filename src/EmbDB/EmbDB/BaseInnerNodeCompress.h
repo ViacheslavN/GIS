@@ -38,7 +38,7 @@ namespace embDB
 
 
 		TBPBaseInnerNodeCompressor(uint32 nPageSize,  TKeyMemSet* pKeyMemSet, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = NULL) : 
-		m_pKeyMemSet(pKeyMemSet), m_pLinkMemSet(pLinkMemSet), m_nCount(0), m_nPageSize(nPageSize), m_KeyCompressor(pAlloc, pParams), m_LinkCompressor(pAlloc, pParams)
+		m_pKeyMemSet(pKeyMemSet), m_pLinkMemSet(pLinkMemSet), m_nCount(0), m_nPageSize(nPageSize), m_KeyCompressor(pAlloc,nPageSize, pParams), m_LinkCompressor(pAlloc, nPageSize, pParams)
 		{
 
 		}

@@ -5,6 +5,7 @@
 #include "StringCompressorParams.h"
 #include "BaseLeafNodeCompDiff.h"
 #include "FixedStringACCompressor.h"
+#include "FixedStringZLibCompressor.h"
 namespace embDB
 {
 	class TFixedCompress
@@ -103,10 +104,10 @@ namespace embDB
 
 
 	template<class _TKey, class _Transaction>
-	class TBPFixedStringLeafCompressor : public TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor, /*TFixedStringACCompressor*/TFixedCompress, StringFieldCompressorParams> 
+	class TBPFixedStringLeafCompressor : public TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor, /*TFixedStringACCompressor*//*TFixedCompress*/TFixedStringZlibCompressor, StringFieldCompressorParams> 
 	{
 		public:
-			typedef TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor,  /*TFixedStringACCompressor*/TFixedCompress, StringFieldCompressorParams>  TBase;
+			typedef TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor,  /*TFixedStringACCompressor*//*TFixedCompress*/TFixedStringZlibCompressor, StringFieldCompressorParams>  TBase;
 
 			TBPFixedStringLeafCompressor(uint32 nPageSize, _Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, typename TBase::TLeafCompressorParams *pParams = NULL,
 				typename TBase::TKeyMemSet *pKeyMemset= NULL, typename TBase::TValueMemSet *pValueMemSet = NULL) : TBase(nPageSize, pTran, pAlloc, pParams, pKeyMemset, pValueMemSet)
@@ -128,6 +129,16 @@ namespace embDB
 			static typename TBase::TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
 			{
 				return new StringFieldCompressorParams();
+			}
+
+
+			uint32 GetBeginSplitBlocIndex() const
+			{
+				return this->m_ValueCompressor->GetBeginSplitBlocIndex();
+			}
+			uint32 GetEndSplitBlocIndex() const
+			{
+				return this->m_ValueCompressor->GetEndSplitBlocIndex();
 			}
 
 

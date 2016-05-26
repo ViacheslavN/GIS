@@ -15,7 +15,7 @@
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CommonLibrary/RangeCoder.h"
 double Log2( double n );
-
+#include <map>
 
 template<class _TCodeValue, uint16 _nValueBit >
 class TestCompressor
@@ -121,6 +121,101 @@ public:
 	}
 
 
+	template<class TCoder>
+	int64 compressDynamicModel2(const wchar_t *pszSrcFile, const wchar_t *pszOutFile, const wchar_t *pszDesc )
+	{
+		CommonLib::CReadFileStream srcFile;
+		CommonLib::CWriteFileStream dstFile;
+		srcFile.open(pszSrcFile, CommonLib::ofmOpenExisting, CommonLib::arRead, CommonLib::smNoMode);
+		dstFile.open(pszOutFile, CommonLib::ofmCreateAlways, CommonLib::arWrite, CommonLib::smNoMode);
+
+
+
+		uint64 nFileSize = srcFile.size();
+
+		if(m_pReadStream.size() < nFileSize)
+			m_pReadStream.resize(nFileSize);
+
+
+		srcFile.read(m_pReadStream.buffer(), nFileSize);
+
+		m_pReadStream.seek(0, CommonLib::soFromBegin);
+		m_pWriteStream.seek(0, CommonLib::soFromBegin);
+
+		uint32 CalcFreq[257];
+		uint32 Freq[257];
+
+		memset(Freq, 0, sizeof(Freq));
+		memset(CalcFreq, 0, sizeof(CalcFreq));
+
+		std::map<uint32, uint32> mapFreq;
+		mapFreq[256] = 0;
+		mapFreq[257] = 1;
+		uint32 Freq[257];
+		Freq[256] = 0;
+		Freq[257] = 1;
+ 
+	/*	for(int i = 0;i < 257; i++) 
+		{
+			Freq[i] = i;
+			CalcFreq[i] = 0;
+		}*/
+
+		TCoder coder(&m_pWriteStream);
+		int64 nMax = coder.MaxRange;
+
+
+		for (uint32 i = 0; i < nFileSize; ++i)
+		{
+			byte ch= m_pReadStream.readByte();
+
+
+			std::map<uint32, uint32>::iterator it = mapFreq.find(ch);
+
+			uint32 nByte = ch;
+			if(it == mapFreq.end())
+				nByte = 256;
+			else
+				nByte = ch;
+				 
+
+			coder.EncodeSymbol(Freq[ch], Freq[ch + 1], Freq[257]);
+			if(nByte == 256)
+			{
+				m_pWriteStream.write(ch);
+				mapFreq[ch] = 1;
+			}
+			 
+		}
+
+		coder.EncodeFinish();
+
+
+		dstFile.write(m_pWriteStream.buffer(), m_pWriteStream.pos());
+
+
+
+		dstFile.flush();
+		uint64 nOutFileSize = dstFile.size();
+
+		srcFile.close();
+		dstFile.close();
+		double dMinSize = 0;
+		for(int i = 0;i < 256; i++) 
+		{
+			if(CalcFreq[i] == 0)
+				continue;
+
+			dMinSize += CalcFreq[i] * (Log2((double)nFileSize/(double)CalcFreq[i]));
+		}
+		uint64 nMinByteSize = (uint64)(dMinSize + 7)/8;
+		int64 nError = nOutFileSize - nMinByteSize;
+		double dErr = (double)nError * 100/nMinByteSize;
+
+		std::wcout <<pszDesc <<" MinByteSize: " << nMinByteSize << " OutSize: " << nOutFileSize  << " Diff: " << nError << " Error: "<< dErr <<" Compress: " <<(double)nFileSize/nOutFileSize <<std::endl;
+		return nFileSize;
+	}
+
 	template<class TDecoder>
 	void decompessDynamicModel(uint64 nFileSize, const wchar_t *pszSrcFile, const wchar_t *pszOutFile, const wchar_t *pszDesc )
 	{
@@ -178,6 +273,8 @@ public:
 
 
 
+
+	
 
 	template<class TCoder>
 	int64 compressStaticModel(const wchar_t *pszSrcFile, const wchar_t *pszOutFile, const wchar_t *pszDesc )

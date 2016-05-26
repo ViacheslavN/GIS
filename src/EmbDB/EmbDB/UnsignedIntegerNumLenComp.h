@@ -29,7 +29,7 @@ namespace embDB
 			TRangeDecoder, TACDecoder, _nBitCount> TCompressor;
 
 
-		TUnsignedNumLenNodeCompressor(CommonLib::alloc_t *pAlloc, CompressorParamsBaseImp *pParams){}
+		TUnsignedNumLenNodeCompressor(CommonLib::alloc_t *pAlloc, uint32 nPageSize,CompressorParamsBaseImp *pParams){}
 		~TUnsignedNumLenNodeCompressor(){}
 
 		void AddSymbol(uint32 nSize,  int nIndex, const TValue& value, const TValueMemSet& vecValues)

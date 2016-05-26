@@ -23,5 +23,6 @@
 #include "../../EmbDB/embDBLib.h"
 #include "ShapeLib/shape_lib.h"
 #include "../GisEngine/GisGeometry/GisGeometryLib.h"
+#include "zlib/zlib_lib.h"
 
 // TODO: reference additional headers your program requires here

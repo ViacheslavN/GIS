@@ -12,6 +12,7 @@
 #include "CompressorParams.h"
 #include "SignedNumLenDiffCompressor2.h"
 #include "StringVal.h"
+#include "ZLibCompressor.h"
 
 namespace embDB
 {
@@ -40,7 +41,7 @@ namespace embDB
 
 		TFixedStringZlibCompressor(CommonLib::alloc_t *pAlloc, uint32 nPageSize,
 			CompressorParamsBaseImp *pParams, uint32 nError = 200 ): 
-			m_nStrings(0), m_nPageSize(nPageSize), m_lenCompressor(nError), m_pCurrBloc(0), m_pAlloc(pAlloc)
+			m_nStrings(0), m_nPageSize(nPageSize), m_lenCompressor(nError), m_pCurrBloc(0), m_pAlloc(pAlloc),m_pValueMemset(0)
 		{
 
 
@@ -48,11 +49,11 @@ namespace embDB
 
 		~TFixedStringZlibCompressor()
 		{
-
+			 DeleteBlocs();
 		}
 		void init(TValueMemSet* pVecValues)
 		{
-
+			m_pValueMemset = pVecValues;
 		}
 
 
@@ -121,7 +122,7 @@ namespace embDB
 				}
 			}
 
-			RemoveString(nValue);
+			RemoveString(nIndex, nValue);
 		}
 		void RemoveDiffSymbol(int32 nLen)
 		{
@@ -157,23 +158,10 @@ namespace embDB
 		void CompressBlock(const TValueMemSet& vecValues)
 		{
 			embDB::CZlibCompressor compressor;
-		/*	CommonLib::CWriteMemoryStream rowStream;
-
-			for (int i =0; i < m_pCurrBloc->m_nCount; ++i)
-			{
-
-				const sFixedStringVal& string = vecValues[m_pCurrBloc->m_nBeginIndex + i];
-				rowStream.write(string.m_pBuf, string.m_nLen - 1);
-			}
-			
-			/compressor.compress(rowStream.buffer(), rowStream.pos(), &m_pCurrBloc->m_compressBlocStream);
-			*/
 			if(m_pCurrBloc->m_nCount != 0)
 			{
 				compressor.compress(&vecValues[0] + m_pCurrBloc->m_nBeginIndex,m_pCurrBloc->m_nCount,  &m_pCurrBloc->m_compressBlocStream);
-
-				m_pCurrBloc->m_bCompress = true;
-				m_pCurrBloc->m_nRowSize = m_pCurrBloc->m_compressBlocStream.pos();
+				m_pCurrBloc->m_nCompressSize = m_pCurrBloc->m_compressBlocStream.pos();
 
 				uint32 nBegin = m_pCurrBloc->m_nBeginIndex + m_pCurrBloc->m_nCount;
 
@@ -185,7 +173,7 @@ namespace embDB
 		}
 
 
-		void RemoveString(const sFixedStringVal& string)
+		void RemoveString(int nIndex, const sFixedStringVal& string)
 		{
 
 		}
@@ -200,19 +188,25 @@ namespace embDB
 		}
 		void Free()
 		{
-
+			for (uint32 i = 0; i < m_pValueMemset->size(); ++i )
+			{
+				sFixedStringVal& val = (*m_pValueMemset)[i];
+				m_pAlloc->free(val.m_pBuf);
+			}
 		}
 		void clear()
 		{
-
+			 DeleteBlocs();
+			 m_nStrings = 0;
+			 m_lenCompressor.clear();
 		}
 		uint32 GetStringCompressSize() const
 		{
 			uint32 nSize = 0;
 			for (size_t i = 0, sz = m_vecStringBloc.size(); i < sz; ++i)
 			{
-				if(m_vecStringBloc[i]->m_bCompress)
-					nSize += m_vecStringBloc[i]->m_nRowSize + sizeof(uint16);
+				//if(m_vecStringBloc[i]->m_nCompressSize != 0)
+					nSize += m_vecStringBloc[i]->m_nCompressSize + sizeof(uint16);
 
 			}
 			
@@ -253,7 +247,7 @@ namespace embDB
 			}
 			return true;
 		}
-		bool decompress(uint32 nSize, TValueMemSet& vecValues, CommonLib::FxMemoryReadStream *pStream)
+		/*bool decompress(uint32 nSize, TValueMemSet& vecValues, CommonLib::FxMemoryReadStream *pStream)
 		{
 
 			CommonLib::FxMemoryReadStream stringCompressStream;
@@ -310,7 +304,7 @@ namespace embDB
 
 
 			return true;
-		}
+		}*/
 
 		void decompressBlock(CommonLib::FxMemoryReadStream *pStream, int nIndex, CommonLib::CWriteMemoryStream *pDecodeStream)
 		{
@@ -331,7 +325,7 @@ namespace embDB
 
 
 
-		bool decompress1(uint32 nSize, TValueMemSet& vecValues, CommonLib::FxMemoryReadStream *pStream)
+		bool decompress(uint32 nSize, TValueMemSet& vecValues, CommonLib::FxMemoryReadStream *pStream)
 		{
 
 			CommonLib::FxMemoryReadStream stringCompressStream;
@@ -383,6 +377,8 @@ namespace embDB
 				sFixedStringVal string;
 				string.m_nLen = nLen;
 				string.m_pBuf = (byte*)m_pAlloc->alloc(nLen);
+
+				m_pCurrBloc->m_nRowSize += (nLen - 1);
 			 
 				bNewBloc = !compressor.decompressSymbol(string.m_pBuf, string.m_nLen - 1);
 
@@ -407,11 +403,33 @@ namespace embDB
 			sStringBloc *pStringBloc = new sStringBloc(m_pAlloc);
 			pStringBloc->m_nBeginIndex = nIndex;
 			pStringBloc->m_compressBlocStream.write(pStream->buffer() + pStream->pos(), nSize);
-
+			pStringBloc->m_nCompressSize;
 			pStream->seek(nSize, CommonLib::soFromCurrent);
 			m_vecStringBloc.push_back(pStringBloc);
 		}
 
+		void DeleteBlocs()
+		{
+			for (size_t i = 0, sz = m_vecStringBloc.size(); i < sz; ++i)
+			{
+				delete m_vecStringBloc[i];
+			}
+			m_pCurrBloc = NULL;
+		}
+
+		
+		uint32 GetBeginSplitBlocIndex() const
+		{
+			 sStringBloc *pBloc = m_pCurrBloc;
+			 if(pBloc->m_nCount == 0)
+			 {
+
+			 }
+		}
+		uint32 GetEndSplitBlocIndex() const
+		{
+			 
+		}
 
  	protected:
 		uint32 m_nStrings;
@@ -422,14 +440,16 @@ namespace embDB
 		struct sStringBloc
 		{
 			uint32 m_nRowSize;
+			uint32 m_nCompressSize;
 			uint32 m_nBeginIndex;
 			uint32 m_nCount;
-			bool m_bCompress;
+			bool m_bDirty;
+ 
 
 			CommonLib::CWriteMemoryStream m_compressBlocStream;
 
-			sStringBloc(CommonLib::alloc_t *pAlloc) : m_compressBlocStream(pAlloc), m_bCompress(false),
-				m_nRowSize(0), m_nCount(0)
+			sStringBloc(CommonLib::alloc_t *pAlloc) : m_compressBlocStream(pAlloc),
+				m_nRowSize(0), m_nCount(0), m_nCompressSize(0), m_bDirty(false)
 			{}
 							
 		};
@@ -439,6 +459,7 @@ namespace embDB
 
 		sStringBloc *m_pCurrBloc;
 		CommonLib::alloc_t* m_pAlloc;
+		TValueMemSet* m_pValueMemset;
 
 	};
 

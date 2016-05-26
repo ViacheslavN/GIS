@@ -27,7 +27,7 @@ namespace embDB
 				TRangeDecoder, TACDecoder, 64> TCompressor;*/
 
 
-			InnerLinkCompress(CommonLib::alloc_t *pAlloc, CompressorParamsBaseImp *pParams);
+			InnerLinkCompress(CommonLib::alloc_t *pAlloc, uint32 nPageSize, CompressorParamsBaseImp *pParams);
 			~InnerLinkCompress();
 
 			void AddSymbol(uint32 nSize,  int nIndex, int64 nLink, const embDB::TBPVector<int64>& vecLinks);
