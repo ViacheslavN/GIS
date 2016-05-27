@@ -18,4 +18,5 @@
 #include "../../GisGeometry/GisGeometryLib.h"
 #include "../../EmbDB/EmbDB/embDBLib.h"
 #include "../../EmbDB/DatasetLite/DatasetLiteLib.h"
+#include "zlib/zlib_lib.h"
 // TODO: reference additional headers your program requires here

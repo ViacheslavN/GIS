@@ -101,7 +101,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../Output;../../../ThirdParty/proj4/lib;../../../CommonLibrary/Output;../../../ThirdParty/ShapeLib/lib;../../../EmbDB/Output</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Output;../../../ThirdParty/proj4/lib;../../../CommonLibrary/Output;../../../ThirdParty/ShapeLib/lib;../../../EmbDB/Output;../../../ThirdParty/zlib/lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

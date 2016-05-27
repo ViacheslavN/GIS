@@ -19,7 +19,7 @@
 //typedef embDB::BPInnerNodeSimpleCompressorV2<int64> TInnerCompressor;
 typedef embDB::BPFixedStringLeafNodeCompressor<int64> TLeafCompressor;
 
-typedef embDB::TBaseValueDiffCompress<int64, embDB::SignedDiffNumLenCompressor64i> TInnerLinkCompress;
+typedef embDB::TBaseValueDiffCompress<int64, int64, embDB::SignedDiffNumLenCompressor64i> TInnerLinkCompress;
 typedef embDB::TBPBaseInnerNodeDiffCompressor2<int64, embDB::OIDCompressor, TInnerLinkCompress> TInnerCompressor;
 	 
 
@@ -121,7 +121,7 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 	}*/
 	
 
-	
+	uint64 nRowSize = 0;
 	if(nStart < nEndStart)
 	{
 		
@@ -143,6 +143,8 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 			uint32 nUft8Len = sString.calcUTF8Length()  + 1;
 			sString.exportToUTF8(mUtf8Buf, nUft8Len);
 			stream.write((byte*)mUtf8Buf, nUft8Len);
+
+			nRowSize += nUft8Len + sizeof(int64);
 
 			if(!tree.insert(i, /*i%10000 == 0 ? sBigString : */sString))
 			{

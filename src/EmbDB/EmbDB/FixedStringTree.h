@@ -15,12 +15,12 @@ namespace embDB
 {
  
 
-typedef TBaseValueDiffCompress<int64, SignedDiffNumLenCompressor64i> TInnerLinkCompress;
+typedef TBaseValueDiffCompress<int64, int64, SignedDiffNumLenCompressor64i> TInnerLinkCompress;
 
 	
 template<class _TKey, class _Transaction>
 class TBPFixedString : public TBPMapV2<_TKey, sFixedStringVal, comp<_TKey>, _Transaction, 
-		 embDB::TBPBaseInnerNodeDiffCompressor2<_TKey, embDB::OIDCompressor, TInnerLinkCompress> ,
+		 embDB::TBPBaseInnerNodeDiffCompressor2<_TKey,  embDB::OIDCompressor, TInnerLinkCompress> ,
 		 TBPFixedStringLeafCompressor<_TKey, _Transaction> /*BPFixedStringLeafNodeCompressor<_TKey, _Transaction>*/, 
 		 BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
 		 TFixedStringLeafNode<_TKey, _Transaction>,

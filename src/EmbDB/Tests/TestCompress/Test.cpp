@@ -300,27 +300,45 @@ public:
 
 		uint32 Freq[257];
 		uint32 FreqPrev[257];
+		uint32 IndexFreq[257];
 		for(int i = 0;i < 257; i++) 
 		{
 			Freq[i] = 0;
 			FreqPrev[i] = 0;
+			IndexFreq[i] = 0;
 		}
 
+		int32 nDiffs = 0;
 
 		for (uint32 i = 0; i < nFileSize; ++i)
 		{
 			byte ch = m_pReadStream.readByte();
 			Freq[ch]++;
+			if(Freq[ch] == 1)
+				nDiffs++;
 		
 		}
 		int32 nPrevF = 0;
-		for(int i = 0;i < 256; i++) 
+		int nF = 0;
+		for(int i = 0; i < 256; i++) 
 		{
+			if(!Freq[i])
+				continue;
 
-			FreqPrev[i + 1] = Freq[i] + nPrevF;
-			nPrevF = FreqPrev[i + 1];
+
+			FreqPrev[nF + 1] = Freq[i] + nPrevF;
+			nPrevF = FreqPrev[nF + 1];
+			IndexFreq[i] = nF;
+			nF++;
 		}
 		
+
+		/*for(int i = 0; i < 256; i++) 
+		{
+			FreqPrev[i + 1] = Freq[i] + nPrevF;
+			nPrevF = FreqPrev[i + 1];
+		}*/
+
 		srcFile.seek(0, CommonLib::soFromBegin);
 		m_pReadStream.seek(0, CommonLib::soFromBegin);
 
@@ -359,8 +377,8 @@ public:
 		for (uint32 i = 0; i < nFileSize; ++i)
 		{
 			byte ch= m_pReadStream.readByte();
-			coder.EncodeSymbol(FreqPrev[ch], FreqPrev[ch+1], nFileSize);
-
+			coder.EncodeSymbol(FreqPrev[IndexFreq[ch] ], FreqPrev[IndexFreq[ch] + 1], nFileSize);
+			//coder.EncodeSymbol(FreqPrev[ch], FreqPrev[ch + 1], nFileSize);
 			if((m_pWriteStream.pos() - nBeginPos) >  nMinByteSizeError)
 			{
 				int dd = 0;
@@ -541,13 +559,27 @@ void CTestCompess::TestCompress(const wchar_t* pszPath)
 		CommonLib::CString sFile = sPath + vecFiles[i];
 		CommonLib::CString sCompFile = sFile + L".compress";
 
-		if(sExt == L"compress" || sExt == L"decompress" )
+		if(sExt == L"compress" || sExt == L"decompress"|| sExt == L"static_decompress")
 		{
 			CommonLib::FileSystem::deleteFile(sFile.cwstr());
 			continue;
 		}
+	}
+	for (size_t i = 0, sz = vecFiles.size(); i < sz; ++i)
+	{
+		if(vecFiles[i] == L"." || vecFiles[i] == L".." )
+			continue;
+
+		CommonLib::CString sExt = CommonLib::FileSystem::FindFileExtension(vecFiles[i]);
+
+
+		if(sExt == L"compress" || sExt == L"decompress"|| sExt == L"static_decompress")
+		{
+			continue;
+		}
+
+		CommonLib::CString sFile = sPath + vecFiles[i];
+		CommonLib::CString sCompFile = sFile + L".compress";
 		compressFile(sFile.cwstr(), sCompFile.cwstr());
 	}
-
-
 }

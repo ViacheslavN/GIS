@@ -204,6 +204,18 @@ namespace embDB
 
 		}
 
+
+		virtual void recalcKey()
+		{
+			m_nCount = m_pKeyMemSet->size();
+			m_KeyCompressor.clear();
+			for (uint32 i = 1, sz = m_pKeyMemSet->size(); i < sz; 	++i)
+			{
+				m_KeyCompressor.AddDiffSymbol((*m_pKeyMemSet)[i] - (*m_pKeyMemSet)[i - 1]); 
+			}
+		}
+
+
 		bool IsHaveUnion(TBaseLeafNodeComp *pCompressor) const
 		{
 			/*uint32 nNoCompSize = m_nCount * (sizeof(TOID) + sizeof(TValue));

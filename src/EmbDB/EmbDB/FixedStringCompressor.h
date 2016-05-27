@@ -104,16 +104,16 @@ namespace embDB
 
 
 	template<class _TKey, class _Transaction>
-	class TBPFixedStringLeafCompressor : public TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor, /*TFixedStringACCompressor*//*TFixedCompress*/TFixedStringZlibCompressor, StringFieldCompressorParams> 
+	class TBPFixedStringLeafCompressor : public TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor, TFixedStringZlibCompressor, StringFieldCompressorParams> 
 	{
 		public:
-			typedef TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor,  /*TFixedStringACCompressor*//*TFixedCompress*/TFixedStringZlibCompressor, StringFieldCompressorParams>  TBase;
+			typedef TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor, TFixedStringZlibCompressor, StringFieldCompressorParams>  TBase;
 
 			TBPFixedStringLeafCompressor(uint32 nPageSize, _Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, typename TBase::TLeafCompressorParams *pParams = NULL,
 				typename TBase::TKeyMemSet *pKeyMemset= NULL, typename TBase::TValueMemSet *pValueMemSet = NULL) : TBase(nPageSize, pTran, pAlloc, pParams, pKeyMemset, pValueMemSet)
 			{
 
-				this->m_ValueCompressor.init(pValueMemSet);
+				this->m_ValueCompressor.init(pValueMemSet, pTran->getType());
 
 			}
 			~TBPFixedStringLeafCompressor()
@@ -132,13 +132,30 @@ namespace embDB
 			}
 
 
-			uint32 GetBeginSplitBlocIndex() const
+			uint32 GetSplitIndex() const
 			{
-				return this->m_ValueCompressor->GetBeginSplitBlocIndex();
+
+				uint32 nFreePage = m_nPageSize - this->m_KeyCompressor.GetComressSize();
+
+				return this->m_ValueCompressor.GetSplitIndex(nFreePage);
 			}
-			uint32 GetEndSplitBlocIndex() const
+			void SplitIn(uint32 nBegin, uint32 nEnd, TBPFixedStringLeafCompressor *pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
 			{
-				return this->m_ValueCompressor->GetEndSplitBlocIndex();
+
+				uint32 nSize = nEnd- nBegin;
+
+				m_nCount -= nSize;
+				pCompressor->m_nCount += nSize;
+			    this->recalcKey();
+				pCompressor->recalcKey();
+
+				m_ValueCompressor.SplitIn( nBegin,  nEnd, &pCompressor->m_ValueCompressor);
+
+			}
+
+			void PreSave()
+			{
+				this->m_ValueCompressor.PreSave();
 			}
 
 

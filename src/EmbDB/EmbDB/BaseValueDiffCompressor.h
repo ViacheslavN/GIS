@@ -8,12 +8,13 @@ namespace embDB
 {
 
 
-	template<class _TValue, class _TCompressor>
+	template<class _TValue, class _TSignTValue, class _TCompressor>
 	class TBaseValueDiffCompress
 	{
 	public:
 
 		typedef _TValue TValue;
+		typedef _TSignTValue TSignTValue;
 		typedef _TCompressor TCompressor;
 		typedef embDB::TBPVector<TValue> TValueMemSet;
 	 
@@ -57,7 +58,7 @@ namespace embDB
 				}
 			}
 		}
-		void AddDiffSymbol(TValue nValue)
+		void AddDiffSymbol(TSignTValue nValue)
 		{
 			m_compressor.AddSymbol(nValue); 
 		}
@@ -93,7 +94,7 @@ namespace embDB
 				}
 			}
 		}
-		void RemoveDiffSymbol(TValue nValue)
+		void RemoveDiffSymbol(TSignTValue nValue)
 		{
 			m_compressor.RemoveSymbol(nValue); 
 		}

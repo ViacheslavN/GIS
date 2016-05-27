@@ -291,6 +291,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 				nStringRowSize += strVal.calcUTF8Length();
 				break;
 			case embDB::dtUInteger32:
+			case embDB::dtInteger32:
 				intVal = ShapeLib::DBFReadIntegerAttribute(dbf.file, row, i);
 				value  = intVal;
 				nDigSize +=4;
@@ -376,8 +377,8 @@ void SearchShapeFile(const wchar_t* pszDBName)
 
 void testDBFromShape()
 {
-	ImportShapeFile(L"d:\\db\\ne_10m_urban_areas_landscan1.embDB", L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp");
-	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
+	//ImportShapeFile(L"d:\\db\\ne_10m_urban_areas_landscan1.embDB", L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp");
+	ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\db\\building.shp");
 	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
-	SearchShapeFile(L"d:\\db\\ne_10m_urban_areas_landscan1.embDB");
+	//SearchShapeFile(L"d:\\db\\ne_10m_urban_areas_landscan1.embDB");
 }

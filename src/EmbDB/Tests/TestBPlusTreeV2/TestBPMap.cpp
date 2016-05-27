@@ -14,7 +14,7 @@
 
 
 
-typedef embDB::TBaseValueDiffCompress<int64, embDB::SignedDiffNumLenCompressor64i> TInnerLinkCompress;
+typedef embDB::TBaseValueDiffCompress<int64, int64,embDB::SignedDiffNumLenCompressor64i> TInnerLinkCompress;
 
 typedef embDB::TBPMapV2 <int64,  uint64, embDB::comp<uint64>, embDB::IDBTransaction, 
 	embDB::TBPBaseInnerNodeDiffCompressor2<int64, embDB::OIDCompressor, TInnerLinkCompress>, 

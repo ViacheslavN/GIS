@@ -178,10 +178,9 @@ namespace embDB
 		{
 			int res = inflate(&m_strm, Z_NO_FLUSH);
 			assert(res != Z_STREAM_ERROR);
-			if (m_strm.avail_out == 0)
-			{
-				 return true;
-			}
+			
+				 return m_strm.avail_in != 0;
+			
 		}
 		return false;
 	}

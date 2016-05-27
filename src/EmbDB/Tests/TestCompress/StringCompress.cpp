@@ -118,7 +118,7 @@ void TestStringCompress()
 
 
 	decompressStream.attach( &compressStream, 0, compressStream.pos());
-	comp1.decompress1(vecValues.size(), vecValues1, &decompressStream);
+	comp1.decompress(vecValues.size(), vecValues1, &decompressStream);
 
 
 	int dd = 0;

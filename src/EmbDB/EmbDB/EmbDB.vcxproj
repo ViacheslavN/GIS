@@ -469,6 +469,7 @@
     <ClInclude Include="BaseLeafNodeComp.h" />
     <ClInclude Include="BaseLeafNodeCompDiff.h" />
     <ClInclude Include="BaseLeafNodeCompDiff2.h" />
+    <ClInclude Include="BaseValueCompressor.h" />
     <ClInclude Include="BaseValueDiffCompressor.h" />
     <ClInclude Include="BaseRBMultiTree.h" />
     <ClInclude Include="BaseRBTree.h" />

@@ -188,7 +188,7 @@ namespace embDB
 			uint32 nBegin = _nBegin == -1 ? src.size()/2 : _nBegin;
 			uint32 nEnd = _nEnd == -1 ? src.size() : _nEnd;
 			dst.copy(src, 0, nBegin, nEnd);
-			src.resize(nEnd - nBegin);
+			src.resize(src.size() - (nEnd - nBegin));
 			if(pSplitVal)
 				*pSplitVal = dst[0];
 			return (int)nBegin;

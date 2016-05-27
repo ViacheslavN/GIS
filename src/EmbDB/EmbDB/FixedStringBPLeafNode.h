@@ -58,54 +58,30 @@ namespace embDB
 		int SplitIn(BPTreeLeafNodeMapv2 *pNode, TKey* pSplitKey)
 		{
 			TCompressor* pNewNodeComp = pNode->m_pCompressor;
+			
+			//uint32 nFreeSize = m_nPageSize - 2 *sizeof(TLink);
 
 
 
+			int nSplitIndex = this->m_pCompressor->GetSplitIndex();
+			uint32 nSize = this->m_leafValueMemSet.size();
+			this->SplitInVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL, nSplitIndex);
+			this->SplitInVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey, nSplitIndex);
+			this->m_pCompressor->SplitIn(nSplitIndex, nSize, pNewNodeComp);
+		
 
-			if(this->m_bMinSplit)
-			{
-
-				int nSplitIndex = this->m_leafKeyMemSet.size() - 1;
-
-				while(true)
-				{
-
-					this->m_pCompressor->remove(nSplitIndex, this->m_leafKeyMemSet[nSplitIndex], this->m_leafValueMemSet[nSplitIndex]);
-					if(!isNeedSplit())
-						break;
-					--nSplitIndex;
-				}
-
-				assert(nSplitIndex > 0);
-				int nCount = this->m_leafKeyMemSet.size() - nSplitIndex;
-				if(nCount == 1)
-				{
-					this->SplitOne(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
-					this->SplitOne(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
-					pNewNodeComp->insert(0, pNode->m_leafKeyMemSet[0], pNode->m_leafValueMemSet[0]);
-				}
-				else
-				{
-					uint32 nSize = this->m_leafValueMemSet.size();
-					this->SplitInVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey, nSplitIndex);
-					this->SplitInVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL, nSplitIndex);
-					this->m_pCompressor->SplitIn(nSplitIndex, nSize, pNewNodeComp, false, true);
-				}
-				return nSplitIndex;
-			}
-			else
-			{
-
-				int nSplitIndex = this->SplitInVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey);
-				this->SplitInVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL);
-				this->m_pCompressor->SplitIn(0, nSplitIndex, pNewNodeComp);
-				return nSplitIndex;
-			}
+			return nSplitIndex;
+		
 		}
 
 		int  SplitIn(BPTreeLeafNodeMapv2 *pLeftNode, BPTreeLeafNodeMapv2 *pRightNode, TKey* pSplitKey)
 		{
 			return TBase::SplitIn(pLeftNode, pRightNode, pSplitKey);
+		}
+
+		virtual  void PreSave()
+		{
+			this->m_pCompressor->PreSave();
 		}
 	public:
 		CPageAlloc *m_pPageAlloc;

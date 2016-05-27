@@ -20,9 +20,10 @@ void TestStringCompress();
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	//CTestCompess test;
+	CTestCompess test;
+	test.TestCompress(L"D:\\test\\files");
 	//test.compressFile(L"D:\\1.data", L"D:\\2.data");
-	TestStringCompress();
+	//TestStringCompress();
 	//ZlibTest();
 	//TestDiffComp();
 	//TestNumLen();
