@@ -73,7 +73,7 @@ template<class _TValue,
 			};
 	 
 
-			TUnsignedIntegerDiffCompress(uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : m_nCount(0),  m_nFlags(0),
+			TUnsignedIntegerDiffCompress(uint32 nError = 10 /*0.5%*/, bool bOnlineCalcSize = false) : m_nCount(0),  m_nFlags(0),
 						m_nTypeFreq(etfByte), m_nError(nError), m_dBitRowSize(0), m_bOnlineCalcSize(bOnlineCalcSize)
 			{
 				
@@ -176,7 +176,8 @@ template<class _TValue,
 				
 				double dBitRowSize = m_bOnlineCalcSize ? m_dBitRowSize :  CalcRowBitSize();
 				
-				dBitRowSize  += (dBitRowSize /m_nError)  + 64; 
+				//dBitRowSize  += (dBitRowSize /m_nError)  + 64; 
+				dBitRowSize += 64;
 				return dBitRowSize;
 			}
 		
@@ -226,7 +227,7 @@ template<class _TValue,
 
 				pStream->write(vecValues[0]);
 				uint32 nBeginCompressPos = pStream->pos();
-				bool bRangeCode = true;
+				/*bool bRangeCode = true;
 				
 				if(m_SymbolsFreq.size() > 1)
 				{
@@ -236,7 +237,10 @@ template<class _TValue,
 						CompressAcCode(vecValues, pStream);
 						bRangeCode = false;
 					}
-				}
+				}*/
+
+				bool bRangeCode = false;
+				CompressAcCode(vecValues, pStream);
 
 				uint32 nEndPos = pStream->pos();
 

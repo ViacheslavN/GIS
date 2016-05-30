@@ -550,7 +550,7 @@ namespace embDB
 		//	virtual bool insert(IRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
 		//	virtual bool insert(INameRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
 
-		virtual IFieldPtr createField(const  SFieldProp& sFP, ITransaction *pTran = NULL) = 0;
+		virtual IFieldPtr createField(const  SFieldProp& sFP, ITransaction *pTran = NULL, const sFieldPropExt *pFieldPropExt = NULL);
 		virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true, uint32 nPageSize = 8192,  ITransaction *pTran = NULL) = 0;
 		virtual bool deleteField(IField* pField) = 0;
 		virtual bool createIndex(const CommonLib::CString& sName, SIndexProp& ip, ITransaction *pTran = NULL) = 0;

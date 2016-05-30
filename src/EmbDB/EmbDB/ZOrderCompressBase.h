@@ -25,7 +25,7 @@ namespace embDB
 			typedef CommonLib::BaseACEncoder<uint64> TEncoder;
 			typedef CommonLib::BaseACDecoder<uint64> TDecoder;
 
-			TBaseZOrderCompressor(uint32 nError = 200 , bool bOnlineCalcSize = false) :
+			TBaseZOrderCompressor(uint32 nError = 10 , bool bOnlineCalcSize = false) :
 					TBase(nError, bOnlineCalcSize)
 			{
  
@@ -83,7 +83,7 @@ namespace embDB
 				bitStream.attach(pStream, pStream->pos(), nBitSize);
 				pStream->seek(nBitSize, CommonLib::soFromCurrent);
 				uint32 nBeginCompressPos = pStream->pos();
-				bool bRangeCode = true;
+			/*	bool bRangeCode = true;
 
 			
 				if(!CompressRangeCode(vecValues, pStream, FreqPrev, nByteSize, &bitStream))
@@ -92,8 +92,9 @@ namespace embDB
 					pStream->seek(nBeginCompressPos, CommonLib::soFromBegin);
 					CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
 					bRangeCode = false;
-				}
-
+				}*/
+				bool bRangeCode = false;
+				CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
 
 				uint32 nEndPos = pStream->pos();
 

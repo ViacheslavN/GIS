@@ -14,6 +14,7 @@
 #include "CommonLibrary/algorithm.h"
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CommonLibrary/RangeCoder.h"
+#include "CommonLibrary/DebugTime.h"
 double Log2( double n );
 #include <map>
 
@@ -79,7 +80,8 @@ public:
 		TCoder coder(&m_pWriteStream);
 		int64 nMax = coder.MaxRange;
 
-
+		CommonLib::TimeUtils::CDebugTime time;
+		time.start();
 		for (uint32 i = 0; i < nFileSize; ++i)
 		{
 			byte ch= m_pReadStream.readByte();
@@ -94,7 +96,7 @@ public:
 
 		coder.EncodeFinish();
 	
-
+		double dTime= time.stop();
 		dstFile.write(m_pWriteStream.buffer(), m_pWriteStream.pos());
 		
 	
@@ -116,7 +118,7 @@ public:
 		int64 nError = nOutFileSize - nMinByteSize;
 		double dErr = (double)nError * 100/nMinByteSize;
 
-		std::wcout <<pszDesc <<" MinByteSize: " << nMinByteSize << " OutSize: " << nOutFileSize  << " Diff: " << nError << " Error: "<< dErr <<" Compress: " <<(double)nFileSize/nOutFileSize <<std::endl;
+		std::wcout <<pszDesc <<" MinByteSize: " << nMinByteSize << " OutSize: " << nOutFileSize  << " Diff: " << nError << " Error: "<< dErr <<" Compress: " <<(double)nFileSize/nOutFileSize << " time: " << dTime <<std::endl;
 		return nFileSize;
 	}
 
@@ -245,6 +247,8 @@ public:
 			Freq[i] = i;
 
 		TDecoder coder(&m_pReadStream);
+		CommonLib::TimeUtils::CDebugTime time;
+		time.start();
 		coder.StartDecode();
 
 		for (size_t i = 0; i < nFileSize; ++i)
@@ -262,13 +266,15 @@ public:
 			if(Freq[256]>=coder.MaxRange)
 				Rescale(Freq);
 		}
-
+		double dTime = time.stop();
 		dstFile.write(m_pWriteStream.buffer(), m_pWriteStream.pos());
 		m_pWriteStream.seek(0, CommonLib::soFromBegin);
 
 
 		srcFile.close();
 		dstFile.close();
+
+		std::wcout <<pszDesc <<" decomp time: " << dTime << std::endl;
 	}
 
 
@@ -374,6 +380,8 @@ public:
 		uint64 nMinByteSizeError = nMinByteSize + nMinByteSize/200;
 
 		uint32 nBeginPos = m_pWriteStream.pos();
+		CommonLib::TimeUtils::CDebugTime time;
+		time.start();
 		for (uint32 i = 0; i < nFileSize; ++i)
 		{
 			byte ch= m_pReadStream.readByte();
@@ -386,6 +394,9 @@ public:
 			}
 		}
 		coder.EncodeFinish();
+
+		double dTimeEncode = time.stop();
+
 		dstFile.write(m_pWriteStream.buffer(), m_pWriteStream.pos());
 		dstFile.flush();
 		uint64 nOutFileSize = dstFile.size() - (256 * sizeof(uint32));;
@@ -397,7 +408,7 @@ public:
 		int64 nError = nOutFileSize - nMinByteSize;
 		double dErr = (double)nError * 100/nMinByteSize;
 
-		std::wcout <<pszDesc <<" MinByteSize: " << nMinByteSize << " OutSize: " << nOutFileSize  << " Diff: " << nError << " Error: "<< dErr <<" Compress: " <<(double)nFileSize/nOutFileSize <<std::endl;
+		std::wcout <<pszDesc <<" MinByteSize: " << nMinByteSize << " OutSize: " << nOutFileSize  << " Diff: " << nError << " Error: "<< dErr <<" Compress: " <<(double)nFileSize/nOutFileSize << " time: " << dTimeEncode <<std::endl;
 		return nFileSize;
 	}
 
@@ -446,6 +457,9 @@ public:
 
 		m_pReadStream.readIntu32();
 
+
+		CommonLib::TimeUtils::CDebugTime time;
+		time.start();
 		TDecoder coder(&m_pReadStream);
 		coder.StartDecode();
 
@@ -474,12 +488,16 @@ public:
 			coder.DecodeSymbol(FreqPrev[Symbol], FreqPrev[Symbol+1], nFileSize);
 		}
 
+		double dTime = time.stop();
+
 		dstFile.write(m_pWriteStream.buffer(), m_pWriteStream.pos());
 		m_pWriteStream.seek(0, CommonLib::soFromBegin);
 
 
 		srcFile.close();
 		dstFile.close();
+
+		std::wcout <<pszDesc <<" Decomp  time: " << dTime << std::endl;
 	}
 
 private:
@@ -536,7 +554,7 @@ void CTestCompess::compressFile(const wchar_t* pszFileName, const wchar_t* pszFi
 
 
 	 compress64.compressStaticModel<TTestCompressor64::TACEncoder>(pszFileName, sSAC64CompFile.cwstr(), L"S AC64");
-	 compress64.decompessStaticModel<TTestCompressor64::TACDecoder>(nFileSize, sSAC64CompFile.cwstr(), sSAC64DecompCompFile.cwstr(), L"S RC64");
+	 compress64.decompessStaticModel<TTestCompressor64::TACDecoder>(nFileSize, sSAC64CompFile.cwstr(), sSAC64DecompCompFile.cwstr(), L"S AC64");
 }
 
 

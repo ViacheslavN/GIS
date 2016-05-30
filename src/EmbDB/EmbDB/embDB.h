@@ -159,6 +159,22 @@ namespace embDB
 		eTMMultiTransactions
 	};
 
+
+
+	enum CompressType
+	{
+		ACCoding,
+		RangeCoding,
+		MixCoding
+	};
+	struct sFieldPropExt
+	{
+		CompressType m_CompressType; //MixCoding default
+		uint32 m_nCompCalcError; //0.5% default for MixCoding/RangeCoding and 64 bits for ACCoding
+		bool m_bOnlineCalcCompSize; //false default
+
+	};
+
 	struct SFieldProp
 	{
 		CommonLib::CString m_sFieldName;

@@ -9,6 +9,8 @@
 #include "testNumLem.h"
 #include "TestDiffComp.h"
 #include "BWTSort.h"
+#include "CommonLibrary/FileStream.h"
+
 
 uint32 compressFile(const wchar_t *pszFileNameIn, const wchar_t* pszCompressFile);
 uint32 compressStaticFile(const wchar_t *pszFileNameIn, const wchar_t* pszCompressFile);
@@ -19,6 +21,16 @@ void ZlibTest();
 void TestStringCompress();
 int _tmain(int argc, _TCHAR* argv[])
 {
+
+	CommonLib::CWriteFileStream File;
+	File.open(L"D:\\test\\files\\1aaa.txt", CommonLib::ofmCreateAlways, CommonLib::arWrite, CommonLib::smNoMode);
+
+	for (size_t i = 0; i< 100000; ++i)
+	{
+		File.write((byte)0);
+		File.write((byte)1);
+	}
+	File.close();
 
 	CTestCompess test;
 	test.TestCompress(L"D:\\test\\files");

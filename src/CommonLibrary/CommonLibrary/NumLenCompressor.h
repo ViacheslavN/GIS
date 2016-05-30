@@ -18,11 +18,11 @@ namespace CommonLib
 			typedef _TValue TValue;
 			typedef _TFindBit TFindBit;
 
-			typedef TRangeEncoder64 TEncoder;
-			typedef TRangeDecoder64 TDecoder;
+			//typedef TRangeEncoder64 TEncoder;
+			//typedef TRangeDecoder64 TDecoder;
 
-			//typedef TACEncoder64 TEncoder;
-			//typedef TACDecoder64 TDecoder;
+			typedef TACEncoder64 TEncoder;
+			typedef TACDecoder64 TDecoder;
 
 			TNumLemCompressor(uint32 nError = 100)  : m_nError(nError)
 			{
@@ -240,7 +240,7 @@ namespace CommonLib
 					dBitRowSize += (dFreq* dLog2);
 				}
 				dBitRowSize += 64;
-				dBitRowSize += (dBitRowSize/m_nError);
+				//dBitRowSize += (dBitRowSize/m_nError);
 
 				return dBitRowSize;
 			}

@@ -131,7 +131,7 @@ namespace embDB
 			
 	 
 
-			TUnsignedNumLenCompressor(uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : m_nLenBitSize(0), m_nCount(0), m_nDiffsLen(0), m_nFlags(0),
+			TUnsignedNumLenCompressor(uint32 nError = 10 /*0.5%*/, bool bOnlineCalcSize = false) : m_nLenBitSize(0), m_nCount(0), m_nDiffsLen(0), m_nFlags(0),
 						m_nTypeFreq(ectByte), m_nError(nError), m_dBitRowSize(0.), m_bOnlineCalcSize(bOnlineCalcSize)
 			{
 				 memset(m_BitsLensFreq, 0, sizeof(m_BitsLensFreq));
@@ -281,8 +281,8 @@ namespace embDB
 			double GetCodeBitSize() const
 			{
 				double dBitRowSize = m_bOnlineCalcSize ? m_dBitRowSize :  CalcRowBitSize<uint32>(m_BitsLensFreq, _nMaxBitsLens + 1, m_nDiffsLen, m_nCount);
-				dBitRowSize += (dBitRowSize/m_nError)   + 64 /*code  finish*/; 
-
+			//	dBitRowSize += (dBitRowSize/m_nError)   + 64 /*code  finish*/; 
+				dBitRowSize += 64;
 				return dBitRowSize;
 			}
 			int GetBitLenSize() const
@@ -332,12 +332,11 @@ namespace embDB
 
 				CommonLib::FxBitWriteStream bitStream;
 				uint32 nBitSize = (m_nLenBitSize +7)/8;
-				
-				//pStream->write((uint16)nBitSize);
+			 
 				bitStream.attach(pStream, pStream->pos(), nBitSize);
 				pStream->seek(nBitSize, CommonLib::soFromCurrent);
 				uint32 nBeginCompressPos = pStream->pos();
-				bool bRangeCode = true;
+			/*	bool bRangeCode = true;
 				
 				if(!CompressRangeCode(vecValues, pStream, FreqPrev, nByteSize, &bitStream))
 				{
@@ -345,8 +344,11 @@ namespace embDB
 					pStream->seek(nBeginCompressPos, CommonLib::soFromBegin);
 					CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
 					bRangeCode = false;
-				}
+				}*/
 		
+				bool bRangeCode = false;
+				CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
+
 
 				uint32 nEndPos = pStream->pos();
 

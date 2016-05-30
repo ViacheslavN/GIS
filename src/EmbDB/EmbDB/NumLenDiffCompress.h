@@ -33,7 +33,7 @@ namespace embDB
 			typedef typename TBase::TACDecoder		 TACDecoder;
 
 
-			TUnsignedDiffNumLenCompressor(uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : TBase(nError, bOnlineCalcSize)
+			TUnsignedDiffNumLenCompressor(uint32 nError = 10 /*0.5%*/, bool bOnlineCalcSize = false) : TBase(nError, bOnlineCalcSize)
 			{
 			}
 
@@ -73,11 +73,11 @@ namespace embDB
 				uint32 nBitSize = (this->m_nLenBitSize +7)/8;
 				
 				pStream->write(vecValues[0]);
-				//pStream->write((uint16)nBitSize);
+			
 				bitStream.attach(pStream, pStream->pos(), nBitSize);
 				pStream->seek(nBitSize, CommonLib::soFromCurrent);
 				uint32 nBeginCompressPos = pStream->pos();
-				bool bRangeCode = true;
+				/*bool bRangeCode = true;
 				
 				if(!CompressRangeCode(vecValues, pStream, FreqPrev, nByteSize, &bitStream))
 				{
@@ -85,8 +85,10 @@ namespace embDB
 					pStream->seek(nBeginCompressPos, CommonLib::soFromBegin);
 					CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
 					bRangeCode = false;
-				}
+				}*/
 		
+				bool bRangeCode = false;
+				CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
 
 				uint32 nEndPos = pStream->pos();
 
