@@ -8,7 +8,7 @@ namespace embDB
 {
 
 
-	class BlobFieldCompressorParams
+	class BlobFieldCompressorParams :public CompressorParamsBaseImp
 	{
 	public:
 		BlobFieldCompressorParams() :  m_nMaxPageBlobSize(0), m_nStreamPageInfo(-1)

@@ -45,7 +45,7 @@ template<class Tran>
 void insertINBTreeMapBlob  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, int64& nTreeRootPage, Tran* pTran)
 {
 
-	typedef embDB::TBPBlobTree<int64, Tran> TBlobTree;
+		typedef embDB::TBPBlobTree<Tran, embDB::BlobFieldCompressorParams> TBlobTree;
 	std::cout << "Insert Test"  << std::endl;
 	CommonLib::TimeUtils::CDebugTime time;
 	double tmInsert = 0;
@@ -126,7 +126,7 @@ void searchINBTreeMapBlob   (CommonLib::alloc_t* pAlloc,
 	double tmInsert = 0;
 	double treeCom = 0;
 	double tranCom  = 0;
-	typedef embDB::TBPBlobTree<int64, Tran> TBlobTree;
+		typedef embDB::TBPBlobTree<Tran, embDB::BlobFieldCompressorParams> TBlobTree;
 	TBlobTree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
 	tree.loadBTreeInfo(); 
 	time.start();
@@ -240,7 +240,7 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 	if(!storage.open(pszName, false, false,  true, false))
 		return -1;
 
-	typedef embDB::TBPBlobTree<int64,  embDB::IDBTransaction> TBlobTree;
+	typedef embDB::TBPBlobTree<TTransaction, embDB::BlobFieldCompressorParams> TBlobTree;
 
 	embDB::FilePagePtr pPage = storage.getNewPage(nPageSize);
 	int64 intnStorageInfoPage = pPage->getAddr();
@@ -253,7 +253,7 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 	embDB::FilePagePtr pTreeRootPage = tran.getNewPage(256);
 
 	embDB::FilePagePtr pLeafCompRootPage = tran.getNewPage(256);
-	embDB::BlobLeafNodeCompressor<int64, TTransaction>::TLeafCompressorParams compParams;
+	embDB::BlobLeafNodeCompressor<TTransaction, embDB::BlobFieldCompressorParams, embDB::BlobCompressor<TTransaction, embDB::BlobFieldCompressorParams> >::TLeafCompressorParams compParams;
 	//compParams.setRootPage(pLeafCompRootPage->getAddr());
 	compParams.SetMaxPageBlobSize(400);
 	//compParams.save(&tran);
@@ -286,7 +286,7 @@ void TestTreeBlobImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, uint
 		Transactions InsertTran(pAlloc, embDB::rtUndo, embDB::eTT_UNDEFINED, L"d:\\db\\inserttran.data", &storage, 1);
 
 
-		insertINBTreeMapBlob<embDB::IDBTransaction>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran);
+		insertINBTreeMapBlob<Transactions>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran);
 	}
 
 	{
@@ -298,7 +298,7 @@ void TestTreeBlobImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, uint
 		Transactions InsertTran(pAlloc, embDB::rtUndo, embDB::eTT_UNDEFINED, L"d:\\db\\inserttran.data", &storage, 1);
 
 
-		searchINBTreeMapBlob<embDB::IDBTransaction>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran, coding);
+		searchINBTreeMapBlob<Transactions>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran, coding);
 	}
 	
 }
@@ -307,5 +307,5 @@ void TestTreeBlobImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, uint
 void TestTreeBlob()
 {
 		CommonLib::simple_alloc_t alloc;
-		TestTreeBlobImpl<embDB::CDirectTransaction>(&alloc, 0, 3000000, 10, embDB::scUTF8);
+		//TestTreeBlobImpl<embDB::CDirectTransaction>(&alloc, 0, 3000000, 10, embDB::scUTF8);
 };

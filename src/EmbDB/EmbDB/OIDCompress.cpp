@@ -7,7 +7,8 @@ namespace embDB
 {
 
 
-	OIDCompressor::OIDCompressor(CommonLib::alloc_t *pAlloc, uint32 nPageSize, CompressorParamsBaseImp *pParams , uint32 nError) : m_NumLenComp(nError), m_DiffComp(nError)
+	OIDCompressor::OIDCompressor(CommonLib::alloc_t *pAlloc, uint32 nPageSize, CompressorParamsBaseImp *pParams , uint32 nError) :
+		m_NumLenComp(pParams->m_compressType, pParams->m_nErrorCalc, pParams->m_bCalcOnlineSize), m_DiffComp(pParams->m_compressType, pParams->m_nErrorCalc, pParams->m_bCalcOnlineSize)
 	{
 
 	}
@@ -107,7 +108,6 @@ namespace embDB
 		if(oids.empty())
 			return true;
 
-
 		uint32 nByteDiffComp = m_DiffComp.GetCompressSize();
 		uint32 nByteNumlenComp = m_NumLenComp.GetCompressSize();
 
@@ -130,6 +130,7 @@ namespace embDB
 	{
 		if(nSize == 0)
 			return true;
+		 
 		byte nCompSchema = pStream->readByte();
 		bool bRet = false;
 		if(nCompSchema == (byte)eCompressDiff)

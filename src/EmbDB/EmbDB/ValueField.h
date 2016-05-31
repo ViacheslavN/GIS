@@ -423,7 +423,21 @@ namespace embDB
 			
 			virtual bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran)
 			{
-				return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc);
+
+				TLeafCompressorParams leafCompParams;
+				TInnerCompressorParams innerCompParams;
+
+
+				leafCompParams.m_compressType = m_CompressType;
+				leafCompParams.m_bCalcOnlineSize = m_bOnlineCalcCompSize;
+				leafCompParams.m_nErrorCalc		  = m_nCompCalcError;
+
+				innerCompParams.m_compressType = m_CompressType;
+				innerCompParams.m_bCalcOnlineSize = m_bOnlineCalcCompSize;
+				innerCompParams.m_nErrorCalc		  = m_nCompCalcError;
+				
+
+				return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc,&innerCompParams, &leafCompParams);
 			}
 
 			virtual bool load(CommonLib::IReadStream* pStream,  IDBTransaction *pTran)

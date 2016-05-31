@@ -25,7 +25,7 @@ namespace embDB
 		template<typename _Transactions  >
 		static TInnerCompressorParams *LoadCompressorParams(_Transactions *pTran)
 		{
-			return NULL;
+			return new TInnerCompressorParams();
 		}
 
 

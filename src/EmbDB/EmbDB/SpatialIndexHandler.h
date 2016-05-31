@@ -11,10 +11,16 @@ namespace embDB
 		 
 		typedef _TSpatialIndex TSpatialIndex;
 
-		TSpatialIndexHandler(IDBShapeFieldHandler* pField, CommonLib::alloc_t* pAlloc, int64 nPageAddr, uint32 nPageNodeSize) : m_pAlloc(pAlloc),m_nPageAddr(nPageAddr), m_nBTreeRootPage(-1), m_nPageNodeSize(nPageNodeSize)
+		TSpatialIndexHandler(IDBShapeFieldHandler* pField, CommonLib::alloc_t* pAlloc, int64 nPageAddr, const SIndexProp& ip) : m_pAlloc(pAlloc),m_nPageAddr(nPageAddr), m_nBTreeRootPage(-1)
 		{
 
 			m_pField = pField;
+			 m_nPageNodeSize = ip.m_nNodePageSize;
+
+			 m_nCompressType = ip.m_FieldPropExt.m_CompressType;
+			 m_nCalcCompressError = ip.m_FieldPropExt.m_nCompCalcError;
+			 m_bOnlineCalcCompSize = ip.m_FieldPropExt.m_bOnlineCalcCompSize;
+
 		}
 		~TSpatialIndexHandler()
 		{}
@@ -25,6 +31,9 @@ namespace embDB
 		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage)
 		{
 			m_nBTreeRootPage = pStream->readInt64();
+			m_nCompressType = (CompressType)pStream->readintu16();
+			m_nCalcCompressError = pStream->readIntu32();
+			m_bOnlineCalcCompSize = pStream->readBool();
 			return true;
 		}
 		virtual bool save(CommonLib::IWriteStream* pStream, IDBTransaction *pTran)
@@ -34,9 +43,12 @@ namespace embDB
 				return false;
 			m_nBTreeRootPage = pRootPage->getAddr();
 			pStream->write(m_nBTreeRootPage);
+			pStream->write(uint16(m_nCompressType));
+			pStream->write(m_nCalcCompressError);
+			pStream->write(m_bOnlineCalcCompSize);
 
 			TSpatialIndex index(pTran, m_pAlloc, m_nPageNodeSize);
-			index.init(m_nBTreeRootPage);
+			index.init(m_nBTreeRootPage, m_nCompressType, m_nCalcCompressError, m_bOnlineCalcCompSize);
 			return true;
 		}
 
@@ -80,6 +92,10 @@ namespace embDB
 		uint32 m_nPageNodeSize;
 		CommonLib::alloc_t* m_pAlloc;
 		IDBShapeFieldHandlerPtr m_pField;
+
+		CompressType m_nCompressType;
+		uint32 m_nCalcCompressError;
+		bool m_bOnlineCalcCompSize;
 
 	};
 

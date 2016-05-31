@@ -135,7 +135,8 @@ namespace CommonLib
 			m_bCompressPart = true;
 			CreatePartCompressor(m_partType);
 			m_PartCompressor->PreCompress(pShp->getParts(), nPartCount);
-			nCompressSize += m_PartCompressor->GetCompressSize();
+			uint32 nPart = m_PartCompressor->GetCompressSize();
+			nCompressSize += nPart;
 		}
 		if(pShp->getPointCnt() < 5)
 		{

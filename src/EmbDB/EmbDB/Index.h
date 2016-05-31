@@ -99,10 +99,11 @@ class CIndexHandlerBase : public IDBIndexHandler
 {
 public:
 
-	CIndexHandlerBase(IDBFieldHandler *pField, CommonLib::alloc_t* pAlloc,  indexTypes type, int64 nIndexPage, uint32 nNodePageSize) : m_pAlloc(pAlloc), m_IndexType(type),
-		m_nIndexPage(nIndexPage), m_nBTreeRootPage(-1), m_nNodePageSize(nNodePageSize)
+	CIndexHandlerBase(IDBFieldHandler *pField, CommonLib::alloc_t* pAlloc,  indexTypes type, int64 nIndexPage, const SIndexProp &ip) : m_pAlloc(pAlloc), m_IndexType(type),
+		m_nIndexPage(nIndexPage), m_nBTreeRootPage(-1)
 	{
 		m_pField = pField;
+		m_nNodePageSize = ip.m_nNodePageSize;
 	}
 	~CIndexHandlerBase(){}
 

@@ -11,13 +11,13 @@ namespace embDB
 {
 
 
-	template<class _TKey, class _Transaction>
-	class TBPShapeTree : public TBPBlobTree<_TKey,  _Transaction, ShapeFieldCompressorParams> 
+	template<class _Transaction>
+	class TBPShapeTree : public TBPBlobTree<_Transaction, ShapeFieldCompressorParams> 
 	
 	{
 	public:
 
-		typedef TBPBlobTree<_TKey,  _Transaction, ShapeFieldCompressorParams>  TBase;
+		typedef TBPBlobTree<_Transaction, ShapeFieldCompressorParams>  TBase;
 		typedef typename TBase::TBase      TSubBase;
 		typedef typename TBase::TBTreeNode      TBTreeNode;
 		typedef typename TBase::iterator      iterator;

@@ -131,7 +131,7 @@ namespace embDB
 
 		typedef CUniqueIndex<FType, TBTree, FieldDataType> TIndex;
 
-		UniqueIndexFieldHandler(IDBFieldHandler *pField, CommonLib::alloc_t* pAlloc, int64 nIndexPage, uint32 nNodePageSize) : CIndexHandlerBase(pField, pAlloc, itUnique, nIndexPage, nNodePageSize)
+		UniqueIndexFieldHandler(IDBFieldHandler *pField, CommonLib::alloc_t* pAlloc, int64 nIndexPage,const SIndexProp &ip) : CIndexHandlerBase(pField, pAlloc, itUnique, nIndexPage, ip)
 		{
 
 		}

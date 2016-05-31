@@ -25,7 +25,7 @@ namespace embDB
 		template<typename _Transactions  >
 		static TInnerCompressorParams *LoadCompressorParams(_Transactions *pTran)
 		{
-			return NULL;
+			return new TInnerCompressorParams();
 		}
 
 		BPMultiIndexInnerNodeCompressor(uint32 nPageSize, TKeyMemSet* pKeyMemset, TLinkMemSet* pLinkMemSet, CommonLib::alloc_t *pAlloc = 0, TInnerCompressorParams *pParams = NULL) : m_nCount(0),

@@ -5,14 +5,14 @@
 #include "BPTreeLeafNodeSetv2.h"
 namespace embDB
 {
-	template<typename _TKey, typename _TValue,  /* typename _TComp,*/
+	template<typename _TKey, typename _TValue,
 	class _Transaction, class _TCompressor,
 	class _TKeyMemSet = TBPVector<_TKey>,
 	class _TValueMemSet = TBPVector<_TValue> >
-	class BPTreeLeafNodeMapv2 : public  BPTreeLeafNodeSetv2Base<_TKey,/* _TComp,*/ _Transaction, _TCompressor, _TKeyMemSet>
+	class BPTreeLeafNodeMapv2 : public  BPTreeLeafNodeSetv2Base<_TKey, _Transaction, _TCompressor, _TKeyMemSet>
 	{
 	public:
-		typedef BPTreeLeafNodeSetv2Base<_TKey, /*_TComp, */_Transaction, _TCompressor, _TKeyMemSet> TBase;
+		typedef BPTreeLeafNodeSetv2Base<_TKey, _Transaction, _TCompressor, _TKeyMemSet> TBase;
 		typedef _TValue TValue;
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;

@@ -9,6 +9,7 @@
 #include "CommonLibrary/RangeCoder.h"
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CompressUtils.h"
+#include "embDB.h"
 namespace embDB
 {
 	
@@ -131,8 +132,8 @@ namespace embDB
 			
 	 
 
-			TUnsignedNumLenCompressor(uint32 nError = 10 /*0.5%*/, bool bOnlineCalcSize = false) : m_nLenBitSize(0), m_nCount(0), m_nDiffsLen(0), m_nFlags(0),
-						m_nTypeFreq(ectByte), m_nError(nError), m_dBitRowSize(0.), m_bOnlineCalcSize(bOnlineCalcSize)
+			TUnsignedNumLenCompressor(CompressType nType, uint32 nError = 200, bool bOnlineCalcSize = false) : m_nLenBitSize(0), m_nCount(0), m_nDiffsLen(0), m_nFlags(0),
+						m_nTypeFreq(ectByte), m_nError(nError), m_dBitRowSize(0.), m_bOnlineCalcSize(bOnlineCalcSize), m_nType(nType)
 			{
 				 memset(m_BitsLensFreq, 0, sizeof(m_BitsLensFreq));
 			}
@@ -281,8 +282,11 @@ namespace embDB
 			double GetCodeBitSize() const
 			{
 				double dBitRowSize = m_bOnlineCalcSize ? m_dBitRowSize :  CalcRowBitSize<uint32>(m_BitsLensFreq, _nMaxBitsLens + 1, m_nDiffsLen, m_nCount);
-			//	dBitRowSize += (dBitRowSize/m_nError)   + 64 /*code  finish*/; 
-				dBitRowSize += 64;
+				if(m_nType == ACCoding)
+					dBitRowSize += 64;
+				else				
+					dBitRowSize += (dBitRowSize/m_nError)   + 64 /*code  finish*/; 
+				
 				return dBitRowSize;
 			}
 			int GetBitLenSize() const
@@ -336,18 +340,26 @@ namespace embDB
 				bitStream.attach(pStream, pStream->pos(), nBitSize);
 				pStream->seek(nBitSize, CommonLib::soFromCurrent);
 				uint32 nBeginCompressPos = pStream->pos();
-			/*	bool bRangeCode = true;
-				
-				if(!CompressRangeCode(vecValues, pStream, FreqPrev, nByteSize, &bitStream))
+				bool bRangeCode = true;
+
+
+				if(m_nType == ACCoding)
 				{
-					bitStream.seek(0, CommonLib::soFromBegin);
-					pStream->seek(nBeginCompressPos, CommonLib::soFromBegin);
-					CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
 					bRangeCode = false;
-				}*/
-		
-				bool bRangeCode = false;
-				CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
+					CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
+				}
+				else
+				{
+					if(!CompressRangeCode(vecValues, pStream, FreqPrev, nByteSize, &bitStream))
+					{
+						bitStream.seek(0, CommonLib::soFromBegin);
+						pStream->seek(nBeginCompressPos, CommonLib::soFromBegin);
+						CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
+						bRangeCode = false;
+					}
+
+				}
+			
 
 
 				uint32 nEndPos = pStream->pos();
@@ -615,6 +627,7 @@ namespace embDB
 
 			mutable double m_dBitRowSize;
 			bool m_bOnlineCalcSize;
+			CompressType m_nType;
 
 	};
 

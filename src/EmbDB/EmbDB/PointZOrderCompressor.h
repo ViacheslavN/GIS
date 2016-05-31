@@ -23,8 +23,8 @@ namespace embDB
 			typedef typename TBase::TEncoder TEncoder;
 			typedef typename TBase::TDecoder TDecoder;
 
-			TPointZOrderCompressor(uint32 nError = 200 , bool bOnlineCalcSize = false) :
-					TBase(nError, bOnlineCalcSize)
+			TPointZOrderCompressor(CompressType nType, uint32 nError = 200 , bool bOnlineCalcSize = false) :
+					TBase(nType, nError, bOnlineCalcSize)
 			{
  
 			}

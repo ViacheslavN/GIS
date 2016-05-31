@@ -29,8 +29,8 @@
 #include "../EmbDB/BaseLeafNodeCompDiff2.h"
 
 
-typedef embDB::TBaseValueDiffCompress<int64, embDB::SignedDiffNumLenCompressor64i> TLinkInnerCompress;
-typedef embDB::TBaseValueDiffCompress<int32, embDB::SignedDiffNumLenCompressor32i> TOIDLeafCompress;
+typedef embDB::TBaseValueDiffCompress<int64, int64,embDB::SignedDiffNumLenCompressor64i> TLinkInnerCompress;
+typedef embDB::TBaseValueDiffCompress<int32, int32, embDB::SignedDiffNumLenCompressor32i> TOIDLeafCompress;
 
 
 typedef embDB::TBaseSpatialCompress<embDB::ZOrderRect2DU16, embDB::TRectZOrderCompressor<embDB::ZOrderRect2DU16, uint16, 16> > TRectSpatialCompress16;

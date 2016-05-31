@@ -3,7 +3,8 @@
 
 namespace embDB
 {
-	InnerLinkCompress::InnerLinkCompress(CommonLib::alloc_t *pAlloc, uint32 nPageSize,CompressorParamsBaseImp *pParams  )
+	InnerLinkCompress::InnerLinkCompress(CommonLib::alloc_t *pAlloc, uint32 nPageSize,CompressorParamsBaseImp *pParams  ) :
+		m_compressor(pParams->m_compressType, pParams->m_nErrorCalc, pParams->m_bCalcOnlineSize)
 	{
 
 	}

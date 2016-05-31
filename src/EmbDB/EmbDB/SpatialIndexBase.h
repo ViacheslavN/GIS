@@ -91,6 +91,10 @@ namespace embDB
 		  typedef typename TZCoordType::TPointType TPointType;
 		  typedef TSpatialIndexIterator<TSpatialTree, TSpatialIterator, TSpatialObj> SpatialIndexIterator;
 		  typedef TSpatialIndexIterator<TSpatialTree, iterator, TSpatialObj> TIndexIterator;
+
+
+		  typedef typename 	TSpatialTree::TLeafCompressorParams TLeafCompressorParams;
+		  typedef typename 	TSpatialTree::TInnerCompressorParams TInnerCompressorParams;
  		  virtual bool save()
 		  {
 			 return true;// return m_tree.saveBTreeInfo();
@@ -116,45 +120,27 @@ namespace embDB
 			  m_tree.setRootPage(m_nBTreeRootPage);
 			  return m_tree.loadBTreeInfo(); 
 
-			/*  int64 m_nFieldInfoPage = nAddr;
-			  FilePagePtr pPage = m_pDBTransactions->getFilePage(nAddr, MIN_PAGE_SIZE); //TO DO FIX
-			  if(!pPage.get())
-				  return false;
-			  CommonLib::FxMemoryReadStream stream;
-			  stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-			  sFilePageHeader header(stream);
-			  if(!header.isValid())
-			  {
-				  m_pDBTransactions->error(_T("IndexField: Page %I64d Error CRC for node page"), pPage->getAddr()); //TO DO log error
-				  return false;
-			  }
-			  if(header.m_nObjectPageType != FIELD_PAGE || header.m_nSubObjectPageType != TABLE_INDEX_PAGE)
-			  {
-				  m_pDBTransactions->error(_T("IndexField: Page %I64d Not index info page"), pPage->getAddr()); //TO DO log error
-				  return false;
-			  }
-			  stream.read(m_nBTreeRootPage);
-			  stream.read(m_dOffsetX);
-			  stream.read(m_dOffsetY);
-			  stream.read(m_dScaleX);
-			  stream.read(m_dScaleY);
-			  stream.read(m_extent.xMin);
-			  stream.read(m_extent.yMin);
-			  stream.read(m_extent.xMax);
-			  stream.read(m_extent.yMax);
- 
-			  m_Type = (eDataTypes)stream.readIntu32();
-			  m_ShapeType = (CommonLib::eShapeType)stream.readIntu32();*/
-			
 		  }
 
 
-		  virtual bool init(int64 nBTreeRootPage)
+		  virtual bool init(int64 nBTreeRootPage, CompressType nType, uint32 nCompCalcError, bool bOnlineCalcCompSize )
 		  {
+
+			  TLeafCompressorParams leafCompParams;
+			  TInnerCompressorParams innerCompParams;
+
+
+			  leafCompParams.m_compressType = nType;
+			  leafCompParams.m_bCalcOnlineSize = bOnlineCalcCompSize;
+			  leafCompParams.m_nErrorCalc		  = nCompCalcError;
+
+			  innerCompParams.m_compressType = nType;
+			  innerCompParams.m_bCalcOnlineSize = bOnlineCalcCompSize;
+			  innerCompParams.m_nErrorCalc		  =nCompCalcError;
 
 			  m_nBTreeRootPage = nBTreeRootPage;
 			//  m_tree.setRootPage(m_nBTreeRootPage);
-			  return m_tree.init(m_nBTreeRootPage);
+			  return m_tree.init(m_nBTreeRootPage, &innerCompParams, &leafCompParams);
 		  }
 
 		  TSpatialTree* getBTree() {return &m_tree;}

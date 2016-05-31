@@ -39,25 +39,24 @@ namespace embDB
 	class CompressorParamsBaseImp
 	{
 	public:
-		CompressorParamsBaseImp() : m_nRootPage(-1)
+		CompressorParamsBaseImp() : m_compressType(ACCoding),m_bCalcOnlineSize(false), m_nErrorCalc(200)
 		{}
 		virtual ~CompressorParamsBaseImp(){}
 
 			 
-	/*	virtual int64 getRootPage() const 
-		{
-			return m_nRootPage;
-		}
-		virtual void setRootPage(int64 nPageID)
-		{
-			m_nRootPage = nPageID;
-		}*/
+		
 		virtual bool load(CommonLib::IReadStream *pStream, IDBTransaction* pTran)
 		{
+			m_compressType = (CompressType)pStream->readintu16();
+			m_bCalcOnlineSize = pStream->readBool();
+			m_nErrorCalc	= pStream->readIntu32();
 			return true;
 		}
 		virtual bool save(CommonLib::IWriteStream *pStream, IDBTransaction* pTran)
 		{
+			pStream->write(uint16(m_compressType));
+			pStream->write(m_bCalcOnlineSize);
+			pStream->write(m_nErrorCalc);
 			return true;
 		}
 		template<class _Transaction>
@@ -65,8 +64,10 @@ namespace embDB
 		{
 
 		}
-	private:
-		int64 m_nRootPage;
+ 
+		CompressType m_compressType;
+		bool m_bCalcOnlineSize;
+		uint32 m_nErrorCalc;
 	};
 }
 

@@ -18,7 +18,10 @@ namespace embDB
 
 
 
-		TBaseSpatialCompress(CommonLib::alloc_t *pAlloc, uint32 nPageSize, CompressorParamsBaseImp *pParams){}
+		TBaseSpatialCompress(CommonLib::alloc_t *pAlloc, uint32 nPageSize, CompressorParamsBaseImp *pParams) :
+			m_Compressor(pParams->m_compressType, pParams->m_nErrorCalc, pParams->m_bCalcOnlineSize)
+		
+		{}
 		~TBaseSpatialCompress()
 		{
 

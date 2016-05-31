@@ -9,10 +9,10 @@
 namespace embDB
 {
 	template<typename _TKey, typename _Transaction, typename _TCompParams>
-	class TBlobLeafNode : public  BPTreeLeafNodeMapv2<_TKey, sBlobVal, _Transaction, BlobLeafNodeCompressor<_TKey, _Transaction, _TCompParams> >
+	class TBlobLeafNode : public  BPTreeLeafNodeMapv2<_TKey, sBlobVal, _Transaction, BlobLeafNodeCompressor<_Transaction, _TCompParams> >
 	{
 	public:
-		typedef   BPTreeLeafNodeMapv2<_TKey, sBlobVal, _Transaction, BlobLeafNodeCompressor<_TKey, _Transaction, _TCompParams> > TBase;
+		typedef   BPTreeLeafNodeMapv2<_TKey, sBlobVal, _Transaction, BlobLeafNodeCompressor<_Transaction, _TCompParams> > TBase;
 		typedef sBlobVal TValue;
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;
@@ -30,7 +30,7 @@ namespace embDB
 		~TBlobLeafNode()
 		{
 			if(this->m_pCompressor)
-				this->m_pCompressor->Clear();
+				this->m_pCompressor->Free();
 		}
 
 

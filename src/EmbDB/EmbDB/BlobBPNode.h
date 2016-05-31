@@ -6,21 +6,24 @@
 #include "BPTreeNodeSetV2.h"
 #include "BlobLeafNode.h"
 #include "BlobLeafNodeCompressor.h"
-
+#include "BaseValueDiffCompressor.h"
+#include "BaseInnerNodeDIffCompress2.h"
 namespace embDB
 {
+	typedef TBaseValueDiffCompress<int64, int64, SignedDiffNumLenCompressor64i> TInnerLinkCompress;
+	typedef TBPBaseInnerNodeDiffCompressor2<int64, embDB::OIDCompressor, TInnerLinkCompress>  TInnerCompressor;
 
 
 	template<class _TKey, class _Transaction, class _TCompParams = BlobFieldCompressorParams>
-	class TBlobNodeMap : public BPTreeNodeMapv2<_TKey, sBlobVal, _Transaction, 	BPInnerNodeSimpleCompressorV2<_TKey>,
-		BlobLeafNodeCompressor<_TKey,  _Transaction, _TCompParams>, 
-		BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >,
+	class TBlobNodeMap : public BPTreeNodeMapv2<_TKey, sBlobVal, _Transaction, 	TInnerCompressor,
+		BlobLeafNodeCompressor<_Transaction, _TCompParams, BlobCompressor <_Transaction, _TCompParams> >, 
+		BPTreeInnerNodeSetv2<_TKey, _Transaction, TInnerCompressor >,
 		TBlobLeafNode<_TKey, _Transaction, _TCompParams> >
 	{
 	public:
-		typedef BPInnerNodeSimpleCompressorV2<_TKey> TInnerCompressor;
-		typedef BlobLeafNodeCompressor<_TKey,  _Transaction, _TCompParams> TLeafCompressor;
-		typedef BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> > TInnerNode;
+	 
+		typedef BlobLeafNodeCompressor< _Transaction, _TCompParams, BlobCompressor <_Transaction, _TCompParams> > TLeafCompressor;
+		typedef BPTreeInnerNodeSetv2<_TKey, _Transaction, TInnerCompressor > TInnerNode;
 		typedef TBlobLeafNode<_TKey, _Transaction, _TCompParams>	TLeafNode;
 
 		typedef BPTreeNodeMapv2<_TKey, sBlobVal, _Transaction, TInnerCompressor, TLeafCompressor, TInnerNode,	 TLeafNode > TBase;

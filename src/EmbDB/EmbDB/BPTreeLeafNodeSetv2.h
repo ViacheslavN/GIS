@@ -9,7 +9,7 @@
 #include "CompressorParams.h"
 namespace embDB
 {
-	template<typename _TKey,  /*typename _TComp,*/
+	template<typename _TKey,
 	class _Transaction, class _TCompressor,
 	class _TLeafMemSet = TBPVector<_TKey> >
 	class BPTreeLeafNodeSetv2Base : public  BPBaseTreeNode
@@ -19,7 +19,6 @@ namespace embDB
 		typedef int64 TLink;
 		typedef _TKey TKey;
 		typedef _Transaction Transaction;
-		//typedef _TComp		 TComporator;
 		typedef _TCompressor TCompressor;
 		typedef _TLeafMemSet TLeafMemSet;
 

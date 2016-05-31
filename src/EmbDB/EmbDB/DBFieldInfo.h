@@ -32,7 +32,9 @@ namespace embDB
 			m_nPageSize = pFieldProp->m_nPageSize;
 			m_sFieldName = pFieldProp->m_sFieldName;
 			m_sFieldAlias = pFieldProp->m_sFieldAlias;
-
+			m_CompressType = pFieldProp->m_FieldPropExt.m_CompressType;
+			m_bOnlineCalcCompSize = pFieldProp->m_FieldPropExt.m_bOnlineCalcCompSize;
+			m_nCompCalcError = pFieldProp->m_FieldPropExt.m_nCompCalcError;
 		}
 		~CDBFieldHandlerBase(){}
 
@@ -42,18 +44,14 @@ namespace embDB
 		bool base_save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,
 			TInnerCompParams *pInnerCompParams = NULL, TLeafCompParams* pLeafCompParams = NULL)
 		{
-		/*	uint32 nNameUtf8Len = m_sFieldName.calcUTF8Length();
-			uint32 nAliasUtf8Len = m_sFieldAlias.calcUTF8Length();
-			std::vector<char> vecBufName(nNameUtf8Len + 1);
-			std::vector<char> vecAliasName(nAliasUtf8Len + 1);
-
-			m_sFieldName.exportToUTF8(&vecBufName[0], vecBufName.size());
-			m_sFieldAlias.exportToUTF8(&vecAliasName[0], vecAliasName.size());*/
-
+ 
 			pStream->write(m_sFieldName);
 			pStream->write(m_sFieldAlias);
 			pStream->write(m_nPrecision);
 			pStream->write(m_dScale);
+			pStream->write(m_bNoNull);
+	 
+
 
 			FilePagePtr pFieldInfoPage(pTran->getNewPage(MIN_PAGE_SIZE)); 
 			if(!pFieldInfoPage.get())
@@ -107,6 +105,9 @@ namespace embDB
 			pStream->read(m_sFieldAlias);
 			m_nPrecision = pStream->readInt32();
 			m_dScale = pStream->readDouble();
+			m_bNoNull = pStream->readBool();
+
+
 			m_nFieldInfoPage = pStream->readInt64();
 		}
 
@@ -206,6 +207,10 @@ namespace embDB
 		IDBIndexHandlerPtr m_pIndexHandler;
 		uint64				m_nFieldInfoPage;
 		int64				m_nPageAdd;
+
+		CompressType m_CompressType;
+		bool m_bOnlineCalcCompSize;
+		uint32 m_nCompCalcError;
 	};
 
  

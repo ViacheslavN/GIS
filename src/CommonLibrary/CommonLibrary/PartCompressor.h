@@ -69,7 +69,12 @@ namespace CommonLib
 			bitStream.attach(pStream, pStream->pos(), nByteSize);
 			pStream->seek(nByteSize, soFromCurrent);
 
+
+			uint32 nSize = 0;		
 			WriteValue(pParts[1], m_dateType, pStream);
+			uint32 nBeginPos = pStream->pos();
+			pStream->write(nSize);
+			
 			m_Compressor.BeginCompreess(pStream);
 			for (uint32 i = 2; i < nCount; ++i)
 			{
@@ -80,12 +85,18 @@ namespace CommonLib
 			}
 
 			m_Compressor.EncodeFinish();
+
+			uint32 nEndPos = pStream->pos();
+			nSize = pStream->pos() - nBeginPos - sizeof(uint32);
+			pStream->seek(nBeginPos, soFromBegin);
+			pStream->write(nSize);
+			pStream->seek(nEndPos, soFromBegin);
 			return true;
 		}
 
 		virtual uint32 GetCompressSize() const
 		{
-			  return m_Compressor.GetCompressSize() + (m_Compressor.GetBitsLen() +7)/8 + GetSizeTypeValue(m_dateType);
+			  return m_Compressor.GetCompressSize() + (m_Compressor.GetBitsLen() +7)/8 + GetSizeTypeValue(m_dateType) + sizeof(uint32);
 		}
 
 		virtual void clear()
@@ -122,7 +133,13 @@ namespace CommonLib
 
 			uint32 nBitPart = 0;
 			uint32 nPartDiff = 0;
-			m_Compressor.StartDecode(pStream);
+			
+			uint32 nCompSize = pStream->readIntu32();
+
+			FxMemoryReadStream compStream;
+			compStream.attach(pStream, pStream->pos(), nCompSize);
+			pStream->seek(nCompSize, soFromCurrent);
+			m_Compressor.StartDecode(&compStream);
 
 			for (uint32 i = 2; i < nCount; ++i)
 			{

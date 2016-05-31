@@ -65,40 +65,40 @@ namespace embDB
 
 
 
-	static IDBIndexHandler* CreateMultiIndex(IDBFieldHandler *pField,  CDatabase* pDB, int64 nPageAddr, uint32 nPageSize)
+	static IDBIndexHandler* CreateMultiIndex(IDBFieldHandler *pField,  CDatabase* pDB, int64 nPageAddr, const SIndexProp &ip)
 	{
 		IDBIndexHandler* pIndex = NULL;
 		switch(pField->getType())
 		{
 		case dtInteger8:
-			pIndex = new TMultiIndexINT8(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TMultiIndexINT8(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtUInteger8:
-			pIndex = new TMultiIndexUINT8(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TMultiIndexUINT8(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtInteger16:
-			pIndex = new TMultiIndexINT16(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TMultiIndexINT16(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtUInteger16:
-			pIndex = new TMultiIndexUINT16(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TMultiIndexUINT16(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtInteger32:
-			pIndex = new TMultiIndexINT32(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TMultiIndexINT32(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtUInteger32:
-			pIndex = new TMultiIndexUINT32(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TMultiIndexUINT32(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtInteger64:
-			pIndex = new TMultiIndexNT64(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TMultiIndexNT64(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtUInteger64:
-			pIndex = new TMultiIndexNT64(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TMultiIndexNT64(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtFloat:
-			pIndex = new TMultiIndexFloat(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TMultiIndexFloat(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtDouble:
-			pIndex = new TMultiIndexDouble(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TMultiIndexDouble(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		}
 
@@ -107,40 +107,40 @@ namespace embDB
 
 
 
-	static IDBIndexHandler* CreateUniqueIndex(IDBFieldHandler *pField, CDatabase* pDB, int64 nPageAddr, uint32 nPageSize)
+	static IDBIndexHandler* CreateUniqueIndex(IDBFieldHandler *pField, CDatabase* pDB, int64 nPageAddr, const SIndexProp &ip)
 	{
 		IDBIndexHandler* pIndex = NULL;
 		switch(pField->getType())
 		{
 		case dtInteger8:
-			pIndex = new TUniqueIndexINT8(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TUniqueIndexINT8(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtUInteger8:
-			pIndex = new TUniqueIndexUINT8(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TUniqueIndexUINT8(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtInteger16:
-			pIndex = new TUniqueIndexINT16(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TUniqueIndexINT16(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtUInteger16:
-			pIndex = new TUniqueIndexUINT16(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TUniqueIndexUINT16(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtInteger32:
-			pIndex = new TUniqueIndexINT32(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TUniqueIndexINT32(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtUInteger32:
-			pIndex = new TUniqueIndexUINT32(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TUniqueIndexUINT32(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtInteger64:
-			pIndex = new TUniqueIndexNT64(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TUniqueIndexNT64(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtUInteger64:
-			pIndex = new TUniqueIndexNT64(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TUniqueIndexNT64(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtFloat:
-			pIndex = new TUniqueIndexFloat(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TUniqueIndexFloat(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtDouble:
-			pIndex = new TUniqueIndexDouble(pField, pDB->getBTreeAlloc(), nPageAddr, nPageSize);
+			pIndex = new TUniqueIndexDouble(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		}
 

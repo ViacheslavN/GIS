@@ -19,7 +19,7 @@ namespace embDB
 		template<typename _Transactions  >
 		static TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
 		{
-			return NULL;
+			return new TLeafCompressorParams();
 		}
 
 		BPLeafNodeMultiIndexCompressor(uint32 nPageSize, _Transaction *pTran = 0, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL, TLeafMemSet *pLeafMemSet = NULL) : m_nCount(0),

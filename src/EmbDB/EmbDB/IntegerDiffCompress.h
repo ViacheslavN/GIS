@@ -73,7 +73,7 @@ template<class _TValue,
 			};
 	 
 
-			TUnsignedIntegerDiffCompress(uint32 nError = 10 /*0.5%*/, bool bOnlineCalcSize = false) : m_nCount(0),  m_nFlags(0),
+			TUnsignedIntegerDiffCompress(CompressType nType, uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : m_nCount(0),  m_nFlags(0),
 						m_nTypeFreq(etfByte), m_nError(nError), m_dBitRowSize(0), m_bOnlineCalcSize(bOnlineCalcSize)
 			{
 				
@@ -175,9 +175,11 @@ template<class _TValue,
 			{
 				
 				double dBitRowSize = m_bOnlineCalcSize ? m_dBitRowSize :  CalcRowBitSize();
+				if(m_nType == ACCoding)
+					dBitRowSize += 64;
+				else
+					dBitRowSize  += (dBitRowSize /m_nError)  + 64; 
 				
-				//dBitRowSize  += (dBitRowSize /m_nError)  + 64; 
-				dBitRowSize += 64;
 				return dBitRowSize;
 			}
 		
@@ -227,20 +229,26 @@ template<class _TValue,
 
 				pStream->write(vecValues[0]);
 				uint32 nBeginCompressPos = pStream->pos();
-				/*bool bRangeCode = true;
-				
+				bool bRangeCode = true;
+								
 				if(m_SymbolsFreq.size() > 1)
 				{
-					if(!CompressRangeCode(vecValues, pStream, nByteSize))
+					if(m_nType == ACCoding)
 					{
-						pStream->seek(nBeginCompressPos, CommonLib::soFromBegin);
 						CompressAcCode(vecValues, pStream);
 						bRangeCode = false;
 					}
-				}*/
-
-				bool bRangeCode = false;
-				CompressAcCode(vecValues, pStream);
+					else
+					{
+						if(!CompressRangeCode(vecValues, pStream, nByteSize))
+						{
+							pStream->seek(nBeginCompressPos, CommonLib::soFromBegin);
+							CompressAcCode(vecValues, pStream);
+							bRangeCode = false;
+						}
+					}
+					
+				}
 
 				uint32 nEndPos = pStream->pos();
 
@@ -484,6 +492,7 @@ template<class _TValue,
 			eTypeFreq m_nTypeFreq;
 			mutable double m_dBitRowSize;
 			bool m_bOnlineCalcSize;
+			CompressType m_nType;
 	};
 }
 

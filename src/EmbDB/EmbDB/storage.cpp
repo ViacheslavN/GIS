@@ -359,6 +359,7 @@ namespace embDB
 	}
 	bool CStorage::saveNewPage(FilePagePtr pPage)
 	{
+
 	//	assert(m_nPageSize == pPage->getPageSize());
 		uint64 nFileAddr = pPage->getAddr() * m_nBasePageSize;
 		bool bRet = m_pFile.setFilePos64(nFileAddr, CommonLib::soFromBegin);

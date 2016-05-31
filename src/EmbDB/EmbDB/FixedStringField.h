@@ -118,9 +118,17 @@ namespace embDB
 			//compParams.setRootPage(pLeafCompRootPage->getAddr());
 			compParams.SetMaxPageStringSize(m_nPageSize/15); //TO FO FIX 
 			compParams.SetStringLen(m_nLenField);
+
+
+			TInnerCompressorParams innerCompParams;
+
+			innerCompParams.m_compressType = m_CompressType;
+			innerCompParams.m_bCalcOnlineSize = m_bOnlineCalcCompSize;
+			innerCompParams.m_nErrorCalc		  = m_nCompCalcError;
+
 			//compParams.save(pTran);
 
-			return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, NULL, &compParams);
+			return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, &innerCompParams, &compParams);
 		}
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{

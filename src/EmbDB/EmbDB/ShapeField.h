@@ -95,7 +95,7 @@ namespace embDB
 	public:
 
 		typedef CDBFieldHandlerBase<IDBShapeFieldHandler> TBase;
-		typedef TBPShapeTree<int64, IDBTransaction> TBTree;
+		typedef TBPShapeTree<IDBTransaction> TBTree;
 		typedef TShapeValueField<TBTree> TField;
 		typedef TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef TBTree::TLeafCompressorParams TLeafCompressorParams;
@@ -116,7 +116,15 @@ namespace embDB
 			compParams.SetScaleY(m_dScaleY);
 			compParams.SetOffsetX(m_dOffsetX);
 			compParams.SetOffsetY(m_dOffsetY);
-			TBase::base_save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, NULL, &compParams);
+
+
+			TInnerCompressorParams innerCompParams;
+
+			innerCompParams.m_compressType = m_CompressType;
+			innerCompParams.m_bCalcOnlineSize = m_bOnlineCalcCompSize;
+			innerCompParams.m_nErrorCalc		  = m_nCompCalcError;
+
+			TBase::base_save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, &innerCompParams, &compParams);
 
 			pStream->write((uint32)m_PointType);
 			pStream->write((uint32)m_ShapeType);
@@ -129,7 +137,7 @@ namespace embDB
 			pStream->write(m_extent.xMax);
 			pStream->write(m_extent.yMin);
 			pStream->write(m_extent.yMax);
-			TBase::initField<TField, TInnerCompressorParams, TLeafCompressorParams>(pTran, m_pAlloc, NULL, &compParams);
+			TBase::initField<TField, TInnerCompressorParams, TLeafCompressorParams>(pTran, m_pAlloc, &innerCompParams, &compParams);
 			
 		
 			return true;

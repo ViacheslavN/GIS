@@ -41,8 +41,8 @@ namespace embDB
 		typedef typename TBase::TACDecoder		 TACDecoder;
 
 
-		TSignedDiffNumLenCompressor2(uint32 nError = 10 /*0.5%*/, bool bOnlineCalcSize = false) :
-		TBase(nError, bOnlineCalcSize), m_nFlag(0), m_pWriteStream(0)
+		TSignedDiffNumLenCompressor2(CompressType type, uint32 nError = 200, bool bOnlineCalcSize = false) :
+		TBase(type, nError, bOnlineCalcSize), m_nFlag(0), m_pWriteStream(0)
 		{
 		}
 		uint16 AddSymbol(TValue symbol)

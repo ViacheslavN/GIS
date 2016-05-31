@@ -311,6 +311,10 @@ void removeFromBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart,
 template<class TBtree,  class TTran, class TKey, class TValue>
 void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize, int32 nCacheBPTreeSize)
 {
+
+	typedef typename TBtree::TInnerCompressorParams TInnerCompressorParams;
+	typedef typename TBtree::TLeafCompressorParams TLeafCompressorParams;
+
 	CommonLib::alloc_t *alloc = new CommonLib::simple_alloc_t();
 	CommonLib::TimeUtils::CDebugTime time;
 	time.start();
@@ -336,7 +340,9 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 
 				nTreeRootPage = pPage->getAddr();
 				TBtree tree(-1, &tran, alloc, nCacheBPTreeSize, 8192);
-				tree.init(nTreeRootPage); 
+				TInnerCompressorParams inerComp;
+				TLeafCompressorParams leafComp;
+				tree.init(nTreeRootPage, &inerComp, &leafComp); 
 
 				tran.commit();
 			}

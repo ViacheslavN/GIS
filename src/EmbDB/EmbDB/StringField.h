@@ -107,7 +107,11 @@ namespace embDB
 			compParams.SetStringLen(m_nLenField);
 		//	compParams.save(pTran);
 
-			if(!CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, NULL, &compParams))
+			TBTree::TInnerCompressorParams compInnerParams;
+
+			
+
+			if(!CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, &compInnerParams, &compParams))
 				return false;
 
 			return true;

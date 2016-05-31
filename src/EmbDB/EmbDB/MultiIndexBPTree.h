@@ -202,7 +202,7 @@ namespace embDB
 
 		typedef MultiIndex<FType, TBTree, FieldDataType, TBaseComp, TKeyComp> TMultiIndex;
 
-		MultiIndexFieldHandler(IDBFieldHandler *pField, CommonLib::alloc_t* pAlloc, int64 nPageAddr, uint32 nNodePageSize) : CIndexHandlerBase(pField, pAlloc, itMultiRegular, nPageAddr, nNodePageSize)
+		MultiIndexFieldHandler(IDBFieldHandler *pField, CommonLib::alloc_t* pAlloc, int64 nPageAddr, const SIndexProp &ip) : CIndexHandlerBase(pField, pAlloc, itMultiRegular, nPageAddr, ip)
 		{
 
 		}

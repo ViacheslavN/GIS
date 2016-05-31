@@ -41,7 +41,7 @@ namespace embDB
 
 		TFixedStringZlibCompressor(CommonLib::alloc_t *pAlloc, uint32 nPageSize,
 			CompressorParamsBaseImp *pParams, uint32 nError = 200 ): 
-			m_nStrings(0), m_nPageSize(nPageSize), m_lenCompressor(nError), m_pCurrBloc(0),
+			m_nStrings(0), m_nPageSize(nPageSize), m_lenCompressor(ACCoding, nError, false), m_pCurrBloc(0),
 				m_pAlloc(pAlloc),m_pValueMemset(0), m_nTranType(eTT_UNDEFINED)
 		{
 

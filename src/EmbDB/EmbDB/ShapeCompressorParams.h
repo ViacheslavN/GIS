@@ -9,7 +9,7 @@ namespace embDB
 {
 
 
-	class ShapeFieldCompressorParams
+	class ShapeFieldCompressorParams : public CompressorParamsBaseImp
 	{
 	public:
 

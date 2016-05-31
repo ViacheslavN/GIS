@@ -19,7 +19,8 @@ namespace embDB
 		typedef embDB::TBPVector<TValue> TValueMemSet;
 	 
 
-		TBaseValueDiffCompress(CommonLib::alloc_t *pAlloc, uint32 nPageSize,CompressorParamsBaseImp *pParams) 
+		TBaseValueDiffCompress(CommonLib::alloc_t *pAlloc, uint32 nPageSize,CompressorParamsBaseImp *pParams) :
+			m_compressor(pParams->m_compressType, pParams->m_nErrorCalc, pParams->m_bCalcOnlineSize)
 		{
 
 		}

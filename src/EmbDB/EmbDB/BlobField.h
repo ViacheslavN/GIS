@@ -83,7 +83,7 @@ namespace embDB
 	{
 	public:
 		typedef CDBFieldHandlerBase<IDBFieldHandler> TBase;
-		typedef TBPBlobTree<int64, IDBTransaction> TBTree;
+		typedef TBPBlobTree<IDBTransaction> TBTree;
 		typedef TBlobValueField<TBTree> TField;
 
 		typedef TBTree::TInnerCompressorParams TInnerCompressorParams;
@@ -103,8 +103,15 @@ namespace embDB
 		{
 			BlobFieldCompressorParams leafCompParams;
 			leafCompParams.SetMaxPageBlobSize(m_nPageSize/20);
+
+
+			TInnerCompressorParams innerCompParams;
+
+			innerCompParams.m_compressType = m_CompressType;
+			innerCompParams.m_bCalcOnlineSize = m_bOnlineCalcCompSize;
+			innerCompParams.m_nErrorCalc		  = m_nCompCalcError;
 	
-			return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, NULL, &leafCompParams);
+			return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, &innerCompParams, &leafCompParams);
 		}
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{

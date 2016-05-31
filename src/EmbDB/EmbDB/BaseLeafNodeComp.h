@@ -35,7 +35,7 @@ namespace embDB
 		template<typename _Transactions  >
 		static TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
 		{
-			return NULL;
+			return new TLeafCompressorParams();
 		}
 
 		virtual ~TBaseLeafNodeComp(){}

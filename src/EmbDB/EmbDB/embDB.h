@@ -169,6 +169,11 @@ namespace embDB
 	};
 	struct sFieldPropExt
 	{
+		sFieldPropExt() : m_CompressType(ACCoding), m_nCompCalcError(200), m_bOnlineCalcCompSize(false)
+		{
+
+		}
+
 		CompressType m_CompressType; //MixCoding default
 		uint32 m_nCompCalcError; //0.5% default for MixCoding/RangeCoding and 64 bits for ACCoding
 		bool m_bOnlineCalcCompSize; //false default
@@ -188,7 +193,7 @@ namespace embDB
 		bool m_bUNIQUE;
 		bool m_bCounter;
 		uint32 m_nPageSize;
-
+		sFieldPropExt m_FieldPropExt;
 
 
 		SFieldProp() : m_nLenField(0), m_dataType(dtUnknown), m_dScale(0), m_nPrecision(0),
@@ -200,7 +205,7 @@ namespace embDB
 	{
 		indexTypes m_indexType;
 		uint32 m_nNodePageSize;
-
+		sFieldPropExt m_FieldPropExt;
 		SIndexProp() : m_indexType(itUnknown), m_nNodePageSize(8192)
 		{
 

@@ -109,8 +109,8 @@ namespace embDB
 			bool readHeader(CommonLib::FxMemoryReadStream& stream);
 			bool createValueField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew);
 			
-			IDBIndexHandlerPtr createIndexHandler(IDBFieldHandler *pField,  SIndexProp* ip, int64 nPageAddr);
-			IDBIndexHandlerPtr createSpatialIndexField(IDBShapeFieldHandler* pField, int64 nPageAddr, uint32 nPageNodeSize);
+			IDBIndexHandlerPtr createIndexHandler(IDBFieldHandler *pField,  const SIndexProp& ip, int64 nPageAddr);
+			IDBIndexHandlerPtr createSpatialIndexField(IDBShapeFieldHandler* pField, int64 nPageAddr, const SIndexProp& ip);
 	
 			//bool loadTableStorage(int64 nAddr);
 			bool ReadIndices(int64 nAddr, IDBTransaction *pTran);

@@ -6,24 +6,23 @@
 #include "PageAlloc.h"
 namespace embDB
 {
-
-
-	template<class _TKey, class _Transaction, class _TCompParams = BlobFieldCompressorParams>
-	class TBPBlobTree : public TBPMapV2<_TKey, sBlobVal, comp<_TKey>, _Transaction, 
-		BPInnerNodeSimpleCompressorV2<_TKey> ,
-		BlobLeafNodeCompressor<_TKey,  _Transaction, _TCompParams>, 
-		BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
-		TBlobLeafNode<_TKey, _Transaction, _TCompParams>,
-		TBlobNodeMap<_TKey, _Transaction, _TCompParams>	>
+	
+	template<class _Transaction, class _TCompParams = BlobFieldCompressorParams>
+	class TBPBlobTree : public TBPMapV2<int64, sBlobVal, comp<int64>, _Transaction, 
+		TInnerCompressor ,
+		BlobLeafNodeCompressor<_Transaction, _TCompParams, BlobCompressor <_Transaction, _TCompParams> >, 
+		BPTreeInnerNodeSetv2<int64, _Transaction, TInnerCompressor >, 
+		TBlobLeafNode<int64, _Transaction, _TCompParams>,
+		TBlobNodeMap<int64, _Transaction, _TCompParams>	>
 	{
 	public:
 
-		typedef TBPMapV2<_TKey, sBlobVal, comp<_TKey>, _Transaction, 
-			BPInnerNodeSimpleCompressorV2<_TKey> ,
-			BlobLeafNodeCompressor<_TKey,  _Transaction, _TCompParams>, 
-			BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
-			TBlobLeafNode<_TKey, _Transaction, _TCompParams>,
-			TBlobNodeMap<_TKey, _Transaction, _TCompParams>	> TBase;
+		typedef TBPMapV2<int64, sBlobVal, comp<int64>, _Transaction, 
+			TInnerCompressor,
+			BlobLeafNodeCompressor< _Transaction, _TCompParams, BlobCompressor <_Transaction, _TCompParams> >, 
+			BPTreeInnerNodeSetv2<int64, _Transaction, TInnerCompressor >, 
+			TBlobLeafNode<int64, _Transaction, _TCompParams>,
+			TBlobNodeMap<int64, _Transaction, _TCompParams>	> TBase;
 
 
 		typedef typename TBase::TBTreeNode	TBTreeNode;

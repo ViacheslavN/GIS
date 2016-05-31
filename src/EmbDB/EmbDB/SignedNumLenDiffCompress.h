@@ -112,7 +112,7 @@ namespace embDB
 		typedef typename TBase::TACDecoder		 TACDecoder;
 
 
-		TSignedDiffNumLenCompressor(uint32 nError = 10 /*0.5%*/, bool bOnlineCalcSize = false) : TBase(nError, bOnlineCalcSize)
+		TSignedDiffNumLenCompressor(CompressType nType, uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : TBase(nType, nError, bOnlineCalcSize)
 		{
 		}
 		uint16 AddSymbol(TSignValue symbol)
@@ -183,20 +183,25 @@ namespace embDB
 			
 
 			uint32 nBeginCompressPos = pStream->pos();
-			/*bool bRangeCode = true;
+			bool bRangeCode = true;
 
-			if(!CompressRangeCode(vecValues, pStream, FreqPrev, nByteSize, &bitStream))
+			if(this->m_nType == ACCoding)
 			{
-				bitStream.seek(0, CommonLib::soFromBegin);
-				pStream->seek(nBeginCompressPos, CommonLib::soFromBegin);
-				CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
 				bRangeCode = false;
-			}*/
-			bool bRangeCode = false;
-			CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
+				CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
+			}
+			else
+			{
+				if(!CompressRangeCode(vecValues, pStream, FreqPrev, nByteSize, &bitStream))
+				{
+					bitStream.seek(0, CommonLib::soFromBegin);
+					pStream->seek(nBeginCompressPos, CommonLib::soFromBegin);
+					CompressAcCode(vecValues, pStream,  FreqPrev,  &bitStream);
+					bRangeCode = false;
+				}
+			}
 
 			uint32 nEndPos = pStream->pos();
-
 			uint32 nCompressSize= nEndPos - nBeginCompressPos;
 
 			if(bRangeCode)

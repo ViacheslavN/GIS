@@ -26,8 +26,8 @@ namespace embDB
 			typedef typename TBase::TDecoder TDecoder;
 
 
-			TRectZOrderCompressor( uint32 nError = 200 , bool bOnlineCalcSize = false) :
-					TBase(nError, bOnlineCalcSize)
+			TRectZOrderCompressor(CompressType nType,  uint32 nError = 200 , bool bOnlineCalcSize = false) :
+					TBase(nType, nError, bOnlineCalcSize)
 			{
  
 			}
