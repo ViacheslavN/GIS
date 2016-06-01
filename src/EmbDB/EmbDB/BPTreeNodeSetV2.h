@@ -84,7 +84,6 @@ namespace embDB
 			if(!pFilePage.get())
 				return false; 
 
-		
 			return LoadFromPage(pFilePage.get(), pTransactions);
 		}
 		void PreSave(Transaction* pTransactions)
@@ -132,7 +131,6 @@ namespace embDB
 		bool LoadFromPage(CFilePage* pFilePage, Transaction* pTransactions)
 		{
 
-	
 			CommonLib::FxMemoryReadStream stream;
 			stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 			sFilePageHeader header(stream, pFilePage->getPageSize(), m_bCheckCRC32 && !pFilePage->isCheck());

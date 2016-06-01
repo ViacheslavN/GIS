@@ -185,13 +185,31 @@ namespace embDB
 
 			m_nRootAddr = stream.readInt64();
 			m_bMulti = stream.readBool();
+
+
+			if(m_InnerCompParams.get() == NULL)
+			{
+				m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(m_pTransaction));
+				if(m_InnerCompParams.get())
+					m_InnerCompParams->load(&stream, m_pTransaction);
+			}
 		
-			m_InnerCompParams.reset(TInnerCompess::LoadCompressorParams(m_pTransaction));
-			m_LeafCompParams.reset(TLeafCompess::LoadCompressorParams(m_pTransaction));
-			if(m_InnerCompParams.get())
-				m_InnerCompParams->load(&stream, m_pTransaction);
-			if(m_LeafCompParams.get())
-				m_LeafCompParams->load(&stream, m_pTransaction);
+
+			if(m_LeafCompParams.get() == NULL)
+			{
+				m_LeafCompParams.reset(TLeafCompess::LoadCompressorParams(m_pTransaction));
+				if(m_LeafCompParams.get())
+					m_LeafCompParams->load(&stream, m_pTransaction);
+			}
+			else
+			{
+				int dd = 0;
+				dd++;
+			}
+	 
+		
+			
+		
 
 			return !m_pTransaction->isError();
 		}
@@ -216,13 +234,27 @@ namespace embDB
 		{
 			if(!m_pRoot.get())
 				return true;
+			{
+				typename TNodesCache::iterator it =	m_Cache.begin();
+				while(!it.isNull())
+				{
+					TBTreeNode* pBNode = it.object();
+					if(pBNode->getFlags() & CHANGE_NODE)
+					{
+						CheckNodeBeforeSave(pBNode);
+					}
+					it.next();
+				}
+				if(m_pRoot->getFlags() & CHANGE_NODE)
+					CheckNodeBeforeSave(m_pRoot.get());
+			}
 			typename TNodesCache::iterator it =	m_Cache.begin();
 			while(!it.isNull())
 			{
 				TBTreeNode* pBNode = it.object();
 				if(pBNode->getFlags() & CHANGE_NODE)
 				{
-					SaveNode(pBNode);
+					SaveNode(pBNode, false);
 					//pBNode->Save(m_pTransaction);
 					//pBNode->setFlags(CHANGE_NODE, false);
 
@@ -236,7 +268,7 @@ namespace embDB
 				//m_pRoot->Save(m_pTransaction);
 				//m_pRoot->setFlags(CHANGE_NODE, false);
 
-				SaveNode(m_pRoot.get());
+				SaveNode(m_pRoot.get(), false);
 
 				if(m_pBPTreeStatistics)
 					m_pBPTreeStatistics->SaveNode(m_pRoot->isLeaf());
@@ -601,9 +633,10 @@ namespace embDB
 	}
 	
 
-	void SaveNode(TBTreeNode *pNode)
+	void SaveNode(TBTreeNode *pNode, bool bCheckNode = true)
 	{
-		CheckNodeBeforeSave(pNode);
+		if(bCheckNode)
+			CheckNodeBeforeSave(pNode);
 		pNode->Save(m_pTransaction);
 		pNode->setFlags(CHANGE_NODE, false);
 	}

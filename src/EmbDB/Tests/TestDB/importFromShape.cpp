@@ -111,6 +111,8 @@ void SHPObjectToGeometry(ShapeLib::SHPObject* obj, CommonLib::CGeoShape& result)
 void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 {
 	
+	CommonLib::FileSystem::deleteFile(pszDBName);
+
 	SHPGuard shp;
 	DBFGuard dbf;
 
@@ -215,7 +217,10 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 			fp.m_dataType =  embDB::dtInteger32;
 			break;
 		case ShapeLib::FTDouble:
-			fp.m_dataType =  embDB::dtDouble;
+			if(dec == 0)
+				fp.m_dataType =  embDB::dtInteger64;
+			else
+				fp.m_dataType =  embDB::dtDouble;
 			break;			 
 		case ShapeLib::FTDate:
 			break;
@@ -224,80 +229,90 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 		
 	}
 
-	pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), true, 65536 );
+	pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), true, 8192 );
 
 
 	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_MODIFY);
 	pTran->begin();
-	embDB::IInsertCursorPtr pInsertCursor = pTran->createInsertCursor(pDBTable->getName().cwstr());
-	embDB::IRowPtr pRow = pInsertCursor->createRow();
-	embDB::IFieldsPtr pFields = pDBTable->getFields();
-
-	ShapeLib::SHPObject*   pCacheObject = NULL;
-
-
-	CommonLib::CString strVal;
-	double dblVal;
-	int intVal;
-	CommonLib::CGeoShape shape;
-	shape.AddRef();
-
-
-	uint32 nShapeRowSize = 0;
-	uint32 nStringRowSize = 0;
-	uint32 nDigSize = 0;
-	uint32 nDblSize = 0;
-	for(size_t row = 0; row < objectCount; ++row)
 	{
-		for (size_t i = 0; i < pFields->GetFieldCount(); ++i)
+
+		embDB::IInsertCursorPtr pInsertCursor = pTran->createInsertCursor(pDBTable->getName().cwstr());
+		embDB::IRowPtr pRow = pInsertCursor->createRow();
+		embDB::IFieldsPtr pFields = pDBTable->getFields();
+
+		ShapeLib::SHPObject*   pCacheObject = NULL;
+
+
+		CommonLib::CString strVal;
+		double dblVal;
+		int intVal;
+		int64 intVal64;
+		CommonLib::CGeoShape shape;
+		shape.AddRef();
+
+
+		uint32 nShapeRowSize = 0;
+		uint32 nStringRowSize = 0;
+		uint32 nDigSize = 0;
+		uint32 nDblSize = 0;
+		for(size_t row = 0; row < objectCount; ++row)
 		{
-			embDB::IFieldPtr pField = pFields->GetField(i);
-			CommonLib::CVariant value;
-			
-			switch(pField->getType())
+			for (size_t i = 0; i < pFields->GetFieldCount(); ++i)
 			{
-			case embDB::dtString:
-				strVal = ShapeLib::DBFReadStringAttribute(dbf.file, row, i);
-				value  = strVal;
-				nStringRowSize += strVal.calcUTF8Length();
-				break;
-			case embDB::dtUInteger32:
-			case embDB::dtInteger32:
-				intVal = ShapeLib::DBFReadIntegerAttribute(dbf.file, row, i);
-				value  = intVal;
-				nDigSize +=4;
-				break;
-			case embDB::dtDouble:
-				dblVal = ShapeLib::DBFReadDoubleAttribute(dbf.file, row, i);
-				value  = dblVal;
-				nDblSize +=8;
-				break;
-			case embDB::dtGeometry:
-						{
-							pCacheObject = ShapeLib::SHPReadObject(shp.file, row);
-							SHPObjectToGeometry(pCacheObject, shape);
-
-
-							//CommonLib::MemoryStream steram;
-							// shape.write(&steram);
-							//nShapeRowSize += steram.pos();
-							if(pCacheObject)
+				embDB::IFieldPtr pField = pFields->GetField(i);
+				CommonLib::CVariant value;
+			
+				switch(pField->getType())
+				{
+				case embDB::dtString:
+					strVal = ShapeLib::DBFReadStringAttribute(dbf.file, row, i);
+					value  = strVal;
+					nStringRowSize += strVal.calcUTF8Length();
+					break;
+				case embDB::dtUInteger32:
+				case embDB::dtInteger32:
+					intVal = ShapeLib::DBFReadIntegerAttribute(dbf.file, row, i);
+					value  = intVal;
+					nDigSize +=4;
+					break;
+				case embDB::dtUInteger64:
+				case embDB::dtInteger64:
+					intVal64 = ShapeLib::DBFReadIntegerAttribute(dbf.file, row, i);
+					value  = intVal64;
+					nDigSize +=8;
+					break;
+				case embDB::dtDouble:
+					dblVal = ShapeLib::DBFReadDoubleAttribute(dbf.file, row, i);
+					value  = dblVal;
+					nDblSize +=8;
+					break;
+				case embDB::dtGeometry:
 							{
-								ShapeLib::SHPDestroyObject(pCacheObject);
-								pCacheObject = 0;
+								pCacheObject = ShapeLib::SHPReadObject(shp.file, row);
+								SHPObjectToGeometry(pCacheObject, shape);
+
+
+								//CommonLib::MemoryStream steram;
+								// shape.write(&steram);
+								//nShapeRowSize += steram.pos();
+								if(pCacheObject)
+								{
+									ShapeLib::SHPDestroyObject(pCacheObject);
+									pCacheObject = 0;
+								}
+								value  = CommonLib::IGeoShapePtr(&shape);
 							}
-							value  = CommonLib::IGeoShapePtr(&shape);
-						}
-				break;
+					break;
+				}
+
+				pRow->set(value, i);
+
 			}
 
-			pRow->set(value, i);
-
+			pInsertCursor->insert(pRow.get());
 		}
 
-		pInsertCursor->insert(pRow.get());
 	}
-
 	pTran->commit();
 }
 
@@ -349,8 +364,10 @@ void SearchShapeFile(const wchar_t* pszDBName)
 
 void testDBFromShape()
 {
-	//ImportShapeFile(L"d:\\db\\ne_10m_urban_areas_landscan1.embDB", L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp");
-	ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\db\\building.shp");
+	//ImportShapeFile(L"d:\\db\\ne_10m_urban_areas_landscan.embDB", L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp");
+	ImportShapeFile(L"d:\\db\\ne_10m_roads_north_america.embDB", L"D:\\db\\10m_cultural\\ne_10m_roads_north_america.shp");
+	
+	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\db\\building.shp");
 	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
-	SearchShapeFile(L"d:\\db\\importShapeFile.embDB");
+	//SearchShapeFile(L"d:\\db\\importShapeFile.embDB");
 }

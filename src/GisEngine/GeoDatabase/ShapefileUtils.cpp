@@ -44,7 +44,14 @@ namespace GisEngine
 				case ShapeLib::FTDouble:
 					*precision = width - 1;
 					*scale = dec;
-					return dtDouble;
+					if(dec == 0)
+					{
+						if(width < 10)
+							return dtInteger32;
+						return dtInteger64;
+					}
+					else
+						return dtDouble;
 				case ShapeLib::FTDate:
 					return dtDate;
 				}

@@ -123,6 +123,7 @@ namespace embDB
 	}
 	FilePagePtr CStorage::getFilePage(int64 nAddr, uint32 nSize, bool bRead)
 	{
+
 		CFilePage* pPage = m_Chache.GetElem(nAddr);
 		if(pPage)
 			return FilePagePtr(pPage);
@@ -285,6 +286,7 @@ namespace embDB
 				 delete pBackPage;
 			 }
 		}
+
 		m_Chache.AddElem(pPage->getAddr(), pPage);
 		return FilePagePtr(pPage);
 	}
@@ -308,7 +310,7 @@ namespace embDB
 #else
 		int64 nAddr = m_nLastAddr;
 #endif
-		
+
 		m_nLastAddr += nCount;
 		return nAddr;
 	}
@@ -359,7 +361,6 @@ namespace embDB
 	}
 	bool CStorage::saveNewPage(FilePagePtr pPage)
 	{
-
 	//	assert(m_nPageSize == pPage->getPageSize());
 		uint64 nFileAddr = pPage->getAddr() * m_nBasePageSize;
 		bool bRet = m_pFile.setFilePos64(nFileAddr, CommonLib::soFromBegin);

@@ -383,10 +383,11 @@ namespace embDB
 				 if(!pBloc->m_nCount)
 					 continue;
 
+				  nSplitIndex = pBloc->m_nBeginIndex;
 				 nSumSize += pBloc->m_nCompressSize != 0 ? pBloc->m_nCompressSize : pBloc->m_nRowSize;
 				 if(nSumSize >= nFreePage)
 					 break;
-				 nSplitIndex = pBloc->m_nBeginIndex;
+				
 
 			}
 			 return nSplitIndex;

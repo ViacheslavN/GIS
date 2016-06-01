@@ -172,7 +172,7 @@ namespace GisEngine
 				CommonLib::CString strVal;
 				double dblVal;
 				int intVal;
-		
+				int64 intVal64;
 				switch(fi.m_nType)
 				{
 					case dtString:
@@ -187,6 +187,11 @@ namespace GisEngine
 					case dtUInteger32:
 						intVal = ShapeLib::DBFReadIntegerAttribute(m_pDbf->file, m_nCurrentRowID, fi.m_nDataSetIndex);
 						*pValue  = intVal;
+						break;
+					case dtInteger64:
+					case dtUInteger64:
+						intVal64 = ShapeLib::DBFReadIntegerAttribute(m_pDbf->file, m_nCurrentRowID, fi.m_nDataSetIndex);
+						*pValue  = intVal64;
 						break;
 					case dtDouble:
 						dblVal = ShapeLib::DBFReadDoubleAttribute(m_pDbf->file, m_nCurrentRowID, fi.m_nDataSetIndex);

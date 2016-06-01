@@ -73,7 +73,7 @@ namespace embDB
 					return IInsertCursorPtr();	
 				}
 				m_setChangeTable.insert(IDBTablePtr((IDBTable*)pTable.get()));
-				return IInsertCursorPtr(pInsertCursor);
+				return IInsertCursorPtr(pInsertCursor);//TO DO save cursors and close cursors before close transactions
 			}
 
 			virtual ICursorPtr executeSpatialQuery(const CommonLib::bbox& extent, const wchar_t *pszTable, const wchar_t* pszSpatialField, SpatialQueryMode mode = sqmIntersect,  IFieldSet *pFileds = 0)
@@ -176,7 +176,8 @@ namespace embDB
 						pTable->commit(this);
 					}
 				}
-
+				m_mapValueField.clear();
+				m_setChangeTable.clear();
 				return true;
 			}
 	protected:

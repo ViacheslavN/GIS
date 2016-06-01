@@ -1122,6 +1122,15 @@
     <ClInclude Include="BaseValueCompressor.h">
       <Filter>DB\Fields\compress</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InfoIterator.h">
+      <Filter>DB\BPTrees\BtreePlusv2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

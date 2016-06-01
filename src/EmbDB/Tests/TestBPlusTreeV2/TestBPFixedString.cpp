@@ -327,7 +327,7 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 
 	uint64 nTreeRootPage = pTreeRootPage->getAddr();
 
-	
+	typedef typename TBFixedMapString::TInnerCompressorParams TInnerCompressorParams;
 
 	embDB::FilePagePtr pLeafCompRootPage = tran.getNewPage(256);
 	TLeafCompressor::TLeafCompressorParams compParams;
@@ -339,9 +339,9 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 
 	typedef embDB::TBPFixedString<int64, TTransaction> TBPString;
 	TBFixedMapString tree(-1, (embDB::IDBTransaction*)&tran, pAlloc, 100, 8192);
-	
+	TInnerCompressorParams inerComp;
 //	tree.saveBTreeInfo(); 
-	tree.init(nTreeRootPage, NULL, &compParams); 
+	tree.init(nTreeRootPage, &inerComp, &compParams); 
 	tree.commit();
 
 	pTreeRootPage.release();
