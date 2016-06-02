@@ -169,15 +169,15 @@ namespace embDB
 	};
 	struct sFieldPropExt
 	{
-		sFieldPropExt() : m_CompressType(MixCoding), m_nCompCalcError(200), m_bOnlineCalcCompSize(false)
+		sFieldPropExt() : m_CompressType(MixCoding), m_nCompCalcError(200), m_bOnlineCalcCompSize(false), m_nBTreeChacheSize(5)
 		{
 
 		}
 
-		CompressType m_CompressType; //MixCoding default
-		uint32 m_nCompCalcError; //0.5% default for MixCoding/RangeCoding and 64 bits for ACCoding
-		bool m_bOnlineCalcCompSize; //false default
-
+		CompressType m_CompressType; 
+		uint32 m_nCompCalcError; 
+		bool m_bOnlineCalcCompSize;  
+		uint32 m_nBTreeChacheSize;
 	};
 
 	struct SFieldProp

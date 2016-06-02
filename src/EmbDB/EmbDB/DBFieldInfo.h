@@ -35,6 +35,7 @@ namespace embDB
 			m_CompressType = pFieldProp->m_FieldPropExt.m_CompressType;
 			m_bOnlineCalcCompSize = pFieldProp->m_FieldPropExt.m_bOnlineCalcCompSize;
 			m_nCompCalcError = pFieldProp->m_FieldPropExt.m_nCompCalcError;
+			m_nBTreeChacheSize = pFieldProp->m_FieldPropExt.m_nBTreeChacheSize;
 		}
 		~CDBFieldHandlerBase(){}
 
@@ -50,8 +51,8 @@ namespace embDB
 			pStream->write(m_nPrecision);
 			pStream->write(m_dScale);
 			pStream->write(m_bNoNull);
-	 
-
+			pStream->write(m_nBTreeChacheSize);
+			
 
 			FilePagePtr pFieldInfoPage(pTran->getNewPage(MIN_PAGE_SIZE)); 
 			if(!pFieldInfoPage.get())
@@ -68,7 +69,7 @@ namespace embDB
 
 		
 
-			TField field(this, pTran, pAlloc, m_nPageSize);
+			TField field(this, pTran, pAlloc, m_nPageSize, m_nBTreeChacheSize);
 			field.init(m_nFieldInfoPage, pInnerCompParams, pLeafCompParams);
 
 			return true;
@@ -106,7 +107,7 @@ namespace embDB
 			m_nPrecision = pStream->readInt32();
 			m_dScale = pStream->readDouble();
 			m_bNoNull = pStream->readBool();
-
+			m_nBTreeChacheSize = pStream->readIntu32();
 
 			m_nFieldInfoPage = pStream->readInt64();
 		}
@@ -125,7 +126,7 @@ namespace embDB
 		template<class TField>
 		IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
-			TField * pField = new  TField(this, pTransactions, m_pAlloc, m_nPageSize);
+			TField * pField = new  TField(this, pTransactions, m_pAlloc, m_nPageSize, m_nBTreeChacheSize);
 			pField->load(m_nFieldInfoPage);
 			if(m_pIndexHandler.get())
 			{
@@ -211,6 +212,7 @@ namespace embDB
 		CompressType m_CompressType;
 		bool m_bOnlineCalcCompSize;
 		uint32 m_nCompCalcError;
+		uint32 m_nBTreeChacheSize;
 	};
 
  

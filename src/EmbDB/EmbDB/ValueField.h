@@ -56,9 +56,9 @@ namespace embDB
 			}
 		};
 		TOIDIncFunctor m_OIDIncFunck;
-		ValueFieldBase( IDBFieldHandler* pFieldHandler, IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize) :
+		ValueFieldBase( IDBFieldHandler* pFieldHandler, IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) :
 			  m_pDBTransactions(pTransactions),
-			  m_tree(-1, pTransactions, pAlloc, 100, nPageSize), 
+			  m_tree(-1, pTransactions, pAlloc, nBTreeChacheSize, nPageSize), 
 			  m_nBTreeInfoPage(-1), m_pAlloc(pAlloc), m_pFieldHandler(pFieldHandler)
 			  {
 
@@ -361,8 +361,8 @@ namespace embDB
 			typedef _FieldIterator TFieldIterator;
 			typedef ValueFieldBase<_FType, _TBTree, TFieldIterator> TBase;
 
-			ValueField(IDBFieldHandler* pFieldHandler,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize) :
-			  TBase(pFieldHandler, pTransactions, pAlloc, nPageSize)
+			ValueField(IDBFieldHandler* pFieldHandler,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) :
+			  TBase(pFieldHandler, pTransactions, pAlloc, nPageSize, nBTreeChacheSize)
 			{
 
 			}
@@ -448,7 +448,7 @@ namespace embDB
 
 			virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 			{
-				TField * pField = new  TField(this, pTransactions, m_pAlloc,m_nPageSize);
+				TField * pField = new  TField(this, pTransactions, m_pAlloc,m_nPageSize, m_nBTreeChacheSize);
 				pField->load(m_nFieldInfoPage);
 				return IValueFieldPtr(pField);	
 			}

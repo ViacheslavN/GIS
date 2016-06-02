@@ -455,5 +455,5 @@ void TestBRteeMap()
 	int64 nCount = 1000000;
 		size_t nPageSize = 8192;
 
-	testBPTreeMapImpl<TBInt64Map,  embDB::CDirectTransaction, int64, int64>(nCount, nPageSize, 50, 10);
+	testBPTreeMapImpl<TBInt64Map,  embDB::CDirectTransaction, int64, int64>(nCount, nPageSize, 50, 2);
 }

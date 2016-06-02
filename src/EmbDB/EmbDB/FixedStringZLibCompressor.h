@@ -169,8 +169,9 @@ namespace embDB
 		void CompressBlock(const TValueMemSet& vecValues)
 		{
 			embDB::CZlibCompressor compressor;
-			if(m_pCurrBloc->m_nCount != 0)
+			if(m_pCurrBloc->m_nCount != 0 && m_pCurrBloc->m_nCompressSize == 0)
 			{
+				m_pCurrBloc->m_compressBlocStream.seek(0, CommonLib::soFromCurrent);
 				compressor.compress(&vecValues[0] + m_pCurrBloc->m_nBeginIndex,m_pCurrBloc->m_nCount,  &m_pCurrBloc->m_compressBlocStream);
 				m_pCurrBloc->m_nCompressSize = m_pCurrBloc->m_compressBlocStream.pos();
 
@@ -265,7 +266,7 @@ namespace embDB
 			sStringBloc *pStringBloc = new sStringBloc(m_pAlloc);
 			pStringBloc->m_nBeginIndex = nIndex;
 			pStringBloc->m_compressBlocStream.write(pStream->buffer() + pStream->pos(), nSize);
-			
+			pStringBloc->m_nCompressSize = nSize;
 			pStream->seek(nSize, CommonLib::soFromCurrent);
 			
 			CZlibCompressor compressor;
@@ -339,6 +340,11 @@ namespace embDB
 			{
 				m_pCurrBloc->m_nCount = nSize - nBeginBloc;
 				compressor.EndDecode();
+
+				if(m_pCurrBloc->m_nRowSize < m_nPageSize - 100)
+				{
+					m_pCurrBloc->m_nCompressSize = 0;
+				}
 			}
 
 
@@ -357,7 +363,7 @@ namespace embDB
 			}
 			else
 				pStringBloc->m_compressBlocStream.write(pStream->buffer() + pStream->pos(), nSize);
-			pStringBloc->m_nCompressSize;
+			pStringBloc->m_nCompressSize = nSize;
 			pStream->seek(nSize, CommonLib::soFromCurrent);
 			m_vecStringBloc.push_back(pStringBloc);
 		}

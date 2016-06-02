@@ -20,6 +20,7 @@ namespace embDB
 			 m_nCompressType = ip.m_FieldPropExt.m_CompressType;
 			 m_nCalcCompressError = ip.m_FieldPropExt.m_nCompCalcError;
 			 m_bOnlineCalcCompSize = ip.m_FieldPropExt.m_bOnlineCalcCompSize;
+			 m_nBTreeChacheSize = ip.m_FieldPropExt.m_nBTreeChacheSize;
 
 		}
 		~TSpatialIndexHandler()
@@ -34,6 +35,7 @@ namespace embDB
 			m_nCompressType = (CompressType)pStream->readintu16();
 			m_nCalcCompressError = pStream->readIntu32();
 			m_bOnlineCalcCompSize = pStream->readBool();
+			m_nBTreeChacheSize =  pStream->readIntu32();
 			return true;
 		}
 		virtual bool save(CommonLib::IWriteStream* pStream, IDBTransaction *pTran)
@@ -46,15 +48,16 @@ namespace embDB
 			pStream->write(uint16(m_nCompressType));
 			pStream->write(m_nCalcCompressError);
 			pStream->write(m_bOnlineCalcCompSize);
+			pStream->write(m_nBTreeChacheSize);
 
-			TSpatialIndex index(pTran, m_pAlloc, m_nPageNodeSize);
+			TSpatialIndex index(pTran, m_pAlloc, m_nPageNodeSize, m_nBTreeChacheSize);
 			index.init(m_nBTreeRootPage, m_nCompressType, m_nCalcCompressError, m_bOnlineCalcCompSize);
 			return true;
 		}
 
 		virtual IndexFiledPtr getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
-			TSpatialIndex * pIndex = new  TSpatialIndex(pTransactions, m_pAlloc, m_nPageNodeSize);
+			TSpatialIndex * pIndex = new  TSpatialIndex(pTransactions, m_pAlloc, m_nPageNodeSize, m_nBTreeChacheSize);
 			pIndex->load(m_nBTreeRootPage, m_pField.get());
 			return IndexFiledPtr(pIndex);
 		}
@@ -96,6 +99,7 @@ namespace embDB
 		CompressType m_nCompressType;
 		uint32 m_nCalcCompressError;
 		bool m_bOnlineCalcCompSize;
+		uint32 m_nBTreeChacheSize;
 
 	};
 

@@ -55,9 +55,6 @@
     <Filter Include="DB\BPTrees">
       <UniqueIdentifier>{6bc92130-c22f-4075-b6e5-80493240829f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\BPTrees\key">
-      <UniqueIdentifier>{99a5b559-b781-4fa5-982f-0a3f3fa5191f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB\BPTrees\memorytree">
       <UniqueIdentifier>{bdb39542-bd41-48f0-a773-8e29d54efdd7}</UniqueIdentifier>
     </Filter>
@@ -226,6 +223,9 @@
     <Filter Include="DB\Fields\string\fixedStringField\compress\BWT_DC">
       <UniqueIdentifier>{1b070496-43b8-41f4-b209-44aaa2f71537}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\BPTrees\BtreePlusv2\key">
+      <UniqueIdentifier>{99a5b559-b781-4fa5-982f-0a3f3fa5191f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -277,7 +277,7 @@
       <Filter>storage</Filter>
     </ClInclude>
     <ClInclude Include="Key.h">
-      <Filter>DB\BPTrees\key</Filter>
+      <Filter>DB\BPTrees\BtreePlusv2\key</Filter>
     </ClInclude>
     <ClInclude Include="NodeLoader.h">
       <Filter>DB\BPTrees\BTreeNotUse\BTreeNodeLoader</Filter>
@@ -1130,6 +1130,12 @@
     </ClInclude>
     <ClInclude Include="InfoIterator.h">
       <Filter>DB\BPTrees\BtreePlusv2</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

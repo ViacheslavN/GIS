@@ -206,7 +206,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 	
 		fp.m_bNotNull = false;
 		fp.m_sFieldName = name;
-
+		fp.m_FieldPropExt.m_nBTreeChacheSize = 5;
 		switch(shpFieldType)
 		{
 		case ShapeLib::FTString:
@@ -257,6 +257,12 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 		uint32 nDblSize = 0;
 		for(size_t row = 0; row < objectCount; ++row)
 		{
+			if(28120 == row)
+			{
+				int dd =0;
+				dd++;
+			}
+
 			for (size_t i = 0; i < pFields->GetFieldCount(); ++i)
 			{
 				embDB::IFieldPtr pField = pFields->GetField(i);
@@ -365,9 +371,9 @@ void SearchShapeFile(const wchar_t* pszDBName)
 void testDBFromShape()
 {
 	//ImportShapeFile(L"d:\\db\\ne_10m_urban_areas_landscan.embDB", L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp");
-	ImportShapeFile(L"d:\\db\\ne_10m_roads_north_america.embDB", L"D:\\db\\10m_cultural\\ne_10m_roads_north_america.shp");
+	//ImportShapeFile(L"d:\\db\\ne_10m_roads_north_america.embDB", L"D:\\db\\10m_cultural\\ne_10m_roads_north_america.shp");
 	
-	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\db\\building.shp");
+	ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\db\\building.shp");
 	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
-	//SearchShapeFile(L"d:\\db\\importShapeFile.embDB");
+	SearchShapeFile(L"d:\\db\\importShapeFile.embDB");
 }

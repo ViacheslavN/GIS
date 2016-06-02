@@ -201,11 +201,7 @@ namespace embDB
 				if(m_LeafCompParams.get())
 					m_LeafCompParams->load(&stream, m_pTransaction);
 			}
-			else
-			{
-				int dd = 0;
-				dd++;
-			}
+			 
 	 
 		
 			
@@ -413,6 +409,8 @@ namespace embDB
 					if(m_pBPTreeStatistics)
 						m_pBPTreeStatistics->SaveNode(pDelNode->isLeaf());
 				}
+
+				assert(pDelNode->IsFree()); //TO DO
 				delete pDelNode;
 			}
 		}
@@ -816,6 +814,7 @@ namespace embDB
 				if(pNextNode.get())
 				{
 					pNextNode->m_LeafNode.m_nPrev = pNewNode->m_nPageAddr;
+					SetParentNext(pNode, pNextNode.get());
 				}
 				pNextNode->setFlags(CHANGE_NODE, true);
 			}

@@ -70,9 +70,9 @@ namespace embDB
 	class TStatialIndexBase : public _TIndex
 	{
 	public:
-		TStatialIndexBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageNodeSize) :
+		TStatialIndexBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageNodeSize, uint32 nBTreeChacheSize) :
 		  m_pDBTransactions(pTransactions),
-			  m_tree(-1, pTransactions, pAlloc, 100, nPageNodeSize), 
+			  m_tree(-1, pTransactions, pAlloc, nBTreeChacheSize, nPageNodeSize), 
 			  m_nBTreeRootPage(-1)
 		  {
 
@@ -297,7 +297,7 @@ namespace embDB
 		typedef typename TBase::TSpatialObj	TSpatialObj;
 		typedef typename TBase::TPointType	TPointType;
 
-		TStatialIndexRect( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageNodeSize) : TBase(pTransactions, pAlloc, nPageNodeSize)
+		TStatialIndexRect( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageNodeSize, uint32 nBTreeChacheSize) : TBase(pTransactions, pAlloc, nPageNodeSize, nBTreeChacheSize)
 		{}
 
 		~TStatialIndexRect()
@@ -345,7 +345,7 @@ namespace embDB
 		typedef typename TBase::TSpatialObj	TSpatialObj;
 		typedef typename TBase::TPointType	TPointType;
 
-		TStatialIndexPoint( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageNodeSize) : TBase(pTransactions, pAlloc, nPageNodeSize)
+		TStatialIndexPoint( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageNodeSize, uint32 nBTreeChacheSize) : TBase(pTransactions, pAlloc, nPageNodeSize, nBTreeChacheSize)
 		{}
 
 		~TStatialIndexPoint()
