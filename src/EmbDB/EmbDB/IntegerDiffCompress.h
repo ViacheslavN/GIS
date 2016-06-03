@@ -4,6 +4,7 @@
 #include <map>
 #include "MathUtils.h"
 #include "BPVector.h"
+#include "embDB.h"
 
 namespace embDB
 {

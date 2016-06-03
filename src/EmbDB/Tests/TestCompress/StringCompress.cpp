@@ -21,7 +21,7 @@ void TestStringCompress()
 
 	CommonLib::CWriteMemoryStream lenCompressStream;
 	CommonLib::FxMemoryReadStream  lenDecompresstream;
-	embDB::SignedDiffNumLenCompressor232i   lenCompressor, lenCompressor1;
+	embDB::SignedDiffNumLenCompressor232i   lenCompressor(embDB::ACCoding, 200, false), lenCompressor1(embDB::ACCoding, 200, false);
 	std::vector<int32> vecLens;
 	for (int i =0; i < 80000; ++i)
 	{

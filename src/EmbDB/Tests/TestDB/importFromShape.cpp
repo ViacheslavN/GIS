@@ -207,6 +207,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 		fp.m_bNotNull = false;
 		fp.m_sFieldName = name;
 		fp.m_FieldPropExt.m_nBTreeChacheSize = 5;
+		fp.m_FieldPropExt.m_CompressType = embDB::ACCoding;
 		switch(shpFieldType)
 		{
 		case ShapeLib::FTString:
@@ -231,6 +232,10 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 
 	pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), true, 8192 );
 
+	uint32 nShapeRowSize = 0;
+	uint32 nStringRowSize = 0;
+	uint32 nDigSize = 0;
+	uint32 nDblSize = 0;
 
 	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_MODIFY);
 	pTran->begin();
@@ -251,10 +256,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 		shape.AddRef();
 
 
-		uint32 nShapeRowSize = 0;
-		uint32 nStringRowSize = 0;
-		uint32 nDigSize = 0;
-		uint32 nDblSize = 0;
+		
 		for(size_t row = 0; row < objectCount; ++row)
 		{
 			if(28120 == row)
@@ -297,7 +299,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 								pCacheObject = ShapeLib::SHPReadObject(shp.file, row);
 								SHPObjectToGeometry(pCacheObject, shape);
 
-
+								nShapeRowSize += shape.getRowSize();
 								//CommonLib::MemoryStream steram;
 								// shape.write(&steram);
 								//nShapeRowSize += steram.pos();
@@ -319,6 +321,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName)
 		}
 
 	}
+	uint32 nTotalRowSize = nDblSize + nDigSize+ nStringRowSize + nShapeRowSize;
 	pTran->commit();
 }
 
@@ -370,10 +373,10 @@ void SearchShapeFile(const wchar_t* pszDBName)
 
 void testDBFromShape()
 {
-	//ImportShapeFile(L"d:\\db\\ne_10m_urban_areas_landscan.embDB", L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp");
+	ImportShapeFile(L"d:\\db\\importne_10m_urban_areas_landscan.embDB", L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp");
 	//ImportShapeFile(L"d:\\db\\ne_10m_roads_north_america.embDB", L"D:\\db\\10m_cultural\\ne_10m_roads_north_america.shp");
 	
-	ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\db\\building.shp");
+	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\db\\building.shp");
 	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
-	SearchShapeFile(L"d:\\db\\importShapeFile.embDB");
+	//SearchShapeFile(L"d:\\db\\importShapeFile.embDB");
 }

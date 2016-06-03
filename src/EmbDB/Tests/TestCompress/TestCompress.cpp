@@ -22,7 +22,7 @@ void TestStringCompress();
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	CommonLib::CWriteFileStream File;
+	/*CommonLib::CWriteFileStream File;
 	File.open(L"D:\\test\\files\\1aaa.txt", CommonLib::ofmCreateAlways, CommonLib::arWrite, CommonLib::smNoMode);
 
 	for (size_t i = 0; i< 100000; ++i)
@@ -33,13 +33,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	File.close();
 
 	CTestCompess test;
-	test.TestCompress(L"D:\\test\\files");
+	test.TestCompress(L"D:\\test\\files");*/
 	//test.compressFile(L"D:\\1.data", L"D:\\2.data");
 	//TestStringCompress();
 	//ZlibTest();
 	//TestDiffComp();
 	//TestNumLen();
-	//TestDoubleCompress();
+	TestDoubleCompress();
 	//TestBWTSort();
 	return 0;
 

@@ -2,7 +2,7 @@
 #include "testNumLem.h"
 #include <iostream>
 
-CTestNumLem::CTestNumLem() : m_compressor(200)
+CTestNumLem::CTestNumLem() : m_compressor(embDB::ACCoding, 200, false)
 {
 
 }

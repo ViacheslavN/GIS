@@ -3,7 +3,7 @@
 #include <iostream>
 #include "CommonLibrary/FileStream.h"
 
-CTestDiffComp::CTestDiffComp()  : m_compressor(200)
+CTestDiffComp::CTestDiffComp()  : m_compressor(embDB::ACCoding, 200, false)
 {
 
 }
