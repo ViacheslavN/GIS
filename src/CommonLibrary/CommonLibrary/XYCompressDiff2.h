@@ -29,6 +29,9 @@ namespace CommonLib
 		{
 			m_nXBitLen = 0;
 			m_nYBitLen = 0;
+
+			m_dScaleX = 1/pow(10., m_params.m_nScaleX);
+			m_dScaleY = 1/pow(10., m_params.m_nScaleY);
 		}
 		~TXYCompressorDiff2(){}
 
@@ -389,6 +392,9 @@ namespace CommonLib
 
 		uint32 m_nXBitLen;
 		uint32 m_nYBitLen;
+
+		double m_dScaleX;
+		double m_dScaleY;
 		
 	};
 

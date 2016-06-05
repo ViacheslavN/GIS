@@ -83,6 +83,40 @@ bool CompareShape(CommonLib::CGeoShape* pShp1, CommonLib::CGeoShape* pShp2, uint
 
 	return true;
 }
+
+uint32 getScale(double dVal, uint32 nMaxScale = 15)
+{
+	uint64 nPow = 1;
+	dVal = fabs(dVal);
+	for (uint32 i = 0; i < nMaxScale; ++i)
+	{
+		uint64 nVal = uint64(dVal * nPow);
+		double dBack = (double)nVal/nPow;
+		if(fabs(dVal - dBack) == 0.)
+			return i;
+		nPow *= 10;
+	}
+	return nMaxScale;
+}
+
+void getMaxShapeScale(uint32 &x, uint32& y, CommonLib::CGeoShape* pShp)
+{
+	x = 0;
+	y = 0;
+
+	for (uint32 i = 0; i < pShp->getPointCnt(); ++i)
+	{
+		CommonLib::GisXYPoint& pt = pShp->getPoints()[i];
+		uint32 nCalcX = getScale(pt.x);
+		uint32 nCalcY = getScale(pt.y);
+
+		if(nCalcX > x)
+			x = nCalcX;
+		if(nCalcY > y)
+			y = nCalcY;
+	}
+
+}
 std::string polylineEncode(CommonLib::GisXYPoint* pPoint, int32 nPointCnt, double dOffsetX, double dOffsetY, double dScale);
 void CompressShape()
 {
@@ -111,11 +145,11 @@ void CompressShape()
 
 	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
 	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData");
-	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\db\\10m_cultural\\");
-	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\db\\");
+	GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\db\\10m_cultural\\");
+	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\db\\");
 
-	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"building.shp");
-	//GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"ne_10m_roads_north_america.shp");
+	//GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"building.shp");
+	GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"ne_10m_roads_north_america.shp");
 	//GisEngine::GeoDatabase::IFeatureClassPtr pShapeFC = pShapeWks->OpenFeatureClass(L"ne_10m_urban_areas_landscan.shp");
 	if(!pShapeFC.get())
 		return;
@@ -142,13 +176,13 @@ void CompressShape()
 	CommonLib::CWriteMemoryStream compressStream;
 	CommonLib::CWriteMemoryStream compressStreamTmp;
 	CommonLib::CGeoShape::compress_params params;
-	/*params.m_PointType = CommonLib::dtType32;
-	params.m_dScaleX = 0.0000001;
-	params.m_dScaleY = 0.0000001;*/
-
 	params.m_PointType = CommonLib::dtType32;
+	params.m_nScaleX = 8;
+	params.m_nScaleY = 8;
+
+	/*params.m_PointType = CommonLib::dtType32;
 	params.m_dScaleX = 0.001;
-	params.m_dScaleY = 0.001;
+	params.m_dScaleY = 0.001;*/
 
 	GisEngine::GisBoundingBox bbox = pShapeFC->GetExtent()->GetBoundingBox();
 
@@ -180,6 +214,8 @@ void CompressShape()
 	 CommonLib::IGeoShapePtr pShape= pFeature->GetShape();
 	 pShape->write(&writeStream);
 
+	 uint32 scaleX, scaleY;
+	 getMaxShapeScale(scaleX, scaleY, pShape.get());
 	if(ii == 4351)
 	 {
 
@@ -206,17 +242,21 @@ void CompressShape()
 	 {
 		 nError++;
 
+
+		 double dScaleX = 1/pow(10., params.m_nScaleX);
+		 double dScaleY = 1/pow(10., params.m_nScaleY);
+
 		 for (uint32 i = 0; i < pShape->getPointCnt(); ++i)
 		 {
 
 			 GisXYPoint pt = pShape->getPoints()[i];
 
-			 int32 X = (int32)((pt.x + params.m_dOffsetX)/params.m_dScaleX);
-			 int32 Y = (int32)((pt.y + params.m_dOffsetY)/params.m_dScaleY);
+			 int32 X = (int32)((pt.x + params.m_dOffsetX)/dScaleX);
+			 int32 Y = (int32)((pt.y + params.m_dOffsetY)/dScaleY);
 
 
-			 double dX = ((double)X *params.m_dScaleX) - params.m_dOffsetX;  
-			 double dY = ((double)Y *params.m_dScaleY) - params.m_dOffsetY;
+			 double dX = ((double)X *dScaleX) - params.m_dOffsetX;  
+			 double dY = ((double)Y *dScaleY) - params.m_dOffsetY;
 
 			 if(!IsEqual(dX, pt.x) || !IsEqual(dY, pt.y) )
 			 {

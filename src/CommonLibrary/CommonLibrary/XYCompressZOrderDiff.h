@@ -50,7 +50,8 @@ namespace CommonLib
 
 		TXYCompressorZOrderDiff(const CGeoShape::compress_params& params) : m_params(params)
 		{
-			
+			m_dScaleX = 1/pow(10., m_params.m_nScaleX);
+			m_dScaleY = 1/pow(10., m_params.m_nScaleY);
 		}
 		~TXYCompressorZOrderDiff(){}
 
@@ -341,6 +342,9 @@ namespace CommonLib
 		TPointLenCompressor m_Compressor;
 		CGeoShape::compress_params m_params;
 		TSignCompressor m_SignCompressor;
+
+		double m_dScaleX;
+		double m_dScaleY;
 	};
 
 	typedef TXYCompressorZOrderDiff<uint16, TPointNumLen16, ZOrderPoint2DU16> TXYCompressorZOrder16;

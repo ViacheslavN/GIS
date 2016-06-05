@@ -61,8 +61,8 @@ namespace CommonLib
 		m_CompressParams.m_PointType = dtType64;
 		m_CompressParams.m_dOffsetX = 0.00000001;
 		m_CompressParams.m_dOffsetY = 0.00000001;
-		m_CompressParams.m_dScaleX = 0.00000001;
-		m_CompressParams.m_dScaleY = 0.00000001;
+		m_CompressParams.m_nScaleX = 8;
+		m_CompressParams.m_nScaleY = 8;
 
 		if(pParams)
 		{
@@ -216,8 +216,8 @@ namespace CommonLib
 			pCache->write((byte)m_CompressParams.m_PointType); 
 			pCache->write(m_CompressParams.m_dOffsetX); 
 			pCache->write(m_CompressParams.m_dOffsetY); 
-			pCache->write(m_CompressParams.m_dScaleX); 
-			pCache->write(m_CompressParams.m_dScaleY); 
+			pCache->write(m_CompressParams.m_nScaleX); 
+			pCache->write(m_CompressParams.m_nScaleY); 
 		}
 
 		if(!m_bNullPart)
@@ -263,10 +263,12 @@ namespace CommonLib
 		{
 			if(m_CompressParams.m_PointType != dtType64)
 			{
+				double dScaleX = 1/pow(10., m_CompressParams.m_nScaleX);
+				double dScaleY = 1/pow(10., m_CompressParams.m_nScaleY);
 				for (uint32 i = 0, sz = pShp->m_vecPoints.size(); i < sz; ++i)
 				{
-					uint64 X = (uint64)((pShp->m_vecPoints[i].x + m_CompressParams.m_dOffsetX)/m_CompressParams.m_dScaleX);
-					uint64 Y = (uint64)((pShp->m_vecPoints[i].y + m_CompressParams.m_dOffsetY)/m_CompressParams.m_dScaleY);
+					uint64 X = (uint64)((pShp->m_vecPoints[i].x + m_CompressParams.m_dOffsetX)/dScaleX);
+					uint64 Y = (uint64)((pShp->m_vecPoints[i].y + m_CompressParams.m_dOffsetY)/dScaleY);
 
 					WriteValue(X, m_CompressParams.m_PointType, pCache);
 					WriteValue(Y, m_CompressParams.m_PointType, pCache);
@@ -314,81 +316,7 @@ namespace CommonLib
 		return true;
 	}
 
-	bool ShapeCompressor::compress1(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CWriteMemoryStream *pCacheStream )
-	{
-		uint32 nRowShapeSize = pShp->getRowSize() + sizeof(uint32);
 
-
-		m_CompressParams.m_PointType = dtType64;
-		m_CompressParams.m_dOffsetX = 0.00000001;
-		m_CompressParams.m_dOffsetY = 0.00000001;
-		m_CompressParams.m_dScaleX = 0.00000001;
-		m_CompressParams.m_dScaleY = 0.00000001;
-
-		if(pParams)
-		{
-			m_bWriteParams = false;
-			m_CompressParams = *pParams;
-		}
-		else
-		{
-
-			nRowShapeSize += sizeof(m_CompressParams);
-
-			bbox bb = pShp->getBB();
-			m_bWriteParams = true;
-
-			if(bb.xMin < 0)
-				m_CompressParams.m_dOffsetX = fabs(bb.xMin);
-			else
-				m_CompressParams.m_dOffsetX = -1 *bb.xMin;
-			if(bb.yMin < 0)
-				m_CompressParams.m_dOffsetX = fabs(bb.yMin);
-			else
-				m_CompressParams.m_dOffsetX = -1 *bb.yMin;
-
-		}
-
-
-		CWriteMemoryStream streamCache(m_pAlloc);
-		CommonLib::CWriteMemoryStream *pCache = &streamCache;
-		if(pCacheStream) 
-			pCache = pCacheStream;
-
-		uint32 nFlag = 0;
-		uint32 nFlagPos = 0;
-		pCache->seek(0, soFromBegin);
-		pCache->resize(nRowShapeSize);
-		pCache->write((byte)pShp->type());
-		nFlagPos = pCache->pos();
-
-		pCache->write(nFlag);
-
-
-
-
-		uint32 nPartCount = pShp->getPartCount();
-		m_partType = dtType8;
-		for (uint32 i = 1; i < nPartCount; i++ )
-		{
-			uint32 nPart = pShp->getPart(i) - pShp->getPart(i - 1);
-			eCompressDataType type  = GetCompressType(nPart);
-			if(m_partType < type)
-			{
-				m_partType = type;
-				if(m_partType == dtType32)
-				{				 
-					break;
-				}
-			}
-		}
-
-
-
-		return true;
-
-
-	}
 	void ShapeCompressor::compressPart(eCompressDataType nPartType, const CGeoShape *pShp, CommonLib::IWriteStream *pStream)
 	{
 
@@ -472,8 +400,8 @@ namespace CommonLib
 			m_CompressParams.m_PointType =  (eCompressDataType)pStream->readByte(); 
 			m_CompressParams.m_dOffsetX = pStream->readDouble();
 			m_CompressParams.m_dOffsetY = pStream->readDouble();
-			m_CompressParams.m_dScaleX = pStream->readDouble();
-			m_CompressParams.m_dScaleY = pStream->readDouble();
+			m_CompressParams.m_nScaleX = pStream->readByte();
+			m_CompressParams.m_nScaleY = pStream->readByte();
 		 }
 
 		 uint32 nParts = 0;
@@ -551,11 +479,14 @@ namespace CommonLib
 			{
 				for (uint32 i = 0, sz = pShp->m_vecPoints.size(); i < sz; ++i)
 				{
+					double dScaleX = 1/pow(10., m_CompressParams.m_nScaleX);
+					double dScaleY = 1/pow(10., m_CompressParams.m_nScaleY);
+
 					uint64 X = ReadValue<uint64>(m_CompressParams.m_PointType, pStream);
 					uint64 Y = ReadValue<uint64>(m_CompressParams.m_PointType, pStream);
  
-					pShp->getPoints()[i].x =  ((double)X *m_CompressParams.m_dScaleX) - m_CompressParams.m_dOffsetX;  
-					pShp->getPoints()[i].y  =  ((double)Y *m_CompressParams.m_dScaleY) - m_CompressParams.m_dOffsetY;
+					pShp->getPoints()[i].x =  ((double)X *dScaleX) - m_CompressParams.m_dOffsetX;  
+					pShp->getPoints()[i].y  =  ((double)Y *dScaleY) - m_CompressParams.m_dOffsetY;
 				}
 			}
 			else

@@ -75,8 +75,8 @@ namespace embDB
 
 			shp_params.m_dOffsetX = pShapeParams->GetOffsetX();
 			shp_params.m_dOffsetY = pShapeParams->GetOffsetY();
-			shp_params.m_dScaleX = pShapeParams->GetScaleX();
-			shp_params.m_dScaleY = pShapeParams->GetScaleY();
+			shp_params.m_nScaleX = pShapeParams->GetScaleX();
+			shp_params.m_nScaleY = pShapeParams->GetScaleY();
 			shp_params.m_PointType = SpatialDataToCompressData(pShapeParams->GetCoordType());
 
 			shape->compress(&stream, &shp_params);
@@ -121,8 +121,8 @@ namespace embDB
 
 			shp_params.m_dOffsetX = pShapeParams->GetOffsetX();
 			shp_params.m_dOffsetY = pShapeParams->GetOffsetY();
-			shp_params.m_dScaleX = pShapeParams->GetScaleX();
-			shp_params.m_dScaleY = pShapeParams->GetScaleY();
+			shp_params.m_nScaleX = pShapeParams->GetScaleX();
+			shp_params.m_nScaleY = pShapeParams->GetScaleY();
 			shp_params.m_PointType = SpatialDataToCompressData(pShapeParams->GetCoordType());
 
 			shape->decompress(&stream, &shp_params);

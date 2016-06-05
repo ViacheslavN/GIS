@@ -25,7 +25,7 @@ namespace CommonLib
 		struct compress_params
 		{
 
-			compress_params() : m_PointType(dtType64), m_dOffsetX(0), m_dOffsetY(0), m_dScaleX(0.00000001), m_dScaleY(0.00000001)
+			compress_params() : m_PointType(dtType64), m_dOffsetX(0), m_dOffsetY(0), m_nScaleX(8), m_nScaleY(8)
 			{
 
 			}
@@ -33,8 +33,10 @@ namespace CommonLib
 			eCompressDataType m_PointType;
 			double m_dOffsetX;
 			double m_dOffsetY;
-			double m_dScaleX;
-			double m_dScaleY;
+			byte m_nScaleX;
+			byte m_nScaleY;
+			//double m_dScaleX;
+			//double m_dScaleY;
 
 
 		};

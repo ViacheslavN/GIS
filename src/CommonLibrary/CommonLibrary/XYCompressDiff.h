@@ -26,6 +26,9 @@ namespace CommonLib
 		TXYCompressorDiff(const CGeoShape::compress_params& params) : m_params(params)
 		{
 
+			m_dScaleX = 1/pow(10., m_params.m_nScaleX);
+			m_dScaleY = 1/pow(10., m_params.m_nScaleY);
+	
 		}
 		~TXYCompressorDiff(){}
 
@@ -76,8 +79,8 @@ namespace CommonLib
 		{
 
 
-			TValue X = (TValue)((pPoint[0].x + m_params.m_dOffsetX)/m_params.m_dScaleX);
-			TValue Y = (TValue)((pPoint[0].y + m_params.m_dOffsetY)/m_params.m_dScaleY);
+			TValue X = (TValue)((pPoint[0].x + m_params.m_dOffsetX)/m_dScaleX);
+			TValue Y = (TValue)((pPoint[0].y + m_params.m_dOffsetY)/m_dScaleY);
 
 			TValue xPrev = X;
 			TValue yPrev = Y;
@@ -87,8 +90,8 @@ namespace CommonLib
 			for (uint32 i = 1; i < nCount; ++i)
 			{
 
-				X = (TValue)((pPoint[i].x + m_params.m_dOffsetX)/m_params.m_dScaleX);
-				Y = (TValue)((pPoint[i].y + m_params.m_dOffsetY)/m_params.m_dScaleY);
+				X = (TValue)((pPoint[i].x + m_params.m_dOffsetX)/m_dScaleX);
+				Y = (TValue)((pPoint[i].y + m_params.m_dOffsetY)/m_dScaleY);
 							 
 				PreAddCoord(xPrev, X, m_SignCompressorX);
 				PreAddCoord(yPrev, Y, m_SignCompressorY);
@@ -130,8 +133,8 @@ namespace CommonLib
 			m_SignCompressorX.BeginCompress(pStream);
 			m_SignCompressorY.BeginCompress(pStream);
 
-			TValue X = (TValue)((pPoint[0].x + m_params.m_dOffsetX)/m_params.m_dScaleX);
-			TValue Y = (TValue)((pPoint[0].y + m_params.m_dOffsetY)/m_params.m_dScaleY);
+			TValue X = (TValue)((pPoint[0].x + m_params.m_dOffsetX)/m_dScaleX);
+			TValue Y = (TValue)((pPoint[0].y + m_params.m_dOffsetY)/m_dScaleY);
 
 
 			TValue xPrev = X;
@@ -148,8 +151,8 @@ namespace CommonLib
 			for (uint32 i = 1; i < nCount; ++i)
 			{
 
-				X = (TValue)((pPoint[i].x + m_params.m_dOffsetX)/m_params.m_dScaleX);
-				Y = (TValue)((pPoint[i].y + m_params.m_dOffsetY)/m_params.m_dScaleY);
+				X = (TValue)((pPoint[i].x + m_params.m_dOffsetX)/m_dScaleX);
+				Y = (TValue)((pPoint[i].y + m_params.m_dOffsetY)/m_dScaleY);
 
 
 				CompreessCoord(i -1, xPrev, X, bitStream, m_SignCompressorX);
@@ -298,8 +301,8 @@ namespace CommonLib
 			pStream->read(Y);
 
 
-			pPoint[0].x =  ((double)X *m_params.m_dScaleX) - m_params.m_dOffsetX;  
-			pPoint[0].y =  ((double)Y *m_params.m_dScaleY) - m_params.m_dOffsetY;
+			pPoint[0].x =  ((double)X *m_dScaleX) - m_params.m_dOffsetX;  
+			pPoint[0].y =  ((double)Y *m_dScaleY) - m_params.m_dOffsetY;
 
 			TValue xNext = X;
 			TValue yNext = Y;
@@ -348,8 +351,8 @@ namespace CommonLib
 				else
 					yNext = yNext + yDiff;
 
-				pPoint[i].x =  ((double)xNext *m_params.m_dScaleX) - m_params.m_dOffsetX;  
-				pPoint[i].y =  ((double)yNext *m_params.m_dScaleY) - m_params.m_dOffsetY;
+				pPoint[i].x =  ((double)xNext *m_dScaleX) - m_params.m_dOffsetX;  
+				pPoint[i].y =  ((double)yNext *m_dScaleY) - m_params.m_dOffsetY;
 
 				//zOrderPrev = zOrderNext;
 			}
@@ -362,6 +365,9 @@ namespace CommonLib
 
 		TSignCompressor m_SignCompressorY;
 		CGeoShape::compress_params m_params;
+
+		double m_dScaleX;
+		double m_dScaleY;
  
 		
 	};

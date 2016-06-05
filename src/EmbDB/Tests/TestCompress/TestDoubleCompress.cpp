@@ -2,6 +2,7 @@
 #include "../../EmbDB/CompressDoubleDiff.h"
 #include "../../EmbDB/CompressDouble.h"
 #include <math.h>
+#include <cmath>
 #include <stdio.h>
 
 struct SDoubleCast 
@@ -22,12 +23,15 @@ union doublebits {
 	};
 };
 
-#define MAX 1000
-#define eps 1e-9
-
-long p[MAX], q[MAX], a[MAX], len;
+#define MAX 100
+//#define eps 1e-9
+#define eps 0
+int64 p[MAX], q[MAX], a[MAX], len;
 void getFraq1(double x)
 {
+
+	printf("val: %.15f\n", x);
+	double dIn = x;
 	//https://shreevatsa.wordpress.com/2011/01/10/not-all-best-rational-approximations-are-the-convergents-of-the-continued-fraction/
 	int i;
 	//The first two convergents are 0/1 and 1/0
@@ -35,17 +39,39 @@ void getFraq1(double x)
 	p[1] = 1; q[1] = 0;
 	//The rest of the convergents (and continued fraction)
 	for(i=2; i<MAX; ++i) {
-		a[i] = int(floor(x) + 0.5);
+		//a[i] = lrint(floor(x));
+		a[i] = int64(floor(x));
 		p[i] = a[i]*p[i-1] + p[i-2];
 		q[i] = a[i]*q[i-1] + q[i-2];
-		printf("%ld:  %ld/%ld\n", a[i], p[i], q[i]);
+
+		double dValue = (double)p[i]/(double)q[i];
+		printf("%I64d:  %I64d/%I64d  %.15f err: %.15f\n", a[i], p[i], q[i], (double)p[i]/(double)q[i], dIn - dValue);
 		len = i;
-		if(fabs(x-a[i])<eps) 
+		if(fabs(dIn - dValue) == 0.)
+			return;
+
+		if(fabs(x-a[i])<eps || (q[i] < 0)|| (p[i] < 0)) 
 			return;
 		x = 1.0/(x - a[i]);
 	}
 }
 
+
+
+uint32 getScale(double dVal, uint32 nMaxScale = 15)
+{
+	uint64 nPow = 1;
+	dVal = fabs(dVal);
+	for (uint32 i = 0; i < nMaxScale; ++i)
+	{
+		uint64 nVal = uint64(dVal * nPow);
+		double dBack = (double)nVal/nPow;
+		if(fabs(dVal - dBack) == 0.)
+			return i;
+		nPow *= 10;
+	}
+	return nMaxScale;
+}
 void getFraq(double val, int maxD,uint32& n, uint32& d)
 {
   assert(val<1.0);
@@ -124,11 +150,13 @@ void TestDoubleCompress()
 
 	embDB::double_cast dVal, dVal1;
 
-	dVal.val = 0.17775000000;
-
+	dVal.val = sqrt(2.);//45654.17775000000;
+	dVal.val = 157.79439826373658;
 	uint32 n4, d1;
+	
 
-	getFraq(dVal.val,(int)pow(10.0,5) - 1,  n4, d1);
+	uint32 nScale = getScale(dVal.val);
+	//getFraq(dVal.val,(int)pow(10.0,5) - 1,  n4, d1);
 	getFraq1(dVal.val);
 
     int i, n; long cp, cq;

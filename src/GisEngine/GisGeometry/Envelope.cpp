@@ -122,33 +122,35 @@ namespace GisEngine
 			switch(units)
 			{
 			case GisEngine::GisCommon::UnitsDecimalDegrees:
-				params.m_dScaleX = 0.0000001;
-				params.m_dScaleY = 0.0000001;
+				params.m_nScaleX = 7; //0.0000001
+				params.m_nScaleY = 7;
 				break;
 			case GisEngine::GisCommon::UnitsKilometers:
 			case GisEngine::GisCommon::UnitsMiles:
-				params.m_dScaleX = 0.001;
-				params.m_dScaleY = 0.001;
+				params.m_nScaleX = 3; //0.001
+				params.m_nScaleY = 3;
 				break;
 			case GisEngine::GisCommon::UnitsMeters:
 			case GisEngine::GisCommon::UnitsYards:
 			case GisEngine::GisCommon::UnitsFeet:
 			case GisEngine::GisCommon::UnitsDecimeters:
 			case GisEngine::GisCommon::UnitsInches:
-				params.m_dScaleX = 0.01;
-				params.m_dScaleY = 0.01;
+				params.m_nScaleX = 2; //0.01
+				params.m_nScaleY = 2;
 				break;
 			case GisEngine::GisCommon::UnitsMillimeters:
-				params.m_dScaleX = 1;
-				params.m_dScaleY = 1;
+				params.m_nScaleX = 1;
+				params.m_nScaleY = 1;
 				break;
 			default:
-				params.m_dScaleX  = 0.0001;
-				params.m_dScaleY  = 0.0001;
+				params.m_nScaleX  = 4; //0.0001
+				params.m_nScaleY  = 4;
 				break;
 			}
 
-			int64 nMaxVal = int64(dMaxCoord/params.m_dScaleX);
+			double dScale = 1.0/pow(10.0, params.m_nScaleX);
+			
+			int64 nMaxVal = int64(dMaxCoord/dScale);
 
 			params.m_PointType =   CommonLib::GetCompressType(nMaxVal);
 

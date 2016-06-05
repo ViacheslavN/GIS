@@ -14,7 +14,7 @@ namespace embDB
 	public:
 
 		ShapeFieldCompressorParams() :   m_nMaxPageBlobSize(400), 
-			m_nStreamPageInfo(-1), m_dOffsetX(0.), m_dOffsetY(0.), m_dScaleX(1.), m_dScaleY(1.),
+			m_nStreamPageInfo(-1), m_dOffsetX(0.), m_dOffsetY(0.), m_nScaleX(1), m_nScaleY(1),
 				m_CoordTypes(stUnknown), m_ShapeType(CommonLib::shape_type_null)
 		{}
 		virtual ~ShapeFieldCompressorParams(){}
@@ -31,8 +31,8 @@ namespace embDB
 			m_nStreamPageInfo = pStream->readInt64();
 			pStream->read(m_dOffsetX);
 			pStream->read(m_dOffsetY);
-			pStream->read(m_dScaleX);
-			pStream->read(m_dScaleY);
+			pStream->read(m_nScaleX);
+			pStream->read(m_nScaleY);
 			m_CoordTypes = (embDB::eSpatialType)pStream->readIntu32();
 			m_ShapeType = (CommonLib::eShapeType)pStream->readIntu32();
 			if(m_nStreamPageInfo != -1)
@@ -58,8 +58,8 @@ namespace embDB
 			pStream->write(m_nStreamPageInfo);
 			pStream->write(m_dOffsetX);
 			pStream->write(m_dOffsetY);
-			pStream->write(m_dScaleX);
-			pStream->write(m_dScaleY);
+			pStream->write(m_nScaleX);
+			pStream->write(m_nScaleY);
 			pStream->write((uint32)m_CoordTypes);
 			pStream->write((uint32)m_ShapeType);
 			return true;
@@ -71,8 +71,8 @@ namespace embDB
 
 		void SetOffsetX(double dOffsetX)   { m_dOffsetX = dOffsetX; }
 		void SetOffsetY(double dOffsetY)   { m_dOffsetY = dOffsetY; } 
-		void SetScaleX(double dScaleX)   { m_dScaleX = dScaleX; } 
-		void SetScaleY(double dScaleY)   { m_dScaleY = dScaleY; } 
+		void SetScaleX(byte nScaleX)   { m_nScaleX = nScaleX; } 
+		void SetScaleY(byte nScaleY)   { m_nScaleY = nScaleY; } 
 		void SetCoordType(embDB::eSpatialType CoordTypes)   { m_CoordTypes = CoordTypes; } 
 		void SetShapeType(CommonLib::eShapeType ShapeType)   { m_ShapeType = ShapeType; } 
 	
@@ -80,8 +80,8 @@ namespace embDB
 
 		double GetOffsetX() const   { return m_dOffsetX;}
 		double GetOffsetY()  const { return m_dOffsetY;} 
-		double GetScaleX()  const { return m_dScaleX; } 
-		double GetScaleY() const  { return m_dScaleY;} 
+		byte GetScaleX()  const { return m_nScaleX; } 
+		byte GetScaleY() const  { return m_nScaleY;} 
 		embDB::eSpatialType GetCoordType() const  {return  m_CoordTypes;} 
 		CommonLib::eShapeType GetShapeType() const  { return m_ShapeType;} 
 
@@ -114,8 +114,8 @@ namespace embDB
 		uint32 m_nMaxPageBlobSize;
 		double m_dOffsetX;
 		double m_dOffsetY;
-		double m_dScaleX;
-		double m_dScaleY;
+		byte m_nScaleX;
+		byte m_nScaleY;
 		embDB::eSpatialType m_CoordTypes;
 		CommonLib::eShapeType m_ShapeType;
 		int64 m_nStreamPageInfo;
