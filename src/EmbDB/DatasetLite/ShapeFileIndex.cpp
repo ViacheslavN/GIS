@@ -83,7 +83,7 @@ namespace DatasetLite
 
 	IShapeFileIndexPtr IShapeFileIndex::create(const CommonLib::CString& sDbName, size_t nPageSize,
 		const CommonLib::CString& sShapeFileName, GisEngine::GisCommon::Units units , 
-		double dOffsetX, double dOffsetY, double dScaleX, double dScaleY, CommonLib::bbox bbox)
+		double dOffsetX, double dOffsetY, byte nScaleX, byte nScaleY, CommonLib::bbox bbox)
 	{ 
 		SHPGuard shpFile;
 		shpFile.file = ShapeLib::SHPOpen(sShapeFileName.cstr(), "rb");
@@ -157,39 +157,42 @@ namespace DatasetLite
 		double dMaxX = fabs(bbox.xMax + dOffsetX);
 		double dMaxY = fabs(bbox.yMax + dOffsetY);
 		double dMaxCoord = max(dMaxX, dMaxY);
-		if(dScaleX == 0 || dScaleY == 0)
+
+		
+		if(nScaleX == 0 || nScaleY == 0)
 		{
 
 			switch(units)
 			{
 				case GisEngine::GisCommon::UnitsDecimalDegrees:
-					dScaleX = 0.0000001;
-					dScaleY = 0.0000001;
+					nScaleX = 7;// 0.0000001;
+					nScaleY = 7;//0.0000001;
 					break;
 				case GisEngine::GisCommon::UnitsKilometers:
 				case GisEngine::GisCommon::UnitsMiles:
-					dScaleX = 0.001;
-					dScaleY = 0.001;
+					nScaleX = 3;
+					nScaleY = 3;//0.001;
 					break;
 				case GisEngine::GisCommon::UnitsMeters:
 				case GisEngine::GisCommon::UnitsYards:
 				case GisEngine::GisCommon::UnitsFeet:
 				case GisEngine::GisCommon::UnitsDecimeters:
 				case GisEngine::GisCommon::UnitsInches:
-					dScaleX = 0.01;
-					dScaleY = 0.01;
+					nScaleX = 2;//;
+					nScaleY = 2;//0.01;
 					break;
 				case GisEngine::GisCommon::UnitsMillimeters:
-					dScaleX = 1;
-					dScaleY = 1;
+					nScaleX = 1;
+					nScaleY = 1;
 					break;
 				default:
-					dScaleX = 0.0001;
-					dScaleY = 0.0001;
+					nScaleX = 4;//0.0001;
+					nScaleY = 4;//0.0001;
 					break;
 			}
 		}
-		int64 nMaxVal = int64(dMaxCoord/dScaleX);
+		double dScale = 1.0/pow(10.0, nScaleX);
+		int64 nMaxVal = int64(dMaxCoord/dScale);
 		DataType = GetType(nMaxVal, isPoint);
 	
 
@@ -202,7 +205,7 @@ namespace DatasetLite
 			case embDB::stPoint64:
 				{
 					CShapeFileIndexPoint *pShapeFileIndexPoint =
-						new CShapeFileIndexPoint(NULL, nPageSize, bbox, dOffsetX, dOffsetY, dScaleX, dScaleY, units, DataType, shapeType);
+						new CShapeFileIndexPoint(NULL, nPageSize, bbox, dOffsetX, dOffsetY, nScaleX, nScaleY, units, DataType, shapeType);
 					if(pShapeFileIndexPoint->Create(sDbName))
 					{
 						pShapeFileIndex = pShapeFileIndexPoint;
@@ -219,7 +222,7 @@ namespace DatasetLite
 				{
 					{
 						CShapeFileIndexRect *pShapeFileIndexRect =
-							new CShapeFileIndexRect(NULL, nPageSize, bbox, dOffsetX, dOffsetY, dScaleX, dScaleY, units, DataType, shapeType);
+							new CShapeFileIndexRect(NULL, nPageSize, bbox, dOffsetX, dOffsetY, nScaleX, nScaleY, units, DataType, shapeType);
 						if(pShapeFileIndexRect->Create(sDbName))
 						{
 							pShapeFileIndex = pShapeFileIndexRect;

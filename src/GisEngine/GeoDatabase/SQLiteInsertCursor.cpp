@@ -107,7 +107,7 @@ namespace GisEngine
 				if(nOID == -1)
 					nOID = nLastRowID;
 
-				if(pOIDField->GetType() == dtOid32)
+				if(pOIDField.get() && pOIDField->GetType() == dtOid32)
 					m_pStmtSpatial->ColumnBindInt(1,  (int32)nOID);
 				else
 					m_pStmtSpatial->ColumnBindInt64(1,  nOID);
@@ -149,6 +149,7 @@ namespace GisEngine
 				m_pStmtSpatial->reset();
 
 			}
+			pRow->SetRowID(nLastRowID);
 			return nLastRowID;
 		}
 		void SQLiteInsertCursor::close()

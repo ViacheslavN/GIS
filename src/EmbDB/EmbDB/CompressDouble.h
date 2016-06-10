@@ -22,6 +22,11 @@ namespace embDB
 		typedef _TSignedValue TSignedValue;
 		typedef  TBPVector<TValue > TValueMemSet;
 
+		TDoubleCompress() : m_MantisaCompressor(ACCoding), m_ExponentCompressor(ACCoding)
+		{
+
+		}
+
 		void AddSymbol(uint32 nSize,  int nIndex, TValue nValue, const TValueMemSet& vecValues)
 		{
 			 

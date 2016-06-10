@@ -360,6 +360,7 @@ namespace embDB
 		virtual bool         IsFieldSelected(int index) const = 0;
 		virtual bool NextRow(IRowPtr* pRow = NULL) = 0;
 		virtual bool  value(CommonLib::CVariant* pValue, int32 nNum) = 0;
+		virtual int64 GetRowID() const =0;
 
 
 	};

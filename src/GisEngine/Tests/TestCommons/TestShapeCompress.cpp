@@ -177,8 +177,13 @@ void CompressShape()
 	CommonLib::CWriteMemoryStream compressStreamTmp;
 	CommonLib::CGeoShape::compress_params params;
 	params.m_PointType = CommonLib::dtType32;
-	params.m_nScaleX = 8;
-	params.m_nScaleY = 8;
+	params.m_nScaleX = 7;
+	params.m_nScaleY = 7;
+
+
+
+	double dScaleX = 1/pow(10., params.m_nScaleX);
+	double dScaleY = 1/pow(10., params.m_nScaleY);
 
 	/*params.m_PointType = CommonLib::dtType32;
 	params.m_dScaleX = 0.001;
@@ -243,8 +248,6 @@ void CompressShape()
 		 nError++;
 
 
-		 double dScaleX = 1/pow(10., params.m_nScaleX);
-		 double dScaleY = 1/pow(10., params.m_nScaleY);
 
 		 for (uint32 i = 0; i < pShape->getPointCnt(); ++i)
 		 {

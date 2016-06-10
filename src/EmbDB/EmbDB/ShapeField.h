@@ -112,8 +112,8 @@ namespace embDB
 			compParams.SetMaxPageBlobSize(m_nPageSize/10); 
 			compParams.SetCoordType(m_PointType);
 			compParams.SetShapeType(m_ShapeType);
-			compParams.SetScaleX(m_dScaleX);
-			compParams.SetScaleY(m_dScaleY);
+			compParams.SetScaleX(m_nScaleX);
+			compParams.SetScaleY(m_nScaleY);
 			compParams.SetOffsetX(m_dOffsetX);
 			compParams.SetOffsetY(m_dOffsetY);
 
@@ -131,8 +131,8 @@ namespace embDB
 			pStream->write((uint32)m_Units);
 			pStream->write(m_dOffsetX);
 			pStream->write(m_dOffsetY);
-			pStream->write(m_dScaleX);
-			pStream->write(m_dScaleY);
+			pStream->write(m_nScaleX);
+			pStream->write(m_nScaleY);
 			pStream->write(m_extent.xMin);
 			pStream->write(m_extent.xMax);
 			pStream->write(m_extent.yMin);
@@ -153,8 +153,8 @@ namespace embDB
 			m_Units = (eSpatialCoordinatesUnits)pStream->readIntu32();
 			pStream->read(m_dOffsetX);
 			pStream->read(m_dOffsetY);
-			pStream->read(m_dScaleX);
-			pStream->read(m_dScaleY);
+			pStream->read(m_nScaleX);
+			pStream->read(m_nScaleY);
 			pStream->read(m_extent.xMin);
 			pStream->read(m_extent.xMax);
 			pStream->read(m_extent.yMin);
@@ -201,13 +201,13 @@ namespace embDB
 		{
 			return m_dOffsetY;
 		}
-		virtual double GetScaleX()  const 
+		virtual byte GetScaleX()  const 
 		{
-			return m_dScaleX;
+			return m_nScaleX;
 		}
-		virtual double GetScaleY()  const 
+		virtual byte GetScaleY()  const 
 		{
-			return m_dScaleY;
+			return m_nScaleY;
 		}
 
 
@@ -236,13 +236,13 @@ namespace embDB
 		{
 			m_dOffsetY = dOffsetY;
 		}
-		void SetScaleX(double dScaleX)   
+		void SetScaleX(byte nScaleX)   
 		{
-			m_dScaleX = dScaleX;
+			m_nScaleX = nScaleX;
 		}
-		void SetScaleY(double dScaleY)   
+		void SetScaleY(byte nScaleY)   
 		{
-			m_dScaleY = dScaleY;
+			m_nScaleY = nScaleY;
 		}
 	private:
  
@@ -253,8 +253,8 @@ namespace embDB
 
 		double m_dOffsetX;
 		double m_dOffsetY;
-		double m_dScaleX;
-		double m_dScaleY;
+		byte m_nScaleX;
+		byte m_nScaleY;
 	};
 
 }

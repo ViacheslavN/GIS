@@ -238,6 +238,7 @@ namespace GisEngine
 				 }
 
 			}
+		 
 			*pRow = m_pCurrentRow;
 			return true;
 		}

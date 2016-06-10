@@ -12,10 +12,11 @@ namespace DatasetLite
 		typedef typename TZOrderVal::TPointType TPointType;
 		typedef _TIterator TIterator;
 
-		TShapeCursorBase(TIterator& iterator, double dOffsetX, double dOffsetY, double dScaleX, double dScaleY) :
-		  m_Iterator(iterator),  m_dOffsetX(dOffsetX),  m_dOffsetY(dOffsetY),  m_dScaleX(dScaleX),  m_dScaleY(dScaleY)
+		TShapeCursorBase(TIterator& iterator, double dOffsetX, double dOffsetY, byte nScaleX, byte nScaleY) :
+		  m_Iterator(iterator),  m_dOffsetX(dOffsetX),  m_dOffsetY(dOffsetY),  m_nScaleX(nScaleX),  m_nScaleY(nScaleY)
 		{
-
+			m_dCalcScaleX = 1/pow(10., m_nScaleX);
+			m_dCalcScaleY = 1/pow(10., m_nScaleY);
 		}
 
 		virtual bool next()
@@ -35,8 +36,11 @@ namespace DatasetLite
 		TIterator m_Iterator;
 		double m_dOffsetX;
 		double m_dOffsetY;
-		double m_dScaleX;
-		double m_dScaleY;
+		byte m_nScaleX;
+		byte m_nScaleY;
+
+		double m_dCalcScaleX;
+		double m_dCalcScaleY;
 		
 	};
 
@@ -59,10 +63,10 @@ namespace DatasetLite
 			TPointType xMin = 0, xMax = 0, yMin = 0, yMax = 0;
 			zVal.getXY(xMin, yMin, xMax, yMax);
 			CommonLib::bbox bbox;
-			bbox.xMin = (xMin*this->m_dScaleX) - this->m_dOffsetX;
-			bbox.xMax = (xMax*this->m_dScaleX) - this->m_dOffsetX;
-			bbox.yMin = (yMin*this->m_dScaleY) - this->m_dOffsetY;
-			bbox.yMax = (yMax*this->m_dScaleY) - this->m_dOffsetY;
+			bbox.xMin = (xMin*this->m_dCalcScaleX) - this->m_dOffsetX;
+			bbox.xMax = (xMax*this->m_dCalcScaleX) - this->m_dOffsetX;
+			bbox.yMin = (yMin*this->m_dCalcScaleY) - this->m_dOffsetY;
+			bbox.yMax = (yMax*this->m_dCalcScaleY) - this->m_dOffsetY;
 
 			return bbox;
 		}
@@ -93,8 +97,8 @@ namespace DatasetLite
 			TPointType X = 0, Y = 0;
 			zVal.getXY(X, Y);
 			
-			bbox.xMax = bbox.xMin = (X*this->m_dScaleX) - this->m_dOffsetX;
-			bbox.yMax = bbox.yMin = (Y*this->m_dScaleY) - this->m_dOffsetY;
+			bbox.xMax = bbox.xMin = (X*this->m_dCalcScaleX) - this->m_dOffsetX;
+			bbox.yMax = bbox.yMin = (Y*this->m_dCalcScaleY) - this->m_dOffsetY;
 			return bbox;
 		}
 

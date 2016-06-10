@@ -21,6 +21,22 @@ namespace CommonLib
 		  *carryout = (tmp < y) || (result < x);
 		  return result;
 	  }
+
+	  static inline uint32 GetScale(double dVal, uint32 nMaxScale = 15)
+	  {
+		  uint64 nPow = 1;
+		  dVal = fabs(dVal);
+		  for (uint32 i = 0; i < nMaxScale; ++i)
+		  {
+			  uint64 nVal = uint64(dVal * nPow);
+			  double dBack = (double)nVal/nPow;
+			  if(fabs(dVal - dBack) == 0.)
+				  return i;
+			  nPow *= 10;
+		  }
+		  return nMaxScale;
+	  } 
+
 	}
 }
 

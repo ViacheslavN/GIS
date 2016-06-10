@@ -68,10 +68,13 @@ namespace DatasetLite
 
 	
 		TStatialTreeRect(CommonLib::alloc_t* pAlloc, embDB::CStorage* pStorage, int64 nTreeRootPageID, 
-			double dOffsetX, double dOffsetY, double dScaleX, double dScaleY):
+			double dOffsetX, double dOffsetY, byte nScaleX, byte nScaleY):
 		m_Storage(pStorage), m_DBTran(pAlloc, pStorage), m_dOffsetX(dOffsetX), m_dOffsetY(dOffsetY),
-			m_dScaleX(dScaleX), m_dScaleY(dScaleY), m_nTreeRootPageID(nTreeRootPageID)
+			m_nScaleX(nScaleX), m_nScaleY(nScaleY), m_nTreeRootPageID(nTreeRootPageID)
 		{
+
+			m_dCalcScaleX = 1/pow(10., m_nScaleX);
+			m_dCalcScaleY = 1/pow(10., m_nScaleY);
 
 			m_SpatialTree.reset( new TSPTree(nTreeRootPageID, &m_DBTran, pAlloc, 50, 8192));
 		}
@@ -100,10 +103,10 @@ namespace DatasetLite
 		}
 		bool insert(double xMin, double yMin, double xMax, double yMax, int nShapeId)
 		{
-			TCoord xMinT = TCoord((xMin + m_dOffsetX) / m_dScaleX);
-			TCoord yMinT = TCoord((yMin + m_dOffsetY) / m_dScaleY);
-			TCoord xMaxT = TCoord((xMax + m_dOffsetX) / m_dScaleX);
-			TCoord yMaxT = TCoord((yMax + m_dOffsetY) / m_dScaleY);
+			TCoord xMinT = TCoord((xMin + m_dOffsetX) / m_dCalcScaleX);
+			TCoord yMinT = TCoord((yMin + m_dOffsetY) / m_dCalcScaleY);
+			TCoord xMaxT = TCoord((xMax + m_dOffsetX) / m_dCalcScaleX);
+			TCoord yMaxT = TCoord((yMax + m_dOffsetY) / m_dCalcScaleY);
 
 			return m_SpatialTree->insert(xMinT, yMinT, xMaxT, yMaxT, nShapeId);
 		}
@@ -124,13 +127,13 @@ namespace DatasetLite
 		{
  
 
-			TCoord xMin = TCoord((extent.xMin + m_dOffsetX) / m_dScaleX);
-			TCoord yMin = TCoord((extent.yMin + m_dOffsetY) / m_dScaleY);
-			TCoord xMax = TCoord((extent.xMax + m_dOffsetX) / m_dScaleX);
-			TCoord yMax = TCoord((extent.yMax + m_dOffsetY) / m_dScaleY);
+			TCoord xMin = TCoord((extent.xMin + m_dOffsetX) / m_dCalcScaleX);
+			TCoord yMin = TCoord((extent.yMin + m_dOffsetY) / m_dCalcScaleY);
+			TCoord xMax = TCoord((extent.xMax + m_dOffsetX) / m_dCalcScaleX);
+			TCoord yMax = TCoord((extent.yMax + m_dOffsetY) / m_dCalcScaleY);
 			TIterator SPIterator = m_SpatialTree->spatialQuery(xMin, yMin, xMax, yMax);
 			TShapeCursor *pCursor = new TShapeCursor(SPIterator, 
-				m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY);
+				m_dOffsetX, m_dOffsetY, m_nScaleX, m_nScaleY);
 			return IShapeCursorPtr(pCursor);
 		}
 	private:
@@ -139,8 +142,10 @@ namespace DatasetLite
 		embDB::CDirectTransaction m_DBTran;
 		double m_dOffsetX;
 		double m_dOffsetY;
-		double m_dScaleX;
-		double m_dScaleY;
+		byte m_nScaleX;
+		byte m_nScaleY;
+		double m_dCalcScaleX;
+		double m_dCalcScaleY;
 		int64 m_nTreeRootPageID;
 	 
 
@@ -149,9 +154,9 @@ namespace DatasetLite
 	typedef TStatialTreeRect<uint32, TBPMapRect32, embDB::stRect32> TSpatialTreeU32;
 	typedef TStatialTreeRect<uint64, TBPMapRect64, embDB::stRect64> TSpatialTreeU64;
 
-	CShapeFileIndexRect::CShapeFileIndexRect(CommonLib::alloc_t* pAlloc, uint32 nPageSize, const CommonLib::bbox& bbox, double dOffsetX, double dOffsetY, double dScaleX, 
-		double dScaleY, GisEngine::GisCommon::Units units, embDB::eSpatialType type, int nShapeType ) : 
-		TBase(pAlloc, nPageSize, bbox, dOffsetX, dOffsetY, dScaleX, dScaleY, units, type, nShapeType)
+	CShapeFileIndexRect::CShapeFileIndexRect(CommonLib::alloc_t* pAlloc, uint32 nPageSize, const CommonLib::bbox& bbox, double dOffsetX, double dOffsetY, byte nScaleX, 
+		byte nScaleY, GisEngine::GisCommon::Units units, embDB::eSpatialType type, int nShapeType ) : 
+		TBase(pAlloc, nPageSize, bbox, dOffsetX, dOffsetY, nScaleY, nScaleY, units, type, nShapeType)
 	{
 
 	}
@@ -173,15 +178,15 @@ namespace DatasetLite
 		{
 			case embDB::stRect16:
 				m_SpTree.reset(new TSpatialTreeU16(m_pAlloc, m_pStorage.get(), m_nRootTreePage,
-					m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
+					m_dOffsetX, m_dOffsetY, m_nScaleX, m_nScaleY));
 					break;
 			case embDB::stRect32:
 				m_SpTree.reset(new TSpatialTreeU32(m_pAlloc, m_pStorage.get(), m_nRootTreePage,
-					m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
+					m_dOffsetX, m_dOffsetY, m_nScaleX, m_nScaleY));
 				break;
 			case embDB::stRect64:
 				m_SpTree.reset(new TSpatialTreeU64(m_pAlloc, m_pStorage.get(), m_nRootTreePage,
-					m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
+					m_dOffsetX, m_dOffsetY, m_nScaleX, m_nScaleY));
 				break;
 		}
 
@@ -195,13 +200,13 @@ namespace DatasetLite
 		switch(m_Type)
 		{
 		case embDB::stRect16:
-			m_SpTree.reset(new TSpatialTreeU16(m_pAlloc, m_pStorage.get(), -1, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
+			m_SpTree.reset(new TSpatialTreeU16(m_pAlloc, m_pStorage.get(), -1, m_dOffsetX, m_dOffsetY, m_nScaleX, m_nScaleY));
 			break;
 		case embDB::stRect32:
-			m_SpTree.reset(new TSpatialTreeU32(m_pAlloc, m_pStorage.get(), -1, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
+			m_SpTree.reset(new TSpatialTreeU32(m_pAlloc, m_pStorage.get(), -1, m_dOffsetX, m_dOffsetY, m_nScaleX, m_nScaleY));
 			break;
 		case embDB::stRect64:
-			m_SpTree.reset(new TSpatialTreeU64(m_pAlloc, m_pStorage.get(), -1, m_dOffsetX, m_dOffsetY, m_dScaleX, m_dScaleY));
+			m_SpTree.reset(new TSpatialTreeU64(m_pAlloc, m_pStorage.get(), -1, m_dOffsetX, m_dOffsetY, m_nScaleX, m_nScaleY));
 			break;
 		}
 		if(m_SpTree.get() == NULL)

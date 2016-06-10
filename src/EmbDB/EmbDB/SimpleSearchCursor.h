@@ -21,6 +21,7 @@ namespace embDB
 			virtual bool         IsFieldSelected(int index) const;
 			virtual bool NextRow(IRowPtr* pRow = NULL);
 			virtual bool  value(CommonLib::CVariant* pValue, int32 nNum);
+			virtual int64 GetRowID() const;
 
 	private:
 		void SetCacheObj();

@@ -14,6 +14,7 @@ namespace GisEngine
 			, m_nOidFieldIndex(-1)
 			, m_nShapeFieldIndex(-1)
 			, m_nAnnoFieldIndex(-1)
+			, m_nRowID(-1)
 		{
 			int fieldCount = fields->GetFieldCount();
 			m_vecFieldMap.resize(fieldCount, -1);
@@ -148,6 +149,14 @@ namespace GisEngine
 			//m_vecValues[m_vecFieldMap[m_nOidFieldIndex]] = nOID;
 		}
 
+		int64 CFeature::GetRowID() const
+		{
+			return m_nRowID;
+		}
+		void  CFeature::SetRowID(int64 RowID) const
+		{
+			m_nRowID = RowID;
+		}
 		// IFeature
 		CommonLib::IGeoShapePtr CFeature::GetShape() const
 		{
@@ -181,5 +190,7 @@ namespace GisEngine
 			//CommonLib::IRefObjectPtr ptr((IRefCnt*)pShape);
 			m_vecValues[m_nShapeFieldIndex] = m_pShape;
 		}
+
+
 	}
 }

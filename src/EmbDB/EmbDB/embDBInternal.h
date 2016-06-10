@@ -33,8 +33,8 @@ namespace embDB
 			,m_nLenField(0)
 			,m_nBPTreeNodePageSize(COMMON_PAGE_SIZE)
 			,m_nCoordType(scuUnknown)
-			,m_dScaleX(1.)
-			,m_dScaleY(1.)
+			,m_nScaleX(1)
+			,m_nScaleY(1)
 			,m_dOffsetX(0.)
 			,m_dOffsetY(0.)
 			,m_ShapeType(CommonLib::shape_type_null)
@@ -63,8 +63,8 @@ namespace embDB
 		uint32   m_nLenField;
 		uint32 m_nBPTreeNodePageSize;
 
-		double m_dScaleX;
-		double m_dScaleY;
+		byte m_nScaleX;
+		byte m_nScaleY;
 		double m_dOffsetX;
 		double m_dOffsetY;
 
@@ -130,7 +130,7 @@ namespace embDB
 	
 	struct sSpatialFieldInfo : public sFieldInfo
 	{
-		sSpatialFieldInfo() :  m_nCoordType(scuUnknown), m_dScaleX(1.), m_dScaleY(1.), m_dOffsetX(0.), m_dOffsetY(0.), m_ShapeType(CommonLib::shape_type_null),
+		sSpatialFieldInfo() :  m_nCoordType(scuUnknown), m_nScaleX(1), m_nScaleY(1), m_dOffsetX(0.), m_dOffsetY(0.), m_ShapeType(CommonLib::shape_type_null),
 								m_nSpatialType(stUnknown)
 		{
 
@@ -139,8 +139,8 @@ namespace embDB
 		//CommonLib::TRect2D64 m_nExtent;
 
 
-		double m_dScaleX;
-		double m_dScaleY;
+		byte m_nScaleX;
+		byte m_nScaleY;
 		double m_dOffsetX;
 		double m_dOffsetY;
 
@@ -154,8 +154,8 @@ namespace embDB
 			if(!sFieldInfo::Read(pStream))
 				return false;
 
-			m_dScaleX = pStream->readDouble();
-			m_dScaleY = pStream->readDouble();
+			m_nScaleX = pStream->readByte();
+			m_nScaleY = pStream->readByte();
 			m_dOffsetX = pStream->readDouble();
 			m_dOffsetY = pStream->readDouble();
 
@@ -174,8 +174,8 @@ namespace embDB
 		{
 			sFieldInfo::Write(pStream);
 
-			  pStream->write(m_dScaleX);
-			  pStream->write(m_dScaleY);
+			  pStream->write(m_nScaleX);
+			  pStream->write(m_nScaleY);
 			  pStream->write(m_dOffsetX);
 			  pStream->write(m_dOffsetY);
 
@@ -420,8 +420,8 @@ namespace embDB
 		virtual const CommonLib::bbox& GetBoundingBox() const = 0;
 		virtual double GetOffsetX()  const = 0;
 		virtual double GetOffsetY()  const = 0;
-		virtual double GetScaleX()  const = 0;
-		virtual double GetScaleY()  const = 0;
+		virtual byte GetScaleX()  const = 0;
+		virtual byte GetScaleY()  const = 0;
 	};
 	
 	/*struct ICounterFiled: public CommonLib::RefCounter

@@ -27,6 +27,8 @@ namespace GisEngine
 			virtual bool                   HasOID() const;
 			virtual int64                  GetOID() const;
 			virtual void                   SetOID(int64 id);
+			virtual int64				   GetRowID() const;
+			virtual void				   SetRowID(int64 RowID) const;
 
 			// IFeature
 			virtual CommonLib::IGeoShapePtr GetShape() const;
@@ -40,6 +42,8 @@ namespace GisEngine
 			std::vector<int>                    m_vecFieldMap;
 			std::vector<CommonLib::CVariant>	m_vecValues;
 			CommonLib::IGeoShapePtr m_pShape;
+
+			int64								m_nRowID;
 		};
 	}
 }

@@ -62,8 +62,10 @@ uint32 getScale(double dVal, uint32 nMaxScale = 15)
 {
 	uint64 nPow = 1;
 	dVal = fabs(dVal);
+  
+
 	for (uint32 i = 0; i < nMaxScale; ++i)
-	{
+	{	
 		uint64 nVal = uint64(dVal * nPow);
 		double dBack = (double)nVal/nPow;
 		if(fabs(dVal - dBack) == 0.)
@@ -72,6 +74,26 @@ uint32 getScale(double dVal, uint32 nMaxScale = 15)
 	}
 	return nMaxScale;
 }
+
+
+
+uint32 getScale2(double dVal)
+{
+ 
+	dVal = fabs(dVal);
+	double dM = dVal;
+	uint32 nResult = 0;
+
+	while( ( dM + dVal ) > dVal )
+	{
+		dM = dM / 10;
+		++nResult;
+	}
+
+	return nResult;
+}
+
+
 void getFraq(double val, int maxD,uint32& n, uint32& d)
 {
   assert(val<1.0);
@@ -151,13 +173,17 @@ void TestDoubleCompress()
 	embDB::double_cast dVal, dVal1;
 
 	dVal.val = sqrt(2.);//45654.17775000000;
-	dVal.val = 157.79439826373658;
+	dVal.val = 1532e-3;
 	uint32 n4, d1;
 	
+	CommonLib::CString str1;
+	str1.format(L"%e", dVal.val);
 
-	uint32 nScale = getScale(dVal.val);
+	uint32 nScale = getScale(dVal.val, 1000);
 	//getFraq(dVal.val,(int)pow(10.0,5) - 1,  n4, d1);
 	getFraq1(dVal.val);
+
+	uint32 nScale2 =getScale2(dVal.val);
 
     int i, n; long cp, cq;
 	for(i=2; i<len; ++i) 
@@ -192,8 +218,8 @@ void TestDoubleCompress()
 
 	double dVal2 = (1 + (double)nMat/nDiv) * pow((double)2, (double)nExp - 1023);
 
-
-	/*
+	
+	
 	embDB::TDoubleDiffCompreessor doubleCompressorDiff;
 	embDB::TDoubleCompreessor doubleCompressor;
 
@@ -207,12 +233,14 @@ void TestDoubleCompress()
 		uint32 nSize = doubleCompressorDiff.GetComressSize();
 		if(nSize > 8192)
 		{
+
 			int dd = 0;
 			dd++;
+			nSize = doubleCompressorDiff.GetComressSize();
 			break;
 		}
 
-		dd += i;
+		dd += i *10.3254;
 
 
 	}
@@ -235,6 +263,6 @@ void TestDoubleCompress()
 		dd += i *10.3254;
 
 		
-	}*/
+	}
 
 }

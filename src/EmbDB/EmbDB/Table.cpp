@@ -571,7 +571,8 @@ namespace embDB
 
 	
 
-		double dOffsetX = 0., dOffsetY = 0., dScaleX = 1., dScaleY = 1.;
+		double dOffsetX = 0., dOffsetY = 0.;
+		byte nScaleX = 1, nScaleY = 1;
 		if(extent.xMin < 0)
 			dOffsetX = fabs(extent.xMin);
 		else
@@ -597,33 +598,33 @@ namespace embDB
 		switch(CoordUnits)
 		{
 			case scuDecimalDegrees:
-				dScaleX = 0.0000001;
-				dScaleY = 0.0000001;
+				nScaleX = 7;//0.0000001;
+				nScaleY = 7;
 				break;
 			case scuKilometers:
 			case scuMiles:
-				dScaleX = 0.001;
-				dScaleY = 0.001;
+				nScaleX = 3;//0.001;
+				nScaleY = 3;//0.001;
 				break;
 			case scuMeters:
 			case scuYards:
 			case scuFeet:
 			case scuDecimeters:
 			case scuInches:
-				dScaleX = 0.01;
-				dScaleY = 0.01;
+				nScaleX = 2;//0.01;
+				nScaleY = 2;//0.01;
 				break;
 			case scuMillimeters:
-				dScaleX = 1;
-				dScaleY = 1;
+				nScaleX = 1;
+				nScaleY = 1;
 				break;
 			default:
-				dScaleX = 0.0001;
-				dScaleY = 0.0001;
+				nScaleX = 4;//0.0001;
+				nScaleY = 4;//0.0001;
 				break;
 		}
-		
-		int64 nMaxVal = int64(dMaxCoord/dScaleX);
+		double dScale = 1/pow(10., nScaleX);
+		int64 nMaxVal = int64(dMaxCoord/dScale);
 		SpatialDataType = GetSpatialType(nMaxVal, isPoint);
 		IDBShapeFieldHandlerPtr pShapeFieldHandler; 
 		{
@@ -647,8 +648,8 @@ namespace embDB
 			pShapeField->SetUnits(CoordUnits);
 			pShapeField->SetOffsetX(dOffsetX);
 			pShapeField->SetOffsetY(dOffsetY);
-			pShapeField->SetScaleX(dScaleX);
-			pShapeField->SetScaleY(dScaleY);
+			pShapeField->SetScaleX(nScaleX);
+			pShapeField->SetScaleY(nScaleY);
 
 			if(!pShapeField->save(&stream, pDBTran.get()))
 			{

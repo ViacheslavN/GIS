@@ -73,7 +73,7 @@ namespace embDB
 		TStatialIndexBase( IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageNodeSize, uint32 nBTreeChacheSize) :
 		  m_pDBTransactions(pTransactions),
 			  m_tree(-1, pTransactions, pAlloc, nBTreeChacheSize, nPageNodeSize), 
-			  m_nBTreeRootPage(-1)
+			  m_nBTreeRootPage(-1), m_dOffsetX(0.), m_dOffsetY(0.), m_nScaleX(1), m_nScaleY(1), m_dCalcScaleX(0.), m_dCalcScaleY(0.)
 		  {
 
 		  }
@@ -106,15 +106,16 @@ namespace embDB
 
 			  m_dOffsetX = pHandlerField->GetOffsetX();
 			  m_dOffsetY = pHandlerField->GetOffsetY();
-			  m_dScaleX = pHandlerField->GetScaleX();
-			  m_dScaleY = pHandlerField->GetScaleY();
+			  m_nScaleX = pHandlerField->GetScaleX();
+			  m_nScaleY = pHandlerField->GetScaleY();
 
 			  m_extent = pHandlerField->GetBoundingBox();
 			  m_Type = pHandlerField->GetPointType();
 			  m_ShapeType = pHandlerField->GetShapeType();
 
-
-
+			  m_dCalcScaleX = 1/pow(10., m_nScaleX);
+			  m_dCalcScaleY = 1/pow(10., m_nScaleY);
+		
 
 
 			  m_tree.setRootPage(m_nBTreeRootPage);
@@ -163,10 +164,12 @@ namespace embDB
 			  if(bb.yMax > m_extent.yMax)
 				  bb.yMax = m_extent.yMax;
 
-			  TPointType xMin = TPointType((bb.xMin + m_dOffsetX) / m_dScaleX);
-			  TPointType yMin = TPointType((bb.yMin + m_dOffsetY) / m_dScaleY);
-			  TPointType xMax = TPointType((bb.xMax + m_dOffsetX) / m_dScaleX);
-			  TPointType yMax = TPointType((bb.yMax + m_dOffsetY) / m_dScaleY);
+
+ 
+			  TPointType xMin = TPointType((bb.xMin + m_dOffsetX) / m_dCalcScaleX);
+			  TPointType yMin = TPointType((bb.yMin + m_dOffsetY) / m_dCalcScaleY);
+			  TPointType xMax = TPointType((bb.xMax + m_dOffsetX) / m_dCalcScaleX);
+			  TPointType yMax = TPointType((bb.yMax + m_dOffsetY) / m_dCalcScaleY);
 			   
 			 TSpatialIterator it =  m_tree.spatialQuery(xMin, yMin, xMax, yMax, mode);
 			 SpatialIndexIterator *pSpIndexIterator = new SpatialIndexIterator(it, this);
@@ -281,8 +284,12 @@ namespace embDB
 
 		double m_dOffsetX;
 		double m_dOffsetY;
-		double m_dScaleX;
-		double m_dScaleY;
+		byte m_nScaleX;
+		byte m_nScaleY;
+
+		double m_dCalcScaleX;
+		double m_dCalcScaleY;
+
 		eSpatialType m_Type;
 		CommonLib::eShapeType m_ShapeType;
 		CommonLib::bbox m_extent;
@@ -308,10 +315,10 @@ namespace embDB
 		{
 			CommonLib::IGeoShapePtr& pShape = pValue->Get<CommonLib::IGeoShapePtr>();
 			CommonLib::bbox bbox = pShape->getBB();
-			Obj.m_minX = TPointType((bbox.xMin + this->m_dOffsetX) / this->m_dScaleX);
-			Obj.m_maxX = TPointType((bbox.xMax + this->m_dOffsetX) / this->m_dScaleX);
-			Obj.m_minY = TPointType((bbox.yMin + this->m_dOffsetY) / this->m_dScaleY);
-			Obj.m_maxY = TPointType((bbox.yMax + this->m_dOffsetY) / this->m_dScaleY);
+			Obj.m_minX = TPointType((bbox.xMin + this->m_dOffsetX) / this->m_dCalcScaleX);
+			Obj.m_maxX = TPointType((bbox.xMax + this->m_dOffsetX) / this->m_dCalcScaleX);
+			Obj.m_minY = TPointType((bbox.yMin + this->m_dOffsetY) / this->m_dCalcScaleY);
+			Obj.m_maxY = TPointType((bbox.yMax + this->m_dOffsetY) / this->m_dCalcScaleY);
 		}
  
 
@@ -326,10 +333,10 @@ namespace embDB
 			if(bbox.yMax > this->m_extent.yMax)
 				return false;
 
-			TPointType xMin = TPointType((bbox.xMin + this->m_dOffsetX) / this->m_dScaleX);
-			TPointType xMax = TPointType((bbox.xMax + this->m_dOffsetX) / this->m_dScaleX);
-			TPointType yMin = TPointType((bbox.yMin + this->m_dOffsetY) / this->m_dScaleY);
-			TPointType yMax = TPointType((bbox.yMax + this->m_dOffsetY) / this->m_dScaleY);
+			TPointType xMin = TPointType((bbox.xMin + this->m_dOffsetX) / this->m_dCalcScaleX);
+			TPointType xMax = TPointType((bbox.xMax + this->m_dOffsetX) / this->m_dCalcScaleX);
+			TPointType yMin = TPointType((bbox.yMin + this->m_dOffsetY) / this->m_dCalcScaleY);
+			TPointType yMax = TPointType((bbox.yMax + this->m_dOffsetY) / this->m_dCalcScaleY);
 
 			return this->m_tree.insert(xMin, yMin, xMax, yMax, nOID);
 
@@ -362,8 +369,8 @@ namespace embDB
 			if(dY < this->m_extent.yMin || dY > this->m_extent.yMax )
 				return false;
 
-			TPointType x = TPointType((dX + this->m_dOffsetX) / this->m_dScaleX);
-			TPointType y = TPointType((dY + this->m_dOffsetY) / this->m_dScaleY);
+			TPointType x = TPointType((dX + this->m_dOffsetX) / this->m_dCalcScaleX);
+			TPointType y = TPointType((dY + this->m_dOffsetY) / this->m_dCalcScaleY);
 			
 			return this->m_tree.insert(x, y, nOID);
 

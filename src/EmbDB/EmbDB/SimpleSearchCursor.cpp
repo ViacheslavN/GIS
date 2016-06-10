@@ -109,8 +109,11 @@ namespace embDB
 			return true;
 		}
 		return false;
-	
-
+	}
+	int64 SimpleSearchCursor::GetRowID() const
+	{
+		if(m_bEnd)
+			return m_vecOIDs[m_nCurrObj];
 	}
 	bool SimpleSearchCursor::NextRow(IRowPtr* pRow)
 	{

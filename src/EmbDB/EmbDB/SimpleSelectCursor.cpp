@@ -95,6 +95,12 @@ namespace embDB
 		}
 		return false;
 	}
+	int64 SimpleSelectCursor::GetRowID() const
+	{
+		if(m_bEnd)
+			return -1;
+		return m_pCacheRow->GetRowID();
+	}
 	bool SimpleSelectCursor::NextRow(IRowPtr* pRow)
 	{
 		if(m_bAllNext)
