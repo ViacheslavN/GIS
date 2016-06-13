@@ -13,7 +13,7 @@
 #include "SignedNumLenDiffCompressor2.h"
 #include "StringVal.h"
 #include "ZLibCompressor.h"
-
+#include <algorithm>
 namespace embDB
 {
 
@@ -38,6 +38,23 @@ namespace embDB
 			etfShort = 1,
 			etfInt32 = 2
 		};*/
+
+		struct sStringBloc
+		{
+			uint32 m_nRowSize;
+			uint32 m_nCompressSize;
+			uint32 m_nBeginIndex;
+			uint32 m_nCount;
+			bool m_bDirty;
+
+
+			CommonLib::CWriteMemoryStream m_compressBlocStream;
+
+			sStringBloc(CommonLib::alloc_t *pAlloc = NULL) : m_compressBlocStream(pAlloc),
+				m_nRowSize(0), m_nCount(0), m_nCompressSize(0), m_bDirty(false)
+			{}
+
+		};
 
 		TFixedStringZlibCompressor(CommonLib::alloc_t *pAlloc, uint32 nPageSize,
 			CompressorParamsBaseImp *pParams, uint32 nError = 200 ): 
@@ -398,7 +415,7 @@ namespace embDB
 			}
 			 return nSplitIndex;
 		}
-		struct sStringBloc;
+	
 
 		struct BlocPred
 		{
@@ -423,7 +440,7 @@ namespace embDB
 		{
 			sStringBloc findBlock;
 			findBlock.m_nBeginIndex = nBegin;
-			std::vector<sStringBloc*>::iterator it = lower_bound(m_vecStringBloc.begin(), m_vecStringBloc.end(), &findBlock, BlocPred());
+			std::vector<sStringBloc*>::iterator it = std::lower_bound(m_vecStringBloc.begin(), m_vecStringBloc.end(), &findBlock, BlocPred());
 			assert(it != m_vecStringBloc.end());
 
 			int nCount = m_vecStringBloc.end() -it;
@@ -473,22 +490,7 @@ namespace embDB
 		SignedDiffNumLenCompressor232i   m_lenCompressor;
 		
 
-		struct sStringBloc
-		{
-			uint32 m_nRowSize;
-			uint32 m_nCompressSize;
-			uint32 m_nBeginIndex;
-			uint32 m_nCount;
-			bool m_bDirty;
- 
-
-			CommonLib::CWriteMemoryStream m_compressBlocStream;
-
-			sStringBloc(CommonLib::alloc_t *pAlloc = NULL) : m_compressBlocStream(pAlloc),
-				m_nRowSize(0), m_nCount(0), m_nCompressSize(0), m_bDirty(false)
-			{}
-							
-		};
+		
 
 		std::vector<sStringBloc*> m_vecStringBloc;
 

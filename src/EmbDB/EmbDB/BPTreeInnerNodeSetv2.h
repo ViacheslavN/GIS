@@ -236,7 +236,7 @@ namespace embDB
 				while(true)
 				{				
 
-					if(!isNeedSplit())
+					if(!this->isNeedSplit())
 						break;
 
 					m_pCompressor->remove(nLessIndex, m_innerKeyMemSet[nLessIndex],  m_innerLinkMemSet[nLessIndex]);

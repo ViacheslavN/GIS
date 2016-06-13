@@ -153,7 +153,7 @@ namespace GisEngine
 		{
 			return m_nRowID;
 		}
-		void  CFeature::SetRowID(int64 RowID) const
+		void  CFeature::SetRowID(int64 RowID) 
 		{
 			m_nRowID = RowID;
 		}

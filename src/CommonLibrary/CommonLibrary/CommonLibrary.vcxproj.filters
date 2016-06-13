@@ -276,6 +276,9 @@
     <ClInclude Include="XYCompressDiff2.h">
       <Filter>SpatialData\shapeCompressor</Filter>
     </ClInclude>
+    <ClInclude Include="IXYComressor.h">
+      <Filter>SpatialData\shapeCompressor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

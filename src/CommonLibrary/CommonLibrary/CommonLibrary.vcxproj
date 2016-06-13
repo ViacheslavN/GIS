@@ -469,6 +469,7 @@
     <ClInclude Include="IGeoShape.h" />
     <ClInclude Include="Interlocked.h" />
     <ClInclude Include="IRefCnt.h" />
+    <ClInclude Include="IXYComressor.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="MathUtils.h" />
     <ClInclude Include="MemoryStream.h" />

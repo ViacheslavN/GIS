@@ -326,7 +326,7 @@ namespace GisEngine
 			virtual int64                  GetOID() const = 0;
 			virtual void                   SetOID(int64 id) = 0;
 			virtual int64				   GetRowID() const = 0;
-			virtual void				   SetRowID(int64 RowID) const = 0;
+			virtual void				   SetRowID(int64 RowID) = 0;
 		};
 
 		struct IFeature : public IRow

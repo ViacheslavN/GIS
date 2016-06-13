@@ -55,7 +55,7 @@ namespace embDB
 			assert(this->m_pCompressor == NULL);
 			m_pPageAlloc = pPageAlloc;
 		}
-		int SplitIn(BPTreeLeafNodeMapv2 *pNode, TKey* pSplitKey)
+		int SplitIn(TFixedStringLeafNode *pNode, TKey* pSplitKey)
 		{
 			TCompressor* pNewNodeComp = pNode->m_pCompressor;
 			
@@ -79,7 +79,7 @@ namespace embDB
 		
 		}
 
-		int  SplitIn(BPTreeLeafNodeMapv2 *pLeftNode, BPTreeLeafNodeMapv2 *pRightNode, TKey* pSplitKey)
+		int  SplitIn(TFixedStringLeafNode *pLeftNode, TFixedStringLeafNode *pRightNode, TKey* pSplitKey)
 		{
 			return TBase::SplitIn(pLeftNode, pRightNode, pSplitKey);
 		}

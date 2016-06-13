@@ -7,7 +7,8 @@
 #include <set>
 #include "ByteCompressor.h"
 #include "SignCompressor.h"
-#include "XYCompressZOrderDiff.h"
+//#include "XYCompressZOrderDiff.h"
+#include "IXYComressor.h"
 namespace CommonLib
 {
  

@@ -101,7 +101,7 @@ namespace embDB
 				{
 				
 					this->m_pCompressor->remove(nSplitIndex, this->m_leafKeyMemSet[nSplitIndex], this->m_leafValueMemSet[nSplitIndex]);
-					if(!isNeedSplit())
+					if(!this->isNeedSplit())
 						break;
 					--nSplitIndex;
 				}

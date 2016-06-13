@@ -28,7 +28,7 @@ namespace GisEngine
 			virtual int64                  GetOID() const;
 			virtual void                   SetOID(int64 id);
 			virtual int64				   GetRowID() const;
-			virtual void				   SetRowID(int64 RowID) const;
+			virtual void				   SetRowID(int64 RowID);
 
 			// IFeature
 			virtual CommonLib::IGeoShapePtr GetShape() const;

@@ -89,9 +89,9 @@ namespace GisEngine
 
 			virtual void Prepare(IDisplay* pDisplay)
 			{
-				m_dDeviceSize = (GUnits)floor(SymbolSizeToDeviceSize(pDisplay->GetTransformation().get(), m_dSize, GetScaleDependent()) / 2.0);
-				m_dDeviceOffsetX = SymbolSizeToDeviceSize(pDisplay->GetTransformation().get(), m_dOffsetX, GetScaleDependent());
-				m_dDeviceOffsetY = -SymbolSizeToDeviceSize(pDisplay->GetTransformation().get(), m_dOffsetY, GetScaleDependent());
+				m_dDeviceSize = (GUnits)floor(SymbolSizeToDeviceSize(pDisplay->GetTransformation().get(), m_dSize, this->GetScaleDependent()) / 2.0);
+				m_dDeviceOffsetX = SymbolSizeToDeviceSize(pDisplay->GetTransformation().get(), m_dOffsetX, this->GetScaleDependent());
+				m_dDeviceOffsetY = -SymbolSizeToDeviceSize(pDisplay->GetTransformation().get(), m_dOffsetY, this->GetScaleDependent());
 				m_dDisplayAngle = m_dAngle + (m_bIgnoreRotation) ? 0 : pDisplay->GetTransformation()->GetRotation();
 			}
 

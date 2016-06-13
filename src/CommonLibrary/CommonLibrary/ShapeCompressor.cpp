@@ -5,8 +5,8 @@
 #include "PartCompressor.h"
 #include "XYCompressDiff.h"
 #include "MemoryStream.h"
-#include "XYCompressDiff2.h"
-#include "XYCompressZOrderDiff.h"
+//#include "XYCompressDiff2.h"
+//#include "XYCompressZOrderDiff.h"
 namespace CommonLib
 {
 

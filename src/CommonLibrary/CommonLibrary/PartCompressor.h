@@ -2,6 +2,7 @@
 #define _LIB_COMMON_GEO_SHAPE_PART_COMPRESSOR_H_
 #include "NumLenCompressor.h"
 #include "BitStream.h"
+#include "FixedMemoryStream.h"
 namespace CommonLib
 {
 

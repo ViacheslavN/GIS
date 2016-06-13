@@ -135,7 +135,7 @@ namespace embDB
 			uint32 GetSplitIndex() const
 			{
 
-				uint32 nFreePage = m_nPageSize - this->m_KeyCompressor.GetComressSize();
+				uint32 nFreePage = this->m_nPageSize - this->m_KeyCompressor.GetComressSize();
 
 				return this->m_ValueCompressor.GetSplitIndex(nFreePage);
 			}
@@ -144,12 +144,12 @@ namespace embDB
 
 				uint32 nSize = nEnd- nBegin;
 
-				m_nCount -= nSize;
+				this->m_nCount -= nSize;
 				pCompressor->m_nCount += nSize;
 			    this->recalcKey();
 				pCompressor->recalcKey();
 
-				m_ValueCompressor.SplitIn( nBegin,  nEnd, &pCompressor->m_ValueCompressor);
+				this->m_ValueCompressor.SplitIn( nBegin,  nEnd, &pCompressor->m_ValueCompressor);
 
 			}
 

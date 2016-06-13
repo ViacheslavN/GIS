@@ -149,7 +149,7 @@ namespace embDB
 			}
  
 			uint32 nBitSize = (this->m_nLenBitSize + 7)/8;
-			m_SignCompressor.BeginDecompress(m_pReadStream, m_nCount);
+			m_SignCompressor.BeginDecompress(m_pReadStream, this->m_nCount);
 
 			m_readBitStream.attach(m_pReadStream, m_pReadStream->pos(), nBitSize);
 			m_pReadStream->seek(nBitSize, CommonLib::soFromCurrent);

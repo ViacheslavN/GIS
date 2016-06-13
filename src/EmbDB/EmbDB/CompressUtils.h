@@ -102,10 +102,10 @@ namespace embDB
 			pStream->readintu16(value);
 			break;
 		case ectUIInt32:
-			pStream->readintu32(value);
+			pStream->readIntu32(value);
 			break;
 		case ectUInt64:
-			pStream->readintu64(value);
+			pStream->readIntu64(value);
 			break;
 		}
 	}

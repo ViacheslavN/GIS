@@ -20,7 +20,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := libEmbDB
 
 COMMON_I_PATH := ..\..\..\..\..\CommonLibrary
-
+ThirdParty_I_PATH := ..\..\..\..\..\ThirdParty
 
 
 
@@ -34,6 +34,7 @@ LOCAL_CFLAGS :=	-DANDROID \
 		-Istlport \
 		-I$(STLPORT_BASE)/stlport \
 		-I$(COMMON_I_PATH) \
+		-I$(ThirdParty_I_PATH) \
 		-x c++
 #storage
 LOCAL_SRC_FILES :=  FilePage.cpp storage.cpp StorageInfo.cpp
@@ -54,7 +55,7 @@ LOCAL_SRC_FILES += PageAlloc.cpp MemPageCache.cpp
 #Z-Order
 LOCAL_SRC_FILES += SpatialPointQuery.cpp  SpatialRectQuery.cpp
 #compress
-LOCAL_SRC_FILES += LinkCompress.cpp OIDCompress.cpp
+LOCAL_SRC_FILES += LinkCompress.cpp OIDCompress.cpp ZLibCompressor.cpp
 #BPTRee
 LOCAL_SRC_FILES += BPTreeStatistics.cpp
 

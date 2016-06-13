@@ -510,16 +510,16 @@ namespace embDB
 			m_nBlobDataSize = 0;
 		}
 
-		void recalcLen()
+	/*	void recalcLen()
 		{
-			m_SizeCompressor.clear();
-			for (size_t i = 0, sz = m_pValueMemset.size(); i < sz; ++i)
+			this->m_SizeCompressor.clear();
+			for (size_t i = 0, sz = m_pValueMemset->size(); i < sz; ++i)
 			{
-				sBlobVal& blob =  m_pValueMemset[i];
+				sBlobVal& blob =  (*m_pValueMemset)[i];
 				AddLen(i + 1, i, blob, *m_pValueMemset);
 			
 			}
-		}
+		}*/
 	private:
 
 		uint32 m_nBlobDataSize;
@@ -534,7 +534,7 @@ namespace embDB
 	};
 
 
-	template<class _Transaction = IDBTransaction,  class _TCompParams = BlobFieldCompressorParams, class _TBlobCompressor = BlobCompressor<_Transaction, _TCompParams>>
+	template<class _Transaction = IDBTransaction,  class _TCompParams = BlobFieldCompressorParams, class _TBlobCompressor = BlobCompressor<_Transaction, _TCompParams> >
 	class BlobLeafNodeCompressor : public TBaseLeafNodeDiffComp<int64, sBlobVal, _Transaction, OIDCompressor, _TBlobCompressor,  _TCompParams> 
 	{
 	public:
@@ -559,14 +559,14 @@ namespace embDB
 		template<typename _Transactions  >
 		static typename TBase::TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
 		{
-			return new TBase::TLeafCompressorParams();
+			return new typename TBase::TLeafCompressorParams();
 		}
 
 
 		uint32 GetSplitIndex() const
 		{
 
-			uint32 nFreePage = m_nPageSize - this->m_KeyCompressor.GetComressSize();
+			uint32 nFreePage = this->m_nPageSize - this->m_KeyCompressor.GetComressSize();
 
 			return this->m_ValueCompressor.GetSplitIndex(nFreePage);
 		}
@@ -575,11 +575,11 @@ namespace embDB
 
 			uint32 nSize = nEnd- nBegin;
 
-			m_nCount -= nSize;
+			this->m_nCount -= nSize;
 			pCompressor->m_nCount += nSize;
 			this->recalcKey();
 			pCompressor->recalcKey();
-			m_ValueCompressor.SplitIn( nBegin,  nEnd, &pCompressor->m_ValueCompressor);
+			this->m_ValueCompressor.SplitIn( nBegin,  nEnd, &pCompressor->m_ValueCompressor);
 
 		}
 
