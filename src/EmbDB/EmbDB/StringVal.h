@@ -10,8 +10,9 @@ namespace embDB
 	{
 		byte *m_pBuf;
 		uint32 m_nLen;
+		wchar_t *m_pConvertBuf;
 
-		sFixedStringVal() : m_pBuf(0), m_nLen(0)
+		sFixedStringVal() : m_pBuf(0), m_nLen(0), m_pConvertBuf(0)
 		{}
 
 		
@@ -26,6 +27,7 @@ namespace embDB
 		int32 m_nPos;
 		int64 m_nPage;
 		bool m_bChange;
+		wchar_t *m_pConvertBuf;
 
 		sStringVal() : m_pBuf(0), m_nLen(0), m_nPos(0), m_nPage(-1), m_bChange(true), m_nOldLen(0)
 		{}
