@@ -255,38 +255,9 @@ namespace embDB
 				*pSplitKey =  m_innerKeyMemSet[nLessIndex];
 				pNode->m_nLess = m_innerLinkMemSet[nLessIndex];
 
-				//nNewSize = m_innerKeyMemSet.size() - nLessIndex;
 
 				m_innerKeyMemSet.resize(nLessIndex);
 				m_innerLinkMemSet.resize(nLessIndex);
-
-				/*
-				uint32 nNewSize = m_innerKeyMemSet.size() - 2;
-				uint32 nLessIndex = m_innerKeyMemSet.size() - 2;
-				uint32 nSplitIndex = m_innerKeyMemSet.size() - 1;
-
-
-				newNodeKeySet.push_back(m_innerKeyMemSet[nSplitIndex]);
-				newNodeLinkSet.push_back(m_innerLinkMemSet[nSplitIndex]);
-
-
-				*pSplitKey =  m_innerKeyMemSet[nLessIndex];
-				pNode->m_nLess = m_innerLinkMemSet[nLessIndex];
-
-	
-				m_pCompressor->remove(nSplitIndex, m_innerKeyMemSet[nSplitIndex], m_innerLinkMemSet[nSplitIndex]);
-
-				m_innerKeyMemSet.resize(nNewSize + 1);
-				m_innerLinkMemSet.resize(nNewSize + 1);
-
-				m_pCompressor->remove(nLessIndex, m_innerKeyMemSet[nLessIndex],  m_innerLinkMemSet[nLessIndex]);
-				
-
-				pNewNodeComp->insert(0, newNodeKeySet[0], newNodeLinkSet[0]);
-
-
-				m_innerKeyMemSet.resize(nNewSize);
-				m_innerLinkMemSet.resize(nNewSize);*/
 
 			}
 			else

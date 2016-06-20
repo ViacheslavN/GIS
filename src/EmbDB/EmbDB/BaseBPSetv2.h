@@ -230,20 +230,30 @@ namespace embDB
 		{
 			if(!m_pRoot.get())
 				return true;
-			{
+			std::vector<TBTreeNode*> vecNodes;
+			{			
 				typename TNodesCache::iterator it =	m_Cache.begin();
 				while(!it.isNull())
 				{
 					TBTreeNode* pBNode = it.object();
 					if(pBNode->getFlags() & CHANGE_NODE)
 					{
-						CheckNodeBeforeSave(pBNode);
+						vecNodes.push_back(pBNode);
+						
 					}
 					it.next();
 				}
 				if(m_pRoot->getFlags() & CHANGE_NODE)
 					CheckNodeBeforeSave(m_pRoot.get());
 			}
+
+			for (size_t i = 0, sz = vecNodes.size(); i < sz; ++i)
+			{
+				TBTreeNode* pBNode = vecNodes[i];
+				CheckNodeBeforeSave(pBNode);
+			}
+			
+
 			typename TNodesCache::iterator it =	m_Cache.begin();
 			while(!it.isNull())
 			{
@@ -261,8 +271,6 @@ namespace embDB
 			}
 			if(m_pRoot->getFlags() & CHANGE_NODE)
 			{
-				//m_pRoot->Save(m_pTransaction);
-				//m_pRoot->setFlags(CHANGE_NODE, false);
 
 				SaveNode(m_pRoot.get(), false);
 
@@ -270,13 +278,6 @@ namespace embDB
 					m_pBPTreeStatistics->SaveNode(m_pRoot->isLeaf());
 			}
 
-		/*	FilePagePtr pFilePage = m_pTransaction->getFilePage(m_pRoot->addr());
-			TBTreeNode *pNode = new TBTreeNode(-1, m_pAlloc, m_pRoot->addr(), m_bMulti, m_pRoot->isLeaf(), m_bCheckCRC32,  m_InnerCompParams.get(),
-				m_LeafCompParams.get() );
-			pNode->LoadFromPage(pFilePage.get(), m_pTransaction);*/
-
-
-			//m_BTreeInfo.Save(m_pTransaction);
 			m_nStateTree = eBPTNoChange;
 
 			if(m_LeafCompParams.get())
@@ -404,7 +405,7 @@ namespace embDB
 				if( pDelNode->getFlags() & CHANGE_NODE)
 				{
 
-					//pDelNode->Save(m_pTransaction);
+ 
 					SaveNode(pDelNode);
 					if(m_pBPTreeStatistics)
 						m_pBPTreeStatistics->SaveNode(pDelNode->isLeaf());
@@ -695,12 +696,13 @@ namespace embDB
 		}
 		TBTreeNodePtr CheckLeafNode(TBTreeNode *pNode, int *pInIndex = NULL)
 		{
+			TBTreeNodePtr  pCheckNode(pNode);
 			TBTreeNodePtr pRetNode(pNode);
-			if(pNode->isNeedSplit())
-			{
-	
-				//uint32 nSize = pNode->size();
-				TBTreeNodePtr pParentNode = getNode(pNode->parentAddr());
+			int nInsertIndex = pInIndex ? *pInIndex : -1;
+			TBTreeNodePtr pParentNode = getNode(pCheckNode->parentAddr());
+			while(pCheckNode->isNeedSplit())
+			{ 
+				
 				bool bNewRoot = false;
 				if(!pParentNode.get())
 				{
@@ -711,30 +713,34 @@ namespace embDB
 						m_pTransaction->error(L"BTREE: Error create new root node");
 						return TBTreeNodePtr(NULL);
 					}
-					//bNewRoot = true;
+					bNewRoot = true;
+ 
 				}
-
-				//m_nStateTree |= eBPTNewLeafNode;
+ 
 
 				TBTreeNodePtr pNewLeafNode = newNode(false, true);
+				int nSplitIndex = splitLeafNode(pCheckNode.get(), pNewLeafNode.get(), pParentNode.get());
+				
+				pNewLeafNode->setFlags(CHANGE_NODE, true);
+				pParentNode->setFlags(CHANGE_NODE, true);
 
-
-				/*int nSplitIndex = splitLeafNode(pNode, pNewLeafNode.get(), pParentNode.get());
 				if(pInIndex)
 				{
 					if(*pInIndex >= nSplitIndex)
 					{
 						*pInIndex = *pInIndex - nSplitIndex;
-						pRetNode = pNewLeafNode.get();
+						pRetNode = bNewRoot ? pParentNode : pNewLeafNode;
 					}
-				}*/
-				pRetNode = splitLeafNode(pNode, pNewLeafNode.get(), pParentNode.get(), pInIndex);
-				pNewLeafNode->setFlags(CHANGE_NODE, true);
-				pParentNode->setFlags(CHANGE_NODE, true);
-
-				//m_ChangeNode.insert(pNewLeafNode);
-				//m_ChangeNode.insert(pParentNode);
+					else
+						pRetNode = pCheckNode;
+				}
 				if(bNewRoot)
+					pParentNode = pCheckNode;
+
+				pCheckNode = pNewLeafNode;
+
+
+			/*	if(bNewRoot)
 				{
 					m_nStateTree |= eBPTNewRootNode;
 					m_nRootAddr = pParentNode->m_nPageAddr;
@@ -743,24 +749,20 @@ namespace embDB
 					m_pRoot = pParentNode;
 					m_pRoot->setFlags(ROOT_NODE, true);
 					m_pRoot->setFlags(CHANGE_NODE, true);
-					//m_Chache.remove(m_pRoot);
-					//saveBTreeInfo();
-					return pRetNode;
-				}
+	 
+				}*/
+			}
 
-				
-				if(pParentNode->isNeedSplit())
+			if(pParentNode.get() && pParentNode->isNeedSplit())
+			{
+				if(!splitInnerNode(pParentNode.get()))
 				{
-					if(!splitInnerNode(pParentNode.get()))
-					{
-						return TBTreeNodePtr(NULL);
-					}
+					return TBTreeNodePtr(NULL);
 				}
-
 			}
 			return pRetNode;
 		}
-		TBTreeNodePtr splitLeafNode(TBTreeNode *pNode, TBTreeNode *pNewNode, TBTreeNode *pParentNode, int *pInIndex = NULL)
+	/*	TBTreeNodePtr splitLeafNode(TBTreeNode *pNode, TBTreeNode *pNewNode, TBTreeNode *pParentNode, int *pInIndex = NULL)
 		{
 			assert(pNewNode->isLeaf());
 			assert(pNode->isLeaf());
@@ -837,6 +839,87 @@ namespace embDB
 
 
 			return pRetNode;
+	}*/
+
+
+		int splitLeafNode(TBTreeNode *pNode, TBTreeNode *pNewNode, TBTreeNode *pParentNode)
+		{
+			assert(pNewNode->isLeaf());
+			assert(pNode->isLeaf());
+			TBTreeNodePtr pRetNode(pNode);
+
+			if(pNode->parentAddr() == -1)
+			{
+				//transform root
+
+				TKey splitKey;
+				assert(pParentNode->isLeaf());
+
+				pNewNode->setParent(pNode, -1);
+
+
+				int nSplitIndex = pNode->splitIn(pNewNode, pParentNode, &splitKey);
+				pNode->clear();
+				pNode->TransformToInner(m_pTransaction);
+
+				pNode->setLess(pNewNode->addr());
+				int nInsertIndex =  pNode->insertInInnerNode(m_comp, splitKey, pParentNode->addr());
+				pParentNode->setParent(pNode, nInsertIndex);
+				pNewNode->setNext(pParentNode->addr());
+				pParentNode->setPrev(pNewNode->addr());
+
+				return nSplitIndex;
+				/*if(pInIndex)
+				{
+					if(*pInIndex >= nSplitIndex)
+					{
+						*pInIndex = *pInIndex - nSplitIndex;
+						pRetNode = pParentNode;
+					}
+					else
+						pRetNode = pNewNode;
+				}
+
+				return   pRetNode; */
+			}
+			TKey splitKey;
+			int nSplitIndex = pNode->splitIn(pNewNode, &splitKey);
+			if(pNode->parentAddr() == -1)
+			{
+
+				pNode->setParent(pParentNode, -1);
+				pParentNode->setLess(pNode->m_nPageAddr);
+
+			}
+			if(pNode->next() != -1)
+			{
+				pNewNode->m_LeafNode.m_nNext = pNode->m_LeafNode.m_nNext;
+				TBTreeNodePtr pNextNode = getNode(pNode->m_LeafNode.m_nNext);
+				if(pNextNode.get())
+				{
+					pNextNode->m_LeafNode.m_nPrev = pNewNode->m_nPageAddr;
+					SetParentNext(pNode, pNextNode.get());
+				}
+				pNextNode->setFlags(CHANGE_NODE, true);
+			}
+			pNode->m_LeafNode.m_nNext = pNewNode->m_nPageAddr;
+			pNewNode->m_LeafNode.m_nPrev = pNode->m_nPageAddr;
+
+			//pNewNode->m_nParent = pParentNode->m_nPageAddr;
+			int nInsertIndex = pParentNode->insertInInnerNode(m_comp, splitKey, pNewNode->m_nPageAddr);
+			pNewNode->setParent(pParentNode, nInsertIndex);
+
+
+		/*	if(pInIndex)
+			{
+				if(*pInIndex >= nSplitIndex)
+				{
+					*pInIndex = *pInIndex - nSplitIndex;
+					pRetNode = pNewNode;
+				}
+			
+			return pRetNode;*/
+			return nSplitIndex;
 		}
 
 	bool splitInnerNode(TBTreeNode *pInNode)
@@ -861,8 +944,6 @@ namespace embDB
 			return false;
 		}
 		SetParentInChildCacheOnly(pNodeNewRight.get());
-		//pNodeNewRight->m_nParent = pNode->m_nParent;
-		
 		
 		while ( pNodeParent.get() != 0 )
 		{
@@ -903,35 +984,6 @@ namespace embDB
 				break;
 			}
 		}
-		if(!pNodeParent.get())
-		{
-			TBTreeNodePtr pNodeNewRoot = newNode(true, false);
-			if(!pNodeNewRoot.get())
-			{
-				m_pTransaction->error(L"BTREE: Error create new root node");
-				return false;
-			}
-			m_nStateTree |= eBPTNewRootNode;
-			//pNodeNewRoot->m_innerMemSet.insert(nMedianKey, pNodeNewRight->m_nPageAddr);
-			int nIndex = pNodeNewRoot->insertInInnerNode(m_comp, nMedianKey, pNodeNewRight->m_nPageAddr);
-
-			//pNode->m_nParent = pNodeNewRoot->m_nPageAddr;
-			pNode->setParent(pNodeNewRoot.get(), -1);
-			pNodeNewRoot->setLess(pNode->m_nPageAddr);
-			assert(pNodeNewRoot->m_InnerNode.m_nLess != -1);
-
-			//pNodeNewRight->m_nParent = pNodeNewRoot->m_nPageAddr;
-			pNodeNewRight->setParent(pNodeNewRoot.get(), nIndex);
-
-			m_nRootAddr = pNodeNewRoot->m_nPageAddr;
-			m_pRoot->setFlags(ROOT_NODE, false);
-			m_Cache.AddElem(m_pRoot->m_nPageAddr, m_pRoot.get());
-			m_pRoot = pNodeNewRoot;
-			m_pRoot->setFlags(ROOT_NODE, true);
-			m_pRoot->setFlags(CHANGE_NODE, true);
-			//m_ChangeNode.insert(pNodeNewRoot);
-			//saveBTreeInfo();
-		}
 		return true;
 	}
 
@@ -963,12 +1015,12 @@ namespace embDB
 	void SetParentInChildCacheOnly(TBTreeNode *pNode)
 	{
 		assert(!pNode->isLeaf());
-		TBTreeNode *pLessNode = m_Cache.GetElem(pNode->less(), false);
+		TBTreeNode *pLessNode = m_Cache.GetElem(pNode->less(), true);
 		if(pLessNode)
 			pLessNode->setParent(pNode, -1);
 		for (uint32 i = 0,  sz = pNode->count(); i < sz; ++i)
 		{
-			TBTreeNode *pChildNode = m_Cache.GetElem(pNode->link(i), false);
+			TBTreeNode *pChildNode = m_Cache.GetElem(pNode->link(i), true);
 			if(pChildNode)
 				pChildNode->setParent(pNode, i);
 		}

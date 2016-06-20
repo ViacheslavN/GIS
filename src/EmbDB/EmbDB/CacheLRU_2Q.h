@@ -74,7 +74,7 @@ namespace embDB
 			if(bAddBack)
 				it = m_BackList.push_back(TCacheVal(key, pObj, BACK));
 			else
-				it = m_BackList.puch_top(TCacheVal(key, pObj, BACK));
+				it = m_BackList.push_top(TCacheVal(key, pObj, BACK));
 			m_CacheMap.insert(std::make_pair(key, it.node()));
 		}
 

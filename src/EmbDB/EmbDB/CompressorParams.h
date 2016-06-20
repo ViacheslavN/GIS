@@ -39,7 +39,7 @@ namespace embDB
 	class CompressorParamsBaseImp
 	{
 	public:
-		CompressorParamsBaseImp() : m_compressType(ACCoding),m_bCalcOnlineSize(false), m_nErrorCalc(200)
+		CompressorParamsBaseImp() : m_compressType(ACCoding),m_bCalcOnlineSize(false), m_nErrorCalc(200), m_nMaxRowCoeff(1)
 		{}
 		virtual ~CompressorParamsBaseImp(){}
 
@@ -50,6 +50,7 @@ namespace embDB
 			m_compressType = (CompressType)pStream->readintu16();
 			m_bCalcOnlineSize = pStream->readBool();
 			m_nErrorCalc	= pStream->readIntu32();
+			m_nMaxRowCoeff  = pStream->readintu16();
 			return true;
 		}
 		virtual bool save(CommonLib::IWriteStream *pStream, IDBTransaction* pTran)
@@ -57,6 +58,7 @@ namespace embDB
 			pStream->write(uint16(m_compressType));
 			pStream->write(m_bCalcOnlineSize);
 			pStream->write(m_nErrorCalc);
+			pStream->write(m_nMaxRowCoeff);
 			return true;
 		}
 		template<class _Transaction>
@@ -68,6 +70,7 @@ namespace embDB
 		CompressType m_compressType;
 		bool m_bCalcOnlineSize;
 		uint32 m_nErrorCalc;
+		uint16 m_nMaxRowCoeff;
 	};
 }
 

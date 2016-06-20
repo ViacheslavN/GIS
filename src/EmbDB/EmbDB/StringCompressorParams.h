@@ -32,6 +32,7 @@ namespace embDB
 			m_StringCoding = (eStringCoding)pStream->readIntu32();
 			m_nLen = pStream->readIntu32();
 			m_nMaxPageStringSize= pStream->readIntu32();
+			m_nMaxRowCoeff = pStream->readintu16();
 			m_nStreamPageInfo = pStream->readInt64();
 			if(m_nStreamPageInfo != -1)
 			{
@@ -56,6 +57,7 @@ namespace embDB
 			pStream->write((uint32)m_StringCoding);
 			pStream->write(m_nLen);
 			pStream->write(m_nMaxPageStringSize);
+			pStream->write(m_nMaxRowCoeff);
 			pStream->write(m_nStreamPageInfo);
 
 			

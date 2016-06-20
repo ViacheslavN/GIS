@@ -61,8 +61,8 @@ namespace embDB
 			m_nStrings(0), m_nPageSize(nPageSize), m_lenCompressor(ACCoding, nError, false), /*m_pCurrBloc(0),*/
 				m_pAlloc(pAlloc),m_pValueMemset(0), m_nTranType(eTT_UNDEFINED), m_bMinSplit(true)
 		{
-
-		 
+			assert(pParams);
+			m_nMaxRowCoeff = pParams->m_nMaxRowCoeff;
 		}
 
 		~TFixedStringZlibCompressor()
@@ -194,7 +194,7 @@ namespace embDB
 			}
 
 
-			if(pCurrBloc->m_nRowSize > m_nPageSize)
+			if(pCurrBloc->m_nRowSize > m_nPageSize * m_nMaxRowCoeff)
 			{
 				SplitBloc(nBlocIDx, pCurrBloc, nIndex, string, vecValues);
 			}
@@ -203,7 +203,7 @@ namespace embDB
 				pCurrBloc->m_nCount += 1;
 				pCurrBloc->m_nRowSize += string.m_nLen;		
 				pCurrBloc->m_bDirty = true;
-				if(pCurrBloc->m_nRowSize > m_nPageSize)
+				if(pCurrBloc->m_nRowSize > m_nPageSize * m_nMaxRowCoeff)
 				{
 					CompressBlock(pCurrBloc, vecValues);
 				}
@@ -256,7 +256,7 @@ namespace embDB
 
 				uint32 nCount =  pBloc->m_nBeginIndex + pBloc->m_nCount - nSplitIndex;
 				pBloc->m_bDirty = true;
-				pBloc->m_nCount = nSplitIndex - pBloc->m_nBeginIndex;;
+				pBloc->m_nCount = nSplitIndex - pBloc->m_nBeginIndex;
 
 				pNewBloc->m_nBeginIndex = nSplitIndex;
 				pNewBloc->m_nCount = nCount;
@@ -284,24 +284,7 @@ namespace embDB
 		}
 
 
-	/*	void CompressBlock(const TValueMemSet& vecValues)
-		{
-			embDB::CZlibCompressor compressor;
-			if(m_pCurrBloc->m_nCount != 0 && m_pCurrBloc->m_nCompressSize == 0)
-			{
-				m_pCurrBloc->m_compressBlocStream.seek(0, CommonLib::soFromCurrent);
-				compressor.compress(&vecValues[0] + m_pCurrBloc->m_nBeginIndex,m_pCurrBloc->m_nCount,  &m_pCurrBloc->m_compressBlocStream);
-				m_pCurrBloc->m_nCompressSize = m_pCurrBloc->m_compressBlocStream.pos();
-
-				uint32 nBegin = m_pCurrBloc->m_nBeginIndex + m_pCurrBloc->m_nCount;
-
-				m_vecStringBloc.push_back(new sStringBloc(m_pAlloc));
-				m_pCurrBloc = m_vecStringBloc.back();
-				m_pCurrBloc->m_nBeginIndex = nBegin;
-			}
-			
-		}*/
-
+	 
 
 		void RemoveString(int nIndex, const sFixedStringVal& string)
 		{
@@ -370,7 +353,7 @@ namespace embDB
 			for (size_t i = 0, sz = m_vecStringBloc.size(); i < sz; ++i)
 			{				
 				sStringBloc *pBloc = m_vecStringBloc[i];
-				assert(pBloc->m_bDirty);
+				assert(!pBloc->m_bDirty);
 				pStream->write((uint16)pBloc->m_compressBlocStream.pos());
 				pStream->write(pBloc->m_compressBlocStream.buffer(), pBloc->m_compressBlocStream.pos());
 
@@ -493,7 +476,6 @@ namespace embDB
 			{
 				delete m_vecStringBloc[i];
 			}
-			//m_pCurrBloc = NULL;
 		}
 
 		
@@ -501,6 +483,18 @@ namespace embDB
 		{
 			int nSplitIndex = 0;
 			uint32 nSumSize = 0;
+			if(m_vecStringBloc.size() == 1)
+			{
+
+				for (size_t i = 0, sz = m_pValueMemset->size(); i< sz; ++i)
+				{
+					nSumSize += (*m_pValueMemset)[i].m_nLen;
+					if(nSumSize >= nFreePage)
+						return i;
+				}
+				
+			}
+			
 			nFreePage -= m_lenCompressor.GetCompressSize();
 			for(size_t i = 0, sz = m_vecStringBloc.size(); i < sz; ++i)
 			{
@@ -530,11 +524,15 @@ namespace embDB
 
 
 
-		void AddBloc(sStringBloc* pBloc)
+		void AddBloc(sStringBloc* pBloc, bool bRecalcRowSize = false)
 		{
-			m_vecStringBloc.push_back(pBloc);
-			//m_pCurrBloc = m_vecStringBloc.back();
 
+			if(bRecalcRowSize)
+			{
+
+			}
+
+			m_vecStringBloc.push_back(pBloc);
 			m_nStrings += pBloc->m_nCount;
 		}
 
@@ -543,12 +541,30 @@ namespace embDB
 			sStringBloc findBlock;
 			findBlock.m_nBeginIndex = nBegin;
 			std::vector<sStringBloc*>::iterator it = std::lower_bound(m_vecStringBloc.begin(), m_vecStringBloc.end(), &findBlock, BlocPred());
-			assert(it != m_vecStringBloc.end());
+			if(it == m_vecStringBloc.end())
+				it = m_vecStringBloc.begin();
+
+
+			sStringBloc* pBloc = *it;
+			if(pBloc->m_nBeginIndex != nBegin || m_vecStringBloc.size() == 1)
+			{
+				int nNewCount = pBloc->m_nCount - nBegin;
+			
+
+				sStringBloc* pNewBloc = new sStringBloc(pCompressor->m_pAlloc);
+				pNewBloc->m_nBeginIndex = 0;
+				pBloc->m_nCount = pBloc->m_nCount - nNewCount;
+				pNewBloc->m_nCount = nNewCount;
+				pCompressor->AddBloc(pNewBloc, true);
+
+				pBloc->m_bDirty = true;
+				pNewBloc->m_bDirty = true;
+				it++;
+
+			}
 
 			int nCount = m_vecStringBloc.end() -it;
-
 			int nIndex = 0;
- 
 			for (; it != m_vecStringBloc.end(); ++it)
 			{
 
@@ -557,8 +573,10 @@ namespace embDB
 				nIndex += pBloc->m_nCount;
 				pCompressor->AddBloc(pBloc);
 			}
+			
 			m_vecStringBloc.resize(m_vecStringBloc.size() - nCount);
-			//m_pCurrBloc = m_vecStringBloc.back();
+
+
 			recalcLen();
 			pCompressor->recalcLen();
 		
@@ -589,6 +607,11 @@ namespace embDB
 				CompressBlock(m_vecStringBloc[i], *m_pValueMemset);
 			}
 		}
+
+		int GetStringBloc() const
+		{
+			return m_vecStringBloc.size();
+		}
  	protected:
 		uint32 m_nStrings;
 		uint32 m_nPageSize;
@@ -599,12 +622,10 @@ namespace embDB
 		
 
 		std::vector<sStringBloc*> m_vecStringBloc;
-
-
-		//sStringBloc *m_pCurrBloc;
 		CommonLib::alloc_t* m_pAlloc;
 		TValueMemSet* m_pValueMemset;
 		int m_nTranType;
+		short m_nMaxRowCoeff;
  
 
 	};

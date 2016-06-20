@@ -334,6 +334,7 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 //	compParams.setRootPage(pLeafCompRootPage->getAddr());
 	compParams.SetStringLen(nLen);
 	compParams.setStringCoding(sc);
+	compParams.m_nMaxRowCoeff = 20;
 	//compParams.SetMaxPageStringSize(400);
 	//compParams.save(&tran);
 
@@ -394,5 +395,5 @@ void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, 
 void TestBPFixedStringTree()
 {
 		CommonLib::simple_alloc_t alloc;
-		TestBPStringTreeImpl<embDB::CTransaction>(&alloc, 0, 1000000, 10, embDB::scUTF8);
+		TestBPStringTreeImpl<embDB::CTransaction>(&alloc, 0, 1000000, 5, embDB::scUTF8);
 };

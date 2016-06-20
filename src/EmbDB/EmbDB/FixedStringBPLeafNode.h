@@ -64,12 +64,9 @@ namespace embDB
 
 
 			int nSplitIndex = this->m_pCompressor->GetSplitIndex();
-			if(nSplitIndex == 0)
-			{
-				int dd = 0;
-				dd++;
-			}
+			assert(nSplitIndex != 0);
 			uint32 nSize = this->m_leafValueMemSet.size();
+			
 			this->SplitInVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL, nSplitIndex);
 			this->SplitInVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey, nSplitIndex);
 			this->m_pCompressor->SplitIn(nSplitIndex, nSize, pNewNodeComp);
