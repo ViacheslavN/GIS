@@ -261,6 +261,19 @@ namespace embDB
 			return m_pData[nIndex];
 		}
 
+		const TValue& GetAt(uint32 nIndex) const
+		{
+			assert(nIndex < m_nSize);
+			return m_pData[nIndex];
+		}
+		TValue& GetAt(uint32 nIndex) 
+		{
+			assert(nIndex < m_nSize);
+			return m_pData[nIndex];
+		}
+
+
+
 		TValue& back() 
 		{
 			assert(m_nSize);

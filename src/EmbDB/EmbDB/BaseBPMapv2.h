@@ -92,7 +92,7 @@ public:
 
 		//m_ChangeNode.insert(TBTreeNodePtr(pNode));
 		this->m_nStateTree |= TBase::eBPTChangeLeafNode;
-		return this->CheckLeafNode(pNode, &nRetIndex);
+		return this->CheckLeafNode(pNode, false,  &nRetIndex);
 	}
 	
 	iterator begin()

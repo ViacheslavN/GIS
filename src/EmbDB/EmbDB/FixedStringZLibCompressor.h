@@ -275,7 +275,7 @@ namespace embDB
 			if(pBloc->m_nCount != 0 &&  pBloc->m_bDirty)
 			{
 				embDB::CZlibCompressor compressor;
-				pBloc->m_compressBlocStream.seek(0, CommonLib::soFromCurrent);
+				pBloc->m_compressBlocStream.seek(0, CommonLib::soFromBegin);
 				compressor.compress(&vecValues[0] + pBloc->m_nBeginIndex,pBloc->m_nCount,  &pBloc->m_compressBlocStream);
 				pBloc->m_nCompressSize = pBloc->m_compressBlocStream.pos();
 			    pBloc->m_bDirty = false;
@@ -442,11 +442,6 @@ namespace embDB
 			{
 				pCurrBloc->m_nCount = nSize - nBeginBloc;
 				compressor.EndDecode();
-
-				if(pCurrBloc->m_nRowSize < m_nPageSize - 100)
-				{
-					pCurrBloc->m_nCompressSize = 0;
-				}
 			}
 
 
@@ -529,11 +524,25 @@ namespace embDB
 
 			if(bRecalcRowSize)
 			{
-
+				RecalcBloc(pBloc);
 			}
 
 			m_vecStringBloc.push_back(pBloc);
 			m_nStrings += pBloc->m_nCount;
+		}
+
+
+		void RecalcBloc(sStringBloc* pBloc)
+		{
+
+			pBloc->m_bDirty = true;
+			pBloc->m_nCompressSize = 0;
+			pBloc->m_nRowSize = 0;
+			for(size_t i = 0; i < pBloc->m_nCount; ++i)
+			{
+				const sFixedStringVal& val = m_pValueMemset->GetAt(i);
+				pBloc->m_nRowSize += val.m_nLen;
+			}
 		}
 
 		void SplitIn(uint32 nBegin, uint32 nEnd, TFixedStringZlibCompressor *pCompressor)
@@ -556,9 +565,8 @@ namespace embDB
 				pBloc->m_nCount = pBloc->m_nCount - nNewCount;
 				pNewBloc->m_nCount = nNewCount;
 				pCompressor->AddBloc(pNewBloc, true);
+				RecalcBloc(pBloc);
 
-				pBloc->m_bDirty = true;
-				pNewBloc->m_bDirty = true;
 				it++;
 
 			}

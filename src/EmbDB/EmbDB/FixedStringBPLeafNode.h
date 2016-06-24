@@ -78,7 +78,11 @@ namespace embDB
 
 		int  SplitIn(TFixedStringLeafNode *pLeftNode, TFixedStringLeafNode *pRightNode, TKey* pSplitKey)
 		{
-			return TBase::SplitIn(pLeftNode, pRightNode, pSplitKey);
+
+			int nSplitIndex = this->m_pCompressor->GetSplitIndex();
+			
+			
+			return TBase::SplitIn(pLeftNode, pRightNode, pSplitKey, nSplitIndex);
 		}
 
 		virtual  void PreSave()

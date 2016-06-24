@@ -146,6 +146,12 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 
 			nRowSize += nUft8Len + sizeof(int64);
 
+			if(i == 6314)
+			{
+				int dd = 0;
+				dd++;
+			}
+
 			if(!tree.insert(i, /*i%10000 == 0 ? sBigString : */sString))
 			{
 				std::cout   << "Error Insert key:  " << i << std::endl;
@@ -298,11 +304,94 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 	nTreeRootPage = tree.getPageBTreeInfo();
 
 
-	std::cout << "Insert end key start: " << nStart << " key end: " << nEndStart << " Total time: " << (tmInsert + treeCom + tranCom) <<
+	std::cout << "Search end key start: " << nStart << " key end: " << nEndStart << " Total time: " << (tmInsert + treeCom + tranCom) <<
 		" time insert: " << tmInsert << " time tree commit: " << treeCom << " Tran commit: " << tranCom <<	std::endl;
 }
 
 
+template<class Tran>
+void RemoveFromTreeMapString  (CommonLib::alloc_t* pAlloc, 
+	uint32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, int64& nTreeRootPage, Tran* pTran, embDB::eStringCoding sCode)
+{
+	std::cout << "Remove Test"  << std::endl;
+	CommonLib::TimeUtils::CDebugTime time;
+	double tmRemove = 0;
+	double treeCom = 0;
+	double tranCom  = 0;
+	typedef embDB::TBPFixedString<int64, Tran> TBPString;
+	TBPString tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192);
+	tree.loadBTreeInfo(); 
+	time.start();
+	int64 i = nStart;
+	int64 n = 0;
+ 
+	int64 nNotFound = 0;	
+	if(nStart < nEndStart)
+	{
+		int64 nCount = nEndStart - nStart;
+		for (; i < nEndStart; ++i)
+		{	
+				
+			if(!tree.remove(i))
+			{
+				std::cout << "Error remove,  not found " << i << std::endl;
+			}
+			n++;
+			TBPString::iterator it = tree.find(i);
+			if(!it.isNull())
+			{
+				std::cout << "Error remove,  found " << i << std::endl;
+ 
+			}
+
+			if(i%nStep == 0)
+			{
+				std::cout << n  << "  " << (n* 100)/nCount << " %" << '\r';
+			}
+		}
+
+	}
+	else
+	{
+		int64 nCount = nStart - nEndStart;
+
+		for (; i > nEndStart; --i)
+		{	
+
+			if(!tree.remove(i))
+			{
+				std::cout << "Error remove,  not found " << i << std::endl;
+			}
+
+			TBPString::iterator it = tree.find(i);
+			if(!it.isNull())
+			{
+				std::cout << "Error remove,  found " << i << std::endl;
+
+			}
+			n++;
+			if(i%nStep == 0)
+			{
+				std::cout << n  << "  " << (n* 100)/nCount << " %" << '\r';
+			}
+		}
+	}
+
+	tmRemove = time.stop();
+	time.start();
+	tree.commit();
+
+	treeCom = time.stop();
+	time.start();
+
+	pTran->commit();
+	tranCom = time.stop();
+ 
+
+	std::cout << "Remove end key start: " << nStart << " key end: " << nEndStart << " Total time: " << (tmRemove + treeCom + tranCom) <<
+		" time remove: " << tmRemove << " time tree commit: " << treeCom << " Tran commit: " << tranCom <<	std::endl;
+	 
+}
 
 
 template<class TTransaction>
@@ -334,7 +423,7 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 //	compParams.setRootPage(pLeafCompRootPage->getAddr());
 	compParams.SetStringLen(nLen);
 	compParams.setStringCoding(sc);
-	compParams.m_nMaxRowCoeff = 20;
+	compParams.m_nMaxRowCoeff = 100;
 	//compParams.SetMaxPageStringSize(400);
 	//compParams.save(&tran);
 
@@ -388,6 +477,20 @@ void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, 
 
 		searchINBTreeMapString<embDB::IDBTransaction>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran, coding);
 	}
+
+
+	{
+		embDB::CStorage storage(pAlloc, 10000);
+		storage.AddRef();
+		if(!storage.open(L"d:\\db\\BPTreeString.data", false, false,  false, false))
+			return;
+		storage.setStoragePageInfo(0);
+		storage.loadStorageInfo();
+		Transactions InsertTran(pAlloc, embDB::rtUndo, embDB::eTT_MODIFY, L"d:\\db\\removettran.data", &storage, 1);
+
+
+		RemoveFromTreeMapString<embDB::IDBTransaction>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran, coding);
+	}
 	
 }
 
@@ -395,5 +498,5 @@ void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, 
 void TestBPFixedStringTree()
 {
 		CommonLib::simple_alloc_t alloc;
-		TestBPStringTreeImpl<embDB::CTransaction>(&alloc, 0, 1000000, 5, embDB::scUTF8);
+		TestBPStringTreeImpl<embDB::CTransaction>(&alloc, 0, 10000, 1, embDB::scUTF8);
 };

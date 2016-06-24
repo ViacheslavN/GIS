@@ -112,11 +112,12 @@ namespace embDB
 				delete pBNode;
 				it.next();
 			}
+			m_Cache.clear();
 			if(m_pRoot.get())
 			{
 				delete m_pRoot.release();
 			}
-			m_Cache.clear();
+			
 		}
 		//typedef _Traits Traits;
 		typedef _TKey      TKey;
@@ -643,10 +644,10 @@ namespace embDB
 
 	void CheckNodeBeforeSave(TBTreeNode *pNode)
 	{
-		pNode->PreSave(m_pTransaction);
+	//	pNode->PreSave(m_pTransaction);
 		if(pNode->isLeaf())
 		{
-			CheckLeafNode(pNode);
+			CheckLeafNode(pNode, true, NULL);
 		}
 		else if(pNode->isNeedSplit())
 		{
@@ -692,14 +693,17 @@ namespace embDB
 		
 			if(pInIndex)
 				*pInIndex = nIndex;
-			return CheckLeafNode(pNode, pInIndex);
+			return CheckLeafNode(pNode, false, pInIndex);
 		}
-		TBTreeNodePtr CheckLeafNode(TBTreeNode *pNode, int *pInIndex = NULL)
+		TBTreeNodePtr CheckLeafNode(TBTreeNode *pNode, bool bPreSave, int *pInIndex = NULL)
 		{
 			TBTreeNodePtr  pCheckNode(pNode);
 			TBTreeNodePtr pRetNode(pNode);
 			int nInsertIndex = pInIndex ? *pInIndex : -1;
 			TBTreeNodePtr pParentNode = getNode(pCheckNode->parentAddr());
+			if(bPreSave)
+				pCheckNode->PreSave(m_pTransaction);
+
 			while(pCheckNode->isNeedSplit())
 			{ 
 				
@@ -721,36 +725,34 @@ namespace embDB
 				TBTreeNodePtr pNewLeafNode = newNode(false, true);
 				int nSplitIndex = splitLeafNode(pCheckNode.get(), pNewLeafNode.get(), pParentNode.get());
 				
+				if(bPreSave)
+				{
+					if(bNewRoot)
+						pParentNode->PreSave(m_pTransaction);
+					pCheckNode->PreSave(m_pTransaction);
+				}
+
+
 				pNewLeafNode->setFlags(CHANGE_NODE, true);
 				pParentNode->setFlags(CHANGE_NODE, true);
-
+				pCheckNode->setFlags(CHANGE_NODE, true);
 				if(pInIndex)
 				{
 					if(*pInIndex >= nSplitIndex)
 					{
 						*pInIndex = *pInIndex - nSplitIndex;
-						pRetNode = bNewRoot ? pParentNode : pNewLeafNode;
+						pRetNode = pNewLeafNode;
 					}
 					else
-						pRetNode = pCheckNode;
+						pRetNode = bNewRoot ? pParentNode : pCheckNode;
 				}
 				if(bNewRoot)
 					pParentNode = pCheckNode;
 
 				pCheckNode = pNewLeafNode;
+				if(bPreSave)
+					pCheckNode->PreSave(m_pTransaction);
 
-
-			/*	if(bNewRoot)
-				{
-					m_nStateTree |= eBPTNewRootNode;
-					m_nRootAddr = pParentNode->m_nPageAddr;
-					m_pRoot->setFlags(ROOT_NODE, false);
-					m_Cache.AddElem(m_pRoot->m_nPageAddr, m_pRoot.get());
-					m_pRoot = pParentNode;
-					m_pRoot->setFlags(ROOT_NODE, true);
-					m_pRoot->setFlags(CHANGE_NODE, true);
-	 
-				}*/
 			}
 
 			if(pParentNode.get() && pParentNode->isNeedSplit())
@@ -858,15 +860,15 @@ namespace embDB
 				pNewNode->setParent(pNode, -1);
 
 
-				int nSplitIndex = pNode->splitIn(pNewNode, pParentNode, &splitKey);
+				int nSplitIndex = pNode->splitIn(pParentNode, pNewNode, &splitKey);
 				pNode->clear();
 				pNode->TransformToInner(m_pTransaction);
-
-				pNode->setLess(pNewNode->addr());
-				int nInsertIndex =  pNode->insertInInnerNode(m_comp, splitKey, pParentNode->addr());
+				pNode->setFlags(CHANGE_NODE, true);
+				pNode->setLess(pParentNode->addr());
+				int nInsertIndex =  pNode->insertInInnerNode(m_comp, splitKey, pNewNode->addr());
 				pParentNode->setParent(pNode, nInsertIndex);
-				pNewNode->setNext(pParentNode->addr());
-				pParentNode->setPrev(pNewNode->addr());
+				pParentNode->setNext(pNewNode->addr());
+				pNewNode->setPrev(pParentNode->addr());
 
 				return nSplitIndex;
 				/*if(pInIndex)

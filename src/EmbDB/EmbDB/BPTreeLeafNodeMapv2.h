@@ -134,7 +134,7 @@ namespace embDB
 		}
 
 
-		int  SplitIn(BPTreeLeafNodeMapv2 *pLeftNode, BPTreeLeafNodeMapv2 *pRightNode, TKey* pSplitKey)
+		int  SplitIn(BPTreeLeafNodeMapv2 *pLeftNode, BPTreeLeafNodeMapv2 *pRightNode, TKey* pSplitKey, int nSplitIndex = -1)
 		{
 
 			TLeafMemSet& leftKeyMemSet = pLeftNode->m_leafKeyMemSet;
@@ -145,21 +145,21 @@ namespace embDB
 			TValueMemSet& rightValueMemSet = pRightNode->m_leafValueMemSet;
 			TCompressor* pRightNodeComp = pRightNode->m_pCompressor;
 
-
-			uint32 nSize = this->m_leafKeyMemSet.size()/2;
+			if(nSplitIndex == -1)
+				nSplitIndex = this->m_leafKeyMemSet.size()/2;
 
 			if(pSplitKey)
-				*pSplitKey = this->m_leafKeyMemSet[nSize];
+				*pSplitKey = this->m_leafKeyMemSet[nSplitIndex];
 
-			this->SplitInVec(this->m_leafKeyMemSet, leftKeyMemSet, 0, nSize);
-			this->SplitInVec(this->m_leafValueMemSet, leftValueMemSet, 0, nSize);
+			this->SplitInVec(this->m_leafKeyMemSet, leftKeyMemSet, 0, nSplitIndex);
+			this->SplitInVec(this->m_leafValueMemSet, leftValueMemSet, 0, nSplitIndex);
 
-			this->SplitInVec(this->m_leafKeyMemSet, rightKeyMemSet, nSize, this->m_leafKeyMemSet.size());
-			this->SplitInVec(this->m_leafValueMemSet, rightValueMemSet, nSize, this->m_leafValueMemSet.size());
+			this->SplitInVec(this->m_leafKeyMemSet, rightKeyMemSet, nSplitIndex, this->m_leafKeyMemSet.size());
+			this->SplitInVec(this->m_leafValueMemSet, rightValueMemSet, nSplitIndex, this->m_leafValueMemSet.size());
 
 			pleftNodeComp->recalc(leftKeyMemSet, leftValueMemSet);
 			pRightNodeComp->recalc(rightKeyMemSet, rightValueMemSet);
-			return nSize;
+			return nSplitIndex;
 
 
 
