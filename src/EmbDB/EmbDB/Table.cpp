@@ -734,7 +734,7 @@ namespace embDB
 				return false; // TO DO Error
 			}
 
-			WriteStreamPage stream(pDBTran.get(), nFieldInfoPageSize, TABLE_PAGE, TABLE_INDEX_PAGE);
+			WriteStreamPage stream(pDBTran.get(), nFieldInfoPageSize, FIELD_PAGE, TABLE_INDEX_PAGE);
 			stream.open(pFieldInfoPage);
 			stream.write((uint32)ip.m_indexType);
 			stream.write(sFieldName);

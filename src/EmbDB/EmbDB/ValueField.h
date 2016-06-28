@@ -450,6 +450,10 @@ namespace embDB
 			{
 				TField * pField = new  TField(this, pTransactions, m_pAlloc,m_nPageSize, m_nBTreeChacheSize);
 				pField->load(m_nFieldInfoPage);
+				if(m_pIndexHandler.get())
+				{
+					pField->SetIndex(m_pIndexHandler->getIndex(pTransactions, pStorage).get());
+				}
 				return IValueFieldPtr(pField);	
 			}
 			virtual bool release(IValueField* pField)
@@ -467,17 +471,22 @@ namespace embDB
     typedef  embDB::TBaseLeafNodeDiffComp2<int64, uint32, embDB::IDBTransaction, embDB::OIDCompressor, TBaseValueDiffCompress<uint32, int32, SignedDiffNumLenCompressor32u> > TUInteger32Compress;
 	
 	typedef  embDB::TBaseLeafNodeDiffComp2<int64, int64, embDB::IDBTransaction, embDB::OIDCompressor, TBaseValueDiffCompress<int64, int32, SignedDiffNumLenCompressor64i> >TInteger64Compress;
+	typedef  embDB::TBaseLeafNodeDiffComp2<int64, uint64, embDB::IDBTransaction, embDB::OIDCompressor, TBaseValueDiffCompress<uint64, int64, SignedDiffNumLenCompressor64u> >TUInteger64Compress;
+
+	typedef  embDB::TBaseLeafNodeDiffComp2<int64, int16, embDB::IDBTransaction, embDB::OIDCompressor, TBaseValueDiffCompress<int16, int16, SignedDiffNumLenCompressor16i> > TInteger16Compress;
+	typedef  embDB::TBaseLeafNodeDiffComp2<int64, uint16, embDB::IDBTransaction, embDB::OIDCompressor, TBaseValueDiffCompress<uint16, int16, SignedDiffNumLenCompressor16u> > TUInteger16Compress;
+
 
 
 	//typedef  embDB::TBaseLeafNodeDiffComp<int64, int32, embDB::IDBTransaction, embDB::OIDCompressor,  TBaseValueCompress<int32,UnsignedNumLenCompressor32i > > TInteger32Compress;
 	//typedef  embDB::TBaseLeafNodeDiffComp<int64, int64, embDB::IDBTransaction, embDB::OIDCompressor,  TBaseValueCompress<int64, UnsignedNumLenCompressor64i> >TInteger64Compress;
 
 	typedef ValueFieldHandler<int64, dtInteger64, TInteger64Compress> TValFieldINT64;
-	typedef ValueFieldHandler<uint64,dtUInteger64> TValFieldUINT64;
+	typedef ValueFieldHandler<uint64,dtUInteger64, TUInteger64Compress> TValFieldUINT64;
 	typedef ValueFieldHandler<int32, dtInteger32, TInteger32Compress> TValFieldINT32;
 	typedef ValueFieldHandler<uint32,dtUInteger32, TUInteger32Compress> TValFieldUINT32;
-	typedef ValueFieldHandler<int16, dtInteger16> TValFieldINT16;
-	typedef ValueFieldHandler<uint16,dtUInteger16> TValFieldUINT16;
+	typedef ValueFieldHandler<int16, dtInteger16, TInteger16Compress> TValFieldINT16;
+	typedef ValueFieldHandler<uint16,dtUInteger16, TUInteger16Compress> TValFieldUINT16;
 	typedef ValueFieldHandler<int32, dtUInteger8> TValFieldINT8;
 	typedef ValueFieldHandler<uint32,dtInteger8> TValFieldUINT8;
 	typedef ValueFieldHandler<double,dtDouble> TValFieldDouble;

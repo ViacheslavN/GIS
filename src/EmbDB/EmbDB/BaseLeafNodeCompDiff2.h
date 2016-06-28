@@ -23,8 +23,8 @@ namespace embDB
 		typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
 
 
-		TBaseLeafNodeDiffComp2(uint32 nPageSize, Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
-			TKeyMemSet *pKeyMemset= NULL, TValueMemSet *pValueMemSet = NULL) : TBase(nPageSize, pTran, pAlloc, pParams, pKeyMemset, pValueMemSet)
+		TBaseLeafNodeDiffComp2(uint32 nPageSize, Transaction *pTran, CommonLib::alloc_t *pAlloc, TLeafCompressorParams *pParams,
+			TKeyMemSet *pKeyMemset, TValueMemSet *pValueMemSet ) : TBase(nPageSize, pTran, pAlloc, pParams, pKeyMemset, pValueMemSet)
 		{
 
 

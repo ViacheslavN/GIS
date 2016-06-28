@@ -298,6 +298,7 @@ namespace embDB
 			else
 			{
 				dstVec.push_back(srcVec);
+				srcVec.clear();
 			}
 			return true;
 		}
@@ -306,10 +307,13 @@ namespace embDB
 		bool UnionWith(BPTreeLeafNodeSetv2Base* pNode, bool bLeft, 
 			int *nCheckIndex = 0)
 		{
-			
-			m_pCompressor->add(pNode->m_leafKeyMemSet);
 			UnionVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft, nCheckIndex);
 
+			if(!bLeft)
+				m_pCompressor->add(pNode->m_leafKeyMemSet);
+			
+			if(bLeft)
+				this->m_pCompressor->recalc(this->m_leafKeyMemSet);
 			return true;
 		}
 

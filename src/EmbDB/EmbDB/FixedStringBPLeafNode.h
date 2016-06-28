@@ -41,7 +41,7 @@ namespace embDB
 		virtual bool init(TLeafCompressorParams *pParams , Transaction* pTransaction)
 		{
 			assert(!this->m_pCompressor);
-			this->m_pCompressor = new TCompressor(this->m_nPageSize - 2* sizeof(TLink), pTransaction, (CommonLib::alloc_t*)m_pPageAlloc, pParams, &this->m_leafKeyMemSet, &this->m_leafValueMemSet);
+			this->m_pCompressor = new TCompressor(this->m_nPageSize - 2* sizeof(TLink), pTransaction, m_pAlloc, pParams, &this->m_leafKeyMemSet, &this->m_leafValueMemSet, m_pPageAlloc);
 			return true;
 		}
 
@@ -49,7 +49,7 @@ namespace embDB
 		{
 
 		}
-		void SetPageAlloc(CPageAlloc *pPageAlloc)
+		void SetPageAlloc(CommonLib::alloc_t *pPageAlloc)
 		{
 			assert(pPageAlloc != NULL);
 			assert(this->m_pCompressor == NULL);
@@ -90,7 +90,7 @@ namespace embDB
 			this->m_pCompressor->PreSave();
 		}
 	public:
-		CPageAlloc *m_pPageAlloc;
+		CommonLib::alloc_t *m_pPageAlloc;
 
 
 	};

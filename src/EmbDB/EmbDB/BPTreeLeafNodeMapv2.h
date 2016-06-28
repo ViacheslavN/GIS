@@ -176,12 +176,17 @@ namespace embDB
 
 		bool UnionWith(BPTreeLeafNodeMapv2* pNode, bool bLeft, int *nCheckIndex = 0)
 		{
-			if(!bLeft)
-				this->m_pCompressor->add(pNode->m_leafKeyMemSet, pNode->m_leafValueMemSet);
+
 			this->UnionVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft, nCheckIndex);
 			this->UnionVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, bLeft);
+/*
 
-			if(bLeft)
+
+			if(!bLeft)
+				this->m_pCompressor->add(pNode->m_leafKeyMemSet, pNode->m_leafValueMemSet);
+	
+
+			if(bLeft)*/
 				this->m_pCompressor->recalc(this->m_leafKeyMemSet, this->m_leafValueMemSet);
 		
 			return true;

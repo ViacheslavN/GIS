@@ -7,6 +7,7 @@
 #include <set>
 #include "CommonLibrary/DebugTime.h"
 #include "../../EmbDB/CompositeIndexKey.h"
+#include "../../EmbDB/StringVal.h"
 //#include "../../EmbDB/VariantField.h"
 template<class _Ty>
 	struct comp
@@ -112,87 +113,80 @@ m_innerKeyMemSet.copy(pNode->m_innerKeyMemSet, 0, newSize + 1, pNode->m_innerKey
 m_innerLinkMemSet.copy(pNode->m_innerLinkMemSet, 0, newSize + 1, pNode->m_innerLinkMemSet.size());
 
 */
+template<class TVector>
+bool UnionVec(TVector& dstVec, TVector& srcVec, bool bLeft, int *nCheckIndex = 0 )
+{
+	if(bLeft)
+	{
+		if(nCheckIndex)
+			*nCheckIndex += srcVec.size();
+		srcVec.push_back(dstVec);
+		srcVec.swap(dstVec);
+	}
+	else
+	{
+		dstVec.push_back(srcVec);
+	}
+	return true;
+}
 
+typedef embDB::TBPVector<embDB::sFixedStringVal> TFxStringVec;
 
 void TestBPVector()
 {
 	
 
+	TFxStringVec vec1;
+	TFxStringVec vec2;
+	TFxStringVec vec3;
+	CommonLib::simple_alloc_t alloc;
+	CommonLib::CString sString;
+
+	for (__int64 i = 0; i < 127; ++i)
+	{
+		sString.format(L"Cтрока_Строка_Строка__%I64d", i);
+
+	
+		embDB::sFixedStringVal val;
+		uint32 nUft8Len = sString.calcUTF8Length()  + 1;
+
+		val.m_pBuf = (byte*)alloc.alloc(nUft8Len);
+		sString.exportToUTF8((char*)val.m_pBuf, nUft8Len);
+		vec1.push_back(val);
+
+	}
+
+	for (__int64 i = 127; i < 500; ++i)
+	{
+		sString.format(L"Cтрока_Строка_Строка__%I64d", i);
+
+
+		embDB::sFixedStringVal val;
+		uint32 nUft8Len = sString.calcUTF8Length()  + 1;
+
+		val.m_pBuf = (byte*)alloc.alloc(nUft8Len);
+		sString.exportToUTF8((char*)val.m_pBuf, nUft8Len);
+		vec2.push_back(val);
+
+	}
+	UnionVec(vec1,vec2, false);
+
+	for (__int64 i = 0; i < 120; ++i)
+	{
+		sString.format(L"Cтрока_Строка_Строка__%I64d", i);
+
+
+		embDB::sFixedStringVal val;
+		uint32 nUft8Len = sString.calcUTF8Length()  + 1;
+
+		val.m_pBuf = (byte*)alloc.alloc(nUft8Len);
+		sString.exportToUTF8((char*)val.m_pBuf, nUft8Len);
+		vec3.push_back(val);
+
+	}
+
+	std::map<int, int> mapInt;
+	mapInt[0] = 15;
 	//TestInsert();
-
-	return;
-
-	return;
-	embDB::TBPVector<int32> vec1;
-
-	vec1.push_back(0);
-	vec1.push_back(1);
-	vec1.push_back(2);
-	vec1.push_back(2);
-	vec1.push_back(2);
-	vec1.push_back(5);
-	vec1.push_back(7);
-	vec1.push_back(7);
-	short nType = 0;
-	int index = vec1.upper_bound(-1, comp<int32>());
-	vec1.insert(2, index);
-
-	index = vec1.lower_bound(6, nType, comp<int32>());
-	int indexmr = vec1.lower_bound(6, nType, comp<int32>());
-	int index1 = vec1.binary_search(0, comp<int32>());
-	vec1.insert(6, index);
-	vec1.insert(6, index);
-	vec1.insert(6, index);
-	vec1.insert(6, index);
-	vec1.insert(6, index);
-
-	indexmr = vec1.lower_bound(6, nType, comp<int32>());
-	index = vec1.upper_bound(6, comp<int32>());
-	indexmr = vec1.upper_bound(8, comp<int32>());
-	indexmr = vec1.lower_bound(8, nType, comp<int32>());
  
-	for (size_t i = 0, sz = vec1.size(); i < sz; ++i)
-	{
-		std::cout << vec1[i] << std::endl;
-	}
-
-
-	std::vector<int> data;
-	data.push_back(0);
-	data.push_back(1);
-	data.push_back(5);
-	data.push_back(7);
-
-	auto lower = std::lower_bound(data.begin(), data.end(), 4);
-	auto upper = std::upper_bound(data.begin(), data.end(), 4);
- 
- 
-	return;
-
-	embDB::TBPVector<int32> vec;
-	int32 nCount = 10;
-
-	for (int32 i = 0; i < nCount; ++i )
-	{
-		vec.push_back(i);
-	}
-	for (int32 i = 0; i < nCount; ++i )
-	{
-		vec.insert(i, (size_t)i);
-	}
-
-	for (size_t i = 0, sz = vec.size(); i < sz; ++i)
-	{
-		std::cout << vec[i] << std::endl;
-	}
-
-	for (int32 i = 0; i < 1; ++i )
-	{
-		vec.remove(9);
-	}
-	std::cout << "remove" << std::endl;
-	for (size_t i = 0, sz = vec.size(); i < sz; ++i)
-	{
-		std::cout << vec[i] << std::endl;
-	}
 }

@@ -1,5 +1,5 @@
-#ifndef _EMBEDDED_DATABASE_EMPTY_VALUE_DIFF_COMPRESS_H_
-#define _EMBEDDED_DATABASE_EMPTY_VALUE_DIFF_COMPRESS_H_
+#ifndef _EMBEDDED_DATABASE_EMPTY_VALUE_COMPRESS_H_
+#define _EMBEDDED_DATABASE_EMPTY_VALUE_COMPRESS_H_
 #include "CompressorParams.h"
 namespace embDB
 {
@@ -66,7 +66,7 @@ namespace embDB
 		{
 			return m_nCount;
 		}
-	private:
+	protected:
 		uint32 m_nCount;
 
 	};

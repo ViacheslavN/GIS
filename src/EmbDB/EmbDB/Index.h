@@ -4,6 +4,7 @@
 #include "embDBInternal.h"
 #include "DBFieldInfo.h"
 #include "IndexIteratorBase.h"
+ 
 namespace embDB
 
 {
@@ -54,7 +55,7 @@ public:
 	  virtual bool load(int64 nAddr, eTransactionType type)
 	  {
 
-		  int64 m_nFieldInfoPage = nAddr;
+		/*  int64 m_nFieldInfoPage = nAddr;
 		  FilePagePtr pPage = m_pDBTransactions->getFilePage(nAddr, MIN_PAGE_SIZE); //TO DO fix
 		  if(!pPage.get())
 			  return false;
@@ -66,13 +67,13 @@ public:
 			  m_pDBTransactions->error(L"IndexField: Page %I64d Error CRC for node page", pPage->getAddr()); //TO DO log error
 			  return false;
 		  }
-		  if(header.m_nObjectPageType != FIELD_PAGE || header.m_nSubObjectPageType != INDEX_INFO_PAGE)
+		  if(header.m_nObjectPageType != FIELD_PAGE || header.m_nSubObjectPageType != TABLE_INDEX_PAGE)
 		  {
 			  m_pDBTransactions->error(L"IndexField: Page %I64d Not field info page", pPage->getAddr()); //TO DO log error
 			  return false;
 		  }
-		  stream.read(m_nBTreeRootPage);
-		  m_tree.setRootPage(m_nBTreeRootPage);
+		  stream.read(m_nBTreeRootPage);*/
+		  m_tree.setRootPage(nAddr);
 		  return m_tree.loadBTreeInfo(); 
 	  }
 
@@ -158,6 +159,10 @@ protected:
 	int64 m_nIndexPage;
 	int64 m_nBTreeRootPage;
 	uint32 m_nNodePageSize;
+
+	CompressType m_CompressType;
+	bool m_bOnlineCalcCompSize;
+	uint32 m_nCompCalcError;
 
 
 };

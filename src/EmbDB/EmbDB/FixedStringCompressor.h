@@ -109,11 +109,11 @@ namespace embDB
 		public:
 			typedef TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor, TFixedStringZlibCompressor, StringFieldCompressorParams>  TBase;
 
-			TBPFixedStringLeafCompressor(uint32 nPageSize, _Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, typename TBase::TLeafCompressorParams *pParams = NULL,
-				typename TBase::TKeyMemSet *pKeyMemset= NULL, typename TBase::TValueMemSet *pValueMemSet = NULL) : TBase(nPageSize, pTran, pAlloc, pParams, pKeyMemset, pValueMemSet)
+			TBPFixedStringLeafCompressor(uint32 nPageSize, _Transaction *pTran, CommonLib::alloc_t *pAlloc,  typename TBase::TLeafCompressorParams *pParams,
+				typename TBase::TKeyMemSet *pKeyMemset, typename TBase::TValueMemSet *pValueMemSet, CommonLib::alloc_t *pPageAlloc = NULL) : TBase(nPageSize, pTran, pAlloc, pParams, pKeyMemset, pValueMemSet)
 			{
 
-				this->m_ValueCompressor.init(pValueMemSet, pTran->getType());
+				this->m_ValueCompressor.init(pValueMemSet, pPageAlloc, pTran->getType());
 
 			}
 			~TBPFixedStringLeafCompressor()
@@ -157,7 +157,19 @@ namespace embDB
 			{
 				this->m_ValueCompressor.PreSave();
 			}
+			bool isHalfEmpty() const
+			{
+				uint32 nNoCompSize = this->m_nCount * (sizeof(TKey) + sizeof(uint16));
+				for (uint32 i = 0, sz = this->m_pValueMemSet->size(); i< sz; ++i)
+				{
 
+					nNoCompSize += this->m_pValueMemSet->GetAt(i).m_nLen;
+				}
+				
+
+
+				return nNoCompSize < (this->m_nPageSize - this->headSize())/2;
+			}
 
 	};
 

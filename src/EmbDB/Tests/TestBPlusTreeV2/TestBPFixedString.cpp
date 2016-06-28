@@ -111,6 +111,7 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 	tree.SetBPTreeStatistics(&statInfo);
 
 	CommonLib::CString sString(&alloc);
+ 
 /*	CommonLib::CString sBigString;
 
 	sBigString += L"begin";
@@ -199,7 +200,7 @@ void insertINBTreeMapString  (CommonLib::alloc_t* pAlloc, uint32 nCacheBPTreeSiz
 	std::cout << "Create Inner Nodes: " << statInfo.GetCreateNode(false) << " Create Leaf Nodes: " <<  statInfo.GetCreateNode(true) <<	std::endl;
 	std::cout << "Load Inner Nodes: " << statInfo.GetLoadNode(false) << " Load Leaf Nodes: " <<  statInfo.GetLoadNode(true) <<	std::endl;
 	std::cout << "Save Inner Nodes: " << statInfo.GetSaveNode(false) << " Save Leaf Nodes: " <<  statInfo.GetSaveNode(true) <<	std::endl;
-
+	std::cout << "RowSize: " << nRowSize <<	std::endl; 
 
 }
 
@@ -221,6 +222,7 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 	int64 n = 0;
 	CommonLib::CString sString(pAlloc);
 	int64 nNotFound = 0;	
+
 	if(nStart < nEndStart)
 	{
 		int64 nCount = nEndStart - nStart;
@@ -331,6 +333,10 @@ void RemoveFromTreeMapString  (CommonLib::alloc_t* pAlloc,
 		int64 nCount = nEndStart - nStart;
 		for (; i < nEndStart; ++i)
 		{	
+			if(i == nEndStart - 1)
+			{int dd = 0;
+			dd++;
+			}
 				
 			if(!tree.remove(i))
 			{
@@ -423,7 +429,7 @@ int64 CreateTree(CommonLib::alloc_t *pAlloc, const wchar_t *pszName, uint32 nPag
 //	compParams.setRootPage(pLeafCompRootPage->getAddr());
 	compParams.SetStringLen(nLen);
 	compParams.setStringCoding(sc);
-	compParams.m_nMaxRowCoeff = 100;
+	compParams.m_nMaxRowCoeff = 1;
 	//compParams.SetMaxPageStringSize(400);
 	//compParams.save(&tran);
 
@@ -486,17 +492,29 @@ void TestBPStringTreeImpl(CommonLib::alloc_t *pAlloc, int64 nBegin, int64 nEnd, 
 			return;
 		storage.setStoragePageInfo(0);
 		storage.loadStorageInfo();
-		Transactions InsertTran(pAlloc, embDB::rtUndo, embDB::eTT_MODIFY, L"d:\\db\\removettran.data", &storage, 1);
+		Transactions DeleteTran(pAlloc, embDB::rtUndo, embDB::eTT_MODIFY, L"d:\\db\\removettran.data", &storage, 1);
+		DeleteTran.begin();
 
-
-		RemoveFromTreeMapString<embDB::IDBTransaction>(pAlloc, nBPCache, nBegin, nEnd, nStep, nRootTreePage, &InsertTran, coding);
+		RemoveFromTreeMapString<embDB::IDBTransaction>(pAlloc, nBPCache, nBegin, nEnd/2, nStep, nRootTreePage, &DeleteTran, coding);
 	}
 	
+	{
+		embDB::CStorage storage(pAlloc, 10000);
+		storage.AddRef();
+		if(!storage.open(L"d:\\db\\BPTreeString.data", false, false,  false, false))
+			return;
+		storage.setStoragePageInfo(0);
+		storage.loadStorageInfo();
+		Transactions InsertTran(pAlloc, embDB::rtUndo, embDB::eTT_SELECT, L"d:\\db\\inserttran.data", &storage, 1);
+
+
+		searchINBTreeMapString<embDB::IDBTransaction>(pAlloc, nBPCache, nEnd/2, nEnd, nStep, nRootTreePage, &InsertTran, coding);
+	}
 }
 
 
 void TestBPFixedStringTree()
 {
 		CommonLib::simple_alloc_t alloc;
-		TestBPStringTreeImpl<embDB::CTransaction>(&alloc, 0, 10000, 1, embDB::scUTF8);
+		TestBPStringTreeImpl<embDB::CTransaction>(&alloc, 0, 1000000, 1, embDB::scUTF8);
 };

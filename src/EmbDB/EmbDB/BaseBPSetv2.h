@@ -1423,6 +1423,13 @@ namespace embDB
 
 		pLeafNode->removeByIndex(it.m_nIndex);
 		pNode->setFlags(CHANGE_NODE, true);
+
+
+		if(pLeafNode->getFlags() & ROOT_NODE)
+		{
+			return true;
+		}
+
 		//m_ChangeNode.insert(pNode);
 		assert(pLeafNode->count());
 
@@ -1444,10 +1451,7 @@ namespace embDB
 
 			return removeUP(key, pParentNode.get());
 		}
-		if(pLeafNode->getFlags() & ROOT_NODE)
-		{
-			return true;
-		}
+		
 
 
 		assert(pParentNode.get());
@@ -1914,6 +1918,7 @@ namespace embDB
 						pCheckNode->clear();
 						pCheckNode->TransformToLeaf(m_pTransaction);
 						pCheckNode->UnionWith(pNode.get(), false);
+						pCheckNode->setFlags(ROOT_NODE, true);
 					}
 					else
 					{

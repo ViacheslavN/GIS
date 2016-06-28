@@ -55,7 +55,7 @@ public:
 	  {
 		  TBTreeNode *pNode = new TBTreeNode(-1, this->m_pAlloc, nAdd, this->m_bMulti, bIsLeaf, this->m_bCheckCRC32, this->m_nNodesPageSize, this->m_InnerCompParams.get(),
 			  this->m_LeafCompParams.get());
-		  pNode->m_LeafNode.SetPageAlloc(&m_PageAlloc);
+		  pNode->m_LeafNode.SetPageAlloc((CommonLib::alloc_t*)&m_PageAlloc);
 		return pNode;
 	  }
 
