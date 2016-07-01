@@ -226,6 +226,9 @@
     <Filter Include="DB\BPTrees\BtreePlusv2\key">
       <UniqueIdentifier>{99a5b559-b781-4fa5-982f-0a3f3fa5191f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\transactions\Cursors\SelectOpCursor">
+      <UniqueIdentifier>{d50dfcca-64fc-4ae2-8644-09144bd70606}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -1137,6 +1140,24 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnsignedNumLenDiffCompressor2.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleSelectOpCursor.h">
+      <Filter>DB\transactions\Cursors\SelectOpCursor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1273,6 +1294,9 @@
     </ClCompile>
     <ClCompile Include="CompressStringLen.cpp">
       <Filter>DB\Fields\string\fixedStringField\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleSelectOpCursor.cpp">
+      <Filter>DB\transactions\Cursors\SelectOpCursor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

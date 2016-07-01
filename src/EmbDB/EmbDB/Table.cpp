@@ -778,7 +778,7 @@ namespace embDB
 			//TO DO log
 			return false;
 		}
-		if(header.m_nObjectPageType != TABLE_PAGE || header.m_nSubObjectPageType != TABLE_INDEX_PAGE )
+		if(header.m_nObjectPageType != FIELD_PAGE || header.m_nSubObjectPageType != TABLE_INDEX_PAGE )
 		{
 			return false;
 		}

@@ -8,7 +8,7 @@
 #include "SimpleSelectCursor.h"
 #include "DeleteCursor.h"
 #include <set>
-
+#include "SimpleSelectOpCursor.h"
 namespace embDB
 {
 	 
@@ -179,6 +179,21 @@ namespace embDB
 				m_mapValueField.clear();
 				m_setChangeTable.clear();
 				return true;
+			}
+
+
+			virtual ICursorPtr executeSelectQuery(const wchar_t *pszTable, IFieldSet *pFileds, const wchar_t *pszFiel, const CommonLib::CVariant& var, OpType opType)
+			{
+				ITablePtr pTable = m_pSchema->getTableByName(pszTable);
+				if(!pTable.get())
+					return ICursorPtr(); //TO DO Error
+				SimpleSelectOpCursor* pCursor = new SimpleSelectOpCursor(this, pTable.get(), pFileds, pszFiel, var, opType); 
+				if(!pCursor->Init())
+				{
+					delete pCursor;
+					return ICursorPtr(); //TO DO Error
+				}
+				return ICursorPtr(pCursor);
 			}
 	protected:
 

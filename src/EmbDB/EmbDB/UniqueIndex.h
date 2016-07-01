@@ -5,15 +5,6 @@
 #include "DBFieldInfo.h"
 #include "Index.h"
 
-#include "BaseInnerNodeDIffCompress.h"
-#include "BaseLeafNodeCompDiff.h"
-#include "BaseInnerNodeDIffCompress.h"
-#include "BaseInnerNodeDIffCompress2.h"
-#include "BaseValueDiffCompressor.h"
-#include "SignedNumLenDiffCompress.h"
-#include "BaseLeafNodeCompDiff2.h"
-#include "BaseValueCompressor.h"
-#include "EmptyValueDIffCompress.h"
 namespace embDB
 {
 
@@ -120,7 +111,6 @@ namespace embDB
 
 	template<class _FType, int FieldDataType,
 	class _TKeyCompressor = TEmptyDiffValueCompress<_FType>,
-	class _TLeafCompressor = embDB::BPLeafNodeMapSimpleCompressorV2<_FType, int64 >,
 	class _TComp = embDB::comp<_FType> >
 	class UniqueIndexFieldHandler : public CIndexHandlerBase 
 	{
@@ -128,12 +118,16 @@ namespace embDB
 
 		typedef _FType FType;
 		typedef _TComp TComp;
+		typedef _TKeyCompressor TKeyCompressor;
 
-		typedef _TLeafCompressor TLeafCompressor;
 
-
+		typedef TBaseValueDiffCompress<int64, int64, SignedDiffNumLenCompressor64i> TOIDCompressor;
 		typedef TBaseValueDiffCompress<int64, int64, SignedDiffNumLenCompressor64i> TInnerLinkCompress;
-		typedef embDB::TBPBaseInnerNodeDiffCompressor2<_FType, _TKeyCompressor, TInnerLinkCompress>  TInnerCompressor;
+		typedef embDB::TBPBaseInnerNodeDiffCompressor2<_FType, TKeyCompressor, TInnerLinkCompress>  TInnerCompressor;
+
+		typedef  embDB::TBaseLeafNodeDiffComp2<FType, int64, embDB::IDBTransaction, TKeyCompressor, TOIDCompressor> TLeafCompressor;
+
+
 
 		typedef embDB::TBPMapV2<FType, int64, TComp, 
 			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
@@ -154,8 +148,6 @@ namespace embDB
 	
 		virtual bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran)
 		{
-
-
 			TLeafCompressorParams leafCompParams;
 			TInnerCompressorParams innerCompParams;
 			return CIndexHandlerBase::save<TIndex, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, &innerCompParams, &leafCompParams);
@@ -190,26 +182,22 @@ namespace embDB
 	};
 
 
+	typedef TBaseValueDiffCompress<int16, int16, SignedDiffNumLenCompressor16i> TInt16KeyCompress;
+	typedef TBaseValueDiffCompress<uint16, uint16, UnsignedDiffNumLenCompressor16u> TUInt16KeyCompress;
+
+	typedef TBaseValueDiffCompress<int32, int32, SignedDiffNumLenCompressor32i> TInt32KeyCompress;
+	typedef TBaseValueDiffCompress<uint32, uint32, UnsignedDiffNumLenCompressor32u> TUInt32KeyCompress;
 	
+	typedef TBaseValueDiffCompress<int64, int64, SignedDiffNumLenCompressor64i> TInt64KeyCompress;
+	typedef TBaseValueDiffCompress<uint64, uint64, UnsignedDiffNumLenCompressor64u> TUInt64KeyCompress;
+ 
 
-
-
-	typedef  embDB::TBaseLeafNodeDiffComp2<int32, int64, embDB::IDBTransaction, TBaseValueDiffCompress<int32, int32, SignedDiffNumLenCompressor32i> , embDB::OIDCompressor> TIndexInteger32Compress;
-	typedef  embDB::TBaseLeafNodeDiffComp2<uint32, int64, embDB::IDBTransaction, TBaseValueDiffCompress<uint32, int32, SignedDiffNumLenCompressor32u>, embDB::OIDCompressor > TIndexUInteger32Compress;
-
-	typedef  embDB::TBaseLeafNodeDiffComp2<int64, int64, embDB::IDBTransaction, TBaseValueDiffCompress<int64, int32, SignedDiffNumLenCompressor64i>, embDB::OIDCompressor >TIndexInteger64Compress;
-	typedef  embDB::TBaseLeafNodeDiffComp2<int64, uint64, embDB::IDBTransaction, TBaseValueDiffCompress<uint64, int64, SignedDiffNumLenCompressor64u>, embDB::OIDCompressor >IndexTUInteger64Compress;
-
-	typedef  embDB::TBaseLeafNodeDiffComp2<int64, int16, embDB::IDBTransaction, embDB::OIDCompressor, TBaseValueDiffCompress<int16, int16, SignedDiffNumLenCompressor16i> > TInteger16Compress;
-	typedef  embDB::TBaseLeafNodeDiffComp2<int64, uint16, embDB::IDBTransaction, embDB::OIDCompressor, TBaseValueDiffCompress<uint16, int16, SignedDiffNumLenCompressor16u> > TUInteger16Compress;
-
-
-	typedef UniqueIndexFieldHandler<int64,  dtInteger64, TEmptyDiffValueCompress<int64>, TIndexInteger64Compress > TUniqueIndexNT64;
-	typedef UniqueIndexFieldHandler<uint64, dtUInteger64, TEmptyDiffValueCompress<uint64>, IndexTUInteger64Compress > TUniqueIndexUINT64;
-	typedef UniqueIndexFieldHandler<int32,  dtInteger32, TEmptyDiffValueCompress<int32> , TIndexInteger32Compress> TUniqueIndexINT32;
-	typedef UniqueIndexFieldHandler<uint32, dtUInteger32, TEmptyDiffValueCompress<uint32> , TIndexUInteger32Compress> TUniqueIndexUINT32;
-	typedef UniqueIndexFieldHandler<int16,  dtInteger16> TUniqueIndexINT16;
-	typedef UniqueIndexFieldHandler<uint16, dtUInteger16> TUniqueIndexUINT16;
+	typedef UniqueIndexFieldHandler<int64,  dtInteger64, TInt64KeyCompress > TUniqueIndexNT64;
+	typedef UniqueIndexFieldHandler<uint64, dtUInteger64, TUInt64KeyCompress > TUniqueIndexUINT64;
+	typedef UniqueIndexFieldHandler<int32,  dtInteger32, TInt32KeyCompress> TUniqueIndexINT32;
+	typedef UniqueIndexFieldHandler<uint32, dtUInteger32, TUInt32KeyCompress> TUniqueIndexUINT32;
+	typedef UniqueIndexFieldHandler<int16,  dtInteger16, TInt16KeyCompress> TUniqueIndexINT16;
+	typedef UniqueIndexFieldHandler<uint16, dtUInteger16, TUInt16KeyCompress> TUniqueIndexUINT16;
 	typedef UniqueIndexFieldHandler<int32,  dtUInteger8> TUniqueIndexINT8;
 	typedef UniqueIndexFieldHandler<uint32, dtInteger8> TUniqueIndexUINT8;
 	typedef UniqueIndexFieldHandler<double, dtDouble> TUniqueIndexDouble;

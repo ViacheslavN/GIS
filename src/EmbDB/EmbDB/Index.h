@@ -5,6 +5,17 @@
 #include "DBFieldInfo.h"
 #include "IndexIteratorBase.h"
  
+
+#include "BaseInnerNodeDIffCompress.h"
+#include "BaseLeafNodeCompDiff.h"
+#include "BaseInnerNodeDIffCompress.h"
+#include "BaseInnerNodeDIffCompress2.h"
+#include "BaseValueDiffCompressor.h"
+#include "SignedNumLenDiffCompress.h"
+#include "BaseLeafNodeCompDiff2.h"
+#include "BaseValueCompressor.h"
+#include "EmptyValueDIffCompress.h"
+
 namespace embDB
 
 {

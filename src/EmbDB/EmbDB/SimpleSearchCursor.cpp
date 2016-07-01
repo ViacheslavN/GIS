@@ -41,7 +41,7 @@ namespace embDB
 			IFieldPtr pField = m_pTable->getField(fieldName);
 			if(!pField.get())
 			{
-				m_pTran->error(L"not exist field %s", pField->getName().cwstr());
+				m_pTran->error(L"not exist field %s", fieldName.cwstr());
 				return false;
 			}
 			IValueFieldPtr pValueField = m_pTran->GetField(m_pTable->getName().cwstr(), pField->getName().cwstr());
@@ -112,8 +112,9 @@ namespace embDB
 	}
 	int64 SimpleSearchCursor::GetRowID() const
 	{
-		if(m_bEnd)
+		if(!m_bEnd)
 			return m_vecOIDs[m_nCurrObj];
+		return -1;
 	}
 	bool SimpleSearchCursor::NextRow(IRowPtr* pRow)
 	{

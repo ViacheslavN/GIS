@@ -167,6 +167,18 @@ namespace embDB
 		RangeCoding,
 		MixCoding
 	};
+
+
+	enum OpType
+	{
+		OpEqual,
+		OpNoEqual,
+		OpLess,
+		OpLessOrEqual,
+		OpGreater,
+		OpGreaterOrEqual
+	};
+
 	struct sFieldPropExt
 	{
 		sFieldPropExt() : m_CompressType(MixCoding), m_nCompCalcError(200), m_bOnlineCalcCompSize(false), m_nBTreeChacheSize(5)
@@ -489,7 +501,7 @@ namespace embDB
 		virtual ICursorPtr executeQuery(const wchar_t* pszQuery = NULL) = 0;
 		virtual ICursorPtr executeSpatialQuery(const CommonLib::bbox& extent, const wchar_t *pszTable, const wchar_t* pszSpatialField, SpatialQueryMode mode = sqmIntersect,  IFieldSet *pFileds = 0) = 0; // For test
 		virtual ICursorPtr executeSelectQuery(const wchar_t *pszTable, IFieldSet *pFileds = 0, const wchar_t *pszSQLQuery = NULL) = 0; // For test
-
+		virtual ICursorPtr executeSelectQuery(const wchar_t *pszTable, IFieldSet *pFileds, const wchar_t *pszFiels, const CommonLib::CVariant& var, OpType opType) = 0; // For test
 
 		virtual IInsertCursorPtr createInsertCursor(const wchar_t *pszTable, IFieldSet *pFileds = 0) = 0;
 		virtual IUpdateCursorPtr createUpdateCursor() = 0;

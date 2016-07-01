@@ -612,6 +612,7 @@
     <ClInclude Include="SignedNumLenDiffCompressor2.h" />
     <ClInclude Include="SimpleSearchCursor.h" />
     <ClInclude Include="SimpleSelectCursor.h" />
+    <ClInclude Include="SimpleSelectOpCursor.h" />
     <ClInclude Include="SpatialIndexBase.h" />
     <ClInclude Include="SpatialIndexHandler.h" />
     <ClInclude Include="Statement.h" />
@@ -633,6 +634,7 @@
     <ClInclude Include="UniqueCompIndexBase.h" />
     <ClInclude Include="UniqueIndex.h" />
     <ClInclude Include="UnsignedIntegerNumLenComp.h" />
+    <ClInclude Include="UnsignedNumLenDiffCompressor2.h" />
     <ClInclude Include="ValueField.h" />
     <ClInclude Include="FilePage.h" />
     <ClInclude Include="FilePageType.h" />
@@ -720,6 +722,7 @@
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="SimpleSearchCursor.cpp" />
     <ClCompile Include="SimpleSelectCursor.cpp" />
+    <ClCompile Include="SimpleSelectOpCursor.cpp" />
     <ClCompile Include="Statement.cpp" />
     <ClCompile Include="ValueField.cpp" />
     <ClCompile Include="FilePage.cpp" />

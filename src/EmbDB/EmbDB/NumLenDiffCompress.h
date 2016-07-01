@@ -240,7 +240,18 @@ namespace embDB
 	typedef TUnsignedDiffNumLenCompressor<int64, TFindMostSigBit, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
 		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 64> UnsignedDiffNumLenCompressor64i;
 
+
+	typedef TUnsignedDiffNumLenCompressor<uint64, TFindMostSigBit, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 64> UnsignedDiffNumLenCompressor64u;
+
 	typedef TUnsignedDiffNumLenCompressor<int32, TFindMostSigBit, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
 		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 32>  UnsignedDiffNumLenCompressor32i;
+
+	typedef TUnsignedDiffNumLenCompressor<uint32, TFindMostSigBit, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 32>  UnsignedDiffNumLenCompressor32u;
+
+
+	typedef TUnsignedDiffNumLenCompressor<uint16, TFindMostSigBit, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 16>  UnsignedDiffNumLenCompressor16u;
 }
 #endif
