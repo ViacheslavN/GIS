@@ -334,12 +334,12 @@ namespace embDB
 			if(nRightRowSize > nLeftRowSize)
 			{
 				pDonorBlock = pBlocRight;
-				nIndexDonor = nBlocIDx + 1;
+				nIndexDonor = (uint32)nBlocIDx + 1;
 			}
 			else
 			{
 				pDonorBlock = pBlocLeft;
-				nIndexDonor = nBlocIDx - 1;
+				nIndexDonor = (uint32)nBlocIDx - 1;
 			}
 
 			if(pDonorBlock->m_nRowSize + pCurrBloc->m_nRowSize < m_nPageSize)
@@ -367,7 +367,7 @@ namespace embDB
 		}
 
 	
-		uint32 GetComressSize() const
+		uint32 GetCompressSize() const
 		{
 		   uint32 nSize = m_lenCompressor.GetCompressSize();
 		   uint32 nStringSize = GetStringCompressSize();
@@ -427,8 +427,8 @@ namespace embDB
 			
 			for (size_t i = 1; i < vecValues.size(); ++i)
 			{
-				int32 nLen1 = vecValues[i].m_nLen;
-				int32 nLen2 = vecValues[i -1].m_nLen;
+				int32 nLen1 = (int32)vecValues[i].m_nLen;
+				int32 nLen2 = (int32)vecValues[i -1].m_nLen;
 				m_lenCompressor.EncodeSymbol(vecValues[i].m_nLen - vecValues[i -1].m_nLen, i -1);	
 			}
 			m_lenCompressor.EncodeFinish();

@@ -30,7 +30,7 @@ namespace embDB
 		 
 
 
-		uint32 GetComressSize() const
+		uint32 GetCompressSize() const
 		{
 			return m_nCount * sizeof(TValue);
 		}

@@ -5,6 +5,8 @@
 #include "BPMultiInnerIndexNodeCompressor.h"
 #include "BPMultiIndexLeafNodeCompressor.h"
 #include "MultiIndex.h"
+#include "UnsignedNumLenDiffCompressor2.h"
+#include "MultiKeyCompressor.h"
 namespace embDB
 {
 	template<class TIterator>
@@ -26,7 +28,7 @@ namespace embDB
 		}
 		virtual int64 getRowID()
 		{
-			return this->m_ParentIt.key().m_nObjectID;
+			return this->m_ParentIt.key().m_nRowID;
 		}
 	};
 
@@ -179,7 +181,7 @@ namespace embDB
 	};
 
 	template<class _FType, int FieldDataType,
-	class _TLeafCompressor = embDB::BPLeafNodeMultiIndexCompressor<_FType >,
+	class _TMultiKeyCompressor = TEmptyMultiKeyCompress<_FType >,
 	class _TKeyComp = embDB::MultiIndexKeyOnlyComp<_FType>,
 	class _TBaseComp = MultiIndexBaseComp<_FType>
 	>
@@ -188,8 +190,9 @@ namespace embDB
 	public:
 
 		typedef _FType FType;
-		typedef embDB::BPMultiIndexInnerNodeCompressor<FType> TInnerCompressor;
-		typedef _TLeafCompressor TLeafCompressor;
+		typedef _TMultiKeyCompressor TMultiKeyCompressor;
+		typedef embDB::BPMultiIndexInnerNodeCompressor<FType, embDB::IDBTransaction, TMultiKeyCompressor> TInnerCompressor;
+		typedef embDB::BPLeafNodeMultiIndexCompressor<FType, embDB::IDBTransaction, TMultiKeyCompressor>    TLeafCompressor;
  		typedef IndexTuple<FType> TIndexTuple;
 
 		typedef _TBaseComp  TBaseComp;
@@ -236,16 +239,30 @@ namespace embDB
 
 	};
 
+	typedef embDB::TMultiKeyCompressor<int64, int64, embDB::SignedDiffNumLenCompressor264i> TMultiKeyCompressor64;
+	typedef embDB::TMultiKeyCompressor<uint64, uint64, embDB::UnsignedDiffNumLenCompressor264u> TMultiKeyCompressor64u;
 
+	typedef embDB::TMultiKeyCompressor<int32, int32, embDB::SignedDiffNumLenCompressor232i> TMultiKeyCompressor32;
+	typedef embDB::TMultiKeyCompressor<uint32, uint32, embDB::UnsignedDiffNumLenCompressor232u> TMultiKeyCompressor32u;
 
-	typedef MultiIndexFieldHandler<int64,  dtInteger64> TMultiIndexNT64;
-	typedef MultiIndexFieldHandler<uint64, dtUInteger64> TMultiIndexUINT64;
-	typedef MultiIndexFieldHandler<int32,  dtInteger32> TMultiIndexINT32;
-	typedef MultiIndexFieldHandler<uint32, dtUInteger32> TMultiIndexUINT32;
-	typedef MultiIndexFieldHandler<int16,  dtInteger16> TMultiIndexINT16;
-	typedef MultiIndexFieldHandler<uint16, dtUInteger16> TMultiIndexUINT16;
-	typedef MultiIndexFieldHandler<int32,  dtUInteger8> TMultiIndexINT8;
-	typedef MultiIndexFieldHandler<uint32, dtInteger8> TMultiIndexUINT8;
+	typedef embDB::TMultiKeyCompressor<int16, int16, embDB::SignedDiffNumLenCompressor216i> TMultiKeyCompressor16;
+	typedef embDB::TMultiKeyCompressor<uint16, uint16, embDB::UnsignedDiffNumLenCompressor216u> TMultiKeyCompressor16u;
+
+	typedef embDB::TMultiKeyCompressor<int8, int8, embDB::SignedDiffNumLenCompressor28i> TMultiKeyCompressor8;
+	typedef embDB::TMultiKeyCompressor<byte, byte, embDB::UnsignedDiffNumLenCompressor28u> TMultiKeyCompressor8u;
+
+	typedef MultiIndexFieldHandler<int64,  dtInteger64, TMultiKeyCompressor64> TMultiIndexNT64;
+	typedef MultiIndexFieldHandler<uint64, dtUInteger64, TMultiKeyCompressor64u> TMultiIndexUINT64;
+
+	typedef MultiIndexFieldHandler<int32,  dtInteger32, TMultiKeyCompressor32> TMultiIndexINT32;
+	typedef MultiIndexFieldHandler<uint32, dtUInteger32, TMultiKeyCompressor32u> TMultiIndexUINT32;
+
+	typedef MultiIndexFieldHandler<int16,  dtInteger16, TMultiKeyCompressor16> TMultiIndexINT16;
+	typedef MultiIndexFieldHandler<uint16, dtUInteger16, TMultiKeyCompressor16u> TMultiIndexUINT16;
+
+	typedef MultiIndexFieldHandler<byte,  dtUInteger8, TMultiKeyCompressor8u> TMultiIndexINT8;
+	typedef MultiIndexFieldHandler<int8, dtInteger8, TMultiKeyCompressor8> TMultiIndexUINT8;
+
 	typedef MultiIndexFieldHandler<double, dtDouble> TMultiIndexDouble;
 	typedef MultiIndexFieldHandler<float,  dtFloat> TMultiIndexFloat;
 }

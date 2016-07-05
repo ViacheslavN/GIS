@@ -21,7 +21,7 @@ namespace embDB
 	{
 		m_compressor.RemoveSymbol(nLink);
 	}
-	uint32 InnerLinkCompress::GetComressSize() const
+	uint32 InnerLinkCompress::GetCompressSize() const
 	{
 		return m_compressor.GetCompressSize();
 	}

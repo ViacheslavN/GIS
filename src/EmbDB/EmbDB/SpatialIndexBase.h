@@ -236,7 +236,11 @@ namespace embDB
 		  }
 		  virtual bool remove (IIndexIterator* pIter )
 		  {
-			  return true;
+			  assert(pIter);
+			  TIndexIterator * pSpIter = (TIndexIterator*)pIter;
+			  iterator& it = pSpIter->m_ParentIt;
+
+			  return m_tree.remove(it);
 		  }
 		  virtual IIndexIteratorPtr find(CommonLib::CVariant* pIndexKey)
 		  {

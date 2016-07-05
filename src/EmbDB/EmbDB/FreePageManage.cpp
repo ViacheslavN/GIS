@@ -246,7 +246,7 @@ namespace embDB
 
 		if(m_vecNewFreeMaps.size())
 		{
-			for (uint32 i = 0, sz = m_vecNewFreeMaps.size(); i < sz; ++i)
+			for (uint32 i = 0, sz = (uint32)m_vecNewFreeMaps.size(); i < sz; ++i)
 			{
 				m_ListFreeMaps.push(m_vecNewFreeMaps[i], m_pStorage);	
 			}

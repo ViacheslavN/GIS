@@ -155,6 +155,13 @@ public:
 			return false;
 		return TBase::template remove<iterator>(it);
 	}
+
+
+	bool remove(const iterator& it)
+	{
+		return TBase::template remove<iterator>(it);
+	}
+
 	template<class TKeyFunctor>
 	bool insertLast(TKeyFunctor& keyFunctor, const TValue& value, TKey* pKey = NULL,  iterator* pFromIterator = NULL,  iterator* pRetIterator = NULL)
 	{

@@ -428,7 +428,7 @@ namespace embDB
 			m_nCount = nCount;
 			m_nBlobDataSize = nSplitBlobDataSize; 
 		}
-		uint32 GetComressSize() const
+		uint32 GetCompressSize() const
 		{
 			return m_nBlobDataSize;
 		}
@@ -566,7 +566,7 @@ namespace embDB
 		uint32 GetSplitIndex() const
 		{
 
-			uint32 nFreePage = this->m_nPageSize - this->m_KeyCompressor.GetComressSize();
+			uint32 nFreePage = this->m_nPageSize - this->m_KeyCompressor.GetCompressSize();
 
 			return this->m_ValueCompressor.GetSplitIndex(nFreePage);
 		}

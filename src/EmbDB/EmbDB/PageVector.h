@@ -59,13 +59,13 @@ public:
 		{
 			m_vec.push_back(val);
 		}
-		uint32 size() {return m_vec.size();}
+		uint32 size() {return (uint32)m_vec.size();}
 		void save(TReaderWriter& rw, CommonLib::FxMemoryWriteStream& stream)
 		{
-			uint32 nSize = m_vec.size();
+			uint32 nSize = (uint32)m_vec.size();
 			stream.write(nSize);
 		
-			for (uint32 idx = 0, sz = m_vec.size(); idx < m_vec.size(); ++idx)
+			for (uint32 idx = 0, sz = (uint32)m_vec.size(); idx < m_vec.size(); ++idx)
 			{
 				//stream.write(m_vec[idx]);
 				rw.write(m_vec[idx], stream);
@@ -298,7 +298,7 @@ public:
 		{
 			if(!m_pPageNode)
 				return true;
-			if(!m_pPageNode->size() || m_nPageIDx >= m_pPageNode->size())
+			if(!m_pPageNode->size() || m_nPageIDx >= (uint32)m_pPageNode->size())
 				return true;
 			return false;
 		}

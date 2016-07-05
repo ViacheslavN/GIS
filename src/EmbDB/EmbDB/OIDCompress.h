@@ -47,7 +47,7 @@ namespace embDB
 			void AddSymbol(uint32 nSize,  int nIndex, int64 nOID, const embDB::TBPVector<int64>& vecOIDs);
 			void RemoveSymbol(uint32 nSize,  int nIndex, int64 nOID, const embDB::TBPVector<int64>& vecOIDs);
 			void RemoveDiffSymbol(int64 nOid);
-			uint32 GetComressSize() const;
+			uint32 GetCompressSize() const;
 		
 			bool compress( const embDB::TBPVector<int64>& vecOIDs, CommonLib::IWriteStream *pStream);
 			bool decompress(uint32 nSize, embDB::TBPVector<int64>& vecOIDs, CommonLib::IReadStream *pStream);

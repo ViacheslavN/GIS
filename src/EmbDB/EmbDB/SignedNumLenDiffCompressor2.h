@@ -203,10 +203,11 @@ namespace embDB
 	typedef TSignedDiffNumLenCompressor2<int32, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
 		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 32> SignedDiffNumLenCompressor232i;
 
-	typedef TSignedDiffNumLenCompressor2<uint32, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
-		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 32> SignedDiffNumLenCompressor264u;
+	typedef TSignedDiffNumLenCompressor2<int16, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 16> SignedDiffNumLenCompressor216i;
 
-
+	typedef TSignedDiffNumLenCompressor2<int8, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 8> SignedDiffNumLenCompressor28i;
 
 }
 #endif

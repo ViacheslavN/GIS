@@ -309,10 +309,10 @@ namespace embDB
 		{
 			UnionVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft, nCheckIndex);
 
-			if(!bLeft)
+			/*if(!bLeft)
 				m_pCompressor->add(pNode->m_leafKeyMemSet);
 			
-			if(bLeft)
+			if(bLeft)*/
 				this->m_pCompressor->recalc(this->m_leafKeyMemSet);
 			return true;
 		}

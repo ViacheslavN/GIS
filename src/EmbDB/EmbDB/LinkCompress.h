@@ -33,7 +33,7 @@ namespace embDB
 			void AddSymbol(uint32 nSize,  int nIndex, int64 nLink, const embDB::TBPVector<int64>& vecLinks);
 			void RemoveSymbol(uint32 nSize,  int nIndex, int64 nLink, const embDB::TBPVector<int64>& vecLinks);
 			 
-			uint32 GetComressSize() const;
+			uint32 GetCompressSize() const;
 
 
 

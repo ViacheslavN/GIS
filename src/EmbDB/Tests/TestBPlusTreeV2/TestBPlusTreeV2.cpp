@@ -15,6 +15,8 @@ void testCompKey();
 void TestBPStringTree();
 void TestTreeBlob();
 void TestBPFixedStringTree();
+void  TestMuiltiIndex();
+void TestCacheLRU_2Q();
 int _tmain(int argc, _TCHAR* argv[])
 {
 
@@ -29,9 +31,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	////testRedo();
 
 
-	TestBPFixedStringTree();
+	//TestBPFixedStringTree();
 	//TestBPStringTree();
 	//TestTreeBlob();
+
+	//TestMuiltiIndex();
+	TestCacheLRU_2Q();;
 	return 0;
 }
 

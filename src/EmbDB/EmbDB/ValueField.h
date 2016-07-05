@@ -71,7 +71,7 @@ namespace embDB
 			typedef typename TBTree::TComp TComp;
 			typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 			typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
-
+			typedef typename TBTree::TValue TValue;
 
 			~ValueFieldBase()
 			{
@@ -175,10 +175,22 @@ namespace embDB
 				//TO DO Update  Index
 				return  m_tree.update(nOID, value);
 			}
+
+			virtual bool removeWithIndex(int64 nOID)
+			{ 
+				assert(false);
+				return false;
+			}
 			virtual bool remove(int64 nOID)
 			{
-				//TO DO Delete from Index
-				return m_tree.remove(nOID);
+		 
+				if(m_pIndex.get())
+				{
+					return removeWithIndex(nOID);
+				}
+				else 
+					return m_tree.remove(nOID);
+
 
 				 
 			}
@@ -384,7 +396,23 @@ namespace embDB
 				pFieldVal->setVal(it.value());
 				return true;
 			}
+			virtual bool removeWithIndex(int64 nOID)
+			{ 
+				iterator it = this->m_tree.find(nOID);
+				if(it.isNull())
+					return false;
 
+				CommonLib::CVariant var(it.value());
+				if(m_pIndex->GetType() == itUnique)
+					m_pIndex->remove(&var);
+				else if(m_pIndex->GetType() == itMultiRegular)
+				{
+					MultiIndexFiled *pMulitIndex = dynamic_cast<MultiIndexFiled *>(m_pIndex.get());
+					assert(pMulitIndex);
+					pMulitIndex->remove(&var, nOID);
+				}
+				return this->m_tree.remove(it);
+			}
 			
 		
 	};

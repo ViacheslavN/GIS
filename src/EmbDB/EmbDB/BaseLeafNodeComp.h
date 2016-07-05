@@ -78,8 +78,8 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream ValueStream;
 			CommonLib::FxMemoryWriteStream KeyStream;
 
-			uint32 nKeySize = m_KeyCompressor.GetComressSize();
-			uint32 nValueSize = m_ValueCompressor.GetComressSize();
+			uint32 nKeySize = m_KeyCompressor.GetCompressSize();
+			uint32 nValueSize = m_ValueCompressor.GetCompressSize();
 
 
 			stream.write(nKeySize);
@@ -168,7 +168,7 @@ namespace embDB
 		}
 		uint32 rowSize() const
 		{
-			return  m_ValueCompressor.GetComressSize() + m_KeyCompressor.GetComressSize();
+			return  m_ValueCompressor.GetCompressSize() + m_KeyCompressor.GetCompressSize();
 		}
 		uint32 tupleSize() const
 		{

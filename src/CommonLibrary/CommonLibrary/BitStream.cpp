@@ -17,6 +17,11 @@ namespace CommonLib
 		assert(nCntBits < 9);
 		_readBits<byte>(nBits, nCntBits); 
 	}
+	void IReadBitStreamBase::readBits(int8& nBits, size_t nCntBits)
+	{
+		assert(nCntBits < 9);
+		_readBits<int8>(nBits, nCntBits); 
+	}
 	void IReadBitStreamBase::readBits(uint16&  nBits, size_t nCntBits)
 	{
 		assert(nCntBits < 17);

@@ -56,7 +56,7 @@ public:
 	protected: 
 		TNode*   m_pNode;
 	};
-	TList(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc), m_nSize(0)
+	TList(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc), m_nSize(0), m_pBack(NULL), m_pBegin(NULL)
 	{
 		if(!m_pAlloc)
 		{
@@ -77,7 +77,7 @@ public:
 	iterator push_top(const TypeVal& val)
 	{
 		TNode* pElem =  new (m_pAlloc->alloc(sizeof(TNode))) TNode(val);
-		push_top(pElem);
+		return push_top(pElem);
 	}
 
 
@@ -198,8 +198,8 @@ public:
 		 return m_pBegin == pNode;
 	 }
 protected:
-	TNode m_pBegin;
-	TNode m_pBack;
+	TNode* m_pBegin;
+	TNode* m_pBack;
 	CommonLib::alloc_t* m_pAlloc;
 	CommonLib::simple_alloc_t m_simple_alloc;
 	uint32 m_nSize;

@@ -97,8 +97,8 @@ namespace embDB
 
 			 
 
-			uint32 nKeySize = m_KeyCompressor.GetComressSize();	
-			uint32 nLinkSize =  m_LinkCompressor.GetComressSize();
+			uint32 nKeySize = m_KeyCompressor.GetCompressSize();	
+			uint32 nLinkSize =  m_LinkCompressor.GetCompressSize();
 
 
 		
@@ -207,8 +207,8 @@ namespace embDB
 		}
 		uint32 rowSize() const
 		{
-			uint32 nOIDSize =  m_KeyCompressor.GetComressSize();
-			uint32 nLinkSize = m_LinkCompressor.GetComressSize();
+			uint32 nOIDSize =  m_KeyCompressor.GetCompressSize();
+			uint32 nLinkSize = m_LinkCompressor.GetCompressSize();
 			return nOIDSize + nLinkSize;
 		}
 		void clear()

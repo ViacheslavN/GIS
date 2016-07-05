@@ -39,6 +39,7 @@ namespace CommonLib
 		IReadBitStreamBase();
 		virtual ~IReadBitStreamBase();
 		virtual void readBits(byte& nBits, size_t nCntBits);
+		virtual void readBits(int8& nBits, size_t nCntBits);
 		virtual void readBits(uint16&  nBits, size_t nCntBits);
 		virtual void readBits(uint32&  nBits, size_t nCntBits);
 		virtual void readBits(uint64&  nBits, size_t nCntBits);

@@ -86,6 +86,51 @@ namespace embDB
 			pFieldVal->setVal(shape);
 			return true;
 		}
+
+
+		virtual bool remove(int64 nOID)
+		{
+
+			if(m_pIndex.get())
+			{
+				 assert(m_pIndex->GetType() == itSpatial);
+				 ISpatialIndex* pSpatialIndex = dynamic_cast<ISpatialIndex*>(m_pIndex.get());
+				 assert(m_pIndex.get());
+
+				 typename TBTree::iterator it = this->m_tree.find(nOID);
+				 if(it.isNull())
+					 return false;
+
+				 CommonLib::IGeoShapePtr shape( new CommonLib::CGeoShape(this->m_pAlloc)); //TO DO use shape cache
+				 this->m_tree.convert(it.value(), shape);
+				
+				 IIndexIteratorPtr pIndexIterator = pSpatialIndex->find(shape->getBB(), sqmByFeature);
+				 if(!pIndexIterator->isNull())
+				 {
+					 //TO DO log
+					  m_tree.remove(it);
+					 return false;
+				 }
+				 while(!pIndexIterator->isNull())
+				 {
+					 if(pIndexIterator->getRowID() == nOID)
+					 {
+						 pSpatialIndex->remove(pIndexIterator.get());
+						 return m_tree.remove(it);
+					 }
+				 }
+
+				 //TO DO log
+				 m_tree.remove(it);
+				 return false;
+
+			}
+			else 
+				return m_tree.remove(nOID);
+
+
+
+		}
  
 	};
 

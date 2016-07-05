@@ -52,7 +52,7 @@ namespace embDB
 	 
 
 
-		uint32 GetComressSize() const
+		uint32 GetCompressSize() const
 		{
 
 			uint32 nSignSize = m_SignCompressor.GetCompressSize();

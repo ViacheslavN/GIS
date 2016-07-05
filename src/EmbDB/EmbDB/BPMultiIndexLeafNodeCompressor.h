@@ -3,10 +3,13 @@
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CompressorParams.h"
+#include "UnsignedNumLenDiffCompressor2.h"
+#include "EmptyMultiKeyCompress.h"
 namespace embDB
 {
 
-	template<typename _TKey, class _Transaction = IDBTransaction>
+	template<typename _TKey, class _Transaction = IDBTransaction,
+	class _TKeyCompress = TEmptyMultiKeyCompress<_TKey> >
 	class BPLeafNodeMultiIndexCompressor
 	{
 	public:	
@@ -14,7 +17,8 @@ namespace embDB
 		typedef IndexTuple<TKey> TIndex;
 		typedef TBPVector<TIndex> TLeafMemSet;
 		typedef CompressorParamsBaseImp TLeafCompressorParams;
-
+		typedef _TKeyCompress TKeyCompress;
+		TKeyCompress m_KeyCompressor;
 
 		template<typename _Transactions  >
 		static TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
@@ -22,8 +26,8 @@ namespace embDB
 			return new TLeafCompressorParams();
 		}
 
-		BPLeafNodeMultiIndexCompressor(uint32 nPageSize, _Transaction *pTran = 0, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL, TLeafMemSet *pLeafMemSet = NULL) : m_nCount(0),
-			m_nPageSize(nPageSize)
+		BPLeafNodeMultiIndexCompressor(uint32 nPageSize, _Transaction *pTran, CommonLib::alloc_t *pAlloc, TLeafCompressorParams *pParams, TLeafMemSet *pLeafMemSet) : 
+		m_nCount(0),	m_nPageSize(nPageSize), m_KeyCompressor(pAlloc, nPageSize, pParams), m_pLeafMemSet(pLeafMemSet)
 		{}
 		virtual ~BPLeafNodeMultiIndexCompressor(){}
 		virtual bool Load(TLeafMemSet& Set, CommonLib::FxMemoryReadStream& stream)
@@ -33,20 +37,16 @@ namespace embDB
 			if(!m_nCount)
 				return true;
 
+			uint32 nKeySize = stream.readInt32();
+
 			Set.reserve(m_nCount);
  
-			uint32 nKeySize =  m_nCount * (sizeof(TKey) + sizeof(int64));
+
 			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
 			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
-			TIndex index;
-			for (uint32 nIndex = 0; nIndex < m_nCount; ++nIndex)
-			{
-				KeyStreams.read(index.m_key);
-				KeyStreams.read(index.m_nObjectID);
-				Set.push_back(index);
-			}
 
-			return true;
+			return m_KeyCompressor.decompress(m_nCount, Set, &KeyStreams);
+ 
 		}
 		virtual bool Write(TLeafMemSet& Set, CommonLib::FxMemoryWriteStream& stream)
 		{
@@ -54,16 +54,20 @@ namespace embDB
 			stream.write(m_nCount);
 			if(!m_nCount)
 				return true;
-			uint32 nKeySize =  m_nCount * (sizeof(TKey) + sizeof(int64));
-			/*stream.write(nKeySize);*/
+			uint32 nKeySize = m_KeyCompressor.GetCompressSize();
+			stream.write(nKeySize);
+
 			CommonLib::FxMemoryWriteStream KeyStreams;
 			KeyStreams.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
+
+			m_KeyCompressor.compress(Set, &KeyStreams);
+
 			stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
-			for(uint32 i = 0, sz = Set.size(); i < sz; ++i)
+			/*for(uint32 i = 0, sz = Set.size(); i < sz; ++i)
 			{
 				KeyStreams.write(Set[i].m_key);
-				KeyStreams.write(Set[i].m_nObjectID);
-			}
+				KeyStreams.write(Set[i].m_nRowID);
+			}*/
 
 			return true;
 		}
@@ -71,18 +75,47 @@ namespace embDB
 		virtual bool insert(int nIndex, const TIndex& key)
 		{
 			m_nCount++;
+			m_KeyCompressor.AddSymbol(m_nCount, nIndex, key, *m_pLeafMemSet);
 			return true;
 		}
 		virtual bool add(const TLeafMemSet& Set)
 		{
 			m_nCount += Set.size();
+
+			if(!Set.empty())
+			{
+				this->m_KeyCompressor.AddDiffSymbol(Set[0], (*this->m_pLeafMemSet)[this->m_nCount - 1]);
+			}
+
+
+			for (uint32 i = 1, sz = Set.size(); i < sz; ++i)
+			{
+				this->m_KeyCompressor.AddDiffSymbol(Set[i], Set[i - 1]);
+			}
+
 			return true;
 		}
 		virtual bool recalc(const TLeafMemSet& Set)
 		{
-			m_nCount = Set.size();
+			this->m_nCount = this->m_pLeafMemSet->size();
+			this->m_KeyCompressor.clear();
+			for (uint32 i = 1, sz = this->m_pLeafMemSet->size(); i < sz; 	++i)
+			{
+				this->m_KeyCompressor.AddDiffSymbol((*this->m_pLeafMemSet)[i], (*this->m_pLeafMemSet)[i - 1]); 
+			}
 			return true;
 		}
+		virtual void recalc()
+		{
+			this->m_nCount = this->m_pLeafMemSet->size();
+			this->m_KeyCompressor.clear();
+			for (uint32 i = 1, sz = this->m_pLeafMemSet->size(); i < sz; 	++i)
+			{
+				this->m_KeyCompressor.AddDiffSymbol((*this->m_pLeafMemSet)[i], (*this->m_pLeafMemSet)[i - 1]); 
+			}
+		}
+
+
 		virtual bool update(int nIndex, const TIndex& key)
 		{
 			return true;
@@ -90,15 +123,16 @@ namespace embDB
 		virtual bool remove(int nIndex, const TIndex& key)
 		{
 			m_nCount--;
+			this->m_KeyCompressor.RemoveSymbol(this->m_nCount, nIndex, key, *(this->m_pLeafMemSet));
 			return true;
 		}
 		virtual uint32 size() const
 		{
-			return (sizeof(TKey) + sizeof(int64))*  m_nCount +  sizeof(uint32);
+			return rowSize() +  headSize();
 		}
 		virtual bool isNeedSplit() const
 		{
-			return m_nPageSize < size();
+			return !(m_nPageSize > size()) || m_nCount > 2 *m_nPageSize;
 		}
 		virtual uint32 count() const
 		{
@@ -106,15 +140,15 @@ namespace embDB
 		}
 		uint32 headSize() const
 		{
-			return  sizeof(uint32);
+			return  sizeof(uint32) + sizeof(uint32); //count + compsize
 		}
 		uint32 rowSize() const
 		{
-			return (sizeof(TKey) + sizeof(int64)) *  m_nCount;
+			return m_KeyCompressor.GetCompressSize();
 		}
 		uint32 tupleSize() const
 		{
-			return  sizeof(TKey) + sizeof(int64);
+			return  sizeof(TIndex) + sizeof(int64);
 		}
 		void SplitIn(uint32 nBegin, uint32 nEnd, BPLeafNodeMultiIndexCompressor *pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
 		{
@@ -122,30 +156,33 @@ namespace embDB
 
 			m_nCount -= nSize;
 			pCompressor->m_nCount += nSize;
+			if(bRecalcSrc)
+				recalc();
+			if(bRecalcDst)
+				pCompressor->recalc();
+
 		}
 
 		bool IsHaveUnion(BPLeafNodeMultiIndexCompressor *pCompressor) const
 		{
-			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(int64) );
-			uint32 nNoCompSizeUnion = pCompressor->m_nCount * (sizeof(TKey) + sizeof(int64) );
-
-			return (nNoCompSize + nNoCompSizeUnion) < (m_nPageSize - headSize());
+			return (rowSize() + pCompressor->rowSize()) < (m_nPageSize - headSize());
 
 
 		}
 		bool IsHaveAlignment(BPLeafNodeMultiIndexCompressor *pCompressor) const
 		{
-			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(int64) );
+			uint32 nNoCompSize = m_nCount * (sizeof(TIndex) + sizeof(int64) );
 			return nNoCompSize < (m_nPageSize - headSize());
 		}
 		bool isHalfEmpty() const
 		{
-			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(int64));
+			uint32 nNoCompSize = m_nCount * (sizeof(TIndex) + sizeof(int64));
 			return nNoCompSize < (m_nPageSize - headSize())/2;
 		}
 	private:
 		uint32 m_nCount;
 		uint32 m_nPageSize;
+		TLeafMemSet *m_pLeafMemSet;
 	};
 }
 

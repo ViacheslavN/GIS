@@ -413,7 +413,7 @@ namespace embDB
 	
 	bool CTransaction::commit_undo()
 	{
-		for (uint32 i = 0, sz = m_InnerTran.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = (uint32)m_InnerTran.size(); i < sz; ++i)
 		{
 			m_InnerTran[i]->commit();
 		}
@@ -438,11 +438,11 @@ namespace embDB
 		m_TranStorage.Flush();
 
 
-		for (uint32 i = 0, sz = m_vecFreePages.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = (uint32)m_vecFreePages.size(); i < sz; ++i)
 		{
 			m_pDBStorage->removeFromFreePage(m_vecFreePages[i]);
 		}
-		for (uint32 i = 0, sz = m_vecRemovePages.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = (uint32)m_vecRemovePages.size(); i < sz; ++i)
 		{
 			m_TranPerfCounter.RemoveDBPage();
 			m_pDBStorage->dropFilePage(m_vecRemovePages[i]);
@@ -461,7 +461,7 @@ namespace embDB
 	}
 	bool CTransaction::commit_redo()
 	{
-		for (uint32 i = 0, sz = m_InnerTran.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = (uint32)m_InnerTran.size(); i < sz; ++i)
 		{
 			m_InnerTran[i]->commit();
 		}
@@ -489,11 +489,11 @@ namespace embDB
 		m_TranStorage.Flush();
 
 
-		for (uint32 i = 0, sz = m_vecFreePages.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = (uint32)m_vecFreePages.size(); i < sz; ++i)
 		{
 			m_pDBStorage->removeFromFreePage(m_vecFreePages[i]);
 		}
-		for (uint32 i = 0, sz = m_vecRemovePages.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = (uint32)m_vecRemovePages.size(); i < sz; ++i)
 		{
 			m_TranPerfCounter.RemoveDBPage();
 			m_pDBStorage->dropFilePage(m_vecRemovePages[i]);

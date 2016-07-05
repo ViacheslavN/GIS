@@ -169,7 +169,9 @@
     <ClCompile Include="TestBPVectorNoPod.cpp" />
     <ClCompile Include="TestBTreeRedo.cpp" />
     <ClCompile Include="TestBTreeUndo.cpp" />
+    <ClCompile Include="TestCacheLRU_2Q.cpp" />
     <ClCompile Include="TestCompositeKey.cpp" />
+    <ClCompile Include="TestMultiIndex.cpp" />
     <ClCompile Include="TestTreeBlob.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

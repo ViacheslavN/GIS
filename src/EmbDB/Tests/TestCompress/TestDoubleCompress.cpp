@@ -230,13 +230,13 @@ void TestDoubleCompress()
 		vec.push_back(dd);
 		doubleCompressorDiff.AddSymbol(vec.size(), vec.size() - 1, dd, vec);
 
-		uint32 nSize = doubleCompressorDiff.GetComressSize();
+		uint32 nSize = doubleCompressorDiff.GetCompressSize();
 		if(nSize > 8192)
 		{
 
 			int dd = 0;
 			dd++;
-			nSize = doubleCompressorDiff.GetComressSize();
+			nSize = doubleCompressorDiff.GetCompressSize();
 			break;
 		}
 
@@ -252,7 +252,7 @@ void TestDoubleCompress()
 		vec.push_back(dd);
 		doubleCompressor.AddSymbol(vec.size(), vec.size() - 1, dd, vec);
 
-		uint32 nSize = doubleCompressor.GetComressSize();
+		uint32 nSize = doubleCompressor.GetCompressSize();
 		if(nSize > 8192)
 		{
 			int dd = 0;

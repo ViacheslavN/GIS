@@ -10,9 +10,7 @@
 #include "CommonLibrary/RangeCoder.h"
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CommonLibrary/FileStream.h"
-#include "SignedNumLenDiffCompress.h"
 #include "SignCompressor.h"
-#include "SignedNumLenDiffCompress.h"
 namespace embDB
 {
 
@@ -24,13 +22,13 @@ namespace embDB
 	class _TRangeDecoder,
 	class _TACDecoder,		
 		uint32 _nMaxBitsLens>
-	class TUnsignedDiffNumLenCompressor2 : public TUnsignedNumLenCompressor<_TValue, TSignedFindMostSigBit, _TRangeEncoder,
+	class TUnsignedDiffNumLenCompressor2 : public TUnsignedNumLenCompressor<_TValue, TFindMostSigBit, _TRangeEncoder,
 		_TACEncoder, _TRangeDecoder, _TACDecoder, _nMaxBitsLens>
 	{
 	public:
 
 
-		typedef TUnsignedNumLenCompressor<_TValue, TSignedFindMostSigBit, _TRangeEncoder,
+		typedef TUnsignedNumLenCompressor<_TValue, TFindMostSigBit, _TRangeEncoder,
 			_TACEncoder, _TRangeDecoder, _TACDecoder, _nMaxBitsLens> TBase;
 
 		typedef typename TBase::TValue TValue;
@@ -56,14 +54,11 @@ namespace embDB
 		uint32 GetCompressSize() const
 		{ 
 			uint32 nBaseSize = TBase::GetCompressSize();
-			uint32 nSignSize = m_SignCompressor.GetCompressSize();
-
-			return nBaseSize +  sizeof(TValue) + nSignSize;
+			return nBaseSize +  sizeof(TValue);
 		}
 		void clear()
 		{
 			TBase::clear();
-			m_SignCompressor.clear();
 			memset(m_FreqPrev, 0, sizeof(m_FreqPrev));
 			m_nFlag = 0;
 		}
@@ -72,8 +67,6 @@ namespace embDB
 		void BeginEncode(CommonLib::IWriteStream* pStream)
 		{
 			m_pWriteStream = pStream;
-			assert(m_SignCompressor.count() == this->m_nCount);
-
 			byte nFlag = (byte)this->m_nTypeFreq;
 			pStream->write(nFlag);
 
@@ -94,7 +87,6 @@ namespace embDB
 
 			uint32 nBitSize = (this->m_nLenBitSize +7)/8;
 
-			m_SignCompressor.BeginCompress(m_pWriteStream);
 
 			m_WriteBitStream.attach(m_pWriteStream, m_pWriteStream->pos(), nBitSize);
 			m_pWriteStream->seek(nBitSize, CommonLib::soFromCurrent);
@@ -108,10 +100,8 @@ namespace embDB
 			uint16 nBitLen =  this->m_FindBit.FMSB(symbol);
 
 			assert(this->m_BitsLensFreq[nBitLen] != 0);
-
-			m_SignCompressor.EncodeSign(symbol < 0, nIndex);
 			if(nBitLen > 1)
-				m_WriteBitStream.writeBits(symbol > 0 ? symbol : -symbol, nBitLen - 1);
+				m_WriteBitStream.writeBits(symbol, nBitLen - 1);
 			m_ACEncoder.EncodeSymbol(m_FreqPrev[nBitLen], m_FreqPrev[nBitLen + 1], this->m_nCount);
 		}
 
@@ -144,8 +134,6 @@ namespace embDB
 			}
 
 			uint32 nBitSize = (this->m_nLenBitSize + 7)/8;
-			m_SignCompressor.BeginDecompress(m_pReadStream, this->m_nCount);
-
 			m_readBitStream.attach(m_pReadStream, m_pReadStream->pos(), nBitSize);
 			m_pReadStream->seek(nBitSize, CommonLib::soFromCurrent);
 
@@ -161,7 +149,6 @@ namespace embDB
 			if(nBitLen != 0)
 				nBitLen--;
 
-			bool bSign = m_SignCompressor.DecodeSign( nIndex);
 			value = nBitLen;
 			if(value > 1)
 			{
@@ -169,8 +156,6 @@ namespace embDB
 				m_readBitStream.readBits(value, nBitLen - 1);
 				value |= 1 << (nBitLen - 1);
 			}
-			if(bSign)
-				value *= -1;
 			m_ACDecoder.DecodeSymbol(m_FreqPrev[nBitLen], m_FreqPrev[nBitLen+1], this->m_nCount);
 			return true;
 		}
@@ -187,3 +172,32 @@ namespace embDB
 	};
 
 
+
+	typedef TUnsignedDiffNumLenCompressor2<int64, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 64> UnsignedDiffNumLenCompressor264i;
+
+	typedef TUnsignedDiffNumLenCompressor2<uint64, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 64> UnsignedDiffNumLenCompressor264u;
+
+	typedef TUnsignedDiffNumLenCompressor2<int32, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 32> UnsignedDiffNumLenCompressor232i;
+
+	typedef TUnsignedDiffNumLenCompressor2<uint32, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 32> UnsignedDiffNumLenCompressor232u;
+
+
+	typedef TUnsignedDiffNumLenCompressor2<int16, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 16> UnsignedDiffNumLenCompressor216i;
+
+	typedef TUnsignedDiffNumLenCompressor2<uint16, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 16> UnsignedDiffNumLenCompressor216u;
+	
+	typedef TUnsignedDiffNumLenCompressor2<int8, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 8> UnsignedDiffNumLenCompressor28i;
+
+	typedef TUnsignedDiffNumLenCompressor2<byte, CommonLib::TRangeEncoder64, CommonLib::TACEncoder64, 
+		CommonLib::TRangeDecoder64, CommonLib::TACDecoder64, 8> UnsignedDiffNumLenCompressor28u;
+
+}
+
+#endif

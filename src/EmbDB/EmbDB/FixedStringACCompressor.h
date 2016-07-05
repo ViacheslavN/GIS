@@ -189,7 +189,7 @@ namespace embDB
 			}
 
 				   
-			uint32 GetComressSize() const
+			uint32 GetCompressSize() const
 			{
 				double dRowBitsLen = GetCodeBitSize();
 				uint32 nByteSize = (dRowBitsLen + 7)/8;

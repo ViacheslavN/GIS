@@ -41,7 +41,7 @@ namespace embDB
 
 		bool checkSize()
 		{
-			uint32 nMemSize = ((m_values.size() + 1) * m_rw.rowSize()) + sizeof(int64) + sizeof(int32) + sFilePageHeader::size();
+			uint32 nMemSize = (((uint32)m_values.size() + 1) * m_rw.rowSize()) + sizeof(int64) + sizeof(int32) + sFilePageHeader::size();
 			return nMemSize < m_nPageSize; 
 		}
 		template <typename _TStorage, typename _FilePage>
@@ -70,7 +70,7 @@ namespace embDB
 			stream.write(pNextPage != NULL? pNextPage->getAddr() : (int64)-1);
 			stream.write((int32)m_values.size());
 
-			for (uint32 i = 0, sz = m_values.size(); i < sz; ++i)
+			for (uint32 i = 0, sz = (uint32)m_values.size(); i < sz; ++i)
 			{
 				m_rw.write(m_values[i], stream);
 			}

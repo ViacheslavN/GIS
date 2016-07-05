@@ -16,7 +16,7 @@ namespace embDB
 	{
 
 	}
-	uint32 OIDCompressor::GetComressSize() const
+	uint32 OIDCompressor::GetCompressSize() const
 	{
 		 uint32 nByteDiffComp = m_DiffComp.GetCompressSize();
 		 uint32 nByteNumlenComp = m_NumLenComp.GetCompressSize();

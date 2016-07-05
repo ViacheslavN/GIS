@@ -1412,7 +1412,7 @@ namespace embDB
 	*/
 
 	template<class TIterator>
-	bool remove(TIterator& it)
+	bool remove(const TIterator& it)
 	{
 		if(it.isNull())
 			return false;

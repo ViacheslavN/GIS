@@ -1,9 +1,9 @@
 1.Логирование в транзакциях
-2.Индексы, уникальный, составной
+2.Индексы, уникальный, составной -+
 3.Индыксы для БД readOnle
 4.Grafh Lock
 5.SQL
-6. установка parent-a через соседнею ноду
-7. string, blob, shapes
-8. work copmress in remove operation union, alignment
+6. установка parent-a через соседнею ноду +
+7. string, blob, shapes +
+8. work copmress in remove operation union, alignment +
  

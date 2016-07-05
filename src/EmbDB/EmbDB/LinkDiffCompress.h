@@ -17,7 +17,7 @@ namespace embDB
 
 		void AddLink(int64 nLink);
 		void RemoveLink(int64 nLink);
-		uint32 GetComressSize() const;
+		uint32 GetCompressSize() const;
 
 
 

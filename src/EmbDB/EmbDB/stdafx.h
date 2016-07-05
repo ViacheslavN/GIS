@@ -11,4 +11,8 @@
 
 
 #endif
+
+#ifdef _WIN32
+	#pragma warning(disable: 4503)
+#endif
 // TODO: reference additional headers your program requires here

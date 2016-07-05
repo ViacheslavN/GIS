@@ -8,8 +8,16 @@
 namespace embDB
 {
 
+	template<class TObj>
+	struct TEmptyFreeChecker
+	{
+		bool IsFree(TObj* pObj)
+		{
+			return true;
+		}
+	};
 
-	template<class TKey, class TObj>
+	template<class TKey, class TObj, class TFreeChecker = TEmptyFreeChecker<TObj> >
 	class TCacheLRU_2Q
 	{
 
@@ -24,11 +32,11 @@ namespace embDB
 		{
 			TCacheVal() : m_type(UNDEFINED)
 			{}
-			TCacheVal( const TKey key, TObj obj, eQueryType type) : m_key(key), m_obj(obj),
+			TCacheVal( const TKey key, TObj* obj, eQueryType type) : m_key(key), m_obj(obj),
 				m_type(type)
 			{}
 			TKey m_key;
-			TObj m_obj;
+			TObj* m_obj;
 			eQueryType m_type;
 		};
 
@@ -36,25 +44,7 @@ namespace embDB
 		typedef TList<TCacheVal> QList;
 
 	 public:
-
-		 class iterator
-		 {
-			public:
-				iterator(): m_bNull(false)
-				{}
-				iterator(TObj obj): obj(m_obj), m_bNull(true)
-				{}
-				bool IsNull() const {return m_bNull;}
-				const TObj& value() const{return m_obj;}
-				TObj& value() {return m_obj;}
-			private:
-				TObj m_obj
-				bool m_bNull;
-
-
-		 };
-
-		 typedef QList::iterator TListIterator;
+		 typedef typename QList::iterator TListIterator;
 		
 		TCacheLRU_2Q(CommonLib::alloc_t* pAlloc) : 
 			m_pAlloc(pAlloc), m_TopList(pAlloc), m_BackList(pAlloc)
@@ -68,13 +58,13 @@ namespace embDB
 		}
 
 
-		void AddElem(const TKey& key, TObj pObj, bool bAddBack = false)
+		void AddElem(const TKey& key, TObj* pObj, bool bAddBack = true)
 		{
  			QList::iterator it;
 			if(bAddBack)
 				it = m_BackList.push_back(TCacheVal(key, pObj, BACK));
 			else
-				it = m_BackList.push_top(TCacheVal(key, pObj, BACK));
+				it = m_TopList.push_top(TCacheVal(key, pObj, TOP));
 			m_CacheMap.insert(std::make_pair(key, it.node()));
 		}
 
@@ -86,53 +76,60 @@ namespace embDB
 			m_TopList.clear();
 
 		}
-		iterator  remove(const TKey& key)
+		TObj*  remove(const TKey& key)
 		{
 			TCacheMap::iterator it = m_CacheMap.find(key);
 			if(it == m_CacheMap.end())
-				return iterator();
+				return NULL;
 
 			QList::TNode* pNode =  it->second;
 			TCacheVal & cacheVal = pNode->m_val;
-			iterator it(cacheVal.m_obj);
+
+			assert(cacheVal.m_type == BACK || cacheVal.m_type == TOP)
 
 			if(cacheVal.m_type == BACK)
 				m_BackList.remove(pNode);
 			else
 				m_TopList.remove(pNode);
-			else
-				assert(false);
+		 
 
 			m_CacheMap.erase(it);
-			return pObj;
+			return cacheVal.m_obj;
 
 		}
-		iterator remove_back()
+		TObj* remove_back()
 		{
 
+			TObj* pObj = NULL;
 			if(m_BackList.size())
-				 return removeBack(m_BackList)
-			if(m_TopList.size())
-				 return removeBack(m_BackList)
-			return iterator();
+				pObj = removeBack(m_BackList)
+
+            if(!pObj)
+			{
+				if(m_TopList.size())
+					pObj = removeBack(m_TopList)
+			}
+			return pObj;
 		}
 
-		iterator GetElem(const TKey& key, bool bNotMove = false)
+		TObj* GetElem(const TKey& key, bool bNotMove = false)
 		{
 			TCacheMap::iterator it = m_CacheMap.find(key);
 			if(it == m_CacheMap.end())
-				return iterator();
+				return NULL;
 
 
 			QList::TNode* pNode =  it->second;
 			TCacheVal & cacheVal = pNode->m_val;
 			if(bNotMove)
-				iterator(cacheVal.m_obj);
+				return cacheVal.m_obj;
 
 			if(cacheVal.m_type == BACK)
 			{
 				m_BackList.remove(pNode, false);
+				cacheVal.m_type = TOP;
 				m_TopList.push_back(pNode);
+				 
 			}
 			else
 			{
@@ -141,37 +138,44 @@ namespace embDB
 					m_TopList.remove(pNode, false);
 					m_TopList.push_top(pNode);
 				}
-			
-				 
 			}
-			return iterator(cacheVal.m_obj);
+			return cacheVal.m_obj;
 		}
 	
 		TListIterator topList() {return m_TopList.begin();}
 		TListIterator backList() {return m_BackList.begin();}
 	 private:
-		iterator removeBack(QList& list)
+		TObj* removeBack(QList& list)
 		{
 			QList::iterator listIt = list.back();
-			if(listIt.iterator)
-				return iterator();
+			if(listIt.IsNull())
+				return NULL;
 
-			iterator it(listIt.value());
-			m_CacheMap.erase(listIt.value().m_key);
-			list.remove(listIt);
 
-			return it;
+			while(!listIt.IsNull())
+			{
+				TObj* pObj = listIt.value();
+				if(m_FreeChecker.IsFree(pObj))
+				{
+					m_CacheMap.erase(listIt.value().m_key);
+					list.remove(listIt);
+					return pObj;
+				}
+			}
+			return NULL;
 		}
 
 	private:
 
 		CommonLib::simple_alloc_t m_simple_alloc;
-		typedef std::map<TKey, QList::TNode*> TCacheMap;
+		typedef typename QList::TNode TListNode;
+		typedef std::map<TKey, TListNode*> TCacheMap;
 
 		CommonLib::alloc_t* m_pAlloc;
 		TCacheMap m_CacheMap;
 		QList m_TopList;
 		QList m_BackList;
+		TFreeChecker m_FreeChecker;
 	 
 	};   
 

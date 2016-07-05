@@ -358,8 +358,76 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, 
 	}
 }
  
+void AddIndex(const wchar_t* pszDBName, const wchar_t* pszTable, const wchar_t* pszField, embDB::indexTypes type)
+{
+	embDB::CDatabase db;
+	CommonLib::CString sFilePath = CommonLib::FileSystem::FindFilePath(pszDBName);
+	if(!db.open(pszDBName, embDB::eTMSingleTransactions, sFilePath.wstr()))
+	{
+		return;
+	}
+	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_DDL);
+	pTran->begin();
+	embDB::ISchemaPtr pSchema = db.getSchema();
+	embDB::ITablePtr pTable = pSchema->getTableByName(pszTable);
+	if(!pTable.get())
+		return;
 
-void SearchShapeFile(const wchar_t* pszDBName, const wchar_t* pszSpField, CommonLib::bbox& bbox, const wchar_t* pszOIDField)
+	embDB::IDBTable *pDBTable = dynamic_cast<embDB::IDBTable*>(pTable.get());
+
+	if(!pDBTable)
+		return;
+	 
+	embDB::SIndexProp ip;
+	ip.m_indexType = type;
+
+	pDBTable->createIndex(pszField, ip);
+
+	pTran->commit();
+}
+
+
+void TestIndex(const wchar_t* pszDBName, const wchar_t* pszTable, const wchar_t* pszField)
+{
+	embDB::CDatabase db;
+	CommonLib::CString sFilePath = CommonLib::FileSystem::FindFilePath(pszDBName);
+	if(!db.open(pszDBName, embDB::eTMSingleTransactions, sFilePath.wstr()))
+	{
+		return;
+	}
+	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_SELECT);
+	pTran->begin();
+
+	embDB::ICursorPtr pCursor = pTran->executeSelectQuery( pszTable);
+	std::vector<CommonLib::CVariant> vecObj;
+	embDB::IRowPtr pRow;
+
+	int nField = pRow->GetSourceFields()->FindField(pszField);
+	while(pCursor->NextRow(&pRow))
+	{
+		vecObj.push_back(*pRow->value(nField));
+	}
+	embDB::IRowPtr pRow1;
+	for(size_t i = 0; i < vecObj.size(); ++i)
+	{
+		CommonLib::CVariant var = vecObj[i];
+
+		embDB::ICursorPtr pCursor1 = pTran->executeSelectQuery( pszTable, NULL, pszTable, var, embDB::OpEqual);
+		if(pCursor1.get())
+		{
+			while(pCursor1->NextRow(&pRow1))
+			{
+			
+			}
+		}
+
+
+	}
+
+
+}
+
+void SearchShapeFile(const wchar_t* pszDBName, const wchar_t* pszTable, const wchar_t* pszSpField, CommonLib::bbox& bbox, const wchar_t* pszOIDField)
 {
 	embDB::CDatabase db;
 	CommonLib::CString sFilePath = CommonLib::FileSystem::FindFilePath(pszDBName);
@@ -376,7 +444,7 @@ void SearchShapeFile(const wchar_t* pszDBName, const wchar_t* pszSpField, Common
 	bbox.xMax =  652299.90000000002;
 	bbox.yMax = 6123549.2000000002;*/
 	//embDB::ICursorPtr pCursor = pTran->executeSpatialQuery(bbox, L"ne_10m_urban_areas_landscan", L"ne_10m_urban_areas_landscan");
-	embDB::ICursorPtr pCursor = pTran->executeSpatialQuery(bbox, pszSpField, pszSpField);
+	embDB::ICursorPtr pCursor = pTran->executeSpatialQuery(bbox, pszTable, pszSpField);
 	int nObj = 0;
 	embDB::IRowPtr pRow;
 	if(pCursor.get())
@@ -392,7 +460,7 @@ void SearchShapeFile(const wchar_t* pszDBName, const wchar_t* pszSpField, Common
 	int  i = 0;
 	i++;
 
-	pCursor = pTran->executeSelectQuery( L"building");
+	pCursor = pTran->executeSelectQuery( pszTable);
 	int nObj2 = 0;
 	std::vector<int64> vecROWID;
 	while(pCursor->NextRow(&pRow))
@@ -413,7 +481,7 @@ void SearchShapeFile(const wchar_t* pszDBName, const wchar_t* pszSpField, Common
 		{
 			CommonLib::CVariant var = vecROWID[i];
 
-			embDB::ICursorPtr pCursor1 = pTran->executeSelectQuery( L"building", NULL, pszOIDField, var, embDB::OpEqual);
+			embDB::ICursorPtr pCursor1 = pTran->executeSelectQuery( pszTable, NULL, pszOIDField, var, embDB::OpEqual);
 			if(pCursor1.get())
 			{
 				while(pCursor1->NextRow(&pRow1))
@@ -446,5 +514,5 @@ void testDBFromShape()
 	bbox.yMin =	6072242.5499999998;
 	bbox.xMax =  652299.90000000002;
 	bbox.yMax = 6123549.2000000002;
-	SearchShapeFile(L"d:\\db\\importShapeFile.embDB", L"building", bbox, L"ID");
+	SearchShapeFile(L"d:\\db\\importShapeFile.embDB", L"building", L"building", bbox, L"ID");
 }

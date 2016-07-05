@@ -125,9 +125,9 @@ namespace embDB
 			CommonLib::FxMemoryWriteStream ValueStream;
 
 			eStringCoding sCode = m_pLeafCompParams->GetStringCoding();
-			uint32 nKeySize =  m_OIDCompressor.GetComressSize();//m_nCount * sizeof(TKey);
+			uint32 nKeySize =  m_OIDCompressor.GetCompressSize();//m_nCount * sizeof(TKey);
 			//uint32 nKeySize =  m_nCount * sizeof(TKey);
-			m_nStringDataSize = m_Compress.GetComressSize();
+			m_nStringDataSize = m_Compress.GetCompressSize();
 
 			stream.write(nKeySize);
 			stream.write(m_nStringDataSize);
@@ -242,8 +242,8 @@ namespace embDB
 		}
 		uint32 rowSize() const
 		{
-			//return (sizeof(TKey) *  m_nCount ) + /*m_nStringDataSize*/ m_Compress.GetComressSize();
-			return m_Compress.GetComressSize() + m_OIDCompressor.GetComressSize();//(sizeof(TKey) *  m_nCount ) + m_nStringDataSize;
+			//return (sizeof(TKey) *  m_nCount ) + /*m_nStringDataSize*/ m_Compress.GetCompressSize();
+			return m_Compress.GetCompressSize() + m_OIDCompressor.GetCompressSize();//(sizeof(TKey) *  m_nCount ) + m_nStringDataSize;
 		}
 		void clear()
 		{

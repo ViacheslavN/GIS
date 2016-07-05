@@ -262,7 +262,7 @@ namespace embDB
 
 	uint32 CSchema::getTableCnt() const
 	{
-		return m_vecTables.size();
+		return (uint32)m_vecTables.size();
 	}
 	ITablePtr CSchema::getTable(uint32 nIndex) const
 	{

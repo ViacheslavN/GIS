@@ -561,6 +561,7 @@
     <ClInclude Include="MultiIndexBase.h" />
     <ClInclude Include="MultiIndexBPTree.h" />
     <ClInclude Include="Counter.h" />
+    <ClInclude Include="MultiKeyCompressor.h" />
     <ClInclude Include="NumLenCompress.h" />
     <ClInclude Include="NumLenDiffCompress.h" />
     <ClInclude Include="OIDCompress.h" />
@@ -630,6 +631,7 @@
     <ClInclude Include="StringTree.h" />
     <ClInclude Include="StringVal.h" />
     <ClInclude Include="TBaseSpatialCompressor.h" />
+    <ClInclude Include="EmptyMultiKeyCompress.h" />
     <ClInclude Include="TransactionBase.h" />
     <ClInclude Include="UniqueCompIndexBase.h" />
     <ClInclude Include="UniqueIndex.h" />

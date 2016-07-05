@@ -96,7 +96,7 @@ namespace embDB
 		{
 			m_Compressor.AddZOrder(zOrder);
 		}
-		uint32 GetComressSize() const
+		uint32 GetCompressSize() const
 		{
 			return m_Compressor.GetCompressSize();
 		}

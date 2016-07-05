@@ -35,7 +35,7 @@ namespace embDB
 		{
 			m_compressor.RemoveSymbol(vecValues[nIndex]); 
 		}
-		uint32 GetComressSize() const
+		uint32 GetCompressSize() const
 		{
 			return m_compressor.GetCompressSize();
 		}

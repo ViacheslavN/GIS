@@ -40,7 +40,7 @@ namespace embDB
 
 
 
-		uint32 GetComressSize() const
+		uint32 GetCompressSize() const
 		{
 			return m_nStringDataSize;
 		}
@@ -135,7 +135,7 @@ namespace embDB
 			uint32 GetSplitIndex() const
 			{
 
-				uint32 nFreePage = this->m_nPageSize - this->m_KeyCompressor.GetComressSize();
+				uint32 nFreePage = this->m_nPageSize - this->m_KeyCompressor.GetCompressSize();
 
 				return this->m_ValueCompressor.GetSplitIndex(nFreePage);
 			}

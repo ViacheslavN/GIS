@@ -45,7 +45,7 @@ void TestStringCompress()
 		vecValues.push_back(sVal);
 		comp.AddSymbol(vecValues.size(), i, sVal, vecValues);
 
-		nSize = comp.GetComressSize();
+		nSize = comp.GetCompressSize();
 
 		if(i != 0)
 		{
@@ -57,7 +57,7 @@ void TestStringCompress()
 		if(nSize > 8192)
 		{
 			comp.CompressBlock(vecValues);
-			nSize = comp.GetComressSize();
+			nSize = comp.GetCompressSize();
 			if(nSize > 8192)
 			{
 				lenCompressStream.resize(nSize);
