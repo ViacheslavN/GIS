@@ -21,7 +21,7 @@ void TestCacheLRU_2Q()
 {
 	CommonLib::simple_alloc_t alloc;
 	{
-		TCache cache(&alloc);
+		TCache cache(&alloc, 2);
 
 		for (int i = 0, sz = 100; i < sz; i++)
 		{
@@ -36,6 +36,30 @@ void TestCacheLRU_2Q()
 			CObj *pObj =  cache.GetElem(i);
 			
 		}
+
+		CObj *pObj =  cache.GetElem(0);
+		pObj =  cache.GetElem(0);
+
+		CObj *pBackObj =  cache.remove_back();
+		delete pBackObj;
+
+		pBackObj =  cache.remove_back();
+		delete pBackObj;
+		pBackObj =  cache.remove_back();
+		delete pBackObj;
+
+
+		TCache::iterator it = cache.begin();
+		while(!it.isNull())
+		{
+			CObj *pRemObj = it.object();
+			delete pRemObj;
+			it.next();
+		}
+
+		cache.clear();
 	}
+
+ 
 	
 }

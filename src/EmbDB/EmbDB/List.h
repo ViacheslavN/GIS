@@ -42,7 +42,7 @@ public:
 			m_pNode = m_pNode->m_pPrev;
 			return m_pNode != NULL;
 		}
-		bool IsEnd()
+		bool IsNull()
 		{
 			return m_pNode == NULL;
 		}
@@ -91,6 +91,7 @@ public:
 		else
 		{
 			pElem->m_pNext = m_pBack;
+			pElem->m_pPrev = NULL;
 			m_pBack->m_pPrev = pElem;
 			m_pBack = pElem;
 		}
@@ -110,6 +111,7 @@ public:
 		{
 			m_pBegin->m_pNext = pElem;
 			pElem->m_pPrev = m_pBegin;
+			pElem->m_pNext = NULL;
 			m_pBegin = pElem;
 		}
 
@@ -120,6 +122,10 @@ public:
 	uint32 size() const{return m_nSize;}
 	void clear()
 	{
+
+		if(m_pBegin == NULL|| m_pBack == NULL)
+			return;
+
 		TNode *pNode = m_pBack;
 		TNode *pNextNode = pNode->m_pNext;
 		if(!pNextNode)

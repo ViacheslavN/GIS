@@ -98,14 +98,7 @@ namespace embDB
 	}
 	CStorage::~CStorage()
 	{
-		/*TNodesCache::TCacheSet::iterator it =	m_Chache.m_set.begin();
-		while(!it.isNull())
-		{
-			CFilePage* pPage  = it.value().pListEl->obj_;
-			delete pPage;
-			it.next();
-		}
-		m_Chache.m_set.clear();*/
+
 		TNodesCache::iterator it = m_Chache.begin();
 		while(!it.isNull())
 		{
