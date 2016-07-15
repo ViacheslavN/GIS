@@ -15,9 +15,9 @@ namespace embDB
 		typedef std::vector<TValue> TVecValues;
 	public:
 
-		TPageVectorLazySave(int64 nPage, uint32 nPageSize, uint16 nObjectPage, uint16 nSubObjectPage) :
+		TPageVectorLazySave(int64 nPage, uint32 nPageSize, uint16 nObjectPage, uint16 nSubObjectPage, bool bCheckCRC) :
 		  m_nRootPage(nPage), m_nPageSize(nPageSize), m_nObjectPage(nObjectPage), 
-			  m_nSubObjectPage(nSubObjectPage), m_nPageAddr(nPage)
+			  m_nSubObjectPage(nSubObjectPage), m_nPageAddr(nPage), m_bCheckCRC(bCheckCRC)
 		{}
 		~TPageVectorLazySave(){}
 
@@ -88,8 +88,9 @@ namespace embDB
 		struct iterator
 		{
 		public:
-			iterator(int64 nPage, _TStorage *pStorage, TReaderWriter *pRW, uint32 nPageSize, short nObjectPage, short nSubObjectPage)
-				: m_nPage(nPage), pStorage(pStorage), pRW(pRW), m_nPageSize(nPageSize), m_nObjectPage(nObjectPage),  m_nSubObjectPage(nSubObjectPage),  m_nNextPage(-1), m_nPageIDx(0)
+			iterator(int64 nPage, _TStorage *pStorage, TReaderWriter *pRW, uint32 nPageSize, short nObjectPage, short nSubObjectPage, bool bCheckCRC)
+				: m_nPage(nPage), pStorage(pStorage), pRW(pRW), m_nPageSize(nPageSize), m_nObjectPage(nObjectPage),  m_nSubObjectPage(nSubObjectPage),  
+				m_nNextPage(-1), m_nPageIDx(0), m_bCheckCRC(bCheckCRC)
 			{
 
 			}
@@ -136,7 +137,7 @@ namespace embDB
 
 				CommonLib::FxMemoryReadStream stream;
 				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-				sFilePageHeader header(stream, pPage->getPageSize());
+				sFilePageHeader header(stream, pPage->getPageSize(), m_bCheckCRC);
 				if(!header.isValid())
 				{
 					//TO DO Logs
@@ -171,11 +172,12 @@ namespace embDB
 			int32 m_nPageIDx;
 			TVecValues m_vecCurValues;
 			uint32 m_nPageSize;
+			bool m_bCheckCRC;
 		};
 		template <typename _TStorage>
 		iterator<_TStorage> begin(_TStorage *pStorage)
 		{
-			return iterator<_TStorage> (m_nRootPage, pStorage, &m_rw, m_nPageSize, m_nObjectPage, m_nSubObjectPage);
+			return iterator<_TStorage> (m_nRootPage, pStorage, &m_rw, m_nPageSize, m_nObjectPage, m_nSubObjectPage, m_bCheckCRC);
 		}
 	private:
 		int64 m_nRootPage;
@@ -185,7 +187,7 @@ namespace embDB
 
 		TVecValues m_values;
 		int64 m_nPageAddr;
-
+		bool m_bCheckCRC;
 		TReaderWriter m_rw;
 
 	};

@@ -21,7 +21,7 @@ void TestCacheLRU_2Q()
 {
 	CommonLib::simple_alloc_t alloc;
 	{
-		TCache cache(&alloc, 2);
+		TCache cache(&alloc);
 
 		for (int i = 0, sz = 100; i < sz; i++)
 		{
@@ -34,6 +34,7 @@ void TestCacheLRU_2Q()
 		 
 		
 			CObj *pObj =  cache.GetElem(i);
+			assert(pObj->GetID() == i);
 			
 		}
 

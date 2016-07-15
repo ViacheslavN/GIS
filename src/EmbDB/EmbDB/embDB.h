@@ -179,6 +179,27 @@ namespace embDB
 		OpGreaterOrEqual
 	};
 
+
+	enum QryptoALG
+	{
+		NONE_ALG,
+		XQR_ALG,
+		DES3_ALG
+	};
+
+
+	struct SDBParams
+	{
+		QryptoALG qryptoAlg;
+		bool bCheckCRC;
+
+		SDBParams() : qryptoAlg(NONE_ALG), bCheckCRC(true)
+		{
+
+		}
+	};
+
+
 	struct sFieldPropExt
 	{
 		sFieldPropExt() : m_CompressType(MixCoding), m_nCompCalcError(200), m_bOnlineCalcCompSize(false), m_nBTreeChacheSize(5)

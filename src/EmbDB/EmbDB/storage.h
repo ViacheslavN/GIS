@@ -17,6 +17,7 @@
 #include "MemPageCache.h"
 #include "PageCrypto.h"
 #include "CacheLRU.h"
+#include "CacheLRU_2Q.h"
 #include <iostream>
 #include <memory>
 namespace embDB
@@ -24,7 +25,7 @@ namespace embDB
 	class CStorage : public IDBStorage
 	{
 	public:
-		CStorage( CommonLib::alloc_t *pAlloc, int32 nCacheSize = 1000);
+		CStorage( CommonLib::alloc_t *pAlloc, int32 nCacheSize = 1000, bool bCheckCRC = true);
 		~CStorage();
 
 		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true);
@@ -38,6 +39,9 @@ namespace embDB
 		//virtual FilePagePtr createPage(int64 nAddr);
 		virtual bool commit();
 		virtual bool removeFromFreePage(int64 nAddr);
+
+
+	
 
 	
 		virtual bool setFileSize(int64 nSize);
@@ -69,8 +73,10 @@ namespace embDB
 		bool initStorage(int64 nStorageInfo);
 		bool loadStorageInfo();
 		bool saveStorageInfo();
+		void SetOffset(int64 nOffset);
+		int64 GetOffset() const;
 
-
+		virtual bool getCheckCRC() const {return m_bCheckCRC;}
 
 		 void error(const CommonLib::CString& sError){}
 	private:
@@ -79,7 +85,19 @@ namespace embDB
 		// typedef RBMap<int64, CFilePage*> TPageCache;
 		 //typedef TList<int64> TPageList;
 		 int32 m_nMaxPageBuf;
-		 typedef TCacheLRU<int64, CFilePage> TNodesCache;
+		// typedef TCacheLRU<int64, CFilePage> TNodesCache;
+
+
+		 struct TPageFreeChecker
+		 {
+			 bool IsFree(CFilePage* pObj)
+			 {
+				 return pObj->IsFree();
+			 }
+		 };
+
+
+		 typedef TCacheLRU_2Q<int64, CFilePage, TPageFreeChecker> TNodesCache;
 		// typedef TSimpleCache<int64, CFilePage> TNodesCache;
 		 TNodesCache m_Chache;
 		 //TPageList   m_FreePageDisk;
@@ -94,12 +112,14 @@ namespace embDB
 		 CommonLib::CString m_sTranName;
 		 int64 m_nBeginSize;
 		 int64 m_nStorageInfo;
+		 int64 m_nOffset;
 
 		 bool m_bCommitState;
 		 uint64 m_nCalcFileSize;
 		// CMemPageCache m_MemCache;
 		 IPageCrypto *m_pPageCrypto;
 		 std::auto_ptr<CFilePage> m_pBufPageCrypto; 
+		 bool m_bCheckCRC;
 	};
 }
 

@@ -5,6 +5,7 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/IGeoShape.h"
 #include "StreamPageIngo.h"
+#include "GlobalParams.h"
 namespace embDB
 {
 
@@ -15,7 +16,7 @@ namespace embDB
 
 		ShapeFieldCompressorParams() :   m_nMaxPageBlobSize(400), 
 			m_nStreamPageInfo(-1), m_dOffsetX(0.), m_dOffsetY(0.), m_nScaleX(1), m_nScaleY(1),
-				m_CoordTypes(stUnknown), m_ShapeType(CommonLib::shape_type_null)
+				m_CoordTypes(stUnknown), m_ShapeType(CommonLib::shape_type_null), m_StreamPageInfo(CGlobalParams::Instance().GetCheckCRC())
 		{}
 		virtual ~ShapeFieldCompressorParams(){}
 

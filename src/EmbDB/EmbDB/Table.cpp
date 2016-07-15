@@ -27,9 +27,9 @@ namespace embDB
 		m_nTablePage(nPageAddr), 
 		m_nFieldsPage(-1),
 		m_nIndexsPage(-1),
-		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE),
-		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE),
-		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE)
+		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE, pDB->getCheckCRC()),
+		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE, pDB->getCheckCRC()),
+		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE, pDB->getCheckCRC())
 	{
 		m_pDBStorage = pDB->getDBStorage();
 		m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
@@ -44,9 +44,9 @@ namespace embDB
 		m_sTableName(sTableName),
 		m_nFieldsPage(-1),
 		m_nIndexsPage(-1),
-		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE),
-		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE),
-		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE)
+		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE, pDB->getCheckCRC()),
+		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE, pDB->getCheckCRC()),
+		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE, pDB->getCheckCRC())
 	{
 		m_pDBStorage = pDB->getDBStorage();
 		m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
@@ -61,9 +61,9 @@ namespace embDB
 		m_sTableName(sTableName),
 		m_nFieldsPage(-1),
 		m_nIndexsPage(-1),
-		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE),
-		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE),
-		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE)
+		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE, pDB->getCheckCRC()),
+		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE, pDB->getCheckCRC()),
+		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE, pDB->getCheckCRC())
 	{
 		m_pDBStorage = pDB->getDBStorage();
 		m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
@@ -105,8 +105,8 @@ namespace embDB
 		if(!pPage.get())
 			return false;
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-		sFilePageHeader header(stream, pPage->getPageSize());
-		if(!header.isValid())
+		sFilePageHeader header(stream, pPage->getPageSize(), m_pDB->getCheckCRC());
+		if(m_pDB->getCheckCRC() && !header.isValid())
 			return false;//TO DO DB LOg
 		if(header.m_nObjectPageType != TABLE_PAGE || header.m_nSubObjectPageType != TABLE_HEADER_PAGE)
 			return false;
@@ -772,7 +772,7 @@ namespace embDB
 			return false;
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		SIndexProp ip;
-		sFilePageHeader header (stream, pPage->getPageSize());
+		sFilePageHeader header (stream, pPage->getPageSize(), m_pDB->getCheckCRC());
 		if(!header.isValid())
 		{
 			//TO DO log

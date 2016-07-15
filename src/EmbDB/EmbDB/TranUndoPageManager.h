@@ -17,7 +17,7 @@ namespace embDB
 	class CTranUndoPageManager
 	{
 	public:
-		CTranUndoPageManager(IDBTransaction *pTran, CTranStorage *pStorage);
+		CTranUndoPageManager(IDBTransaction *pTran, CTranStorage *pStorage, bool bCheckCRC);
 		~CTranUndoPageManager();
 
 

@@ -18,7 +18,7 @@ namespace embDB
 	class CFreePageManager
 	{
 		public:
-			CFreePageManager(CStorage* pStorage, CommonLib::alloc_t * pAlloc);
+			CFreePageManager(CStorage* pStorage, CommonLib::alloc_t * pAlloc, bool bCheckCRC);
 			~CFreePageManager();
 			bool init(int64 nRootAddr, bool bNew);
 			bool load();
@@ -38,7 +38,8 @@ namespace embDB
 
 			struct FileFreeMap
 			{
-				FileFreeMap(uint32 nAddrLen) : m_bChange(false), m_nAddr(-1), m_nBlockNum(0), m_nBeginAddr(0), m_nEndAddr(0), m_nAddrLen(nAddrLen)
+				FileFreeMap(uint32 nAddrLen, bool bCheckCRC) : m_bChange(false), m_nAddr(-1), m_nBlockNum(0),
+					m_nBeginAddr(0), m_nEndAddr(0), m_nAddrLen(nAddrLen), m_bCheckCRC(bCheckCRC)
 				{
 
 				}
@@ -70,11 +71,12 @@ namespace embDB
 				int64 m_nBeginAddr;
 				int64 m_nEndAddr;
 				uint32 m_nAddrLen;
+				bool m_bCheckCRC;
 				bool load(CFilePage* pPage )
 				{
 					CommonLib::FxMemoryReadStream stream;
 					stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-					sFilePageHeader header (stream, pPage->getPageSize());
+					sFilePageHeader header (stream, pPage->getPageSize(), m_bCheckCRC);
 					if(!header.isValid())
 					{
 						//TO DO Logs
@@ -182,6 +184,7 @@ namespace embDB
 			TMapFreeMaps m_FreeMaps;
 			uint32 m_nAddrLen;
 			uint32 m_nPageSize;
+			bool m_bCheckCRC;
 
 	
 	};

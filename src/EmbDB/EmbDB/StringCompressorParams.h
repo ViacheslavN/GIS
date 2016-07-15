@@ -4,6 +4,7 @@
 #include "embDBInternal.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "StreamPageIngo.h"
+#include "GlobalParams.h"
 namespace embDB
 {
 
@@ -12,7 +13,7 @@ namespace embDB
 	{
 	public:
 		StringFieldCompressorParams(int64 nRootPage = -1) : m_StringCoding(scUTF8), m_nLen(0),
-			m_nMaxPageStringSize(400), m_nStreamPageInfo(-1)
+			m_nMaxPageStringSize(400), m_nStreamPageInfo(-1), m_StreamPageInfo(CGlobalParams::Instance().GetCheckCRC())
 		{}
 		virtual ~StringFieldCompressorParams(){}
 

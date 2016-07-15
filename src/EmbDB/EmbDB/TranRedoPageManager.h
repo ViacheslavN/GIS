@@ -38,7 +38,7 @@ namespace embDB
 		typedef std::vector<sRedoPageInfo> TRedoDBPages;
 
 	public:
-		CTranRedoPageManager(IDBTransaction *pTran, CTranStorage *pStorage);
+		CTranRedoPageManager(IDBTransaction *pTran, CTranStorage *pStorage, bool bCheckCRC);
 		~CTranRedoPageManager();
 
 		void setFirstPage(int64 nPage, bool bCreate);
@@ -78,6 +78,7 @@ namespace embDB
 		TRedoPageList m_UndoPages;
 		int64 m_nRootPage;
 		sRedoHeader m_Header;
+		bool m_bCheckCRC;
 	};
 }
 #endif

@@ -545,6 +545,7 @@
     <ClInclude Include="FixedStringField.h" />
     <ClInclude Include="FixedStringZLibCompressor.h" />
     <ClInclude Include="FormatDouble.h" />
+    <ClInclude Include="GlobalParams.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IndexIteratorBase.h" />
     <ClInclude Include="InfoIterator.h" />
@@ -685,6 +686,7 @@
     <ClInclude Include="VariantField.h" />
     <ClInclude Include="PageVector.h" />
     <ClInclude Include="WriteStreamPage.h" />
+    <ClInclude Include="XorPageCrypto.h" />
     <ClInclude Include="ZLibCompressor.h" />
     <ClInclude Include="ZOrderCompressBase.h" />
   </ItemGroup>
@@ -716,6 +718,7 @@
     <ClCompile Include="Fields.cpp" />
     <ClCompile Include="FieldSet.cpp" />
     <ClCompile Include="FreePageManage.cpp" />
+    <ClCompile Include="GlobalParams.cpp" />
     <ClCompile Include="InsertCursor.cpp" />
     <ClCompile Include="LinkCompress.cpp" />
     <ClCompile Include="MathUtils.cpp" />

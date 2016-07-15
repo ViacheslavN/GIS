@@ -10,8 +10,8 @@ namespace embDB
 	class TCounter
 	{
 		public:
-			TCounter(short nObjectPage, short nSubObjectPage, uint32 nPageSize, TValue val = 1, int64 nPage = -1) : m_nVal(val), m_nPage(-1),
-					m_nPageSize(nPageSize), m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage)
+			TCounter(short nObjectPage, short nSubObjectPage, uint32 nPageSize, bool bCheckCRC, TValue val = 1, int64 nPage = -1) : m_nVal(val), m_nPage(-1),
+					m_nPageSize(nPageSize), m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage), m_bCheckCRC(bCheckCRC)
 			{
 
 			}
@@ -37,8 +37,8 @@ namespace embDB
 
 				CommonLib::FxMemoryReadStream stream;
 				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-				sFilePageHeader header(stream, pPage->getPageSize());
-				if(!header.isValid())
+				sFilePageHeader header(stream, pPage->getPageSize(), m_bCheckCRC);
+				if(m_bCheckCRC && !header.isValid())
 				{
 					//TO DO Log
 					return false;
@@ -63,7 +63,8 @@ namespace embDB
 				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 				sFilePageHeader header(stream, m_nObjectPage, m_nSubObjectPage, pPage->getPageSize());
 				stream.write(m_nVal);
-				header.writeCRC32(stream);
+				if(m_bCheckCRC)
+					header.writeCRC32(stream);
 				pPage->setFlag(eFP_CHANGE, true);
 				pStorage->saveFilePage(pPage);
 				return true;
@@ -74,6 +75,7 @@ namespace embDB
 			uint32 m_nPageSize;
 			short m_nObjectPage;
 			short m_nSubObjectPage;
+			bool m_bCheckCRC;
 	};
 
 }

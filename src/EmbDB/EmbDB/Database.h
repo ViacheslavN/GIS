@@ -14,12 +14,52 @@ namespace embDB
 	class CDBTranManager;
 	struct sDBHeader
 	{
-		sDBHeader() : nMagicSymbol(-1), nCRC(-1), nVersion(-1), /*nPageSize(DEFAULT_PAGE_SIZE),*/ nShemaPage(-1), nStoragePage(-1), nUserPage(-1)
-		{}
-		~sDBHeader(){}
 		int64  nMagicSymbol;
-		int nCRC;
-		int nVersion;
+		uint32 nMajorVersion;
+		uint32 nMinorVersion;
+		uint32 nCryptoAlg;
+		bool bCheckCRC;
+		short nSaltSize;
+		byte szSalt[256];
+
+		sDBHeader(): nMagicSymbol(0), nMajorVersion(0), nMinorVersion(0), nCryptoAlg(NONE_ALG), bCheckCRC(false),
+			nSaltSize(10)
+		{
+			memset(szSalt, 0, sizeof(szSalt));
+		}
+
+
+		void Read(CommonLib::IReadStream* pStream)
+		{
+			nMagicSymbol = pStream->readInt64();
+			nMajorVersion = pStream->readIntu32();
+			nMinorVersion = pStream->readIntu32();
+			nCryptoAlg = pStream->readIntu32();
+			nSaltSize = pStream->readintu16();
+
+			pStream->read(szSalt, nSaltSize);
+		}
+		void Write(CommonLib::IWriteStream* pStream)
+		{
+			pStream->write(nMagicSymbol);
+			pStream->write(nMajorVersion);
+			pStream->write(nMinorVersion);
+			pStream->write(nCryptoAlg);
+			pStream->write(nSaltSize);
+
+			pStream->write(szSalt, nSaltSize);
+		}
+
+	};
+ 
+
+	struct sDBRootPage
+	{
+		sDBRootPage() :  nShemaPage(-1), nStoragePage(-1), nUserPage(-1), nOffcet(0)
+		{}
+		~sDBRootPage(){}
+		int64 nOffcet;
+
 		//int nPageSize;
 		int64  nShemaPage;
 		int64  nStoragePage;
@@ -28,20 +68,16 @@ namespace embDB
 
 		void Read(CommonLib::IReadStream* pStream)
 		{
-			nMagicSymbol = pStream->readInt64();
-			nCRC = pStream->readInt32();
-			nVersion= pStream->readInt32();
-			//nPageSize = pStream->readInt32();
+
+ 
+			nOffcet = pStream->readInt64();
 			nShemaPage = pStream->readInt64();
 			nStoragePage = pStream->readInt64();
 			nUserPage = pStream->readInt64();
 		}
 		void Write(CommonLib::IWriteStream* pStream)
 		{
-			pStream->write(nMagicSymbol);
-			pStream->write(nCRC);
-			pStream->write(nVersion);
-			//pStream->write(nPageSize);
+			pStream->write(nOffcet);
 			pStream->write(nShemaPage);
 			pStream->write(nStoragePage);
 			pStream->write(nUserPage);
@@ -65,8 +101,10 @@ namespace embDB
 			//CStorage* getTableStorage(const CommonLib::CString& sFileName, bool bCreate);
 
 			CommonLib::alloc_t* getBTreeAlloc();
+			bool getCheckCRC() const {return m_DBParams.bCheckCRC;}
 				
 		private:
+			bool readHeadPage(CFilePage* pPage);
 			bool readRootPage(CFilePage* pPage);
 			bool CheckDirty();
 		private:
@@ -74,8 +112,10 @@ namespace embDB
 			IDBStoragePtr m_pStorage;
 			IDBShemaPtr m_pSchema;
 			sDBHeader m_dbHeader;
+			sDBRootPage m_dbRootPage;
 			std::auto_ptr<CDBTranManager>  m_pTranManager;
 			bool m_bOpen;
+			SDBParams m_DBParams;
 		//	typedef RBMap<CommonLib::CString, CStorage*> TTableStorages;
 		//	TTableStorages m_TableStorages;
 			 

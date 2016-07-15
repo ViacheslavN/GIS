@@ -5,7 +5,7 @@
 #include <iostream>
 namespace embDB
 {
-	CStorage::CStorage(CommonLib::alloc_t *pAlloc, int32 nCacheSize) :
+	CStorage::CStorage(CommonLib::alloc_t *pAlloc, int32 nCacheSize, bool bCheckCRC) :
 		m_pAlloc(pAlloc)
 		,m_nMaxPageBuf(nCacheSize) 
 		,m_Chache(pAlloc)
@@ -22,6 +22,8 @@ namespace embDB
 		, m_nCalcFileSize(0)
 		//, m_MemCache(pAlloc)
 		, m_pPageCrypto(NULL)
+		, m_nOffset(0)
+		, m_bCheckCRC(bCheckCRC)
 	 
 	{
 		
@@ -108,6 +110,18 @@ namespace embDB
 		}
 		//m_MemCache.clear();
 	}
+
+	void CStorage::SetOffset(int64 nOffset)
+	{
+		m_nOffset = nOffset;
+	}
+	int64 CStorage::GetOffset() const
+	{
+		return m_nOffset;
+	}
+
+
+
 	int64 CStorage::getFileSize()
 	{
 		if(m_pFile.isValid())
@@ -134,7 +148,7 @@ namespace embDB
 		pPage = new CFilePage(/*&m_MemCache*/m_pAlloc, nSize, nAddr);
 		if(bRead)
 		{
-			bool bRet = m_pFile.setFilePos64(nAddr * m_nBasePageSize, CommonLib::soFromBegin);
+			bool bRet = m_pFile.setFilePos64(m_nOffset + (nAddr * m_nBasePageSize), CommonLib::soFromBegin);
 			assert(bRet);
 			uint32 nWCnt = m_pFile.readFile((void*)pPage->getRowData(),  nSize );
 			assert(nWCnt != 0);
@@ -260,7 +274,7 @@ namespace embDB
 		{
 			uint64 nFileAddr = pPage->getAddr() * nSize;
 
-			bool bRet = m_pFile.setFilePos64(nFileAddr, CommonLib::soFromBegin);
+			bool bRet = m_pFile.setFilePos64(m_nOffset + nFileAddr, CommonLib::soFromBegin);
 			assert(bRet);
 			uint32 nWCnt = m_pFile.writeFile((void*)pPage->getRowData(), nSize );
 			assert(nWCnt != 0);
@@ -323,7 +337,7 @@ namespace embDB
 			}
 		}
 		uint64 nFileAddr = pPage->getAddr() * m_nBasePageSize;
-		bool bRet = m_pFile.setFilePos64(nFileAddr, CommonLib::soFromBegin);
+		bool bRet = m_pFile.setFilePos64(m_nOffset + nFileAddr, CommonLib::soFromBegin);
 		assert(bRet);
 		if(!bRet)
 			return false;
@@ -356,7 +370,7 @@ namespace embDB
 	{
 	//	assert(m_nPageSize == pPage->getPageSize());
 		uint64 nFileAddr = pPage->getAddr() * m_nBasePageSize;
-		bool bRet = m_pFile.setFilePos64(nFileAddr, CommonLib::soFromBegin);
+		bool bRet = m_pFile.setFilePos64(m_nOffset + nFileAddr, CommonLib::soFromBegin);
 		assert(bRet);
 		if(!bRet)
 			return false;
@@ -411,7 +425,8 @@ namespace embDB
 			stream.write((uint32)m_sTranName.length());
 			stream.write((byte*)m_sTranName.cwstr(), m_sTranName.length() * 2);
 		}
-		header.writeCRC32(stream);
+		if(m_bCheckCRC)
+			header.writeCRC32(stream);
 		return saveFilePage(pPage);
 	}
 	bool  CStorage::loadStorageInfo()
@@ -421,8 +436,8 @@ namespace embDB
 			return false;
 		CommonLib::FxMemoryReadStream stream;
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-		sFilePageHeader header(stream, pPage->getPageSize());
-		if(!header.isValid())
+		sFilePageHeader header(stream, pPage->getPageSize(), m_bCheckCRC);
+		if(m_bCheckCRC && !header.isValid())
 		{
 			//TO DO Log
 			return false;

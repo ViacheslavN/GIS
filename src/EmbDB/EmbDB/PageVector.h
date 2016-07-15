@@ -97,8 +97,10 @@ public:
 	};
 
 
-	TPageVector(int64 nPage, uint32 nPageSize, short nObjectPage, short nSubObjectPage) : 
-	m_nFirstPage(nPage), m_nPageSize(nPageSize), m_pBeginNode(NULL), m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage)
+	TPageVector(int64 nPage, uint32 nPageSize, short nObjectPage, short nSubObjectPage, bool
+		 bCheckCRC) : 
+	m_nFirstPage(nPage), m_nPageSize(nPageSize), m_pBeginNode(NULL), m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage),
+		m_bCheckCRC(bCheckCRC)
 	{
 	
 	}
@@ -218,8 +220,8 @@ public:
 				return false;
 			CommonLib::FxMemoryReadStream stream;
 			stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-			sFilePageHeader header(stream, pPage->getPageSize());
-			if(!header.isValid())
+			sFilePageHeader header(stream, pPage->getPageSize(), m_bCheckCRC);
+			if(m_bCheckCRC && !header.isValid())
 			{
 				//TO DO Log
 				return false;
@@ -341,7 +343,7 @@ private:
 	short m_nObjectPage;
 	short m_nSubObjectPage;
 	TReaderWriter m_rw;
-
+	bool m_bCheckCRC;
 };
 
 }

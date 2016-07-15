@@ -101,7 +101,7 @@ namespace embDB
 
 
 			//FilePagePtr pLeafCompRootPage = pTran->getNewPage(MIN_PAGE_SIZE);
-			TBTree::TLeafCompressorParams compParams;
+			TBTree::TLeafCompressorParams compParams(this->m_bCheckCRC);
 			//compParams.setRootPage(pLeafCompRootPage->getAddr());
 			compParams.SetMaxPageStringSize(m_nPageSize/25); //TO DO FIX
 			compParams.SetStringLen(m_nLenField);

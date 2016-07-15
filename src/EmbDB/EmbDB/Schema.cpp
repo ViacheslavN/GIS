@@ -8,7 +8,7 @@ namespace embDB
 {
 	CSchema::CSchema(CDatabase *pDB) : m_pDB(pDB), m_pStorage(NULL), 
 		m_nAddr(-1), m_nTablesPage(-1), 
-		m_nTablesAddr(-1, 0, SCHEMA_PAGE, SCHEMA_TABLE_LIST_PAGE), m_nPageSize(MIN_PAGE_SIZE)
+		m_nTablesAddr(-1, 0, SCHEMA_PAGE, SCHEMA_TABLE_LIST_PAGE, pDB->getCheckCRC()), m_nPageSize(MIN_PAGE_SIZE)
 	{
 
 	}
@@ -97,8 +97,8 @@ namespace embDB
 
 		CommonLib::FxMemoryReadStream stream;
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-		sFilePageHeader header(stream, pPage->getPageSize());
-		if(!header.isValid())
+		sFilePageHeader header(stream, pPage->getPageSize(), m_pDB->getCheckCRC());
+		if(m_pDB->getCheckCRC() && !header.isValid())
 		{
 			//TO DO Error LOg
 			return false;

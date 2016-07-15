@@ -83,7 +83,7 @@ namespace embDB
 	{
 		CommonLib::FxMemoryReadStream stream;
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-		sFilePageHeader header(stream, pPage->getPageSize());
+		sFilePageHeader header(stream, pPage->getPageSize(), m_pDB->getCheckCRC());
 		if(!header.isValid())
 			return false;//TO DO Log
 		if(header.m_nObjectPageType != TRAN_MANAGE_PAGE || header.m_nSubObjectPageType != TM_HEADER_PAGE)

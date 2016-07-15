@@ -13,20 +13,20 @@ namespace embDB
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
 		eTransactionType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache) :
 		TBase(pDatabase)
-		, m_TranStorage(pAlloc, &m_TranPerfCounter)
+		, m_TranStorage(pAlloc, &m_TranPerfCounter, pDatabase->getCheckCRC())
 		, m_nRestoreType(nRestoreType)
 		, m_nTranType(nTranType)
 		, m_sFileName(sFileName)
 		, m_PageChache(pAlloc, &m_TranStorage, this, &m_TranPerfCounter, nTranCache)
 		, m_pAlloc(pAlloc)
 		, m_bError(false)
-		, m_TranUndoManager(this, &m_TranStorage)
+		, m_TranUndoManager(this, &m_TranStorage, pDatabase->getCheckCRC())
 		, m_LogStateManager(&m_TranStorage)
 		, m_nID(nID)
 		, m_bIsCompleted(true)
 		, m_bIsBegin(false)
 		, m_bDeleteStorage(true)
-		, m_TranRedoManager(this, &m_TranStorage)
+		, m_TranRedoManager(this, &m_TranStorage, pDatabase->getCheckCRC())
 		, m_nPageSize(MIN_PAGE_SIZE)
 	{
 
@@ -35,40 +35,40 @@ namespace embDB
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
 		eTransactionType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) :
 		TBase(NULL)
-		, m_TranStorage(pAlloc, &m_TranPerfCounter)
+		, m_TranStorage(pAlloc, &m_TranPerfCounter, pDBStorage->getCheckCRC())
 		, m_nRestoreType(nRestoreType)
 		, m_nTranType(nTranType)
 		, m_sFileName(sFileName)
 		, m_PageChache(pAlloc, &m_TranStorage, this, &m_TranPerfCounter, nTranCache)
 		, m_pAlloc(pAlloc)
 		, m_bError(false)
-		, m_TranUndoManager(this, &m_TranStorage)
+		, m_TranUndoManager(this, &m_TranStorage, pDBStorage->getCheckCRC())
 		, m_LogStateManager(&m_TranStorage)
 		, m_nID(nID)
 		, m_bIsCompleted(true)
 		, m_bIsBegin(false)
 		, m_bDeleteStorage(true)
-		, m_TranRedoManager(this, &m_TranStorage)
+		, m_TranRedoManager(this, &m_TranStorage, pDBStorage->getCheckCRC())
 		, m_nPageSize(MIN_PAGE_SIZE)
 	{
 		m_pDBStorage = pDBStorage;
 	}
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache) :
 		TBase(NULL)
-		,m_TranStorage(pAlloc, &m_TranPerfCounter)
+		,m_TranStorage(pAlloc, &m_TranPerfCounter, pDBStorage->getCheckCRC())
 		,m_nRestoreType(rtUndefined)
 		,m_nTranType(eTT_UNDEFINED)
 		,m_sFileName(sFileName)
 		,m_PageChache(pAlloc, &m_TranStorage, this, &m_TranPerfCounter, nTranCache)
 		,m_pAlloc(pAlloc)
 		,m_bError(false)
-		,m_TranUndoManager(this, &m_TranStorage)
+		,m_TranUndoManager(this, &m_TranStorage, pDBStorage->getCheckCRC())
 		, m_LogStateManager(&m_TranStorage)
 		, m_nID(-1)
 		, m_bIsCompleted(true)
 		, m_bIsBegin(false)
 		, m_bDeleteStorage(true)
-		, m_TranRedoManager(this, &m_TranStorage)
+		, m_TranRedoManager(this, &m_TranStorage, pDBStorage->getCheckCRC())
 		, m_nPageSize(MIN_PAGE_SIZE)
 	{
 		m_pDBStorage = pDBStorage;

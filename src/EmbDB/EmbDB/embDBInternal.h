@@ -6,6 +6,7 @@
 
 
 #define MIN_PAGE_SIZE	  256
+#define HEADER_DB_PAGE_SIZE  512
 #define COMMON_PAGE_SIZE  8192
 #define MAX_PAGE_SIZE	  1048576
 
@@ -530,6 +531,8 @@ namespace embDB
 		virtual bool reload()= 0;
 		//
 		virtual bool saveState() = 0;
+
+		virtual bool getCheckCRC() const;
 	};
 
 

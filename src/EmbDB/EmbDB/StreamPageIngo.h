@@ -15,8 +15,8 @@ namespace embDB
 	{
 	public:
 
-			CStreamPageInfo(uint32 nSizePage = 1024*1024) : m_nSizePage(nSizePage), m_nRootPage(-1), m_nBeginStream(-1), m_nEndStream(-1), 
-				m_nPos(0)
+			CStreamPageInfo(bool bCheckCRC, uint32 nSizePage = 1024*1024) : m_nSizePage(nSizePage), m_nRootPage(-1), m_nBeginStream(-1), m_nEndStream(-1), 
+				m_nPos(0), m_bCheckCRC(bCheckCRC)
 			{
 
 			}
@@ -75,7 +75,7 @@ namespace embDB
 					return false; //TO DO Error
 				CommonLib::FxMemoryReadStream stream;
 				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-				sFilePageHeader header(stream, pPage->getPageSize());
+				sFilePageHeader header(stream, pPage->getPageSize(), m_bCheckCRC);
 				if(header.m_nObjectPageType != BTREE_PAGE || header.m_nSubObjectPageType != BTREE_STREAM_PAGE_INFO)
 				{
 					pTran->error(L"BTREE: Page %I64d is not stream info page", m_nRootPage);
@@ -140,6 +140,7 @@ namespace embDB
 		int64 m_nBeginStream;
 		int64 m_nEndStream;
 		uint32 m_nPos;
+		bool m_bCheckCRC;
 
 		WriteStreamPagePtr m_pWriteStream;
 		ReadStreamPagePtr m_pReadStream;

@@ -26,7 +26,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	// TestInsert();
 	//TestBPVector();
 	//TestBRteeSet();
-	//TestBRteeMap();
+	TestBRteeMap();
 	//testUndo();
 	////testRedo();
 
@@ -36,7 +36,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//TestTreeBlob();
 
 	//TestMuiltiIndex();
-	TestCacheLRU_2Q();;
+	//TestCacheLRU_2Q();;
 	return 0;
 }
 

@@ -3,8 +3,8 @@
 #include "embDBInternal.h"
 namespace embDB
 {
-	CTranStorage::CTranStorage(CommonLib::alloc_t *pAlloc, CTranPerfCounter *pCounter) : m_pAlloc(pAlloc), m_nLastAddr(-1),
-		m_pCounter(pCounter), m_pPageCrypto(NULL), m_nPageSize(MIN_PAGE_SIZE)
+	CTranStorage::CTranStorage(CommonLib::alloc_t *pAlloc, CTranPerfCounter *pCounter, bool bCheckCRC ) : m_pAlloc(pAlloc), m_nLastAddr(-1),
+		m_pCounter(pCounter), m_pPageCrypto(NULL), m_nPageSize(MIN_PAGE_SIZE), m_bCheckCRC(bCheckCRC)
 	{
 
 	}
@@ -24,7 +24,6 @@ namespace embDB
 			m_nLastAddr = m_pFile.getFileSize();
 		}
 
-		m_pBufPageCrypto.reset(new CFilePage(m_pAlloc, m_nPageSize, -1));
 		return bRet;
 	}
 	bool CTranStorage::close(bool bDelete)
@@ -48,8 +47,8 @@ namespace embDB
 		uint32 nCnt = 0;
 		if(m_pPageCrypto && pPage->isNeedEncrypt())
 		{
-			m_pPageCrypto->encrypt(pPage->getRowData(), pPage->getPageSize(), m_pBufPageCrypto->getRowData(), m_pBufPageCrypto->getPageSize());
-			nCnt = m_pFile.writeFile((void*)m_pBufPageCrypto->getRowData(),  (uint32)m_pBufPageCrypto->getPageSize() );
+			m_pPageCrypto->encrypt(pPage->getRowData(), pPage->getPageSize());
+			nCnt = m_pFile.writeFile((void*)pPage->getRowData(),  (uint32)pPage->getPageSize());
 		}
 		else
 			nCnt = m_pFile.writeFile((void*)pPage->getRowData(),  pPage->getPageSize() );

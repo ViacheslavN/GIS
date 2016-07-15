@@ -144,7 +144,8 @@ namespace embDB
 		typedef TShapeValueField<TBTree> TField;
 		typedef TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef TBTree::TLeafCompressorParams TLeafCompressorParams;
-		ShapeValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp *pFP, int64 nPageAdd) : TBase(pAlloc, pFP, nPageAdd)
+		ShapeValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp *pFP, int64 nPageAdd) : 
+			TBase(pAlloc, pFP, nPageAdd)
 		{}
 		~ShapeValueFieldHandler()
 		{}
@@ -300,6 +301,7 @@ namespace embDB
 		double m_dOffsetY;
 		byte m_nScaleX;
 		byte m_nScaleY;
+ 
 	};
 
 }

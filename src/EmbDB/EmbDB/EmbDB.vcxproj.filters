@@ -1170,6 +1170,18 @@
     <ClInclude Include="MultiKeyCompressor.h">
       <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalParams.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="XorPageCrypto.h">
+      <Filter>Crypto</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1309,6 +1321,9 @@
     </ClCompile>
     <ClCompile Include="SimpleSelectOpCursor.cpp">
       <Filter>DB\transactions\Cursors\SelectOpCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalParams.cpp">
+      <Filter>DB</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

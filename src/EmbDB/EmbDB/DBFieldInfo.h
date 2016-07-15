@@ -8,6 +8,7 @@
 #include "CommonLibrary/SpatialKey.h"
 
 #include "CommonLibrary/BoundaryBox.h"
+#include "GlobalParams.h"
 
 namespace embDB
 {
@@ -19,7 +20,7 @@ namespace embDB
 	public:
 
 		CDBFieldHandlerBase(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp, int64 nPageAdd) : m_pAlloc(pAlloc), 
-			m_pIndexHandler(0), m_nFieldInfoPage(-1), m_nPageAdd(nPageAdd)
+			m_pIndexHandler(0), m_nFieldInfoPage(-1), m_nPageAdd(nPageAdd), m_bCheckCRC(CGlobalParams::Instance().GetCheckCRC())
 		{
 			assert(pFieldProp);
 
@@ -213,6 +214,7 @@ namespace embDB
 		bool m_bOnlineCalcCompSize;
 		uint32 m_nCompCalcError;
 		uint32 m_nBTreeChacheSize;
+		bool m_bCheckCRC;
 	};
 
  

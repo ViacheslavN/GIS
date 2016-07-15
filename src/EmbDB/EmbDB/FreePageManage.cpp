@@ -5,12 +5,13 @@
 
 namespace embDB
 {
-	CFreePageManager::CFreePageManager(CStorage* pStorage, CommonLib::alloc_t * pAlloc) :
+	CFreePageManager::CFreePageManager(CStorage* pStorage, CommonLib::alloc_t * pAlloc, bool bCheckCRC) :
 		m_nRootPage(-1)
 		,m_pStorage(pStorage)
 		,m_pAlloc(pAlloc)
-		,m_ListFreeMaps(-1, 0, STORAGE_PAGE, STORAGE_LIST_FREEMAP_PAGE)
+		,m_ListFreeMaps(-1, 0, STORAGE_PAGE, STORAGE_LIST_FREEMAP_PAGE, bCheckCRC)
 		, m_nPageSize(8192)
+		, m_bCheckCRC(bCheckCRC)
  
 	{
 		
@@ -89,7 +90,7 @@ namespace embDB
 		{
 
 
-			FileFreeMap* pFreeMap =  new FileFreeMap(m_nAddrLen);
+			FileFreeMap* pFreeMap =  new FileFreeMap(m_nAddrLen, m_bCheckCRC);
 			pFreeMap->m_nAddr = nAddr;
 			pFreeMap->m_nBlockNum = nBlockNum;
 			pFreeMap->m_nBeginAddr = pFreeMap->m_nBlockNum *  m_nAddrLen;
@@ -115,7 +116,7 @@ namespace embDB
 		}
 		else
 		{
-			FileFreeMap* pFreeMap =  new FileFreeMap(m_nAddrLen);
+			FileFreeMap* pFreeMap =  new FileFreeMap(m_nAddrLen, m_bCheckCRC);
 			FilePagePtr pPage(m_pStorage->getFilePage(nAddr, m_nPageSize));
 			if(!pPage.get())
 			{
@@ -141,7 +142,7 @@ namespace embDB
 		{
 			CommonLib::FxMemoryReadStream stream;
 			stream.attachBuffer(pRootPage->getRowData(), pRootPage->getPageSize());
-			sFilePageHeader header(stream, pRootPage->getPageSize());
+			sFilePageHeader header(stream, pRootPage->getPageSize(), m_bCheckCRC);
 			if(!header.isValid())
 			{
 				//TO DO Log
@@ -164,7 +165,7 @@ namespace embDB
 		TFreeMapLists::iterator it =  m_ListFreeMaps.begin();
 		while(!it.isNull())
 		{
-			FileFreeMap* pFreeMap =  new FileFreeMap(m_nAddrLen);
+			FileFreeMap* pFreeMap =  new FileFreeMap(m_nAddrLen, m_bCheckCRC);
 			FilePagePtr pPage(m_pStorage->getFilePage(it.value(), m_nPageSize));
 			if(!pPage.get())
 			{
@@ -379,8 +380,8 @@ namespace embDB
 		}
 		CommonLib::FxMemoryReadStream stream;
 		stream.attachBuffer(pRootPage->getRowData(), pRootPage->getPageSize());
-		sFilePageHeader header(stream, pRootPage->getPageSize());
-		if(!header.isValid())
+		sFilePageHeader header(stream, pRootPage->getPageSize(), m_bCheckCRC);
+		if(m_bCheckCRC && !header.isValid())
 		{
 			//TO DO Log
 			return false;
@@ -393,7 +394,7 @@ namespace embDB
 
 		int64 nPageList = stream.readInt64();
 		
-		TUndoVector UndoVector(nPageList, m_nPageSize/*pTran->getPageSize()*/, TRANSACTION_PAGE, UNDO_FREEMAP_PAGES_LIST);
+		TUndoVector UndoVector(nPageList, m_nPageSize/*pTran->getPageSize()*/, TRANSACTION_PAGE, UNDO_FREEMAP_PAGES_LIST, m_bCheckCRC);
 		TUndoVector::iterator<IDBTransaction> it = UndoVector.begin(pTran);
 		while(!it.isNull())
 		{

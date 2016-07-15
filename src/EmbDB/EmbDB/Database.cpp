@@ -5,6 +5,7 @@
 #include "storage.h"
 #include "Transactions.h"
 #include "DBTranManager.h"
+#include "GlobalParams.h"
 namespace embDB
 {
 
@@ -38,28 +39,39 @@ namespace embDB
 		if(!bOpen)
 			return false;
 		int64 nfSize = m_pStorage->getFileSize();
-		if(nfSize < MIN_PAGE_SIZE)
+		if(nfSize < MIN_PAGE_SIZE + HEADER_DB_PAGE_SIZE)
 			return false;
 		//m_pStorage->setPageSize(DEFAULT_PAGE_SIZE);
-		FilePagePtr pFile(m_pStorage->getFilePage(0, MIN_PAGE_SIZE));
-		if(!pFile.get())
+		FilePagePtr pHeadDBFile(m_pStorage->getFilePage(0, HEADER_DB_PAGE_SIZE));
+		if(!pHeadDBFile.get())
 			return false;
 
-		m_bOpen =  readRootPage(pFile.get());
+		if(!readHeadPage(pHeadDBFile.get()))
+			return false;
+
+		FilePagePtr pRootFile(m_pStorage->getFilePage(1, MIN_PAGE_SIZE));
+		if(!pRootFile.get())
+			return false;
+
+		m_bOpen =  readRootPage(pRootFile.get());
 		return m_bOpen;
 	}
 	bool CDatabase::create(const wchar_t* pszName, /*uint32 nPageSize,*/ DBTransactionMode mode, const wchar_t* pszWorkingPath, const wchar_t* pszPassword)
 	{
 		close();
-		/*if(nPageSize <= 0 )
-			return false;*/
-		m_dbHeader.nCRC = 10;
-		m_dbHeader.nVersion = 1;
-	//	m_dbHeader.nPageSize = nPageSize;
-		m_dbHeader.nMagicSymbol = DB_SYMBOL;
+
+		CGlobalParams::Instance().SetCheckCRC(true);
+
+		m_dbHeader.bCheckCRC = true;
+		m_dbHeader.nCryptoAlg = NONE_ALG;
+
+
+	//	m_dbHeader.nCRC = 10;
+	//	m_dbHeader.nVersion = 1;
+	//	m_dbHeader.nMagicSymbol = DB_SYMBOL;
 		
 	 
-		bool bOpen = m_pStorage->open(pszName, false, false, true, false/*,  nPageSize*/);
+		bool bOpen = m_pStorage->open(pszName, false, false, true, false);
 		if(!bOpen)
 			return false;
 		bOpen = m_pTranManager->open(pszName, pszWorkingPath);
@@ -79,19 +91,19 @@ namespace embDB
 		if(!pDBUserPage.get())
 			return false;
 
-		m_dbHeader.nStoragePage = pDBStoragePage->getAddr();
-		m_dbHeader.nShemaPage = pDBShemaPage->getAddr();
-		m_dbHeader.nUserPage = pDBUserPage->getAddr();
+		m_dbRootPage.nStoragePage = pDBStoragePage->getAddr();
+		m_dbRootPage.nShemaPage = pDBShemaPage->getAddr();
+		m_dbRootPage.nUserPage = pDBUserPage->getAddr();
 
 		CommonLib::FxMemoryWriteStream stream;
 		stream.attachBuffer(pDBHeaderPage->getRowData(), pDBHeaderPage->getPageSize());
 		sFilePageHeader header(stream, DATABASE_PAGE, DB_HEADER_PAGE, pDBHeaderPage->getPageSize());
-		m_dbHeader.Write(&stream);
+		m_dbRootPage.Write(&stream);
 		header.writeCRC32(stream);
-		m_pStorage->initStorage(m_dbHeader.nStoragePage);
+		m_pStorage->initStorage(m_dbRootPage.nStoragePage);
 		m_pStorage->saveFilePage(pDBHeaderPage);
 
-		if(!m_pSchema->open(m_pStorage.get(), m_dbHeader.nShemaPage, true))
+		if(!m_pSchema->open(m_pStorage.get(), m_dbRootPage.nShemaPage, true))
 			return false;
 		m_pStorage->saveStorageInfo();
 		m_pStorage->commit();
@@ -109,11 +121,15 @@ namespace embDB
 		bRet = m_pSchema->close();
 		return bRet;
 	}
+	bool CDatabase::readHeadPage(CFilePage* pPage)
+	{
+
+	}
 	bool CDatabase::readRootPage(CFilePage* pFilePage)
 	{
 		CommonLib::FxMemoryReadStream stream(m_pAlloc.get());
 		stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
-		sFilePageHeader header(stream, pFilePage->getPageSize());
+		sFilePageHeader header(stream, pFilePage->getPageSize(), true);
 		if(!header.isValid())
 		{
 			//TO DO Logging
@@ -124,20 +140,20 @@ namespace embDB
 			//TO DO Logging
 			return false;
 		}
-		m_dbHeader.Read(&stream);
-		if(m_dbHeader.nMagicSymbol != DB_SYMBOL)
-			return false;
+		m_dbRootPage.Read(&stream);
+	/*	if(m_dbRootPage.nMagicSymbol != DB_SYMBOL)
+			return false;*/
 		//if(m_dbHeader.nPageSize <= 0 )
 		//	return false;
 		//m_pStorage->setPageSize(m_dbHeader.nPageSize);
-		m_pStorage->setStoragePageInfo(m_dbHeader.nStoragePage);
+		m_pStorage->setStoragePageInfo(m_dbRootPage.nStoragePage);
 		if(!m_pStorage->loadStorageInfo())
 			return false;
 		if(!CheckDirty())
 			return false;
-		if(m_dbHeader.nShemaPage <= 0 )
+		if(m_dbRootPage.nShemaPage <= 0 )
 			return false;
-		if(!m_pSchema->open(m_pStorage.get(), m_dbHeader.nShemaPage))
+		if(!m_pSchema->open(m_pStorage.get(), m_dbRootPage.nShemaPage))
 			return false;
 
 		

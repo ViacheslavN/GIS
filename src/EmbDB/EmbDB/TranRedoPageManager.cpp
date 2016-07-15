@@ -6,13 +6,14 @@
 
 namespace embDB
 {
-	CTranRedoPageManager::CTranRedoPageManager(IDBTransaction *pTran, CTranStorage *pStorage) :
+	CTranRedoPageManager::CTranRedoPageManager(IDBTransaction *pTran, CTranStorage *pStorage, bool bCheckCRC) :
 	m_pTran(pTran)
 	,m_pStorage(pStorage)
 	,m_nRootPage(-1)
 	,m_nLastPos(0)
-	,m_RedoPages(-1, COMMON_PAGE_SIZE, TRANSACTION_PAGE, REDO_PAGES)
-	,m_UndoPages(-1, COMMON_PAGE_SIZE, TRANSACTION_PAGE, REDO_PAGES)
+	,m_bCheckCRC(bCheckCRC)
+	,m_RedoPages(-1, COMMON_PAGE_SIZE, TRANSACTION_PAGE, REDO_PAGES, bCheckCRC)
+	,m_UndoPages(-1, COMMON_PAGE_SIZE, TRANSACTION_PAGE, REDO_PAGES, bCheckCRC)
 {
 
 }
@@ -138,7 +139,7 @@ void CTranRedoPageManager::setFirstPage(int64 nPage, bool bCreate)
 			return; //TO DO Logs
 		CommonLib::FxMemoryReadStream stream;	
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-		sFilePageHeader header(stream, pPage->getPageSize());
+		sFilePageHeader header(stream, pPage->getPageSize(), m_bCheckCRC);
 		if(!header.isValid())
 		{
 			//TO DO Log
