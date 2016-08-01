@@ -78,9 +78,13 @@ namespace embDB
 		if(!bOpen)
 			return false;
 
-		FilePagePtr pDBHeaderPage(m_pStorage->getNewPage(MIN_PAGE_SIZE, true));
+		FilePagePtr pDBHeaderPage(m_pStorage->getNewPage(HEADER_DB_PAGE_SIZE, true));
 		if(!pDBHeaderPage.get())
 			return false;
+		FilePagePtr pDBRootPage(m_pStorage->getNewPage(MIN_PAGE_SIZE, true));
+		if(!pDBRootPage.get())
+			return false;
+
 		FilePagePtr pDBStoragePage(m_pStorage->getNewPage(MIN_PAGE_SIZE, true));
 		if(!pDBStoragePage.get())
 			return false;
@@ -94,14 +98,30 @@ namespace embDB
 		m_dbRootPage.nStoragePage = pDBStoragePage->getAddr();
 		m_dbRootPage.nShemaPage = pDBShemaPage->getAddr();
 		m_dbRootPage.nUserPage = pDBUserPage->getAddr();
-
-		CommonLib::FxMemoryWriteStream stream;
-		stream.attachBuffer(pDBHeaderPage->getRowData(), pDBHeaderPage->getPageSize());
-		sFilePageHeader header(stream, DATABASE_PAGE, DB_HEADER_PAGE, pDBHeaderPage->getPageSize());
-		m_dbRootPage.Write(&stream);
-		header.writeCRC32(stream);
+		
 		m_pStorage->initStorage(m_dbRootPage.nStoragePage);
-		m_pStorage->saveFilePage(pDBHeaderPage);
+
+
+		{
+
+			CommonLib::FxMemoryWriteStream stream;
+			stream.attachBuffer(pDBHeaderPage->getRowData(), pDBHeaderPage->getPageSize());
+			sFilePageHeader header(stream, DATABASE_PAGE, DB_ROOT_PAGE, pDBHeaderPage->getPageSize());
+			m_dbHeader.Write(&stream);
+			header.writeCRC32(stream);
+			m_pStorage->saveFilePage(pDBHeaderPage);
+		}
+
+		{
+
+			CommonLib::FxMemoryWriteStream stream;
+			stream.attachBuffer(pDBRootPage->getRowData(), pDBRootPage->getPageSize());
+			sFilePageHeader header(stream, DATABASE_PAGE, DB_ROOT_PAGE, pDBRootPage->getPageSize());
+			m_dbRootPage.Write(&stream);
+			header.writeCRC32(stream);
+			m_pStorage->saveFilePage(pDBRootPage);
+		}
+
 
 		if(!m_pSchema->open(m_pStorage.get(), m_dbRootPage.nShemaPage, true))
 			return false;
@@ -121,9 +141,26 @@ namespace embDB
 		bRet = m_pSchema->close();
 		return bRet;
 	}
-	bool CDatabase::readHeadPage(CFilePage* pPage)
+	bool CDatabase::readHeadPage(CFilePage* pFilePage)
 	{
+		CommonLib::FxMemoryReadStream stream(m_pAlloc.get());
+		stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
+		sFilePageHeader header(stream, pFilePage->getPageSize(), true);
+		if(!header.isValid())
+		{
+			//TO DO Logging
+			return false;
+		}
 
+		if(header.m_nObjectPageType != DATABASE_PAGE || header.m_nSubObjectPageType != DB_HEADER_PAGE)
+		{
+			//TO DO Logging
+			return false;
+		}
+
+		m_dbHeader.Read(&stream);
+
+		return true;
 	}
 	bool CDatabase::readRootPage(CFilePage* pFilePage)
 	{
@@ -135,7 +172,7 @@ namespace embDB
 			//TO DO Logging
 			return false;
 		}
-		if(header.m_nObjectPageType != DATABASE_PAGE || header.m_nSubObjectPageType != DB_HEADER_PAGE)
+		if(header.m_nObjectPageType != DATABASE_PAGE || header.m_nSubObjectPageType != DB_ROOT_PAGE)
 		{
 			//TO DO Logging
 			return false;

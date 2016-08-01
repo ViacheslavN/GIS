@@ -17,7 +17,8 @@ namespace embDB
 	};
 	enum eDatabasePageType
 	{
-		DB_HEADER_PAGE
+		DB_HEADER_PAGE,
+		DB_ROOT_PAGE
 		
 	};
 

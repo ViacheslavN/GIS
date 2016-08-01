@@ -18,12 +18,13 @@ namespace embDB
 		uint32 nMajorVersion;
 		uint32 nMinorVersion;
 		uint32 nCryptoAlg;
+		bool bCheckPWD;
 		bool bCheckCRC;
 		short nSaltSize;
 		byte szSalt[256];
 
 		sDBHeader(): nMagicSymbol(0), nMajorVersion(0), nMinorVersion(0), nCryptoAlg(NONE_ALG), bCheckCRC(false),
-			nSaltSize(10)
+			bCheckPWD(false), nSaltSize(10)
 		{
 			memset(szSalt, 0, sizeof(szSalt));
 		}
@@ -36,7 +37,7 @@ namespace embDB
 			nMinorVersion = pStream->readIntu32();
 			nCryptoAlg = pStream->readIntu32();
 			nSaltSize = pStream->readintu16();
-
+			bCheckPWD = pStream->readBool();
 			pStream->read(szSalt, nSaltSize);
 		}
 		void Write(CommonLib::IWriteStream* pStream)
@@ -46,7 +47,7 @@ namespace embDB
 			pStream->write(nMinorVersion);
 			pStream->write(nCryptoAlg);
 			pStream->write(nSaltSize);
-
+			pStream->write(bCheckPWD);
 			pStream->write(szSalt, nSaltSize);
 		}
 

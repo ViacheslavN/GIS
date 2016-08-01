@@ -351,7 +351,7 @@ namespace embDB
 		uint32 nCnt = 0;
 		if(m_pPageCrypto && pPage->isNeedEncrypt())
 		{
-			m_pPageCrypto->encrypt(pPage->getRowData(), pPage->getPageSize(), m_pBufPageCrypto->getRowData(), m_pBufPageCrypto->getPageSize());
+			m_pPageCrypto->encrypt(pPage->getRowData(), pPage->getPageSize());
 			nCnt = m_pFile.writeFile((void*)m_pBufPageCrypto->getRowData(), m_pBufPageCrypto->getPageSize());
 		}
 		else

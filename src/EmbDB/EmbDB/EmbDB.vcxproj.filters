@@ -630,9 +630,6 @@
     <ClInclude Include="UniqueIndex.h">
       <Filter>DB\Fields\Index\UniqueIndex</Filter>
     </ClInclude>
-    <ClInclude Include="PageCrypto.h">
-      <Filter>Crypto</Filter>
-    </ClInclude>
     <ClInclude Include="BPMapPointSpatialIteratorOld.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
     </ClInclude>
@@ -1179,7 +1176,19 @@
     <ClInclude Include="GlobalParams.h">
       <Filter>DB</Filter>
     </ClInclude>
-    <ClInclude Include="XorPageCrypto.h">
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PBKDF2.h">
+      <Filter>Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="PageCipher.h">
+      <Filter>Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="XorPageCipher.h">
       <Filter>Crypto</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,7 +6,7 @@
 #include "FilePage.h"
 #include "CommonLibrary/alloc_t.h"
 #include "TranPerfCounter.h"
-#include "PageCrypto.h"
+#include "PageCipher.h"
 #include <memory>
 namespace embDB
 {
@@ -32,7 +32,7 @@ namespace embDB
 		uint32 m_nPageSize;
 		CommonLib::CString m_sTranName;
 		CTranPerfCounter *m_pCounter;
-		IPageCrypto* m_pPageCrypto;
+		IPageCipher* m_pPageCrypto;
 		bool m_bCheckCRC;
 	};
 }

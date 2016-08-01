@@ -566,7 +566,7 @@
     <ClInclude Include="NumLenCompress.h" />
     <ClInclude Include="NumLenDiffCompress.h" />
     <ClInclude Include="OIDCompress.h" />
-    <ClInclude Include="PageCrypto.h" />
+    <ClInclude Include="PageCipher.h" />
     <ClInclude Include="PageVectorLazySave.h" />
     <ClInclude Include="BPMapTraits.h" />
     <ClInclude Include="BPSetIteratorRO.h" />
@@ -602,6 +602,7 @@
     <ClInclude Include="HuffmanOIDComp.h" />
     <ClInclude Include="ListDBPage.h" />
     <ClInclude Include="PageAlloc.h" />
+    <ClInclude Include="PBKDF2.h" />
     <ClInclude Include="PointZOrderCompressor.h" />
     <ClInclude Include="RectZOrderCompressor.h" />
     <ClInclude Include="RowIDCounter.h" />
@@ -686,7 +687,7 @@
     <ClInclude Include="VariantField.h" />
     <ClInclude Include="PageVector.h" />
     <ClInclude Include="WriteStreamPage.h" />
-    <ClInclude Include="XorPageCrypto.h" />
+    <ClInclude Include="XorPageCipher.h" />
     <ClInclude Include="ZLibCompressor.h" />
     <ClInclude Include="ZOrderCompressBase.h" />
   </ItemGroup>

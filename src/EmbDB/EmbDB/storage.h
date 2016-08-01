@@ -15,7 +15,7 @@
 #endif
 #include "StorageInfo.h"
 #include "MemPageCache.h"
-#include "PageCrypto.h"
+#include "PageCipher.h"
 #include "CacheLRU.h"
 #include "CacheLRU_2Q.h"
 #include <iostream>
@@ -117,7 +117,7 @@ namespace embDB
 		 bool m_bCommitState;
 		 uint64 m_nCalcFileSize;
 		// CMemPageCache m_MemCache;
-		 IPageCrypto *m_pPageCrypto;
+		 IPageCipher *m_pPageCrypto;
 		 std::auto_ptr<CFilePage> m_pBufPageCrypto; 
 		 bool m_bCheckCRC;
 	};
