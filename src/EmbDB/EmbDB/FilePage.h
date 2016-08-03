@@ -34,46 +34,56 @@ struct sFilePageHeader
 	uint32 m_nCalcCRC32;
 	uint32 m_nPageSize;
 	bool m_bCheckCRC;
-
-	sFilePageHeader(uint32 nPageSize) : m_nObjectPageType(0), m_nSubObjectPageType(0), m_nCRC32(0), m_nCalcCRC32(0), m_nSize(0), m_nPageSize(nPageSize)
+	bool m_bCheckPageType;
+	sFilePageHeader(uint32 nPageSize) : m_nObjectPageType(0), m_nSubObjectPageType(0), m_nCRC32(0),
+		m_nCalcCRC32(0), m_nSize(0), m_nPageSize(nPageSize), m_bCheckPageType(true)
 	{}
 
 	sFilePageHeader(CommonLib::FxMemoryReadStream& stream, uint32 nPageSize, bool bCalcCRC): m_nPageSize(nPageSize), m_nSize(0),
-		m_bCheckCRC(bCalcCRC)
+		m_bCheckCRC(bCalcCRC), m_bCheckPageType(true)
 	{
-		read(stream, bCalcCRC);
+		read(stream);
 	}
 
-	sFilePageHeader(CommonLib::FxMemoryWriteStream& stream, uint16 nObjectPageType, uint16 nSubObjectPageType, uint32 nPageSize) :
+	sFilePageHeader(CommonLib::FxMemoryWriteStream& stream, uint16 nObjectPageType, uint16 nSubObjectPageType, uint32 nPageSize, bool bCalcCRC) :
 		m_nObjectPageType(nObjectPageType), m_nSubObjectPageType(nSubObjectPageType), m_nCRC32(0), m_nCalcCRC32(0), m_nPageSize(nPageSize), m_nSize(0),
-			m_bCheckCRC(false)
+			m_bCheckCRC(bCalcCRC), m_bCheckPageType(true)
 	{
 		write(stream);
 	}
 
 
-	sFilePageHeader(uint16 nObjectPageType, uint16 nSubObjectPageType, uint32 nPageSize) :
-	m_nObjectPageType(nObjectPageType), m_nSubObjectPageType(nSubObjectPageType), m_nCRC32(0), m_nCalcCRC32(0), m_nPageSize(nPageSize), m_nSize(0), m_bCheckCRC(false)
+	sFilePageHeader(uint16 nObjectPageType, uint16 nSubObjectPageType, uint32 nPageSize, bool bCalcCRC) :
+	m_nObjectPageType(nObjectPageType), m_nSubObjectPageType(nSubObjectPageType), m_nCRC32(0), m_nCalcCRC32(0), m_nPageSize(nPageSize), m_nSize(0), m_bCheckCRC(bCalcCRC), m_bCheckPageType(true)
 	{}
 
 
-	static uint32 size() 
+	static uint32 size(bool bCheckCRC = true, bool bCheckPageType = true) 
 	{
-		return 2* (sizeof(uint16) )+ 2 * sizeof(uint32);
+		return bCheckPageType ? 2* (sizeof(uint16) ) : 0 +  bCheckCRC ? 2 * sizeof(uint32) : 0;
 	}
 
 	void write(CommonLib::FxMemoryWriteStream& stream)
 	{
 		assert(m_nPageSize != 0);
-		assert(m_nSize <= (m_nPageSize - 2 *sizeof(uint32)));
-		stream.write(m_nCRC32);
-		stream.write(m_nSize);
-		stream.write(m_nObjectPageType);
-		stream.write(m_nSubObjectPageType);
+		 if(m_bCheckCRC)
+		 {
+			 stream.write(m_nCRC32);
+			 stream.write(m_nSize);
+		 }
+		 if(m_bCheckPageType)
+		 {
+			 stream.write(m_nObjectPageType);
+			 stream.write(m_nSubObjectPageType);
+		 }
+
 	}
 
 	void writeCRC32(CommonLib::FxMemoryWriteStream& stream)
 	{
+		if(!m_bCheckCRC)
+			return;
+
 		assert(m_nPageSize != 0);
 		m_nSize = stream.pos() - 2 *sizeof(uint32);
 		assert(m_nSize <= (m_nPageSize - 2 *sizeof(uint32)));
@@ -85,15 +95,21 @@ struct sFilePageHeader
 		stream.seek(pos, CommonLib::soFromBegin );
 	}
 
-	void read(CommonLib::FxMemoryReadStream& stream, bool bCalcCRC = true)
+	void read(CommonLib::FxMemoryReadStream& stream)
 	{
 		assert(m_nPageSize != 0);
-		stream.read(m_nCRC32);
-		stream.read(m_nSize);
-		stream.read(m_nObjectPageType);
-		stream.read(m_nSubObjectPageType);
-		assert(m_nSize <= (m_nPageSize - 2 *sizeof(uint32)));
-		if(bCalcCRC)
+		if(m_bCheckCRC)
+		{
+			stream.read(m_nCRC32);
+			stream.read(m_nSize);
+		}
+		if(m_bCheckPageType)
+		{
+			stream.read(m_nObjectPageType);
+			stream.read(m_nSubObjectPageType);
+		}
+ 
+		if(m_bCheckCRC)
 		{
 			m_nCalcCRC32 = Crc32(stream.buffer() + 2 *sizeof(uint32), m_nSize);
 		}

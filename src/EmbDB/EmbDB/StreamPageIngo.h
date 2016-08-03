@@ -58,7 +58,7 @@ namespace embDB
 
 				CommonLib::FxMemoryWriteStream stream;
 				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-				sFilePageHeader header(stream, BTREE_PAGE, BTREE_STREAM_PAGE_INFO, pPage->getPageSize());
+				sFilePageHeader header(stream, BTREE_PAGE, BTREE_STREAM_PAGE_INFO, pPage->getPageSize(), m_bCheckCRC);
 				stream.write(m_nBeginStream);
 				stream.write(m_nEndStream);
 				stream.write(m_nPos);
@@ -100,7 +100,7 @@ namespace embDB
 						//m_pWriteStream->open(m_nEndStream, m_nPos);
 						return m_pWriteStream;
 					}
-					m_pWriteStream = new WriteStreamPage(pTran, m_nSizePage);
+					m_pWriteStream = new WriteStreamPage(pTran, m_nSizePage, m_bCheckCRC);
 				}
 				m_pWriteStream->open(nPage, nPos);
 				return m_pWriteStream;
@@ -128,7 +128,7 @@ namespace embDB
 					m_nPos = 0;
 					Save(pTran);
 
-					m_pWriteStream = new WriteStreamPage(pTran, m_nSizePage);
+					m_pWriteStream = new WriteStreamPage(pTran, m_nSizePage, m_bCheckCRC);
 					m_pWriteStream->open(m_nEndStream, m_nPos);
 				 
 				}

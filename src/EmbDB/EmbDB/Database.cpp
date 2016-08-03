@@ -106,7 +106,7 @@ namespace embDB
 
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attachBuffer(pDBHeaderPage->getRowData(), pDBHeaderPage->getPageSize());
-			sFilePageHeader header(stream, DATABASE_PAGE, DB_ROOT_PAGE, pDBHeaderPage->getPageSize());
+			sFilePageHeader header(stream, DATABASE_PAGE, DB_ROOT_PAGE, pDBHeaderPage->getPageSize(), m_DBParams.bCheckCRC);
 			m_dbHeader.Write(&stream);
 			header.writeCRC32(stream);
 			m_pStorage->saveFilePage(pDBHeaderPage);
@@ -116,7 +116,7 @@ namespace embDB
 
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attachBuffer(pDBRootPage->getRowData(), pDBRootPage->getPageSize());
-			sFilePageHeader header(stream, DATABASE_PAGE, DB_ROOT_PAGE, pDBRootPage->getPageSize());
+			sFilePageHeader header(stream, DATABASE_PAGE, DB_ROOT_PAGE, pDBRootPage->getPageSize(), m_DBParams.bCheckCRC);
 			m_dbRootPage.Write(&stream);
 			header.writeCRC32(stream);
 			m_pStorage->saveFilePage(pDBRootPage);

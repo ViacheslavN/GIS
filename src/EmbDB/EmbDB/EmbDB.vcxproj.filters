@@ -229,6 +229,12 @@
     <Filter Include="DB\transactions\Cursors\SelectOpCursor">
       <UniqueIdentifier>{d50dfcca-64fc-4ae2-8644-09144bd70606}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Crypto\Cryptopp">
+      <UniqueIdentifier>{85a70c58-4956-4568-81f1-33ee54ffd207}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Crypto\CryptoAlg">
+      <UniqueIdentifier>{aaec819f-4893-44e2-933f-6cd41edd7a4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -1182,14 +1188,26 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PBKDF2.h">
-      <Filter>Crypto</Filter>
-    </ClInclude>
     <ClInclude Include="PageCipher.h">
       <Filter>Crypto</Filter>
     </ClInclude>
     <ClInclude Include="XorPageCipher.h">
       <Filter>Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PBKDF2.h">
+      <Filter>Crypto\CryptoAlg</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockClipher.h">
+      <Filter>Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="SHA25.h">
+      <Filter>Crypto\CryptoAlg</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1333,6 +1351,9 @@
     </ClCompile>
     <ClCompile Include="GlobalParams.cpp">
       <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="SHA25.cpp">
+      <Filter>Crypto\CryptoAlg</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

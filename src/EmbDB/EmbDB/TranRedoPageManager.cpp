@@ -45,7 +45,7 @@ bool CTranRedoPageManager::save()
 		return false; //TO DO Logs
 	CommonLib::FxMemoryWriteStream stream;	
 	stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-	sFilePageHeader header(stream, TRANSACTION_PAGE, REDO_PAGES, pPage->getPageSize());
+	sFilePageHeader header(stream, TRANSACTION_PAGE, REDO_PAGES, pPage->getPageSize(), m_bCheckCRC);
 	 stream.write(m_Header.nRedoBlock);
 	 stream.write(m_Header.nUndoBlock);
 	 header.writeCRC32(stream);

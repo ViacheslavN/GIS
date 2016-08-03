@@ -11,12 +11,14 @@ namespace embDB
 			static CGlobalParams& Instance();
 			void SetCheckCRC(bool bCheck);
 			bool GetCheckCRC() const;
-
+			void SetCheckPageType(bool bCheckPageType);
+			bool GetCheckPageType() const;
 		private:
 			CGlobalParams();
 			~CGlobalParams();
 		private:
 			bool m_bCheckCRC;
+			bool m_bCheckPageType;
 
 	};
 }

@@ -264,7 +264,7 @@ public:
 			return false;
 		CommonLib::FxMemoryWriteStream stream;
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-		sFilePageHeader header(stream, m_nObjectPage, m_nSubObjectPage, pPage->getPageSize());
+		sFilePageHeader header(stream, m_nObjectPage, m_nSubObjectPage, pPage->getPageSize(), m_bCheckCRC);
 		stream.write(pNode->m_pNext ? pNode->m_pNext->m_nPageAddr : -1);
 		pNode->save(m_rw, stream);
 		header.writeCRC32(stream);

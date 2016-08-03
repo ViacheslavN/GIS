@@ -103,7 +103,7 @@ namespace embDB
 
 			CommonLib::alloc_t* getBTreeAlloc();
 			bool getCheckCRC() const {return m_DBParams.bCheckCRC;}
-				
+			bool getCheckPageType() const {return !m_DBParams.qryptoAlg == NONE_ALG;}
 		private:
 			bool readHeadPage(CFilePage* pPage);
 			bool readRootPage(CFilePage* pPage);

@@ -5,7 +5,7 @@
 namespace embDB
 {
 
-	CGlobalParams::CGlobalParams() : m_bCheckCRC(false)
+	CGlobalParams::CGlobalParams() : m_bCheckCRC(false), m_bCheckPageType(false)
 	{
 	}
 	CGlobalParams::~CGlobalParams()
@@ -27,6 +27,13 @@ namespace embDB
 		return m_bCheckCRC;
 	}
 
- 
+	void  CGlobalParams::SetCheckPageType(bool bCheckPageType)
+	{
+		m_bCheckPageType = bCheckPageType;
+	}
+	bool  CGlobalParams::GetCheckPageType() const
+	{
+		return m_bCheckPageType;
+	}
 
 }

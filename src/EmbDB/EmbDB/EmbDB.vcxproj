@@ -481,6 +481,7 @@
     <ClInclude Include="BlobLeafNodeCompressor.h" />
     <ClInclude Include="BlobTree.h" />
     <ClInclude Include="BlobVal.h" />
+    <ClInclude Include="BlockClipher.h" />
     <ClInclude Include="BPCompressors.h" />
     <ClInclude Include="BPInneOIDNodeCompressor.h" />
     <ClInclude Include="BPInnerNodeSetROSimpleCompressor.h" />
@@ -606,6 +607,7 @@
     <ClInclude Include="PointZOrderCompressor.h" />
     <ClInclude Include="RectZOrderCompressor.h" />
     <ClInclude Include="RowIDCounter.h" />
+    <ClInclude Include="SHA25.h" />
     <ClInclude Include="ShapeComp.h" />
     <ClInclude Include="ShapeCompressorParams.h" />
     <ClInclude Include="ShapeField.h" />
@@ -726,6 +728,7 @@
     <ClCompile Include="OIDCompress.cpp" />
     <ClCompile Include="PageAlloc.cpp" />
     <ClCompile Include="Row.cpp" />
+    <ClCompile Include="SHA25.cpp" />
     <ClCompile Include="SimpleSearchCursor.cpp" />
     <ClCompile Include="SimpleSelectCursor.cpp" />
     <ClCompile Include="SimpleSelectOpCursor.cpp" />

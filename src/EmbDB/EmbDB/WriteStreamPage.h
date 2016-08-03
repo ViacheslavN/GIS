@@ -9,9 +9,9 @@ namespace embDB
 	class WriteStreamPage : public CommonLib::TMemoryStreamBase<CommonLib::IWriteStreamBase>, public CommonLib::AutoRefCounter
 	{
 	public:
-		WriteStreamPage(IDBTransaction* pTran, uint32 nPageSize, uint16 nObjectPage = 0, uint16 nSubObjectPage = 0) :
+		WriteStreamPage(IDBTransaction* pTran, uint32 nPageSize, bool bCheckCRC, uint16 nObjectPage = 0, uint16 nSubObjectPage = 0) :
 		  m_pTran(pTran), m_nPageHeader(-1), m_nBeginPos(0), m_nPageSize(nPageSize), 
-			  m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage)
+			  m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage), m_bCheckCRC(bCheckCRC)
 		  {
 			
 
@@ -32,7 +32,7 @@ namespace embDB
 			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
-				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, pPage->getPageSize());
+				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, pPage->getPageSize(), false);
 				  if(m_nBeginPos != 0)
 					  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
 			  }
@@ -66,7 +66,7 @@ namespace embDB
 			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
 			  if(m_nObjectPage !=0 && m_nSubObjectPage != 0)
 			  {
-				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize());
+				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize(), m_bCheckCRC);
 				  if(m_nBeginPos != 0)
 					  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
 			  }
@@ -87,7 +87,7 @@ namespace embDB
 				  int32 nFreeSize = m_stream.size() - m_stream.pos();
 				  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 				  {
-					  nFreeSize -= sFilePageHeader::size();  
+					  nFreeSize -= sFilePageHeader::size(m_bCheckCRC);  
 				  }
 
 				  if((int32)size <= nFreeSize)
@@ -170,7 +170,7 @@ namespace embDB
 		  {
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
-				  sFilePageHeader header(m_nObjectPage, m_nSubObjectPage, m_nPageSize);
+				  sFilePageHeader header(m_nObjectPage, m_nSubObjectPage, m_nPageSize, m_bCheckCRC);
 				  header.writeCRC32(m_stream);
 			
 			  }
@@ -185,7 +185,7 @@ namespace embDB
 			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
-				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize());
+				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize(), m_bCheckCRC);
 			  }
 		  }
  
@@ -195,7 +195,7 @@ namespace embDB
 			  {
 				  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 				  {
-					  sFilePageHeader header(m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize());
+					  sFilePageHeader header(m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize(), m_bCheckCRC);
 					  header.writeCRC32(m_stream);
 
 				  }
@@ -223,7 +223,7 @@ namespace embDB
     	CommonLib::FxMemoryWriteStream m_stream;
 		uint16 m_nObjectPage;
 		uint16 m_nSubObjectPage; 
-	
+		 bool m_bCheckCRC; 
  
 	};
 

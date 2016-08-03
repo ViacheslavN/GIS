@@ -123,7 +123,7 @@ namespace embDB
 				{
 					CommonLib::FxMemoryWriteStream stream;
 					stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-					sFilePageHeader header (stream, STORAGE_PAGE, STORAGE_FREE_MAP_PAGE, pPage->getPageSize());
+					sFilePageHeader header (stream, STORAGE_PAGE, STORAGE_FREE_MAP_PAGE, pPage->getPageSize(), m_bCheckCRC);
 					stream.write(m_nBlockNum);
 				//	m_BitMap.setBits(stream.buffer() + stream.pos(), stream.size() - stream.pos());
 					stream.write(m_BitMap.getBits(), m_BitMap.size());
