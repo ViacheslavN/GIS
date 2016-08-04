@@ -4,10 +4,11 @@
 #include "stdafx.h"
 
 void TestSha256();
+void TestAES128();
 int _tmain(int argc, _TCHAR* argv[])
 {
-
-	 TestSha256();
+	TestAES128();
+	// TestSha256();
 	return 0;
 }
 

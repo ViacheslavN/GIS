@@ -236,15 +236,15 @@ void displayHash(uchar hash[32])
 void TestSha256()
 {
 	byte str[] = "The quick brown fox jumps over the lazy dog";
-
+	uchar finalHash[32];
 	embDB::SHA256 sha256;
-	sha256.getHash((byte*)str, sizeof(str) - 1);
+	sha256.getHash((byte*)str, sizeof(str) - 1, finalHash);
 
-	displayHash(sha256.Result());
+	displayHash(finalHash);
 
 
 	uchar test[] = "The quick brown fox jumps over the lazy dog";
-	uchar finalHash[32];
+	 
 	SHA256(finalHash, test, sizeof(test) - 1);
 
 	displayHash(finalHash);

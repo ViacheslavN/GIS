@@ -454,6 +454,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AES128.h" />
     <ClInclude Include="BackTableZPoint16Bit.h" />
     <ClInclude Include="BaseBPMapRO.h" />
     <ClInclude Include="BaseBPMapv2.h" />
@@ -689,11 +690,11 @@
     <ClInclude Include="VariantField.h" />
     <ClInclude Include="PageVector.h" />
     <ClInclude Include="WriteStreamPage.h" />
-    <ClInclude Include="XorPageCipher.h" />
     <ClInclude Include="ZLibCompressor.h" />
     <ClInclude Include="ZOrderCompressBase.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AES128.cpp" />
     <ClCompile Include="BaseRBMultiTree.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>

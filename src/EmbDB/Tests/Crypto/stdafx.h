@@ -11,6 +11,6 @@
 #include <tchar.h>
 #include "CommonLibrary/CommonLib_lib.h"
 #include "../../EmbDB/embDBLib.h"
-
+#include  "cryptopp/cryptlib_lib.h"
 
 // TODO: reference additional headers your program requires here

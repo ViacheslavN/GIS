@@ -281,7 +281,7 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>$(OutDir)\CryptoppLib64ds-5.6.3.lib</OutputFile>
+      <OutputFile>$(OutDir)\LibCryptopp64ds-5.6.3.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL-Import Debug|Win32'">

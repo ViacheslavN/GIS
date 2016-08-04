@@ -1191,9 +1191,6 @@
     <ClInclude Include="PageCipher.h">
       <Filter>Crypto</Filter>
     </ClInclude>
-    <ClInclude Include="XorPageCipher.h">
-      <Filter>Crypto</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1207,6 +1204,15 @@
       <Filter>Crypto</Filter>
     </ClInclude>
     <ClInclude Include="SHA25.h">
+      <Filter>Crypto\CryptoAlg</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AES128.h">
       <Filter>Crypto\CryptoAlg</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1353,6 +1359,9 @@
       <Filter>DB</Filter>
     </ClCompile>
     <ClCompile Include="SHA25.cpp">
+      <Filter>Crypto\CryptoAlg</Filter>
+    </ClCompile>
+    <ClCompile Include="AES128.cpp">
       <Filter>Crypto\CryptoAlg</Filter>
     </ClCompile>
   </ItemGroup>
