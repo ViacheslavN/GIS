@@ -3,7 +3,7 @@
 
 #include "BlockClipher.h"
 
-#define _USE_CRYPTOPP_LIB_
+//#define _USE_CRYPTOPP_LIB_
 
 #ifdef _USE_CRYPTOPP_LIB_
 	#include "cryptopp/modes.h"

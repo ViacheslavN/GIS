@@ -117,7 +117,7 @@ namespace embDB
 		 bool m_bCommitState;
 		 uint64 m_nCalcFileSize;
 		// CMemPageCache m_MemCache;
-		 IPageCipher *m_pPageCrypto;
+		 CPageCipher *m_pPageCrypto;
 		 std::auto_ptr<CFilePage> m_pBufPageCrypto; 
 		 bool m_bCheckCRC;
 	};

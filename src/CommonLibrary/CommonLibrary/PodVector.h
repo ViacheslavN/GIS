@@ -211,7 +211,7 @@ namespace CommonLib
 				return true;
 			}
 			template<class _TComp >
-			void quick_sort(_TComp& comp)
+			void quick_sort(_TComp& comp) //TO DO need inner
 			{
 				if(m_nSize < 2) return;
 

@@ -183,8 +183,7 @@ namespace embDB
 	enum QryptoALG
 	{
 		NONE_ALG,
-		XQR_ALG,
-		DES3_ALG
+		AES128_ALG
 	};
 
 

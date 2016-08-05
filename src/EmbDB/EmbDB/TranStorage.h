@@ -32,7 +32,8 @@ namespace embDB
 		uint32 m_nPageSize;
 		CommonLib::CString m_sTranName;
 		CTranPerfCounter *m_pCounter;
-		IPageCipher* m_pPageCrypto;
+		CPageCipher* m_pPageCrypto;
+		std::auto_ptr<CFilePage> m_pBufPageCrypto; 
 		bool m_bCheckCRC;
 	};
 }

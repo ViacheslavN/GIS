@@ -533,6 +533,7 @@
     <ClInclude Include="CRC.h" />
     <ClInclude Include="CreateFields.h" />
     <ClInclude Include="DeleteCursor.h" />
+    <ClInclude Include="BaseHash.h" />
     <ClInclude Include="embDB.h" />
     <ClInclude Include="embDBInternal.h" />
     <ClInclude Include="embDBLib.h" />
@@ -695,6 +696,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AES128.cpp" />
+    <ClCompile Include="BaseHash.cpp" />
     <ClCompile Include="BaseRBMultiTree.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
@@ -728,6 +730,8 @@
     <ClCompile Include="MathUtils.cpp" />
     <ClCompile Include="OIDCompress.cpp" />
     <ClCompile Include="PageAlloc.cpp" />
+    <ClCompile Include="PageCipher.cpp" />
+    <ClCompile Include="PBKDF2.cpp" />
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="SHA25.cpp" />
     <ClCompile Include="SimpleSearchCursor.cpp" />

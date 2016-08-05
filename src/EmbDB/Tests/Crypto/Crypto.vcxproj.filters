@@ -38,5 +38,8 @@
     <ClCompile Include="AES128.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PageCipher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -5,9 +5,11 @@
 
 void TestSha256();
 void TestAES128();
+void TestPageCipher();
 int _tmain(int argc, _TCHAR* argv[])
 {
-	TestAES128();
+	TestPageCipher();
+	//TestAES128();
 	// TestSha256();
 	return 0;
 }

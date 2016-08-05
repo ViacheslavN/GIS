@@ -47,8 +47,8 @@ namespace embDB
 		uint32 nCnt = 0;
 		if(m_pPageCrypto && pPage->isNeedEncrypt())
 		{
-			m_pPageCrypto->encrypt(pPage->getRowData(), pPage->getPageSize());
-			nCnt = m_pFile.writeFile((void*)pPage->getRowData(),  (uint32)pPage->getPageSize());
+			m_pPageCrypto->encrypt(pPage, m_pBufPageCrypto->getRowData(),  (uint32)pPage->getPageSize());
+			nCnt = m_pFile.writeFile((void*)m_pBufPageCrypto->getRowData(),  (uint32)pPage->getPageSize());
 		}
 		else
 			nCnt = m_pFile.writeFile((void*)pPage->getRowData(),  pPage->getPageSize() );
@@ -75,7 +75,7 @@ namespace embDB
 
 			if(m_pPageCrypto && bDecrypt)
 			{
-				m_pPageCrypto->decrypt(pPage->getRowData(), pPage->getPageSize());
+				m_pPageCrypto->decrypt(pPage);
 			}
 		}
 	

@@ -8,6 +8,8 @@
 namespace embDB
 {
 
+#define  CIPHER_FILE_BLOCK_SIZE    16
+
 	class IBlockCipher
 	{
 	public:

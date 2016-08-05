@@ -5,7 +5,7 @@
 #include "CommonLibrary/general.h"
 #include "CommonLibrary/alloc_t.h"
 
-//#define  _USE_CRYPTOPP_LIB_
+#define  _USE_CRYPTOPP_LIB_
 
 #ifdef _USE_CRYPTOPP_LIB_
 	#include "cryptopp/sha.h"

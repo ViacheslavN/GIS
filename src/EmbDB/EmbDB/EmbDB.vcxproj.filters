@@ -235,6 +235,9 @@
     <Filter Include="Crypto\CryptoAlg">
       <UniqueIdentifier>{aaec819f-4893-44e2-933f-6cd41edd7a4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Crypto\CryptoAlg\Hash">
+      <UniqueIdentifier>{7ddd289e-abbd-40b5-866a-461ab924b22f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -1215,6 +1218,15 @@
     <ClInclude Include="AES128.h">
       <Filter>Crypto\CryptoAlg</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseHash.h">
+      <Filter>Crypto\CryptoAlg\Hash</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1363,6 +1375,15 @@
     </ClCompile>
     <ClCompile Include="AES128.cpp">
       <Filter>Crypto\CryptoAlg</Filter>
+    </ClCompile>
+    <ClCompile Include="PageCipher.cpp">
+      <Filter>Crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="PBKDF2.cpp">
+      <Filter>Crypto\CryptoAlg</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseHash.cpp">
+      <Filter>Crypto\CryptoAlg\Hash</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="AES128.cpp" />
     <ClCompile Include="Crypto.cpp" />
+    <ClCompile Include="PageCipher.cpp" />
     <ClCompile Include="sha256.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
