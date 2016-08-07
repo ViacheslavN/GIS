@@ -23,7 +23,7 @@ namespace embDB
 			return;
 
 
-
+		m_vecInitVector.resize(m_pCipher->getBlockSIze());
 		byte chipKey[32];
 		byte chipInitKey[32];
 
@@ -47,9 +47,10 @@ namespace embDB
 	void CPageCipher::xorInitVector(byte* b, int off, int len, int64 pos)
 	{
  
+		uint32 nBlockSIze = m_pCipherForInitVector->getBlockSIze();
 		while (len > 0)
 		{
-			for (int i = 0; i < CIPHER_FILE_BLOCK_SIZE; i += 8)
+			for (int i = 0; i < nBlockSIze; i += 8)
 			{
 				int64 block = (pos + i) >> 3;
 				m_vecInitVector[i] = (byte) (block >> 56);
@@ -61,14 +62,14 @@ namespace embDB
 				m_vecInitVector[i + 6] = (byte) (block >> 8);
 				m_vecInitVector[i + 7] = (byte) block;
 			}
-			m_pCipherForInitVector->encrypt(&m_vecInitVector[0], &m_vecInitVector[0], CIPHER_FILE_BLOCK_SIZE);
-			for (int i = 0; i < CIPHER_FILE_BLOCK_SIZE; i++)
+			m_pCipherForInitVector->encrypt(&m_vecInitVector[0], &m_vecInitVector[0], nBlockSIze);
+			for (int i = 0; i < nBlockSIze; i++)
 			{
 				b[off + i] ^= m_vecInitVector[i];
 			}
-			pos += CIPHER_FILE_BLOCK_SIZE;
-			off += CIPHER_FILE_BLOCK_SIZE;
-			len -= CIPHER_FILE_BLOCK_SIZE;
+			pos += nBlockSIze;
+			off += nBlockSIze;
+			len -= nBlockSIze;
 		}
 	}
 

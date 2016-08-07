@@ -16,11 +16,14 @@ namespace embDB
 		IBlockCipher(){}
 		virtual ~IBlockCipher(){}
 		virtual bool setKey(byte *pKey, uint32 nLen) = 0;
-		virtual bool encrypt(byte* pBuf, uint32 len) = 0;
-		virtual bool decrypt(byte* pBuf, uint32 len) = 0;
-		virtual bool encrypt(byte* pBuf, byte* pDst, uint32 len) = 0;
-		virtual bool decrypt(byte* pBuf, byte* pDst, uint32 len) = 0;
-		virtual int getKeyLength() const  = 0;
+		virtual bool encrypt(byte* pPlain, uint32 len) = 0;
+		virtual bool decrypt(byte* pPlain, uint32 len) = 0;
+		virtual bool encrypt(byte* pPlain, byte* pDst, uint32 len) = 0;
+		virtual bool decrypt(byte* pPlain, byte* pDst, uint32 len) = 0;
+
+		virtual uint32 getBlockSIze() const = 0;
+
+		virtual uint32 getKeyLength() const  = 0;
  
 	};
 }

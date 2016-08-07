@@ -532,8 +532,13 @@
     <ClInclude Include="CounterField.h" />
     <ClInclude Include="CRC.h" />
     <ClInclude Include="CreateFields.h" />
+    <ClInclude Include="Crypto\AES128.h" />
+    <ClInclude Include="Crypto\ASE256.h" />
+    <ClInclude Include="Crypto\BaseAES.h" />
+    <ClInclude Include="Crypto\BaseHash.h" />
+    <ClInclude Include="Crypto\SHA256.h" />
+    <ClInclude Include="Crypto\SHA512.h" />
     <ClInclude Include="DeleteCursor.h" />
-    <ClInclude Include="BaseHash.h" />
     <ClInclude Include="embDB.h" />
     <ClInclude Include="embDBInternal.h" />
     <ClInclude Include="embDBLib.h" />
@@ -696,7 +701,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AES128.cpp" />
-    <ClCompile Include="BaseHash.cpp" />
     <ClCompile Include="BaseRBMultiTree.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
@@ -717,6 +721,10 @@
     <ClCompile Include="CompressCompIndexParams.cpp" />
     <ClCompile Include="CompressStringLen.cpp" />
     <ClCompile Include="CRC.cpp" />
+    <ClCompile Include="Crypto\BaseAES.cpp" />
+    <ClCompile Include="Crypto\BaseHash.cpp" />
+    <ClCompile Include="Crypto\SHA256.cpp" />
+    <ClCompile Include="Crypto\SHA512.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="DBTranManager.cpp" />
     <ClCompile Include="DeleteCursor.cpp" />

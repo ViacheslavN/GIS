@@ -238,6 +238,9 @@
     <Filter Include="Crypto\CryptoAlg\Hash">
       <UniqueIdentifier>{7ddd289e-abbd-40b5-866a-461ab924b22f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Crypto\CryptoAlg\Clipher">
+      <UniqueIdentifier>{c191a4a9-2823-4e82-8289-9e130a036ee3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -1224,8 +1227,29 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseHash.h">
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\BaseHash.h">
       <Filter>Crypto\CryptoAlg\Hash</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\SHA256.h">
+      <Filter>Crypto\CryptoAlg\Hash</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\SHA512.h">
+      <Filter>Crypto\CryptoAlg\Hash</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\AES128.h">
+      <Filter>Crypto\CryptoAlg\Clipher</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\ASE256.h">
+      <Filter>Crypto\CryptoAlg\Clipher</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\BaseAES.h">
+      <Filter>Crypto\CryptoAlg\Clipher</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1382,8 +1406,17 @@
     <ClCompile Include="PBKDF2.cpp">
       <Filter>Crypto\CryptoAlg</Filter>
     </ClCompile>
-    <ClCompile Include="BaseHash.cpp">
+    <ClCompile Include="Crypto\BaseHash.cpp">
       <Filter>Crypto\CryptoAlg\Hash</Filter>
+    </ClCompile>
+    <ClCompile Include="Crypto\SHA256.cpp">
+      <Filter>Crypto\CryptoAlg\Hash</Filter>
+    </ClCompile>
+    <ClCompile Include="Crypto\SHA512.cpp">
+      <Filter>Crypto\CryptoAlg\Hash</Filter>
+    </ClCompile>
+    <ClCompile Include="Crypto\BaseAES.cpp">
+      <Filter>Crypto\CryptoAlg\Clipher</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

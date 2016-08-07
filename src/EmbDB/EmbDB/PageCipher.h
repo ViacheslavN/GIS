@@ -22,7 +22,7 @@ namespace embDB
 			void xorInitVector(byte* b, int off, int len, int64 p);
 		private:
 			std::vector<byte> m_vecKey;
-			byte m_vecInitVector[CIPHER_FILE_BLOCK_SIZE];
+			std::vector<byte> m_vecInitVector;
 			std::auto_ptr<IBlockCipher> m_pCipher;
 			std::auto_ptr<IBlockCipher>  m_pCipherForInitVector;
 

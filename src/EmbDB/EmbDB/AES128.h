@@ -23,7 +23,8 @@ namespace embDB
 			virtual bool decrypt(byte* pBuf, uint32 len);
 			virtual bool encrypt(byte* pBuf, byte* pDst, uint32 len);
 			virtual bool decrypt(byte* pBuf, byte* pDst, uint32 len);
-			virtual int getKeyLength() const {return 16;}
+			virtual uint32 getKeyLength() const {return 16;}
+			virtual uint32 getBlockSIze() const {return 16;}
 
 
 	private:

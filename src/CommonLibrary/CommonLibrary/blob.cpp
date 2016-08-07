@@ -92,8 +92,25 @@ namespace CommonLib
 		resize(nSize);
 		memcpy(m_pBuffer, pBuf, nSize);
 	}
+	void CBlob::push_back(byte nVal)
+	{
+		if(size() + 1 > m_nCapacity - 1)
+		{
+			reserve((size() * 2) + 1, false);
+		}
 
-
+		m_pBuffer[m_nSize] = nVal;
+		m_nSize++;
+	}
+	void CBlob::push_back(const byte* pBuf, uint32 nSize)
+	{
+		if(size() + nSize > m_nCapacity - 1)
+		{
+			reserve(((size() + nSize) * 2 ) + 1, false);
+		}
+		memcpy(m_pBuffer + m_nSize, pBuf, nSize);
+		m_nSize += nSize;
+	}
 	bool CBlob::operator ==(const CBlob& blob) const
 	{
 		return compare(blob) == 0;
@@ -177,7 +194,7 @@ namespace CommonLib
 			if(m_pBuffer != NULL)
 			{
 				if(!bClear)
-					memcpy(pBuffer, m_pBuffer, nSize);
+					memcpy(pBuffer, m_pBuffer, m_nSize);
 				m_pAlloc->free(m_pBuffer);
 			}
 			m_pBuffer = pBuffer;
@@ -186,20 +203,28 @@ namespace CommonLib
 		if(bClear)
 			m_nSize = 0;
 	}
+	void  CBlob::reserve_fill(uint32 nSize, byte nVal)
+	{
+		reserve(nSize, false);
+		uint32 nLen = capacity() - size();
+		if(nLen > 0)
+			memset(m_pBuffer + m_nSize, nVal, nLen);
+
+	}
 	void  CBlob::resize(uint32 nSize)
 	{
 		if(m_bAttach)
 			deattach();
 		if(m_nCapacity >= nSize)
 		{
-			m_nSize = m_nSize;
+			m_nSize = nSize;
 			return;
 		}
 
 		byte* pBuffer = (byte*)m_pAlloc->alloc(nSize);
 		if(m_pBuffer != NULL)
 		{
-			memcpy(pBuffer, m_pBuffer, nSize);
+			memcpy(pBuffer, m_pBuffer, m_nSize);
 			m_pAlloc->free(m_pBuffer);
 		}
 
@@ -208,6 +233,11 @@ namespace CommonLib
 
 		m_pBuffer = pBuffer;
 
+	}
+	void  CBlob::resize(uint32 nSize, byte bVal)
+	{
+		resize(nSize);
+		memset(m_pBuffer, bVal, m_nSize);
 	}
 	bool   CBlob::empty() const
 	{
