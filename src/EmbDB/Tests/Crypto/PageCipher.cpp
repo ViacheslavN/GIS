@@ -13,7 +13,7 @@ void TestPageCipher()
 	std::string sPWD = "1223345";
 	std::string sSalt =  "dfgjfkbjigjg45840ujdfis34bj5j409bjkr55665667";
 	std::string sSalt1 = "1111234tr45gjfkbjigjg45840ujdfis34bj5j409bjk";
-	embDB::CPageCipher pageCipher((byte*)sPWD.c_str(), sPWD.length(), (byte*)sSalt.c_str(), (byte*)sSalt1.c_str(), sSalt.length(), embDB::AES128_ALG);
+	embDB::CPageCipher pageCipher((byte*)sPWD.c_str(), sPWD.length(), (byte*)sSalt.c_str(), (byte*)sSalt1.c_str(), sSalt.length(), embDB::AES256);
 
 
 	CommonLib::FxMemoryWriteStream stream;

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "../../EmbDB/SHA25.h"
+#include "../../EmbDB/Crypto/SHA256.h"
 
 
  
@@ -237,9 +237,9 @@ void TestSha256()
 {
 	byte str[] = "The quick brown fox jumps over the lazy dog";
 	uchar finalHash[32];
-	embDB::SHA256 sha256;
-	sha256.getHash((byte*)str, sizeof(str) - 1, finalHash);
-
+	embDB::Crypto::CSHA256 sha256;
+	sha256.add((byte*)str, sizeof(str) - 1);
+	sha256.digest(finalHash, 32);
 	displayHash(finalHash);
 
 

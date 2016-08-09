@@ -454,7 +454,6 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AES128.h" />
     <ClInclude Include="BackTableZPoint16Bit.h" />
     <ClInclude Include="BaseBPMapRO.h" />
     <ClInclude Include="BaseBPMapv2.h" />
@@ -533,9 +532,14 @@
     <ClInclude Include="CRC.h" />
     <ClInclude Include="CreateFields.h" />
     <ClInclude Include="Crypto\AES128.h" />
-    <ClInclude Include="Crypto\ASE256.h" />
+    <ClInclude Include="Crypto\AES256.h" />
     <ClInclude Include="Crypto\BaseAES.h" />
     <ClInclude Include="Crypto\BaseHash.h" />
+    <ClInclude Include="Crypto\CryptoPP\AES128.h" />
+    <ClInclude Include="Crypto\CryptoPP\AES256.h" />
+    <ClInclude Include="Crypto\CryptoPP\AESBaseCryptoPP.h" />
+    <ClInclude Include="Crypto\HMAC.h" />
+    <ClInclude Include="Crypto\pbkdf2.h" />
     <ClInclude Include="Crypto\SHA256.h" />
     <ClInclude Include="Crypto\SHA512.h" />
     <ClInclude Include="DeleteCursor.h" />
@@ -614,7 +618,6 @@
     <ClInclude Include="PointZOrderCompressor.h" />
     <ClInclude Include="RectZOrderCompressor.h" />
     <ClInclude Include="RowIDCounter.h" />
-    <ClInclude Include="SHA25.h" />
     <ClInclude Include="ShapeComp.h" />
     <ClInclude Include="ShapeCompressorParams.h" />
     <ClInclude Include="ShapeField.h" />
@@ -700,7 +703,6 @@
     <ClInclude Include="ZOrderCompressBase.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AES128.cpp" />
     <ClCompile Include="BaseRBMultiTree.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
@@ -723,6 +725,7 @@
     <ClCompile Include="CRC.cpp" />
     <ClCompile Include="Crypto\BaseAES.cpp" />
     <ClCompile Include="Crypto\BaseHash.cpp" />
+    <ClCompile Include="Crypto\CryptoPP\AESBaseCryptoPP.cpp" />
     <ClCompile Include="Crypto\SHA256.cpp" />
     <ClCompile Include="Crypto\SHA512.cpp" />
     <ClCompile Include="Database.cpp" />
@@ -741,7 +744,6 @@
     <ClCompile Include="PageCipher.cpp" />
     <ClCompile Include="PBKDF2.cpp" />
     <ClCompile Include="Row.cpp" />
-    <ClCompile Include="SHA25.cpp" />
     <ClCompile Include="SimpleSearchCursor.cpp" />
     <ClCompile Include="SimpleSelectCursor.cpp" />
     <ClCompile Include="SimpleSelectOpCursor.cpp" />

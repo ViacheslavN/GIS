@@ -1209,17 +1209,11 @@
     <ClInclude Include="BlockClipher.h">
       <Filter>Crypto</Filter>
     </ClInclude>
-    <ClInclude Include="SHA25.h">
-      <Filter>Crypto\CryptoAlg</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AES128.h">
-      <Filter>Crypto\CryptoAlg</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1245,10 +1239,31 @@
     <ClInclude Include="Crypto\AES128.h">
       <Filter>Crypto\CryptoAlg\Clipher</Filter>
     </ClInclude>
-    <ClInclude Include="Crypto\ASE256.h">
+    <ClInclude Include="Crypto\BaseAES.h">
       <Filter>Crypto\CryptoAlg\Clipher</Filter>
     </ClInclude>
-    <ClInclude Include="Crypto\BaseAES.h">
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\pbkdf2.h">
+      <Filter>Crypto\CryptoAlg\Hash</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\HMAC.h">
+      <Filter>Crypto\CryptoAlg\Hash</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\CryptoPP\AESBaseCryptoPP.h">
+      <Filter>Crypto\Cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\CryptoPP\AES128.h">
+      <Filter>Crypto\Cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\CryptoPP\AES256.h">
+      <Filter>Crypto\Cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\AES256.h">
       <Filter>Crypto\CryptoAlg\Clipher</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1394,12 +1409,6 @@
     <ClCompile Include="GlobalParams.cpp">
       <Filter>DB</Filter>
     </ClCompile>
-    <ClCompile Include="SHA25.cpp">
-      <Filter>Crypto\CryptoAlg</Filter>
-    </ClCompile>
-    <ClCompile Include="AES128.cpp">
-      <Filter>Crypto\CryptoAlg</Filter>
-    </ClCompile>
     <ClCompile Include="PageCipher.cpp">
       <Filter>Crypto</Filter>
     </ClCompile>
@@ -1417,6 +1426,9 @@
     </ClCompile>
     <ClCompile Include="Crypto\BaseAES.cpp">
       <Filter>Crypto\CryptoAlg\Clipher</Filter>
+    </ClCompile>
+    <ClCompile Include="Crypto\CryptoPP\AESBaseCryptoPP.cpp">
+      <Filter>Crypto\Cryptopp</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,7 +1,17 @@
 #include "stdafx.h"
 #include "PageCipher.h"
-#include "AES128.h"
+ 
 #include "PBKDF2.h"
+
+#ifdef _USE_CRYPTOPP_LIB_
+	#include "Crypto/CryptoPP/AES128.h"
+	#include "Crypto/CryptoPP/AES256.h"
+#else
+	#include "Crypto/AES128.h"
+	#include "Crypto/AES256.h"
+#endif
+
+
 namespace embDB
 {
 
@@ -23,31 +33,60 @@ namespace embDB
 			return;
 
 
-		m_vecInitVector.resize(m_pCipher->getBlockSIze());
-		byte chipKey[32];
-		byte chipInitKey[32];
+		m_vecInitVector.resize(m_pCipher->getBlockSize());
+		std::vector<byte> chipKey(m_pCipher->getKeyLength());
+		std::vector<byte> chipInitKey(m_pCipher->getKeyLength());
+ 
 
-		CPBKDF2::PBKDF2(pPWD, nLenPwd, pSalt, nLenSalt, chipKey, 32, 1000);
-		CPBKDF2::PBKDF2(pPWD, nLenPwd, pIVSalt, nLenSalt, chipInitKey, 32, 1000);
+		CPBKDF2::PBKDF2(pPWD, nLenPwd, pSalt, nLenSalt, &chipKey[0], m_pCipher->getKeyLength(), 6400);
+		CPBKDF2::PBKDF2(pPWD, nLenPwd, pIVSalt, nLenSalt, &chipInitKey[0], m_pCipher->getKeyLength(), 6400);
 
-		m_pCipher->setKey(chipKey, 32);
-		m_pCipher->setKey(chipInitKey, 32);
+		m_pCipher->setEncryptKey(&chipKey[0], m_pCipher->getKeyLength());
+		m_pCipher->setDecryptKey(&chipKey[0], m_pCipher->getKeyLength());
+	
+		m_pCipherForInitVector->setEncryptKey(&chipInitKey[0], m_pCipherForInitVector->getKeyLength());
+		m_pCipherForInitVector->setDecryptKey(&chipInitKey[0], m_pCipherForInitVector->getKeyLength());
 
 
 	}
 	void CPageCipher::CreateCiphers()
 	{
-		if(m_qryptoAlg != AES128_ALG)
-			return;
 
-		m_pCipher.reset(new CAES128());
-		m_pCipherForInitVector.reset(new CAES128());
+
+#ifdef _USE_CRYPTOPP_LIB_
+		switch(m_qryptoAlg)
+		{
+		case AES128:
+			m_pCipher.reset(new Crypto::CryptoPPWrap::CAES128());
+			m_pCipherForInitVector.reset(new Crypto::CryptoPPWrap::CAES128());
+			break;
+		case AES256:
+			m_pCipher.reset(new Crypto::CryptoPPWrap::CAES256());
+			m_pCipherForInitVector.reset(new Crypto::CryptoPPWrap::CAES256());
+			break;
+		}
+
+#else
+		switch(m_qryptoAlg)
+		{
+			case AES128:
+				m_pCipher.reset(new Crypto::CAES128());
+				m_pCipherForInitVector.reset(new Crypto::CAES128());
+				break;
+			case AES256:
+				m_pCipher.reset(new Crypto::CAES256());
+				m_pCipherForInitVector.reset(new Crypto::CAES256());
+				break;
+		}
+
+#endif
+	
 	}
 
 	void CPageCipher::xorInitVector(byte* b, int off, int len, int64 pos)
 	{
  
-		uint32 nBlockSIze = m_pCipherForInitVector->getBlockSIze();
+		uint32 nBlockSIze = m_pCipherForInitVector->getBlockSize();
 		while (len > 0)
 		{
 			for (int i = 0; i < nBlockSIze; i += 8)

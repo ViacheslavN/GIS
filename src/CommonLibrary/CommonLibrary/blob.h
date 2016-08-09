@@ -42,6 +42,7 @@ namespace CommonLib
 		void push_back(const byte* pBuf, uint32 nSize);
 		void  resize(uint32 nSize);
 		void  resize(uint32 nSize, byte bVal);
+		void  resize_fill(uint32 nSize, byte bVal);
 		void  reserve(uint32 nSize, bool bClear = true);
 		void  reserve_fill(uint32 nSize, byte bVal);
 		bool   empty() const;

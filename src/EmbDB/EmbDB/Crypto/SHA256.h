@@ -15,11 +15,13 @@ namespace embDB
 				~CSHA256();
 	
 		  public:
+			  	virtual void digest (CommonLib::CBlob& blob);
 				virtual bool digest (byte *pData, uint32 nSize);
 				virtual uint32 blocksize () const;
+				virtual uint32 length() const;
 			protected:
 				virtual void init_sum ();
-				virtual void update_sum (byte *pData);
+				virtual void update_sum (const byte *pData);
 				virtual void last_sum ();
 			private:
 				uint32 m_sum[8];

@@ -5,22 +5,20 @@ namespace embDB
 {
 	namespace Crypto
 	{
-		CBaseHash& CBaseHash::reset ()
+		void CBaseHash::reset ()
 		{
 			m_state = ADD;
 			m_buf.clear ();
 			m_nLen = 0;
 			init_sum ();
-			return *this;
 		}
-		CBaseHash& CBaseHash::add (byte *pData, uint32 nSize)
+		void CBaseHash::add (const byte *pData, uint32 nSize)
 		{
 			if (ADD != m_state)
 				reset ();
-
-
+			
 			if (nSize == 0)
-				return *this;
+				return;
 			uint32 nPos = 0;
 
 			std::size_t const blksize = blocksize ();
@@ -30,14 +28,15 @@ namespace embDB
 				m_buf.push_back (pData, n);
 				nPos += n;
 				m_nLen += n;
+		 
 			}
 			if (m_buf.size () == blksize)
 			{
 				update_sum (m_buf.buffer());
 				m_buf.clear ();
 			}
-			if (nSize == 0)
-				return *this;
+			if (nSize == nPos)
+				return;
 
 			for (; nPos + blksize < nSize; nPos += blksize)
 			{
@@ -47,19 +46,27 @@ namespace embDB
 			}
 			m_buf.copy (pData, nSize);
 			m_nLen += m_buf.size ();
-			return *this;
+	
  
 		}
-		CBaseHash& CBaseHash::finish ()
+		void CBaseHash::add (const CommonLib::CBlob& blob)
+		{
+			add(blob.buffer(), blob.size());
+		}
+		void CBaseHash::finish ()
 		{
 			if (INIT == m_state)
 				reset ();
 			if (FINISH == m_state)
-				return *this;
+				return;
 			m_state = FINISH;
 			last_sum ();
-			return *this;
+			return;
 		}
-
+		void CBaseHash::digest (CommonLib::CBlob& blob)
+		{
+			blob.resize(length());
+			digest(blob.buffer(), blob.size());
+		}
 	}
 }

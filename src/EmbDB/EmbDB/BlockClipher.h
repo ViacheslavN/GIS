@@ -8,21 +8,23 @@
 namespace embDB
 {
 
-#define  CIPHER_FILE_BLOCK_SIZE    16
+ 
 
 	class IBlockCipher
 	{
 	public:
 		IBlockCipher(){}
 		virtual ~IBlockCipher(){}
-		virtual bool setKey(byte *pKey, uint32 nLen) = 0;
+		//virtual bool setKey(byte *pKey, uint32 nLen) = 0;
+
+		virtual bool setEncryptKey(byte *pKey, uint32 nSize) = 0;
+		virtual bool setDecryptKey(byte *pKey, uint32 nSize) = 0;
 		virtual bool encrypt(byte* pPlain, uint32 len) = 0;
-		virtual bool decrypt(byte* pPlain, uint32 len) = 0;
-		virtual bool encrypt(byte* pPlain, byte* pDst, uint32 len) = 0;
-		virtual bool decrypt(byte* pPlain, byte* pDst, uint32 len) = 0;
+		virtual bool decrypt(byte* pSecret, uint32 len) = 0;
+		virtual bool encrypt(byte* pPlain, byte* pSecret, uint32 len) = 0;
+		virtual bool decrypt(byte* pSecret, byte* pPlain, uint32 len) = 0;
 
-		virtual uint32 getBlockSIze() const = 0;
-
+		virtual uint32 getBlockSize() const = 0;
 		virtual uint32 getKeyLength() const  = 0;
  
 	};

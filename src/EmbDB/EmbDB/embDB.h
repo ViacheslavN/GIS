@@ -192,8 +192,9 @@ namespace embDB
 	{
 		QryptoALG qryptoAlg;
 		bool bCheckCRC;
-
-		SDBParams() : qryptoAlg(NONE_ALG), bCheckCRC(true)
+		bool bCheckPage;
+		uint32 nMaxOffset; 
+		SDBParams() : qryptoAlg(NONE_ALG), bCheckCRC(true), bCheckPage(true), nMaxOffset(65535)
 		{
 
 		}

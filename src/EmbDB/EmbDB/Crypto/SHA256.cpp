@@ -78,14 +78,20 @@ namespace embDB
 		{
 
 		}
+		void CSHA256::digest (CommonLib::CBlob& blob)
+		{
+			blob.resize(length());
+			digest(blob.buffer(), blob.size());
+		}
+
 		bool CSHA256::digest (byte *pData, uint32 nSize)
 		{
-			if(nSize < 32)
+			if(nSize < length())
 				return false;
 
 			finish ();
 			uint32* p = m_sum;
-			for (uint32 i = 0; i < 32; i += 4)
+			for (uint32 i = 0; i < length(); i += 4)
 				unpack_big_endian (pData, i, *p++);
 			return true;
 		}
@@ -93,7 +99,10 @@ namespace embDB
 		{
 			return 64;
 		}
-
+		uint32 CSHA256::length() const
+		{
+			return 32;
+		}
 		void CSHA256::init_sum ()
 		{
 			m_sum[0] = 0x6a09e667; m_sum[1] = 0xbb67ae85; m_sum[2] = 0x3c6ef372;
@@ -102,7 +111,7 @@ namespace embDB
 
 		}
 
-		void CSHA256::update_sum (byte *pData)
+		void CSHA256::update_sum (const byte *pData)
 		{
 			static const uint32 K[64] = {
 				0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,

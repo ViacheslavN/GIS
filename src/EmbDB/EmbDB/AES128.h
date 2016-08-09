@@ -25,7 +25,8 @@ namespace embDB
 			virtual bool decrypt(byte* pBuf, byte* pDst, uint32 len);
 			virtual uint32 getKeyLength() const {return 16;}
 			virtual uint32 getBlockSIze() const {return 16;}
-
+			virtual bool setEncryptKey(byte *pKey, uint32 nSize){return true;}
+			virtual bool setDecryptKey(byte *pKey, uint32 nSize){return true;}
 
 	private:
 

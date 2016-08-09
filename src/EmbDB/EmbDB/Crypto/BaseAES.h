@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_BASE_AES_H_
 
 #include "CommonLibrary/general.h"
-
+#include "../BlockClipher.h"
  
 
 namespace embDB
@@ -11,7 +11,7 @@ namespace embDB
 
 	namespace Crypto
 	{
-		class CBaseAES
+		class CBaseAES : public IBlockCipher
 		{
 			public:
 				CBaseAES();

@@ -532,7 +532,7 @@ namespace embDB
 		//
 		virtual bool saveState() = 0;
 
-		virtual bool getCheckCRC() const;
+		virtual bool getCheckCRC() const = 0;
 	};
 
 

@@ -94,7 +94,7 @@ namespace CommonLib
 	}
 	void CBlob::push_back(byte nVal)
 	{
-		if(size() + 1 > m_nCapacity - 1)
+		if(size() + 1 > m_nCapacity)
 		{
 			reserve((size() * 2) + 1, false);
 		}
@@ -104,7 +104,7 @@ namespace CommonLib
 	}
 	void CBlob::push_back(const byte* pBuf, uint32 nSize)
 	{
-		if(size() + nSize > m_nCapacity - 1)
+		if(size() + nSize > m_nCapacity)
 		{
 			reserve(((size() + nSize) * 2 ) + 1, false);
 		}
@@ -238,6 +238,13 @@ namespace CommonLib
 	{
 		resize(nSize);
 		memset(m_pBuffer, bVal, m_nSize);
+	}
+	void   CBlob::resize_fill(uint32 nSize, byte bVal)
+	{
+		uint32 nCurSize = m_nSize;
+		resize(nSize);
+		if(nCurSize < m_nSize)
+			memset(m_pBuffer + nCurSize, bVal, m_nSize - nCurSize);
 	}
 	bool   CBlob::empty() const
 	{
