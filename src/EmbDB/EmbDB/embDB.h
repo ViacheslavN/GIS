@@ -193,8 +193,9 @@ namespace embDB
 		QryptoALG qryptoAlg;
 		bool bCheckCRC;
 		bool bCheckPage;
-		uint32 nMaxOffset; 
-		SDBParams() : qryptoAlg(NONE_ALG), bCheckCRC(true), bCheckPage(true), nMaxOffset(65535)
+		bool bCheckPWD;
+		uint32 nOffset; //max 1024*1024
+		SDBParams() : qryptoAlg(AES128), bCheckCRC(true), bCheckPage(true), nOffset(1024*1024)
 		{
 
 		}
@@ -539,7 +540,8 @@ namespace embDB
 		IDatabase(){}
 		virtual ~IDatabase(){}
 		virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL)  = 0;
-		virtual bool create(const wchar_t* pszDbName,/* uint32 nPageSize, */DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL)  = 0;
+		virtual bool create(const wchar_t* pszDbName,DBTransactionMode mode = eTMMultiTransactions, 
+			const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL, const SDBParams *Params = NULL)  = 0;
 		virtual bool close()  = 0;
 		virtual ITransactionPtr startTransaction(eTransactionType trType) = 0;
 		virtual bool closeTransaction(ITransaction* ) = 0;

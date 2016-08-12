@@ -1266,6 +1266,15 @@
     <ClInclude Include="Crypto\AES256.h">
       <Filter>Crypto\CryptoAlg\Clipher</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomGenerator.h">
+      <Filter>Crypto</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1429,6 +1438,9 @@
     </ClCompile>
     <ClCompile Include="Crypto\CryptoPP\AESBaseCryptoPP.cpp">
       <Filter>Crypto\Cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="RandomGenerator.cpp">
+      <Filter>Crypto</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

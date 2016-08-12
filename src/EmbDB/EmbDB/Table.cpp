@@ -502,7 +502,7 @@ namespace embDB
 			if(!pFieldInfoPage.get())
 				return IFieldPtr(); // TO DO Error
 
-			WriteStreamPage stream(pDBTran.get(), nFieldInfoPageSize, TABLE_PAGE, TABLE_FIELD_PAGE);
+			WriteStreamPage stream(pDBTran.get(), nFieldInfoPageSize, m_pDB->getCheckCRC(), TABLE_PAGE, TABLE_FIELD_PAGE);
 			stream.open(pFieldInfoPage);
 			stream.write((uint32)sFP.m_dataType);
 			stream.write(sFP.m_nPageSize);
@@ -633,7 +633,7 @@ namespace embDB
 			if(!pFieldInfoPage.get())
 				return IFieldPtr(); // TO DO Error
 
-			WriteStreamPage stream(pDBTran.get(), nFieldInfoPageSize, TABLE_PAGE, TABLE_FIELD_PAGE);
+			WriteStreamPage stream(pDBTran.get(), nFieldInfoPageSize,m_pDB->getCheckCRC(), TABLE_PAGE, TABLE_FIELD_PAGE);
 			stream.open(pFieldInfoPage);
 			stream.write((uint32)fp.m_dataType);
 			stream.write(fp.m_nPageSize);
@@ -734,7 +734,7 @@ namespace embDB
 				return false; // TO DO Error
 			}
 
-			WriteStreamPage stream(pDBTran.get(), nFieldInfoPageSize, FIELD_PAGE, TABLE_INDEX_PAGE);
+			WriteStreamPage stream(pDBTran.get(), nFieldInfoPageSize, m_pDB->getCheckCRC(), FIELD_PAGE, TABLE_INDEX_PAGE);
 			stream.open(pFieldInfoPage);
 			stream.write((uint32)ip.m_indexType);
 			stream.write(sFieldName);

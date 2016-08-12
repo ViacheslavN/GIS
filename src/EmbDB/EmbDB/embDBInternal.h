@@ -520,6 +520,9 @@ namespace embDB
 		virtual bool saveStorageInfo()= 0;
 
 
+		virtual bool WriteRowData(const byte* pData, uint32 nSize, int64 nPos = -1) = 0;
+
+
 		//for write/save
 		virtual bool isLockWrite() = 0;
 		virtual bool lockWrite(IDBTransaction *pTran = NULL) = 0;

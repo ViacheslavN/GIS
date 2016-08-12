@@ -108,7 +108,7 @@ void SHPObjectToGeometry(ShapeLib::SHPObject* obj, CommonLib::CGeoShape& result)
 }
 		
 
-void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, const wchar_t* pszIDObj)
+void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, const wchar_t* pszIDObj, const wchar_t *pszPWD = NULL)
 {
 	
 	CommonLib::FileSystem::deleteFile(pszDBName);
@@ -128,21 +128,18 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, 
 	int shapeType;
 	double minBounds[4];
 	double maxBounds[4];
+
+	CommonLib::CString sPWD = pszPWD;
 	CommonLib::bbox bounds;
 	{
-
-
 		embDB::CDatabase db;
-		if(!db.open(pszDBName, embDB::eTMSingleTransactions, sDBPath.wstr()))
+ 
+	 
+		if(!db.create(pszDBName, embDB::eTMSingleTransactions,  sDBPath.wstr(), pszPWD))
 		{
-			if(!db.create(pszDBName, embDB::eTMSingleTransactions,  sDBPath.wstr()))
-			{
 				std::cout << "Error create db";
 				return;
-			}
 		}
-		else
-			return;
 
 		embDB::ISchemaPtr pSchema = db.getSchema();
 		embDB::ITablePtr pTable = pSchema->getTableByName(sFileName.cwstr());
@@ -249,7 +246,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, 
 	{
 		
 		embDB::CDatabase db;
-		if(!db.open(pszDBName, embDB::eTMSingleTransactions, sDBPath.wstr()))
+		if(!db.open(pszDBName, embDB::eTMSingleTransactions, sDBPath.wstr(), pszPWD))
 			return;
 		uint32 nShapeRowSize = 0;
 		uint32 nStringRowSize = 0;
@@ -505,7 +502,7 @@ void testDBFromShape()
 	//ImportShapeFile(L"d:\\db\\importne_10m_urban_areas_landscan.embDB", L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp");
 	//ImportShapeFile(L"d:\\db\\ne_10m_roads_north_america.embDB", L"D:\\db\\10m_cultural\\ne_10m_roads_north_america.shp");
 	
-	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\db\\building.shp", L"ID");
+	ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\db\\building.shp", L"ID"/*, L"ddrrvfmvdssmdfb"*/);
 	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
 	
 	CommonLib::bbox bbox;
@@ -514,5 +511,5 @@ void testDBFromShape()
 	bbox.yMin =	6072242.5499999998;
 	bbox.xMax =  652299.90000000002;
 	bbox.yMax = 6123549.2000000002;
-	SearchShapeFile(L"d:\\db\\importShapeFile.embDB", L"building", L"building", bbox, L"ID");
+	//SearchShapeFile(L"d:\\db\\importShapeFile.embDB", L"building", L"building", bbox, L"ID");
 }

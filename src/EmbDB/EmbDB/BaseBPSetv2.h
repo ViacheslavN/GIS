@@ -501,7 +501,7 @@ namespace embDB
 			return false;
 		}
 		
-		WriteStreamPage stream(m_pTransaction, MIN_PAGE_SIZE,  BTREE_PAGE, BTREE_INFO_PAGE);
+		WriteStreamPage stream(m_pTransaction, MIN_PAGE_SIZE, m_bCheckCRC32, BTREE_PAGE, BTREE_INFO_PAGE);
 		stream.open(pPage);
 		stream.write(m_nRootAddr);
 		stream.write(m_bMulti);

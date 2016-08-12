@@ -10,14 +10,14 @@ namespace embDB
 	class CPageCipher
 	{
 		public:
-			CPageCipher(byte* pPWD, uint32 nLenPwd, byte* pSalt, byte* pIVSalt, uint32 nLenSalt, QryptoALG qryptoAlg);
+			CPageCipher(const byte* pPWD, uint32 nLenPwd, const byte* pSalt, const byte* pIVSalt, uint32 nLenSalt, QryptoALG qryptoAlg);
 			~CPageCipher();
 			bool encrypt(CFilePage *pFilePage);
 			bool decrypt(CFilePage *pFilePage);
 			bool encrypt(CFilePage *pFilePage, byte* pDstBuf, uint32 len);
 			bool decrypt(CFilePage *pFilePage, byte* pDstBuf, uint32 len);
 		private:
-			void init(byte* pPWD, uint32 nLenPwd, byte* pSalt,  byte* pIVSalt,uint32 nLenSalt);
+			void init(const byte* pPWD, uint32 nLenPwd, const byte* pSalt,  const byte* pIVSalt,uint32 nLenSalt);
 			void CreateCiphers();
 			void xorInitVector(byte* b, int off, int len, int64 p);
 		private:

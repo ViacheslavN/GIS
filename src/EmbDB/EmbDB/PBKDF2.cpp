@@ -14,7 +14,7 @@ namespace embDB
 
 
 
-	bool CPBKDF2::PBKDF2(byte* pPWD, uint32 nPWdSize, byte* pSalt, uint32 nSaltSize, byte* pResult, uint32 nResultLen, uint32 nIterations)
+	bool CPBKDF2::PBKDF2(const byte* pPWD, uint32 nPWdSize, const byte* pSalt, uint32 nSaltSize, byte* pResult, uint32 nResultLen, uint32 nIterations)
 	{
 #ifndef _USE_CRYPTOPP_LIB_
 		Crypto::pbkdf2<Crypto::HMAC<Crypto::CSHA256> >(pPWD, nPWdSize, pSalt, nSaltSize, nIterations, pResult, nResultLen);

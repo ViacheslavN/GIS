@@ -16,7 +16,7 @@ namespace embDB
 {
 
 
-	CPageCipher::CPageCipher(byte* pPWD, uint32 nLenPwd, byte* pSalt,  byte* pIVSalt, uint32 nLenSalt, QryptoALG qryptoAlg) : m_qryptoAlg(qryptoAlg)
+	CPageCipher::CPageCipher(const byte* pPWD, uint32 nLenPwd, const byte* pSalt, const byte* pIVSalt, uint32 nLenSalt, QryptoALG qryptoAlg) : m_qryptoAlg(qryptoAlg)
 	{
 		init(pPWD, nLenPwd, pSalt, pIVSalt, nLenSalt);
 	}
@@ -25,7 +25,7 @@ namespace embDB
 
 	}
 
-	void CPageCipher::init(byte* pPWD, uint32 nLenPwd, byte* pSalt, byte* pIVSalt, uint32 nLenSalt)
+	void CPageCipher::init(const byte* pPWD, uint32 nLenPwd, const byte* pSalt, const byte* pIVSalt, uint32 nLenSalt)
 	{
 		CreateCiphers();
 

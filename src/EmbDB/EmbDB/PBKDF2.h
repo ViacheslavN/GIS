@@ -13,7 +13,7 @@ namespace embDB
 	class CPBKDF2
 	{
 	public:
-		static bool PBKDF2(byte* pPWD, uint32 nPWdSize, byte* pSalt, uint32 nSaltSize, byte* pResult, uint32 nResultLen, uint32 nIterations);
+		static bool PBKDF2(const byte* pPWD, uint32 nPWdSize, const byte* pSalt, uint32 nSaltSize, byte* pResult, uint32 nResultLen, uint32 nIterations);
 	};
 	
 }

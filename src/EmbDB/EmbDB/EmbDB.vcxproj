@@ -616,6 +616,7 @@
     <ClInclude Include="PageAlloc.h" />
     <ClInclude Include="PBKDF2.h" />
     <ClInclude Include="PointZOrderCompressor.h" />
+    <ClInclude Include="RandomGenerator.h" />
     <ClInclude Include="RectZOrderCompressor.h" />
     <ClInclude Include="RowIDCounter.h" />
     <ClInclude Include="ShapeComp.h" />
@@ -743,6 +744,7 @@
     <ClCompile Include="PageAlloc.cpp" />
     <ClCompile Include="PageCipher.cpp" />
     <ClCompile Include="PBKDF2.cpp" />
+    <ClCompile Include="RandomGenerator.cpp" />
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="SimpleSearchCursor.cpp" />
     <ClCompile Include="SimpleSelectCursor.cpp" />

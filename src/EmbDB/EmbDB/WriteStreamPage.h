@@ -32,7 +32,7 @@ namespace embDB
 			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
-				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, pPage->getPageSize(), false);
+				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, pPage->getPageSize(), m_bCheckCRC);
 				  if(m_nBeginPos != 0)
 					  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
 			  }

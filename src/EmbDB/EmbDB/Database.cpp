@@ -6,6 +6,15 @@
 #include "Transactions.h"
 #include "DBTranManager.h"
 #include "GlobalParams.h"
+#include "RandomGenerator.h"
+#include "PBKDF2.h"
+
+#ifdef _USE_CRYPTOPP_LIB_
+	#include "Crypto/CryptoPP/AES128.h"
+#else
+	#include "Crypto/AES128.h"
+#endif
+
 namespace embDB
 {
 
@@ -49,21 +58,51 @@ namespace embDB
 		if(!readHeadPage(pHeadDBFile.get()))
 			return false;
 
-		FilePagePtr pRootFile(m_pStorage->getFilePage(1, MIN_PAGE_SIZE));
+
+		CommonLib::CString sPassword = pszPassword;
+
+		if(sPassword.length() && m_dbHeader.qryptoAlg == NONE_ALG)
+			return false; //TO DO log
+
+		if(!sPassword.length() && m_dbHeader.qryptoAlg != NONE_ALG)
+			return false; //TO DO log
+
+		if(sPassword.length())
+		{
+ 
+			int64 nOffset = CalcOffset((const byte*)sPassword.cstr(), sPassword.length(), m_dbHeader.szSalt, sDBHeader::SALT_SIZE);
+			m_PageChiper.reset( new CPageCipher((const byte*)sPassword.cstr(), sPassword.length(), (const byte*)m_dbHeader.szSalt, m_dbHeader.szSaltIV, sDBHeader::SALT_SIZE, m_DBParams.qryptoAlg));
+			((CStorage*)m_pStorage.get())->setPageChiper(m_PageChiper.get());
+
+			FilePagePtr pPagePWD = m_pStorage->getFilePage(m_dbHeader.nPWDPage, MIN_PAGE_SIZE);
+			CommonLib::FxMemoryReadStream stream;
+			stream.attachBuffer(pPagePWD->getRowData(), pPagePWD->getPageSize());
+			sFilePageHeader header(stream, pPagePWD->getPageSize(), true, false);
+			if(!header.isValid())
+				return false; //TO DO log
+
+			((CStorage*)m_pStorage.get())->SetOffset(nOffset);
+		
+		}
+
+
+
+		FilePagePtr pRootFile(m_pStorage->getFilePage(m_dbHeader.nRootPage, MIN_PAGE_SIZE));
 		if(!pRootFile.get())
 			return false;
 
 		m_bOpen =  readRootPage(pRootFile.get());
 		return m_bOpen;
 	}
-	bool CDatabase::create(const wchar_t* pszName, /*uint32 nPageSize,*/ DBTransactionMode mode, const wchar_t* pszWorkingPath, const wchar_t* pszPassword)
+	bool CDatabase::create(const wchar_t* pszName,  DBTransactionMode mode, const wchar_t* pszWorkingPath,
+		const wchar_t* pszPassword, const SDBParams *pParams)
 	{
 		close();
 
 		CGlobalParams::Instance().SetCheckCRC(true);
 
-		m_dbHeader.bCheckCRC = true;
-		m_dbHeader.nCryptoAlg = NONE_ALG;
+
+		
 
 
 	//	m_dbHeader.nCRC = 10;
@@ -78,12 +117,42 @@ namespace embDB
 		if(!bOpen)
 			return false;
 
+
+		CommonLib::CString sPassword = pszPassword;
+
+		if(pParams)
+		{
+			m_dbHeader.qryptoAlg = pParams->qryptoAlg;
+			m_dbHeader.bCheckCRC =  pParams->bCheckCRC;
+			m_dbHeader.bCheckPage =  pParams->bCheckPage;
+			m_dbHeader.bCheckPWD =  pParams->bCheckPWD;
+		}
+
+
+		
+
+
 		FilePagePtr pDBHeaderPage(m_pStorage->getNewPage(HEADER_DB_PAGE_SIZE, true));
 		if(!pDBHeaderPage.get())
 			return false;
+
+
+		int64 nOffset = 0;
+		if(sPassword.isEmpty())
+		{
+			m_dbHeader.qryptoAlg = NONE_ALG;
+		}
+		else
+		{
+			nOffset = InitCrypto((byte*)sPassword.cstr(), sPassword.length()); 
+		}
+	
 		FilePagePtr pDBRootPage(m_pStorage->getNewPage(MIN_PAGE_SIZE, true));
 		if(!pDBRootPage.get())
 			return false;
+
+
+		m_dbHeader.nRootPage = pDBRootPage->getAddr();
 
 		FilePagePtr pDBStoragePage(m_pStorage->getNewPage(MIN_PAGE_SIZE, true));
 		if(!pDBStoragePage.get())
@@ -98,6 +167,7 @@ namespace embDB
 		m_dbRootPage.nStoragePage = pDBStoragePage->getAddr();
 		m_dbRootPage.nShemaPage = pDBShemaPage->getAddr();
 		m_dbRootPage.nUserPage = pDBUserPage->getAddr();
+
 		
 		m_pStorage->initStorage(m_dbRootPage.nStoragePage);
 
@@ -106,10 +176,15 @@ namespace embDB
 
 			CommonLib::FxMemoryWriteStream stream;
 			stream.attachBuffer(pDBHeaderPage->getRowData(), pDBHeaderPage->getPageSize());
-			sFilePageHeader header(stream, DATABASE_PAGE, DB_ROOT_PAGE, pDBHeaderPage->getPageSize(), m_DBParams.bCheckCRC);
+			sFilePageHeader header(stream, DATABASE_PAGE, DB_HEADER_PAGE, pDBHeaderPage->getPageSize(), m_DBParams.bCheckCRC);
 			m_dbHeader.Write(&stream);
 			header.writeCRC32(stream);
+			pDBHeaderPage->setNeedEncrypt(false);
 			m_pStorage->saveFilePage(pDBHeaderPage);
+
+
+			if(nOffset != 0)
+					((CStorage*)m_pStorage.get())->SetOffset(nOffset);
 		}
 
 		{
@@ -225,41 +300,72 @@ namespace embDB
 		return tran.restore();
 		
 	}
-	/*CStorage* CDatabase::getTableStorage(const CommonLib::CString& sFileName, bool bCreate)
+	int64 CDatabase::InitCrypto(byte* pPWD, uint32 nLen)
 	{
-		TTableStorages::iterator it = m_TableStorages.find(sFileName);
-		if(it.isNull())
-		{
-			if(!bCreate)
-				return NULL;
 
-			CStorage* pStorage = new CStorage(m_pAlloc.get());
-			if(!pStorage->open(sFileName.cwstr(), false, false, false, true, m_pStorage->getPageSize()))
-			{
-				delete pStorage;
-				return NULL;
-			}
-			if(!pStorage->getFileSzie())
-			{
-				FilePagePtr pPage(pStorage->getNewPage());
-				pStorage->setStoragePageInfo(pPage->getAddr());
-				pStorage->saveStorageInfo();
-			}
-			else
-			{
-				if(pStorage->isDirty())
-				{
-					CTransaction tran(m_pAlloc.get(), rtUndo,  eTT_UNDEFINED, pStorage->getTranFileName(), pStorage, -1);
-					if(!tran.restore())
-					{
-						delete pStorage;
-						return NULL;
-					}
-				}
-			}
-			m_TableStorages.insert(sFileName, pStorage);
-			return pStorage;
-		}
-		return it.value();
-	}*/
+		CRandomGenerator::GetRandomValues(m_dbHeader.szSalt, sDBHeader::SALT_SIZE);
+		CRandomGenerator::GetRandomValues(m_dbHeader.szSaltIV, sDBHeader::SALT_SIZE);
+
+		int64 nOffset = CalcOffset(pPWD, nLen, m_dbHeader.szSalt, sDBHeader::SALT_SIZE);
+	 
+
+
+		m_PageChiper.reset( new CPageCipher(pPWD, nLen, m_dbHeader.szSalt, m_dbHeader.szSaltIV, sDBHeader::SALT_SIZE, m_DBParams.qryptoAlg));
+		((CStorage*)m_pStorage.get())->setPageChiper(m_PageChiper.get());
+		CreateCheckPWDPage();
+		CreateNoise(nOffset);
+
+
+		return nOffset;
+	
+	}
+	void CDatabase::CreateCheckPWDPage()
+	{
+		FilePagePtr pPage = m_pStorage->getNewPage(MIN_PAGE_SIZE, true);
+		
+		m_dbHeader.nPWDPage = pPage->getAddr();
+
+		CRandomGenerator::GetRandomValues(pPage->getRowData() + sFilePageHeader::size(true, false), MIN_PAGE_SIZE - sFilePageHeader::size(true, false));
+
+
+		CommonLib::FxMemoryWriteStream stream;
+		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
+
+		sFilePageHeader fph(stream, -1, -1, MIN_PAGE_SIZE, true, false);
+		fph.m_bCheckPageType = false;
+		fph.writeCRC32(stream);
+
+		m_pStorage->saveFilePage(pPage);
+		 
+	}
+	int64 CDatabase::CalcOffset(const byte* pPWD, uint32 nLen, const byte* pSlat, uint32 nSaltLen) const
+	{
+		int64 nOffset = 0;
+		CPBKDF2::PBKDF2(pPWD, nLen, pSlat, nSaltLen, (byte*)&nOffset, 2, 1000);
+		return nOffset;
+	}
+
+
+	void CDatabase::CreateNoise(int64 nSize)
+	{
+	 
+		/*byte nKey[16];
+
+		CRandomGenerator::GetRandomValues(nKey, 16);
+	#ifdef _USE_CRYPTOPP_LIB_
+		 Crypto::CryptoPPWrap::CAES128 aes128;
+	#else
+		Crypto::CAES128 aes128;
+	#endif
+		aes128.setEncryptKey(nKey, 16);
+		*/
+
+		std::vector<byte> vecRandomData(nSize);
+		CRandomGenerator::GetRandomValues(&vecRandomData[0], nSize);
+		//aes128.encrypt(&vecRandomData[0], nSize);
+		m_pStorage->WriteRowData(&vecRandomData[0], nSize);
+
+	
+	}
+	 
 }

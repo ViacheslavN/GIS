@@ -42,7 +42,7 @@ namespace embDB
 
 
 	
-
+		virtual bool WriteRowData(const byte* pData, uint32 nSize, int64 nPos = -1);
 	
 		virtual bool setFileSize(int64 nSize);
 
@@ -79,6 +79,8 @@ namespace embDB
 		virtual bool getCheckCRC() const {return m_bCheckCRC;}
 
 		 void error(const CommonLib::CString& sError){}
+
+		 void setPageChiper(CPageCipher *pCipher) {m_pPageChiper = pCipher;}
 	private:
 		 CommonLib::CFile m_pFile;
 		 CommonLib::alloc_t *m_pAlloc;
@@ -117,8 +119,8 @@ namespace embDB
 		 bool m_bCommitState;
 		 uint64 m_nCalcFileSize;
 		// CMemPageCache m_MemCache;
-		 CPageCipher *m_pPageCrypto;
-		 std::auto_ptr<CFilePage> m_pBufPageCrypto; 
+		 CPageCipher *m_pPageChiper;
+		 CommonLib::CBlob m_BufForChiper;
 		 bool m_bCheckCRC;
 	};
 }
