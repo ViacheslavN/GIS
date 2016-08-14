@@ -363,11 +363,17 @@ public:
 			break;
 		}
 		if(newpos > m_nSize && m_bAttach)
+		{
+			assert(false);
 			return false;
+		}
 		if(newpos > m_nSize && !m_bAttach)
 		{
 			if(!resize(newpos - m_nSize))
+			{
+				assert(false);
 				return false;
+			}
 		}
 		m_nPos = newpos;
 		return true;

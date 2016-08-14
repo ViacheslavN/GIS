@@ -325,14 +325,16 @@ namespace embDB
 		
 		m_dbHeader.nPWDPage = pPage->getAddr();
 
-		CRandomGenerator::GetRandomValues(pPage->getRowData() + sFilePageHeader::size(true, false), MIN_PAGE_SIZE - sFilePageHeader::size(true, false));
 
 
 		CommonLib::FxMemoryWriteStream stream;
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 
+		CRandomGenerator::GetRandomValues(pPage->getRowData() + sFilePageHeader::size(true, false), MIN_PAGE_SIZE - sFilePageHeader::size(true, false));
 		sFilePageHeader fph(stream, -1, -1, MIN_PAGE_SIZE, true, false);
 		fph.m_bCheckPageType = false;
+		stream.seek( pPage->getPageSize(), CommonLib::soFromBegin);
+
 		fph.writeCRC32(stream);
 
 		m_pStorage->saveFilePage(pPage);

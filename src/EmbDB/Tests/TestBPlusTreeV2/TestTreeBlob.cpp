@@ -175,7 +175,7 @@ void searchINBTreeMapBlob   (CommonLib::alloc_t* pAlloc,
 					
 					}
 
-				   	embDB::ReadStreamPage readStream(pTran, 1024*1024);
+				   	embDB::ReadStreamPage readStream(pTran, 1024*1024, true);
 					readStream.open(BlobVal.m_nPage, BlobVal.m_nBeginPos);
 					readStream.read(CacheBlob.buffer(), BlobVal.m_nSize);
 					stream.attachBuffer(CacheBlob.buffer(), BlobVal.m_nSize);

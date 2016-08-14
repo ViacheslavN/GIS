@@ -41,7 +41,7 @@ namespace embDB
 
 		bool checkSize()
 		{
-			uint32 nMemSize = (((uint32)m_values.size() + 1) * m_rw.rowSize()) + sizeof(int64) + sizeof(int32) + sFilePageHeader::size();
+			uint32 nMemSize = (((uint32)m_values.size() + 1) * m_rw.rowSize()) + sizeof(int64) + sizeof(int32) + sFilePageHeader::size(m_bCheckCRC);
 			return nMemSize < m_nPageSize; 
 		}
 		template <typename _TStorage, typename _FilePage>

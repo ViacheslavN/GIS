@@ -42,18 +42,19 @@ public:
 	typedef std::vector<TValue> TvecValues;
 	struct SPageValues
 	{
-		SPageValues(int64 nPageAddr) : 
-			m_nPageAddr(nPageAddr), m_pNext(NULL), m_pPrev(NULL)
+		SPageValues(int64 nPageAddr, bool bCheckCRC) : 
+			m_nPageAddr(nPageAddr), m_pNext(NULL), m_pPrev(NULL), m_bCheckCRC(bCheckCRC)
 		{}
 		int64 m_nPageAddr;
 		SPageValues* m_pNext;
 		SPageValues* m_pPrev;
 		TvecValues m_vec;
+		bool m_bCheckCRC;
 	
 	
 		bool isFree(uint32 nPageSize)
 		{
-			return (sFilePageHeader::size() + sizeof(int64) + sizeof(int32) + (sizeof(TValue) * (m_vec.size() + 1))) < nPageSize;
+			return (sFilePageHeader::size(m_bCheckCRC) + sizeof(int64) + sizeof(int32) + (sizeof(TValue) * (m_vec.size() + 1))) < nPageSize;
 		}
 		void insert(const TValue& val)
 		{
@@ -180,7 +181,7 @@ public:
 	{
 		if(!m_pBeginNode)
 		{
-			m_pBeginNode = new SPageValues(m_nFirstPage);
+			m_pBeginNode = new SPageValues(m_nFirstPage, m_bCheckCRC);
 			m_pBeginNode->insert(val);
 			return SavePage(m_pBeginNode, pStorage);
 		}
@@ -197,7 +198,7 @@ public:
 			pNode = pNode->m_pNext;
 		}
 
-		pNode = new SPageValues(-1);
+		pNode = new SPageValues(-1, m_bCheckCRC);
 		pNode->insert(val);
 		if(!SavePage(pNode, pStorage))
 			return false;
@@ -232,7 +233,7 @@ public:
 				return false;
 			}
 			int64 nNextPage = stream.readInt64(); // next
-			SPageValues* pNode =  new SPageValues(nPage);
+			SPageValues* pNode =  new SPageValues(nPage, m_bCheckCRC);
 			if(!m_pBeginNode)
 				m_pBeginNode = pNode;
 			else
@@ -277,7 +278,7 @@ public:
 	{
 		if(!m_pBeginNode)
 		{
-			m_pBeginNode = new SPageValues(m_nFirstPage);
+			m_pBeginNode = new SPageValues(m_nFirstPage, m_bCheckCRC);
 		}
 		SPageValues *pNode = m_pBeginNode;
 		while(pNode)

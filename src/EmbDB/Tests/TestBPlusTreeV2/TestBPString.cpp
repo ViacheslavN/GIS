@@ -224,7 +224,7 @@ void searchINBTreeMapString  (CommonLib::alloc_t* pAlloc,
 						d++;
 					}
 					sBigString += sString;
-					embDB::ReadStreamPage readStream(pTran, 1024*1024);
+					embDB::ReadStreamPage readStream(pTran, 1024*1024, true);
 					readStream.open(val.m_nPage, val.m_nPos);
 					CommonLib::CBlob blob(val.m_nLen);
 					readStream.read(blob.buffer(), val.m_nLen);

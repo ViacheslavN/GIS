@@ -92,14 +92,14 @@ void CFilePage::setValid(bool bValid)
 {
 	m_bValid = bValid;
 }
-bool CFilePage::isCheck() const
+/*bool CFilePage::isCheck() const
 {
 	return m_bCheck;
 }
 void CFilePage::setCheck(bool bCheck)
 {
 	m_bCheck = bCheck;
-}
+}*/
 bool CFilePage::isNeedEncrypt() const
 {
 	return m_bIsNeedEncrypt;

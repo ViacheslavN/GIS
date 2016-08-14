@@ -10,9 +10,9 @@ namespace embDB
 	class ReadStreamPage : public CommonLib::TMemoryStreamBase<CommonLib::IReadStreamBase>, public CommonLib::AutoRefCounter
 	{
 	public:
-		ReadStreamPage(IFilePage* pTran, uint32 nPageSize, uint16 nObjectPage = 0, uint16 nSubObjectPage = 0) :
+		ReadStreamPage(IFilePage* pTran, uint32 nPageSize, bool bCheckCRC, uint16 nObjectPage = 0, uint16 nSubObjectPage = 0) :
 		  m_pTran(pTran), m_nPageHeader(-1), m_nEndPage(-1), m_nEndPos(0), m_nPageSize(nPageSize), 
-			  m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage)
+			  m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage), m_bCheckCRC(bCheckCRC)
 		  {									  
 			
 
@@ -37,8 +37,8 @@ namespace embDB
 
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
-				  sFilePageHeader header(m_stream, m_pPage->getPageSize(), !m_pPage->isCheck());
-				  if(!m_pPage->isCheck() && !header.isValid())
+				  sFilePageHeader header(m_stream, m_pPage->getPageSize(), m_bCheckCRC);
+				  if(/*!m_pPage->isCheck() &&*/ !header.isValid())
 				  {
 					  //TO DO Logs
 					  return false;
@@ -49,7 +49,7 @@ namespace embDB
 					  return false;
 				  }
 
-				  m_pPage->setCheck(true);
+				//  m_pPage->setCheck(true);
 			  }
 
 
@@ -74,7 +74,7 @@ namespace embDB
 
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
-				  sFilePageHeader header(m_stream, m_pPage->getPageSize(), !m_pPage->isCheck());
+				  sFilePageHeader header(m_stream, m_pPage->getPageSize(), m_bCheckCRC);
 				  if(!header.isValid())
 				  {
 					  //TO DO Logs
@@ -86,7 +86,7 @@ namespace embDB
 					  return false;
 				  }
 
-				  m_pPage->setCheck(true);
+				//  m_pPage->setCheck(true);
 
 				  if(m_nBeginPos != 0)
 					 m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
@@ -212,7 +212,7 @@ namespace embDB
 
 			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
 			  {
-				  sFilePageHeader header(m_stream, m_pPage->getPageSize(), !m_pPage->isCheck());
+				  sFilePageHeader header(m_stream, m_pPage->getPageSize(), m_bCheckCRC);
 				  if(!header.isValid())
 				  {
 					  //TO DO Logs
@@ -224,7 +224,7 @@ namespace embDB
 					  return false;
 				  }
 
-				  m_pPage->setCheck(true);
+				//  m_pPage->setCheck(true);
 			  }
 
 
@@ -243,6 +243,7 @@ namespace embDB
     	CommonLib::FxMemoryReadStream m_stream;
 		uint16 m_nObjectPage;
 		uint16 m_nSubObjectPage; 
+		bool m_bCheckCRC;
  
 	};
 	COMMON_LIB_REFPTR_TYPEDEF(ReadStreamPage);

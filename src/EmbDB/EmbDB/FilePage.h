@@ -60,7 +60,7 @@ struct sFilePageHeader
 
 	static uint32 size(bool bCheckCRC = true, bool bCheckPageType = true) 
 	{
-		return bCheckPageType ? 2* (sizeof(uint16) ) : 0 +  bCheckCRC ? 2 * sizeof(uint32) : 0;
+		return (bCheckPageType ? 2* (sizeof(uint16) ) : 0 ) +  (bCheckCRC ? 2 * sizeof(uint32) : 0);
 	}
 
 	void write(CommonLib::FxMemoryWriteStream& stream)
@@ -109,8 +109,9 @@ struct sFilePageHeader
 			stream.read(m_nSubObjectPageType);
 		}
  
-		if(m_bCheckCRC)
+		if(m_bCheckCRC && m_nSize <= m_nPageSize)
 		{
+
 			m_nCalcCRC32 = Crc32(stream.buffer() + 2 *sizeof(uint32), m_nSize);
 		}
 	}
@@ -120,7 +121,7 @@ struct sFilePageHeader
 		if(!m_bCheckCRC)
 			return true;
 
-		return m_nCalcCRC32 == m_nCRC32;
+		return m_nCalcCRC32 == m_nCRC32 && m_nSize <= m_nPageSize;
 	}
 };
 
@@ -141,8 +142,8 @@ public:
 	bool copyFrom(CFilePage *pPage);
 	bool isValid() const;
 	void setValid(bool bValid);
-	bool isCheck() const;
-	void setCheck(bool bCheck);
+	//bool isCheck() const;
+	//void setCheck(bool bCheck);
 	bool isNeedEncrypt() const;
 	void setNeedEncrypt(bool bEncrypt);
 protected:

@@ -811,7 +811,7 @@ namespace embDB
 	}
 	bool CTable::ReadField(int64 nAddr)
 	{
-		ReadStreamPage stream(m_pDBStorage.get(), MIN_PAGE_SIZE, TABLE_PAGE, TABLE_FIELD_PAGE);
+		ReadStreamPage stream(m_pDBStorage.get(), MIN_PAGE_SIZE,m_pDB->getCheckCRC(), TABLE_PAGE, TABLE_FIELD_PAGE);
 		FilePagePtr pPage = m_pDBStorage->getFilePage(nAddr, nFieldInfoPageSize);
 
 		if(!stream.open(nAddr, 0))

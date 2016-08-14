@@ -424,11 +424,11 @@ void TestIndex(const wchar_t* pszDBName, const wchar_t* pszTable, const wchar_t*
 
 }
 
-void SearchShapeFile(const wchar_t* pszDBName, const wchar_t* pszTable, const wchar_t* pszSpField, CommonLib::bbox& bbox, const wchar_t* pszOIDField)
+void SearchShapeFile(const wchar_t* pszDBName, const wchar_t* pszTable, const wchar_t* pszSpField, CommonLib::bbox& bbox, const wchar_t* pszOIDField, const wchar_t* pszPWD)
 {
 	embDB::CDatabase db;
 	CommonLib::CString sFilePath = CommonLib::FileSystem::FindFilePath(pszDBName);
-	if(!db.open(pszDBName, embDB::eTMSingleTransactions, sFilePath.wstr()))
+	if(!db.open(pszDBName, embDB::eTMSingleTransactions, sFilePath.wstr(), pszPWD))
 	{
 		return;
 	}
@@ -502,7 +502,7 @@ void testDBFromShape()
 	//ImportShapeFile(L"d:\\db\\importne_10m_urban_areas_landscan.embDB", L"D:\\db\\10m_cultural\\ne_10m_urban_areas_landscan.shp");
 	//ImportShapeFile(L"d:\\db\\ne_10m_roads_north_america.embDB", L"D:\\db\\10m_cultural\\ne_10m_roads_north_america.shp");
 	
-	ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\db\\building.shp", L"ID"/*, L"ddrrvfmvdssmdfb"*/);
+	ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\db\\building.shp", L"ID", L"ddrrvfmvdssmdfb");
 	//ImportShapeFile(L"d:\\db\\importShapeFile.embDB", L"d:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData\\building.shp");
 	
 	CommonLib::bbox bbox;
@@ -511,5 +511,5 @@ void testDBFromShape()
 	bbox.yMin =	6072242.5499999998;
 	bbox.xMax =  652299.90000000002;
 	bbox.yMax = 6123549.2000000002;
-	//SearchShapeFile(L"d:\\db\\importShapeFile.embDB", L"building", L"building", bbox, L"ID");
+	SearchShapeFile(L"d:\\db\\importShapeFile.embDB", L"building", L"building", bbox, L"ID", L"ddrrvfmvdssmdfb");
 }

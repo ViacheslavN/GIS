@@ -40,8 +40,8 @@ namespace embDB
 			,m_nParent(nParentAddr)
 			,m_bMulti(bMulti)
 			,m_pBaseNode(0)
-			,m_LeafNode(pAlloc,  bMulti, nPageSize - ( sFilePageHeader::size(bCheckCRC32) + 1))
-			,m_InnerNode(pAlloc, bMulti, nPageSize - ( sFilePageHeader::size(bCheckCRC32) + 1))
+			,m_LeafNode(pAlloc,  bMulti, (nPageSize - ( sFilePageHeader::size(bCheckCRC32) + 1)))
+			,m_InnerNode(pAlloc, bMulti, (nPageSize - ( sFilePageHeader::size(bCheckCRC32) + 1)))
 			,m_nFoundIndex(-1)
 			,m_nType(0)
 			,m_bValidNextKey(false)
@@ -113,6 +113,9 @@ namespace embDB
 				header.m_nSubObjectPageType = BTREE_LEAF_PAGE;
 			else
 				header.m_nSubObjectPageType = BTREE_INNER_PAGE;
+
+			header.m_bCheckCRC = m_bCheckCRC32;
+
 			stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
 			header.write(stream);
 			stream.write(m_bIsLeaf);
@@ -122,7 +125,7 @@ namespace embDB
 
 			if(m_bCheckCRC32)
 				header.writeCRC32(stream);
-			pFilePage->setCheck(true);
+		//	pFilePage->setCheck(true);
 			pTransactions->saveFilePage(pFilePage, stream.pos(), true);
 
 			//pFilePage->setFlag(eFP_CHANGE, false);
@@ -133,13 +136,13 @@ namespace embDB
 
 			CommonLib::FxMemoryReadStream stream;
 			stream.attachBuffer(pFilePage->getRowData(), pFilePage->getPageSize());
-			sFilePageHeader header(stream, pFilePage->getPageSize(), m_bCheckCRC32 && !pFilePage->isCheck());
-			if( m_bCheckCRC32 && !pFilePage->isCheck() && !header.isValid())
+			sFilePageHeader header(stream, pFilePage->getPageSize(), m_bCheckCRC32 /*&& !pFilePage->isCheck()*/);
+			if(/* m_bCheckCRC32 && !pFilePage->isCheck() &&*/ !header.isValid())
 			{
 				pTransactions->error(L"BTREE: Page %I64d Error CRC for node page (crc page: %ud, calc crc %ud)", pFilePage->getAddr(), header.m_nCRC32, header.m_nCalcCRC32);
 				return false;
 			}
-			pFilePage->setCheck(true);
+			//pFilePage->setCheck(true);
 
 			m_bIsLeaf = stream.readBool();
 			//m_bMulti = stream.readBool();
@@ -190,7 +193,7 @@ namespace embDB
 		uint32 size()
 		{
 			assert(m_pBaseNode);
-			return sFilePageHeader::size() + 1 + /*3 * sizeof(int16) */+ m_pBaseNode->size();
+			return sFilePageHeader::size(m_bCheckCRC32) + 1 + /*3 * sizeof(int16) */+ m_pBaseNode->size();
 		}
 
 		bool isNeedSplit() const
@@ -202,7 +205,7 @@ namespace embDB
 		uint32 headSize()
 		{
 			assert(m_pBaseNode);
-			return sFilePageHeader::size() + 1 + /*3 * sizeof(int16)*/ + m_pBaseNode->headSize();
+			return sFilePageHeader::size(m_bCheckCRC32) + 1 + /*3 * sizeof(int16)*/ + m_pBaseNode->headSize();
 		}
 		uint32 rowSize()
 		{

@@ -178,7 +178,7 @@ namespace embDB
 				m_pTransaction->error(L"BTREE: Error load BTreeInfoPage: %I64d", (int64)m_nPageBTreeInfo);
 				return false;
 			}
-			ReadStreamPage stream(m_pTransaction, MIN_PAGE_SIZE,  BTREE_PAGE, BTREE_INFO_PAGE);
+			ReadStreamPage stream(m_pTransaction, MIN_PAGE_SIZE, m_bCheckCRC32, BTREE_PAGE, BTREE_INFO_PAGE);
 		 	if(!stream.open(pPage))
 			{
 				return false;

@@ -109,7 +109,7 @@ namespace embDB
 			{
 				if(!m_pReadStream.get())
 				{
-					m_pReadStream = new ReadStreamPage(pTran, m_nSizePage);
+					m_pReadStream = new ReadStreamPage(pTran, m_nSizePage, m_bCheckCRC);
 				}
 				m_pReadStream->SetEnd(m_nEndStream, nPos);
 				m_pReadStream->open(nPage != 1 ? nPage : m_nEndStream, nPos  != -1 ? nPos : m_nPos);

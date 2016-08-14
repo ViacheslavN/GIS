@@ -3,6 +3,11 @@
 #include "general.h"
 
 static const size_t nMemSymbol = 12345;
+
+#define MAX_ALLOC_SIZE  1024*1024*50 
+#define CHECK_MAX_ALLOC_SIZE  
+
+
 namespace CommonLib
 {
 
@@ -24,6 +29,16 @@ simple_alloc_t::simple_alloc_t()
 void* simple_alloc_t::alloc(uint32 size)
 {
 #ifdef _DEBUG
+
+#ifdef CHECK_MAX_ALLOC_SIZE
+	if(size > MAX_ALLOC_SIZE)
+	{
+		assert(false);
+		return NULL;
+	}
+#endif
+
+
 #ifdef _CHECK_MEM
 	byte* pBuf =  (byte*)::malloc(size + 3 *sizeof(uint32));
 #else
