@@ -24,7 +24,7 @@ namespace embDB
 	}
 	
 
-	CDatabase::CDatabase() :  m_bOpen(false)
+	CDatabase::CDatabase() :  m_bOpen(false), m_bLoad(false)
 	{
 		m_pAlloc.reset(new CommonLib::simple_alloc_t());
 		m_pStorage = (IDBStorage*)new CStorage(m_pAlloc.get());
@@ -38,7 +38,7 @@ namespace embDB
 
 	
 
-	bool CDatabase::open(const wchar_t* pszName, DBTransactionMode mode, const wchar_t* pszWorkingPath, const  wchar_t* pszPassword)
+	bool CDatabase::open(const wchar_t* pszName, DBTransactionMode mode, const wchar_t* pszWorkingPath)
 	{
 		close();
 		bool bOpen =  m_pStorage->open(pszName, false, false, false, false/*, DEFAULT_PAGE_SIZE*/);
@@ -58,8 +58,11 @@ namespace embDB
 		if(!readHeadPage(pHeadDBFile.get()))
 			return false;
 
+		m_bOpen = true;
 
-		CommonLib::CString sPassword = pszPassword;
+		return true;
+
+		/*CommonLib::CString sPassword = pszPassword;
 
 		if(sPassword.length() && m_dbHeader.qryptoAlg == NONE_ALG)
 			return false; //TO DO log
@@ -92,10 +95,10 @@ namespace embDB
 			return false;
 
 		m_bOpen =  readRootPage(pRootFile.get());
-		return m_bOpen;
+		return m_bOpen;*/
 	}
 	bool CDatabase::create(const wchar_t* pszName,  DBTransactionMode mode, const wchar_t* pszWorkingPath,
-		const wchar_t* pszPassword, const SDBParams *pParams)
+		  const wchar_t* pszPassword, const SDBParams *pParams)
 	{
 		close();
 
@@ -205,12 +208,20 @@ namespace embDB
 		m_bOpen = true;
 		return true;
 	}
+
+	bool CDatabase::create(const wchar_t* pszDbName,const wchar_t* pszAdmUser, const wchar_t* pszPassword , DBTransactionMode mode, 
+		const wchar_t* pszWorkingPath, const SDBParams *Params)
+	{
+		return true;
+	}
+
 	bool CDatabase::close()
 	{
 		if(!m_bOpen)
 			return false;
 
 		m_bOpen = false;
+		m_bLoad = false;
 		bool bRet = m_pStorage->close();
 		bRet = m_pTranManager->close();
 		bRet = m_pSchema->close();
@@ -277,7 +288,7 @@ namespace embDB
 		return m_pAlloc.get();
 	}
 	
-	ITransactionPtr CDatabase::startTransaction(eTransactionType trType)
+	ITransactionPtr CDatabase::startTransaction(eTransactionType trType, uint64 nUserID)
 	{
 		if(!m_bOpen)
 			return ITransactionPtr();
@@ -285,7 +296,7 @@ namespace embDB
 
 		
 	}
-	bool CDatabase::closeTransaction(ITransaction* pTran)
+	bool CDatabase::closeTransaction(ITransaction* pTran, uint64 nUserID)
 	{
 		if(!m_bOpen)
 			return false;
@@ -350,24 +361,18 @@ namespace embDB
 
 	void CDatabase::CreateNoise(int64 nSize)
 	{
-	 
-		/*byte nKey[16];
-
-		CRandomGenerator::GetRandomValues(nKey, 16);
-	#ifdef _USE_CRYPTOPP_LIB_
-		 Crypto::CryptoPPWrap::CAES128 aes128;
-	#else
-		Crypto::CAES128 aes128;
-	#endif
-		aes128.setEncryptKey(nKey, 16);
-		*/
-
 		std::vector<byte> vecRandomData(nSize);
 		CRandomGenerator::GetRandomValues(&vecRandomData[0], nSize);
-		//aes128.encrypt(&vecRandomData[0], nSize);
 		m_pStorage->WriteRowData(&vecRandomData[0], nSize);
+	}
 
-	
+	IConnectionPtr CDatabase::connect(const wchar_t* pszUser, const wchar_t* pszPassword)
+	{
+		return IConnectionPtr();
+	}
+	bool CDatabase::closeConnection(IConnection *pConnection)
+	{
+		return false;
 	}
 	 
 }

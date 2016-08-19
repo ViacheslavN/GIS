@@ -21,7 +21,7 @@ namespace embDB
 			~CSchema();
 			virtual bool open(IDBStorage* pStorage, int64 nFileAddr, bool bNew = false);
 			virtual bool close();
-			virtual bool addTable(const wchar_t*  pszTableName, ITransaction *Tran = NULL);
+			virtual bool addTable(const wchar_t*  pszTableName, ITransaction *Tran);
  			virtual bool save(IDBTransaction *pTran);
 			virtual uint32 getTableCnt() const;
 			virtual ITablePtr getTable(uint32 nIndex) const;
@@ -29,9 +29,9 @@ namespace embDB
 			virtual ITablePtr getTableByID(int64 nID) const;
 
 
-			virtual bool dropTable(const CommonLib::CString& sTableName, ITransaction *Tran = NULL);
-			virtual bool dropTable(int64 nID, ITransaction *Tran = NULL);
-			virtual bool dropTable(ITable *pTable, ITransaction *Tran = NULL);
+			virtual bool dropTable(const CommonLib::CString& sTableName, ITransaction *Tran );
+			virtual bool dropTable(int64 nID, ITransaction *Tran );
+			virtual bool dropTable(ITable *pTable, ITransaction *Tran );
 
 			uint32 getTableCount();
 			

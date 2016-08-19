@@ -254,7 +254,12 @@ namespace embDB
 		eTT_DDL = 8  
 	};
 
-
+	enum eLogMode
+	{
+		lmUndefined,
+		lmFile,
+		lmConsole
+	};
 	struct IField;
 	struct IFields;
 	struct IFieldSet;
@@ -269,6 +274,7 @@ namespace embDB
 	struct ITransaction;
 	struct IDatabase;
 	struct IIndex;
+	struct IConnection;
 
 	COMMON_LIB_REFPTR_TYPEDEF(IField);
 	COMMON_LIB_REFPTR_TYPEDEF(IFields);
@@ -284,7 +290,7 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(ITransaction); 
 	COMMON_LIB_REFPTR_TYPEDEF(IDatabase); 
 	COMMON_LIB_REFPTR_TYPEDEF(IIndex);
-
+	COMMON_LIB_REFPTR_TYPEDEF(IConnection);
 	struct IField: public CommonLib::AutoRefCounter
 	{
 	public:
@@ -448,10 +454,10 @@ namespace embDB
 		virtual ITablePtr getTableByID(int64 nID) const = 0;
 		virtual ITablePtr getTableByName(const wchar_t* pszTableName) const = 0;
 
-		virtual bool addTable(const  wchar_t*  sTableName, ITransaction *Tran = NULL)= 0;
-		virtual bool dropTable(const CommonLib::CString& sTableName, ITransaction *Tran = NULL)= 0;
-		virtual bool dropTable(int64 nID, ITransaction *Tran = NULL)= 0;
-		virtual bool dropTable(ITable *pTable, ITransaction *Tran = NULL)= 0;
+		virtual bool addTable(const  wchar_t*  sTableName, ITransaction *Tran )= 0;
+		virtual bool dropTable(const CommonLib::CString& sTableName, ITransaction *Tran)= 0;
+		virtual bool dropTable(int64 nID, ITransaction *Tran)= 0;
+		virtual bool dropTable(ITable *pTable, ITransaction *Tran )= 0;
 
 
 	};
@@ -516,6 +522,14 @@ namespace embDB
 		virtual bool commit() = 0;
 		virtual bool rollback() = 0;
 		virtual bool isError() const = 0 ;
+
+		virtual uint32 getLogLevel() const = 0;
+		virtual void    setLogLevel(uint32 nLogLevel)= 0;
+
+		virtual eLogMode getLogMode() const = 0;
+		virtual void setLogMode(eLogMode logMode) = 0;
+
+
 		virtual uint32 getErrorMessageSize() const = 0;
 		virtual uint32 getErroMessage(wchar_t * pBuf, uint32 nSize) const = 0;
 
@@ -539,15 +553,41 @@ namespace embDB
 	public:
 		IDatabase(){}
 		virtual ~IDatabase(){}
-		virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL)  = 0;
+
+
+
+		virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL)  = 0;
+
 		virtual bool create(const wchar_t* pszDbName,DBTransactionMode mode = eTMMultiTransactions, 
-			const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL, const SDBParams *Params = NULL)  = 0;
+			const wchar_t* pszWorkingPath = NULL,  const wchar_t* pszPassword = NULL, const SDBParams *Params = NULL)  = 0;
+		
+		virtual bool create(const wchar_t* pszDbName,const wchar_t* pszAdmUser, const wchar_t* pszPassword , DBTransactionMode mode = eTMMultiTransactions, 
+			const wchar_t* pszWorkingPath = NULL, const SDBParams *Params = NULL)  = 0;
+
+
+
+		 virtual IConnectionPtr connect(const wchar_t* pszUser= NULL, const wchar_t* pszPassword = NULL) = 0;
+		 virtual bool closeConnection(IConnection *pConnection)  = 0;
+
 		virtual bool close()  = 0;
-		virtual ITransactionPtr startTransaction(eTransactionType trType) = 0;
-		virtual bool closeTransaction(ITransaction* ) = 0;
+		//virtual ITransactionPtr startTransaction(eTransactionType trType) = 0;
+		//virtual bool closeTransaction(ITransaction* ) = 0;
+
 		virtual ISchemaPtr getSchema() const = 0;
 		
 		static IDatabasePtr CreateDatabase();
+	};
+
+
+	struct IConnection : public CommonLib::AutoRefCounter
+	{
+		IConnection(){}
+		virtual ~IConnection(){}
+
+		virtual ITransactionPtr startTransaction(eTransactionType trType) = 0;
+		virtual bool closeTransaction(ITransaction* ) = 0;
+		virtual uint64 getUserUID() const = 0;
+		virtual const wchar_t *getUserName() const = 0;
 	};
 
 

@@ -109,7 +109,7 @@ namespace embDB
 		virtual uint32 getErroMessage(wchar_t * pBuf, uint32 nSize) const;
 
 		virtual void error(const wchar_t *pszFormat, ...);
-		virtual uint32 getLogLevel() const ;
+	 
 		virtual void log(uint32 nLevel, const wchar_t *pszFormat, ...);
 
 		virtual void addDBBTree(IDBBtree *pTree);

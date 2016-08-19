@@ -241,6 +241,18 @@
     <Filter Include="Crypto\CryptoAlg\Clipher">
       <UniqueIdentifier>{c191a4a9-2823-4e82-8289-9e130a036ee3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\transactions\TranLogs">
+      <UniqueIdentifier>{e07710a9-01ff-4f83-836c-7a9da3f0d82b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\transactions\TranLogs\ConsolLog">
+      <UniqueIdentifier>{78375454-5b38-4d63-a1fc-96d765a2afa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\transactions\TranLogs\FileLog">
+      <UniqueIdentifier>{12de0940-9c74-4011-81e2-9c44d2b6138a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Database">
+      <UniqueIdentifier>{13f50890-833b-4825-9371-a1d8139825fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -302,9 +314,6 @@
     </ClInclude>
     <ClInclude Include="SimpleCompessor.h">
       <Filter>DB\BPTrees\BTreeNotUse\BTreeNodeLoader\Compressors</Filter>
-    </ClInclude>
-    <ClInclude Include="Database.h">
-      <Filter>DB</Filter>
     </ClInclude>
     <ClInclude Include="FilePageType.h">
       <Filter>storage</Filter>
@@ -401,9 +410,6 @@
     </ClInclude>
     <ClInclude Include="BPTree.h">
       <Filter>DB\BPTrees\BTreePlus</Filter>
-    </ClInclude>
-    <ClInclude Include="DBTranManager.h">
-      <Filter>DB</Filter>
     </ClInclude>
     <ClInclude Include="StorageInfo.h">
       <Filter>storage</Filter>
@@ -1275,6 +1281,36 @@
     <ClInclude Include="RandomGenerator.h">
       <Filter>Crypto</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TranLogger.h">
+      <Filter>DB\transactions\TranLogs</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsolLog.h">
+      <Filter>DB\transactions\TranLogs\ConsolLog</Filter>
+    </ClInclude>
+    <ClInclude Include="Database.h">
+      <Filter>DB\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="DBTranManager.h">
+      <Filter>DB\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="Connection.h">
+      <Filter>DB\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="UserManager.h">
+      <Filter>DB\Database</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1291,9 +1327,6 @@
     </ClCompile>
     <ClCompile Include="storage.cpp">
       <Filter>storage</Filter>
-    </ClCompile>
-    <ClCompile Include="Database.cpp">
-      <Filter>DB</Filter>
     </ClCompile>
     <ClCompile Include="Schema.cpp">
       <Filter>DB</Filter>
@@ -1320,9 +1353,6 @@
       <Filter>DB\transactions</Filter>
     </ClCompile>
     <ClCompile Include="DBStateManager.cpp">
-      <Filter>DB</Filter>
-    </ClCompile>
-    <ClCompile Include="DBTranManager.cpp">
       <Filter>DB</Filter>
     </ClCompile>
     <ClCompile Include="StorageInfo.cpp">
@@ -1441,6 +1471,21 @@
     </ClCompile>
     <ClCompile Include="RandomGenerator.cpp">
       <Filter>Crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsolLog.cpp">
+      <Filter>DB\transactions\TranLogs\ConsolLog</Filter>
+    </ClCompile>
+    <ClCompile Include="Database.cpp">
+      <Filter>DB\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="DBTranManager.cpp">
+      <Filter>DB\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="Connection.cpp">
+      <Filter>DB\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="UserManager.cpp">
+      <Filter>DB\Database</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

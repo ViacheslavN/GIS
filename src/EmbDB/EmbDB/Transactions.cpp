@@ -376,10 +376,7 @@ namespace embDB
 
 
 	}
-	uint32 CTransaction::getLogLevel() const
-	{
-		return 1;
-	}
+ 
 	void CTransaction::log(uint32 nLevel, const wchar_t *pszFormat, ...)
 	{
 

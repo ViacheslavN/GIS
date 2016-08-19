@@ -12,6 +12,7 @@ namespace embDB
 	class CFilePage;
 	class CStorage;
 	class CDBTranManager;
+	class Connection;
 	struct sDBHeader
 	{
 		enum
@@ -105,12 +106,19 @@ namespace embDB
 		public:
 			CDatabase();
 			~CDatabase();
-			virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL);
+			virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL);
 			virtual bool create(const wchar_t* pszDbName,  DBTransactionMode mode = eTMMultiTransactions,
-				const wchar_t* pszWorkingPath = NULL, const wchar_t* pszPassword = NULL, const SDBParams *Params = NULL) ;
+				const wchar_t* pszWorkingPath = NULL,  const wchar_t* pszPassword = NULL, const SDBParams *Params = NULL) ;
+			virtual bool create(const wchar_t* pszDbName,const wchar_t* pszAdmUser, const wchar_t* pszPassword , DBTransactionMode mode = eTMMultiTransactions, 
+				const wchar_t* pszWorkingPath = NULL, const SDBParams *Params = NULL);
+			
+
+			virtual IConnectionPtr connect(const wchar_t* pszUser= NULL, const wchar_t* pszPassword = NULL);
+			virtual bool closeConnection(IConnection *pConnection);
+			
+			
 			virtual bool close();
-			virtual ITransactionPtr startTransaction(eTransactionType trType);
-			virtual bool closeTransaction(ITransaction* );
+		
 			virtual ISchemaPtr getSchema() const {return ISchemaPtr(m_pSchema.get());}
 			virtual IDBStoragePtr getDBStorage() const  {return m_pStorage;}
 
@@ -121,6 +129,10 @@ namespace embDB
 			bool getCheckCRC() const {return m_DBParams.bCheckCRC;}
 			bool getCheckPageType() const {return !m_DBParams.qryptoAlg == NONE_ALG;}
 		private:
+			ITransactionPtr startTransaction(eTransactionType trType, uint64 nUserID);
+			bool closeTransaction(ITransaction* pTran, uint64 nUserID);
+			void load();
+	    private:
 			bool readHeadPage(CFilePage* pPage);
 			bool readRootPage(CFilePage* pPage);
 			bool CheckDirty();
@@ -136,8 +148,12 @@ namespace embDB
 			sDBRootPage m_dbRootPage;
 			std::auto_ptr<CDBTranManager>  m_pTranManager;
 			bool m_bOpen;
+			bool m_bLoad;
 			SDBParams m_DBParams;
 			std::auto_ptr<CPageCipher> m_PageChiper;
+
+
+			friend class CConnection;
 		//	typedef RBMap<CommonLib::CString, CStorage*> TTableStorages;
 		//	TTableStorages m_TableStorages;
 			 

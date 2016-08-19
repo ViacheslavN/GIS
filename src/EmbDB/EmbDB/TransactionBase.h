@@ -195,6 +195,26 @@ namespace embDB
 				}
 				return ICursorPtr(pCursor);
 			}
+
+			 
+
+			virtual eLogMode getLogMode() const
+			{
+				return m_logMode;
+			}
+			virtual void setLogMode(eLogMode logMode)
+			{
+				m_logMode = logMode;
+			}
+			virtual uint32 getLogLevel() const 
+			{
+				return m_LogLevel;
+			}
+			virtual void setLogLevel(uint32 nLogLevel)  
+			{
+				 m_LogLevel = nLogLevel;
+			}
+
 	protected:
 
 		IDBDatabase* m_pDatabase;
@@ -205,6 +225,9 @@ namespace embDB
 		typedef std::set<IDBTablePtr>  TChangeTable;
 		TMapValueField m_mapValueField;
 		TChangeTable m_setChangeTable;
+		eLogMode m_logMode;
+		uint32 m_LogLevel;
+
 
 
 	};

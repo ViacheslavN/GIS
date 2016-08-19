@@ -475,6 +475,9 @@ namespace embDB
 	IFieldPtr CTable::createField(const  SFieldProp& sFP, ITransaction *pTran )
 	{
 
+		if(!pTran)
+			return IFieldPtr(); // TO DO Error
+
 		if(sFP.m_sFieldName.length() > nMaxFieldNameLen || sFP.m_sFieldAlias.length() > nMaxFieldAliasLen)
 			return IFieldPtr(); // TO DO Error
 
@@ -490,12 +493,7 @@ namespace embDB
 			pDBTran =  (IDBTransaction*)pTran;
 
 		}
-		else
-		{
-
-			pDBTran =  ((IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get());
-			pDBTran->begin();
-		}
+		 
 		{
 
 			FilePagePtr pFieldInfoPage = pDBTran->getNewPage(nFieldInfoPageSize);
@@ -525,18 +523,16 @@ namespace embDB
 			m_pFields->AddField(pField.get());
 		}
 		
-		if(!pTran)
-		{
-			pDBTran->commit();
-			m_pDB->closeTransaction(pDBTran.get());
-		}
+		 
 		return getField(sFP.m_sFieldName);
 	}
 		IFieldPtr CTable::createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias,  CommonLib::eShapeType shapeType,
-		const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex, uint32 nPageSize, ITransaction *pTran)
+		const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, ITransaction *pTran, bool bCreateIndex, uint32 nPageSize)
 	{
 
-		
+		if(!pTran)
+			return IFieldPtr(); //TO DO Log
+
 		if(shapeType == CommonLib::shape_type_null || extent.type == CommonLib::bbox_type_invalid)
 			return IFieldPtr(); //TO DO Log
 
@@ -554,7 +550,7 @@ namespace embDB
 			return IFieldPtr(); // TO DO Error
 
 		IDBTransactionPtr pDBTran;
-		if(pTran)
+		
 		{
 			if(pTran->getType() != eTT_DDL)
 				return IFieldPtr(); // TO DO Error
@@ -562,12 +558,7 @@ namespace embDB
 			pDBTran =  (IDBTransaction*)pTran;
 
 		}
-		else
-		{
-
-			pDBTran =  ((IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get());
-			pDBTran->begin();
-		}
+		 
 
 	
 
@@ -671,11 +662,7 @@ namespace embDB
 			ip.m_nNodePageSize = nPageSize;
 			createIndex(pszFieldName, ip, pDBTran.get());
 		}
-		if(!pTran)
-		{
-			pDBTran->commit();
-			m_pDB->closeTransaction(pDBTran.get());
-		}
+		 
 		return getField(fp.m_sFieldName);
 
 	}
@@ -683,6 +670,9 @@ namespace embDB
 	
 	bool  CTable::createIndex(const CommonLib::CString& sFieldName, SIndexProp& ip, ITransaction *pTran)
 	{
+		if(!pTran)
+			return false;
+
 		TIndexByName::iterator it = m_IndexByName.find(sFieldName);
 		if(it != m_IndexByName.end())
 			return false;
@@ -704,33 +694,20 @@ namespace embDB
 			pDBTran =  (IDBTransaction*)pTran;
 
 		}
-		else
-		{
-
-			pDBTran =  ((IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get());
-			pDBTran->begin();
-		}
+		 
 		{
 
 			FilePagePtr pFieldInfoPage = pDBTran->getNewPage(nFieldInfoPageSize);
 			if(!pFieldInfoPage.get())
 			{
-				if(!pTran)
-				{
-					pDBTran->commit();
-					m_pDB->closeTransaction(pDBTran.get());
-				}
+				 
 				return false; // TO DO Error
 			}
 
 			IDBIndexHandlerPtr pIndex = createIndexHandler(pFieldHandler, ip, pFieldInfoPage->getAddr());
 			if(!pIndex.get())
 			{
-				if(!pTran)
-				{
-					pDBTran->commit();
-					m_pDB->closeTransaction(pDBTran.get());
-				}
+				 
 				return false; // TO DO Error
 			}
 
@@ -756,11 +733,7 @@ namespace embDB
 
 		BuildIndex(pIndex.get(), pFieldHandler, pDBTran.get());
 
-		if(!pTran)
-		{
-			pDBTran->commit();
-			m_pDB->closeTransaction(pDBTran.get());
-		}
+		 
 
 		return true;
 	}

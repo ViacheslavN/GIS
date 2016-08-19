@@ -57,10 +57,10 @@ namespace embDB
 			virtual bool setOIDFieldName(const CommonLib::CString& sOIDName) ;
 			virtual const CommonLib::CString& getName() const ;
 			
-			virtual IFieldPtr createField(const SFieldProp& sFP, ITransaction *pTran = NULL);
+			virtual IFieldPtr createField(const SFieldProp& sFP, ITransaction *pTran);
 			virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, 
-					const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true, uint32 nPageSize = 8192, ITransaction *pTran = NULL);
-			virtual bool createIndex(const CommonLib::CString& sFieldName, SIndexProp& ip, ITransaction *pTran = NULL);
+					const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, ITransaction *pTran, bool bCreateIndex = true, uint32 nPageSize = 8192);
+			virtual bool createIndex(const CommonLib::CString& sFieldName, SIndexProp& ip, ITransaction *pTran);
 			
 			
 			virtual bool deleteField(IField* pField);

@@ -41,21 +41,11 @@ namespace embDB
 
 		IDBTransactionPtr pDBTran((IDBTransaction *)pTran);
 
-		IDBTransactionPtr pInnerTran;
 		if(!pDBTran.get())
 		{
-			 pInnerTran =  (IDBTransaction*)m_pDB->startTransaction(eTT_DDL).get();
-			 pDBTran = pInnerTran;
+			return false;
 		}
-	
-		if(pInnerTran.get())
-		{
-			if(!pInnerTran->begin())
-			{
-				m_pDB->closeTransaction(pInnerTran.get());
-				return false;
-			}
-		}
+	 
 		
 		FilePagePtr pPage = pDBTran->getNewPage(nTableInfoPageSize);
 		if(!pPage.get())
@@ -73,18 +63,10 @@ namespace embDB
 		 
 		if(!m_nTablesAddr.push(nPageAddr, pDBTran.get()))
 		{
-			if(pInnerTran.get())
-			{
-				pInnerTran->rollback();
-				m_pDB->closeTransaction(pInnerTran.get());
-			}
+			 
 			return false;
 		}
-		if(pInnerTran.get())
-		{
-			pInnerTran->commit();
-			m_pDB->closeTransaction(pInnerTran.get());
-		}
+	 
 		return true;
 	}
 	
@@ -214,7 +196,7 @@ namespace embDB
 	bool CSchema::dropTable(ITable *pTable, ITransaction *pTran)
 	{
 		assert(pTable);
-		if(!pTable)
+		if(!pTable || !pTran)
 			return false;
 
 		IDBTransaction* pDBTran = (IDBTransaction*)pTran;

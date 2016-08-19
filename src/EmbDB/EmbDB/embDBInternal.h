@@ -556,10 +556,10 @@ namespace embDB
 		//	virtual bool insert(IRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
 		//	virtual bool insert(INameRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
 
-		virtual IFieldPtr createField(const  SFieldProp& sFP, ITransaction *pTran = NULL) = 0;
-		virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, bool bCreateIndex = true, uint32 nPageSize = 8192,  ITransaction *pTran = NULL) = 0;
+		virtual IFieldPtr createField(const  SFieldProp& sFP, ITransaction *pTran ) = 0;
+		virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits,  ITransaction *pTran, bool bCreateIndex = true, uint32 nPageSize = 8192) = 0;
 		virtual bool deleteField(IField* pField) = 0;
-		virtual bool createIndex(const CommonLib::CString& sName, SIndexProp& ip, ITransaction *pTran = NULL) = 0;
+		virtual bool createIndex(const CommonLib::CString& sName, SIndexProp& ip, ITransaction *pTran) = 0;
 		virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip) = 0;
 
 		virtual int64 GetNextOID() = 0;
@@ -574,6 +574,10 @@ namespace embDB
 		rtRedo
 	};
  
+
+	
+
+
 	class IDBBtree
 	{
 	public:
@@ -602,7 +606,6 @@ namespace embDB
 		virtual void addInnerTransactions(IDBTransaction *pTran) = 0;
 
 		virtual void error(const wchar_t *pszFormat, ...) = 0;
-		virtual uint32 getLogLevel() const = 0;
 		virtual void log(uint32 nLevel, const wchar_t *pszFormat, ...) = 0;
 
 		virtual void addDBBTree(IDBBtree *pTree) = 0;

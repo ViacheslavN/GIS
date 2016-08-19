@@ -69,10 +69,7 @@ namespace embDB
 		{
 			m_bError = true;
 		}
-		virtual uint32 getLogLevel() const 
-		{
-			return 0;
-		}
+	
 		virtual void log(uint32 nLevel, const wchar_t *pszFormat, ...)
 		{
 

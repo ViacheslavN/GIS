@@ -528,6 +528,8 @@
     <ClInclude Include="CompressCompIndexParams.h" />
     <ClInclude Include="CompressStringLen.h" />
     <ClInclude Include="CompressUtils.h" />
+    <ClInclude Include="Connection.h" />
+    <ClInclude Include="ConsolLog.h" />
     <ClInclude Include="CounterField.h" />
     <ClInclude Include="CRC.h" />
     <ClInclude Include="CreateFields.h" />
@@ -647,11 +649,13 @@
     <ClInclude Include="StringVal.h" />
     <ClInclude Include="TBaseSpatialCompressor.h" />
     <ClInclude Include="EmptyMultiKeyCompress.h" />
+    <ClInclude Include="TranLogger.h" />
     <ClInclude Include="TransactionBase.h" />
     <ClInclude Include="UniqueCompIndexBase.h" />
     <ClInclude Include="UniqueIndex.h" />
     <ClInclude Include="UnsignedIntegerNumLenComp.h" />
     <ClInclude Include="UnsignedNumLenDiffCompressor2.h" />
+    <ClInclude Include="UserManager.h" />
     <ClInclude Include="ValueField.h" />
     <ClInclude Include="FilePage.h" />
     <ClInclude Include="FilePageType.h" />
@@ -723,6 +727,8 @@
     <ClCompile Include="CompositeIndexKey.cpp" />
     <ClCompile Include="CompressCompIndexParams.cpp" />
     <ClCompile Include="CompressStringLen.cpp" />
+    <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="ConsolLog.cpp" />
     <ClCompile Include="CRC.cpp" />
     <ClCompile Include="Crypto\BaseAES.cpp" />
     <ClCompile Include="Crypto\BaseHash.cpp" />
@@ -750,6 +756,7 @@
     <ClCompile Include="SimpleSelectCursor.cpp" />
     <ClCompile Include="SimpleSelectOpCursor.cpp" />
     <ClCompile Include="Statement.cpp" />
+    <ClCompile Include="UserManager.cpp" />
     <ClCompile Include="ValueField.cpp" />
     <ClCompile Include="FilePage.cpp" />
     <ClCompile Include="MemPageCache.cpp" />
