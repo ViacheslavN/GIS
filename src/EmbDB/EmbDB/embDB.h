@@ -187,6 +187,13 @@ namespace embDB
 		AES256
 	};
 
+	enum eUserGroup
+	{
+		ugAdmin,
+		ugRW_DDL,
+		ugRW,
+		ugReadOnly
+	};
 
 	struct SDBParams
 	{
@@ -573,7 +580,7 @@ namespace embDB
 		//virtual ITransactionPtr startTransaction(eTransactionType trType) = 0;
 		//virtual bool closeTransaction(ITransaction* ) = 0;
 
-		virtual ISchemaPtr getSchema() const = 0;
+	
 		
 		static IDatabasePtr CreateDatabase();
 	};
@@ -584,9 +591,11 @@ namespace embDB
 		IConnection(){}
 		virtual ~IConnection(){}
 
+		virtual ISchemaPtr getSchema() const = 0;
 		virtual ITransactionPtr startTransaction(eTransactionType trType) = 0;
 		virtual bool closeTransaction(ITransaction* ) = 0;
 		virtual uint64 getUserUID() const = 0;
+		virtual eUserGroup getUserGroup() const = 0;
 		virtual const wchar_t *getUserName() const = 0;
 	};
 

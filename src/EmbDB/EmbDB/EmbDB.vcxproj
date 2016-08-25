@@ -655,7 +655,7 @@
     <ClInclude Include="UniqueIndex.h" />
     <ClInclude Include="UnsignedIntegerNumLenComp.h" />
     <ClInclude Include="UnsignedNumLenDiffCompressor2.h" />
-    <ClInclude Include="UserManager.h" />
+    <ClInclude Include="UserCryptoManager.h" />
     <ClInclude Include="ValueField.h" />
     <ClInclude Include="FilePage.h" />
     <ClInclude Include="FilePageType.h" />
@@ -756,7 +756,7 @@
     <ClCompile Include="SimpleSelectCursor.cpp" />
     <ClCompile Include="SimpleSelectOpCursor.cpp" />
     <ClCompile Include="Statement.cpp" />
-    <ClCompile Include="UserManager.cpp" />
+    <ClCompile Include="UserCryptoManager.cpp" />
     <ClCompile Include="ValueField.cpp" />
     <ClCompile Include="FilePage.cpp" />
     <ClCompile Include="MemPageCache.cpp" />

@@ -11,6 +11,7 @@ CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, uint32 nSize, int64 nAddr) :
 	,m_bValid(false)
 	,m_bCheck(false)
 	,m_bIsNeedEncrypt(true)
+	,m_bIgnoreOffset(false)
 {
 	m_pData =  (byte*)m_pAlloc->alloc(sizeof(byte) * m_nSize);
 
@@ -23,6 +24,7 @@ CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, uint32 nSize, in
 	,m_bValid(false)
 	,m_bCheck(false)
 	,m_bIsNeedEncrypt(true)
+	,m_bIgnoreOffset(false)
 {
 	m_pData =  (byte*)m_pAlloc->alloc(sizeof(byte) * m_nSize);
 	memcpy(m_pData, pData, nSize);
@@ -36,6 +38,7 @@ CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, uint32 nSize, in
 	,m_bValid(false)
 	,m_bCheck(false)
 	,m_bIsNeedEncrypt(true)
+	,m_bIgnoreOffset(false)
 {
 	m_pData =  pData;
 
@@ -108,5 +111,14 @@ void CFilePage::setNeedEncrypt(bool bEncrypt)
 {
 	m_bIsNeedEncrypt = bEncrypt;
 }
-
+/*
+bool CFilePage::isIgnoreOffset() const
+{
+	return m_bIgnoreOffset;
+}
+void CFilePage::setIgnoreOffset(bool bIgnore)
+{
+	m_bIgnoreOffset = bIgnore;
+}
+*/
 }

@@ -22,7 +22,7 @@ namespace embDB
 
 
 	CDirectTransaction::CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache) : TBase(pDatabase)
+		eTransactionType nTranType, const CommonLib::CString& sFileName, IDBConnection* pConnection, int64 nID, uint32 nTranCache) : TBase(pConnection)
 		,m_bError(false)
 	{
 
@@ -31,9 +31,9 @@ namespace embDB
 	{
 
 	}
-	FilePagePtr CDirectTransaction::getFilePage(int64 nAddr, uint32 nSize , bool bRead)
+	FilePagePtr CDirectTransaction::getFilePage(int64 nAddr, uint32 nSize , bool bRead, bool bNeedDecrypt)
 	{
-		return  m_pDBStorage->getFilePage(nAddr, nSize, bRead);
+		return  m_pDBStorage->getFilePage(nAddr, nSize, bRead, bNeedDecrypt);
 		/*if(!pFilePage)
 			return NULL;
 		if(pFilePage->getFlags() & eFP_FROM_FREE_PAGES)

@@ -1308,7 +1308,13 @@
     <ClInclude Include="Connection.h">
       <Filter>DB\Database</Filter>
     </ClInclude>
-    <ClInclude Include="UserManager.h">
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UserCryptoManager.h">
       <Filter>DB\Database</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1484,7 +1490,7 @@
     <ClCompile Include="Connection.cpp">
       <Filter>DB\Database</Filter>
     </ClCompile>
-    <ClCompile Include="UserManager.cpp">
+    <ClCompile Include="UserCryptoManager.cpp">
       <Filter>DB\Database</Filter>
     </ClCompile>
   </ItemGroup>

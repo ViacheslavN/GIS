@@ -16,18 +16,18 @@ namespace embDB
 {
 
 
-	CPageCipher::CPageCipher(const byte* pPWD, uint32 nLenPwd, const byte* pSalt, const byte* pIVSalt, uint32 nLenSalt, QryptoALG qryptoAlg) : m_qryptoAlg(qryptoAlg)
+	CPageCipher::CPageCipher(QryptoALG qryptoAlg) : m_qryptoAlg(qryptoAlg)
 	{
-		init(pPWD, nLenPwd, pSalt, pIVSalt, nLenSalt);
+		 CreateCiphers();
 	}
 	CPageCipher::~CPageCipher()
 	{
 
 	}
 
-	void CPageCipher::init(const byte* pPWD, uint32 nLenPwd, const byte* pSalt, const byte* pIVSalt, uint32 nLenSalt)
+	void CPageCipher::SetKey(const byte* pPWD, uint32 nLenPwd, const byte* pSalt, const byte* pIVSalt, uint32 nLenSalt)
 	{
-		CreateCiphers();
+ 
 
 		if(!m_pCipher.get())
 			return;
@@ -115,6 +115,8 @@ namespace embDB
 	bool CPageCipher::encrypt(CFilePage *pFilePage)
 	{
 
+		assert(m_pCipher.get());
+
 		xorInitVector(pFilePage->getRowData(), 0, pFilePage->getPageSize(), pFilePage->getAddr());
 		m_pCipher->encrypt(pFilePage->getRowData(), pFilePage->getPageSize());
 
@@ -122,12 +124,16 @@ namespace embDB
 	}
 	bool CPageCipher::decrypt(CFilePage *pFilePage)
 	{
+		assert(m_pCipher.get());
+
 		m_pCipher->decrypt(pFilePage->getRowData(), pFilePage->getPageSize());
 		xorInitVector(pFilePage->getRowData(), 0, pFilePage->getPageSize(), pFilePage->getAddr());
 		return true;
 	}
 	bool CPageCipher::encrypt(CFilePage *pFilePage, byte* pDstBuf, uint32 len)
 	{
+		assert(m_pCipher.get());
+
 		memcpy(pDstBuf, pFilePage->getRowData(), pFilePage->getPageSize());
 
 		xorInitVector(pDstBuf, 0, pFilePage->getPageSize(), pFilePage->getAddr());
@@ -136,6 +142,8 @@ namespace embDB
 	}
 	bool CPageCipher::decrypt(CFilePage *pFilePage, byte* pDstBuf, uint32 len)
 	{
+		assert(m_pCipher.get());
+
 		memcpy(pDstBuf, pFilePage->getRowData(), pFilePage->getPageSize());
 		m_pCipher->decrypt(pDstBuf, pFilePage->getPageSize());
 		xorInitVector(pDstBuf, 0, pFilePage->getPageSize(), pFilePage->getAddr());

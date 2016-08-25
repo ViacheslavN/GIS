@@ -116,7 +116,7 @@ namespace embDB
 			m_CacheMap.insert(std::make_pair(key, it.node()));
 		}
 
-		uint32 size() const {return m_CacheMap.size();}
+		uint32 size() const {return (uint32)m_CacheMap.size();}
 		void clear()
 		{
 	 		m_CacheMap.clear();

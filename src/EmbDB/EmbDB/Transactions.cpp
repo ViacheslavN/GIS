@@ -11,22 +11,22 @@ namespace embDB
 
 	
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache) :
-		TBase(pDatabase)
-		, m_TranStorage(pAlloc, &m_TranPerfCounter, pDatabase->getCheckCRC())
+		eTransactionType nTranType, const CommonLib::CString& sFileName,  IDBConnection* pConnection, int64 nID, uint32 nTranCache) :
+		TBase(pConnection)
+		, m_TranStorage(pAlloc, &m_TranPerfCounter, pConnection->getCheckCRC())
 		, m_nRestoreType(nRestoreType)
 		, m_nTranType(nTranType)
 		, m_sFileName(sFileName)
 		, m_PageChache(pAlloc, &m_TranStorage, this, &m_TranPerfCounter, nTranCache)
 		, m_pAlloc(pAlloc)
 		, m_bError(false)
-		, m_TranUndoManager(this, &m_TranStorage, pDatabase->getCheckCRC())
+		, m_TranUndoManager(this, &m_TranStorage, pConnection->getCheckCRC())
 		, m_LogStateManager(&m_TranStorage)
 		, m_nID(nID)
 		, m_bIsCompleted(true)
 		, m_bIsBegin(false)
 		, m_bDeleteStorage(true)
-		, m_TranRedoManager(this, &m_TranStorage, pDatabase->getCheckCRC())
+		, m_TranRedoManager(this, &m_TranStorage, pConnection->getCheckCRC())
 		, m_nPageSize(MIN_PAGE_SIZE)
 	{
 
@@ -232,12 +232,12 @@ namespace embDB
 
 		return bRet;
 	}
-	FilePagePtr CTransaction::getFilePage(int64 nAddr, uint32 nSize, bool bRead)
+	FilePagePtr CTransaction::getFilePage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt )
 	{
 		if(m_nTranType == eTT_SELECT)
 		{
 			m_TranPerfCounter.ReadDBPage();
-			return m_pDBStorage->getFilePage(nAddr, nSize, bRead);
+			return m_pDBStorage->getFilePage(nAddr, nSize, bRead, bNeedDecrypt);
 		}
 		CFilePage* pPage = m_PageChache.GetPage(nAddr, false, bRead, nSize);
 		if(!pPage)
@@ -260,7 +260,7 @@ namespace embDB
 		{
 			m_TranPerfCounter.ReadDBPage();
 			pPage->setAddr(nAddr);
-			FilePagePtr pStoragePage =  m_pDBStorage->getFilePage(nAddr, bRead);
+			FilePagePtr pStoragePage =  m_pDBStorage->getFilePage(nAddr, bRead, bNeedDecrypt);
 			pPage->copyFrom(pStoragePage.get());
 		}
 
@@ -292,7 +292,7 @@ namespace embDB
 		m_PageChache.AddPage(-1, nTranAddr, pFilePage);
 		return FilePagePtr(pFilePage);
 	}
-	FilePagePtr CTransaction::getTranFilePage(int64 nAddr, uint32 nSize, bool bRead)
+	FilePagePtr CTransaction::getTranFilePage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt )
 	{
 		CFilePage* pPage = m_PageChache.GetPage(nAddr, false, bRead, nSize);
 	 	return FilePagePtr(pPage);

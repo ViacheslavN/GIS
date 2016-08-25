@@ -17,12 +17,12 @@ namespace embDB
 	{
 		public:
 
-			ITransactionBase(IDBDatabase* pDatabase) : m_pDatabase(pDatabase)
+			ITransactionBase(IDBConnection* pDBConnection) : m_pConnection(pDBConnection)
 			{
-				if(m_pDatabase) //check for test bplus tree 
+				if(m_pConnection) //check for test bplus tree 
 				{
-					m_pSchema = m_pDatabase->getSchema();
-					m_pDBStorage = m_pDatabase->getDBStorage();
+					m_pSchema = pDBConnection->getSchema();
+					m_pDBStorage = pDBConnection->getDBStorage();
 				}
 			}
 			~ITransactionBase()
@@ -217,7 +217,7 @@ namespace embDB
 
 	protected:
 
-		IDBDatabase* m_pDatabase;
+		IDBConnection* m_pConnection;
 		IDBStoragePtr m_pDBStorage;
 		ISchemaPtr m_pSchema;
 		typedef CommonLib::CHash2Key<CommonLib::CString, CommonLib::CString> TValueFieldKey;

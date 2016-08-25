@@ -6,7 +6,8 @@
 #include "CommonLibrary/String.h"
 #include "DBConfig.h"
 #include "embDBInternal.h"
-#include "PageCipher.h"
+
+#include "UserCryptoManager.h"
 namespace embDB
 {
 	class CFilePage;
@@ -32,8 +33,9 @@ namespace embDB
 		byte szSaltIV[SALT_SIZE];
 		int64  nRootPage;
 		int64  nPWDPage;
+		int64  nUserCryptoManager;
 		sDBHeader(): nMagicSymbol(0), nMajorVersion(0), nMinorVersion(0), qryptoAlg(AES128), bCheckCRC(false),
-			bCheckPWD(false), nRootPage(-1), nPWDPage(-1)
+			bCheckPWD(false), nRootPage(-1), nPWDPage(-1), nUserCryptoManager(-1)
 		{
 			memset(szSalt, 0, sizeof(szSalt));
 			memset(szSaltIV, 0, sizeof(szSaltIV));
@@ -42,28 +44,23 @@ namespace embDB
 
 		void Read(CommonLib::IReadStream* pStream)
 		{
-			pStream->read(szSalt, SALT_SIZE);
-			pStream->read(szSaltIV, SALT_SIZE);
 			nMagicSymbol = pStream->readInt64();
 			nMajorVersion = pStream->readIntu32();
 			nMinorVersion = pStream->readIntu32();
 			qryptoAlg = (QryptoALG)pStream->readIntu32();
-			bCheckPWD = pStream->readBool();
+	 
 			nRootPage = pStream->readInt64();
-			nPWDPage= pStream->readInt64();
+			nUserCryptoManager= pStream->readInt64();
 		
 		}
 		void Write(CommonLib::IWriteStream* pStream)
 		{
-			pStream->write(szSalt, SALT_SIZE);
-			pStream->write(szSaltIV, SALT_SIZE);
 			pStream->write(nMagicSymbol);
 			pStream->write(nMajorVersion);
 			pStream->write(nMinorVersion);
 			pStream->write((uint32)qryptoAlg);
-			pStream->write(bCheckPWD);
 			pStream->write(nRootPage);
-			pStream->write(nPWDPage);
+			pStream->write(nUserCryptoManager);
 		}
 
 	};
@@ -71,7 +68,7 @@ namespace embDB
 
 	struct sDBRootPage
 	{
-		sDBRootPage() :  nShemaPage(-1), nStoragePage(-1), nUserPage(-1), nOffcet(0)
+		sDBRootPage() :  nShemaPage(-1), nStoragePage(-1),   nOffcet(0)
 		{}
 		~sDBRootPage(){}
 		int64 nOffcet;
@@ -79,7 +76,8 @@ namespace embDB
 		//int nPageSize;
 		int64  nShemaPage;
 		int64  nStoragePage;
-		int64  nUserPage;
+	 
+
 	
 
 
@@ -90,14 +88,14 @@ namespace embDB
 			nOffcet = pStream->readInt64();
 			nShemaPage = pStream->readInt64();
 			nStoragePage = pStream->readInt64();
-			nUserPage = pStream->readInt64();
+			 
 		}
 		void Write(CommonLib::IWriteStream* pStream)
 		{
 			pStream->write(nOffcet);
 			pStream->write(nShemaPage);
 			pStream->write(nStoragePage);
-			pStream->write(nUserPage);
+ 
 		}
 
 	};
@@ -119,7 +117,7 @@ namespace embDB
 			
 			virtual bool close();
 		
-			virtual ISchemaPtr getSchema() const {return ISchemaPtr(m_pSchema.get());}
+		
 			virtual IDBStoragePtr getDBStorage() const  {return m_pStorage;}
 
 			//CStorage* getMainStorage();
@@ -129,9 +127,9 @@ namespace embDB
 			bool getCheckCRC() const {return m_DBParams.bCheckCRC;}
 			bool getCheckPageType() const {return !m_DBParams.qryptoAlg == NONE_ALG;}
 		private:
-			ITransactionPtr startTransaction(eTransactionType trType, uint64 nUserID);
+			ITransactionPtr startTransaction(eTransactionType trType, uint64 nUserID, IDBConnection *pConn);
 			bool closeTransaction(ITransaction* pTran, uint64 nUserID);
-			void load();
+			bool load();
 	    private:
 			bool readHeadPage(CFilePage* pPage);
 			bool readRootPage(CFilePage* pPage);
@@ -151,7 +149,7 @@ namespace embDB
 			bool m_bLoad;
 			SDBParams m_DBParams;
 			std::auto_ptr<CPageCipher> m_PageChiper;
-
+			CUserCryptoManager m_UserCryptoManager;
 
 			friend class CConnection;
 		//	typedef RBMap<CommonLib::CString, CStorage*> TTableStorages;

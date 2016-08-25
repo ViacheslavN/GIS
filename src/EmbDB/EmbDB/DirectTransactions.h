@@ -19,7 +19,7 @@ namespace embDB
 			eTransactionType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
 
 		CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache = 10000);
+			eTransactionType nTranType, const CommonLib::CString& sFileName, IDBConnection* pConnection, int64 nID, uint32 nTranCache = 10000);
 		~CDirectTransaction();
 
 		//ITransactions
@@ -38,7 +38,7 @@ namespace embDB
 		virtual IUpdateCursorPtr createUpdateCursor() {return  IUpdateCursorPtr();}
 
 
-		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true);
+		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true);
 		virtual void dropFilePage(FilePagePtr pPage);
 		virtual void dropFilePage(int64 nAddr, uint32 nSize);
 		virtual FilePagePtr getNewPage(uint32 nSize, bool bWrite = false);
@@ -85,9 +85,9 @@ namespace embDB
 		virtual void stop() {}
 
 
-		virtual FilePagePtr getTranFilePage(int64 nAddr, uint32 nSize, bool bRead = true)
+		virtual FilePagePtr getTranFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true)
 		{
-			return getFilePage(nAddr, nSize, bRead);
+			return getFilePage(nAddr, nSize, bRead, bNeedDecrypt);
 		}
 		virtual void saveTranFilePage(FilePagePtr pPage,  uint32 nSize = 0,  bool bChandgeInCache = false) 
 		{

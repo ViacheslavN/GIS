@@ -128,8 +128,11 @@ namespace embDB
 			return m_pFile.getFileSize();
 		return -1;
 	}
-	FilePagePtr CStorage::getFilePage(int64 nAddr, uint32 nSize, bool bRead)
+	FilePagePtr CStorage::getFilePage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt)
 	{
+
+
+		//TO Do lock
 
 		CFilePage* pPage = m_Chache.GetElem(nAddr);
 		if(pPage)
@@ -153,7 +156,7 @@ namespace embDB
 			uint32 nWCnt = m_pFile.readFile((void*)pPage->getRowData(),  nSize );
 			assert(nWCnt != 0);
 
-			if(m_pPageChiper && pPage->isNeedEncrypt())
+			if(m_pPageChiper && bNeedDecrypt)
 			{
 				m_pPageChiper->decrypt(pPage);
 			}
@@ -184,6 +187,8 @@ namespace embDB
 	}*/
 	bool CStorage::dropFilePage(FilePagePtr pPage)
 	{
+		//TO Do lock
+
 		if(!m_bCommitState)
 			return false;
 
@@ -213,7 +218,7 @@ namespace embDB
 	}
 	bool CStorage::dropFilePage(int64 nAddr)
 	{		
- 
+		//TO Do lock
 		if(!m_bCommitState)
 			return false;
 
@@ -233,7 +238,7 @@ namespace embDB
 	}
 	FilePagePtr CStorage::getNewPage(uint32 nSize, bool bWrite)
 	{
-
+		//TO Do lock
 		if((nSize % m_nBasePageSize) != 0 )
 			return FilePagePtr();
 		if(nSize == 0)
@@ -297,6 +302,8 @@ namespace embDB
 	}
 	int64 CStorage::getNewPageAddr(uint32 nSize /*,uint32* nType*/)
 	{
+		//TO Do lock
+
 		if((nSize % m_nBasePageSize) != 0 )
 			return -1;
 
@@ -368,6 +375,7 @@ namespace embDB
 
 	bool CStorage::WriteRowData(const byte* pData, uint32 nSize, int64 nPos)
 	{
+		//TO Do lock
 		if(nPos == -1)
 			nPos = m_pFile.getFilePos();
 		bool bRet = m_pFile.setFilePos64(nPos, CommonLib::soFromBegin);
@@ -378,10 +386,23 @@ namespace embDB
 		uint32 nCnt = m_pFile.writeFile((void*)pData, nSize);
 		return nCnt == nSize;
 	}
+	bool CStorage::ReadRowData(const byte* pData, uint32 nSize, int64 nPos)
+	{
+		//TO Do lock
+		if(nPos == -1)
+			nPos = m_pFile.getFilePos();
+		bool bRet = m_pFile.setFilePos64(nPos, CommonLib::soFromBegin);
+		assert(bRet);
+		if(!bRet)
+			return false;
 
+		uint32 nCnt = m_pFile.readFile((void*)pData, nSize);
+		return nCnt == nSize;
+	}
 	bool CStorage::saveNewPage(FilePagePtr pPage)
 	{
-	//	assert(m_nPageSize == pPage->getPageSize());
+		//TO Do lock
+ 
 		uint64 nFileAddr = pPage->getAddr() * m_nBasePageSize;
 		bool bRet = m_pFile.setFilePos64(m_nOffset + nFileAddr, CommonLib::soFromBegin);
 		assert(bRet);

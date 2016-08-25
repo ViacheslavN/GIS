@@ -481,7 +481,7 @@ namespace embDB
 			IFilePage(){}
 			virtual ~IFilePage(){}
 
-			virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true) = 0;
+			virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true) = 0;
 			virtual FilePagePtr getNewPage(uint32 nSize, bool bWrite = false) = 0;
 			virtual bool saveFilePage(CFilePage* pPage, uint32 nDataSize = 0,  bool ChandgeInCache = false) = 0;
 			virtual bool saveFilePage(FilePagePtr pPage, uint32 nDataSize = 0,  bool ChandgeInCache = false) = 0;
@@ -500,6 +500,9 @@ namespace embDB
  
 		virtual bool saveNewPage(FilePagePtr pPage) = 0;
 		virtual int64 getNewPageAddr(uint32 nSize) = 0;
+		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true) = 0;
+ 
+
 		
 		virtual bool dropFilePage(FilePagePtr pPage) = 0;
 		virtual bool dropFilePage(int64 nAddr) = 0;
@@ -520,14 +523,24 @@ namespace embDB
 		virtual bool saveStorageInfo()= 0;
 
 
-		virtual bool WriteRowData(const byte* pData, uint32 nSize, int64 nPos = -1) = 0;
+		virtual void SetOffset(int64 nOffset)= 0;
+		virtual int64 GetOffset() const= 0;
 
+		virtual bool WriteRowData(const byte* pData, uint32 nSize, int64 nPos = -1) = 0;
+		virtual bool ReadRowData(const byte* pData, uint32 nSize, int64 nPos = -1) = 0;
 
 		//for write/save
 		virtual bool isLockWrite() = 0;
 		virtual bool lockWrite(IDBTransaction *pTran = NULL) = 0;
 		virtual bool try_lockWrite() = 0;
 		virtual bool unlockWrite(IDBTransaction *pTran = NULL) = 0;
+
+
+		virtual bool isLock() = 0;
+		virtual bool lock(IDBTransaction *pTran = NULL) = 0;
+		virtual bool try_lock() = 0;
+		virtual bool unlock(IDBTransaction *pTran = NULL) = 0;
+
 
 		virtual bool saveForUndoState(IDBTransaction *pTran) = 0;
 		virtual bool undo(IDBTransaction *pTran) = 0;
@@ -575,7 +588,7 @@ namespace embDB
 	};
  
 
-	
+
 
 
 	class IDBBtree
@@ -599,7 +612,7 @@ namespace embDB
 
 
 		virtual FilePagePtr getTranNewPage(uint32 nSize = 0)= 0;
-		virtual FilePagePtr getTranFilePage(int64 nAddr, uint32 nSize, bool bRead = true) = 0;
+		virtual FilePagePtr getTranFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true) = 0;
 		virtual void saveTranFilePage(FilePagePtr pPage,  uint32 nSize = 0,  bool bChandgeInCache = false) = 0;
 		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false) = 0;
 
@@ -619,11 +632,20 @@ namespace embDB
 		virtual IValueFieldPtr GetField(const wchar_t* pszTableName, const wchar_t* pszFieldName) = 0;
 
 	};
+
+	struct IDBConnection : public IConnection
+	{
+		IDBConnection(){}
+		virtual ~IDBConnection(){}
+		virtual IDBStoragePtr getDBStorage() const = 0;
+		virtual bool getCheckCRC() const = 0;
+	};
+
 	struct IDBDatabase : public IDatabase
 	{
 		IDBDatabase(){}
 		virtual ~IDBDatabase(){}
-		virtual IDBStoragePtr getDBStorage() const = 0;
+	 
 	};
 }
 

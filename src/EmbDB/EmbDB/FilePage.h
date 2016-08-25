@@ -142,6 +142,9 @@ public:
 	bool copyFrom(CFilePage *pPage);
 	bool isValid() const;
 	void setValid(bool bValid);
+	/*bool isIgnoreOffset() const;
+	void setIgnoreOffset(bool bIgnore);*/
+
 	//bool isCheck() const;
 	//void setCheck(bool bCheck);
 	bool isNeedEncrypt() const;
@@ -155,6 +158,7 @@ protected:
 	bool m_bValid;
 	bool m_bCheck;
 	bool m_bIsNeedEncrypt;
+	bool m_bIgnoreOffset;
 };
 
 typedef CommonLib::IRefCntPtr<CFilePage> FilePagePtr;

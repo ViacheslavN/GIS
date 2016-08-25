@@ -50,7 +50,7 @@ namespace embDB
 			eTransactionType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
 
 		CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionType nTranType, const CommonLib::CString& sFileName, CDatabase* pDatabase, int64 nID, uint32 nTranCache = 10000);
+			eTransactionType nTranType, const CommonLib::CString& sFileName, IDBConnection* pConnection, int64 nID, uint32 nTranCache = 10000);
 
 
 		CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache = 10000);
@@ -84,7 +84,7 @@ namespace embDB
 		bool close();
 		
 
-		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true);
+		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true);
 		virtual void dropFilePage(FilePagePtr pPage);
 		virtual void dropFilePage(int64 nAddr, uint32 nSize);
 		virtual FilePagePtr getNewPage(uint32 nSize, bool bWrite = false);
@@ -96,7 +96,7 @@ namespace embDB
 		virtual eTransactionType getType() const {return (eTransactionType)m_nTranType;}
 
 		virtual FilePagePtr getTranNewPage(uint32 nSize);
-		virtual FilePagePtr getTranFilePage(int64 nAddr, uint32 nSize, bool bRead = true);
+		virtual FilePagePtr getTranFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true);
 		virtual void saveTranFilePage(FilePagePtr pPage,  uint32 nSize = 0,  bool bChandgeInCache = false);
 
 		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false);

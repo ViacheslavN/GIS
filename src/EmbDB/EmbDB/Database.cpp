@@ -14,6 +14,7 @@
 #else
 	#include "Crypto/AES128.h"
 #endif
+#include "Connection.h"
 
 namespace embDB
 {
@@ -24,7 +25,7 @@ namespace embDB
 	}
 	
 
-	CDatabase::CDatabase() :  m_bOpen(false), m_bLoad(false)
+	CDatabase::CDatabase() :  m_bOpen(false), m_bLoad(false), m_UserCryptoManager(this)
 	{
 		m_pAlloc.reset(new CommonLib::simple_alloc_t());
 		m_pStorage = (IDBStorage*)new CStorage(m_pAlloc.get());
@@ -56,6 +57,9 @@ namespace embDB
 			return false;
 
 		if(!readHeadPage(pHeadDBFile.get()))
+			return false;
+
+		if(!m_UserCryptoManager.load(m_dbHeader.nUserCryptoManager))
 			return false;
 
 		m_bOpen = true;
@@ -121,8 +125,7 @@ namespace embDB
 			return false;
 
 
-		CommonLib::CString sPassword = pszPassword;
-
+	
 		if(pParams)
 		{
 			m_dbHeader.qryptoAlg = pParams->qryptoAlg;
@@ -139,16 +142,24 @@ namespace embDB
 		if(!pDBHeaderPage.get())
 			return false;
 
+		FilePagePtr pDBUserPage(m_pStorage->getNewPage(MIN_PAGE_SIZE, true));
+		if(!pDBUserPage.get())
+			return false;
 
-		int64 nOffset = 0;
-		if(sPassword.isEmpty())
+		
+
+		
+
+		
+
+		/*int64 nOffset = 0;
+		if(m_UserCryptoManager.getMode() == CUserCryptoManager::ePasswordMode || m_UserCryptoManager.getMode() == CUserCryptoManager::eMultiUser)
 		{
-			m_dbHeader.qryptoAlg = NONE_ALG;
-		}
-		else
-		{
-			nOffset = InitCrypto((byte*)sPassword.cstr(), sPassword.length()); 
-		}
+			InitCrypto((byte*)sPassword.cstr(), sPassword.length()); 
+
+			 
+		}*/
+		 
 	
 		FilePagePtr pDBRootPage(m_pStorage->getNewPage(MIN_PAGE_SIZE, true));
 		if(!pDBRootPage.get())
@@ -163,17 +174,17 @@ namespace embDB
 		FilePagePtr pDBShemaPage(m_pStorage->getNewPage(MIN_PAGE_SIZE, true));
 		if(!pDBShemaPage.get())
 			return false;
-		FilePagePtr pDBUserPage(m_pStorage->getNewPage(MIN_PAGE_SIZE, true));
-		if(!pDBUserPage.get())
-			return false;
+	
 
 		m_dbRootPage.nStoragePage = pDBStoragePage->getAddr();
 		m_dbRootPage.nShemaPage = pDBShemaPage->getAddr();
-		m_dbRootPage.nUserPage = pDBUserPage->getAddr();
-
+		m_dbHeader.nUserCryptoManager = pDBUserPage->getAddr();
+	
 		
 		m_pStorage->initStorage(m_dbRootPage.nStoragePage);
 
+
+		m_UserCryptoManager.init(pDBUserPage->getAddr(),  pszPassword, m_dbHeader.qryptoAlg);
 
 		{
 
@@ -183,11 +194,15 @@ namespace embDB
 			m_dbHeader.Write(&stream);
 			header.writeCRC32(stream);
 			pDBHeaderPage->setNeedEncrypt(false);
+
+		 
+			int64 nOffset = m_pStorage->GetOffset();
+			m_pStorage->SetOffset(0);
 			m_pStorage->saveFilePage(pDBHeaderPage);
+			m_pStorage->SetOffset(nOffset);
 
-
-			if(nOffset != 0)
-					((CStorage*)m_pStorage.get())->SetOffset(nOffset);
+			//if(nOffset != 0)
+			//		((CStorage*)m_pStorage.get())->SetOffset(nOffset);
 		}
 
 		{
@@ -225,6 +240,7 @@ namespace embDB
 		bool bRet = m_pStorage->close();
 		bRet = m_pTranManager->close();
 		bRet = m_pSchema->close();
+		m_UserCryptoManager.close();
 		return bRet;
 	}
 	bool CDatabase::readHeadPage(CFilePage* pFilePage)
@@ -288,11 +304,11 @@ namespace embDB
 		return m_pAlloc.get();
 	}
 	
-	ITransactionPtr CDatabase::startTransaction(eTransactionType trType, uint64 nUserID)
+	ITransactionPtr CDatabase::startTransaction(eTransactionType trType, uint64 nUserID, IDBConnection *pConn)
 	{
 		if(!m_bOpen)
 			return ITransactionPtr();
-		return m_pTranManager->CreateTransaction(trType);
+		return m_pTranManager->CreateTransaction(trType, pConn);
 
 		
 	}
@@ -321,7 +337,8 @@ namespace embDB
 	 
 
 
-		m_PageChiper.reset( new CPageCipher(pPWD, nLen, m_dbHeader.szSalt, m_dbHeader.szSaltIV, sDBHeader::SALT_SIZE, m_DBParams.qryptoAlg));
+		m_PageChiper.reset( new CPageCipher(m_DBParams.qryptoAlg));
+		m_PageChiper->SetKey(pPWD, nLen, m_dbHeader.szSalt, m_dbHeader.szSaltIV, sDBHeader::SALT_SIZE);
 		((CStorage*)m_pStorage.get())->setPageChiper(m_PageChiper.get());
 		CreateCheckPWDPage();
 		CreateNoise(nOffset);
@@ -368,11 +385,35 @@ namespace embDB
 
 	IConnectionPtr CDatabase::connect(const wchar_t* pszUser, const wchar_t* pszPassword)
 	{
-		return IConnectionPtr();
+		if(!m_UserCryptoManager.CheckUser(pszUser, pszPassword))
+		{
+			return IConnectionPtr(); // TO DO Log error
+		}
+
+		if(!m_bLoad)
+		{
+			if(!load())
+				return IConnectionPtr(); // TO DO Log error
+
+			m_bLoad = true;
+		}
+
+		uint64 nUserID = m_UserCryptoManager.GetUserID(pszUser);
+		eUserGroup userGroup = m_UserCryptoManager.GetUserGroup(pszUser);
+
+	return IConnectionPtr(new CConnection(this, m_pSchema.get(), pszUser, nUserID, userGroup));
 	}
 	bool CDatabase::closeConnection(IConnection *pConnection)
 	{
 		return false;
+	}
+
+	bool CDatabase::load()
+	{
+		FilePagePtr pRootFile(m_pStorage->getFilePage(m_dbHeader.nRootPage, MIN_PAGE_SIZE));
+		if(!pRootFile.get())
+			return false;
+		return readRootPage(pRootFile.get());
 	}
 	 
 }

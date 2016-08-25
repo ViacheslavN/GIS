@@ -28,7 +28,8 @@ namespace embDB
 		CStorage( CommonLib::alloc_t *pAlloc, int32 nCacheSize = 1000, bool bCheckCRC = true);
 		~CStorage();
 
-		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true);
+		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true);
+
 		virtual bool dropFilePage(FilePagePtr pPage);
 		virtual  bool dropFilePage(int64 nAddr);
 		virtual  FilePagePtr getNewPage(uint32 nSize, bool bWrite = false);
@@ -43,14 +44,24 @@ namespace embDB
 
 	
 		virtual bool WriteRowData(const byte* pData, uint32 nSize, int64 nPos = -1);
-	
+		virtual bool ReadRowData(const byte* pData, uint32 nSize, int64 nPos = -1);
 		virtual bool setFileSize(int64 nSize);
+
+
+
 
 		virtual bool isLockWrite(){return false;}
 		virtual bool lockWrite(IDBTransaction *pTran = NULL);
 		virtual bool try_lockWrite(){return false;}
 		virtual bool unlockWrite(IDBTransaction *pTran = NULL);
 		virtual void clearDirty();
+
+
+
+		virtual bool isLock(){return false;}
+		virtual bool lock(IDBTransaction *pTran = NULL) {return false;}
+		virtual bool try_lock(){return false;}
+		virtual bool unlock(IDBTransaction *pTran = NULL){return false;}
 
 		virtual bool saveForUndoState(IDBTransaction *pTran);
 		virtual bool undo(IDBTransaction *pTran);
@@ -73,8 +84,8 @@ namespace embDB
 		bool initStorage(int64 nStorageInfo);
 		bool loadStorageInfo();
 		bool saveStorageInfo();
-		void SetOffset(int64 nOffset);
-		int64 GetOffset() const;
+		virtual void SetOffset(int64 nOffset);
+		virtual int64 GetOffset() const;
 
 		virtual bool getCheckCRC() const {return m_bCheckCRC;}
 

@@ -141,12 +141,16 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, 
 				return;
 		}
 
-		embDB::ISchemaPtr pSchema = db.getSchema();
+		embDB::IConnectionPtr pConn = db.connect(NULL, pszPWD);
+
+		embDB::ITransactionPtr pTran = pConn->startTransaction(embDB::eTT_DDL);
+		pTran->begin();
+		embDB::ISchemaPtr pSchema = pConn->getSchema();
 		embDB::ITablePtr pTable = pSchema->getTableByName(sFileName.cwstr());
 		if(pTable.get())
 			return;
 
-		pSchema->addTable(sFileName.wstr());
+		pSchema->addTable(sFileName.wstr(), pTran.get());
 		pTable = pSchema->getTableByName(sFileName.wstr());
 
 		if(!pTable.get())
@@ -227,18 +231,19 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, 
 			case ShapeLib::FTDate:
 				break;
 			}
-			pDBTable->createField(fp);
+			pDBTable->createField(fp, pTran.get());
 			if(fp.m_sFieldName == pszIDObj)
 			{
 				embDB::SIndexProp ip;
 				ip.m_indexType = embDB::itUnique;
 
-				pDBTable->createIndex(fp.m_sFieldName, ip);
+				pDBTable->createIndex(fp.m_sFieldName, ip, pTran.get());
 			}
 
 		}
 
-		pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), true, 8192 );
+		pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), pTran.get(), true, 8192 );
+		pTran->commit();
 
 		db.close();
 	}
@@ -246,26 +251,41 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, 
 	{
 		
 		embDB::CDatabase db;
-		if(!db.open(pszDBName, embDB::eTMSingleTransactions, sDBPath.wstr(), pszPWD))
+		if(!db.open(pszDBName, embDB::eTMSingleTransactions, sDBPath.wstr()))
 			return;
+
+
+		embDB::IConnectionPtr pConnect = db.connect(NULL, pszPWD);
+
+		if(!pConnect.get())
+			return;
+
 		uint32 nShapeRowSize = 0;
 		uint32 nStringRowSize = 0;
 		uint32 nDigSize = 0;
 		uint32 nDblSize = 0;
 
 
-		embDB::ISchemaPtr pSchema = db.getSchema();
+		embDB::ISchemaPtr pSchema = pConnect->getSchema();
 		embDB::ITablePtr pTable = pSchema->getTableByName(sFileName.cwstr());
 		if(!pTable.get())
 			return;
 
-		pSchema->addTable(sFileName.wstr());
-		pTable = pSchema->getTableByName(sFileName.wstr());
 
+		embDB::ITransactionPtr pAddTblTran = pConnect->startTransaction(embDB::eTT_DDL);
+		pAddTblTran->begin();
+
+
+
+		pSchema->addTable(sFileName.wstr(), pAddTblTran.get());
+		pAddTblTran->commit();
+
+		pTable = pSchema->getTableByName(sFileName.wstr());
+		
 
 		embDB::IDBTable *pDBTable = dynamic_cast<embDB::IDBTable*>(pTable.get());
 
-		embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_MODIFY);
+		embDB::ITransactionPtr pTran = pConnect->startTransaction(embDB::eTT_MODIFY);
 		pTran->begin();
 		{
 
@@ -363,9 +383,10 @@ void AddIndex(const wchar_t* pszDBName, const wchar_t* pszTable, const wchar_t* 
 	{
 		return;
 	}
-	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_DDL);
+	embDB::IConnectionPtr pConnect = db.connect();
+	embDB::ITransactionPtr pTran = pConnect->startTransaction(embDB::eTT_DDL);
 	pTran->begin();
-	embDB::ISchemaPtr pSchema = db.getSchema();
+	embDB::ISchemaPtr pSchema = pConnect->getSchema();
 	embDB::ITablePtr pTable = pSchema->getTableByName(pszTable);
 	if(!pTable.get())
 		return;
@@ -378,7 +399,7 @@ void AddIndex(const wchar_t* pszDBName, const wchar_t* pszTable, const wchar_t* 
 	embDB::SIndexProp ip;
 	ip.m_indexType = type;
 
-	pDBTable->createIndex(pszField, ip);
+	pDBTable->createIndex(pszField, ip, pTran.get());
 
 	pTran->commit();
 }
@@ -392,7 +413,8 @@ void TestIndex(const wchar_t* pszDBName, const wchar_t* pszTable, const wchar_t*
 	{
 		return;
 	}
-	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_SELECT);
+	embDB::IConnectionPtr pConnect = db.connect();
+	embDB::ITransactionPtr pTran = pConnect->startTransaction(embDB::eTT_SELECT);
 	pTran->begin();
 
 	embDB::ICursorPtr pCursor = pTran->executeSelectQuery( pszTable);
@@ -428,11 +450,12 @@ void SearchShapeFile(const wchar_t* pszDBName, const wchar_t* pszTable, const wc
 {
 	embDB::CDatabase db;
 	CommonLib::CString sFilePath = CommonLib::FileSystem::FindFilePath(pszDBName);
-	if(!db.open(pszDBName, embDB::eTMSingleTransactions, sFilePath.wstr(), pszPWD))
+	if(!db.open(pszDBName, embDB::eTMSingleTransactions, sFilePath.wstr()))
 	{
 		return;
 	}
-	embDB::ITransactionPtr pTran = db.startTransaction(embDB::eTT_SELECT);
+	embDB::IConnectionPtr pConnect = db.connect(NULL, pszPWD);
+	embDB::ITransactionPtr pTran = pConnect->startTransaction(embDB::eTT_SELECT);
 	pTran->begin();
 	/*CommonLib::bbox bbox;
 	bbox.type =CommonLib::bbox_type_normal;
@@ -489,7 +512,7 @@ void SearchShapeFile(const wchar_t* pszDBName, const wchar_t* pszTable, const wc
 			}
 		
 		
-		}
+		}	
 
 			
 

@@ -20,9 +20,14 @@ void CreateDB(const wchar_t *pszDBName)
 	fp.m_sFieldAlias = L"dddddddddddddddddddddddddddddddddddddddddaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafffffffffffffffffffffèèèèèèèèèèèèèèèèèèèè";
 	fp.m_dataType = embDB::dtInteger32;
 
-	embDB::ISchemaPtr pSchema =  db.getSchema();
 
-	pSchema->addTable(L"testtable1");
+
+	embDB::IConnectionPtr pConnect = db.connect(NULL, NULL);
+	embDB::ITransactionPtr pTran = pConnect->startTransaction(embDB::eTT_DDL) ;
+
+	embDB::ISchemaPtr pSchema =  pConnect->getSchema();
+
+	pSchema->addTable(L"testtable1", pTran.get());
 	embDB::ITablePtr pTable = pSchema->getTableByName(L"testtable1");
 
 	if(!pTable.get())
@@ -30,7 +35,7 @@ void CreateDB(const wchar_t *pszDBName)
 
 	embDB::IDBTable *pDBTable = dynamic_cast<embDB::IDBTable*>(pTable.get());
 
-	pDBTable->createField(fp);
+	pDBTable->createField(fp, pTran.get());
 
 
 	embDB::SFieldProp  blobfp;
@@ -38,7 +43,9 @@ void CreateDB(const wchar_t *pszDBName)
 	blobfp.m_sFieldAlias = L"ddddddddddddddddddddddddddddddddddddddddddddddddddddaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafffffffffffffffffffffèèèèèèèèèèèèèèèèèèèè";
 	blobfp.m_dataType = embDB::dtBlob;
 	
-	pDBTable->createField(blobfp);
+	pDBTable->createField(blobfp, pTran.get());
+
+	pTran->commit();
 }
 
 
