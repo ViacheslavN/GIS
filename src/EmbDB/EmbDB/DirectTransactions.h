@@ -52,29 +52,7 @@ namespace embDB
 		virtual void addInnerTransactions(IDBTransaction *pTran){}
 
 		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false){}
-		virtual bool isError() const
-		{
-			return m_bError;
-		}
-		virtual uint32 getErrorMessageSize() const
-		{
-			return 0;
-		}
-		virtual uint32 getErroMessage(wchar_t * pBuf, uint32 nSize) const
-		{
-			return 0;
-		}
-
-		virtual void error(const wchar_t *pszFormat, ...)
-		{
-			m_bError = true;
-		}
-	
-		virtual void log(uint32 nLevel, const wchar_t *pszFormat, ...)
-		{
-
-		}
-
+	 
 		virtual void addDBBTree(IDBBtree *pTree){}
 
 		virtual int64 getID() const {return 0;}
@@ -100,7 +78,7 @@ namespace embDB
 		void OutDebugInfo(){}
 	private:
 		IDBStorage* m_pDBStorage;
-		bool m_bError;
+ 
 		CommonLib::CString m_sFileName;
 		std::set<int64> m_setRemovePages;
 		std::set<int64> m_setPagesFromFree;

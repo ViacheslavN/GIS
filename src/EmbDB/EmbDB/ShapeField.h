@@ -104,24 +104,26 @@ namespace embDB
 				 CommonLib::IGeoShapePtr shape( new CommonLib::CGeoShape(this->m_pAlloc)); //TO DO use shape cache
 				 this->m_tree.convert(it.value(), shape);
 				
+				 m_tree.remove(it);
 				 IIndexIteratorPtr pIndexIterator = pSpatialIndex->find(shape->getBB(), sqmByFeature);
-				 if(!pIndexIterator->isNull())
+				 if(pIndexIterator->isNull())
 				 {
-					 //TO DO log
-					  m_tree.remove(it);
+		
+					 const CommonLib::bbox& bb shape->getBB();
+					 m_pDBTransactions->error(L"Not Found shape in index RowID: %I64d, bbox xMin: %f, yMin: %f, xMax: %f, yMax: %f", nOID, bb.xMin, bb.yMax, bb.xMax, bb.yMax);
 					 return false;
 				 }
 				 while(!pIndexIterator->isNull())
 				 {
 					 if(pIndexIterator->getRowID() == nOID)
 					 {
-						 pSpatialIndex->remove(pIndexIterator.get());
-						 return m_tree.remove(it);
+						 return pSpatialIndex->remove(pIndexIterator.get());
+					
 					 }
+					 pIndexIterator->next();
 				 }
-
-				 //TO DO log
-				 m_tree.remove(it);
+				 const CommonLib::bbox& bb shape->getBB();
+				 m_pDBTransactions->error(L"Not Found shape in index RowID: %I64d, bbox xMin: %f, yMin: %f, xMax: %f, yMax: %f", nOID, bb.xMin, bb.yMax, bb.xMax, bb.yMax);
 				 return false;
 
 			}

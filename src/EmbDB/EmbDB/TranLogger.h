@@ -14,7 +14,7 @@ namespace embDB
 
 			virtual void error(const wchar_t *pszFormat, ...) = 0;
 			virtual void log(uint32 nLevel, const wchar_t *pszFormat, ...) = 0;
-			virtual void log_msg(uint32 nLevel, const wchar_t *pszFormat) = 0;
+			virtual void log_msg(uint32 nLevel, const wchar_t *pszMsg) = 0;
 	};
 }
 

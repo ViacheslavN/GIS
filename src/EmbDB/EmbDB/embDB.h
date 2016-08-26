@@ -298,6 +298,10 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(IDatabase); 
 	COMMON_LIB_REFPTR_TYPEDEF(IIndex);
 	COMMON_LIB_REFPTR_TYPEDEF(IConnection);
+
+
+
+
 	struct IField: public CommonLib::AutoRefCounter
 	{
 	public:
@@ -535,6 +539,8 @@ namespace embDB
 
 		virtual eLogMode getLogMode() const = 0;
 		virtual void setLogMode(eLogMode logMode) = 0;
+
+		virtual void setMaxLimitErrorMessage(uint32 nSize) = 0; //1024*1024 default
 
 
 		virtual uint32 getErrorMessageSize() const = 0;

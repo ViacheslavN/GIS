@@ -104,13 +104,10 @@ namespace embDB
 		virtual void addInnerTransactions(IDBTransaction *pTran);
 
 
-		virtual bool isError() const;
-		virtual uint32 getErrorMessageSize() const;
-		virtual uint32 getErroMessage(wchar_t * pBuf, uint32 nSize) const;
 
-		virtual void error(const wchar_t *pszFormat, ...);
-	 
-		virtual void log(uint32 nLevel, const wchar_t *pszFormat, ...);
+	
+
+
 
 		virtual void addDBBTree(IDBBtree *pTree);
 
@@ -150,9 +147,9 @@ namespace embDB
 		CTranUndoPageManager m_TranUndoManager;
 		CTranRedoPageManager m_TranRedoManager;
 		CTranLogStateManager m_LogStateManager;
- 		CommonLib::alloc_t *m_pAlloc;
+ 
 		sTransactionHeader m_Header;
-		bool m_bError;
+ 
 		int64 m_nID;
 
 		bool m_bIsCompleted;

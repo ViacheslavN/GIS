@@ -66,40 +66,7 @@ namespace embDB
 
 		return true;
 
-		/*CommonLib::CString sPassword = pszPassword;
-
-		if(sPassword.length() && m_dbHeader.qryptoAlg == NONE_ALG)
-			return false; //TO DO log
-
-		if(!sPassword.length() && m_dbHeader.qryptoAlg != NONE_ALG)
-			return false; //TO DO log
-
-		if(sPassword.length())
-		{
- 
-			int64 nOffset = CalcOffset((const byte*)sPassword.cstr(), sPassword.length(), m_dbHeader.szSalt, sDBHeader::SALT_SIZE);
-			m_PageChiper.reset( new CPageCipher((const byte*)sPassword.cstr(), sPassword.length(), (const byte*)m_dbHeader.szSalt, m_dbHeader.szSaltIV, sDBHeader::SALT_SIZE, m_DBParams.qryptoAlg));
-			((CStorage*)m_pStorage.get())->setPageChiper(m_PageChiper.get());
-
-			FilePagePtr pPagePWD = m_pStorage->getFilePage(m_dbHeader.nPWDPage, MIN_PAGE_SIZE);
-			CommonLib::FxMemoryReadStream stream;
-			stream.attachBuffer(pPagePWD->getRowData(), pPagePWD->getPageSize());
-			sFilePageHeader header(stream, pPagePWD->getPageSize(), true, false);
-			if(!header.isValid())
-				return false; //TO DO log
-
-			((CStorage*)m_pStorage.get())->SetOffset(nOffset);
-		
-		}
-
-
-
-		FilePagePtr pRootFile(m_pStorage->getFilePage(m_dbHeader.nRootPage, MIN_PAGE_SIZE));
-		if(!pRootFile.get())
-			return false;
-
-		m_bOpen =  readRootPage(pRootFile.get());
-		return m_bOpen;*/
+		 
 	}
 	bool CDatabase::create(const wchar_t* pszName,  DBTransactionMode mode, const wchar_t* pszWorkingPath,
 		  const wchar_t* pszPassword, const SDBParams *pParams)

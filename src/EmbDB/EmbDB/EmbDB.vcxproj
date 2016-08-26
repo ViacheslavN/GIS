@@ -649,7 +649,6 @@
     <ClInclude Include="StringVal.h" />
     <ClInclude Include="TBaseSpatialCompressor.h" />
     <ClInclude Include="EmptyMultiKeyCompress.h" />
-    <ClInclude Include="TranLogger.h" />
     <ClInclude Include="TransactionBase.h" />
     <ClInclude Include="UniqueCompIndexBase.h" />
     <ClInclude Include="UniqueIndex.h" />

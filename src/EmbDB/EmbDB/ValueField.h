@@ -82,23 +82,6 @@ namespace embDB
 			virtual bool load(int64 nRootBPTreeField)
 			{
 				m_nBTreeInfoPage = nRootBPTreeField;
-			/*	FilePagePtr pPage = m_pDBTransactions->getFilePage(nRootBPTreeField, MIN_PAGE_SIZE);
-				if(!pPage.get())
-					return false;
-				CommonLib::FxMemoryReadStream stream;
-				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-				sFilePageHeader header(stream);
-				if(!header.isValid())
-				{
-					m_pDBTransactions->error(_T("OIDField: Page %I64d Error CRC for node page"), pPage->getAddr()); //TO DO log error
-					return false;
-				}
-				if(header.m_nObjectPageType != FIELD_PAGE || header.m_nSubObjectPageType != FIELD_INFO_PAGE)
-				{
-					m_pDBTransactions->error(_T("OIDField: Page %I64d Not field info page"), pPage->getAddr()); //TO DO log error
-					return false;
-				}
-				stream.read(m_nBTreeInfoPage);*/
 				m_tree.setRootPage(m_nBTreeInfoPage);
 				return m_tree.loadBTreeInfo(); 
 			 

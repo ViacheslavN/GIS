@@ -33,19 +33,23 @@ namespace embDB
 			{
 				FilePagePtr pPage = pStorage->getFilePage(m_nPage, m_nPageSize);
 				if(!pPage.get())
-					return false; //TO DO Log;
+				{
+					pStorage->error(L"Error  load page addr: %I64d, size: %d  for counter", m_nPage, m_nPageSize);
+					return false; 
+				}
 
 				CommonLib::FxMemoryReadStream stream;
 				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 				sFilePageHeader header(stream, pPage->getPageSize(), m_bCheckCRC);
 				if(m_bCheckCRC && !header.isValid())
 				{
-					//TO DO Log
+					pStorage->error(L"Error  check crc page addr: %I64d, size: %d  for counter", m_nPage, m_nPageSize);
 					return false;
 				}
 				if(header.m_nObjectPageType != m_nObjectPage || header.m_nSubObjectPageType != m_nSubObjectPage)
 				{
-					//TO DO Log
+					pStorage->error(L"Error  check ObjType page addr: %I64d, ObjType: %d, SubObject: %d, for counter", 
+						m_nPage, m_nPageSize, header.m_nObjectPageType ,  header.m_nSubObjectPageType);
 					return false;
 				}
 				stream.read(m_nVal);
@@ -58,7 +62,10 @@ namespace embDB
 			{
 				FilePagePtr pPage = pStorage->getFilePage(m_nPage, m_nPageSize);
 				if(!pPage.get())
-					return false; //TO DO Log;
+				{
+					pStorage->error(L"Error  load page addr: %I64d, size: %d  for counter (save)", m_nPage, m_nPageSize);
+					return false;  
+				}
 				CommonLib::FxMemoryWriteStream stream;
 				stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 				sFilePageHeader header(stream, m_nObjectPage, m_nSubObjectPage, pPage->getPageSize(), m_bCheckCRC);

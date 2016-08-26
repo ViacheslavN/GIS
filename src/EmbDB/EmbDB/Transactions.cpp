@@ -12,15 +12,13 @@ namespace embDB
 	
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
 		eTransactionType nTranType, const CommonLib::CString& sFileName,  IDBConnection* pConnection, int64 nID, uint32 nTranCache) :
-		TBase(pConnection)
+		TBase(pConnection, pAlloc)
 		, m_TranStorage(pAlloc, &m_TranPerfCounter, pConnection->getCheckCRC())
 		, m_nRestoreType(nRestoreType)
 		, m_nTranType(nTranType)
 		, m_sFileName(sFileName)
 		, m_PageChache(pAlloc, &m_TranStorage, this, &m_TranPerfCounter, nTranCache)
-		, m_pAlloc(pAlloc)
-		, m_bError(false)
-		, m_TranUndoManager(this, &m_TranStorage, pConnection->getCheckCRC())
+ 		, m_TranUndoManager(this, &m_TranStorage, pConnection->getCheckCRC())
 		, m_LogStateManager(&m_TranStorage)
 		, m_nID(nID)
 		, m_bIsCompleted(true)
@@ -34,15 +32,13 @@ namespace embDB
 
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
 		eTransactionType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) :
-		TBase(NULL)
+		TBase(NULL, pAlloc)
 		, m_TranStorage(pAlloc, &m_TranPerfCounter, pDBStorage->getCheckCRC())
 		, m_nRestoreType(nRestoreType)
 		, m_nTranType(nTranType)
 		, m_sFileName(sFileName)
 		, m_PageChache(pAlloc, &m_TranStorage, this, &m_TranPerfCounter, nTranCache)
-		, m_pAlloc(pAlloc)
-		, m_bError(false)
-		, m_TranUndoManager(this, &m_TranStorage, pDBStorage->getCheckCRC())
+ 		, m_TranUndoManager(this, &m_TranStorage, pDBStorage->getCheckCRC())
 		, m_LogStateManager(&m_TranStorage)
 		, m_nID(nID)
 		, m_bIsCompleted(true)
@@ -54,14 +50,12 @@ namespace embDB
 		m_pDBStorage = pDBStorage;
 	}
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache) :
-		TBase(NULL)
+		TBase(NULL, pAlloc)
 		,m_TranStorage(pAlloc, &m_TranPerfCounter, pDBStorage->getCheckCRC())
 		,m_nRestoreType(rtUndefined)
 		,m_nTranType(eTT_UNDEFINED)
 		,m_sFileName(sFileName)
 		,m_PageChache(pAlloc, &m_TranStorage, this, &m_TranPerfCounter, nTranCache)
-		,m_pAlloc(pAlloc)
-		,m_bError(false)
 		,m_TranUndoManager(this, &m_TranStorage, pDBStorage->getCheckCRC())
 		, m_LogStateManager(&m_TranStorage)
 		, m_nID(-1)
@@ -85,6 +79,9 @@ namespace embDB
 		{
 			rollback();
 		}
+
+
+		log(10, L"Begin Tran ID: %I64d\n", getID());
 
 		m_bIsBegin = true;
 
@@ -132,6 +129,8 @@ namespace embDB
 	}
 	bool CTransaction::commit()
 	{
+
+		log(10, L"commit Tran ID: %I64d", getID());
 		CommitTemp();
 		m_bIsBegin = false;
 		if(m_nTranType == eTT_SELECT)
@@ -151,6 +150,8 @@ namespace embDB
 	}
 	bool CTransaction::rollback()
 	{
+
+		log(10, L"rollback Tran ID: %I64d", getID());
 		m_bIsBegin = false;
 		if(m_nTranType == eTT_SELECT)
 			return true;
@@ -354,34 +355,7 @@ namespace embDB
 	}*/
 
 
-	void CTransaction::error(const wchar_t *pszFormat, ...)
-	{
-		m_bError = true;
-		va_list args;
-		wchar_t* buffer;
-		int len;
-
-		va_start(args, pszFormat);
-#if defined(_WIN32) && !defined(_WIN32_WCE)
-		len = _vscwprintf(pszFormat, args);
-#else
-		len = 1000;
-#endif
-		buffer = (wchar_t*)m_pAlloc->alloc((len + 1)* sizeof (wchar_t)); 
-		vswprintf(buffer, len, pszFormat, args);
-
-		//TO DO WRITE
-
-		m_pAlloc->free(buffer);
-
-
-	}
- 
-	void CTransaction::log(uint32 nLevel, const wchar_t *pszFormat, ...)
-	{
-
-	}
-
+	 
 	void CTransaction::addDBBTree(IDBBtree *pTree)
 	{
 		m_btrees.push_back(pTree);
@@ -510,18 +484,7 @@ namespace embDB
 
 
 
-	bool  CTransaction::isError() const
-	{
-		return m_bError;
-	}
-	uint32  CTransaction::getErrorMessageSize() const
-	{
-		return 0;
-	}
-	uint32  CTransaction::getErroMessage(wchar_t * pBuf, uint32 nSize) const
-	{
-		return 0;
-	}
+	 
 
 	bool CTransaction::close()
 	{

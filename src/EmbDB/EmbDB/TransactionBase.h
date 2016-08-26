@@ -9,6 +9,7 @@
 #include "DeleteCursor.h"
 #include <set>
 #include "SimpleSelectOpCursor.h"
+#include "ConsolLog.h"
 namespace embDB
 {
 	 
@@ -17,7 +18,8 @@ namespace embDB
 	{
 		public:
 
-			ITransactionBase(IDBConnection* pDBConnection) : m_pConnection(pDBConnection)
+			ITransactionBase(IDBConnection* pDBConnection, CommonLib::alloc_t* pAlloc) : m_pConnection(pDBConnection), m_bError(false),
+				m_nMaxMessageSize(1024 * 1024), m_LogLevel(0), m_pAlloc(pAlloc)
 			{
 				if(m_pConnection) //check for test bplus tree 
 				{
@@ -196,7 +198,10 @@ namespace embDB
 				return ICursorPtr(pCursor);
 			}
 
-			 
+			virtual void setMaxLimitErrorMessage(uint32 nSize) 
+			{
+				m_nMaxMessageSize = nSize;
+			}
 
 			virtual eLogMode getLogMode() const
 			{
@@ -205,6 +210,13 @@ namespace embDB
 			virtual void setLogMode(eLogMode logMode)
 			{
 				m_logMode = logMode;
+				if(m_logMode == lmConsole)
+				{
+					m_pLogger = new CConsolLogger();
+					 m_pLogger->SetLogLevel(m_LogLevel);
+				}
+
+
 			}
 			virtual uint32 getLogLevel() const 
 			{
@@ -213,9 +225,103 @@ namespace embDB
 			virtual void setLogLevel(uint32 nLogLevel)  
 			{
 				 m_LogLevel = nLogLevel;
+				 if(m_pLogger.get())
+					 m_pLogger->SetLogLevel(m_LogLevel);
+			}
+
+			virtual void SetLogger(ILogger *pLogger)
+			{
+				m_pLogger = pLogger;
+				if(pLogger)
+				{
+					m_logMode = m_pLogger->GetLogMode();
+					m_LogLevel = m_pLogger->GetLogLevel();
+				}
+				else
+				{
+					m_logMode = lmUndefined;
+					m_LogLevel = 0;
+				}
+			}
+
+
+
+			virtual bool isError() const
+			{
+				return m_bError;
+			}
+			virtual void error(const wchar_t *pszFormat, ...)
+			{
+				m_bError = true;
+
+				if(m_pLogger.get())
+				{
+					va_list qlist;
+					va_start(qlist, pszFormat);
+					m_pLogger->error(pszFormat, qlist);
+					va_end(qlist);
+				}
+
+
+				if(m_sErrorMSG.length() < m_nMaxMessageSize)
+				{
+					 CommonLib::CString sTemp;
+					va_list qlist;
+					va_start(qlist, pszFormat);
+					m_sErrorMSG += sTemp.format(pszFormat, qlist);
+					va_end(qlist);
+				}
+
+			}
+
+			void log_msg(uint32 nLevel, const wchar_t *pszMsg) 
+			{
+				if(m_LogLevel < nLevel)
+					return;
+
+				if(m_pLogger.get())
+					m_pLogger->log_msg(nLevel, pszMsg);
+			}
+			virtual void log(uint32 nLevel, const wchar_t *pszFormat, ...)
+			{
+				if(m_LogLevel < nLevel)
+					return;
+
+
+				if(m_pLogger.get())
+				{
+					va_list args;
+					va_start(args, pszFormat);
+
+					uint32 len =  _vscwprintf(pszFormat, args);
+					
+					if(len != 0)
+					{
+						wchar_t* buffer= (wchar_t*)_alloca ((len + 1)* sizeof (wchar_t)); 
+						vswprintf(buffer, pszFormat, args);
+						m_pLogger->log_msg(nLevel, buffer);
+					}
+
+					va_end(args);
+				}
+			}
+
+
+			virtual uint32 getErrorMessageSize() const
+			{
+				return m_sErrorMSG.length();
+			}
+			virtual uint32 getErroMessage(wchar_t * pBuf, uint32 nSize) const
+			{
+				uint32 nLenSize = min(nSize, getErrorMessageSize());
+				memcpy(pBuf, m_sErrorMSG.cwstr(), nLenSize * sizeof(wchar_t));
+				return nLenSize;
 			}
 
 	protected:
+
+
+		CommonLib::CString m_sErrorMSG;
 
 		IDBConnection* m_pConnection;
 		IDBStoragePtr m_pDBStorage;
@@ -227,7 +333,10 @@ namespace embDB
 		TChangeTable m_setChangeTable;
 		eLogMode m_logMode;
 		uint32 m_LogLevel;
-
+		ILoggerPtr m_pLogger;
+		bool m_bError;
+		uint32 m_nMaxMessageSize;
+		CommonLib::alloc_t *m_pAlloc;
 
 
 	};

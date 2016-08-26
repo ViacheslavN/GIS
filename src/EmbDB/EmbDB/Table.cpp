@@ -107,9 +107,14 @@ namespace embDB
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		sFilePageHeader header(stream, pPage->getPageSize(), m_pDB->getCheckCRC());
 		if(m_pDB->getCheckCRC() && !header.isValid())
+		{
 			return false;//TO DO DB LOg
+		}
 		if(header.m_nObjectPageType != TABLE_PAGE || header.m_nSubObjectPageType != TABLE_HEADER_PAGE)
+		{
+			//TO DO DB Log
 			return false;
+		}
 		int64 nPrev = stream.readInt64();
 		int64  nNext = stream.readInt64();
 		//m_nTableID = stream.readInt64();
@@ -332,47 +337,8 @@ namespace embDB
 	}
 	
 
-	/*IDBFieldHandlerPtr CTable::getFieldHandler(const CommonLib::CString&  sName)
-	{
-		TFieldByName::iterator it = m_FieldByName.find(sName);
-		if(it == m_FieldByName.end())
-			return IDBFieldHandlerPtr();
-		return it->second;
-	}*/
-
-	/*bool CTable::loadTableStorage(int64 nAddr)
-	{
-		FilePagePtr pPage(m_pMainDBStorage->getFilePage(nAddr));
-		if(!pPage.get())
-			return false;
-		CommonLib::FxMemoryReadStream stream;
-		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-		sFilePageHeader header(stream);
-		if(!header.isValid())
-			return false;//TO DO DB LOg
-		if(header.m_nObjectPageType != TABLE_PAGE || header.m_nSubObjectPageType != TABLE_STORAGE_PAGE)
-			return false;
-		uint32 nlenStr = stream.readInt32();
-		if(nlenStr <= 0 || nlenStr > uint32(stream.size() - stream.pos()))
-			return false;
-		std::vector<wchar_t> buf(nlenStr + 1, L'\0');
-		stream.read((byte*)&buf[0], nlenStr * 2);
-		CommonLib::CString sStorageName = CommonLib::CString(&buf[0]);
-		m_pTableStorage = m_pDB->getTableStorage(sStorageName, false);
-		if(!m_pTableStorage)
-			return false;
-		return true;
-
-
-	}*/
-	
 	bool CTable::lock()
 	{
-		/*TFieldByName::iterator it = m_FieldByName.begin();
-		while(it != m_FieldByName.end())
-		{
-			it->second->lock();
-		}*/
 		return true;
 	}
 	bool CTable::isCanBeRemoving()
@@ -391,7 +357,9 @@ namespace embDB
 
 		IDBFieldHandler *pDBField = dynamic_cast<IDBFieldHandler *>(pField);
 		if(!pDBField)
+		{
 			return false; //TO DO add  message
+		}
 
 
 		pDBField->lock();

@@ -226,6 +226,7 @@ namespace embDB
 	struct IDBDatabase;
 	struct IDBTable;
 	struct IIndexIterator;
+	struct ILogger;
 
 	COMMON_LIB_REFPTR_TYPEDEF(IFieldIterator); 
 	COMMON_LIB_REFPTR_TYPEDEF(IIndexPageIterator); 
@@ -239,6 +240,8 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(IDBStorage);
 	COMMON_LIB_REFPTR_TYPEDEF(IDBTable);
 	COMMON_LIB_REFPTR_TYPEDEF(IIndexIterator); 
+	COMMON_LIB_REFPTR_TYPEDEF(ILogger); 
+
 
 	struct IFieldIterator : public CommonLib::AutoRefCounter
 	{
@@ -596,6 +599,26 @@ namespace embDB
 	public:
 		virtual bool commit() = 0;
 	};
+
+
+
+	struct ILogger : public CommonLib::AutoRefCounter
+	{
+ 
+		ILogger(){}
+		virtual ~ILogger(){}
+
+		virtual eLogMode GetLogMode() const = 0;
+
+		virtual uint32 GetLogLevel() const = 0;
+		virtual void SetLogLevel(uint32 nLogLevel) = 0;
+
+		virtual void error(const wchar_t *pszFormat, ...) = 0;
+		virtual void log(uint32 nLevel, const wchar_t *pszFormat, ...) = 0;
+		virtual void log_msg(uint32 nLevel, const wchar_t *pszMsg) = 0;
+	};
+
+
 	struct  IDBTransaction : public IFilePage, public ITransaction
 	{
 	public:
@@ -620,6 +643,7 @@ namespace embDB
 
 		virtual void error(const wchar_t *pszFormat, ...) = 0;
 		virtual void log(uint32 nLevel, const wchar_t *pszFormat, ...) = 0;
+		virtual void log_msg(uint32 nLevel, const wchar_t *pszMsg) = 0;
 
 		virtual void addDBBTree(IDBBtree *pTree) = 0;
 		virtual int64 getID() const = 0;
@@ -630,6 +654,9 @@ namespace embDB
 		virtual void wait() = 0;
 
 		virtual IValueFieldPtr GetField(const wchar_t* pszTableName, const wchar_t* pszFieldName) = 0;
+
+
+		virtual void SetLogger(ILogger *pLogger) = 0;
 
 	};
 

@@ -65,25 +65,7 @@ public:
 	  }
 	  virtual bool load(int64 nAddr, eTransactionType type)
 	  {
-
-		/*  int64 m_nFieldInfoPage = nAddr;
-		  FilePagePtr pPage = m_pDBTransactions->getFilePage(nAddr, MIN_PAGE_SIZE); //TO DO fix
-		  if(!pPage.get())
-			  return false;
-		  CommonLib::FxMemoryReadStream stream;
-		  stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
-		  sFilePageHeader header(stream, pPage->getPageSize());
-		  if(!header.isValid())
-		  {
-			  m_pDBTransactions->error(L"IndexField: Page %I64d Error CRC for node page", pPage->getAddr()); //TO DO log error
-			  return false;
-		  }
-		  if(header.m_nObjectPageType != FIELD_PAGE || header.m_nSubObjectPageType != TABLE_INDEX_PAGE)
-		  {
-			  m_pDBTransactions->error(L"IndexField: Page %I64d Not field info page", pPage->getAddr()); //TO DO log error
-			  return false;
-		  }
-		  stream.read(m_nBTreeRootPage);*/
+ 
 		  m_tree.setRootPage(nAddr);
 		  return m_tree.loadBTreeInfo(); 
 	  }

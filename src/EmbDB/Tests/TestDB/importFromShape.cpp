@@ -4,6 +4,7 @@
 #include "CommonLibrary/BoundaryBox.h"
 #include "../GisEngine/GisGeometry/SpatialReferenceProj4.h"
 
+
 	    
 embDB::eSpatialCoordinatesUnits GetGeometryUnits(GisEngine::GisCommon::Units units)
 {
@@ -144,6 +145,8 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, 
 		embDB::IConnectionPtr pConn = db.connect(NULL, pszPWD);
 
 		embDB::ITransactionPtr pTran = pConn->startTransaction(embDB::eTT_DDL);
+		pTran->setLogMode(embDB::lmConsole);
+		pTran->setLogLevel(11);
 		pTran->begin();
 		embDB::ISchemaPtr pSchema = pConn->getSchema();
 		embDB::ITablePtr pTable = pSchema->getTableByName(sFileName.cwstr());
@@ -385,6 +388,8 @@ void AddIndex(const wchar_t* pszDBName, const wchar_t* pszTable, const wchar_t* 
 	}
 	embDB::IConnectionPtr pConnect = db.connect();
 	embDB::ITransactionPtr pTran = pConnect->startTransaction(embDB::eTT_DDL);
+	pTran->setLogMode(embDB::lmConsole);
+	pTran->setLogLevel(11);
 	pTran->begin();
 	embDB::ISchemaPtr pSchema = pConnect->getSchema();
 	embDB::ITablePtr pTable = pSchema->getTableByName(pszTable);
