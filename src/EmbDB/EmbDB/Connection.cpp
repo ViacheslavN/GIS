@@ -4,8 +4,8 @@
 
 namespace embDB
 {
-	CConnection::CConnection(CDatabase *pDB, IDBShema* pSchema, const wchar_t *pszUserName, uint64 nUID, eUserGroup userGroup) :
-		m_pDB(pDB), m_nUID(nUID), m_UserGroup(userGroup)
+	CConnection::CConnection(CDatabase* pDB,  IDBShema* pSchema, const wchar_t *pszUserName, uint64 nUID, eUserGroup userGroup) :
+		 m_nUID(nUID), m_UserGroup(userGroup), m_pDB(pDB)
 	{
 		m_sUserName = pszUserName;
 		m_pSchema = pSchema;

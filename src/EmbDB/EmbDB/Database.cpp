@@ -31,6 +31,8 @@ namespace embDB
 		m_pStorage = (IDBStorage*)new CStorage(m_pAlloc.get());
 		m_pTranManager.reset(new CDBTranManager(m_pAlloc.get(), this));
 		m_pSchema = (IDBShema*)new CSchema(this);
+
+		AddRef(); //TO DO fix it
 	}
 	CDatabase::~CDatabase()
 	{

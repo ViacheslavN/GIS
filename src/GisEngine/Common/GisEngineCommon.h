@@ -68,6 +68,23 @@ namespace GisEngine
 		};
 
 
+		struct IStreamSerializeSecurity
+		{
+			IStreamSerializeSecurity(){}
+			virtual ~IStreamSerializeSecurity(){}
+			virtual bool save(CommonLib::IWriteStream *pWriteStream, const wchar_t *pszPasswodrd = NULL) const = 0;
+			virtual bool load(CommonLib::IReadStream* pReadStream, const wchar_t *pszPasswodrd = NULL) = 0;
+		};
+
+		struct IXMLSerializeSecurity
+		{
+			IXMLSerializeSecurity(){}
+			virtual ~IXMLSerializeSecurity(){}
+			virtual bool saveXML(IXMLNode* pXmlNode, const wchar_t *pszPasswodrd = NULL) const = 0;
+			virtual bool load(const IXMLNode* pXmlNode, const wchar_t *pszPasswodrd = NULL) = 0;
+		};
+
+
 		struct IXMLNode : CommonLib::AutoRefCounter
 		{
 			IXMLNode(){}

@@ -40,7 +40,7 @@ namespace GisEngine
 		}
 
 
-		IWorkspacePtr CEmbDBWorkspace::Create(const wchar_t *pszName, const wchar_t *pszPath)
+		IWorkspacePtr CEmbDBWorkspace::Create(const wchar_t *pszName, const wchar_t *pszPath, const wchar_t *pszPWD )
 		{
 			CommonLib::CString sFullName = pszPath;
 
@@ -72,7 +72,7 @@ namespace GisEngine
 			}
 
 			CEmbDBWorkspace *pEmbDBWks = new  CEmbDBWorkspace(pszName, pszPath, CWorkspaceHolder::GetIDWorkspace());
-			if(!pEmbDBWks->create(sFullName))
+			if(!pEmbDBWks->create(sFullName, pszPWD))
 			{
 				//TO DO Error
 				delete pEmbDBWks;
@@ -82,7 +82,7 @@ namespace GisEngine
 			return IWorkspacePtr((IWorkspace*)pEmbDBWks);
 		}
 
-		IWorkspacePtr CEmbDBWorkspace::Open(const wchar_t *pszName, const wchar_t *pszPath, bool bWrite, bool bOpenAll)
+		IWorkspacePtr CEmbDBWorkspace::Open(const wchar_t *pszName, const wchar_t *pszPath, bool bWrite, bool bOpenAll, const wchar_t *pszPWD)
 		{
 
 			CommonLib::CString sFullName = pszPath;
@@ -101,7 +101,7 @@ namespace GisEngine
 				//TO DO Error
 				return IWorkspacePtr();
 			}
-			IWorkspacePtr pWks = CWorkspaceHolder::GetWorkspace(wtSqlLite, sFullName);
+			IWorkspacePtr pWks = CWorkspaceHolder::GetWorkspace(wtEmbDB, sFullName);
 			if(pWks.get())
 			{
 				//TO DO Error
@@ -109,7 +109,7 @@ namespace GisEngine
 			}
 
 			CEmbDBWorkspace *pEmbDBWks = new  CEmbDBWorkspace(pszName, pszPath, CWorkspaceHolder::GetIDWorkspace());
-			if(!pEmbDBWks->load(sFullName, bWrite, bOpenAll))
+			if(!pEmbDBWks->load(sFullName, pszPWD, bWrite, bOpenAll))
 			{
 				//TO DO Error
 				delete pEmbDBWks;
@@ -119,7 +119,7 @@ namespace GisEngine
 			CWorkspaceHolder::AddWorkspace((IWorkspace*)pEmbDBWks);
 			return IWorkspacePtr((IWorkspace*)pEmbDBWks);
 		}
-		IWorkspacePtr CEmbDBWorkspace::Open(CommonLib::IReadStream* pSteram, bool bOpenAll)
+		IWorkspacePtr CEmbDBWorkspace::Open(CommonLib::IReadStream* pSteram, const wchar_t *pszPWD, bool bOpenAll)
 		{
 
 			CEmbDBWorkspace *pEmbDBWks = new  CEmbDBWorkspace(-1);
@@ -132,7 +132,7 @@ namespace GisEngine
 
 			return IWorkspacePtr((IWorkspace*)pEmbDBWks);
 		}
-		IWorkspacePtr CEmbDBWorkspace::Open(GisCommon::IXMLNode *pNode, bool bOpenAll)
+		IWorkspacePtr CEmbDBWorkspace::Open(GisCommon::IXMLNode *pNode, const wchar_t *pszPWD, bool bOpenAll)
 		{
 			int nWksID = pNode->GetPropertyInt32(L"ID", -1);
 			if(nWksID == -1)
@@ -140,7 +140,7 @@ namespace GisEngine
 			CommonLib::CString sName = pNode->GetPropertyString(L"Name", "");
 			CommonLib::CString sPath = pNode->GetPropertyString(L"Path", "");
 			CEmbDBWorkspace *pEmbDBWks = new  CEmbDBWorkspace(sName.cwstr(), sPath.cwstr(), nWksID);
-			if(!pEmbDBWks->load(sPath + sName, true, bOpenAll)) // TO FIX use name, path
+			if(!pEmbDBWks->load(sPath + sName, pszPWD, true, bOpenAll)) // TO FIX use name, path
 			{
 				//TO DO Error
 				delete pEmbDBWks;
@@ -151,22 +151,26 @@ namespace GisEngine
 		}
 
 
-		bool CEmbDBWorkspace::create(const CommonLib::CString& sFullName)
+		bool CEmbDBWorkspace::create(const CommonLib::CString& sFullName, const CommonLib::CString& sPWD)
 		{
 			if(m_pDB.get())
 				m_pDB->close();
 			m_pDB = embDB::IDatabase::CreateDatabase();
-			if(!m_pDB->create(sFullName.cwstr()))
+			if(!m_pDB->create(sFullName.cwstr(), embDB::eTMMultiTransactions, sPWD.cwstr()))
 			{
 				//TO DO Error
 				return false;
 			}
-
+			m_pConnection = m_pDB->connect(NULL, sPWD.cwstr());
+			if(!m_pConnection.get())
+				return false;
 			return true;
 		}
 
-		bool CEmbDBWorkspace::load(const CommonLib::CString& sFullName, bool bWrite, bool bOpenAll)
+		bool CEmbDBWorkspace::load(const CommonLib::CString& sFullName, const CommonLib::CString& sPWD,  bool bWrite, bool bOpenAll)
 		{
+
+		 
 
 			m_pDB =  embDB::IDatabase::CreateDatabase();
 			if(!m_pDB.get())
@@ -177,17 +181,21 @@ namespace GisEngine
 			{
 				return false;
 			}
+			m_pConnection = m_pDB->connect(NULL, sPWD.cwstr());
+			if(!m_pConnection)
+				return false;
+			
 			
 
 			if(!bOpenAll)
 				return true;
 
 
-			embDB::ISchemaPtr pShema = m_pDB->getSchema();
+			embDB::ISchemaPtr pShema = m_pConnection->getSchema();
 			if(!pShema.get())
 				return false;
 
-			for (size_t i = 0, sz = pShema->getTableCnt(); i < sz; ++i)
+			for (uint32 i = 0, sz = pShema->getTableCnt(); i < sz; ++i)
 			{
 				embDB::ITablePtr pTable = pShema->getTable(i);
 				if(CEmbDBFeatureClass::IsFeatureClass(pTable.get()))
@@ -227,7 +235,7 @@ namespace GisEngine
 			SAFE_READ(stream.save_read(m_sPath))
 
 			const CommonLib::CString sFullName = m_sPath + m_sName;
-			return load(sFullName, true, false);
+			return load(sFullName, L"", true, false);
 		}
 
 		bool CEmbDBWorkspace::saveXML(GisCommon::IXMLNode* pXmlNode) const
@@ -245,7 +253,7 @@ namespace GisEngine
 		}
 		ITransactionPtr CEmbDBWorkspace::startTransaction(eTransactionType type)
 		{
-			CEmbDBTransaction* pTran = new CEmbDBTransaction(m_pDB.get(), type);
+			CEmbDBTransaction* pTran = new CEmbDBTransaction(m_pConnection.get(), type);
 			pTran->begin();
 			return ITransactionPtr(pTran);
 		}
@@ -255,6 +263,9 @@ namespace GisEngine
 		{
 
 			if(!m_pDB.get())
+				return ITablePtr();
+
+			if(!m_pConnection.get())
 				return ITablePtr();
 
 			if(sName.isEmpty())

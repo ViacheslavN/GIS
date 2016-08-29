@@ -124,7 +124,7 @@ namespace embDB
 			//CStorage* getTableStorage(const CommonLib::CString& sFileName, bool bCreate);
 
 			CommonLib::alloc_t* getBTreeAlloc();
-			bool getCheckCRC() const {return m_DBParams.bCheckCRC;}
+			virtual bool getCheckCRC() const {return m_DBParams.bCheckCRC;}
 			bool getCheckPageType() const {return !m_DBParams.qryptoAlg == NONE_ALG;}
 		private:
 			ITransactionPtr startTransaction(eTransactionType trType, uint64 nUserID, IDBConnection *pConn);

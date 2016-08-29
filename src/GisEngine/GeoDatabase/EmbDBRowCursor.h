@@ -14,8 +14,8 @@ namespace GisEngine
 		public:
 
 			typedef ICursorBase<ICursor> TBase;
-			CEmbDBRowCursor(IQueryFilter* filter, bool recycling, ITable *pTable, embDB::IDatabase *pDB);
-			CEmbDBRowCursor(int64 nOId, IFieldSet *pFieldSet, ITable* pTable, embDB::IDatabase *pDB);
+			CEmbDBRowCursor(IQueryFilter* filter, bool recycling, ITable *pTable, embDB::IConnection *pConnection);
+			CEmbDBRowCursor(int64 nOId, IFieldSet *pFieldSet, ITable* pTable, embDB::IConnection *pConnection);
 
 			virtual ~CEmbDBRowCursor();
 
@@ -25,7 +25,7 @@ namespace GisEngine
 		protected:
 			CommonLib::IGeoShapePtr   m_pCacheShape;
 			std::map<int, CommonLib::IBlobPtr> m_mapCacheBlob;
-			embDB::IDatabasePtr				m_pDB;
+			embDB::IConnectionPtr				m_pConnection;
 			embDB::ICursorPtr				m_pCursor;
 			embDB::ITransactionPtr			m_pTran;
 			//embDB::IRowPtr					m_pEmbDbRow;

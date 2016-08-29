@@ -52,11 +52,11 @@ namespace GisEngine
 
 		bool CEmbDBTable::open()
 		{
-			embDB::IDatabasePtr pDB = m_pEmbDBWorkspace->GetDB();
-			if(!pDB.get())
+			embDB::IConnectionPtr pConnection = m_pEmbDBWorkspace->GetConnection();
+			if(!pConnection.get())
 				return false;
 
-			embDB::ISchemaPtr pSchema = pDB->getSchema();
+			embDB::ISchemaPtr pSchema = pConnection->getSchema();
 			if(!pSchema.get())
 				return false;
 
@@ -74,8 +74,8 @@ namespace GisEngine
 		}
 		bool CEmbDBTable::CreateTable(IFields* pFields)
 		{
-			embDB::IDatabasePtr pDB = m_pEmbDBWorkspace->GetDB();
-			if(!pDB)
+			embDB::IConnectionPtr pConn = m_pEmbDBWorkspace->GetConnection();
+			if(!pConn)
 				return false;
 
 
@@ -84,7 +84,7 @@ namespace GisEngine
 			GisGeometry::ISpatialReferencePtr pSPRef;
 
 
-			if(!embDBUtils::CreateTable(m_sDatasetName.cwstr(), pFields, pDB.get(), &sOidField))
+			if(!embDBUtils::CreateTable(m_sDatasetName.cwstr(), pFields, pConn.get(), &sOidField))
 				return false;
 
 			m_pFields = pFields->clone();

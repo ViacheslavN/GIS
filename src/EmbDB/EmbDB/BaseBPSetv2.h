@@ -150,6 +150,12 @@ namespace embDB
 			m_pTransaction  = pTransaction;
 		}
 
+
+		Transaction * getTransactions() const
+		{
+			return m_pTransaction;
+		}
+
 		void SetMinSplit(bool bMinSplit)
 		{
 			m_bMinSplit = bMinSplit;

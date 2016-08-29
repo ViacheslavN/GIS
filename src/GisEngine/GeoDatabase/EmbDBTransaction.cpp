@@ -8,13 +8,13 @@ namespace GisEngine
 	namespace GeoDatabase
 	{
 
-		CEmbDBTransaction::CEmbDBTransaction(embDB::IDatabase* pDB, eTransactionType type) :
+		CEmbDBTransaction::CEmbDBTransaction(embDB::IConnection* pConnection,  eTransactionType type) :
 			m_bCommit(false)
 			,m_bEnd(false)
 			,m_bBegin(false)
 		{
-			m_pDB = pDB;
-			m_pTran = m_pDB->startTransaction(embDBUtils::TranType2EmbDbTranType(type));
+			m_pConnection = pConnection;
+			m_pTran = m_pConnection->startTransaction(embDBUtils::TranType2EmbDbTranType(type));
 		}
 		CEmbDBTransaction::~CEmbDBTransaction()
 		{
@@ -59,7 +59,7 @@ namespace GisEngine
 
 		IInsertCursorPtr  CEmbDBTransaction::CreateInsertCusor(ITable *pTable, IFieldSet *pFileds)
 		{
-			CEmbDBInsertCursor* pCursor = new  CEmbDBInsertCursor(pTable, pFileds, m_pDB.get(), m_pTran.get());
+			CEmbDBInsertCursor* pCursor = new  CEmbDBInsertCursor(pTable, pFileds, m_pConnection.get(), m_pTran.get());
 			return IInsertCursorPtr(pCursor);
 		}
 		IUpdateCursorPtr  CEmbDBTransaction::CreateUpdateCusor(ITable *pTable, IFieldSet *pFileds)

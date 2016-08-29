@@ -12,7 +12,7 @@ namespace GisEngine
 		class CEmbDBTransaction : public ITransaction
 		{
 		public:
-			CEmbDBTransaction(embDB::IDatabase* pDB, eTransactionType type);
+			CEmbDBTransaction(embDB::IConnection* pConnection, eTransactionType type);
 			~CEmbDBTransaction();
 
 
@@ -28,7 +28,7 @@ namespace GisEngine
 			virtual IDeleteCursorPtr CreateDeleteCusor(ITable *pTable, IFieldSet *pFileds = 0);
 
 		private:
-			embDB::IDatabasePtr m_pDB;
+			embDB::IConnectionPtr m_pConnection;
 			embDB::ITransactionPtr m_pTran;
 			bool m_bCommit;
 			bool m_bEnd;

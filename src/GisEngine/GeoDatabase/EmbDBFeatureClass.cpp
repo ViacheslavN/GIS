@@ -31,8 +31,8 @@ namespace GisEngine
 	bool CEmbDBFeatureClass::CreateFeatureClass(IFields* pFields, bool bSaveFCProp)
 	{
 
-		embDB::IDatabasePtr pDB = m_pEmbDBWorkspace->GetDB();
-		if(!pDB)
+		embDB::IConnectionPtr pConnect = m_pEmbDBWorkspace->GetConnection();
+		if(!pConnect)
 			return false;
 
 
@@ -44,7 +44,7 @@ namespace GisEngine
 		GisGeometry::ISpatialReferencePtr pSPRef;
 
 
-		embDBUtils::CreateTable(m_sDatasetName.cwstr(), pFields, pDB.get(), &sOidField, &sShapeField, &sAnno, 	&m_ShapeType, &pSPRef);
+		embDBUtils::CreateTable(m_sDatasetName.cwstr(), pFields, pConnect.get(), &sOidField, &sShapeField, &sAnno, 	&m_ShapeType, &pSPRef);
 
 
 
@@ -105,19 +105,19 @@ namespace GisEngine
 		if(m_ShapeType == CommonLib::shape_type_null)
 			return false;
 
-		embDB::IDatabasePtr pDB = m_pEmbDBWorkspace->GetDB();
-		if(!pDB.get())
+		embDB::IConnectionPtr  pConnection = m_pEmbDBWorkspace->GetConnection();
+		if(!pConnection.get())
 			return false;
 
 		//TO DO Create from sql
 
-		embDB::ISchemaPtr pSchema = pDB->getSchema();
+		embDB::ISchemaPtr pSchema = pConnection->getSchema();
 
 		embDB::ITablePtr pTable = pSchema->getTableByName(m_sPropTableName.cwstr());
 
 		if(pTable.get())
 		{
-			embDB::ITransactionPtr pTran = pDB->startTransaction(embDB::eTT_MODIFY);
+			embDB::ITransactionPtr pTran = pConnection->startTransaction(embDB::eTT_MODIFY);
 			pTran->begin();
 			embDB::IDeleteCursorPtr pDeleteCursor = pTran->createDeleteCursor(pTable->getName().cwstr());
 			embDB::IRowPtr pRow;
@@ -133,7 +133,10 @@ namespace GisEngine
 		}
 		else
 		{
-			pSchema->addTable(m_sPropTableName.cwstr());
+			embDB::ITransactionPtr pTran = pConnection->startTransaction(embDB::eTT_DDL);
+			pTran->begin();
+
+			pSchema->addTable(m_sPropTableName.cwstr(), pTran.get());
 			pTable = pSchema->getTableByName(m_sPropTableName.cwstr());
 			embDB::IDBTable* pDBTable = (embDB::IDBTable*)pTable.get();
 
@@ -141,7 +144,7 @@ namespace GisEngine
 				embDB::SFieldProp fp;
 				fp.m_dataType = embDB::dtString;
 				fp.m_sFieldName = L"PROJ";
-				pDBTable->createField(fp);
+				pDBTable->createField(fp, pTran.get());
 			}
 			{
 				embDB::SFieldProp fp;
@@ -149,38 +152,39 @@ namespace GisEngine
 				fp.m_sFieldName = L"SHAPEFIELD";
 				fp.m_nLenField = 128;
 				fp.m_bNotNull = true;
-				pDBTable->createField(fp);
+				pDBTable->createField(fp, pTran.get());
 			}
 			{
 				embDB::SFieldProp fp;
 				fp.m_dataType = embDB::dtInteger32;
 				fp.m_sFieldName = L"GEOMTYPE";
 				fp.m_bNotNull = true;
-				pDBTable->createField(fp);
+				pDBTable->createField(fp, pTran.get());
 			}
 			{
 				embDB::SFieldProp fp;
 				fp.m_dataType = embDB::dtString;
 				fp.m_sFieldName = L"ANNO";
 				fp.m_nLenField = 128;
-				pDBTable->createField(fp);
+				pDBTable->createField(fp, pTran.get());
 			}
 			{
 				embDB::SFieldProp fp;
 				fp.m_dataType = embDB::dtString;
 				fp.m_sFieldName = L"OIDFIELD";
-				pDBTable->createField(fp);
+				pDBTable->createField(fp, pTran.get());
 			}
 			{
 				embDB::SFieldProp fp;
 				fp.m_dataType = embDB::dtInteger32;
 				fp.m_sFieldName = L"OIDTYPE";
-				pDBTable->createField(fp);
+				pDBTable->createField(fp, pTran.get());
 			}
 			
+			pTran->commit();
 		}
 
-		embDB::ITransactionPtr pTran = pDB->startTransaction(embDB::eTT_MODIFY);
+		embDB::ITransactionPtr pTran = pConnection->startTransaction(embDB::eTT_MODIFY);
 		pTran->begin();
 		embDB::IInsertCursorPtr pCursor = pTran->createInsertCursor(pTable->getName().cwstr());
 
@@ -203,11 +207,11 @@ namespace GisEngine
 	}
 	bool CEmbDBFeatureClass::open()
 	{
-		embDB::IDatabasePtr pDB = m_pEmbDBWorkspace->GetDB();
-		if(!pDB.get())
+		embDB::IConnectionPtr pConnection = m_pEmbDBWorkspace->GetConnection();
+		if(!pConnection.get())
 			return false;
 
-		embDB::ISchemaPtr pSchema = pDB->getSchema();
+		embDB::ISchemaPtr pSchema = pConnection->getSchema();
 		if(!pSchema.get())
 			return false;
 
@@ -223,7 +227,7 @@ namespace GisEngine
 			return false;
 
 
-		embDB::ITransactionPtr pTran =  pDB->startTransaction(embDB::eTT_SELECT);
+		embDB::ITransactionPtr pTran =  pConnection->startTransaction(embDB::eTT_SELECT);
 		pTran->begin();
 		embDB::ICursorPtr pCursor = pTran->executeSelectQuery(m_sPropTableName.cwstr());
 		embDB::IRowPtr pRow;
@@ -317,7 +321,7 @@ namespace GisEngine
 		if(!pTable)
 			return false;
 		
-		for (size_t i = 0, sz = pTable->getFieldCnt(); i < sz; ++i)
+		for (uint32 i = 0, sz = pTable->getFieldCnt(); i < sz; ++i)
 		{
 			embDB::IFieldPtr pField = pTable->getField(i);
 			if(pField->getType() == embDB::dtGeometry)
@@ -329,14 +333,14 @@ namespace GisEngine
 	IRowPtr	CEmbDBFeatureClass::GetRow(int64 id)
 	{
 
-		CEmbDBRowCursor cursor(id,  NULL, this, m_pEmbDBWorkspace->GetDB().get());
+		CEmbDBRowCursor cursor(id,  NULL, this, m_pEmbDBWorkspace->GetConnection().get());
 		IRowPtr pRow;
 		cursor.NextRow(&pRow);
 		return pRow;
 	}
 	ICursorPtr	CEmbDBFeatureClass::Search(IQueryFilter* filter, bool recycling)
 	{
-		return  ICursorPtr( (ICursor*)(new CEmbDBRowCursor(filter, recycling, this, m_pEmbDBWorkspace->GetDB().get())) );
+		return  ICursorPtr( (ICursor*)(new CEmbDBRowCursor(filter, recycling, this, m_pEmbDBWorkspace->GetConnection().get())) );
 	}
 
 

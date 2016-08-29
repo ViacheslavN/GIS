@@ -347,7 +347,7 @@ namespace embDB
 			TBTreeNodePtr pNode = m_pTree->getNode(nAddr); 
 			if(!pNode.get())
 			{
-				//to do log error
+				m_pTree->getTransactions()->error(L"BTree SplitIter error set addr node %I64d", nAddr);
 				return false;
 			}
 			m_pCurNode = pNode;

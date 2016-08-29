@@ -255,10 +255,10 @@ namespace GisEngine
 				return embDB::dtUnknown;
 			}
 		
-			bool CreateTable(const wchar_t* pszTableName, IFields* pFields, embDB::IDatabase *pDatabase, CommonLib::CString* pOIDField, CommonLib::CString* pShapeFieldName, 
+			bool CreateTable(const wchar_t* pszTableName, IFields* pFields, embDB::IConnection *pConn, CommonLib::CString* pOIDField, CommonLib::CString* pShapeFieldName, 
 				CommonLib::CString* pAnno , CommonLib::eShapeType *pSPType , GisGeometry::ISpatialReferencePtr* pSPref)
 			{
-				if(!pFields || !pDatabase)
+				if(!pFields || !pConn)
 					return false;
 
 				
@@ -267,12 +267,15 @@ namespace GisEngine
 
 				//TO DO create sql operation
 
-				embDB::ISchemaPtr pSchema = pDatabase->getSchema();
+				embDB::ISchemaPtr pSchema = pConn->getSchema();
 				embDB::ITablePtr  pTable = pSchema->getTableByName(pszTableName);
 				if(pTable.get())
 					return false;
 
-				pSchema->addTable(pszTableName);
+				embDB::ITransactionPtr pTran = pConn->startTransaction(embDB::eTT_DDL);
+				pTran->begin();
+
+				pSchema->addTable(pszTableName, pTran.get());
 				pTable = pSchema->getTableByName(pszTableName);
 				if(!pTable.get())
 					return false;
@@ -320,7 +323,7 @@ namespace GisEngine
 						if(pSPref)
 							*pSPref = pSpatialRef;
 
-						if(!pDBTable->createShapeField(pField->GetName().cwstr(), pField->GetAliasName().cwstr(), shapeType, extent, units))
+						if(!pDBTable->createShapeField(pField->GetName().cwstr(), pField->GetAliasName().cwstr(), shapeType, extent, units, pTran.get()))
 							return false;
 					}
 					else
@@ -337,13 +340,15 @@ namespace GisEngine
 						fp.m_sFieldAlias = pField->GetAliasName();
 						fp.m_devaultValue = pField->GetDefaultValue();
 						fp.m_nLenField = pField->GetLength();
-						if(!pDBTable->createField(fp))
+						if(!pDBTable->createField(fp, pTran.get()))
 							return false;
 					}
 
 					
 
 				}
+
+				pTran->commit();
 				return true;
 			}
 

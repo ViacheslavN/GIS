@@ -16,7 +16,7 @@ namespace GisEngine
 			IFieldsPtr EmbDBFields2Fields(embDB::IFields *pFields);
 			IFieldPtr EmbDBField2Field(embDB::IField *pField);
 
-			bool CreateTable(const wchar_t* pszTableName, IFields* pFields, embDB::IDatabase *pDatabase, CommonLib::CString* pOIDField = NULL, CommonLib::CString* pShapeField = NULL, 
+			bool CreateTable(const wchar_t* pszTableName, IFields* pFields, embDB::IConnection *pConn, CommonLib::CString* pOIDField = NULL, CommonLib::CString* pShapeField = NULL, 
 				CommonLib::CString* pAnno = NULL, CommonLib::eShapeType *pSPType = NULL, GisGeometry::ISpatialReferencePtr* pSPref = NULL);
 		
 			embDB::eTransactionType  TranType2EmbDbTranType(eTransactionType type);

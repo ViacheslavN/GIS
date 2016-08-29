@@ -10,8 +10,8 @@ namespace GisEngine
 	namespace GeoDatabase
 	{
  
-		CEmbDBRowCursor::CEmbDBRowCursor(IQueryFilter* pFilter, bool bRecycling, ITable *pTable, embDB::IDatabase *pDB) :
-			TBase(pFilter, bRecycling, pTable), m_pDB(pDB)
+		CEmbDBRowCursor::CEmbDBRowCursor(IQueryFilter* pFilter, bool bRecycling, ITable *pTable, embDB::IConnection *pConnection) :
+			TBase(pFilter, bRecycling, pTable), m_pConnection(pConnection)
 		{
 			 embDB::IFieldSetPtr pEmbFieldSet(new embDB::CFieldSet());
 
@@ -23,7 +23,7 @@ namespace GisEngine
 			 }
 
 
-			 m_pTran = m_pDB->startTransaction(embDB::eTT_SELECT);
+			 m_pTran = m_pConnection->startTransaction(embDB::eTT_SELECT);
 			 m_pTran->begin();
 			 if(m_pExtentSource.get())
 			 {
@@ -36,8 +36,8 @@ namespace GisEngine
 			 else
 				 m_bInvalidCursor = true;
 		}
-			CEmbDBRowCursor::CEmbDBRowCursor(int64 nOId, IFieldSet *pFieldSet, ITable* pTable, embDB::IDatabase *pDB):
-					TBase(nOId, pFieldSet, pTable), m_pDB(pDB)
+			CEmbDBRowCursor::CEmbDBRowCursor(int64 nOId, IFieldSet *pFieldSet, ITable* pTable, embDB::IConnection *pConnection ):
+					TBase(nOId, pFieldSet, pTable), m_pConnection(pConnection)
 		{
 			m_bInvalidCursor = true;
 		}

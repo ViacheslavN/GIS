@@ -13,7 +13,7 @@ namespace GisEngine
 				public:
 					typedef IInsertCursorBase<IInsertCursor> TBase;
 
-					CEmbDBInsertCursor(ITable* pTable, IFieldSet *pFileds, embDB::IDatabase *pDB ,
+					CEmbDBInsertCursor(ITable* pTable, IFieldSet *pFileds, embDB::IConnection *pConnection ,
 						embDB::ITransaction* pTran);
 					virtual ~CEmbDBInsertCursor();
 
@@ -23,7 +23,7 @@ namespace GisEngine
 					void close();
 				private:
 					std::vector<eDataTypes> m_vecTypes;
-					embDB::IDatabasePtr m_pDB;
+					embDB::IConnectionPtr m_pConnection;
 					embDB::IInsertCursorPtr m_pCursor;
 					embDB::IRowPtr m_pDBRow;
 					embDB::ITransactionPtr m_pTran;

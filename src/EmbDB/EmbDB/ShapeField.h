@@ -109,7 +109,7 @@ namespace embDB
 				 if(pIndexIterator->isNull())
 				 {
 		
-					 const CommonLib::bbox& bb shape->getBB();
+					 const CommonLib::bbox& bb = shape->getBB();
 					 m_pDBTransactions->error(L"Not Found shape in index RowID: %I64d, bbox xMin: %f, yMin: %f, xMax: %f, yMax: %f", nOID, bb.xMin, bb.yMax, bb.xMax, bb.yMax);
 					 return false;
 				 }
@@ -122,7 +122,7 @@ namespace embDB
 					 }
 					 pIndexIterator->next();
 				 }
-				 const CommonLib::bbox& bb shape->getBB();
+				 const CommonLib::bbox& bb = shape->getBB();
 				 m_pDBTransactions->error(L"Not Found shape in index RowID: %I64d, bbox xMin: %f, yMin: %f, xMax: %f, yMax: %f", nOID, bb.xMin, bb.yMax, bb.xMax, bb.yMax);
 				 return false;
 

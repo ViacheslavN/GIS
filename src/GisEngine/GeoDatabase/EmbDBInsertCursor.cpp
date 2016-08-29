@@ -7,11 +7,11 @@ namespace GisEngine
 {
 	namespace GeoDatabase
 	{
-		CEmbDBInsertCursor::CEmbDBInsertCursor(ITable* pTable, IFieldSet *pFileds, embDB::IDatabase *pDB ,
+		CEmbDBInsertCursor::CEmbDBInsertCursor(ITable* pTable, IFieldSet *pFileds,  embDB::IConnection *pConnection,
 			embDB::ITransaction* pTran) :
-				TBase(pTable, pFileds), m_pDB(pDB), m_bValidCursor(true), m_bInit(false)
+				TBase(pTable, pFileds), m_bValidCursor(true), m_bInit(false)
 		{
-			m_pDB = pDB;
+			m_pConnection = pConnection;
 			m_pTran = pTran;
 		}
 		CEmbDBInsertCursor::~CEmbDBInsertCursor()

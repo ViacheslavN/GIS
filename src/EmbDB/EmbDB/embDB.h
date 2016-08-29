@@ -599,6 +599,7 @@ namespace embDB
 
 		virtual ISchemaPtr getSchema() const = 0;
 		virtual ITransactionPtr startTransaction(eTransactionType trType) = 0;
+		virtual IDatabase* getDB() const  = 0;
 		virtual bool closeTransaction(ITransaction* ) = 0;
 		virtual uint64 getUserUID() const = 0;
 		virtual eUserGroup getUserGroup() const = 0;

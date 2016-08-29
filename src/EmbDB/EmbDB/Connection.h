@@ -13,9 +13,10 @@ namespace embDB
 	{
 		public:
 
-			CConnection(CDatabase *pDB, IDBShema* pSchema, const wchar_t *pszUserName, uint64 nUID, eUserGroup userGroup);
+			CConnection(CDatabase* pDB, IDBShema* pSchema, const wchar_t *pszUserName, uint64 nUID, eUserGroup userGroup);
 			virtual ~CConnection();
 
+			virtual IDatabase* getDB() const {return (IDatabase*)m_pDB;}
 			virtual ITransactionPtr startTransaction(eTransactionType trType);
 			virtual bool closeTransaction(ITransaction* );
 			virtual uint64 getUserUID() const;
@@ -25,7 +26,7 @@ namespace embDB
 			virtual bool getCheckCRC() const;
 			virtual eUserGroup getUserGroup() const;
 		private:
-			CDatabase *m_pDB;
+			CDatabase* m_pDB;
 			CommonLib::CString m_sUserName;
 			uint64 m_nUID;
 			eUserGroup m_UserGroup;

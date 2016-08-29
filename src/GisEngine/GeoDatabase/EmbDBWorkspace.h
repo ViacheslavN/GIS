@@ -20,10 +20,10 @@ namespace GisEngine
 			CEmbDBWorkspace(const wchar_t *pszName, const wchar_t *pszPath, int32 ID);
 			~CEmbDBWorkspace();
 		public:
-			static IWorkspacePtr Create(const wchar_t *pszName, const wchar_t *pszPath);
-			static IWorkspacePtr Open(const wchar_t *pszName, const wchar_t *pszPath, bool bWrite, bool bOpenAll = false);
-			static IWorkspacePtr Open(CommonLib::IReadStream* pSteram, bool bOpenAll = false);
-			static IWorkspacePtr Open(GisCommon::IXMLNode *pNode, bool bOpenAll = false);
+			static IWorkspacePtr Create(const wchar_t *pszName, const wchar_t *pszPath, const wchar_t *pszPWD = NULL);
+			static IWorkspacePtr Open(const wchar_t *pszName, const wchar_t *pszPath, bool bWrite, bool bOpenAll = false, const wchar_t *pszPWD = NULL);
+			static IWorkspacePtr Open(CommonLib::IReadStream* pSteram, const wchar_t *pszPWD = NULL, bool bOpenAll = false);
+			static IWorkspacePtr Open(GisCommon::IXMLNode *pNode, const wchar_t *pszPWD = NULL, bool bOpenAll = false);
 
 
 			virtual ITablePtr  CreateTable(const CommonLib::CString& name, IFields* fields);
@@ -51,18 +51,20 @@ namespace GisEngine
 
 
 			embDB::IDatabasePtr GetDB(){return m_pDB;}
+			embDB::IConnectionPtr GetConnection() {return m_pConnection;}
 		private:
  
 			virtual const CommonLib::CString& GetHash() const{return m_sHash;};
 
 			void close();
-			bool create(const CommonLib::CString& sFullName);
-			bool load(const CommonLib::CString& sFullName, bool bWrite, bool bOpenAll = true);
+			bool create(const CommonLib::CString& sFullName, const CommonLib::CString& sPWD);
+			bool load(const CommonLib::CString& sFullName, const CommonLib::CString& sPWD, bool bWrite, bool bOpenAll = true);
 		private:
 
 			CommonLib::CString m_sPath;
 			CommonLib::CString m_sHash;
 			embDB::IDatabasePtr m_pDB;
+			embDB::IConnectionPtr m_pConnection;
 		};
 	
 	}

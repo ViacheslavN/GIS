@@ -241,7 +241,7 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(IDBTable);
 	COMMON_LIB_REFPTR_TYPEDEF(IIndexIterator); 
 	COMMON_LIB_REFPTR_TYPEDEF(ILogger); 
-
+	COMMON_LIB_REFPTR_TYPEDEF(IDBDatabase); 
 
 	struct IFieldIterator : public CommonLib::AutoRefCounter
 	{
@@ -552,6 +552,11 @@ namespace embDB
 		virtual bool saveState() = 0;
 
 		virtual bool getCheckCRC() const = 0;
+
+
+		virtual void error(const wchar_t *pszFormat, ...) = 0;
+		virtual void log(uint32 nLevel, const wchar_t *pszFormat, ...) = 0;
+		virtual void log_msg(uint32 nLevel, const wchar_t *pszMsg) = 0;
 	};
 
 
@@ -671,6 +676,9 @@ namespace embDB
 	struct IDBDatabase : public IDatabase
 	{
 		IDBDatabase(){}
+
+		virtual IDBStoragePtr getDBStorage() const = 0;
+		virtual bool getCheckCRC() const = 0;
 		virtual ~IDBDatabase(){}
 	 
 	};
