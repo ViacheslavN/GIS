@@ -24,24 +24,24 @@ CTranRedoPageManager::~CTranRedoPageManager()
 bool CTranRedoPageManager::add(int64 nDBAddr, int64 nTranAddr, uint32 nFlags, uint32 nPageSize)
 {
 	sRedoPageInfo PageInfo(nDBAddr, nTranAddr, nFlags, nPageSize);
-	return m_RedoPages.push<CTranStorage, CFilePage*>(PageInfo, m_pStorage);
+	return m_RedoPages.push<CTranStorage>(PageInfo, m_pStorage);
 }
 bool CTranRedoPageManager::add_undo(int64 nDBAddr, int64 nTranAddr, uint32 nFlags, uint32 nPageSize)
 {
 	sRedoPageInfo PageInfo(nDBAddr, nTranAddr, nFlags, nPageSize);
-	return m_UndoPages.push<CTranStorage, CFilePage*>(PageInfo, m_pStorage);
+	return m_UndoPages.push<CTranStorage>(PageInfo, m_pStorage);
 }
 bool CTranRedoPageManager::save()
 {
-	bool bRet = m_RedoPages.save<CTranStorage, CFilePage*>(m_pStorage);
+	bool bRet = m_RedoPages.save<CTranStorage>(m_pStorage);
 	if(!bRet)
 		return false;
-	bRet = m_UndoPages.save<CTranStorage, CFilePage*>(m_pStorage);
+	bRet = m_UndoPages.save<CTranStorage>(m_pStorage);
 	if(!bRet)
 		return false;
 
-	CFilePage *pPage = m_pStorage->getFilePage(m_nRootPage, COMMON_PAGE_SIZE);
-	if(!pPage)
+	FilePagePtr pPage = m_pStorage->getFilePage(m_nRootPage, COMMON_PAGE_SIZE);
+	if(!pPage.get())
 		return false; //TO DO Logs
 	CommonLib::FxMemoryWriteStream stream;	
 	stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
@@ -49,8 +49,8 @@ bool CTranRedoPageManager::save()
 	 stream.write(m_Header.nRedoBlock);
 	 stream.write(m_Header.nUndoBlock);
 	 header.writeCRC32(stream);
-	 m_pStorage->saveFilePage(pPage);
-	 delete pPage;
+	 m_pStorage->saveFilePage(pPage.get());
+	 //delete pPage;
 	return true;
 
 }
@@ -134,8 +134,8 @@ void CTranRedoPageManager::setFirstPage(int64 nPage, bool bCreate)
 	}
 	else
 	{
-		CFilePage *pPage = m_pStorage->getFilePage(m_nRootPage, COMMON_PAGE_SIZE);
-		if(!pPage)
+		FilePagePtr pPage = m_pStorage->getFilePage(m_nRootPage, COMMON_PAGE_SIZE);
+		if(!pPage.get())
 			return; //TO DO Logs
 		CommonLib::FxMemoryReadStream stream;	
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
@@ -153,7 +153,7 @@ void CTranRedoPageManager::setFirstPage(int64 nPage, bool bCreate)
 		m_Header.nRedoBlock = stream.readInt64();
 		m_Header.nUndoBlock = stream.readInt64();
 
-		 delete pPage;
+		 
 	}
 
 	m_RedoPages.setRoot(m_Header.nRedoBlock);

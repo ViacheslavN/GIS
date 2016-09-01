@@ -20,12 +20,17 @@
 #include "CacheLRU_2Q.h"
 #include <iostream>
 #include <memory>
+
+
+#include "CommonLibrary/LockObject.h"
+
 namespace embDB
 {
 	class CStorage : public IDBStorage
 	{
 	public:
-		CStorage( CommonLib::alloc_t *pAlloc, int32 nCacheSize = 1000, bool bCheckCRC = true);
+		CStorage( CommonLib::alloc_t *pAlloc, int32 nCacheSize = 1000, bool bCheckCRC = true,
+			bool bMultiThread = true);
 		~CStorage();
 
 		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true);
@@ -50,7 +55,7 @@ namespace embDB
 
 
 
-		virtual bool isLockWrite(){return false;}
+	//	virtual bool isLockWrite();
 		virtual bool lockWrite(IDBTransaction *pTran = NULL);
 		virtual bool try_lockWrite(){return false;}
 		virtual bool unlockWrite(IDBTransaction *pTran = NULL);
@@ -79,6 +84,7 @@ namespace embDB
 		virtual int64 getBeginFileSize() const;
 		virtual bool isDirty() const;
 		virtual const CommonLib::CString & getTranFileName() const;
+		virtual eDBTransationType  getTranDBType() const;
 
 		void setStoragePageInfo(int64 nStorageInfo);
 		bool initStorage(int64 nStorageInfo);
@@ -105,14 +111,17 @@ namespace embDB
 
 		 struct TPageFreeChecker
 		 {
-			 bool IsFree(CFilePage* pObj)
+			 bool IsFree(FilePagePtr& pObj)
 			 {
-				 return pObj->IsFree();
+
+				
+				 return  pObj->isRemovable(1);
+				 //return pObj->IsFree();
 			 }
 		 };
 
 
-		 typedef TCacheLRU_2Q<int64, CFilePage, TPageFreeChecker> TNodesCache;
+		 typedef TCacheLRU_2Q<int64, FilePagePtr, TPageFreeChecker> TNodesCache;
 		// typedef TSimpleCache<int64, CFilePage> TNodesCache;
 		 TNodesCache m_Chache;
 		 //TPageList   m_FreePageDisk;
@@ -125,6 +134,7 @@ namespace embDB
 
 		 bool m_bDirty;
 		 CommonLib::CString m_sTranName;
+		 eDBTransationType m_nTrantype;
 		 int64 m_nBeginSize;
 		 int64 m_nStorageInfo;
 		 int64 m_nOffset;
@@ -135,6 +145,16 @@ namespace embDB
 		 CPageCipher *m_pPageChiper;
 		 CommonLib::CBlob m_BufForChiper;
 		 bool m_bCheckCRC;
+
+
+		 CommonLib::ILockObject *m_pCommonLockObj;
+		 CommonLib::CEmptyLockObject m_ComEmptyLock;
+		 CommonLib::CSLockObject m_ComLock;
+
+
+		 CommonLib::ILockObject *m_pWriteLockObj;
+		 CommonLib::CEmptyLockObject m_WriteEmptyLock;
+		 CommonLib::CSLockObject m_WriteLock;
 	};
 }
 

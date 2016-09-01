@@ -116,6 +116,11 @@ namespace embDB
 			
 			
 			virtual bool close();
+
+			virtual bool setFileLogName(const wchar_t *pszFileLog);
+			virtual void consolLog();
+			virtual void setLogLevel(uint32 nLevel);
+			virtual uint32 getLogLevel();
 		
 		
 			virtual IDBStoragePtr getDBStorage() const  {return m_pStorage;}
@@ -127,7 +132,7 @@ namespace embDB
 			virtual bool getCheckCRC() const {return m_DBParams.bCheckCRC;}
 			bool getCheckPageType() const {return !m_DBParams.qryptoAlg == NONE_ALG;}
 		private:
-			ITransactionPtr startTransaction(eTransactionType trType, uint64 nUserID, IDBConnection *pConn);
+			ITransactionPtr startTransaction(eTransactionDataType trType, uint64 nUserID, IDBConnection *pConn, eDBTransationType trDbType = eTTFullTransaction);
 			bool closeTransaction(ITransaction* pTran, uint64 nUserID);
 			bool load();
 	    private:
@@ -152,6 +157,10 @@ namespace embDB
 			CUserCryptoManager m_UserCryptoManager;
 
 			friend class CConnection;
+			uint32 m_nLogLevel;
+
+			DBTransactionMode m_TranMode;
+
 		//	typedef RBMap<CommonLib::CString, CStorage*> TTableStorages;
 		//	TTableStorages m_TableStorages;
 			 

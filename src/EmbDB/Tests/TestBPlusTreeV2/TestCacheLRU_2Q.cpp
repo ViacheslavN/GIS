@@ -15,13 +15,13 @@ private:
 };
 
 
-typedef embDB::TCacheLRU_2Q<__int64, CObj> TCache;
+typedef embDB::TCacheLRU_2Q<__int64, CObj*> TCache;
 
 void TestCacheLRU_2Q()
 {
 	CommonLib::simple_alloc_t alloc;
 	{
-		TCache cache(&alloc);
+		TCache cache(&alloc, nullptr);
 
 		for (int i = 0, sz = 100; i < sz; i++)
 		{

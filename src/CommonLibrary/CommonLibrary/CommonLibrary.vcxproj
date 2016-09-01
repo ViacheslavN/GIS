@@ -470,6 +470,7 @@
     <ClInclude Include="Interlocked.h" />
     <ClInclude Include="IRefCnt.h" />
     <ClInclude Include="IXYComressor.h" />
+    <ClInclude Include="LockObject.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="MathUtils.h" />
     <ClInclude Include="MemoryStream.h" />

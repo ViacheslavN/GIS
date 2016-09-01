@@ -17,7 +17,7 @@ namespace embDB
 			virtual ~CConnection();
 
 			virtual IDatabase* getDB() const {return (IDatabase*)m_pDB;}
-			virtual ITransactionPtr startTransaction(eTransactionType trType);
+			virtual ITransactionPtr startTransaction(eTransactionDataType trType, eDBTransationType trDbType = eTTFullTransaction);
 			virtual bool closeTransaction(ITransaction* );
 			virtual uint64 getUserUID() const;
 			virtual const wchar_t *getUserName() const;

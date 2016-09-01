@@ -425,7 +425,7 @@ namespace embDB
 			return false;
 		}
 		undoPageInfo.m_nBitMapAddInTran = pTranPage->getAddr();
-		if(!UndoVector.push<IDBTransaction, FilePagePtr>(undoPageInfo, pTran))
+		if(!UndoVector.push<IDBTransaction>(undoPageInfo, pTran))
 		{
 			//TO DO LOGs
 			return false;

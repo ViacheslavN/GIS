@@ -125,7 +125,7 @@ struct sFilePageHeader
 	}
 };
 
-class CFilePage : public CommonLib::RefCounter
+class CFilePage : public CommonLib::AutoRefCounter
 {
 public: 
 	CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, uint32 uint32, int64 nAddr);
@@ -149,6 +149,10 @@ public:
 	//void setCheck(bool bCheck);
 	bool isNeedEncrypt() const;
 	void setNeedEncrypt(bool bEncrypt);
+public:
+
+
+
 protected:
 	byte *m_pData;
 	uint32 m_nSize;

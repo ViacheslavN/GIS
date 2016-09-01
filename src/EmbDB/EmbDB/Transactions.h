@@ -47,10 +47,10 @@ namespace embDB
 		typedef ITransactionBase<IDBTransaction> TBase;
 
 		CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
+			eTransactionDataType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
 
 		CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionType nTranType, const CommonLib::CString& sFileName, IDBConnection* pConnection, int64 nID, uint32 nTranCache = 10000);
+			eTransactionDataType nTranType, const CommonLib::CString& sFileName, IDBConnection* pConnection, int64 nID, uint32 nTranCache = 10000);
 
 
 		CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache = 10000);
@@ -93,7 +93,7 @@ namespace embDB
  
 
  
-		virtual eTransactionType getType() const {return (eTransactionType)m_nTranType;}
+		virtual eTransactionDataType getType() const {return (eTransactionDataType)m_nTranType;}
 
 		virtual FilePagePtr getTranNewPage(uint32 nSize);
 		virtual FilePagePtr getTranFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true);
@@ -126,6 +126,8 @@ namespace embDB
 		void setDeleteStorage(bool bDel){m_bDeleteStorage = bDel;}
 
 		FilePagePtr getFileDBPage(int64 nAddr, uint32 nPageSize, bool bRead = true);
+
+		virtual eDBTransationType getDBTransationType() const {return eTTFullTransaction;}
 	private:
 		bool SaveDBPage(CFilePage* pPage);
 		bool SaveDBPage(int64 nAddr);

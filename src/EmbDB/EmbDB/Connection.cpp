@@ -22,11 +22,11 @@ namespace embDB
 	{
 		return m_pDB->getCheckCRC();
 	}
-	ITransactionPtr CConnection::startTransaction(eTransactionType trType)
+	ITransactionPtr CConnection::startTransaction(eTransactionDataType trType, eDBTransationType trDbType)
 	{
 
 		//TO Do check right
-		return m_pDB->startTransaction(trType, m_nUID, this);
+		return m_pDB->startTransaction(trType, m_nUID, this, trDbType);
 	}
 	bool CConnection::closeTransaction(ITransaction* pTran)
 	{

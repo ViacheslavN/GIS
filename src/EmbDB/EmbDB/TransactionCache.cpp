@@ -8,14 +8,14 @@ namespace embDB
 	{
 		if(m_Chache.size() > m_nMaxPageBuf)
 		{
-			CFilePage* pRemPage = m_Chache.remove_back();
-			assert(pRemPage);
+			FilePagePtr pRemPage = m_Chache.remove_back();
+			assert(pRemPage.get());
 			TPages::iterator it = m_pages.find(pRemPage->getAddr());
 			assert(it != m_pages.end());
 			sFileTranPageInfo& pi = it->second;
 			if(pi.m_nFlags & (eFP_CHANGE | eFP_NEW))
 			{
-				int64 nRet = m_pFileStorage->saveFilePage(pRemPage, pi.m_nFileAddr);
+				int64 nRet = m_pFileStorage->saveFilePage(pRemPage.get(), pi.m_nFileAddr);
 				if(pi.m_nFileAddr == -1)
 				{
 					pi.m_nFileAddr = nRet;
@@ -28,8 +28,7 @@ namespace embDB
 					{
 						if( !(pi.m_nFlags & eFP_NEW) && (pi.m_nFlags & eFP_CHANGE))
 						{
-
-							m_pTransaction->addUndoPage(FilePagePtr(pRemPage), true);
+							m_pTransaction->addUndoPage(pRemPage, true);
 						}
 						pi.m_bOrignSave = true;
 					}
@@ -41,7 +40,7 @@ namespace embDB
 				
 			
 			}
-			delete pRemPage;
+			//delete pRemPage;
 		}
 	}
 	void CTransactionsCache::savePage(CFilePage *pPage)
@@ -82,20 +81,20 @@ namespace embDB
 			 if(!bNew && bChange)
 			 {			
 
-				 bool bRemPage = false;
-				 FilePagePtr pPage(m_Chache.GetElem(it->first, true));//pi.m_pPage;
+				 //bool bRemPage = false;
+				 FilePagePtr pPage = m_Chache.GetElem(it->first, true);//pi.m_pPage;
 				 if(!pPage.get())
 				 {
 					 assert(pi.m_nFileAddr != -1);
 					 pPage = m_pFileStorage->getFilePage(pi.m_nFileAddr, pi.m_nPageSize);
 					 pPage->setFlag(pi.m_nFlags, true);
 					 pPage->setAddr(it->first);
-					 bRemPage = true;
+					// bRemPage = true;
 					// m_Chache.AddElem(it->first, pPage.get());
 				 }
 				 pTran->addUndoPage(pPage, true);
-				 if(bRemPage)
-					 delete pPage.release();
+				// if(bRemPage)
+				//	 delete pPage.release();
 			 }
 		 }
 		 return true;
@@ -126,14 +125,14 @@ namespace embDB
 			 {
 				 if(!pi.m_bRedoSave)
 				 {
-					CFilePage* pPage = m_Chache.GetElem(it->first, true);
-					 if(!pPage)
+					FilePagePtr pPage = m_Chache.GetElem(it->first, true);
+					 if(!pPage.get())
 					 {
 						 assert(pPage); //должна быть
 						 //TO DO Logs
 						 return false;
 					 }
-					 int64 nRet = m_pFileStorage->saveFilePage(pPage, pi.m_nFileAddr);
+					 int64 nRet = m_pFileStorage->saveFilePage(pPage.get(), pi.m_nFileAddr);
 					 if(pi.m_nFileAddr == -1)
 					 {
 						 pi.m_nFileAddr = nRet;
@@ -162,7 +161,7 @@ namespace embDB
 			
 			if(bNew || bChange)
 			{
-				FilePagePtr pPage(m_Chache.GetElem(it->first, true));
+				FilePagePtr pPage = m_Chache.GetElem(it->first, true);
 				if(!pPage.get())
 				{
 					assert(pi.m_nFileAddr != -1);
@@ -171,7 +170,7 @@ namespace embDB
 					assert(pPage.get());
 					pPage->setFlag(pi.m_nFlags, true);
 					pPage->setAddr(it->first);
-					pPage->setNeedEncrypt(false);
+					pPage->setNeedEncrypt(pi.m_bNeedCrypt);
 				}
 
 				bool bNew = (pPage->getFlags() & eFP_NEW) != 0;
@@ -192,7 +191,7 @@ namespace embDB
 					}
 
 				}
-				delete pPage.release();
+				//delete pPage.release();
 			}
 		
 		}
@@ -203,25 +202,25 @@ namespace embDB
 	void  CTransactionsCache::AddPage(int64 nAddr, int64 nTranAddr, CFilePage* pPage, bool bAddBack)
 	{
 
-		m_pages.insert(std::make_pair(nAddr, sFileTranPageInfo(nTranAddr, pPage->getFlags(), pPage->getPageSize())));
+		m_pages.insert(std::make_pair(nAddr, sFileTranPageInfo(nTranAddr, pPage->getFlags(), pPage->getPageSize(), pPage->isNeedEncrypt())));
 		CheckCache();
-		m_Chache.AddElem(nAddr, pPage);
+		m_Chache.AddElem(nAddr, FilePagePtr(pPage));
 	}
 
  
-	CFilePage*  CTransactionsCache::GetPage(int64 nAddr, bool bNotMove, bool bRead, uint32 nSize)
+	FilePagePtr  CTransactionsCache::GetPage(int64 nAddr, bool bNotMove, bool bRead, uint32 nSize)
 	{
-		CFilePage* pPage = m_Chache.GetElem(nAddr);
-		if(pPage)
+		FilePagePtr pPage = m_Chache.GetElem(nAddr);
+		if(pPage.get())
 			return pPage;
 		TPages::iterator it = m_pages.find(nAddr);
 		if(it == m_pages.end())
-			return NULL;
+			return FilePagePtr();
 
 		sFileTranPageInfo& PageInfo = it->second;
 		if(PageInfo.m_nFileAddr == -1)
 		{
-			CFilePage* pPage = new CFilePage(m_pAlloc, nSize, -1);
+			FilePagePtr pPage (new CFilePage(m_pAlloc, nSize, -1));
 			m_Chache.AddElem(nAddr, pPage);
 			return pPage;
 		}

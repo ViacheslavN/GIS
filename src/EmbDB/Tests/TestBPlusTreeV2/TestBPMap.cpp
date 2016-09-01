@@ -326,11 +326,12 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		int64 nStep = nCount/100;
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
+			storage.AddRef();
 			storage.open(L"d:\\dbplus.data", false, false,  true, false);
 			embDB::FilePagePtr pPage = storage.getNewPage(nPageSize);
 			nStorageInfoPage = pPage->getAddr();
 			storage.initStorage(pPage->getAddr());
-			pPage.release();
+			//pPage.release();
 			storage.saveStorageInfo();
 
 			{
@@ -355,6 +356,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		}
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
+			storage.AddRef();
 			storage.open(L"d:\\dbplus.data", false, false,  false, false);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
@@ -386,6 +388,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 		int64 mRemConst =nCount/2;
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
+			storage.AddRef();
 			storage.open(L"d:\\dbplus.data", false, false,  false, false);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
@@ -398,6 +401,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 	
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
+			storage.AddRef();
 			storage.open(L"d:\\dbplus.data", false, false,  false, false);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
@@ -409,6 +413,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 	
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
+			storage.AddRef();
 			storage.open(L"d:\\dbplus.data", false, false,  false, false);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
@@ -421,6 +426,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 
 		{
 			embDB::CStorage storage( alloc, nCacheStorageSize);
+			storage.AddRef();
 			storage.open(L"d:\\dbplus.data", false, false,  false, false);
 			storage.setStoragePageInfo(nStorageInfoPage);
 			storage.loadStorageInfo();
@@ -455,5 +461,5 @@ void TestBRteeMap()
 	int64 nCount = 1000000;
 		size_t nPageSize = 8192;
 
-	testBPTreeMapImpl<TBInt64Map,  embDB::CDirectTransaction, int64, int64>(nCount, nPageSize, 50, 2, false);
+	testBPTreeMapImpl<TBInt64Map,  embDB::CTransaction, int64, int64>(nCount, nPageSize, 50, 2, false);
 }

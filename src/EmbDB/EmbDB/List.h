@@ -20,6 +20,12 @@ public:
 		TListNode(const Type& val) : m_val(val), m_pNext(0), m_pPrev(0)
 		{
 		}
+
+		~TListNode()
+		{
+
+		}
+
 		TListNode *m_pNext;
 		TListNode *m_pPrev;
 		Type m_val;
@@ -130,6 +136,7 @@ public:
 		TNode *pNextNode = pNode->m_pNext;
 		if(!pNextNode)
 		{
+			pNode->~TListNode();
 			m_pAlloc->free(pNode);
 			m_pBegin = 0;
 			m_pBack = 0;
@@ -137,10 +144,12 @@ public:
 		}
 		while(pNextNode)
 		{
+			pNode->~TListNode();
 			m_pAlloc->free(pNode);
 			pNode = pNextNode;
 			pNextNode = pNextNode->m_pNext;
 		}
+		pNode->~TListNode();
 		m_pAlloc->free(pNode);
 
 		m_pBegin = 0;
@@ -190,7 +199,10 @@ public:
 			m_pBack = pNext;
 
 		if(bDel)
+		{
+			pNode->~TListNode();
 			m_pAlloc->free(pNode);
+		}
 		m_nSize--;
 		return iterator(pNext);
 	}

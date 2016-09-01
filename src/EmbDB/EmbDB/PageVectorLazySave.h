@@ -27,12 +27,12 @@ namespace embDB
 			m_nPageAddr = nPage;
 		}
 
-		template <typename _TStorage, typename _TFilePage>
+		template <typename _TStorage>
 		bool push( const TValue& val, _TStorage *pStorage)
 		{
 			if(!checkSize())
 			{
-				if(!save<_TStorage, _TFilePage>(pStorage))
+				if(!save<_TStorage>(pStorage))
 					return false;
 			}
 			m_values.push_back(val);
@@ -44,17 +44,17 @@ namespace embDB
 			uint32 nMemSize = (((uint32)m_values.size() + 1) * m_rw.rowSize()) + sizeof(int64) + sizeof(int32) + sFilePageHeader::size(m_bCheckCRC);
 			return nMemSize < m_nPageSize; 
 		}
-		template <typename _TStorage, typename _FilePage>
+		template <typename _TStorage>
 		bool save(_TStorage *pStorage)
 		{
-			_FilePage pPage = pStorage->getFilePage(m_nPageAddr, m_nPageSize, false);
-			if(pPage == NULL)
+			FilePagePtr pPage = pStorage->getFilePage(m_nPageAddr, m_nPageSize, false);
+			if(pPage.get())
 			{
 				//TO DO Logs
 				return false;
 			}
 		 
-			_FilePage pNextPage(NULL);
+			FilePagePtr pNextPage(NULL);
 			if(!checkSize())
 			{
 				pNextPage = pStorage->getNewPage(m_nPageSize);
@@ -76,7 +76,7 @@ namespace embDB
 			}
 			header.writeCRC32(stream);
 			pPage->setFlag(eFP_CHANGE, true);
-			pStorage->saveFilePage(pPage);
+			pStorage->saveFilePage(pPage.get());
 
 			m_values.clear();
 			if(pNextPage != NULL)
@@ -128,8 +128,8 @@ namespace embDB
 			{
 				if(m_nPage == -1 )
 					return false;
-				CFilePage *pPage = pStorage->getFilePage(m_nPage, m_nPageSize);
-				if(!pPage)
+				FilePagePtr pPage = pStorage->getFilePage(m_nPage, m_nPageSize);
+				if(!pPage.get())
 				{
 					//TO DO Logs
 					return false;

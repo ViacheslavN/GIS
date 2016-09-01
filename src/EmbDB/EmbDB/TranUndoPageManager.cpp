@@ -20,12 +20,12 @@ namespace embDB
 	}
 	bool CTranUndoPageManager::add(int64 nDBAddr, int64 nTranAddr, uint32 nFlags, uint32 nPageSize)
 	{
-		return m_undoPages.push<CTranStorage, CFilePage*>(sUndoPageInfo(nDBAddr, nTranAddr, nFlags, nPageSize), m_pStorage);
+		return m_undoPages.push<CTranStorage>(sUndoPageInfo(nDBAddr, nTranAddr, nFlags, nPageSize), m_pStorage);
 	}
 
 	bool CTranUndoPageManager::save()
 	{
-		return m_undoPages.save<CTranStorage, CFilePage*>(m_pStorage);
+		return m_undoPages.save<CTranStorage>(m_pStorage);
 	}
 	
 	bool  CTranUndoPageManager::undo(CTranStorage *pTranStorage, IDBStorage* pDBStorage)
@@ -36,8 +36,8 @@ namespace embDB
 		while(!it.isNull())
 		{			
 			sUndoPageInfo& pageInfo = it.value();
-			CFilePage *pFilePage = pTranStorage->getFilePage(pageInfo.nTranAddr, pageInfo.nPageSize);
-			if(!pFilePage)
+			FilePagePtr pFilePage = pTranStorage->getFilePage(pageInfo.nTranAddr, pageInfo.nPageSize); // TO DO fix memory leak
+			if(!pFilePage.get())
 			{
 				m_pTran->error(L"TRAN: Can't get page from Tran");
 				return false;

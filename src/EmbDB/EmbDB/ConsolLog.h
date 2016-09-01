@@ -2,14 +2,14 @@
 #define _EMBEDDED_DATABASE_BP_CONSOL_LOGGER_H_
 #include "CommonLibrary/general.h"
 #include  "embDBInternal.h"
-
+#include "CommonLibrary/LockObject.h"
 namespace embDB
 {
 
 	class CConsolLogger : public ILogger
 	{
 		public:
-			CConsolLogger();
+			CConsolLogger(bool bMultiTread = true);
 			~CConsolLogger();
 
 			virtual eLogMode GetLogMode() const {return lmConsole;}
@@ -23,6 +23,9 @@ namespace embDB
 
 		private:
 			uint32 m_nLogLevel;
+			CommonLib::ILockObject *m_pLockObj;
+			CommonLib::CEmptyLockObject m_emptyLock;
+			CommonLib::CSLockObject m_CSLock;
 	};
 
 }

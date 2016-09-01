@@ -6,6 +6,7 @@
 #include <set>
 #include <iostream>
 #include "TransactionBase.h"
+#include "TranStorage.h"
 namespace embDB
 {
 	class CDatabase;
@@ -13,13 +14,18 @@ namespace embDB
 	{
 	public:
 		typedef ITransactionBase<IDBTransaction> TBase;
-		CDirectTransaction(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache = 10000);
+		CDirectTransaction(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache = 10000,
+			eDBTransationType tranType = eTTDirectTransaction);
 		//for compatible tests
 		CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
+			eTransactionDataType nTranType, const CommonLib::CString& sFileName, 
+			IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000,
+			eDBTransationType tranType = eTTDirectTransaction);
 
 		CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionType nTranType, const CommonLib::CString& sFileName, IDBConnection* pConnection, int64 nID, uint32 nTranCache = 10000);
+			eTransactionDataType nTranType, const CommonLib::CString& sFileName, 
+			IDBConnection* pConnection, int64 nID, uint32 nTranCache = 10000,
+			eDBTransationType tranType = eTTDirectTransaction);
 		~CDirectTransaction();
 
 		//ITransactions
@@ -47,7 +53,7 @@ namespace embDB
  
 
  
-		virtual eTransactionType getType() const {return eTT_UNDEFINED;}
+		virtual eTransactionDataType getType() const {return eTT_UNDEFINED;}
 
 		virtual void addInnerTransactions(IDBTransaction *pTran){}
 
@@ -76,12 +82,19 @@ namespace embDB
 			return getNewPage(nSize);
 		}
 		void OutDebugInfo(){}
+
+		virtual eDBTransationType getDBTransationType() const {return m_TranType;}
 	private:
 		IDBStorage* m_pDBStorage;
+		CommonLib::CFile m_TranStorage;
  
 		CommonLib::CString m_sFileName;
 		std::set<int64> m_setRemovePages;
 		std::set<int64> m_setPagesFromFree;
+
+		eDBTransationType m_TranType;
+
+ 
 };
 }
 #endif

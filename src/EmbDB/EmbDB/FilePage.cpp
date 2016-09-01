@@ -63,7 +63,7 @@ int64 CFilePage::getAddr() const
 }
 bool CFilePage::IsFree()
 {
-	return RefCounter::isRemovable();
+	return AutoRefCounter::isRemovable();
 }
 uint32 CFilePage::getFlags() const
 {

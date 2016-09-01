@@ -279,6 +279,9 @@
     <ClInclude Include="IXYComressor.h">
       <Filter>SpatialData\shapeCompressor</Filter>
     </ClInclude>
+    <ClInclude Include="LockObject.h">
+      <Filter>thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

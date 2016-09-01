@@ -155,11 +155,13 @@ namespace embDB
 	enum DBTransactionMode
 	{
 		eTMSingleTransactions,
+		eTMSingleReadTransactions,
+		eTMMultiReadTransactions,
 		eTMOneReadersManywriter,
 		eTMMultiTransactions
 	};
 
-
+	
 
 	enum CompressType
 	{
@@ -253,13 +255,23 @@ namespace embDB
 
 		}
 	};
-	enum eTransactionType
+	enum eTransactionDataType
 	{
 		eTT_UNDEFINED=1,  //предпологатеься что тип может быть любой
 		eTT_MODIFY = 2,
 		eTT_SELECT = 4,
 		eTT_DDL = 8  
 	};
+
+	enum eDBTransationType
+	{
+		eTTUndefined,
+		eTTFullTransaction,
+		eTTDirectTransactionUndo,
+		eTTDirectTransaction
+
+	};
+
 
 	enum eLogMode
 	{
@@ -528,7 +540,7 @@ namespace embDB
 		virtual ~ITransaction(){}
 
 
-		virtual eTransactionType getType() const = 0;
+		virtual eTransactionDataType getType() const = 0;
 		virtual bool begin() = 0;
 		virtual bool commit() = 0;
 		virtual bool rollback() = 0;
@@ -557,6 +569,9 @@ namespace embDB
 		virtual IUpdateCursorPtr createUpdateCursor() = 0;
 		virtual IDeleteCursorPtr createDeleteCursor(const wchar_t *pszTable) = 0;
 
+
+		virtual eDBTransationType getDBTransationType() const = 0;
+
 	};
 	
 
@@ -583,6 +598,11 @@ namespace embDB
 		 virtual bool closeConnection(IConnection *pConnection)  = 0;
 
 		virtual bool close()  = 0;
+		virtual bool setFileLogName(const wchar_t *pszFileLog) = 0;
+		virtual void consolLog() = 0;
+		virtual void setLogLevel(uint32 nLevel) = 0;
+		virtual uint32 getLogLevel() = 0;
+
 		//virtual ITransactionPtr startTransaction(eTransactionType trType) = 0;
 		//virtual bool closeTransaction(ITransaction* ) = 0;
 
@@ -598,7 +618,7 @@ namespace embDB
 		virtual ~IConnection(){}
 
 		virtual ISchemaPtr getSchema() const = 0;
-		virtual ITransactionPtr startTransaction(eTransactionType trType) = 0;
+		virtual ITransactionPtr startTransaction(eTransactionDataType trType, eDBTransationType trDbType = eTTFullTransaction) = 0;
 		virtual IDatabase* getDB() const  = 0;
 		virtual bool closeTransaction(ITransaction* ) = 0;
 		virtual uint64 getUserUID() const = 0;

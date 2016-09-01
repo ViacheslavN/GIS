@@ -11,7 +11,7 @@ namespace embDB
 
 	
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionType nTranType, const CommonLib::CString& sFileName,  IDBConnection* pConnection, int64 nID, uint32 nTranCache) :
+		eTransactionDataType nTranType, const CommonLib::CString& sFileName,  IDBConnection* pConnection, int64 nID, uint32 nTranCache) :
 		TBase(pConnection, pAlloc)
 		, m_TranStorage(pAlloc, &m_TranPerfCounter, pConnection->getCheckCRC())
 		, m_nRestoreType(nRestoreType)
@@ -31,7 +31,7 @@ namespace embDB
 	}
 
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) :
+		eTransactionDataType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) :
 		TBase(NULL, pAlloc)
 		, m_TranStorage(pAlloc, &m_TranPerfCounter, pDBStorage->getCheckCRC())
 		, m_nRestoreType(nRestoreType)
@@ -95,8 +95,8 @@ namespace embDB
 			return false;
 		}
 		m_LogStateManager.setState(eTS_BEGIN);
-		CFilePage* pFilePage = m_TranStorage.getNewPage(MIN_PAGE_SIZE);
-		if(!pFilePage)
+		FilePagePtr pFilePage = m_TranStorage.getNewPage(MIN_PAGE_SIZE);
+		if(!pFilePage.get())
 		{
 			error(L"Transactions: Can't create page addr:0");
 			return false;
@@ -116,13 +116,13 @@ namespace embDB
 		stream.write(m_Header.nPageChangeHeader);
 		stream.write(m_Header.nPageUndoRedoHeader);
 		stream.write(m_Header.nPageStateHeader);
-		m_TranStorage.saveFilePage(pFilePage, 0);
+		m_TranStorage.saveFilePage(pFilePage.get(), 0);
 		if(m_nRestoreType == rtUndo)
 			m_TranUndoManager.setFirstPage(m_Header.nPageUndoRedoHeader);
 		else if(m_nRestoreType == rtRedo)
 			m_TranRedoManager.setFirstPage(m_Header.nPageUndoRedoHeader, true);
 		m_LogStateManager.Init(m_Header.nPageStateHeader, false);
-		delete pFilePage;
+	
 		m_bIsCompleted = false;
 		return true;
 
@@ -137,16 +137,17 @@ namespace embDB
 			return true;
 		
 
+		bool bRet = false;
 		if(m_nRestoreType == rtUndo)
 		{
-			return commit_undo();
+			bRet = commit_undo();
 		};
 		if(m_nRestoreType == rtRedo)
 		{
-			return commit_redo();
+			bRet = commit_redo();
 		};
 		m_bIsCompleted = true;
-		return true;
+		return bRet;
 	}
 	bool CTransaction::rollback()
 	{
@@ -171,8 +172,8 @@ namespace embDB
 		{
 			return false;
 		}
-		CFilePage* pFilePage = m_TranStorage.getFilePage(0, true);
-		if(!pFilePage)
+		FilePagePtr pFilePage = m_TranStorage.getFilePage(0, true);
+		if(!pFilePage.get())
 		{
 			return false;
 		}
@@ -240,8 +241,8 @@ namespace embDB
 			m_TranPerfCounter.ReadDBPage();
 			return m_pDBStorage->getFilePage(nAddr, nSize, bRead, bNeedDecrypt);
 		}
-		CFilePage* pPage = m_PageChache.GetPage(nAddr, false, bRead, nSize);
-		if(!pPage)
+		FilePagePtr pPage = m_PageChache.GetPage(nAddr, false, bRead, nSize);
+		if(!pPage.get())
 		{
 			m_TranPerfCounter.ReadDBPage();
 			FilePagePtr pStoragePage =  m_pDBStorage->getFilePage(nAddr, nSize, bRead);
@@ -251,7 +252,7 @@ namespace embDB
 				SaveDBPage(pStoragePage.get());
 			}*/
 			//int64 nTranAddr = m_TranStorage.getNewPageAddr();
-			m_PageChache.AddPage(nAddr, -1, pPage);
+			m_PageChache.AddPage(nAddr, -1, pPage.get());
 		}
 		else if(pPage->getAddr() != -1)
 		{
@@ -295,8 +296,8 @@ namespace embDB
 	}
 	FilePagePtr CTransaction::getTranFilePage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt )
 	{
-		CFilePage* pPage = m_PageChache.GetPage(nAddr, false, bRead, nSize);
-	 	return FilePagePtr(pPage);
+	 
+	 	return m_PageChache.GetPage(nAddr, false, bRead, nSize);
 	}
 	void CTransaction::saveTranFilePage(FilePagePtr pPage,  uint32 nSize,  bool bChandgeInCache)
 	{

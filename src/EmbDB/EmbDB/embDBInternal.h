@@ -519,6 +519,7 @@ namespace embDB
 		virtual int64 getBeginFileSize() const = 0;
 		virtual bool isDirty() const = 0;
 		virtual const CommonLib::CString & getTranFileName() const = 0;
+		virtual	eDBTransationType  getTranDBType() const = 0;
 		virtual void clearDirty() = 0;
 		virtual void setStoragePageInfo(int64 nStorageInfo)= 0;
 		virtual bool initStorage(int64 nStorageInfo)= 0;
@@ -533,7 +534,7 @@ namespace embDB
 		virtual bool ReadRowData(const byte* pData, uint32 nSize, int64 nPos = -1) = 0;
 
 		//for write/save
-		virtual bool isLockWrite() = 0;
+		//virtual bool isLockWrite() = 0;
 		virtual bool lockWrite(IDBTransaction *pTran = NULL) = 0;
 		virtual bool try_lockWrite() = 0;
 		virtual bool unlockWrite(IDBTransaction *pTran = NULL) = 0;
@@ -566,7 +567,7 @@ namespace embDB
 		IDBTable(){}
 		virtual ~IDBTable(){}
 
-		virtual bool isLockWrite() = 0;
+		//virtual bool isLockWrite() = 0;
 		virtual bool lockWrite() = 0;
 		virtual bool try_lockWrite() = 0;
 		virtual bool unlockWrite() = 0;

@@ -519,6 +519,7 @@
     <ClInclude Include="BPVectorNoPod.h" />
     <ClInclude Include="CacheLRU.h" />
     <ClInclude Include="CacheLRU_2Q.h" />
+    <ClInclude Include="CacheLRU_2Q_Ptr.h" />
     <ClInclude Include="CompIndexInnerCompressor.h" />
     <ClInclude Include="CompIndexLeafCompressor.h" />
     <ClInclude Include="CompositeIndexKey.h" />
@@ -545,6 +546,7 @@
     <ClInclude Include="Crypto\SHA256.h" />
     <ClInclude Include="Crypto\SHA512.h" />
     <ClInclude Include="DeleteCursor.h" />
+    <ClInclude Include="DirectTranUndoManager.h" />
     <ClInclude Include="embDB.h" />
     <ClInclude Include="embDBInternal.h" />
     <ClInclude Include="embDBLib.h" />
@@ -738,6 +740,7 @@
     <ClCompile Include="DBTranManager.cpp" />
     <ClCompile Include="DeleteCursor.cpp" />
     <ClCompile Include="DirectTransactions.cpp" />
+    <ClCompile Include="DirectTranUndoManager.cpp" />
     <ClCompile Include="Fields.cpp" />
     <ClCompile Include="FieldSet.cpp" />
     <ClCompile Include="FreePageManage.cpp" />

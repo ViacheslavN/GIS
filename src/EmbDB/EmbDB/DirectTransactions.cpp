@@ -4,8 +4,9 @@
 
 namespace embDB
 {
-	CDirectTransaction::CDirectTransaction(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache) 
-		: TBase(NULL, pAlloc)
+	CDirectTransaction::CDirectTransaction(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache,
+		eDBTransationType tranType) 
+		: TBase(NULL, pAlloc), m_TranType(tranType)
  
 		
 	{
@@ -13,7 +14,8 @@ namespace embDB
 		 m_pDBStorage =pDBStorage;
 	}
 	CDirectTransaction::CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) : TBase(NULL, pAlloc)
+		eTransactionDataType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache,
+		eDBTransationType tranType) : TBase(NULL, pAlloc), m_TranType(tranType)
  
 	{
 		assert(m_pDBStorage);
@@ -22,7 +24,8 @@ namespace embDB
 
 
 	CDirectTransaction::CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionType nTranType, const CommonLib::CString& sFileName, IDBConnection* pConnection, int64 nID, uint32 nTranCache) : TBase(pConnection, pAlloc)
+		eTransactionDataType nTranType, const CommonLib::CString& sFileName, IDBConnection* pConnection, int64 nID, uint32 nTranCache,
+		eDBTransationType tranType) : TBase(pConnection, pAlloc), m_TranType(tranType)
  
 	{
 

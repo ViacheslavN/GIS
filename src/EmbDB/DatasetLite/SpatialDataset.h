@@ -28,7 +28,7 @@ namespace DatasetLite
 		ISpatialLiteDataset(){}
 		virtual ~ISpatialLiteDataset(){}
 		virtual bool close()  = 0;
-		virtual embDB::ITransaction* startTransaction(embDB::eTransactionType trType) = 0;
+		virtual embDB::ITransaction* startTransaction(embDB::eTransactionDataType trType) = 0;
 		virtual bool closeTransaction(embDB::ITransaction* ) = 0;
 		virtual embDB::ICursor * spatialQuery();
 

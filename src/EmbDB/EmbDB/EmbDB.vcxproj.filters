@@ -241,17 +241,17 @@
     <Filter Include="Crypto\CryptoAlg\Clipher">
       <UniqueIdentifier>{c191a4a9-2823-4e82-8289-9e130a036ee3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\transactions\TranLogs">
-      <UniqueIdentifier>{e07710a9-01ff-4f83-836c-7a9da3f0d82b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\transactions\TranLogs\ConsolLog">
-      <UniqueIdentifier>{78375454-5b38-4d63-a1fc-96d765a2afa6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\transactions\TranLogs\FileLog">
-      <UniqueIdentifier>{12de0940-9c74-4011-81e2-9c44d2b6138a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB\Database">
       <UniqueIdentifier>{13f50890-833b-4825-9371-a1d8139825fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Logs">
+      <UniqueIdentifier>{e07710a9-01ff-4f83-836c-7a9da3f0d82b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Logs\ConsolLog">
+      <UniqueIdentifier>{78375454-5b38-4d63-a1fc-96d765a2afa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Logs\FileLog">
+      <UniqueIdentifier>{12de0940-9c74-4011-81e2-9c44d2b6138a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -325,9 +325,6 @@
       <Filter>storage</Filter>
     </ClInclude>
     <ClInclude Include="DBMagicSymbol.h">
-      <Filter>DB</Filter>
-    </ClInclude>
-    <ClInclude Include="DBConfig.h">
       <Filter>DB</Filter>
     </ClInclude>
     <ClInclude Include="VariantField.h">
@@ -1294,7 +1291,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ConsolLog.h">
-      <Filter>DB\transactions\TranLogs\ConsolLog</Filter>
+      <Filter>DB\Logs\ConsolLog</Filter>
     </ClInclude>
     <ClInclude Include="Database.h">
       <Filter>DB\Database</Filter>
@@ -1319,6 +1316,27 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectTranUndoManager.h">
+      <Filter>DB\transactions\DirectTran</Filter>
+    </ClInclude>
+    <ClInclude Include="DBConfig.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="CacheLRU_2Q_Ptr.h">
+      <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1482,7 +1500,7 @@
       <Filter>Crypto</Filter>
     </ClCompile>
     <ClCompile Include="ConsolLog.cpp">
-      <Filter>DB\transactions\TranLogs\ConsolLog</Filter>
+      <Filter>DB\Logs\ConsolLog</Filter>
     </ClCompile>
     <ClCompile Include="Database.cpp">
       <Filter>DB\Database</Filter>
@@ -1495,6 +1513,9 @@
     </ClCompile>
     <ClCompile Include="UserCryptoManager.cpp">
       <Filter>DB\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectTranUndoManager.cpp">
+      <Filter>DB\transactions\DirectTran</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

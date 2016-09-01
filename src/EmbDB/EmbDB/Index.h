@@ -63,7 +63,7 @@ public:
 	  {
 		 return true;// return m_tree.saveBTreeInfo();
 	  }
-	  virtual bool load(int64 nAddr, eTransactionType type)
+	  virtual bool load(int64 nAddr, eTransactionDataType type)
 	  {
  
 		  m_tree.setRootPage(nAddr);

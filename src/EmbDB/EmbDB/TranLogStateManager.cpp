@@ -20,30 +20,29 @@ namespace embDB
 		m_nPageAddr = nPageAddr;
 		if(bRead)
 		{
-			CFilePage* pPage = m_pStorage->getFilePage(m_nPageAddr, COMMON_PAGE_SIZE);
-			assert(pPage);
-			if(!pPage)
+			FilePagePtr pPage = m_pStorage->getFilePage(m_nPageAddr, COMMON_PAGE_SIZE);
+			assert(pPage.get());
+			if(!pPage.get())
 				return false;
 			CommonLib::FxMemoryReadStream stream;
 			stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 			stream.read(m_nState);
 			stream.read(m_nDbSize);
-			delete pPage; 
+		 
 		}
 		return true;
 	}
 	bool CTranLogStateManager::save()
 	{
-		CFilePage* pPage = m_pStorage->getFilePage(m_nPageAddr, false);
-		assert(pPage);
-		if(!pPage)
+		FilePagePtr pPage = m_pStorage->getFilePage(m_nPageAddr, COMMON_PAGE_SIZE, false);
+		assert(pPage.get());
+		if(!pPage.get())
 			return false;
 		CommonLib::FxMemoryWriteStream stream;
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		stream.write(m_nState);
 		stream.write(m_nDbSize);
-		m_pStorage->saveFilePage(pPage, pPage->getAddr());
-		delete pPage;
+		m_pStorage->saveFilePage(pPage.get(), pPage->getAddr());
 		return true;
 	}
 	bool  CTranLogStateManager::setState(eTransactionsState eTS)

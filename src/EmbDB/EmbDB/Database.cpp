@@ -4,6 +4,7 @@
 #include "DBMagicSymbol.h"
 #include "storage.h"
 #include "Transactions.h"
+#include "DirectTransactions.h"
 #include "DBTranManager.h"
 #include "GlobalParams.h"
 #include "RandomGenerator.h"
@@ -25,7 +26,8 @@ namespace embDB
 	}
 	
 
-	CDatabase::CDatabase() :  m_bOpen(false), m_bLoad(false), m_UserCryptoManager(this)
+	CDatabase::CDatabase() :  m_bOpen(false), m_bLoad(false), m_UserCryptoManager(this), m_nLogLevel(0),
+		m_TranMode(eTMMultiTransactions)
 	{
 		m_pAlloc.reset(new CommonLib::simple_alloc_t());
 		m_pStorage = (IDBStorage*)new CStorage(m_pAlloc.get());
@@ -44,6 +46,8 @@ namespace embDB
 	bool CDatabase::open(const wchar_t* pszName, DBTransactionMode mode, const wchar_t* pszWorkingPath)
 	{
 		close();
+		m_TranMode = mode;
+
 		bool bOpen =  m_pStorage->open(pszName, false, false, false, false/*, DEFAULT_PAGE_SIZE*/);
 		if(!bOpen)
 			return false;
@@ -54,7 +58,7 @@ namespace embDB
 		if(nfSize < MIN_PAGE_SIZE + HEADER_DB_PAGE_SIZE)
 			return false;
 		//m_pStorage->setPageSize(DEFAULT_PAGE_SIZE);
-		FilePagePtr pHeadDBFile(m_pStorage->getFilePage(0, HEADER_DB_PAGE_SIZE));
+		FilePagePtr pHeadDBFile = m_pStorage->getFilePage(0, HEADER_DB_PAGE_SIZE);
 		if(!pHeadDBFile.get())
 			return false;
 
@@ -74,7 +78,7 @@ namespace embDB
 		  const wchar_t* pszPassword, const SDBParams *pParams)
 	{
 		close();
-
+		m_TranMode = mode;
 		CGlobalParams::Instance().SetCheckCRC(true);
 
 
@@ -273,11 +277,11 @@ namespace embDB
 		return m_pAlloc.get();
 	}
 	
-	ITransactionPtr CDatabase::startTransaction(eTransactionType trType, uint64 nUserID, IDBConnection *pConn)
+	ITransactionPtr CDatabase::startTransaction(eTransactionDataType trType, uint64 nUserID, IDBConnection *pConn, eDBTransationType trDbType)
 	{
 		if(!m_bOpen)
 			return ITransactionPtr();
-		return m_pTranManager->CreateTransaction(trType, pConn);
+		return m_pTranManager->CreateTransaction(trType, pConn, trDbType);
 
 		
 	}
@@ -291,9 +295,18 @@ namespace embDB
 	{
 		if(!m_pStorage->isDirty())
 			return true;
+
+		if(m_pStorage->getTranDBType() == eTTFullTransaction)
+		{
+			CTransaction tran(m_pAlloc.get(), rtUndo,  eTT_UNDEFINED, m_pStorage->getTranFileName(), m_pStorage.get(), -1);
+			return tran.restore();
+		}
+		else
+		{
+			CDirectTransaction tran(m_pAlloc.get(), rtUndo,  eTT_UNDEFINED, m_pStorage->getTranFileName(), m_pStorage.get(), -1, 10000, m_pStorage->getTranDBType());
+			return tran.restore();
+		}
 		
-		CTransaction tran(m_pAlloc.get(), rtUndo,  eTT_UNDEFINED, m_pStorage->getTranFileName(), m_pStorage.get(), -1);
-		return tran.restore();
 		
 	}
 	int64 CDatabase::InitCrypto(byte* pPWD, uint32 nLen)
@@ -383,6 +396,23 @@ namespace embDB
 		if(!pRootFile.get())
 			return false;
 		return readRootPage(pRootFile.get());
+	}
+
+	bool  CDatabase::setFileLogName(const wchar_t *pszFileLog)
+	{
+		return true;
+	}
+	void  CDatabase::consolLog()
+	{
+
+	}
+	void  CDatabase::setLogLevel(uint32 nLevel)
+	{
+		m_nLogLevel = nLevel;
+	}
+	uint32  CDatabase::getLogLevel()
+	{
+		return m_nLogLevel;
 	}
 	 
 }

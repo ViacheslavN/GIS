@@ -143,7 +143,7 @@ namespace embDB
 	}
 	uint32 CUserCryptoManager::CalcOffset(const byte* pPWD, uint32 nLen, const byte* pSlat, uint32 nSaltLen) const
 	{
-		int64 nOffset = 0;
+		uint32 nOffset = 0;
 		CPBKDF2::PBKDF2(pPWD, nLen, pSlat, nSaltLen, (byte*)&nOffset, 2, 1000);
 		return nOffset;
 	}
@@ -268,7 +268,7 @@ namespace embDB
 		if(!header.isValid())
 			return false; 
 
-		int64 nOffset = CalcOffset(&vecUtf8PWD[0], nUtf8Len, m_szSalt, ___nSALT_SIZE);
+		uint32 nOffset = CalcOffset(&vecUtf8PWD[0], nUtf8Len, m_szSalt, ___nSALT_SIZE);
 
 		if(m_bPWDCheck)
 		{

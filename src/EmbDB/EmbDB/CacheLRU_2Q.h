@@ -11,7 +11,7 @@ namespace embDB
 	template<class TObj>
 	struct TEmptyFreeChecker
 	{
-		bool IsFree(TObj* pObj)
+		bool IsFree(TObj& pObj)
 		{
 			return true;
 		}
@@ -32,11 +32,16 @@ namespace embDB
 		{
 			TCacheVal() : /*m_nCnt(0)*/m_type(UNDEFINED)
 			{}
-			TCacheVal( const TKey key, TObj* obj, eQueryType type) : m_key(key), m_obj(obj),
+			TCacheVal( const TKey key, TObj obj, eQueryType type) : m_key(key), m_obj(obj),
 				/*m_nCnt(0)*/	m_type(type)
 			{}
+
+			~TCacheVal()
+			{
+
+			}
 			TKey m_key;
-			TObj* m_obj;
+			TObj m_obj;
 			//uint64 m_nCnt;
 			eQueryType m_type;
 		};
@@ -47,8 +52,9 @@ namespace embDB
 	 public:
 		 typedef typename QList::iterator TListIterator;
 		
-		TCacheLRU_2Q(CommonLib::alloc_t* pAlloc) : 
-			m_pAlloc(pAlloc), m_TopList(pAlloc), m_BackList(pAlloc)
+		TCacheLRU_2Q(CommonLib::alloc_t* pAlloc, TObj nullObj = TObj()) : 
+			m_pAlloc(pAlloc), m_TopList(pAlloc), m_BackList(pAlloc),
+				m_NullObj(nullObj)
 		{
 			if(!m_pAlloc)
 				m_pAlloc = &m_simple_alloc;
@@ -81,8 +87,8 @@ namespace embDB
 				{
 					return m_listIt.IsNull();
 				}
-				TObj* object(){return m_listIt.value().m_obj;}
-				TKey  key(){return m_listIt.value().m_key;}
+				TObj& object(){return m_listIt.value().m_obj;}
+				TKey&  key(){return m_listIt.value().m_key;}
 				bool next()
 				{
 					if( m_listIt.IsNull())
@@ -105,7 +111,7 @@ namespace embDB
 		};
  
 
-		void AddElem(const TKey& key, TObj* pObj, bool bAddBack = true)
+		void AddElem(const TKey& key, TObj& pObj, bool bAddBack = true)
 		{
 
 			QList::iterator it;
@@ -123,15 +129,15 @@ namespace embDB
 			m_TopList.clear();
 			m_BackList.clear();
 		}
-		TObj*  remove(const TKey& key)
+		TObj remove(const TKey& key)
 		{
 			TCacheMap::iterator it = m_CacheMap.find(key);
 			if(it == m_CacheMap.end())
-				return NULL;
+				return m_NullObj;
 
 			QList::TNode* pNode =  it->second;
 			TCacheVal & cacheVal = pNode->m_val;
-			TObj* pObj =  cacheVal.m_obj;
+			TObj pObj =  cacheVal.m_obj;
 
 			if(cacheVal.m_type == BACK)
 				m_BackList.remove(pNode);
@@ -142,20 +148,20 @@ namespace embDB
 			return pObj;
 
 		}
-		TObj* remove_back()
+		TObj remove_back()
 		{
-			TObj* pObj = removeBack(m_BackList);
-			if(!pObj)
+			TObj pObj = removeBack(m_BackList);
+			if(pObj == m_NullObj)
 				 pObj = removeBack(m_TopList);
 
 			return pObj;
 		}
 
-		TObj* GetElem(const TKey& key, bool bNotMove = false)
+		TObj& GetElem(const TKey& key, bool bNotMove = false)
 		{
 			TCacheMap::iterator it = m_CacheMap.find(key);
 			if(it == m_CacheMap.end())
-				return NULL;
+				return m_NullObj;
 
 
 			QList::TNode* pNode =  it->second;
@@ -197,24 +203,29 @@ namespace embDB
 	
 		iterator begin() {return iterator(&m_TopList, &m_BackList);}
 	 private:
-		TObj* removeBack(QList& list)
+		TObj removeBack(QList& list)
 		{
 			QList::iterator listIt = list.back();
 			if(listIt.IsNull())
-				return NULL;
+				return m_NullObj;
 
 
 			while(!listIt.IsNull())
 			{
-				TObj* pObj = listIt.value().m_obj;
-				if(m_FreeChecker.IsFree(pObj))
+				
+				if(m_FreeChecker.IsFree(listIt.value().m_obj))
 				{
+					TObj pObj = listIt.value().m_obj;
 					m_CacheMap.erase(listIt.value().m_key);
 					list.remove(listIt);
 					return pObj;
 				}
+				else
+				{
+					listIt.next();
+				}
 			}
-			return NULL;
+			return m_NullObj;
 		}
 
 	private:
@@ -229,6 +240,8 @@ namespace embDB
 		QList m_BackList;
 		TFreeChecker m_FreeChecker;
 		uint32 m_nK;
+
+		TObj m_NullObj;
 	 
 	};   
 

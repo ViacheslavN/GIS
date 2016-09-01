@@ -37,11 +37,10 @@ namespace CommonLib
 		//		delete this;
 			return 0;
 		}
-		bool isRemovable() const { return 0 == m_nCounter; }
+		bool isRemovable(CommonLib::Interlocked::inc_type val = 0) const { return val == m_nCounter; }
 		TRemoveFunk* m_pRemFunk;
 	private:
 		mutable CommonLib::Interlocked::inc_type m_nCounter;
-
 
 	};
 
@@ -63,7 +62,7 @@ namespace CommonLib
 			delete this;
 			return 0;
 		}
-		bool isRemovable() const { return 0 == m_nCounter; }
+		bool isRemovable(CommonLib::Interlocked::inc_type val = 0) const { return val == m_nCounter; }
 	private:
 		mutable Interlocked::inc_type m_nCounter;
 
