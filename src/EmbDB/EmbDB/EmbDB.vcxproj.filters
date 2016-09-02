@@ -1338,6 +1338,18 @@
     <ClInclude Include="CacheLRU_2Q_Ptr.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileLog.h">
+      <Filter>DB\Logs\FileLog</Filter>
+    </ClInclude>
+    <ClInclude Include="LogBase.h">
+      <Filter>DB\Logs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1516,6 +1528,9 @@
     </ClCompile>
     <ClCompile Include="DirectTranUndoManager.cpp">
       <Filter>DB\transactions\DirectTran</Filter>
+    </ClCompile>
+    <ClCompile Include="FileLog.cpp">
+      <Filter>DB\Logs\FileLog</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

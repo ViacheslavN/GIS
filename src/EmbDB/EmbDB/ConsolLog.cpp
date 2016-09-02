@@ -4,32 +4,12 @@
 
 namespace embDB
 {
-	CConsolLogger::CConsolLogger(bool bMultiTread ) : m_nLogLevel(0)
-	{
-
-		if(bMultiTread)
-			m_pLockObj = &m_CSLock;
-		else
-			m_pLockObj = &m_emptyLock;
-
-	}
+	CConsolLogger::CConsolLogger(bool bMultiThread ) : LogBase(bMultiThread)
+	{}
 	CConsolLogger::~CConsolLogger()
-	{
+	{}
 
-	}
-
-	uint32 CConsolLogger::GetLogLevel() const
-	{
-		CommonLib::ILockObject::scoped_lock lock(m_pLockObj);
-
-		return m_nLogLevel;
-	}
-	void CConsolLogger::SetLogLevel(uint32 nLogLevel)
-	{
-		CommonLib::ILockObject::scoped_lock lock(m_pLockObj);
-		m_nLogLevel = nLogLevel;
-	}
-
+	
 	void CConsolLogger::error(const wchar_t *pszFormat, ...)
 	{
 		CommonLib::ILockObject::scoped_lock lock(m_pLockObj);

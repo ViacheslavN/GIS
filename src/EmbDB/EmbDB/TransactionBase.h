@@ -256,10 +256,20 @@ namespace embDB
 
 				if(m_pLogger.get())
 				{
-					va_list qlist;
-					va_start(qlist, pszFormat);
-					m_pLogger->error(pszFormat, qlist);
-					va_end(qlist);
+					va_list args;
+					va_start(args, pszFormat);
+
+					uint32 len =  _vscwprintf(pszFormat, args);
+
+					if(len != 0)
+					{
+						wchar_t* buffer= (wchar_t*)_alloca ((len + 1)* sizeof (wchar_t)); 
+						vswprintf(buffer, pszFormat, args);
+						m_pLogger->error(buffer);
+					}
+
+					va_end(args);
+
 				}
 
 

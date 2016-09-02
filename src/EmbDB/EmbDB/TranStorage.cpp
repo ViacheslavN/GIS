@@ -18,8 +18,8 @@ namespace embDB
 	}
 	bool CTranStorage::open(const CommonLib::CString& sTranName,/* uint32 nPageSize,*/ bool bNew)
 	{
-		CommonLib::enOpenFileMode nOpenMode = bNew ? CommonLib::ofmCreateAlways : CommonLib::ofmOpenExisting ;
-		CommonLib::enAccesRights nReadWrite = CommonLib::aeReadWrite;;
+		CommonLib::enOpenFileMode nOpenMode = bNew ? CommonLib::ofmCreateAlways : CommonLib::ofmOpenExisting;
+		CommonLib::enAccesRights nReadWrite = CommonLib::aeReadWrite;
 		//m_nPageSize = nPageSize;
 		bool bRet =  m_pFile.openFile(sTranName.cwstr(), nOpenMode, nReadWrite, CommonLib::smNoMode);
 		m_sTranName = sTranName;

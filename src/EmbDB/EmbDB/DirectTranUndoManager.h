@@ -7,7 +7,7 @@
 
 namespace embDB
 {
-
+	class CTranStorage;
 
 	class CDirectTranUndoManager
 	{
@@ -15,13 +15,13 @@ namespace embDB
 			CDirectTranUndoManager();
 			~CDirectTranUndoManager();
 
-			void init(int64 nRootPage, CommonLib::CFile *pStorage);
-			void load(int64 nRootPage, CommonLib::CFile *pStorage);
+			void init(int64 nRootPage, CTranStorage *pStorage);
+			void load(int64 nRootPage, CTranStorage *pStorage);
 
 			void AddUndoPage(CFilePage *pPage);
 
 		private:
-			CommonLib::CFile *m_pStorage;
+			CTranStorage *m_pStorage;
 			int64 m_nRootPage;
 			typedef std::map<int64, int64> TPages;
 

@@ -6,6 +6,9 @@
 #include <iostream>
 #include "CreateFields.h"
 #include "importFromShape.h"
+#include "../../EmbDB/FileLog.h"
+
+
 
 void TestSpatialField(embDB::CDatabase& db);
 void TestAddFieldDB();
@@ -14,7 +17,15 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	//TestAddFieldDB();
 //	TestSpIndexFromShapeFile();
-	testDBFromShape();
+
+
+	embDB::CFileLogger flogger(L"D:\\db\\1.log", false, true);
+
+
+	flogger.error(L"Error : %d", 3405);
+	flogger.error(L"Error : %d", 11);
+
+	//testDBFromShape();
 	return 0;
 	
 /*	embDB::TVarINT32 int32key;

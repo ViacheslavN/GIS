@@ -86,7 +86,7 @@ namespace embDB
 		virtual eDBTransationType getDBTransationType() const {return m_TranType;}
 	private:
 		IDBStorage* m_pDBStorage;
-		CommonLib::CFile m_TranStorage;
+		CTranStorage m_TranStorage;
  
 		CommonLib::CString m_sFileName;
 		std::set<int64> m_setRemovePages;

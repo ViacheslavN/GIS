@@ -556,6 +556,7 @@
     <ClInclude Include="FieldIteratorBase.h" />
     <ClInclude Include="Fields.h" />
     <ClInclude Include="FieldSet.h" />
+    <ClInclude Include="FileLog.h" />
     <ClInclude Include="FixedStringBWTCompressor.h" />
     <ClInclude Include="FixedStringCompressor.h" />
     <ClInclude Include="FixedStringField.h" />
@@ -572,6 +573,7 @@
     <ClInclude Include="LeafStringCompress.h" />
     <ClInclude Include="LinkCompress.h" />
     <ClInclude Include="LinkDiffCompress.h" />
+    <ClInclude Include="LogBase.h" />
     <ClInclude Include="MathUtils.h" />
     <ClInclude Include="MemPageCache.h" />
     <ClInclude Include="MultiIndex.h" />
@@ -743,6 +745,7 @@
     <ClCompile Include="DirectTranUndoManager.cpp" />
     <ClCompile Include="Fields.cpp" />
     <ClCompile Include="FieldSet.cpp" />
+    <ClCompile Include="FileLog.cpp" />
     <ClCompile Include="FreePageManage.cpp" />
     <ClCompile Include="GlobalParams.cpp" />
     <ClCompile Include="InsertCursor.cpp" />
