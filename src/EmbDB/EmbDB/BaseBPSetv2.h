@@ -1437,7 +1437,7 @@ namespace embDB
 		}
 
 		//m_ChangeNode.insert(pNode);
-		assert(pLeafNode->count());
+		//assert(pLeafNode->count());
 
 		int nFoundIndex = pNode->foundIndex();
 

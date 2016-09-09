@@ -43,7 +43,8 @@ void insertINBTreeMap  (int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, i
 	double tranCom  = 0;
 	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, 8192, false, bCheckCRC);
 	tree.loadBTreeInfo(); 
-	tree.SetMinSplit(true);
+	if(nStart < nEndStart)
+		tree.SetMinSplit(true);
 	tree.SetBPTreeStatistics(&statInfo);
 	time.start();
 	int64 n = 0;
@@ -350,7 +351,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran1.data", &storage, 1);
 			tran.begin();
-			insertINBTreeMap <TBtree, TTran,  TKey, TValue>(nCacheBPTreeSize, 0, nCount, nStep, &tran, alloc, nTreeRootPage,  bCheckCRC);
+			insertINBTreeMap <TBtree, TTran,  TKey, TValue>(nCacheBPTreeSize, nCount, 0, nStep, &tran, alloc, nTreeRootPage,  bCheckCRC);
 			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 			storage.close();
 		}

@@ -19,13 +19,13 @@ int _tmain(int argc, _TCHAR* argv[])
 //	TestSpIndexFromShapeFile();
 
 
-	embDB::CFileLogger flogger(L"D:\\db\\1.log", false, true);
+	/*embDB::CFileLogger flogger(L"D:\\db\\1.log", false, true);
 
 
 	flogger.error(L"Error : %d", 3405);
 	flogger.error(L"Error : %d", 11);
-
-	//testDBFromShape();
+	*/
+	testDBFromShape();
 	return 0;
 	
 /*	embDB::TVarINT32 int32key;

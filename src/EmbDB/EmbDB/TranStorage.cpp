@@ -41,22 +41,31 @@ namespace embDB
 	}
 	int64 CTranStorage::saveFilePage(CFilePage* pPage, int64 nAddr )
 	{
+		uint32 nSize = pPage->getPageSize();
+		if(nSize%m_nPageSize != 0)
+			return -1;
+		if(nSize == 0)
+			nSize = m_nPageSize;
+
+		uint32 nCnt = nSize/m_nPageSize;
+
+
 		if(nAddr == -1)
 		{
 			nAddr = m_nLastAddr;
-			m_nLastAddr += 1;
+			m_nLastAddr += nCnt;
 		}
-		bool bRet = m_pFile.setFilePos64(nAddr * pPage->getPageSize(), CommonLib::soFromBegin);
+		bool bRet = m_pFile.setFilePos64(nAddr * m_nPageSize, CommonLib::soFromBegin);
 		assert(bRet);
-		uint32 nCnt = 0;
+		uint32 nWCnt = 0;
 		if(m_pPageCrypto && pPage->isNeedEncrypt())
 		{
 			m_pPageCrypto->encrypt(pPage, m_pBufPageCrypto->getRowData(),  (uint32)pPage->getPageSize());
-			nCnt = m_pFile.writeFile((void*)m_pBufPageCrypto->getRowData(),  (uint32)pPage->getPageSize());
+			nWCnt = m_pFile.writeFile((void*)m_pBufPageCrypto->getRowData(),  (uint32)pPage->getPageSize());
 		}
 		else
-			nCnt = m_pFile.writeFile((void*)pPage->getRowData(),  pPage->getPageSize() );
-		assert(nCnt != 0);
+			nWCnt = m_pFile.writeFile((void*)pPage->getRowData(),  pPage->getPageSize() );
+		assert(nWCnt != 0);
 		m_pCounter->WriteTranPage();
 		return nAddr;
 	}
