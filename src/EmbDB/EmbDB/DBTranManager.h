@@ -143,7 +143,7 @@ namespace embDB
 
 		CDBTranManager(CommonLib::alloc_t *pAlloc, CDatabase *pDB);
 		~CDBTranManager();
-		bool open(const CommonLib::CString &sFileName, const CommonLib::CString& sWorkingPath);
+		bool open(const CommonLib::CString &sFileName, const CommonLib::CString& sWorkingPath, ILogger *pLogger);
 		bool close();
 		ITransactionPtr CreateTransaction(eTransactionDataType trType, IDBConnection *pConn, eDBTransationType trDbType);
 		bool releaseTransaction(ITransaction* pTran);
@@ -160,6 +160,7 @@ namespace embDB
 		TDBTransactions m_Transactions;
 		CDatabase* m_pDB;
 		CommonLib::CString m_sWorkingPath;
+		ILoggerPtr m_pLogger;
 
 	};
 }

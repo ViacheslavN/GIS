@@ -22,9 +22,10 @@ namespace embDB
 	{
 
 	}
-	bool CDBTranManager::open(const CommonLib::CString &sFileName, const CommonLib::CString& sWorkingPath)
+	bool CDBTranManager::open(const CommonLib::CString &sFileName, const CommonLib::CString& sWorkingPath, ILogger *pLogger)
 	{
 		close();
+		m_pLogger = pLogger;
 		m_sWorkingPath = sWorkingPath;
 		m_nTranID = 1;
 		CommonLib::CString sTranLogFileName = sFileName;
@@ -105,6 +106,7 @@ namespace embDB
 			}
 			//delete pTran;
 		}
+		m_pLogger.release();
 		return m_Storage.close();
 	}
 
@@ -137,7 +139,7 @@ namespace embDB
 			return  ITransactionPtr();
 		}
 
-
+		pTran->SetLogger(m_pLogger.get());
 		//CDirectTransactions *pTran = new CDirectTransactions(m_pAlloc, rtUndo, trType, m_sWorkingPath + sFileName, m_pDB->getMainStorage(), m_nTranID++ );
 		ITransactionPtr pTranPtr(pTran);
 		m_Transactions.insert(pTranPtr);

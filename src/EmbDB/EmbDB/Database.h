@@ -102,7 +102,7 @@ namespace embDB
 	class CDatabase : public IDBDatabase
 	{
 		public:
-			CDatabase();
+			CDatabase(eLogMode logMode = lmUndefined, const wchar_t* pszLogName = NULL);
 			~CDatabase();
 			virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL);
 			virtual bool create(const wchar_t* pszDbName,  DBTransactionMode mode = eTMMultiTransactions,
@@ -117,11 +117,11 @@ namespace embDB
 			
 			virtual bool close();
 
-			virtual bool setFileLogName(const wchar_t *pszFileLog);
-			virtual void consolLog();
+ 
+
 			virtual void setLogLevel(uint32 nLevel);
 			virtual uint32 getLogLevel();
-		
+			virtual eLogMode getLogMode() const;
 		
 			virtual IDBStoragePtr getDBStorage() const  {return m_pStorage;}
 
@@ -160,6 +160,10 @@ namespace embDB
 			uint32 m_nLogLevel;
 
 			DBTransactionMode m_TranMode;
+
+			ILoggerPtr m_pLogger;
+			eLogMode m_LogMode;
+			CommonLib::CString m_sFileLogPath;
 
 		//	typedef RBMap<CommonLib::CString, CStorage*> TTableStorages;
 		//	TTableStorages m_TableStorages;

@@ -574,6 +574,7 @@
     <ClInclude Include="LinkCompress.h" />
     <ClInclude Include="LinkDiffCompress.h" />
     <ClInclude Include="LogBase.h" />
+    <ClInclude Include="LogHolder.h" />
     <ClInclude Include="MathUtils.h" />
     <ClInclude Include="MemPageCache.h" />
     <ClInclude Include="MultiIndex.h" />

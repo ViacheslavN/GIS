@@ -17,24 +17,30 @@
 #endif
 #include "Connection.h"
 
+#include "FileLog.h"
+#include "ConsolLog.h"
+
+
 namespace embDB
 {
 
-	IDatabasePtr IDatabase::CreateDatabase()
+	IDatabasePtr IDatabase::CreateDatabase(eLogMode logMode, const wchar_t* pszLogFile)
 	{
-		return IDatabasePtr(new CDatabase());
+		return IDatabasePtr(new CDatabase(logMode , pszLogFile));
 	}
 	
 
-	CDatabase::CDatabase() :  m_bOpen(false), m_bLoad(false), m_UserCryptoManager(this), m_nLogLevel(0),
-		m_TranMode(eTMMultiTransactions)
+	CDatabase::CDatabase(eLogMode logMode, const wchar_t* pszLogName) :  m_bOpen(false), m_bLoad(false), m_UserCryptoManager(this), m_nLogLevel(0),
+		m_TranMode(eTMMultiTransactions), m_LogMode(logMode), m_sFileLogPath(pszLogName)
 	{
 		m_pAlloc.reset(new CommonLib::simple_alloc_t());
 		m_pStorage = (IDBStorage*)new CStorage(m_pAlloc.get());
 		m_pTranManager.reset(new CDBTranManager(m_pAlloc.get(), this));
 		m_pSchema = (IDBShema*)new CSchema(this);
 
-		AddRef(); //TO DO fix it
+		//AddRef(); //TO DO fix it
+ 
+
 	}
 	CDatabase::~CDatabase()
 	{
@@ -48,10 +54,15 @@ namespace embDB
 		close();
 		m_TranMode = mode;
 
+		if(m_LogMode == lmConsole)
+			m_pLogger = new CConsolLogger(mode != eTMSingleTransactions && mode != eTMSingleReadTransactions);
+		else if(m_LogMode == lmFile)
+			m_pLogger = new CFileLogger(m_sFileLogPath.cwstr(), false, mode != eTMSingleTransactions && mode != eTMSingleReadTransactions);
+
 		bool bOpen =  m_pStorage->open(pszName, false, false, false, false/*, DEFAULT_PAGE_SIZE*/);
 		if(!bOpen)
 			return false;
-		bOpen = m_pTranManager->open(pszName, pszWorkingPath);
+		bOpen = m_pTranManager->open(pszName, pszWorkingPath, m_pLogger.get());
 		if(!bOpen)
 			return false;
 		int64 nfSize = m_pStorage->getFileSize();
@@ -82,9 +93,12 @@ namespace embDB
 		CGlobalParams::Instance().SetCheckCRC(true);
 
 
-		
 
-
+		if(m_LogMode == lmConsole)
+			m_pLogger = new CConsolLogger(mode != eTMSingleTransactions && mode != eTMSingleReadTransactions);
+		else if(m_LogMode == lmFile)
+			m_pLogger = new CFileLogger(m_sFileLogPath.cwstr(), false, mode != eTMSingleTransactions && mode != eTMSingleReadTransactions);
+	
 	//	m_dbHeader.nCRC = 10;
 	//	m_dbHeader.nVersion = 1;
 	//	m_dbHeader.nMagicSymbol = DB_SYMBOL;
@@ -93,7 +107,7 @@ namespace embDB
 		bool bOpen = m_pStorage->open(pszName, false, false, true, false);
 		if(!bOpen)
 			return false;
-		bOpen = m_pTranManager->open(pszName, pszWorkingPath);
+		bOpen = m_pTranManager->open(pszName, pszWorkingPath, m_pLogger.get());
 		if(!bOpen)
 			return false;
 
@@ -214,6 +228,7 @@ namespace embDB
 		bRet = m_pTranManager->close();
 		bRet = m_pSchema->close();
 		m_UserCryptoManager.close();
+		m_pLogger.release();
 		return bRet;
 	}
 	bool CDatabase::readHeadPage(CFilePage* pFilePage)
@@ -398,21 +413,27 @@ namespace embDB
 		return readRootPage(pRootFile.get());
 	}
 
-	bool  CDatabase::setFileLogName(const wchar_t *pszFileLog)
+ 
+	eLogMode CDatabase::getLogMode() const
 	{
-		return true;
-	}
-	void  CDatabase::consolLog()
-	{
+		if(!m_pLogger.get())
+			return lmUndefined;
 
+		return m_pLogger->GetLogMode();
 	}
+
+
 	void  CDatabase::setLogLevel(uint32 nLevel)
 	{
-		m_nLogLevel = nLevel;
+		if(m_pLogger.get())
+			m_pLogger->SetLogLevel(nLevel);
 	}
 	uint32  CDatabase::getLogLevel()
 	{
-		return m_nLogLevel;
+		if(m_pLogger.get())
+			m_pLogger->GetLogLevel();
+
+		return 0;
 	}
 	 
 }

@@ -157,7 +157,7 @@ namespace embDB
 		eTMSingleTransactions,
 		eTMSingleReadTransactions,
 		eTMMultiReadTransactions,
-		eTMOneReadersManywriter,
+		eTMOneReaderManyWriters,
 		eTMMultiTransactions
 	};
 
@@ -545,12 +545,7 @@ namespace embDB
 		virtual bool commit() = 0;
 		virtual bool rollback() = 0;
 		virtual bool isError() const = 0 ;
-
-		virtual uint32 getLogLevel() const = 0;
-		virtual void    setLogLevel(uint32 nLogLevel)= 0;
-
-		virtual eLogMode getLogMode() const = 0;
-		virtual void setLogMode(eLogMode logMode) = 0;
+ 
 
 		virtual void setMaxLimitErrorMessage(uint32 nSize) = 0; //1024*1024 default
 
@@ -598,17 +593,17 @@ namespace embDB
 		 virtual bool closeConnection(IConnection *pConnection)  = 0;
 
 		virtual bool close()  = 0;
-		virtual bool setFileLogName(const wchar_t *pszFileLog) = 0;
-		virtual void consolLog() = 0;
+ 
 		virtual void setLogLevel(uint32 nLevel) = 0;
 		virtual uint32 getLogLevel() = 0;
+		virtual eLogMode getLogMode() const = 0;
 
 		//virtual ITransactionPtr startTransaction(eTransactionType trType) = 0;
 		//virtual bool closeTransaction(ITransaction* ) = 0;
 
 	
 		
-		static IDatabasePtr CreateDatabase();
+		static IDatabasePtr CreateDatabase(eLogMode logMode = lmUndefined, const wchar_t* pszLogFile = NULL);
 	};
 
 

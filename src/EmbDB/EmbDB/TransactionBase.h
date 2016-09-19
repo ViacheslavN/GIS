@@ -19,7 +19,7 @@ namespace embDB
 		public:
 
 			ITransactionBase(IDBConnection* pDBConnection, CommonLib::alloc_t* pAlloc) : m_pConnection(pDBConnection), m_bError(false),
-				m_nMaxMessageSize(1024 * 1024), m_LogLevel(0), m_pAlloc(pAlloc)
+				m_nMaxMessageSize(1024 * 1024), m_pAlloc(pAlloc)
 			{
 				if(m_pConnection) //check for test bplus tree 
 				{
@@ -203,45 +203,9 @@ namespace embDB
 				m_nMaxMessageSize = nSize;
 			}
 
-			virtual eLogMode getLogMode() const
-			{
-				return m_logMode;
-			}
-			virtual void setLogMode(eLogMode logMode)
-			{
-				m_logMode = logMode;
-				if(m_logMode == lmConsole)
-				{
-					m_pLogger = new CConsolLogger();
-					 m_pLogger->SetLogLevel(m_LogLevel);
-				}
-
-
-			}
-			virtual uint32 getLogLevel() const 
-			{
-				return m_LogLevel;
-			}
-			virtual void setLogLevel(uint32 nLogLevel)  
-			{
-				 m_LogLevel = nLogLevel;
-				 if(m_pLogger.get())
-					 m_pLogger->SetLogLevel(m_LogLevel);
-			}
-
 			virtual void SetLogger(ILogger *pLogger)
 			{
 				m_pLogger = pLogger;
-				if(pLogger)
-				{
-					m_logMode = m_pLogger->GetLogMode();
-					m_LogLevel = m_pLogger->GetLogLevel();
-				}
-				else
-				{
-					m_logMode = lmUndefined;
-					m_LogLevel = 0;
-				}
 			}
 
 
@@ -286,19 +250,15 @@ namespace embDB
 
 			void log_msg(uint32 nLevel, const wchar_t *pszMsg) 
 			{
-				if(m_LogLevel < nLevel)
-					return;
-
-				if(m_pLogger.get())
+ 
+				if(m_pLogger.get() && m_pLogger->GetLogLevel() >= nLevel)
 					m_pLogger->log_msg(nLevel, pszMsg);
 			}
 			virtual void log(uint32 nLevel, const wchar_t *pszFormat, ...)
 			{
-				if(m_LogLevel < nLevel)
-					return;
+ 
 
-
-				if(m_pLogger.get())
+				if(m_pLogger.get() && m_pLogger->GetLogLevel() >= nLevel)
 				{
 					va_list args;
 					va_start(args, pszFormat);
@@ -341,8 +301,6 @@ namespace embDB
 		typedef std::set<IDBTablePtr>  TChangeTable;
 		TMapValueField m_mapValueField;
 		TChangeTable m_setChangeTable;
-		eLogMode m_logMode;
-		uint32 m_LogLevel;
 		ILoggerPtr m_pLogger;
 		bool m_bError;
 		uint32 m_nMaxMessageSize;

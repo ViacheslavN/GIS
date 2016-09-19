@@ -133,20 +133,20 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, 
 	CommonLib::CString sPWD = pszPWD;
 	CommonLib::bbox bounds;
 	{
-		embDB::CDatabase db;
- 
+		embDB::CDatabase db(embDB::lmConsole);
+		
+		db.AddRef();
 	 
 		if(!db.create(pszDBName, embDB::eTMSingleTransactions,  sDBPath.wstr(), pszPWD))
 		{
 				std::cout << "Error create db";
 				return;
 		}
-
+		db.setLogLevel(11);
 		embDB::IConnectionPtr pConn = db.connect(NULL, pszPWD);
 
 		embDB::ITransactionPtr pTran = pConn->startTransaction(embDB::eTT_DDL);
-		pTran->setLogMode(embDB::lmConsole);
-		pTran->setLogLevel(11);
+ 
 		pTran->begin();
 		embDB::ISchemaPtr pSchema = pConn->getSchema();
 		embDB::ITablePtr pTable = pSchema->getTableByName(sFileName.cwstr());
@@ -253,11 +253,11 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, 
 
 	{
 		
-		embDB::CDatabase db;
+		embDB::CDatabase db(embDB::lmConsole);
 		if(!db.open(pszDBName, embDB::eTMSingleTransactions, sDBPath.wstr()))
 			return;
 
-
+		db.setLogLevel(11);
 		embDB::IConnectionPtr pConnect = db.connect(NULL, pszPWD);
 
 		if(!pConnect.get())
@@ -380,16 +380,17 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, 
  
 void AddIndex(const wchar_t* pszDBName, const wchar_t* pszTable, const wchar_t* pszField, embDB::indexTypes type)
 {
-	embDB::CDatabase db;
+	embDB::CDatabase db(embDB::lmConsole);
+	db.AddRef();
+
 	CommonLib::CString sFilePath = CommonLib::FileSystem::FindFilePath(pszDBName);
 	if(!db.open(pszDBName, embDB::eTMSingleTransactions, sFilePath.wstr()))
 	{
 		return;
 	}
+		db.setLogLevel(11);
 	embDB::IConnectionPtr pConnect = db.connect();
 	embDB::ITransactionPtr pTran = pConnect->startTransaction(embDB::eTT_DDL);
-	pTran->setLogMode(embDB::lmConsole);
-	pTran->setLogLevel(11);
 	pTran->begin();
 	embDB::ISchemaPtr pSchema = pConnect->getSchema();
 	embDB::ITablePtr pTable = pSchema->getTableByName(pszTable);
