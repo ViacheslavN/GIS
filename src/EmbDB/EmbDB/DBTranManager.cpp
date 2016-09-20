@@ -15,6 +15,7 @@ namespace embDB
 		,m_Storage(pAlloc)
 		,m_nTranID(1)
 		,m_pDB(pDB)
+		,m_pPageCliper(nullptr)
 	{
 		
 	}
@@ -68,6 +69,12 @@ namespace embDB
 		return true;
 	}
 
+
+	void CDBTranManager::SetPageCipher(CPageCipher* pPageCliper)
+	{
+		m_pPageCliper = pPageCliper;
+	}
+
 	bool CDBTranManager::SaveHeader(CFilePage *pPage)
 	{
 		CommonLib::FxMemoryWriteStream stream;
@@ -107,6 +114,7 @@ namespace embDB
 			//delete pTran;
 		}
 		m_pLogger.release();
+		m_pPageCliper = nullptr;
 		return m_Storage.close();
 	}
 
@@ -125,7 +133,9 @@ namespace embDB
 		switch(trDbType)
 		{
 			case  eTTFullTransaction:
-				pTran	= new CTransaction(m_pAlloc, rtUndo, trType, m_sWorkingPath + sFileName, pConn, m_nTranID++ );
+				pTran	= new CTransaction(m_pAlloc, rtUndo, trType, m_sWorkingPath + sFileName, pConn, m_nTranID++, 10000, m_pPageCliper);
+				
+				
 				break;
 			case  eTTDirectTransaction:
 			case  eTTDirectTransactionUndo:

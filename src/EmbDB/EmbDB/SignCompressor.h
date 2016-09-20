@@ -153,9 +153,9 @@ namespace embDB
 				m_bSign = nFlag & (1 << 2) ? true : false;
 				m_DataType = GetCompressType(nCount);
 
-				uint32 nCount = ReadCompressValue<uint32>(m_DataType, pStream);
-				m_nVecPos.reserve(nCount);
-				for (size_t i = 0; i < nCount; ++i)
+				uint32 nPosCount = ReadCompressValue<uint32>(m_DataType, pStream);
+				m_nVecPos.reserve(nPosCount);
+				for (size_t i = 0; i < nPosCount; ++i)
 				{
 					uint32 nPos = ReadCompressValue<uint32>(m_DataType, pStream);
 					m_nVecPos.push_back(nPos);

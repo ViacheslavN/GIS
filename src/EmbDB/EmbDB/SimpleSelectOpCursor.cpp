@@ -166,6 +166,8 @@ namespace embDB
 			m_pSearhHandler = new FieldSearchHandler(m_value, m_nOpType, pFindField.get());
 		}
 		m_pSearhHandler->reset();
+		m_nCurrROWID = m_pSearhHandler->nextRowID();
+
 		if(!m_pFieldSet.get())
 			m_pFieldSet = new CFieldSet();
 		if(m_pFieldSet->GetCount() == 0)

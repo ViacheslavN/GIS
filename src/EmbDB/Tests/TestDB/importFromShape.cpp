@@ -473,12 +473,27 @@ void SearchShapeFile(const wchar_t* pszDBName, const wchar_t* pszTable, const wc
 	embDB::ICursorPtr pCursor = pTran->executeSpatialQuery(bbox, pszTable, pszSpField);
 	int nObj = 0;
 	embDB::IRowPtr pRow;
+	int32 nIdx =pCursor->GetFieldSet()->Find(L"ID");
+
+	std::vector<__int64> vecSpIDs;
 	if(pCursor.get())
 	{
 	
 		
 		while(pCursor->NextRow(&pRow))
 		{
+			CommonLib::CVariant* pVar = pRow->value(nIdx);
+
+			int64 nID = pVar->Get<int64>();
+			if(nID == 112328)
+			{
+				int dd = 0;
+				dd++;
+			}
+
+			if(pVar)
+				vecSpIDs.push_back(pVar->Get<int64>());
+
 			++nObj;
 		}
 	}
@@ -489,27 +504,49 @@ void SearchShapeFile(const wchar_t* pszDBName, const wchar_t* pszTable, const wc
 	pCursor = pTran->executeSelectQuery( pszTable);
 	int nObj2 = 0;
 	std::vector<int64> vecROWID;
+
+	nIdx =pCursor->GetFieldSet()->Find(L"ID");
+
 	while(pCursor->NextRow(&pRow))
 	{
 		++nObj2;
+		CommonLib::CVariant* pVar = pRow->value(nIdx);
 
-		vecROWID.push_back(pRow->GetRowID());
+		if(pVar)
+			vecROWID.push_back(pVar->Get<int64>());
 	}
 
 	i = 0;
 	i++;
 
+	int nObjFound = 0;
+	int nObjNotFound = 0;
 
+	std::sort(vecROWID.begin(), vecROWID.end());
+	std::sort(vecSpIDs.begin(), vecSpIDs.end());
+	 
+
+	std::vector<__int64> vecNotFound;
 	if(pszOIDField != NULL)
 	{
 		embDB::IRowPtr pRow1;
-		for(size_t i = 0; i < vecROWID.size(); ++i)
+		for(size_t i = 0; i < vecSpIDs.size(); ++i)
 		{
 			CommonLib::CVariant var = vecROWID[i];
 
 			embDB::ICursorPtr pCursor1 = pTran->executeSelectQuery( pszTable, NULL, pszOIDField, var, embDB::OpEqual);
 			if(pCursor1.get())
 			{
+
+				int64 nRowID = pCursor1->GetRowID();
+				if(nRowID != -1)
+					nObjFound++;
+				else
+				{
+					vecNotFound.push_back(var.Get<int64>());
+					nObjNotFound++;
+				}
+
 				while(pCursor1->NextRow(&pRow1))
 				{
 					++nObj2;

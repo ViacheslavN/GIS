@@ -179,6 +179,8 @@ namespace embDB
 					m_nCurrRowID++;
 					return nRowID;
 				}
+
+			 
 		protected:
 			virtual void	FillChache() = 0;
 		protected:

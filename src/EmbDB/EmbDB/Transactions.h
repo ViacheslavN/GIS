@@ -47,13 +47,14 @@ namespace embDB
 		typedef ITransactionBase<IDBTransaction> TBase;
 
 		CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionDataType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000);
+			eTransactionDataType nTranType, const CommonLib::CString& sFileName,
+			IDBStorage* pDBStorage, int64 nID = -1, uint32 nTranCache = 10000, CPageCipher *pPageCiher = nullptr);
 
 		CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionDataType nTranType, const CommonLib::CString& sFileName, IDBConnection* pConnection, int64 nID, uint32 nTranCache = 10000);
+			eTransactionDataType nTranType, const CommonLib::CString& sFileName, IDBConnection* pConnection, int64 nID = -1, uint32 nTranCache = 10000, CPageCipher *pPageCiher = nullptr);
 
 
-		CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache = 10000);
+		//CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache = 10000);
 
 
 		static const uint32 nCommonPageSize = 8192;

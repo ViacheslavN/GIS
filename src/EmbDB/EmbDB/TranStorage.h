@@ -13,7 +13,8 @@ namespace embDB
 	class CTranStorage
 	{
 	public:
-		CTranStorage(CommonLib::alloc_t *pAlloc, CTranPerfCounter *pCounter, bool bCheckCRC);
+		CTranStorage(CommonLib::alloc_t *pAlloc, CTranPerfCounter *pCounter, bool bCheckCRC,
+			CPageCipher* pPageCrypto = nullptr);
 		~CTranStorage();
 		bool open(const CommonLib::CString& sTranName, /*uint32 nPageSize,*/ bool bNew);
 		int64 saveFilePage(CFilePage* pPage, int64 nAddr = -1); //если nAddr = -1, то возвращаеться новый адрес
@@ -32,8 +33,8 @@ namespace embDB
 		uint32 m_nPageSize;
 		CommonLib::CString m_sTranName;
 		CTranPerfCounter *m_pCounter;
-		CPageCipher* m_pPageCrypto;
-		std::auto_ptr<CFilePage> m_pBufPageCrypto; 
+		CPageCipher* m_pPageChiper;
+		 CommonLib::CBlob m_BufForChiper;
 		bool m_bCheckCRC;
 	};
 }

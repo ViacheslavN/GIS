@@ -11,9 +11,10 @@ namespace embDB
 
 	
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionDataType nTranType, const CommonLib::CString& sFileName,  IDBConnection* pConnection, int64 nID, uint32 nTranCache) :
+		eTransactionDataType nTranType, const CommonLib::CString& sFileName,  
+		IDBConnection* pConnection, int64 nID, uint32 nTranCache, CPageCipher *pPageCiher) :
 		TBase(pConnection, pAlloc)
-		, m_TranStorage(pAlloc, &m_TranPerfCounter, pConnection->getCheckCRC())
+		, m_TranStorage(pAlloc, &m_TranPerfCounter, pConnection->getCheckCRC(), pPageCiher)
 		, m_nRestoreType(nRestoreType)
 		, m_nTranType(nTranType)
 		, m_sFileName(sFileName)
@@ -31,9 +32,10 @@ namespace embDB
 	}
 
 	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-		eTransactionDataType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache) :
+		eTransactionDataType nTranType, const CommonLib::CString& sFileName, 
+		IDBStorage* pDBStorage, int64 nID, uint32 nTranCache, CPageCipher *pPageCiher) :
 		TBase(NULL, pAlloc)
-		, m_TranStorage(pAlloc, &m_TranPerfCounter, pDBStorage->getCheckCRC())
+		, m_TranStorage(pAlloc, &m_TranPerfCounter, pDBStorage->getCheckCRC(), pPageCiher)
 		, m_nRestoreType(nRestoreType)
 		, m_nTranType(nTranType)
 		, m_sFileName(sFileName)
@@ -49,7 +51,7 @@ namespace embDB
 	{
 		m_pDBStorage = pDBStorage;
 	}
-	CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache) :
+	/*CTransaction::CTransaction(CommonLib::alloc_t* pAlloc, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, uint32 nTranCache) :
 		TBase(NULL, pAlloc)
 		,m_TranStorage(pAlloc, &m_TranPerfCounter, pDBStorage->getCheckCRC())
 		,m_nRestoreType(rtUndefined)
@@ -66,7 +68,7 @@ namespace embDB
 		, m_nPageSize(MIN_PAGE_SIZE)
 	{
 		m_pDBStorage = pDBStorage;
-	}
+	}*/
 	CTransaction::~CTransaction()
 	{
 

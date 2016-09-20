@@ -147,6 +147,7 @@ namespace embDB
 		bool close();
 		ITransactionPtr CreateTransaction(eTransactionDataType trType, IDBConnection *pConn, eDBTransationType trDbType);
 		bool releaseTransaction(ITransaction* pTran);
+		void SetPageCipher(CPageCipher* pPageCliper);
 	private:
 		bool SaveHeader(CFilePage *pPage);
 		bool LoadHeader(CFilePage *pPage);
@@ -161,7 +162,7 @@ namespace embDB
 		CDatabase* m_pDB;
 		CommonLib::CString m_sWorkingPath;
 		ILoggerPtr m_pLogger;
-
+		CPageCipher* m_pPageCliper;
 	};
 }
 

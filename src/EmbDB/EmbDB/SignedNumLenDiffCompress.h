@@ -274,6 +274,7 @@ namespace embDB
 
 				assert(this->m_BitsLensFreq[nBitLen] != 0);
 
+
 				m_SignCompressor.EncodeSign(nDiff < 0 , i - 1);
 				if(nBitLen > 1)
 					pBitStream->writeBits(nDiff > 0 ? nDiff : -nDiff, nBitLen - 1);
@@ -322,7 +323,7 @@ namespace embDB
 				//bool bSign = pBitStream->readBit();
 
 
-				bool bSign = m_SignCompressor.DecodeSign( i - 1);
+				bool bSign = m_SignCompressor.DecodeSign( i);
 				value = nBitLen;
 				if(value > 1)
 				{
@@ -334,7 +335,6 @@ namespace embDB
 				nBegin +=  (bSign ? -1 *value : value);
 
 				vecValues.push_back(nBegin);
-			 
 				decoder.DecodeSymbol(FreqPrev[nBitLen], FreqPrev[nBitLen+1], this->m_nCount);
 
 			}

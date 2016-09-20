@@ -233,7 +233,7 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 				storage1.setStoragePageInfo(nStorageInfoPage);
 				storage1.open(L"d:\\dbplus.data", false, false,  false, false);
 				storage1.loadStorageInfo();
-				TTran Undotran(alloc,  "d:\\tran1.data", &storage1, nTranCache);
+				TTran Undotran(alloc,   embDB::rtUndefined, embDB::eTT_UNDEFINED, "d:\\tran1.data", &storage1, -1, nTranCache);
 				Undotran.restore(true);
 			}
 
@@ -286,7 +286,7 @@ void testBPTreeSetRedoImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageS
 			storage1.setStoragePageInfo(nStorageInfoPage);
 			storage1.open(L"d:\\dbplus.data", false, false,  false, false);
 			storage1.loadStorageInfo();
-			TTran Undotran(alloc,  "d:\\Remtran.data", &storage1, nTranCache);
+			TTran Undotran(alloc,   embDB::rtUndefined, embDB::eTT_UNDEFINED, "d:\\Remtran.data", &storage1, -1, nTranCache);
 			Undotran.restore(true);
 		}
 

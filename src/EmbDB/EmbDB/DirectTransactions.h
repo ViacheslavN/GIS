@@ -14,17 +14,16 @@ namespace embDB
 	{
 	public:
 		typedef ITransactionBase<IDBTransaction> TBase;
-		CDirectTransaction(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache = 10000,
-			eDBTransationType tranType = eTTDirectTransaction);
+		 
 		//for compatible tests
 		CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
 			eTransactionDataType nTranType, const CommonLib::CString& sFileName, 
-			IDBStorage* pDBStorage, int64 nID, uint32 nTranCache = 10000,
+			IDBStorage* pDBStorage, int64 nID = -1, uint32 nTranCache = 10000,
 			eDBTransationType tranType = eTTDirectTransaction);
 
 		CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
 			eTransactionDataType nTranType, const CommonLib::CString& sFileName, 
-			IDBConnection* pConnection, int64 nID, uint32 nTranCache = 10000,
+			IDBConnection* pConnection, int64 nID = -1, uint32 nTranCache = 10000,
 			eDBTransationType tranType = eTTDirectTransaction);
 		~CDirectTransaction();
 

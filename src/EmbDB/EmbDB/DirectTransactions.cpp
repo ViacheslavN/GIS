@@ -4,16 +4,7 @@
 
 namespace embDB
 {
-	CDirectTransaction::CDirectTransaction(CommonLib::alloc_t* pAlloc,  IDBStorage* pDBStorage, uint32 nTranCache,
-		eDBTransationType tranType) 
-		: TBase(NULL, pAlloc), m_TranType(tranType)
-		, m_TranStorage(pAlloc, NULL, pDBStorage->getCheckCRC())
- 
-		
-	{
-		assert(m_pDBStorage);
-		 m_pDBStorage =pDBStorage;
-	}
+	 
 	CDirectTransaction::CDirectTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
 		eTransactionDataType nTranType, const CommonLib::CString& sFileName, IDBStorage* pDBStorage, int64 nID, uint32 nTranCache,
 		eDBTransationType tranType) : TBase(NULL, pAlloc), m_TranType(tranType)

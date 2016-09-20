@@ -31,6 +31,7 @@ namespace embDB
 		m_qryptoAlg = NONE_ALG;
 		m_bPWDCheck = false;
 		m_nOffset = 0;
+		m_PageChiper.reset();
 	}
 
 	bool CUserCryptoManager::init(int64 nAddr, const wchar_t *pszPassword, QryptoALG qryptoAlg)

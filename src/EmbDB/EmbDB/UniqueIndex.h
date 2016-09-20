@@ -75,7 +75,7 @@ namespace embDB
 			FType val;
 			pIndexKey->getVal(val);
 			typename TBTree::iterator it = this->m_tree.find(val);
-			IndexIterator *pIndexIterator = new IndexIterator(it, this);
+			IndexIterator *pIndexIterator = new IndexIterator(it, this); // TO DO use
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 		virtual IIndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
@@ -84,7 +84,7 @@ namespace embDB
 			pIndexKey->getVal(val);
 
 			typename TBTree::iterator it = this->m_tree.lower_bound(val);
-			IndexIterator *pIndexIterator = new IndexIterator(it, this);
+			IndexIterator *pIndexIterator = new IndexIterator(it, this);  // TO DO use
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 		virtual IIndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
@@ -92,7 +92,7 @@ namespace embDB
 			FType val;
 			pIndexKey->getVal(val);
 			typename TBTree::iterator it = this->m_tree.upper_bound(val);
-			IndexIterator *pIndexIterator = new IndexIterator(it, this);
+			IndexIterator *pIndexIterator = new IndexIterator(it, this);  // TO DO use
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 

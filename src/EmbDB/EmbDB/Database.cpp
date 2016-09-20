@@ -80,7 +80,7 @@ namespace embDB
 			return false;
 
 		m_bOpen = true;
-
+		m_pTranManager->SetPageCipher(m_UserCryptoManager.GetPageCipher());
 		return true;
 
 		 
@@ -208,13 +208,17 @@ namespace embDB
 		m_pStorage->saveStorageInfo();
 		m_pStorage->commit();
 		m_bOpen = true;
+
+
+		m_pTranManager->SetPageCipher(m_UserCryptoManager.GetPageCipher());
+
 		return true;
 	}
 
 	bool CDatabase::create(const wchar_t* pszDbName,const wchar_t* pszAdmUser, const wchar_t* pszPassword , DBTransactionMode mode, 
 		const wchar_t* pszWorkingPath, const SDBParams *Params)
 	{
-		return true;
+		return false;
 	}
 
 	bool CDatabase::close()
