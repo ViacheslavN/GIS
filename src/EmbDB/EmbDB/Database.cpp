@@ -402,11 +402,20 @@ namespace embDB
 		uint64 nUserID = m_UserCryptoManager.GetUserID(pszUser);
 		eUserGroup userGroup = m_UserCryptoManager.GetUserGroup(pszUser);
 
-	return IConnectionPtr(new CConnection(this, m_pSchema.get(), pszUser, nUserID, userGroup));
+		CConnection *pConnection = new CConnection(this, m_pSchema.get(), pszUser, nUserID, userGroup);
+
+		m_Connections.insert(pConnection);
+
+		return IConnectionPtr(pConnection);
 	}
 	bool CDatabase::closeConnection(IConnection *pConnection)
 	{
-		return false;
+	 
+		TConnections::iterator it = m_Connections.find(IConnectionPtr(pConnection));
+		if(it == m_Connections.end())
+			return false; // TO DO Log
+		m_Connections.erase(it);
+		return true;
 	}
 
 	bool CDatabase::load()

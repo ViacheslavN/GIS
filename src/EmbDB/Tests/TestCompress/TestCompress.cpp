@@ -19,6 +19,7 @@ void DecompressStaticFile(uint32 nFileSize, const wchar_t *pszCompressFile, cons
 void TestDoubleCompress();
 void ZlibTest();
 void TestStringCompress();
+void TestSignCompress();
 int _tmain(int argc, _TCHAR* argv[])
 {
 
@@ -39,8 +40,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//ZlibTest();
 	//TestDiffComp();
 	//TestNumLen();
-	TestDoubleCompress();
+	//TestDoubleCompress();
 	//TestBWTSort();
+
+	TestSignCompress();
 	return 0;
 
 

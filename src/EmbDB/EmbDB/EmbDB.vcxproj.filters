@@ -1176,9 +1176,6 @@
     <ClInclude Include="EmptyMultiKeyCompress.h">
       <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
     </ClInclude>
-    <ClInclude Include="NumLenCompress.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
     <ClInclude Include="MultiKeyCompressor.h">
       <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
     </ClInclude>
@@ -1358,6 +1355,15 @@
     </ClInclude>
     <ClInclude Include="LogHolder.h">
       <Filter>DB\Logs</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NumLenCompress.h">
+      <Filter>utils\compress</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

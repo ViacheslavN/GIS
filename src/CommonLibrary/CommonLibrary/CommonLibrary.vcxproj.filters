@@ -282,6 +282,12 @@
     <ClInclude Include="LockObject.h">
       <Filter>thread</Filter>
     </ClInclude>
+    <ClInclude Include="StaticSignCompressor.h">
+      <Filter>compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BitsMap.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -382,6 +388,9 @@
     </ClCompile>
     <ClCompile Include="GeoShapeBuf.cpp">
       <Filter>SpatialData</Filter>
+    </ClCompile>
+    <ClCompile Include="BitsMap.cpp">
+      <Filter>utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

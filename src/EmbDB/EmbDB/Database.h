@@ -165,6 +165,10 @@ namespace embDB
 			eLogMode m_LogMode;
 			CommonLib::CString m_sFileLogPath;
 
+
+			typedef std::set<IConnectionPtr> TConnections;
+			TConnections m_Connections;
+
 		//	typedef RBMap<CommonLib::CString, CStorage*> TTableStorages;
 		//	TTableStorages m_TableStorages;
 			 

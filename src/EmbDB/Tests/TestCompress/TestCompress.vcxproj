@@ -153,6 +153,7 @@
     <ClInclude Include="range.h" />
     <ClInclude Include="RangeCoder.h" />
     <ClInclude Include="stdafx.h" />
+    <ClCompile Include="signCompess.cpp" />
     <ClCompile Include="StringCompress.cpp">
       <FileType>CppHeader</FileType>
     </ClCompile>

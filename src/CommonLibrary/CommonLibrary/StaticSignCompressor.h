@@ -1,16 +1,16 @@
-#ifndef _EMBEDDED_DATABASE_SIGN_COMPRESSOR_H_
-#define _EMBEDDED_DATABASE_SIGN_COMPRESSOR_H_
-#include "CommonLibrary/WriteBitStream.h"
-#include "CompressUtils.h"
-#include "CommonLibrary/PodVector.h"
-#include "CommonLibrary/algorithm.h"
-#include "CommonLibrary/FixedMemoryStream.h"
-#include "NumLenCompress.h"
-namespace embDB
+#ifndef _COMMON_LIB_STATIC_SIGN_COMPRESSOR_H_
+#define _COMMON_LIB_STATIC_SIGN_COMPRESSOR_H_
+#include "compressutils.h"
+#include "WriteBitStream.h"
+#include "FixedMemoryStream.h"
+#include "ArithmeticCoder.h"
+#include "PodVector.h"
+#include "NumLenCompressor.h"
+namespace CommonLib
 {
 
-//	template<class _TEncoder, class _TDecoder>
-	class TSignCompressor
+	//	template<class _TEncoder, class _TDecoder>
+	class TStaticSignCompressor
 	{
 	public:
 		enum eCompressType
@@ -23,11 +23,11 @@ namespace embDB
 		};
 
 
-		TSignCompressor()
+		TStaticSignCompressor()
 		{
 			clear();
 		}
-		~TSignCompressor(){}
+		~TStaticSignCompressor(){}
 
 
 		void clear()
@@ -35,20 +35,26 @@ namespace embDB
 			m_nSigns[0] = 0;
 			m_nSigns[1] = 0;
 			m_compreesType = NO_COMPRESS;
-			m_DataType = ectUInt64;
+			m_DataType = dtType64;
 			m_bSign = false;
 			m_nVecPos.clear();
 		}
 
 
-		void AddSymbol(bool bSign)
+		void AddSymbol(bool bSign, uint32 nPos)
 		{
 			m_nSigns[bSign ? 1 : 0] += 1;
+
+			if(bSign)
+				m_nVecSignPos.push_back(nPos);
+			else
+				m_nVecUnSignPos.push_back(nPos);
+
 		}
-		void RemoveSymbol(bool bSign)
+		/*void RemoveSymbol(bool bSign)
 		{
 			m_nSigns[bSign ? 1 : 0] -= 1;
-		}
+		}*/
 		uint32 GetCompressSize() const
 		{
 			if(m_nSigns[0] == 0 || m_nSigns[1] == 0)
@@ -63,21 +69,9 @@ namespace embDB
 			eCompressDataType type = GetCompressType(m_nSigns[0] + m_nSigns[1]);
 			uint32 nBytePosCodeSize = GetLenForDiffLen(type, nMinCount + 1);
 
-			/*uint32 nBitLen = TFindMostSigBit::FMSB(m_nSigns[0] + m_nSigns[1]) - 1;
-			uint32 nBitByteSize = ((min(m_nSigns[0] , m_nSigns[1]))*((nBitLen + 7 )/8)) + 1;
-
-			if(nBitByteSize < nBytePosCodeSize)
-			{
-				int dd = 0;
-				dd++;
-			}*/
-
 			return min(nBytePosCodeSize, nByteSize);
 		}
-		uint32 count() const 
-		{
-			return m_nSigns[0] + m_nSigns[1] ;
-		}
+
 		void BeginCompress(CommonLib::IWriteStream *pStream)
 		{
 
@@ -119,7 +113,7 @@ namespace embDB
 
 					m_WriteStream.attach(pStream, pStream->pos(), nBytePosCodeSize);
 					m_WriteStream.write(nFlag);
-					WriteCompressValue( m_DataType, nMinCount,&m_WriteStream);
+					WriteValue(nMinCount, m_DataType, &m_WriteStream);
 
 					pStream->seek(nBytePosCodeSize, CommonLib::soFromCurrent);
 
@@ -138,7 +132,7 @@ namespace embDB
 				{
 					if(bSign == m_bSign)
 					{
-						WriteCompressValue(m_DataType, nPos,  &m_WriteStream);
+						WriteValue(nPos, m_DataType,  &m_WriteStream);
 					}
 					break;
 				}
@@ -155,19 +149,19 @@ namespace embDB
 			m_compreesType = (eCompressType)(nFlag & 0x03);
 			if(m_compreesType == ONE_SIGN)
 			{
-				m_bSign = nFlag & (1 << 2) ? true : false;
+				m_bSign = nFlag & (1 << 2);
 			}
 			else if(m_compreesType == COMPRESS_POS)
 			{
 
-				m_bSign = nFlag & (1 << 2) ? true : false;
+				m_bSign = nFlag & (1 << 2);
 				m_DataType = GetCompressType(nCount);
 
-				uint32 nPosCount = ReadCompressValue<uint32>(m_DataType, pStream);
-				m_nVecPos.reserve(nPosCount);
-				for (size_t i = 0; i < nPosCount; ++i)
+				uint32 nCount = ReadValue<uint32>(m_DataType, pStream);
+				m_nVecPos.reserve(nCount);
+				for (size_t i = 0; i < nCount; ++i)
 				{
-					uint32 nPos = ReadCompressValue<uint32>(m_DataType, pStream);
+					uint32 nPos = ReadValue<uint32>(m_DataType, pStream);
 					m_nVecPos.push_back(nPos);
 				}
 
@@ -184,41 +178,45 @@ namespace embDB
 
 		bool DecodeSign(uint32 nPos)
 		{
-			bool bSign = false;
 			switch(m_compreesType)
 			{
 			case ONE_SIGN:
-				bSign = m_bSign;
+				return m_bSign;
 				break;
 			case COMPRESS_POS:
 				{
 
 					int nIndex = CommonLib::binary_search(m_nVecPos.begin(), m_nVecPos.size(), nPos);
-					bSign=   nIndex != -1 ? m_bSign : !m_bSign;
+					return nIndex != -1 ? m_bSign : !m_bSign;
 					break;
 				}
 			case NO_COMPRESS:
-				 bSign=  m_bitReadStream.readBit();
-				break;
-			default:
-				assert(false);
+				return m_bitReadStream.readBit();
 				break;
 			}
 
-			m_nSigns[bSign ? 1 : 0] += 1;
-			return bSign;
+			assert(false);
+			return false;
 		}
 
 	private:
 		uint32 m_nSigns[2];
 		eCompressType m_compreesType;
-		CommonLib::FxMemoryWriteStream m_WriteStream;
-		CommonLib::FxBitReadStream m_bitReadStream;
-		CommonLib::FxBitWriteStream m_bitWriteStream;
+		FxMemoryWriteStream m_WriteStream;
+		FxBitReadStream m_bitReadStream;
+		FxBitWriteStream m_bitWriteStream;
 		eCompressDataType m_DataType;
 		bool m_bSign;
 
 		CommonLib::TPodVector<uint32> m_nVecPos;
+
+		CommonLib::TPodVector<uint32> m_nVecSignPos;
+		CommonLib::TPodVector<uint32> m_nVecUnSignPos;
+ 
+
+
+
+		typedef TNumLemCompressor<uint32, TFindMostSigBit, 32> TNumLen32;
 
 		//	uint32 m_nFreq[257];
 		//	uint32 m_nDiff;

@@ -159,7 +159,7 @@ namespace embDB
 	{
 		TDBTransactions::iterator it = m_Transactions.find(ITransactionPtr(pTran));
 		if(it == m_Transactions.end())
-			return false;
+			return false; // TO DO Log
 		m_Transactions.erase(it);
 		return true;
 	}

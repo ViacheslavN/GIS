@@ -56,7 +56,7 @@ void TestStringCompress()
 
 		if(nSize > 8192)
 		{
-			comp.CompressBlock(vecValues);
+		//	comp.CompressBlock(vecValues);
 			nSize = comp.GetCompressSize();
 			if(nSize > 8192)
 			{

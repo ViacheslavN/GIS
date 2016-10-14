@@ -443,6 +443,7 @@
     <ClInclude Include="AutoPtr.h" />
     <ClInclude Include="BackTableZPoint16Bit.h" />
     <ClInclude Include="BaseACCoder.h" />
+    <ClInclude Include="BitsMap.h" />
     <ClInclude Include="BitStream.h" />
     <ClInclude Include="blob.h" />
     <ClInclude Include="BoundaryBox.h" />
@@ -489,6 +490,7 @@
     <ClInclude Include="SignCompressor.h" />
     <ClInclude Include="SpatialKey.h" />
     <ClInclude Include="sprintf.h" />
+    <ClInclude Include="StaticSignCompressor.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stl_alloc.h" />
     <ClInclude Include="stream.h" />
@@ -509,6 +511,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="alloc_t.cpp" />
+    <ClCompile Include="BitsMap.cpp" />
     <ClCompile Include="BitStream.cpp" />
     <ClCompile Include="blob.cpp" />
     <ClCompile Include="BoundaryBox.cpp" />

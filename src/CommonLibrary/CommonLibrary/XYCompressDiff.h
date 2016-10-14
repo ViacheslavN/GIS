@@ -38,19 +38,19 @@ namespace CommonLib
 		{
 			return m_params.m_PointType;
 		}
-		uint32 PreAddCoord(TValue prev, TValue next, TSignCompressor &signCpmrpessor)
+		uint32 PreAddCoord(uint32 nPos, TValue prev, TValue next, TSignCompressor &signCpmrpessor)
 		{
 			TValue nDiff = 0;
 
 			if(prev <  next)
 			{
 				nDiff = next - prev;
-				signCpmrpessor.AddSymbol(false);
+				signCpmrpessor.AddSymbol(false, nPos);
 			}
 			else
 			{
 				nDiff = prev - next;
-				signCpmrpessor.AddSymbol(true);
+				signCpmrpessor.AddSymbol(true, nPos);
 			}
 
 			return m_PointCompressor.PreAddSympol(nDiff);
@@ -94,8 +94,8 @@ namespace CommonLib
 				X = (TValue)((pPoint[i].x + m_params.m_dOffsetX)/m_dScaleX);
 				Y = (TValue)((pPoint[i].y + m_params.m_dOffsetY)/m_dScaleY);
 							 
-				PreAddCoord(xPrev, X, m_SignCompressorX);
-				PreAddCoord(yPrev, Y, m_SignCompressorY);
+				PreAddCoord(i - 1, xPrev, X, m_SignCompressorX);
+				PreAddCoord(i - 1, yPrev, Y, m_SignCompressorY);
 				
 				xPrev = X;
 				yPrev = Y;

@@ -3,6 +3,7 @@
 #include "compressutils.h"
 #include "WriteBitStream.h"
 #include "FixedMemoryStream.h"
+#include "blob.h"
 namespace CommonLib
 {
 
@@ -38,7 +39,7 @@ namespace CommonLib
 		}
 
 
-		void AddSymbol(bool bSign)
+		void AddSymbol(bool bSign, uint32 nIndex)
 		{
 			m_nSigns[bSign ? 1 : 0] += 1;
 		}
@@ -145,6 +146,9 @@ namespace CommonLib
 			else if(m_compreesType == COMPRESS_POS)
 			{
 
+
+				m_pos.resize(nCount);
+
 				m_bSign = nFlag & (1 << 2);
 				m_DataType = GetCompressType(nCount);
 
@@ -200,6 +204,8 @@ namespace CommonLib
 		bool m_bSign;
 
 		CommonLib::TPodVector<uint32> m_nVecPos;
+
+		CommonLib::CBlob m_pos;
 
 		//	uint32 m_nFreq[257];
 		//	uint32 m_nDiff;
