@@ -69,7 +69,7 @@ namespace DatasetLite
 	
 		TStatialTreeRect(CommonLib::alloc_t* pAlloc, embDB::CStorage* pStorage, int64 nTreeRootPageID, 
 			double dOffsetX, double dOffsetY, byte nScaleX, byte nScaleY):
-		m_Storage(pStorage), m_DBTran(pAlloc, pStorage), m_dOffsetX(dOffsetX), m_dOffsetY(dOffsetY),
+		m_Storage(pStorage), m_DBTran(pAlloc, embDB::rtUndefined, embDB::eTT_UNDEFINED, L"", pStorage), m_dOffsetX(dOffsetX), m_dOffsetY(dOffsetY),
 			m_nScaleX(nScaleX), m_nScaleY(nScaleY), m_nTreeRootPageID(nTreeRootPageID)
 		{
 

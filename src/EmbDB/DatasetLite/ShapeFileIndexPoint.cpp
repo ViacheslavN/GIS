@@ -52,9 +52,9 @@ namespace DatasetLite
 
 		TStatialTreePoint(CommonLib::alloc_t* pAlloc, embDB::CStorage* pStorage, int64 nTreeRootPageID, 
 			double dOffsetX, double dOffsetY, byte nScaleX, byte nScaleY):
-		m_Storage(pStorage), m_DBTran(pAlloc, pStorage), m_dOffsetX(dOffsetX), m_dOffsetY(dOffsetY),
+		m_Storage(pStorage), m_DBTran(pAlloc, embDB::rtUndefined, embDB::eTT_UNDEFINED, L"", pStorage), m_dOffsetX(dOffsetX), m_dOffsetY(dOffsetY),
 			m_nScaleX(nScaleX), m_nScaleY(nScaleY), m_nTreeRootPageID(nTreeRootPageID)
-		{
+ 		{
 			m_dCalcScaleX = 1/pow(10., m_nScaleX);
 			m_dCalcScaleY = 1/pow(10., m_nScaleY);
 			m_SpatialTree.reset( new TSPTree(nTreeRootPageID, &m_DBTran, pAlloc, 50, 8192));

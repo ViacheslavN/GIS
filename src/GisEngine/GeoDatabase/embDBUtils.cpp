@@ -352,7 +352,7 @@ namespace GisEngine
 				return true;
 			}
 
-			embDB::eTransactionType  TranType2EmbDbTranType(eTransactionType type)
+			embDB::eTransactionDataType  TranType2EmbDbTranType(eTransactionType type)
 			{
 				switch(type)
 				{
