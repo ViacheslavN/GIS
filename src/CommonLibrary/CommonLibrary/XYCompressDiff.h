@@ -9,6 +9,7 @@
 #include "SignCompressor.h"
 //#include "XYCompressZOrderDiff.h"
 #include "IXYComressor.h"
+#include "StaticSignCompressor.h"
 namespace CommonLib
 {
  
@@ -38,7 +39,7 @@ namespace CommonLib
 		{
 			return m_params.m_PointType;
 		}
-		uint32 PreAddCoord(uint32 nPos, TValue prev, TValue next, TSignCompressor &signCpmrpessor)
+		uint32 PreAddCoord(uint32 nPos, TValue prev, TValue next, TSignCompressor &signCpmrpessor, TStaticSignCompressor &signCpmrpessor1)
 		{
 			TValue nDiff = 0;
 
@@ -46,11 +47,13 @@ namespace CommonLib
 			{
 				nDiff = next - prev;
 				signCpmrpessor.AddSymbol(false, nPos);
+				signCpmrpessor1.AddSymbol(false, nPos);
 			}
 			else
 			{
 				nDiff = prev - next;
 				signCpmrpessor.AddSymbol(true, nPos);
+				signCpmrpessor1.AddSymbol(true, nPos);
 			}
 
 			return m_PointCompressor.PreAddSympol(nDiff);
@@ -94,8 +97,8 @@ namespace CommonLib
 				X = (TValue)((pPoint[i].x + m_params.m_dOffsetX)/m_dScaleX);
 				Y = (TValue)((pPoint[i].y + m_params.m_dOffsetY)/m_dScaleY);
 							 
-				PreAddCoord(i - 1, xPrev, X, m_SignCompressorX);
-				PreAddCoord(i - 1, yPrev, Y, m_SignCompressorY);
+				PreAddCoord(i - 1, xPrev, X, m_SignCompressorX, m_SignCompressorX1);
+				PreAddCoord(i - 1, yPrev, Y, m_SignCompressorY, m_SignCompressorY1);
 				
 				xPrev = X;
 				yPrev = Y;
@@ -106,6 +109,9 @@ namespace CommonLib
 		{
 			uint32 nSignSizeX = m_SignCompressorX.GetCompressSize();
 			uint32 nSignSizeY = m_SignCompressorY.GetCompressSize();
+
+			uint32 nSignSizeX1 = m_SignCompressorX1.GetCompressSize();
+			uint32 nSignSizeY1 = m_SignCompressorY1.GetCompressSize();
 			//uint32 nSize = m_PointCompressor.GetCompressSize() + (m_PointCompressor.GetBitsLen() +7)/8;
 			uint32 nSize = m_PointCompressor.GetCompressSize() + (m_PointCompressor.GetBitsLen() +7)/8;
 
@@ -259,6 +265,8 @@ namespace CommonLib
 			m_SignCompressorX.clear();
 			m_SignCompressorY.clear();
 
+			m_SignCompressorX1.clear();
+			m_SignCompressorY1.clear();
 			if(pParams)
 				m_params = *pParams;
 		}
@@ -366,6 +374,9 @@ namespace CommonLib
 
 		TSignCompressor m_SignCompressorY;
 		CGeoShape::compress_params m_params;
+
+		TStaticSignCompressor m_SignCompressorX1;
+		TStaticSignCompressor m_SignCompressorY1;
 
 		double m_dScaleX;
 		double m_dScaleY;

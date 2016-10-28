@@ -17,9 +17,15 @@ namespace CommonLib
 			void resize(uint32 nSizeInByte);
 			void resizeBits(uint32 nSizeInBits);
 			uint32 size() const;
-			uint32 getBitSize() const;
+			uint32 sizeInBits() const;
+
+			const byte *bits() const;
+			byte *bits();
+
+			void fill(bool bBit);
 		private:
 			CommonLib::CBlob m_blob;
+			bool m_bInitBit;
 
 	};
 }

@@ -4,7 +4,7 @@
 
 static const size_t nMemSymbol = 12345;
 
-#define MAX_ALLOC_SIZE  1024*1024*50 
+#define MAX_ALLOC_SIZE  1024*1024*100 
 #define CHECK_MAX_ALLOC_SIZE  
 
 

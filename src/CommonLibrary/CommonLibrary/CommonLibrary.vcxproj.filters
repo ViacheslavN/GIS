@@ -288,6 +288,9 @@
     <ClInclude Include="BitsMap.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="BitsVector.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -390,6 +393,9 @@
       <Filter>SpatialData</Filter>
     </ClCompile>
     <ClCompile Include="BitsMap.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="BitsVector.cpp">
       <Filter>utils</Filter>
     </ClCompile>
   </ItemGroup>

@@ -113,7 +113,8 @@ Global
 		{2BCDCFE3-C07C-49F8-A7B8-19950FF1896E}.debug_shared|x64.ActiveCfg = Debug|Win32
 		{2BCDCFE3-C07C-49F8-A7B8-19950FF1896E}.debug_static|Win32.ActiveCfg = Debug|Win32
 		{2BCDCFE3-C07C-49F8-A7B8-19950FF1896E}.debug_static|Win32.Build.0 = Debug|Win32
-		{2BCDCFE3-C07C-49F8-A7B8-19950FF1896E}.debug_static|x64.ActiveCfg = Debug|Win32
+		{2BCDCFE3-C07C-49F8-A7B8-19950FF1896E}.debug_static|x64.ActiveCfg = Debug|x64
+		{2BCDCFE3-C07C-49F8-A7B8-19950FF1896E}.debug_static|x64.Build.0 = Debug|x64
 		{2BCDCFE3-C07C-49F8-A7B8-19950FF1896E}.Debug|Win32.ActiveCfg = Debug|Win32
 		{2BCDCFE3-C07C-49F8-A7B8-19950FF1896E}.Debug|Win32.Build.0 = Debug|Win32
 		{2BCDCFE3-C07C-49F8-A7B8-19950FF1896E}.Debug|x64.ActiveCfg = Debug|Win32

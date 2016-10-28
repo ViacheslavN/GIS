@@ -15,7 +15,8 @@ namespace CommonLib
 		{
 			ONE_SIGN = 0,
 			COMPRESS_POS = 1,
-			NO_COMPRESS =2
+			WRITE_POS = 2,
+			NO_COMPRESS =3
 
 
 		};

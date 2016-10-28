@@ -445,6 +445,7 @@
     <ClInclude Include="BaseACCoder.h" />
     <ClInclude Include="BitsMap.h" />
     <ClInclude Include="BitStream.h" />
+    <ClInclude Include="BitsVector.h" />
     <ClInclude Include="blob.h" />
     <ClInclude Include="BoundaryBox.h" />
     <ClInclude Include="ByteCompressor.h" />
@@ -513,6 +514,7 @@
     <ClCompile Include="alloc_t.cpp" />
     <ClCompile Include="BitsMap.cpp" />
     <ClCompile Include="BitStream.cpp" />
+    <ClCompile Include="BitsVector.cpp" />
     <ClCompile Include="blob.cpp" />
     <ClCompile Include="BoundaryBox.cpp" />
     <ClCompile Include="caseutils.cpp" />

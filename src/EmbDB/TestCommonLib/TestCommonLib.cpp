@@ -8,6 +8,8 @@
 #include "CommonLibrary/FixedBitStream.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/FileStream.h"
+#include "CommonLibrary/blob.h"
+#include "CommonLibrary/BitsVector.h"
 void testAlloc ();
 
 
@@ -49,6 +51,30 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 
 
+
+	CommonLib::CBitsVector bitVectors;
+
+	bool bBit = false;
+	for (size_t i = 0; i < 10000; ++i)
+	{
+
+		bitVectors.push_back(bBit);
+		bBit = !bBit;
+	}
+	
+
+	for (size_t i = 0; i < 10000; ++i)
+	{
+
+		bool bBitt = bitVectors[bBit];
+		bBit = !bBit;
+	}
+	 
+	int nBitCount = 8;
+
+	int nByte = nBitCount/8;
+	int nBit = nBitCount%8;
+	 
 
 	Int128 a1(2, 0xFFFFFFFFFFFFFFFF);
 	Int128 a2(1, 1);
