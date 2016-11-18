@@ -107,9 +107,9 @@ namespace CommonLib
 			}
 
 			
-			void BeginCompreess(CommonLib::IWriteStream* pStream)
+			void BeginCompress(CommonLib::IWriteStream* pStream)
 			{
-				m_pEncoder.reset(new TEncoder(pStream));
+				m_Encoder.Reset(pStream);
 			}
 
 			uint32 EncodeSymbol(TValue value, CommonLib::FxBitWriteStream *pBitStream)
@@ -122,9 +122,9 @@ namespace CommonLib
 				else  nBitLen = m_FindBit.FMSB(value);
 
 				assert(m_BitsLensFreq[nBitLen] != 0);
-				assert(m_pEncoder.get());
+
 				
-				m_pEncoder->EncodeSymbol(m_FreqPrev[nBitLen], m_FreqPrev[nBitLen + 1],  m_nCount);
+				m_Encoder.EncodeSymbol(m_FreqPrev[nBitLen], m_FreqPrev[nBitLen + 1],  m_nCount);
 				if(nBitLen > 1)
 					pBitStream->writeBits(value, nBitLen - 1);
 
@@ -134,7 +134,7 @@ namespace CommonLib
 
 			void EncodeFinish()
 			{
-				m_pEncoder->EncodeFinish();
+				m_Encoder.EncodeFinish();
 			}
 
 
@@ -195,19 +195,19 @@ namespace CommonLib
 
 			void StartDecode(CommonLib::IReadStream* pStream)
 			{
-				m_pDecoder.reset(new TDecoder(pStream));
-				m_pDecoder->StartDecode();
+				m_Decoder.Reset(pStream);
+				m_Decoder.StartDecode();
 			}
 
 			bool DecodeSymbol(uint32& value)
 			{
-				uint32 freq = (uint32)m_pDecoder->GetFreq(m_nCount);
+				uint32 freq = (uint32)m_Decoder.GetFreq(m_nCount);
 				value = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens + 1, freq);
 				if(value != 0)
 					value--;
 
 
-				m_pDecoder->DecodeSymbol(m_FreqPrev[value], m_FreqPrev[value+1], m_nCount);
+				m_Decoder.DecodeSymbol(m_FreqPrev[value], m_FreqPrev[value+1], m_nCount);
 
 				//value += 1;
 				return true;
@@ -273,11 +273,9 @@ namespace CommonLib
 		uint32 m_nCount;
 		uint32 m_nBitLen;
 		eCompressDataType m_FreqType;
-		typedef std::auto_ptr<TEncoder> TEncoderPtr;
-		typedef std::auto_ptr<TDecoder> TDecoderPtr;
 
-		TEncoderPtr m_pEncoder;
-		TDecoderPtr m_pDecoder;
+		TEncoder m_Encoder;
+		TDecoder m_Decoder;
 		uint32 m_nError;
 	};
 

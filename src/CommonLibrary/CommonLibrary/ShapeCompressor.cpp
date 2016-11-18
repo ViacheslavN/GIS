@@ -102,24 +102,6 @@ namespace CommonLib
 				}
 			}
 		}
-
-		
-		/*if(m_partType != dtType32)
-		{
-			for (uint32 i = 0; i < nPartCount; i++ )
-			{
-				uint32 nPart = pShp->getPart(i);
-				eDataType type = GetType(nPartCount);
-				if(m_partType < type)
-				{
-					m_partType = type;
-					if(m_partType == dtType32)
-					{				 
-						break;
-					}
-				}
-			}
-		}*/
 		if(nPartCount == 1)
 		{
 			m_bNullPart = true;
@@ -134,9 +116,9 @@ namespace CommonLib
 		{
 			m_bCompressPart = true;
 			CreatePartCompressor(m_partType);
-			m_PartCompressor->PreCompress(pShp->getParts(), nPartCount);
-			uint32 nPart = m_PartCompressor->GetCompressSize();
-			nCompressSize += nPart;
+			//m_PartCompressor->PreCompress(pShp->getParts(), nPartCount);
+			//uint32 nPart = m_PartCompressor->GetCompressSize();
+			//nCompressSize += nPart;
 		}
 		if(pShp->getPointCnt() < 5)
 		{
@@ -148,15 +130,15 @@ namespace CommonLib
 		{
 			m_bCompressPoint = true;
 			CreateCompressXY(&m_CompressParams);
-			m_xyCompressor->PreCompress(pShp->getPoints(), pShp->getPointCnt());
-			uint32 nCompSize = m_xyCompressor->GetCompressSize();
-			nCompressSize += nCompSize;
+		//	m_xyCompressor->PreCompress(pShp->getPoints(), pShp->getPointCnt());
+		//	uint32 nCompSize = m_xyCompressor->GetCompressSize();
+		//	nCompressSize += nCompSize;
 		}
-		if(m_bWriteParams)
-			nCompressSize += sizeof(m_CompressParams);
+		//if(m_bWriteParams)
+		//	nCompressSize += sizeof(m_CompressParams);
 
 
-		eShapeType genType;
+	/*	eShapeType genType;
 		bool has_z;
 		bool has_m;
 		bool has_curve;
@@ -174,10 +156,13 @@ namespace CommonLib
 			nCompressSize += (pShp->m_vecMs.size() * sizeof(double))  + sizeof(uint32);
 		}
 
-		return nCompressSize;
+		return nCompressSize;*/
+
+		return pShp->getRowSize() * 2;
 	}
 
-	 
+
+ 
 	bool ShapeCompressor::compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CommonLib::CWriteMemoryStream *pCacheStream)
 	{
 		

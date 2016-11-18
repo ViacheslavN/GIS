@@ -36,15 +36,17 @@ namespace CommonLib
 		void fill(bool bBit);
 		void clear(bool bDel = false);
 	private:
+		void _resize(uint32 nSizeInByte);
+		void _reserve(uint32 nSizeInByte);
 		//uint32 getBitCapacity() const;
 	private:
 		byte* m_pBuffer;
 		alloc_t *m_pAlloc;
 		simple_alloc_t m_alloc;
-		uint32 m_nSize;
 		uint32 m_nCapacity;
 		bool m_bAttach;
 		uint32 m_nSizeInBits;
+		uint32 m_nCapacityInBits;
 
 	};
 }

@@ -17,15 +17,27 @@ namespace CommonLib
 		static const TCodeValue  _ThirdQuarter = (3 * _FirstQuarter);
 		static const _TCodeValue MaxRange = _FirstQuarter - 1;
 
-		TACEncoder(IWriteStream* pStream = NULL, uint32 nMaxSize = 0) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue), m_nScale(0),
-			m_nBitsBuf(0), m_nCurrBit(0), m_nMaxSize(nMaxSize)//, m_nBeginPos(0)
-#ifdef _DEBUG
-			, m_nBitsWrite(0)
-#endif
+		TACEncoder(IWriteStream* pStream = NULL, uint32 nMaxSize = 0)  
+ 
 
 		{
-			//if(pStream)
-			//	m_nBeginPos = pStream->pos();
+			Reset(pStream, nMaxSize);
+		}
+
+
+		void Reset(IWriteStream* pStream = NULL, uint32 nMaxSize = 0)
+		{
+			m_pStream = pStream;
+			m_nLow = 0;
+			m_nHigh = _TopValue;
+			m_nScale = 0;
+			m_nBitsBuf = 0;
+			m_nCurrBit = 0;
+			m_nMaxSize = nMaxSize;
+#ifdef _DEBUG
+			m_nBitsWrite = 0.;
+#endif
+
 		}
 
 		void SetStream(IWriteStream* pStream)
@@ -154,10 +166,21 @@ namespace CommonLib
 		static const TCodeValue  _ThirdQuarter = (3 * _FirstQuarter);
 		static const _TCodeValue MaxRange = _FirstQuarter - 1;
 
-		TACDecoder(IReadStream* pStream = NULL) : m_pStream(pStream), m_nLow(0), m_nHigh(_TopValue),
-			m_nBitsRead(0), m_nValue(0), m_nBitsBuf(0), m_nCurrBit(8)
+		TACDecoder(IReadStream* pStream = NULL)  
 		{
+			Reset(pStream);
+		}
 
+
+		void Reset(IReadStream* pStream = NULL)
+		{
+			m_pStream = pStream;
+			m_nLow = 0;
+			m_nHigh = _TopValue;
+			m_nBitsRead = 0;
+			m_nValue = 0;
+			m_nBitsBuf = 0;
+			m_nCurrBit = 8;
 		}
 
 		TCodeValue GetBit()

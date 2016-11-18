@@ -221,7 +221,7 @@ void CompressShape()
 
 	 uint32 scaleX, scaleY;
 	 getMaxShapeScale(scaleX, scaleY, pShape.get());
-	if(ii == 4351)
+	if(ii == 40)
 	 {
 
 		// std::string sStr = polylineEncode(pShape->getPoints(), pShape->getPointCnt(), params.m_dOffsetX, params.m_dOffsetY, params.m_dScaleX);

@@ -76,7 +76,7 @@ namespace CommonLib
 			uint32 nBeginPos = pStream->pos();
 			pStream->write(nSize);
 			
-			m_Compressor.BeginCompreess(pStream);
+			m_Compressor.BeginCompress(pStream);
 			for (uint32 i = 2; i < nCount; ++i)
 			{
 				assert(pParts[i] >= pParts[i - 1]);

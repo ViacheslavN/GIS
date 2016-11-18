@@ -39,7 +39,10 @@ namespace CommonLib
 			m_nVecPos.clear();
 		}
 
+		void InitCompress(uint32 nCount)
+		{
 
+		}
 		void AddSymbol(bool bSign, uint32 nIndex)
 		{
 			m_nSigns[bSign ? 1 : 0] += 1;

@@ -61,6 +61,9 @@
     <Filter Include="SpatialData\shapeCompressor\dynamic">
       <UniqueIdentifier>{035c5060-360d-4be9-8567-d5bfd3aa73d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SpatialData\ShapeCompressor2">
+      <UniqueIdentifier>{fc732f6c-7b32-414b-8d91-453213e0d049}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
