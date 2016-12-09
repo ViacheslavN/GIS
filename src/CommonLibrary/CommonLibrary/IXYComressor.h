@@ -28,7 +28,7 @@ namespace CommonLib
 		virtual void ReadHeader(IReadStream *pStream) = 0;
 		virtual bool  decompress(GisXYPoint *pPoint, uint32 nCount, IReadStream *pStream) = 0;
 
-		virtual eCompressDataType GeteCompressDataType() const = 0;
+		virtual eCompressDataType GetCompressDataType() const = 0;
 		virtual void clear(const CGeoShape::compress_params* pParams = NULL) = 0;
 	};
 

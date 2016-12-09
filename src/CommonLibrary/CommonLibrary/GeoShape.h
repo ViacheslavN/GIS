@@ -177,6 +177,8 @@ namespace CommonLib
 		eShapeType m_general_type;
 		bbox m_bbox;
 		friend class ShapeCompressor;
+		friend class ShapeCompressor2;
+		friend class CPartCompressor;
 
 	};
 

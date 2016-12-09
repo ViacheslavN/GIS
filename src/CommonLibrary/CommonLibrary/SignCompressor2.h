@@ -1,5 +1,5 @@
-#ifndef _COMMON_LIB_STATIC_SIGN_COMPRESSOR_H_
-#define _COMMON_LIB_STATIC_SIGN_COMPRESSOR_H_
+#ifndef _COMMON_LIB_SIGN_COMPRESSOR_2_H_
+#define _COMMON_LIB_SIGN_COMPRESSOR_2_H_
 #include "compressutils.h"
 #include "WriteBitStream.h"
 #include "FixedMemoryStream.h"
@@ -11,7 +11,7 @@ namespace CommonLib
 {
 
 	//	template<class _TEncoder, class _TDecoder>
-	class TStaticSignCompressor
+	class TSignCompressor2
 	{
 	public:
 		enum eCompressType
@@ -27,11 +27,11 @@ namespace CommonLib
 		static const uint32 __nMinCountPosForCompress = 0xff;
 
 
-		TStaticSignCompressor()
+		TSignCompressor2()
 		{
 			clear();
 		}
-		~TStaticSignCompressor(){}
+		~TSignCompressor2(){}
 
 		void InitCompress(uint32 nCount)
 		{
@@ -187,11 +187,11 @@ namespace CommonLib
 			m_compreesType = (eCompressType)(nFlag & 0x03);
 			if(m_compreesType == ONE_SIGN)
 			{
-				m_bSign = nFlag & (1 << 2);
+				m_bSign = nFlag & (1 << 2) ? true : false;
 			}
 			else if(m_compreesType ==  COMPRESS_POS)
 			{
-				m_bSign = nFlag & (1 << 2);
+				m_bSign = nFlag & (1 << 2)? true : false;
 				m_BitVecPos.resizeBits(nCount);
 				m_BitVecPos.fill(m_bSign ? false : true);
 			}

@@ -18,6 +18,9 @@ namespace CommonLib
 		virtual ~IPartComressor() {}
 		IPartComressor(){}
 
+
+		virtual eCompressDataType GetCompressDataType() const = 0;
+
 		virtual void PreCompress(const uint32 *pParts, uint32 nCount) = 0;
 		virtual uint32 GetCompressSize() const = 0;
 		virtual uint32 GetCount() const = 0;
@@ -27,6 +30,7 @@ namespace CommonLib
 
 		virtual void ReadHeader(IReadStream *pStream) = 0;
 		virtual bool  decompress(uint32 *pParts, uint32 nCount, IReadStream *pStream) = 0;
+		virtual void clear() = 0;
 	};
 
 
@@ -43,6 +47,8 @@ namespace CommonLib
 			clear();
 		}
 		~TPartCompressor(){}
+
+		virtual eCompressDataType GetCompressDataType() const {return m_dateType;}
 
 		virtual void PreCompress(const uint32 *pParts, uint32 nCount)
 		{

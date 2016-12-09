@@ -23,7 +23,6 @@ namespace CommonLib
 			ShapeCompressor(CommonLib::alloc_t *pAlloc);
 			~ShapeCompressor();
 
-
 			bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CWriteMemoryStream *pCacheStream = 0);
 			bool decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream);
 		private:

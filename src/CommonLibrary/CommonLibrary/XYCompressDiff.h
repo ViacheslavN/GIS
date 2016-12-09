@@ -9,7 +9,7 @@
 #include "SignCompressor.h"
 //#include "XYCompressZOrderDiff.h"
 #include "IXYComressor.h"
-#include "StaticSignCompressor.h"
+#include "SignCompressor2.h"
 namespace CommonLib
 {
  
@@ -35,10 +35,11 @@ namespace CommonLib
 		~TXYCompressorDiff(){}
 
 
-		virtual eCompressDataType GeteCompressDataType() const
+		virtual eCompressDataType GetCompressDataType() const
 		{
 			return m_params.m_PointType;
 		}
+
 		template<class TCompressor>
 		uint32 PreAddCoord(uint32 nPos, TValue prev, TValue next, TCompressor &signCpmrpessor)
 		{
@@ -371,8 +372,8 @@ namespace CommonLib
 		//TSignCompressor m_SignCompressorY;
 
 
-		TStaticSignCompressor m_SignCompressorX;
-		TStaticSignCompressor m_SignCompressorY;
+		TSignCompressor2 m_SignCompressorX;
+		TSignCompressor2 m_SignCompressorY;
 
 		CGeoShape::compress_params m_params;
 

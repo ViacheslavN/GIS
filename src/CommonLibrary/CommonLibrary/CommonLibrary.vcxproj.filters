@@ -285,14 +285,23 @@
     <ClInclude Include="LockObject.h">
       <Filter>thread</Filter>
     </ClInclude>
-    <ClInclude Include="StaticSignCompressor.h">
-      <Filter>compress</Filter>
-    </ClInclude>
     <ClInclude Include="BitsMap.h">
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="BitsVector.h">
       <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeCompressor2.h">
+      <Filter>SpatialData\ShapeCompressor2</Filter>
+    </ClInclude>
+    <ClInclude Include="PartCompressor2.h">
+      <Filter>SpatialData\ShapeCompressor2</Filter>
+    </ClInclude>
+    <ClInclude Include="NumLenCompressor2.h">
+      <Filter>SpatialData\ShapeCompressor2</Filter>
+    </ClInclude>
+    <ClInclude Include="SignCompressor2.h">
+      <Filter>compress</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -400,6 +409,12 @@
     </ClCompile>
     <ClCompile Include="BitsVector.cpp">
       <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeCompressor2.cpp">
+      <Filter>SpatialData\ShapeCompressor2</Filter>
+    </ClCompile>
+    <ClCompile Include="PartCompressor2.cpp">
+      <Filter>SpatialData\ShapeCompressor2</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

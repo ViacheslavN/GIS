@@ -482,16 +482,19 @@
     <ClInclude Include="FixedBitStream.h" />
     <ClInclude Include="GeoShape.h" />
     <ClInclude Include="NumLenCompressor.h" />
+    <ClInclude Include="NumLenCompressor2.h" />
     <ClInclude Include="NumLenCompressorDynamic.h" />
     <ClInclude Include="NumLenPointCompress.h" />
     <ClInclude Include="PartCompressor.h" />
+    <ClInclude Include="PartCompressor2.h" />
     <ClInclude Include="PodVector.h" />
     <ClInclude Include="RangeCoder.h" />
     <ClInclude Include="ShapeCompressor.h" />
+    <ClInclude Include="ShapeCompressor2.h" />
     <ClInclude Include="SignCompressor.h" />
     <ClInclude Include="SpatialKey.h" />
     <ClInclude Include="sprintf.h" />
-    <ClInclude Include="StaticSignCompressor.h" />
+    <ClInclude Include="SignCompressor2.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stl_alloc.h" />
     <ClInclude Include="stream.h" />
@@ -549,8 +552,10 @@
       <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <ClCompile Include="multibyte.cpp" />
+    <ClCompile Include="PartCompressor2.cpp" />
     <ClCompile Include="PointZOrder.cpp" />
     <ClCompile Include="ShapeCompressor.cpp" />
+    <ClCompile Include="ShapeCompressor2.cpp" />
     <ClCompile Include="sprintf.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

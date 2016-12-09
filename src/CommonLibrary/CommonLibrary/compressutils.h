@@ -92,6 +92,18 @@ namespace CommonLib
 		return 0;
 	}
 
+	static eCompressDataType GetTypeFromBitsLen(uint32 nLenBits)
+	{
+		if(nLenBits > 31)
+			return dtType64;
+		if(nLenBits > 15)
+			return dtType32;
+		if(nLenBits > 7)
+			return dtType16;
+
+		return dtType8;
+	}
+
 
    // static int bits_lens[] = {0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3};
 	  static int bits_lens[] = {0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4};
