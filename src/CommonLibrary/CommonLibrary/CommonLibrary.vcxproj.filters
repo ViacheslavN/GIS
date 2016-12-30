@@ -301,7 +301,10 @@
       <Filter>SpatialData\ShapeCompressor2</Filter>
     </ClInclude>
     <ClInclude Include="SignCompressor2.h">
-      <Filter>compress</Filter>
+      <Filter>SpatialData\ShapeCompressor2</Filter>
+    </ClInclude>
+    <ClInclude Include="PointCompressor.h">
+      <Filter>SpatialData\ShapeCompressor2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

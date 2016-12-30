@@ -24,8 +24,8 @@ public:
 	virtual void reset() = 0;
 	virtual void close() = 0;
 
-	virtual bool attach(IStream *pStream, int32 nPos = -1, int32 nSize = -1)  = 0;
-	virtual bool attach64(IStream *pStream, int64 nPos = -1, int64 nSize = -1)  = 0;
+	virtual bool attach(IStream *pStream, int32 nPos = -1, int32 nSize = -1, bool bSeekPos = false)  = 0;
+	virtual bool attach64(IStream *pStream, int64 nPos = -1, int64 nSize = -1, bool bSeekPos = false)  = 0;
 	virtual IStream * deattach()  = 0;
 
 	static bool isBigEndian()
@@ -394,7 +394,7 @@ public:
 	{
 		m_nPos = 0;
 	}
-	virtual bool attach(IStream *pStream, int32 nPos = -1, int32 nSize = -1)
+	virtual bool attach(IStream *pStream, int32 nPos = -1, int32 nSize = -1, bool bSeekPos = false)
 	{
 		IMemoryStream *pMemStream = dynamic_cast<IMemoryStream *>(pStream);
 		if(!pMemStream)
@@ -403,14 +403,24 @@ public:
 		  uint32 _nPos = (nPos != -1 ? nPos : 0);
 		  uint32 _nSize= (nSize != -1 ? nSize : pStream->size());
 
+		  if((pStream->size() -  _nPos) < _nSize)
+		  {
+			  if(!pMemStream->resize(pStream->size()  + _nSize))
+				  return false;
+		  }
+
 		 if(!attachBuffer(pMemStream->buffer() + _nPos, _nSize, false))
 			 return false;
 		 m_pAttachStream = pStream;
+
+		 if(bSeekPos)
+			 pStream->seek(_nPos + _nSize, CommonLib::soFromBegin);
+
 		return true;
 	}
-	virtual bool attach64(IStream *pStream, int64 nPos = -1, int64 nSize = -1)
+	virtual bool attach64(IStream *pStream, int64 nPos = -1, int64 nSize = -1, bool bSeek = false)
 	{
-		return attach(pStream, int32(nPos), int32(nSize));
+		return attach(pStream, int32(nPos), int32(nSize), bSeek);
 	}
 	virtual IStream* deattach()
 	{

@@ -488,6 +488,7 @@
     <ClInclude Include="PartCompressor.h" />
     <ClInclude Include="PartCompressor2.h" />
     <ClInclude Include="PodVector.h" />
+    <ClInclude Include="PointCompressor.h" />
     <ClInclude Include="RangeCoder.h" />
     <ClInclude Include="ShapeCompressor.h" />
     <ClInclude Include="ShapeCompressor2.h" />

@@ -1,5 +1,5 @@
-#ifndef _LIB_COMMON_GEO_SHAPE_PART_COMPRESSOR_H_
-#define _LIB_COMMON_GEO_SHAPE_PART_COMPRESSOR_H_
+#ifndef _LIB_COMMON_GEO_SHAPE_PART_COMPRESSOR_2_H_
+#define _LIB_COMMON_GEO_SHAPE_PART_COMPRESSOR_2_H_
 #include "NumLenCompressor.h"
 #include "BitStream.h"
 #include "FixedMemoryStream.h"

@@ -5,7 +5,7 @@
 #include "FixedMemoryStream.h"
 #include "ArithmeticCoder.h"
 #include "PodVector.h"
-#include "NumLenCompressor.h"
+#include "NumLenCompressor2.h"
 #include "BitsVector.h"
 namespace CommonLib
 {
@@ -47,7 +47,6 @@ namespace CommonLib
 			m_bSign = false;
 			m_nVecPos.clear();
 			m_BitVecPos.clear();
-			m_NumLen16.clear();
 			m_NumLen32.clear();
 			m_nCalcCompressPos = -1;
 		}
@@ -60,10 +59,6 @@ namespace CommonLib
 			m_BitVecPos.push_back(bSign ? true : false);
 
 		}
-		/*void RemoveSymbol(bool bSign)
-		{
-			m_nSigns[bSign ? 1 : 0] -= 1;
-		}*/
 		uint32 GetCompressSize() const
 		{
 			if(m_nSigns[0] == 0 || m_nSigns[1] == 0)
@@ -98,7 +93,7 @@ namespace CommonLib
 				nFlag = ONE_SIGN;
 
 				if(m_nSigns[1] != 0)
-					nFlag |= (1 << 2);
+					nFlag |= (1 << 3);
 
 				pStream->write(nFlag);
 			}
@@ -129,17 +124,11 @@ namespace CommonLib
 					m_bSign = false;
 					if(m_nSigns[1] == nMinCount)
 					{
-						nFlag |= (1 << 2);
+						nFlag |= (1 << 3);
 						m_bSign = true;
 					}
-
-					m_WriteStream.attach(pStream, pStream->pos(), nCompressPosSize);
-					m_WriteStream.write(nFlag);
-
-					CompressPos(&m_WriteStream);
-
-
-					pStream->seek(nCompressPosSize, CommonLib::soFromCurrent);
+					pStream->write(nFlag);
+					CompressPos(pStream);
 				}
 				else 
 				{
@@ -148,13 +137,13 @@ namespace CommonLib
 					m_bSign = false;
 					if(m_nSigns[1] == nMinCount)
 					{
-						nFlag |= (1 << 2);
+						nFlag |= (1 << 3);
 						m_bSign = true;
 					}
-					m_WriteStream.attach(pStream, pStream->pos(), nBytePosCodeSize);
-					m_WriteStream.write(nFlag);
-					WriteValue(nMinCount, m_DataType, &m_WriteStream);
-					pStream->seek(nBytePosCodeSize, CommonLib::soFromCurrent);
+					pStream->write(nFlag);
+					WriteValue(nMinCount, m_DataType, pStream);
+					m_WriteStream.attach(pStream, pStream->pos(), nBytePosCodeSize, true);
+
 				}
 
 			}
@@ -185,22 +174,22 @@ namespace CommonLib
 		{
 			byte nFlag = pStream->readByte();
 			m_compreesType = (eCompressType)(nFlag & 0x03);
+			m_bSign = nFlag & (1 << 3) ? true : false;
 			if(m_compreesType == ONE_SIGN)
 			{
-				m_bSign = nFlag & (1 << 2) ? true : false;
+				
 			}
 			else if(m_compreesType ==  COMPRESS_POS)
 			{
-				m_bSign = nFlag & (1 << 2)? true : false;
 				m_BitVecPos.resizeBits(nCount);
 				m_BitVecPos.fill(m_bSign ? false : true);
+				DecompressPos(pStream, nCount);
 			}
 			else if(m_compreesType == NO_COMPRESS_POS)
 			{
 
-				m_bSign = nFlag & (1 << 2);
-				m_DataType = GetCompressType(nCount);
 
+				m_DataType = GetCompressType(nCount);
 				uint32 nCount = ReadValue<uint32>(m_DataType, pStream);
 				m_nVecPos.reserve(nCount);
 				for (size_t i = 0; i < nCount; ++i)
@@ -280,11 +269,11 @@ namespace CommonLib
 
 		uint32 CalcCompressPosSize() const
 		{
-			uint32 nCompressSize = 0;
+			uint32 nCompressSize =  CalcCompressPosSize(m_NumLen32);
 			if((m_nSigns[0] + m_nSigns[1]) < 0xFFFF - 1)
-				nCompressSize = CalcCompressPosSize(m_NumLen16) + sizeof(uint16);
+				nCompressSize += sizeof(uint16);
 			else
-				nCompressSize = CalcCompressPosSize(m_NumLen32) + sizeof(uint32);
+				 nCompressSize += sizeof(uint32);
 
 			return nCompressSize;
 
@@ -292,23 +281,13 @@ namespace CommonLib
 
 
 
-		template<class TNumLen, class Type>
-		void CompressPos(TNumLen& numLen, IWriteStream *pStream) const
+		template<class Type>
+		void CompressPos(IWriteStream *pStream) const
 		{
-
-
-			uint32 nBitSize = numLen.GetBitsLen();
-			uint32 nByteSize = (nBitSize + 7)/8;
-			
-			CommonLib::FxBitWriteStream bitStream;
-
-			bitStream.attach(pStream, pStream->pos(), nByteSize);
-			pStream->seek(nByteSize, soFromCurrent);
-
-
 
 			int32 nPrevPos = -1;
 			int32 nCount = 0;
+			CommonLib::FxBitWriteStream bitStream;
 
 			for(uint32 i = 0, sz = m_BitVecPos.sizeInBits(); i < sz; ++i)
 			{
@@ -319,28 +298,97 @@ namespace CommonLib
 					{
 
 						pStream->write((Type)i);
-						numLen.BeginCompress(pStream);
-						numLen.WriteHeader(pStream);
+						m_NumLen32.BeginEncode(pStream);
+						m_NumLen32.WriteHeader(pStream);
+
+						uint32 nBitSize = m_NumLen32.GetBitsLen();
+						uint32 nByteSize = (nBitSize + 7)/8;
+
+					
+
+						bitStream.attach(pStream, pStream->pos(), nByteSize);
+						pStream->seek(nByteSize, soFromCurrent);
 					}
 					else
 					{
 						nCount++;
-						numLen.EncodeSymbol(i - nPrevPos, &bitStream);
+						m_NumLen32.EncodeSymbol(i - nPrevPos, &bitStream);
 					}
 					nPrevPos = i;
 				}
 
 			}
-			numLen.EncodeFinish();
+			m_NumLen32.EncodeFinish();
 		}
 
 		void CompressPos(IWriteStream *pStream)
 		{
 			uint32 nCompressSize = 0;
 			if((m_nSigns[0] + m_nSigns[1]) < 0xFFFF - 1)
-				CompressPos<TNumLen16, uint16>(m_NumLen16, pStream);
+				CompressPos< uint16>(pStream);
 			else
-				CompressPos<TNumLen32, uint32>(m_NumLen32, pStream);
+				CompressPos<uint32>(pStream);
+		}
+		void DecompressPos(IReadStream *pStream, uint32 nCount)
+		{
+		 
+			if(nCount < 0xFFFF - 1)
+				DecompressPos<uint16>(pStream);
+			else
+				DecompressPos<uint32>(pStream);
+		}
+
+
+		template<class Type>
+		void DecompressPos(IReadStream *pStream)
+		{
+
+
+			Type nPos = 0;
+			pStream->read(nPos);
+
+			m_BitVecPos.setBit(m_bSign, nPos);
+
+			m_NumLen32.clear();
+			m_NumLen32.Init(pStream);
+			
+
+			uint32 nBitSize = m_NumLen32.GetBitsLen();
+			uint32 nByteSize = (nBitSize + 7)/8;
+
+			CommonLib::FxBitReadStream bitStream;
+
+			bitStream.attach(pStream, pStream->pos(), nByteSize);
+			pStream->seek(nByteSize, soFromCurrent);
+
+			uint32 nCount = m_NumLen32.GetCount();
+			uint32 nBitLen = 0;
+			uint32 nPosDiff = 0;
+			m_NumLen32.StartDecode();
+			for (uint32 i = 0; i < nCount; ++i)
+			{
+
+				m_NumLen32.DecodeSymbol(nBitLen);
+				nPosDiff = nBitLen;
+
+				if(nPosDiff > 1)
+				{
+
+					nPosDiff = 0;
+					bitStream.readBits(nPosDiff, nBitLen - 1);
+					nPosDiff |= (1 << nBitLen- 1);
+				}
+
+				nPos = nPos + nPosDiff;
+				m_BitVecPos.setBit(m_bSign, nPos);
+			}
+
+		}
+
+
+		bool IsNeedEncode() const
+		{
+			return !(m_compreesType ==  COMPRESS_POS || m_compreesType == ONE_SIGN);
 		}
 
 	private:
@@ -359,10 +407,10 @@ namespace CommonLib
 
 
 
-		typedef TNumLemCompressor<uint32, TFindMostSigBit, 32> TNumLen32;
-		typedef TNumLemCompressor<uint16, TFindMostSigBit, 16> TNumLen16;
+		typedef TNumLemCompressor2<uint32, TFindMostSigBit, 32> TNumLen32;
+		//typedef TNumLemCompressor<uint16, TFindMostSigBit, 16> TNumLen16;
 		mutable TNumLen32 m_NumLen32;
-		mutable TNumLen16 m_NumLen16;
+		//mutable TNumLen16 m_NumLen16;
 
 		mutable int32 m_nCalcCompressPos;
 

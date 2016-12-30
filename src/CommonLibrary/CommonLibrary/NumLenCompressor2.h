@@ -125,7 +125,7 @@ namespace CommonLib
 
 		void BeginEncode(CommonLib::IWriteStream* pStream)
 		{
-			clear();
+			//clear();
 			m_Encoder.Reset(pStream);
 		}
 
@@ -228,15 +228,15 @@ namespace CommonLib
 			
 		}
 
-		bool DecodeSymbol(uint32& value)
+		bool DecodeSymbol(uint32& nSymbol)
 		{
 			uint32 freq = (uint32)m_Decoder.GetFreq(m_nCount);
-			value = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens + 1, freq);
-			if(value != 0)
-				value--;
+			nSymbol = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens + 1, freq);
+			if(nSymbol != 0)
+				nSymbol--;
 
 
-			m_Decoder.DecodeSymbol(m_FreqPrev[value], m_FreqPrev[value+1], m_nCount);
+			m_Decoder.DecodeSymbol(m_FreqPrev[nSymbol], m_FreqPrev[nSymbol+1], m_nCount);
 
 			//value += 1;
 			return true;
@@ -275,7 +275,8 @@ namespace CommonLib
 		}
 		uint32 GetHeaderSize() const
 		{
-			uint32 nSize = _nMaxBitsLens/8  + 1;
+			//uint32 nSize = _nMaxBitsLens/8  + 1;
+			uint32 nSize = 1  + 1; //maxLen + freqtype
 			for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 			{
 				if(m_BitsLensFreq[i] != 0)
