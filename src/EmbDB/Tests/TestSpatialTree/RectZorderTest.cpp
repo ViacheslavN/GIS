@@ -533,6 +533,8 @@ void TestRectWithSubQuery(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, Com
 	int nInRect = 0;
 	int nInOut = 0;
 	int nTotal = 0;
+
+	embDB::ZOrderRect2DU16 zLastValIn;
 	for (size_t i = nIndex; i < vecRect.size();)
 	{
 
@@ -549,7 +551,7 @@ void TestRectWithSubQuery(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, Com
 		{
 			++nInOut;
 			embDB::ZOrderRect2DU16 zQVal;
-			FindRectMinZVal(zVal, zKeyMin, zKeyMax, zQVal);
+			FindRectMinZVal(zLastValIn, zKeyMin, zKeyMax, zQVal);
 
 			size_t index  = vecRect.lower_bound(zQVal,nType,comp);
 			if(index <= i)
@@ -562,10 +564,12 @@ void TestRectWithSubQuery(embDB::TBPVector<embDB::ZOrderRect2DU16>& vecRect, Com
 				d++;
 
 			}
+			zLastValIn = zQVal;
 			i = index;
 		}
 		else
 		{
+			zLastValIn = zVal;
 			if(pSet)
 				pSet->insert(i);
 			nInRect++;

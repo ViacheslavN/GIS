@@ -16,7 +16,7 @@ void TestSpIndexFromShapeFile();
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//TestAddFieldDB();
-//	TestSpIndexFromShapeFile();
+	TestSpIndexFromShapeFile();
 
 
 	/*embDB::CFileLogger flogger(L"D:\\db\\1.log", false, true);
@@ -25,7 +25,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	flogger.error(L"Error : %d", 3405);
 	flogger.error(L"Error : %d", 11);
 	*/
-	testDBFromShape();
+	//testDBFromShape();
 	return 0;
 	
 /*	embDB::TVarINT32 int32key;

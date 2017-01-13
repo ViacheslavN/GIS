@@ -419,5 +419,8 @@
     <ClCompile Include="PartCompressor2.cpp">
       <Filter>SpatialData\ShapeCompressor2</Filter>
     </ClCompile>
+    <ClCompile Include="PointCompressor.cpp">
+      <Filter>SpatialData\ShapeCompressor2</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

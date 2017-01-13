@@ -84,6 +84,19 @@ namespace embDB
 		uint64 m_nZValue;
 	};
 
+	struct ZRect16Comp
+	{
+		bool LE(const ZOrderRect2DU16& _Left, const ZOrderRect2DU16& _Right) const
+		{
+		
+			return _Left.m_nZValue < _Right.m_nZValue;
+		}
+		bool EQ(const ZOrderRect2DU16& _Left, const ZOrderRect2DU16& _Right) const
+		{
+			return _Left.m_nZValue == _Right.m_nZValue;
+		}
+	};
+
 	struct ZOrderRect2DU32
 	{
 		typedef  int32 TPointTypei;
@@ -184,15 +197,36 @@ namespace embDB
 			return 255;
 		}
 
+		bool less(const ZOrderRect2DU64& zOrder) const
+		{
+			for(int i = 3; i >= 0; i--)
+			{
+				if(m_nZValue[i]>zOrder.m_nZValue[i])
+					return false;
+				if(m_nZValue[i]<zOrder.m_nZValue[i])
+					return true;
+			}
+			return false;
+		}
+
 		bool operator < (const ZOrderRect2DU64& zOrder) const
 		{
-			if(m_nZValue[3] != zOrder.m_nZValue[3] )
+		/*	if(m_nZValue[3] != zOrder.m_nZValue[3] )
 				return m_nZValue[3] < zOrder.m_nZValue[3];
 			if(m_nZValue[2] != zOrder.m_nZValue[2] )
 				return m_nZValue[2] < zOrder.m_nZValue[2];
 			if(m_nZValue[1] != zOrder.m_nZValue[1] )
 				return m_nZValue[1] < zOrder.m_nZValue[1];
-			return m_nZValue[0] < zOrder.m_nZValue[0];
+			return m_nZValue[0] < zOrder.m_nZValue[0];*/
+
+			for(int i = 3; i >= 0; i--)
+			{
+				if(m_nZValue[i]>zOrder.m_nZValue[i])
+					return false;
+				if(m_nZValue[i]<zOrder.m_nZValue[i])
+					return true;
+			}
+			return false;
 		}
 		bool operator <= (const ZOrderRect2DU64& zOrder) const
 		{
@@ -209,13 +243,16 @@ namespace embDB
 		}
 		bool operator > (const ZOrderRect2DU64& zOrder) const
 		{
-			if(m_nZValue[3] != zOrder.m_nZValue[3] )
+
+			return !less(zOrder);
+
+			/*if(m_nZValue[3] != zOrder.m_nZValue[3] )
 				return m_nZValue[3] > zOrder.m_nZValue[3];
 			if(m_nZValue[2] != zOrder.m_nZValue[2] )
 				return m_nZValue[2] > zOrder.m_nZValue[2];
 			if(m_nZValue[1] != zOrder.m_nZValue[1] )
 				return m_nZValue[1] > zOrder.m_nZValue[1];
-			return m_nZValue[0] > zOrder.m_nZValue[0];
+			return m_nZValue[0] > zOrder.m_nZValue[0];*/
 		}
 		bool operator == (const ZOrderRect2DU64&  zOrder) const
 		{
@@ -245,13 +282,24 @@ namespace embDB
 	{
 		bool LE(const ZOrderRect2DU64& _Left, const ZOrderRect2DU64& _Right) const
 		{
-			if(_Left.m_nZValue[3] != _Right.m_nZValue[3] )
+			/*if(_Left.m_nZValue[3] != _Right.m_nZValue[3] )
 				return _Left.m_nZValue[3] < _Right.m_nZValue[3];
 			if(_Left.m_nZValue[2] != _Right.m_nZValue[2] )
 				return _Left.m_nZValue[2] < _Right.m_nZValue[2];
 			if(_Left.m_nZValue[1] != _Right.m_nZValue[1] )
 				return _Left.m_nZValue[1] < _Right.m_nZValue[1];
-			return _Left.m_nZValue[0] < _Right.m_nZValue[0];
+			return _Left.m_nZValue[0] < _Right.m_nZValue[0];*/
+
+			for(int i = 3; i >= 0; i--)
+			{
+				if(_Left.m_nZValue[i]>_Right.m_nZValue[i])
+					return false;
+				if(_Left.m_nZValue[i]<_Right.m_nZValue[i])
+					return true;
+			}
+			return false;
+
+
 		}
 		bool EQ(const ZOrderRect2DU64& _Left, const ZOrderRect2DU64& _Right) const
 		{

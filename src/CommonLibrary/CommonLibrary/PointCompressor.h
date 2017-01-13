@@ -6,17 +6,24 @@
 #include "GeoShape.h"
 #include "SignCompressor2.h"
 
+
 namespace CommonLib
 {
 
+	class CWriteMemoryStream;
 	class CPointCompressor
 	{
 		public:
-			CPointCompressor();
+			CPointCompressor(CWriteMemoryStream *pCacheStreamX, CWriteMemoryStream *pCacheStreamY);
 			~CPointCompressor();
+
+			void clear();
 
 			bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
 			bool decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream);
+	private:
+		void calc(const CGeoShape *pShp, CGeoShape::compress_params *pParams);
+		bool compressImpl(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
 	private:
 			
 			typedef TNumLemCompressor2<uint64, TFindMostSigBit, 64> TNumLen32;
@@ -26,6 +33,11 @@ namespace CommonLib
 
 			TNumLen32 m_PointX;
 			TNumLen32 m_PointY;
+
+			CWriteMemoryStream *m_pCacheStreamX;
+			CWriteMemoryStream *m_pCacheStreamY;
+
+
 	};
 }
 

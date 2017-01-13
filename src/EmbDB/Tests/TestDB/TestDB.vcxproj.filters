@@ -66,5 +66,8 @@
     <ClCompile Include="TestSpIndex.cpp">
       <Filter>TestSpIndex</Filter>
     </ClCompile>
+    <ClCompile Include="TestSP16.cpp">
+      <Filter>TestSpIndex</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

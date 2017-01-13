@@ -554,6 +554,7 @@
     </ClCompile>
     <ClCompile Include="multibyte.cpp" />
     <ClCompile Include="PartCompressor2.cpp" />
+    <ClCompile Include="PointCompressor.cpp" />
     <ClCompile Include="PointZOrder.cpp" />
     <ClCompile Include="ShapeCompressor.cpp" />
     <ClCompile Include="ShapeCompressor2.cpp" />
