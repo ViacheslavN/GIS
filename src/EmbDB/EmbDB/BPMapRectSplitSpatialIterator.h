@@ -228,7 +228,7 @@ namespace embDB
 
 					while(true)
 					{
-						TSubQuery nPrev = m_CurrentSpatialQuery;
+						//TSubQuery nPrev = m_CurrentSpatialQuery;
 						m_CurrentSpatialQuery = m_Queries.top();
 
 						short nType = 0;

@@ -233,32 +233,28 @@ namespace embDB
 		assert( idx < 128 && idx >= 0);
 		if(idx > 63)
 		{
-			int subIndex = (idx - 64) & 0x3f;
-			uint64 bit = uint64 (1) << uint64 (subIndex);
-			uint64 bitMask = sBitsMasks[0] >> (63 - subIndex);
+			int subIndex = (idx - 64);
+			uint64 bitMask = 0x8888888888888888 >> (63 - subIndex);
+			uint64 bit = uint64 (1) << uint64 (subIndex & 0x3f);
 
-			
-			m_nZValue[1] |= (bitMask& (bit - 1));
-			m_nZValue[1] &= ~bit;
-			//m_nZValue[1] |= (sBitsMasks[0] >> (63 - subIndex));
-			//m_nZValue[1]-= (1ULL << subIndex);
-	
-			//bitMask = 0x8888888888888888 >> (3 - subIndex % 4);
-			m_nZValue[0] |= ( sBitsMasks[idx % 4]);
+			m_nZValue[1] -= bit;
+			m_nZValue[1] |= (bitMask & (bit - 1));
+
+			bitMask = 0x8888888888888888 >> (3 - subIndex % 4);
+			m_nZValue[0] |= bitMask;
 		}
 		else
 		{
 			uint64 bitMask = 0x8888888888888888 >> (63 - idx);
 			uint64 bit = uint64 (1) << uint64 (idx & 0x3f);
 			
-			m_nZValue[0] |= (sBitsMasks[0]& (bit - 1));
+			m_nZValue[0] |= bitMask;
 			m_nZValue[0] &= ~bit;
-		//	m_nZValue[0] |= (sBitsMasks[0] >> (63 - idx));
-		//	m_nZValue[1]-= (1ULL << idx);
 			
 		}
 
 	}
+
 
 
 
@@ -268,23 +264,15 @@ namespace embDB
 		assert( idx < 128 && idx >= 0);
 		if(idx > 63)
 		{
-			int subIndex =  (idx - 64) & 0x3f;
-			uint64 bitMask = sBitsMasks[0] >> (63 - (subIndex));
+			int subIndex =  (idx - 64);
+			uint64 bitMask = 0x8888888888888888 >> (63 - subIndex);
 			uint64 bit = uint64 (1) << uint64 (subIndex & 0x3f);
-			
-			
-			
-			m_nZValue[1] &=~(bitMask& (bit - 1));
 			m_nZValue[1] |=  bit;
-
-			//m_nZValue[1] &= ~(sBitsMasks[0] >> (63 - subIndex));
-			//m_nZValue[1] |= (1ULL << subIndex);
-			
+			m_nZValue[1] &= ~(bitMask& (bit - 1));
 
 			bitMask = 0x8888888888888888 >> (3 - subIndex % 4);
-			m_nZValue[0] &= ~(bitMask);
+			m_nZValue[0] &= ~(bitMask /*& (bit - 1)*/);
 
-			//m_nZValue[0] &=( sBitsMasks[idx % 4]);
 
 		}
 		else
@@ -293,10 +281,6 @@ namespace embDB
 			uint64 bit = uint64 (1) << uint64 (idx & 0x3f);
 			m_nZValue[0] &= ~(bitMask & (bit - 1));
 			m_nZValue[0] |= bit;
-		
-			//m_nZValue[0] &= ~(sBitsMasks[0] >> (63 - idx));
-			//m_nZValue[0] |= (1ULL << idx);
-			
 		}
 	}
 	ZOrderRect2DU32 ZOrderRect2DU32::operator - (const ZOrderRect2DU32&  zOrder) const

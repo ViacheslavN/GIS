@@ -2,7 +2,7 @@
 #include "PointCompressor.h"
 namespace CommonLib
 {
-	CPointCompressor::CPointCompressor()
+	CPointCompressor::CPointCompressor(CWriteMemoryStream *pCacheStreamX, CWriteMemoryStream *pCacheStreamY)
 	{
 
 	}

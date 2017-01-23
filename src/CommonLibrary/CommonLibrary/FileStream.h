@@ -103,7 +103,7 @@ namespace CommonLib
 			m_File.closeFile();
 		}
 	
-		virtual bool attach(IStream *pStream, int32 nPos = -1, int32 nSize = -1)
+		virtual bool attach(IStream *pStream, int32 nPos = -1, int32 nSize = -1, bool bSeekPos = false)
 		{
 
 			IFileStream *pFileStream = dynamic_cast<IFileStream *>(pStream);
@@ -116,7 +116,7 @@ namespace CommonLib
 			return true;
 
 		}
-		virtual bool attach64(IStream *pStream, int64 nPos = -1, int64 nSize  = -1) 
+		virtual bool attach64(IStream *pStream, int64 nPos = -1, int64 nSize  = -1, bool bSeekPos = false) 
 		{
 			return attach(pStream, (int32)nPos, (int32)nSize);
 		}

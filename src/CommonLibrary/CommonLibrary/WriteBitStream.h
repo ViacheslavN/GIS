@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_COMMON_I_WRITE_BIT_STERAM_H_
 #define _EMBEDDED_COMMON_I_WRITE_BIT_STERAM_H_
-
+#include "BitStream.h"
 namespace CommonLib
 {
 	class WriteBitStream : public TBaseBitMemryStream<IWriteBitStreamBase>
