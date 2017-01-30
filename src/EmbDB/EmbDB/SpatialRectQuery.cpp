@@ -169,7 +169,8 @@ namespace embDB
 		yMin = getFromZu16((m_nZValue >> 1 ) & 0x1111111111111111);
 		xMax = getFromZu16((m_nZValue >> 2 ) & 0x1111111111111111);
 		yMax = getFromZu16((m_nZValue >> 3 ) & 0x1111111111111111);*/
-		getXYFromZValue16(xMin, yMin, xMax, yMax, m_nZValue);
+		//getXYFromZValue16(xMin, yMin, xMax, yMax, m_nZValue);
+		getCoordFromZValue16(yMax, yMin, xMax, xMin, m_nZValue);
 	}
 	void ZOrderRect2DU16::getXY(TRect& rect) const
 	{
@@ -182,16 +183,24 @@ namespace embDB
 		uint64 bit = uint64 (1) << uint64 (idx & 0x3f);
 		
 		
-		m_nZValue |= (bitMask & (bit - 1));
+		m_nZValue |= (bitMask);
 		m_nZValue -= bit;
+
+		/*m_nZValue -= bit;
+		m_nZValue |= (bitMask & (bit - 1));*/
+		
 	}
 	void ZOrderRect2DU16::clearLowBits(int idx)
 	{
 		uint64 bitMask = sBitsMasks[0] >> (63 - idx);
 		uint64 bit = uint64 (1) << uint64 (idx & 0x3f);
 		
+	
+		m_nZValue &= ~(bitMask);
 		m_nZValue |= bit;
-		m_nZValue &= ~(bitMask & (bit - 1));
+
+		/*m_nZValue |= bit;
+		m_nZValue &= ~(bitMask & (bit - 1));*/
 		
 	}
 

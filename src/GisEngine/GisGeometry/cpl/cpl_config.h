@@ -140,7 +140,7 @@
 #define  CPL_DISABLE_DLL
 
 #ifdef _WIN32
-	#define snprintf _snprintf
+	//#define snprintf _snprintf
 #endif
 
 /* Use this file to override settings in instances where you're doing FAT compiles

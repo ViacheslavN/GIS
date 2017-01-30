@@ -224,7 +224,7 @@ namespace embDB
 
 					//TPointKey& zVal = m_pCurNode->key(m_nIndex - 1);
 
-
+					//TO DO Check next page to current query
 
 					while(true)
 					{

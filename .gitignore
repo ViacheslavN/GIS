@@ -12,7 +12,7 @@
 # Compiled Static libraries
 *.lai
 *.la
-*.a
+*.db*.a
 *.lib
 
 # Executables
@@ -46,7 +46,7 @@ Thumbs.db
 *.idb
 *.map
 *.exp
-*.lastbuildstate
+*.opendb*.lastbuildstate
 *.unsuccessfulbuild
 [Bb]in
 [Dd]ebug*/
@@ -92,3 +92,7 @@ src/MapViewer/Android/MapViewer/CodeDB/MapViewer-Debug-Win32/MapDrawer.npa
 src/MapViewer/Android/MapViewer/CodeDB/MapViewer-Debug-Win32/MapDrawer.npd
 src/MapViewer/Android/MapViewer/CodeDB/MapViewer-Debug-Win32/MapDrawer.rdb
 src/MapViewer/Android/MapViewer/VisualGDBCache/MapViewer-Debug/DeploymentStatus.xml
+src/CommonLibrary/CommonLibrary.VC.db
+src/CommonLibrary/CommonLibrary.VC.VC.opendb
+*.db
+*.opendb

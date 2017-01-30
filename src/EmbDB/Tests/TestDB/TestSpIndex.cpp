@@ -9,6 +9,7 @@
 #include "ZRectU32.h"
 #include <fstream>
 #include <stack>
+#include 	<sstream>
 
 typedef embDB::TBPVector<embDB::ZOrderRect2DU32> TVecZOrder;
 
@@ -33,7 +34,7 @@ typedef embDB::TBPVector<embDB::ZOrderRect2DU32> TVecZOrder;
 
 template<class TZVal>
 bool FindRectMinZValFile(const TZVal& zVal, 
-	const TZVal& zMin, const TZVal& zMax, TZVal& zRes)
+	const TZVal& zMin, const TZVal& zMax, TZVal& zRes, const char *pszFileName)
 {
 	if(zVal < zMin || zVal > zMax)
 	{
@@ -42,7 +43,7 @@ bool FindRectMinZValFile(const TZVal& zVal,
 	}
 
 	std::ofstream fileZOrder;
-	fileZOrder.open("D:\\zOrderSplit");
+	fileZOrder.open(pszFileName);
 
 	short nBits = zRes.getBits();
 
@@ -51,9 +52,9 @@ bool FindRectMinZValFile(const TZVal& zVal,
 	zRes = zMax;
 
 
-	fileZOrder << "zMin   " << zMin.m_nZValue[1] << "  " << zMin.m_nZValue[0] <<
-		"zNext   " << zVal.m_nZValue[1] << "  " << zVal.m_nZValue[0] <<
-		"  zMax  " << 	zMax.m_nZValue[1] << "  " << zMax.m_nZValue[0] << "\n" ;
+	fileZOrder << "zMin   " << zMin.m_nZValue << "  " << zMin.m_nZValue <<
+		"zNext   " << zVal.m_nZValue << "  " << zVal.m_nZValue <<
+		"  zMax  " << 	zMax.m_nZValue << "  " << zMax.m_nZValue << "\n" ;
 	while(nBits >= 0)
 	{
 
@@ -82,10 +83,10 @@ bool FindRectMinZValFile(const TZVal& zVal,
 		--nBits;
 
 		fileZOrder <<"Split Query bits: " << nBits <<" ";
-		fileZOrder << "L: " << left.m_nZValue[1] << "  " << left.m_nZValue[0] << "    ";
-		fileZOrder << "Qmax: "<< qMax.m_nZValue[1] << "  " << qMax.m_nZValue[0] << "    ";
-		fileZOrder << "Qmin: "<<qMin.m_nZValue[1] << "  " << qMin.m_nZValue[0] << "    ";
-		fileZOrder << "R: " <<right.m_nZValue[1] << "  " << right.m_nZValue[0] << "\n";
+		fileZOrder << "L: " << left.m_nZValue << "  " << left.m_nZValue << "    ";
+		fileZOrder << "Qmax: "<< qMax.m_nZValue << "  " << qMax.m_nZValue << "    ";
+		fileZOrder << "Qmin: "<<qMin.m_nZValue << "  " << qMin.m_nZValue << "    ";
+		fileZOrder << "R: " <<right.m_nZValue << "  " << right.m_nZValue << "\n";
 		if(qMin < qMax)
 		{
 
@@ -118,8 +119,154 @@ bool FindRectMinZValFile(const TZVal& zVal,
 		}
 
 		fileZOrder <<"New Query             ";
-		fileZOrder << "L: "<< left.m_nZValue[1] << "  " << left.m_nZValue[0] << "    ";
-		fileZOrder << "R: "<<right.m_nZValue[1] << "  " << right.m_nZValue[0] << "\n";
+		fileZOrder << "L: "<< left.m_nZValue << "  " << left.m_nZValue << "    ";
+		fileZOrder << "R: "<<right.m_nZValue << "  " << right.m_nZValue << "\n";
+
+	}
+	fileZOrder.close();
+	return true;
+}
+
+
+
+std::string OutBits(uint64 nVal)
+{
+	bool bWriteZero = false;
+
+	std::string sResult = "x";
+
+	for (int i = 63; i >= 0; --i)
+	{
+		bool bBit = (nVal &( ((uint64)1 << i))) != 0;
+		if(!bBit && !bWriteZero)
+			continue;
+		bWriteZero = true;
+		sResult += bBit ? "1" : "0";
+	}
+
+	return sResult;
+}
+
+ 
+std::string Coord(const embDB::ZOrderRect2DU16& zVal)
+{
+	uint16 xMin, yMin, xMax, yMax;
+
+	std::string sResult = "x";
+	zVal.getXY(xMin, yMin, xMax, yMax);
+
+	std::stringstream stream;
+
+	stream << " " << xMin << ", " << yMin << " " << xMax << " " << yMax;
+	sResult = stream.str();
+	return sResult;
+}
+
+template<class TZVal>
+bool FindRectMinZValFile_16(const TZVal& zVal,
+	const TZVal& zMin, const TZVal& zMax, TZVal& zRes, const char *pszFileName)
+{
+	if (zVal < zMin || zVal > zMax)
+	{
+		assert(false);
+		return false;
+	}
+
+	std::ofstream fileZOrder;
+	fileZOrder.open(pszFileName);
+
+	short nBits = zRes.getBits();
+
+	TZVal left = zMin;
+	TZVal right = zMax;
+	zRes = zMax;
+
+	uint16 xMin, yMin, xMax, yMax;
+	uint16 xMin1, yMin1, xMax1, yMax1;
+
+ 
+
+	left.getXY(xMin1, yMin1, xMax1, yMax1);
+	right.getXY(xMin, yMin, xMax, yMax);
+	fileZOrder << "zMin   " << zMin.m_nZValue << "  " << Coord(zMin.m_nZValue)<<
+		"  zNext   " << zVal.m_nZValue << "  " << Coord(zVal.m_nZValue) <<
+		"  zMax  " << zMax.m_nZValue << "  " << Coord(zMax.m_nZValue) << "\n";
+	while (nBits >= 0)
+	{
+
+
+		TZVal qMin = left;
+		TZVal qMax = right;
+
+		while (qMin.getBit(nBits) == qMax.getBit(nBits))
+		{
+
+			nBits--;
+			if (nBits < 0)
+			{
+				//	uint16 xMin, yMin, xMax, yMax;
+				//	zRes.getXY(xMin, yMin, xMax, yMax);
+
+				int i = 0;
+				i++;
+				return true;
+
+			}
+			//assert(nBits >= 0);
+		}
+
+
+	 
+
+		qMin.clearLowBits(nBits);
+		qMax.setLowBits(nBits);
+		--nBits;
+
+		qMin.getXY(xMin1, yMin1, xMax1, yMax1);
+		qMax.getXY(xMin, yMin, xMax, yMax);
+
+		TZVal z1(xMin1, yMin1, xMax1, yMax1);
+		TZVal z2(xMin, yMin, xMax, yMax);
+
+		fileZOrder << "Split Query bits: " << nBits << " ";
+		fileZOrder << "L: " << left.m_nZValue << "  " << Coord(left.m_nZValue) << "    ";
+		fileZOrder << "Qmax: " << qMax.m_nZValue << "  " << Coord(qMax.m_nZValue) << "    ";
+		fileZOrder << "Qmin: " << qMin.m_nZValue << "  " << Coord(qMin.m_nZValue) << "    ";
+		fileZOrder << "R: " << right.m_nZValue << "  " << Coord(right.m_nZValue) << "\n";
+		if (qMin < qMax)
+		{
+
+			int d = 0;
+			d++;
+		}
+
+		if (zVal < qMax)
+		{
+			right = qMax;
+			zRes = qMax;
+		}
+		else
+		{
+			zRes = qMin;
+			left = qMin;
+			if (qMin > zVal)
+			{
+
+				if (qMax < zVal)
+					break;
+			}
+			else
+			{
+				left = qMin;
+
+			}
+
+
+		}
+
+		fileZOrder << "New Query             ";
+		fileZOrder << "L: " << left.m_nZValue << "  " << Coord(left.m_nZValue) << "    ";
+		fileZOrder << "R: " << right.m_nZValue << "  " << Coord(right.m_nZValue) << "\n";
 
 	}
 	fileZOrder.close();
@@ -343,6 +490,58 @@ bool FindRectMinZVal(const TPointKey& zVal,
 }
 
 
+
+template<>
+bool FindRectMinZVal<embDB::ZOrderPoint2DU16>(const embDB::ZOrderPoint2DU16& zVal,
+	const embDB::ZOrderPoint2DU16& zMin, const embDB::ZOrderPoint2DU16& zMax, embDB::ZOrderPoint2DU16& zRes)
+{
+	if (zVal < zMin || zVal > zMax)
+		return false;
+
+	short nBits = zRes.getBits();
+
+	embDB::ZOrderPoint2DU16 left = zMin;
+	embDB::ZOrderPoint2DU16 right = zMax;
+	zRes = zMax;
+	while (nBits >= 0)
+	{
+
+
+		embDB::ZOrderPoint2DU16 qMin = left;
+		embDB::ZOrderPoint2DU16 qMax = right;
+
+		while (qMin.getBit(nBits) == qMax.getBit(nBits))
+		{
+
+			nBits--;
+			assert(nBits >= 0);
+
+		}
+		qMin.clearLowBits(nBits);
+		qMax.setLowBits(nBits);
+
+		if (zVal < qMax)
+		{
+			right = qMax;
+			zRes = qMax;
+		}
+		else
+		{
+			if (qMin > zVal)
+			{
+				zRes = qMin;
+				break;
+			}
+			left = qMin;
+			zRes = qMin;
+
+		}
+		nBits--;
+	}
+
+	return true;
+}
+
 template<class ZOrder, class zOrderComp, class TUnits>
 void ReadShape(embDB::TBPVector<ZOrder>& vec, const wchar_t* pszShapeFileName)
 {
@@ -465,7 +664,7 @@ template<class ZOrder, class zOrderComp, class TUnits>
 void TestFullRectScan(embDB::TBPVector<ZOrder>& vecRect, CommonLib::TRect2D<TUnits>& extent, std::set<uint32> *pSet = NULL)
 {
 	ZOrder zKeyMin(extent.m_minX, extent.m_minY, 0, 0);
-	ZOrder zKeyMax(extent.m_maxX, extent.m_maxY, 0xFFFFFFFF, 0xFFFFFFFF);
+	ZOrder zKeyMax(extent.m_maxX, extent.m_maxY, ZOrder::coordMax, ZOrder::coordMax);
 
 	//embDB::ZRect32Comp comp;
 	zOrderComp   comp;
@@ -580,6 +779,7 @@ void TestRectWithSubQuery(embDB::TBPVector<ZOrder>& vecRect, CommonLib::TRect2D<
 
 				int d = 0;
 				d++;
+				break;
 
 			}
 			i = index;
@@ -724,7 +924,45 @@ void FillVector(TValue xMin, TValue yMin, TValue xMax, TValue yMax, TValue nWx, 
 		for (TValue y = yMin; y < yMax;  y += nWy)
 		{
 
-			vec.push_back(TZOrder(x, y, x + nWx, y + nWy));
+			TValue vXmin = x;
+			TValue vYmin = y;
+			TValue vXmax = x + nWx;
+			TValue vYmax=  y + nWy;
+
+			TZOrder zOrder(vXmin, vYmin, vXmax, vYmax);
+
+			vec.push_back(zOrder);
+
+
+			TValue xMin1 = 0;
+			TValue yMin1 = 0;
+			TValue xMax1 = 0;
+			TValue yMax1 = 0;
+
+
+			zOrder.getXY(xMin1, yMin1, xMax1, yMax1);
+
+			if (xMin == 0)
+			{
+				int dd = 0;
+				dd++;
+			}
+
+			if (vXmin != xMin1 || vYmin != yMin1 || vXmax != xMax1 || vYmax != yMax1)
+			{
+				int dd = 0;
+				dd++;
+				if (vXmin != xMin1)
+					dd++;
+				if (vYmin != yMin1)
+					dd++;
+				if (vXmax != xMax1)
+					dd++;
+				if (vYmax != yMax1)
+					dd++;
+			}
+
+
 
 			y += yOff;
 			
@@ -732,6 +970,26 @@ void FillVector(TValue xMin, TValue yMin, TValue xMax, TValue yMax, TValue nWx, 
 
 		x += xOff;
 	}
+
+	TComp zComp;
+	vec.quick_sort(zComp);
+
+}
+
+
+
+template<class TValue, class TZOrder, class TVector, class TComp>
+void FillVector_16(TValue xMin, TValue yMin, TValue xMax, TValue yMax, TValue nWx, TValue nWy, int32 xOff, int32 yOff, TVector& vec)
+{
+
+	TValue xMin;
+	TValue yMin;
+	TValue xMax;
+	TValue yMax;
+
+	TZOrder zOrder(xMin, yMin, xMax, yMax);
+	vec.push_back(zOrder);
+	
 
 	TComp zComp;
 	vec.quick_sort(zComp);
@@ -762,19 +1020,30 @@ void TestSpIndexFromShapeFileTmp()
 	rect.m_maxY	= 1308887284;*/
 
 	CommonLib::TRect2D<TUnits> rect;
-	FillVector<TUnits, ZOrder,  embDB::TBPVector<ZOrder>, zOrderComp>(1000, 1253, 10000, 10000, 20, 50, -1, -1, vecOrder);
+/*	FillVector<TUnits, ZOrder,  embDB::TBPVector<ZOrder>, zOrderComp>(30, 30, 100, 100, 3, 3, -1, -1, vecOrder);
 
-	rect.m_minX = 1451;
-	rect.m_minY	= 2345;
-	rect.m_maxX	= 1985;
-	rect.m_maxY	= 4137;
+	rect.m_minX = 36;
+	rect.m_minY	= 36;
+	rect.m_maxX	= 50;
+	rect.m_maxY	= 50;*/
+
+
+	FillVector<TUnits, ZOrder,  embDB::TBPVector<ZOrder>, zOrderComp>(0, 0, 100, 100, 3, 3, -2, -2, vecOrder);
+
+	rect.m_minX = 11;
+	rect.m_minY	= 11;
+	rect.m_maxX	= 30;
+	rect.m_maxY	= 30;
  
 
 	std::set<uint32> setFullIndex, setSubQueryIndex, setSplitSubQuery;
 
+ 
 	TestFullRectScan<ZOrder, zOrderComp, TUnits>(vecOrder, rect, &setFullIndex);
 	TestRectWithSubQuery<ZOrder, zOrderComp, TUnits>(vecOrder, rect, &setSubQueryIndex);
 	TestRectWithSplitSubQuery<ZOrder, zOrderComp, TUnits>(vecOrder, rect, &setSplitSubQuery);
+
+ 
 
 	for(std::set<uint32>::iterator it = setSubQueryIndex.begin(); it != setSubQueryIndex.end(); ++it)
 	{
@@ -800,13 +1069,44 @@ void TestSpIndexFromShapeFileTmp()
 	dd++;
 }
 
+
+
+
+
+void TestSpIndexFromShape_Zorder16()
+{
+	embDB::ZOrderRect2DU16 zVal;
+	embDB::ZOrderRect2DU16 zKeyMin;
+	embDB::ZOrderRect2DU16 zKeyMax;
+	embDB::ZOrderRect2DU16 zQVal;
+
+	zVal.m_nZValue = 1238569;
+	zKeyMin.m_nZValue = 41130;
+	zKeyMax.m_nZValue = 6148914691237216245;
+
+
+	FindRectMinZValFile_16(zVal, zKeyMin, zKeyMax, zQVal, "D:\\split.txt");
+
+	int dd = 0;
+	dd++;
+}
+
 void TestSpIndexFromShapeFile()
 { 
+	TestSpIndexFromShapeFileTmp<embDB::ZOrderRect2DU16, embDB::ZRect16Comp, uint16>();
+	TestSpIndexFromShapeFileTmp<sRectU32, ZRectU32Comp, uint32>();
+	TestSpIndexFromShape_Zorder16();
+	return;
 	//TestSpIndexFromShapeFileTmp<embDB::ZOrderRect2DU32, embDB::ZRect32Comp, uint32>();
 	//TestSpIndexFromShapeFileTmp<embDB::ZOrderRect2DU16, embDB::ZRect16Comp, uint16>();
-
+	std::cout << "-------ZOrderRect2DU16---------- " << std::endl;
+	TestSpIndexFromShapeFileTmp<embDB::ZOrderRect2DU16, embDB::ZRect16Comp, uint16>();
+	std::cout << "-------ZOrderRect2DU32---------- " << std::endl;
 	TestSpIndexFromShapeFileTmp<embDB::ZOrderRect2DU32, embDB::ZRect32Comp, uint32>();
+	std::cout << "-------ZRectU32Comp---------- " << std::endl;
 	TestSpIndexFromShapeFileTmp<sRectU32, ZRectU32Comp, uint32>();
+
+	std::cout << "-------ZOrderRect2DU64---------- " << std::endl;
 	TestSpIndexFromShapeFileTmp<embDB::ZOrderRect2DU64, embDB::ZRect64Comp, uint64>();
 	/*
 	embDB::TBPVector<sRectU32> vecOrder1;

@@ -404,7 +404,7 @@ namespace embDB
 
 		CConnection *pConnection = new CConnection(this, m_pSchema.get(), pszUser, nUserID, userGroup);
 
-		m_Connections.insert(pConnection);
+		m_Connections.insert(IConnectionPtr(pConnection));
 
 		return IConnectionPtr(pConnection);
 	}
