@@ -4,9 +4,12 @@
 #include "stdafx.h"
 void TestCompressPart();
 void TestSignCompress();
+
+
 int _tmain(int argc, _TCHAR* argv[])
 {
  
+	 
 	//TestCompressPart();
 	TestSignCompress();
 	return 0;

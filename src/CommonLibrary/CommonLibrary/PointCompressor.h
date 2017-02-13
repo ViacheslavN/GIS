@@ -5,37 +5,57 @@
 #include "PodVector.h"
 #include "GeoShape.h"
 #include "SignCompressor2.h"
-
+#include "MemoryStream.h"
 
 namespace CommonLib
 {
 
-	class CWriteMemoryStream;
+	 
 	class CPointCompressor
 	{
+
+		enum eFlags
+		{
+			compress_point = 0x1
+		};
+
 		public:
-			CPointCompressor(CWriteMemoryStream *pCacheStreamX, CWriteMemoryStream *pCacheStreamY);
+			CPointCompressor(CommonLib::alloc_t *pAlloc = nullptr);
 			~CPointCompressor();
 
 			void clear();
 
 			bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
-			bool decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream);
+			bool decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams,	CommonLib::IReadStream *pStream);
 	private:
+		void WriteRawPoint(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
+		void ReadRawPoint( CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream);
+
+		typedef TNumLemCompressor2<uint64, TFindMostSigBit, 64> TNumLen32;
+
 		void calc(const CGeoShape *pShp, CGeoShape::compress_params *pParams);
 		bool compressImpl(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
+
+	 
+		void PreAddCoord(uint32 nPos, uint64 prev, uint64 next, TSignCompressor2& sign);
+		void CompreessCoord(uint32 nPos, uint64 prev, uint64 next, FxBitWriteStream& bitStream,
+			TSignCompressor2 &signCpmrpessor);
+
 	private:
 			
-			typedef TNumLemCompressor2<uint64, TFindMostSigBit, 64> TNumLen32;
+			byte m_nFlag;
 
 			TSignCompressor2 m_SignX;
 			TSignCompressor2 m_SignY;
 
-			TNumLen32 m_PointX;
-			TNumLen32 m_PointY;
+			TNumLen32 m_Point;
 
-			CWriteMemoryStream *m_pCacheStreamX;
-			CWriteMemoryStream *m_pCacheStreamY;
+
+			CWriteMemoryStream m_pCacheSignX;
+			CWriteMemoryStream m_pCacheSignY;
+
+			CWriteMemoryStream m_pCacheStreamX;
+			CWriteMemoryStream m_pCacheStreamY;
 
 
 	};

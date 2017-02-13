@@ -6,6 +6,7 @@
 #include "stream.h"
 #include "MemoryStream.h"
 #include "PartCompressor2.h"
+#include "PointCompressor.h"
 namespace CommonLib
 {
 
@@ -18,7 +19,10 @@ namespace CommonLib
 
 	class ShapeCompressor2
 	{
-
+		enum eFlags
+		{
+			WriteCompressParams = 0x01
+		};
 
 	public:
 		ShapeCompressor2(CommonLib::alloc_t *pAlloc);
@@ -28,35 +32,20 @@ namespace CommonLib
 		bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CWriteMemoryStream *pCacheStream = 0);
 		bool decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream);
 	private:
-		void CompressPart(const CGeoShape *pShp, CommonLib::IWriteStream *pStream);
-
-
-		void compressPart(eCompressDataType nPartType, const CGeoShape *pShp, CommonLib::IWriteStream *pStream);
-
-
-		template<class TPartCompress>
-		void CompressPart(TPartCompress& partCompress, uint32 *pParts, uint32 nCount, CommonLib::IWriteStream *pStream)
-		{
-			partCompress.compress(pParts, nCount,  pStream);
-		}
-
-		void CreateCompressXY( CGeoShape::compress_params *pParams);
-		void CreatePartCompressor(eCompressDataType nPartType);
 
 
 		uint32 CalcCompressSize(const CGeoShape *pShp, CGeoShape::compress_params *pParams);
 	private:
 		CommonLib::alloc_t *m_pAlloc;
-		std::auto_ptr<IXYComressor> m_xyCompressor;
-		std::auto_ptr<IPartComressor> m_PartCompressor;
-
+ 
 		bool m_bWriteParams;
 		bool m_bNullPart;
 		bool m_bCompressPart;
 		bool m_bCompressPoint;
 		eCompressDataType m_partType;
 		CGeoShape::compress_params m_CompressParams;
-		CPartCompressor m_PartCompress;
+		CPartCompressor m_PartCompressor;
+		CPointCompressor m_PointCompressor;
 	};
 
 }

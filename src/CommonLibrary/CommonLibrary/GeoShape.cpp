@@ -2,6 +2,7 @@
 #include "GeoShape.h"
 #include "stream.h"
 #include "ShapeCompressor.h"
+#include "ShapeCompressor2.h"
 namespace CommonLib
 {
 
@@ -288,6 +289,10 @@ namespace CommonLib
 	{
 		return m_general_type;
 	}
+	void CGeoShape::createParts(uint32 nCount)
+	{
+		m_vecParts.resize(nCount);
+	}
 	uint32  CGeoShape::getPartCount() const
 	{
 		return m_vecParts.size();
@@ -464,7 +469,10 @@ namespace CommonLib
 	 {
 		 return m_bbox;
 	 }
-
+	 void  CGeoShape::createPoints(uint32 nCount)
+	 {
+		 m_vecPoints.resize(nCount);
+	 }
 	 void CGeoShape::setPoints(const double *pPoint)
 	 {
 		 for(uint32 i = 0, sz = m_vecPoints.size(); i < sz; ++i)
@@ -590,12 +598,12 @@ namespace CommonLib
 
 	 bool  CGeoShape::compress(IWriteStream *pStream, compress_params* pParams) const
 	 {
-		 ShapeCompressor compressor(m_pAlloc);
+		 ShapeCompressor2 compressor(m_pAlloc);
 		 return compressor.compress(this, pParams, pStream);
 	 }
 	 bool  CGeoShape::decompress(IReadStream *pStream, compress_params* pParams)
 	 {
-		 ShapeCompressor compressor(m_pAlloc);
+		 ShapeCompressor2 compressor(m_pAlloc);
 		 return compressor.decompress(this, pParams, pStream);
 	 }
 }

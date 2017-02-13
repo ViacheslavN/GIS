@@ -127,10 +127,11 @@ namespace CommonLib
 		eShapeType type() const;
 		eShapeType GetGeneralType() const;
 		uint32  getPartCount() const;
-		//const uint32&  getPart(uint32 idx) const;
 		uint32  getPart(uint32 idx) const;
 		const uint32*  getParts() const;
 		uint32*  getParts();
+		void createParts(uint32 nCount);
+
 		
 		patch_type*       getPartsTypes();
 		const patch_type* getPartsTypes() const;
@@ -141,6 +142,7 @@ namespace CommonLib
 		GisXYPoint* getPoints();
 		const GisXYPoint* getPoints() const;
 		void setPoints(const double *pPoint);
+		void createPoints(uint32 nCount);
 		uint32 getPointCnt() const;
 		
 		double&       ptX(uint32 idx); 
