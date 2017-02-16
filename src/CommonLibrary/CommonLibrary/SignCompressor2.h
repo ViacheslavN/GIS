@@ -24,6 +24,14 @@ namespace CommonLib
 
 		};
 
+
+		enum eSizeType
+		{
+			SIZE_8 = 0,
+			SIZE_16 = 1,
+			SIZE_32 = 2
+		};
+
 		static const uint32 __nMinCountPosForCompress = 0xff;
 
 
@@ -49,8 +57,21 @@ namespace CommonLib
 			m_BitVecPos.clear();
 			m_NumLen32.clear();
 			m_nCalcCompressPos = -1;
+
+			m_WriteStream.seek(0, soFromBegin);
+			m_bitReadStream.seek(0, soFromBegin);
+			m_bitWriteStream.seek(0, soFromBegin);
 		}
 
+		eSizeType GetSizeType(uint32 nSize) const
+		{
+			if (nSize < 0xFF - 1)
+				return SIZE_8;
+			else  if (nSize < 0xFFFF - 1)
+				return SIZE_16;
+
+			return SIZE_32;
+		}
 
 		void AddSymbol(bool bSign, uint32 nPos)
 		{
@@ -102,6 +123,7 @@ namespace CommonLib
 				uint32 nByteBitsSize = ((m_nSigns[0] + m_nSigns[1] + 7 )/8) + 1;
 				uint32 nMinCount = min(m_nSigns[0], m_nSigns[1]);
 				m_DataType = GetCompressType(m_nSigns[0] + m_nSigns[1]);
+				
 				uint32 nBytePosCodeSize = GetLenForDiffLen(m_DataType, nMinCount + 1) + 1;
 				uint32 nCompressPosSize = 0xffffffff;
 
@@ -127,8 +149,25 @@ namespace CommonLib
 						nFlag |= (1 << 3);
 						m_bSign = true;
 					}
+
+				
+
+					eCompressDataType nDataType = GetCompressType(nCompressPosSize);
+
 					pStream->write(nFlag);
+					uint32 nSizePos = pStream->pos();
+					pStream->write(nSizePos);
+				 
+					uint32 nPosBegin = pStream->pos();
+
 					CompressPos(pStream);
+
+					uint32 nEndPos = pStream->pos();
+					uint32 nCompSize = nEndPos - nPosBegin;
+
+					pStream->seek(nSizePos, soFromBegin);
+					pStream->write(nCompSize);
+					pStream->seek(nEndPos, soFromBegin);
 				}
 				else 
 				{
@@ -140,10 +179,10 @@ namespace CommonLib
 						nFlag |= (1 << 3);
 						m_bSign = true;
 					}
-					pStream->write(nFlag);
-					WriteValue(nMinCount, m_DataType, pStream);
 					m_WriteStream.attach(pStream, pStream->pos(), nBytePosCodeSize, true);
 
+					m_WriteStream.write(nFlag);
+					WriteValue(nMinCount, m_DataType, &m_WriteStream);
 				}
 
 			}
@@ -183,16 +222,21 @@ namespace CommonLib
 			{
 				m_BitVecPos.resizeBits(nCount);
 				m_BitVecPos.fill(m_bSign ? false : true);
-				DecompressPos(pStream, nCount);
+
+		
+				uint32 nSize = pStream->readIntu32();
+				FxMemoryReadStream stream;
+				stream.attach(pStream, pStream->pos(), nSize, true);
+				DecompressPos(&stream, nCount);
 			}
 			else if(m_compreesType == NO_COMPRESS_POS)
 			{
 
 
 				m_DataType = GetCompressType(nCount);
-				uint32 nCount = ReadValue<uint32>(m_DataType, pStream);
-				m_nVecPos.reserve(nCount);
-				for (size_t i = 0; i < nCount; ++i)
+				uint32 nPosCount = ReadValue<uint32>(m_DataType, pStream);
+				m_nVecPos.reserve(nPosCount);
+				for (size_t i = 0; i < nPosCount; ++i)
 				{
 					uint32 nPos = ReadValue<uint32>(m_DataType, pStream);
 					m_nVecPos.push_back(nPos);
@@ -288,7 +332,6 @@ namespace CommonLib
 			int32 nPrevPos = -1;
 			int32 nCount = 0;
 			CommonLib::FxBitWriteStream bitStream;
-
 			for(uint32 i = 0, sz = m_BitVecPos.sizeInBits(); i < sz; ++i)
 			{
 				bool bBit = m_BitVecPos.getBit(i);
@@ -296,8 +339,8 @@ namespace CommonLib
 				{
 					if(nPrevPos == -1)
 					{
-
-						pStream->write((Type)i);
+						
+						pStream->write((Type)i); 
 						m_NumLen32.BeginEncode(pStream);
 						m_NumLen32.WriteHeader(pStream);
 
@@ -314,6 +357,7 @@ namespace CommonLib
 						nCount++;
 						m_NumLen32.EncodeSymbol(i - nPrevPos, &bitStream);
 					}
+					
 					nPrevPos = i;
 				}
 
@@ -343,10 +387,8 @@ namespace CommonLib
 		void DecompressPos(IReadStream *pStream)
 		{
 
-
 			Type nPos = 0;
 			pStream->read(nPos);
-
 			m_BitVecPos.setBit(m_bSign, nPos);
 
 			m_NumLen32.clear();

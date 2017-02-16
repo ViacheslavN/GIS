@@ -17,7 +17,7 @@ namespace CommonLib
 
 
 
-	class ShapeCompressor2
+	class ShapeCompressor2 : public IShapeCompressor
 	{
 		enum eFlags
 		{
@@ -25,12 +25,12 @@ namespace CommonLib
 		};
 
 	public:
-		ShapeCompressor2(CommonLib::alloc_t *pAlloc);
+		ShapeCompressor2(CommonLib::alloc_t *pAlloc = nullptr);
 		~ShapeCompressor2();
-
-		bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CWriteMemoryStream *pStream);
-		bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CWriteMemoryStream *pCacheStream = 0);
-		bool decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream);
+					 
+		virtual  bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream  *pStream);
+		virtual  bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CWriteMemoryStream *pCacheStream);
+		virtual  bool decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream);
 	private:
 
 

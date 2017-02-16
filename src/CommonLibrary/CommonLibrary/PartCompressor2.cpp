@@ -26,6 +26,8 @@ namespace CommonLib
 	}
 	void CPartCompressor::compress(const CGeoShape *pShp, CommonLib::IWriteStream* pStream)
 	{
+		clear();
+
 		byte nFlag = 0;
 		uint32 nPosFlag = pStream->pos();
 		pStream->write(nFlag);
@@ -65,7 +67,16 @@ namespace CommonLib
 		else
 		{
 			m_bCompressPart = true;
+			uint32 nSizePos = pStream->pos();
+			pStream->write(uint32(0));
+			uint32 nBeginPos = pStream->pos();
 			EncodePart(pShp, pStream);
+
+			uint32 nEndPos = pStream->pos();
+			pStream->seek(nSizePos, soFromBegin);
+			pStream->write(nEndPos - nBeginPos);
+			pStream->seek(nEndPos, soFromBegin);
+
 		}
 		WriteFlag(nPosFlag, pStream);
 	
@@ -84,7 +95,6 @@ namespace CommonLib
 
 			m_NumLen.PreAddSympol(nDiff);
 		}
-		m_nDataType = GetTypeFromBitsLen(m_NumLen.GetMaxBitLen());
 
 		m_NumLen.WriteHeader(pStream);
 		pStream->write((uint32)pParts[1]);
@@ -104,9 +114,6 @@ namespace CommonLib
 		}
 
 		m_NumLen.EncodeFinish();
-		
-
-
 	}
 	void CPartCompressor::WriteFlag(uint32 nFlagPos, CommonLib::IWriteStream* pStream)
 	{
@@ -122,6 +129,8 @@ namespace CommonLib
 
 		pStream->write(nFlag);
 		pStream->seek(nEndPos, soFromBegin);
+
+
 	}
 	void CPartCompressor::ReadFlag(CommonLib::IReadStream* pStream)
 	{
@@ -132,6 +141,7 @@ namespace CommonLib
 	}
 	void CPartCompressor::decompress(CGeoShape *pShp, CommonLib::IReadStream* pStream)
 	{
+		clear();
 		ReadFlag(pStream);
 
 		int nParts = 0;
@@ -155,20 +165,28 @@ namespace CommonLib
 		}
 		else
 		{
-			DecodePart(pShp, pStream);
+			FxMemoryReadStream stream;
+			uint32 nCompSize = pStream->readIntu32();
+
+			stream.attach(pStream, pStream->pos(), nCompSize, true);
+
+			DecodePart(pShp, &stream);
 		}
 	}
 
 	void CPartCompressor::DecodePart(CGeoShape *pShp, CommonLib::IReadStream* pStream)
 	{
+
+
+
 		m_NumLen.Init(pStream);
+		
 		uint32 nPartCount = m_NumLen.GetCount() + 2;
 		uint32 nBitsLen = m_NumLen.GetBitsLen();
 
-		FxBitReadStream bitStream;
-		
+		FxBitReadStream bitStream;		
 
-		pShp->m_vecParts.resize(nPartCount + 1);
+		pShp->m_vecParts.resize(nPartCount);
 		pShp->m_vecParts[0] = 0;
 		pShp->m_vecParts[1]= pStream->readIntu32();
 

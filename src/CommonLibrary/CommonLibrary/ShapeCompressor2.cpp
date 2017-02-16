@@ -59,13 +59,14 @@ namespace CommonLib
 		return pShp->getRowSize() + 100;
 	}
 
-
+	bool ShapeCompressor2::compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream  *pStream)
+	{
+		return compress(pShp, pParams, pStream, nullptr);
+	}
  
 	bool ShapeCompressor2::compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CommonLib::CWriteMemoryStream *pCacheStream)
 	{
 		
-
-
 		CWriteMemoryStream streamCache(m_pAlloc);
 		CommonLib::CWriteMemoryStream *pCache = &streamCache;
 		if(pCacheStream) 

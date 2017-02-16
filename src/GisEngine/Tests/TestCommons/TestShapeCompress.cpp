@@ -9,6 +9,7 @@
 #include "CommonLibrary/WriteBitStream.h"
 #include "CommonLibrary/compressutils.h"
 #include "CommonLibrary/FixedBitStream.h"
+#include "CommonLibrary/ShapeCompressor2.h"
 
 double inline Round(double dValue, unsigned int uiScale = 0)
 {
@@ -50,17 +51,13 @@ bool CompareShape(CommonLib::CGeoShape* pShp1, CommonLib::CGeoShape* pShp2, uint
 		return false;
 
 
+	CommonLib::GisXYPoint* pPt1 = pShp1->getPoints();
+	CommonLib::GisXYPoint* pPt2 = pShp2->getPoints();
+
 	for (uint32 i = 0; i < pShp1->getPointCnt(); ++i)
 	{
 		CommonLib::GisXYPoint pt1 = pShp1->getPoints()[i];
 		CommonLib::GisXYPoint pt2 = pShp2->getPoints()[i];
-		/*double dX1 = Round(pt1.x, 6);
-		double dY1 = Round(pt1.y, 6);
-
-
-		double dX2 = Round(pt2.x, 6);
-		double dY2 = Round(pt2.y, 6);*/
-
 
 		double dX1 = pt1.x;
 		double dY1 = pt1.y;
@@ -121,27 +118,7 @@ std::string polylineEncode(CommonLib::GisXYPoint* pPoint, int32 nPointCnt, doubl
 void CompressShape()
 {
 	
-	CommonLib::WriteBitStream bits;
-	CommonLib::FxBitReadStream bitStream;
-
-	bits.resize(10);
-
-
-	uint64 val = 6330;
-
-	uint32 nLen =  CommonLib::TFindMostSigBit::FMSB(val);
-
-
-	((CommonLib::IBitWriteStream*)(&bits))->writeBits(val, nLen - 1);
-
-
-	bitStream.attachBuffer(bits.buffer(), bits.size());
-
-	uint64 val1 = 0;
-	bitStream.readBits(val1, nLen - 1);
-
-
-	val1 |= ((uint64)1 << nLen - 1);
+	
 
 	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"d:\\work\\MyProject\\GIS\\src\\GisEngine\\Tests\\TestData");
 	//GisEngine::GeoDatabase::IWorkspacePtr pShapeWks  = GisEngine::GeoDatabase::CShapefileWorkspace::Open(L"ShapeTest", L"D:\\test\\GIS\\GIS\\src\\GisEngine\\Tests\\TestData");
@@ -204,6 +181,8 @@ void CompressShape()
 
 	CommonLib::CGeoShape shape;
 	CommonLib::FxMemoryReadStream readCompressStream;
+	CommonLib::ShapeCompressor2 compressShape2;
+
 
 	int ii = 0;
 
@@ -221,27 +200,27 @@ void CompressShape()
 
 	 uint32 scaleX, scaleY;
 	 getMaxShapeScale(scaleX, scaleY, pShape.get());
-	if(ii == 40)
+	if(ii == 529)
 	 {
 
 		// std::string sStr = polylineEncode(pShape->getPoints(), pShape->getPointCnt(), params.m_dOffsetX, params.m_dOffsetY, params.m_dScaleX);
 		 int dd =0;
 		 dd++;
 	 }
-	 pShape->compress(&compressStreamTmp, &params);
+	 pShape->compress(&compressStreamTmp, &params, &compressShape2);
 	 compressStream.write(compressStreamTmp.buffer(), compressStreamTmp.pos());
+	 int compSize = compressStreamTmp.pos();
+	 if(nSize < compSize)
+		 nSize = compSize;
 
-	 if(nSize < compressStreamTmp.pos())
-		 nSize = compressStreamTmp.pos();
-
-	 if(nSize == 18955)
+	 if(nSize == 43685)
 	 {
 		 int dd = 0;
 		 dd++;
 	 }
 	 readCompressStream.attachBuffer(compressStreamTmp.buffer(), compressStreamTmp.pos());
 
-	 shape.decompress(&readCompressStream, &params);
+	 shape.decompress(&readCompressStream, &params, &compressShape2);
 	
 	 if(!CompareShape(pShape.get(), &shape))
 	 {

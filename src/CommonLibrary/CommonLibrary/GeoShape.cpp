@@ -596,13 +596,19 @@ namespace CommonLib
 		 return nSize;
 	 }
 
-	 bool  CGeoShape::compress(IWriteStream *pStream, compress_params* pParams) const
+	 bool  CGeoShape::compress(IWriteStream *pStream, compress_params* pParams, IShapeCompressor *pCompressor, CWriteMemoryStream *pCacheStream)
 	 {
+		 if(pCompressor)
+			 return pCompressor->compress(this, pParams, pStream, pCacheStream);
+
 		 ShapeCompressor2 compressor(m_pAlloc);
-		 return compressor.compress(this, pParams, pStream);
+		 return compressor.compress(this, pParams, pStream, pCacheStream);
 	 }
-	 bool  CGeoShape::decompress(IReadStream *pStream, compress_params* pParams)
+	 bool  CGeoShape::decompress(IReadStream *pStream, compress_params* pParams, IShapeCompressor *pCompressor)
 	 {
+		 if(pCompressor)
+			 return pCompressor->decompress(this, pParams, pStream);
+
 		 ShapeCompressor2 compressor(m_pAlloc);
 		 return compressor.decompress(this, pParams, pStream);
 	 }

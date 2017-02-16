@@ -8,6 +8,9 @@ namespace CommonLib
 {
 	class IWriteStream;
 	class IReadStream;
+	class CWriteMemoryStream;
+	class IShapeCompressor;
+
 	class CGeoShape  : public AutoRefCounter
 	{
 
@@ -18,6 +21,7 @@ namespace CommonLib
 		typedef TPodVector<patch_type> TVecPartTypes;
 	public:
 
+		
 
 
 	
@@ -114,8 +118,8 @@ namespace CommonLib
 
 		static uint32 CalcSize(eShapeType shapeType, uint32 npoints, uint32 nparts, uint32 ncurves , uint32 mpatchSpecificSize);
 
-		bool compress(IWriteStream *pStream, compress_params* pParams = NULL) const;
-		bool decompress(IReadStream *pStream, compress_params* pParams = NULL);
+		bool compress(IWriteStream *pStream, compress_params* pParams = nullptr, IShapeCompressor *pCompressor = nullptr, CWriteMemoryStream *pCacheStream = nullptr);
+		bool decompress(IReadStream *pStream, compress_params* pParams = nullptr, IShapeCompressor *pCompressor = nullptr);
 
 		static void getTypeParams(eShapeType shapeType, eShapeType* pGenType, bool* has_z, bool* has_m, bool* has_curve, bool* has_id);
 		
@@ -185,6 +189,21 @@ namespace CommonLib
 	};
 
 	typedef IRefCntPtr<CGeoShape> IGeoShapePtr;
+
+
+	class IShapeCompressor
+	{
+	public:
+		IShapeCompressor() {}
+		virtual ~IShapeCompressor() {}
+
+
+		virtual  bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream  *pStream) = 0;
+		virtual  bool compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream, CWriteMemoryStream *pCacheStream) = 0;
+		virtual  bool decompress(CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IReadStream *pStream) = 0;
+
+
+	};
 
 }
 

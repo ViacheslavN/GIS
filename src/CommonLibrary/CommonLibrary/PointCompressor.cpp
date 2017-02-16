@@ -22,7 +22,7 @@ namespace CommonLib
 	}
 	bool CPointCompressor::compress(const CGeoShape *pShp, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream)
 	{
-
+		clear();
 		uint32 nCount = pShp->getPointCnt();
 		if (nCount < 10)
 		{
@@ -165,8 +165,8 @@ namespace CommonLib
 
 		for (uint32 i = 1; i < nCount; ++i)
 		{
-			X = (uint64)((pPoints[0].x + pParams->m_dOffsetX) / dScaleX);
-			Y = (uint64)((pPoints[0].y + pParams->m_dOffsetY) / dScaleY);
+			X = (uint64)((pPoints[i].x + pParams->m_dOffsetX) / dScaleX);
+			Y = (uint64)((pPoints[i].y + pParams->m_dOffsetY) / dScaleY);
 
 
 			CompreessCoord(i - 1, xPrev, X, bitStream, m_SignX);
@@ -191,10 +191,10 @@ namespace CommonLib
 			ReadRawPoint(pShp, pParams, pStream);
 			return true;
 		}
+		m_Point.Init(pStream);
+		//m_Point.ReadHeader(pStream);
 
-		m_Point.ReadHeader(pStream);
-
-		uint32 nCount = m_Point.GetCount();
+		uint32 nCount = m_Point.GetCount()/2;
 
 
 		m_SignX.BeginDecompress(pStream, nCount);
@@ -249,14 +249,14 @@ namespace CommonLib
 			{
 				xDiff = 0;
 				bitStream.readBits(xDiff, nBitX - 1);
-				xDiff |= (1 << nBitX - 1);
+				xDiff |= ((uint64)1 << (nBitX - 1));
 			}
 
 			if (yDiff > 1)
 			{
 				yDiff = 0;
 				bitStream.readBits(yDiff, nBitY - 1);
-				yDiff |= (1 << nBitY - 1);
+				yDiff |= ((uint64)1 << (nBitY - 1));
 			}
 
 			if (bSignX)
