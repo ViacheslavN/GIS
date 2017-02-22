@@ -253,6 +253,12 @@
     <Filter Include="DB\Logs\FileLog">
       <UniqueIdentifier>{12de0940-9c74-4011-81e2-9c44d2b6138a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SDK\internal\visual">
+      <UniqueIdentifier>{5ad0841d-f73e-4fa0-b6d5-971b6a88ec18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Fields\Statistic">
+      <UniqueIdentifier>{3230f4fd-5978-491d-b61d-e229a35c9f20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -1140,9 +1146,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InfoIterator.h">
-      <Filter>DB\BPTrees\BtreePlusv2</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1371,6 +1374,36 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreeInfo.h">
+      <Filter>SDK\internal\visual</Filter>
+    </ClInclude>
+    <ClInclude Include="ValueFieldStatistic.h">
+      <Filter>DB\Fields\Statistic</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ValueFieldFullStatistic.h">
+      <Filter>DB\Fields\Statistic</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NumLenCompressor2.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1552,6 +1585,9 @@
     </ClCompile>
     <ClCompile Include="FileLog.cpp">
       <Filter>DB\Logs\FileLog</Filter>
+    </ClCompile>
+    <ClCompile Include="ValueFieldStatistic.cpp">
+      <Filter>DB\Fields\Statistic</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

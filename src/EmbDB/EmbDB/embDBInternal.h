@@ -5,10 +5,11 @@
 #include "FilePage.h"
 
 
-#define MIN_PAGE_SIZE	  256
-#define HEADER_DB_PAGE_SIZE  512
-#define COMMON_PAGE_SIZE  8192
-#define MAX_PAGE_SIZE	  1048576
+#define MIN_PAGE_SIZE			256
+#define HEADER_DB_PAGE_SIZE		512
+#define COMMON_PAGE_SIZE		8192
+#define PAGE_SIZE_65K			65536
+#define MAX_PAGE_SIZE			1048576
 
 namespace embDB
 {

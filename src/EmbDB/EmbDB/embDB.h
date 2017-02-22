@@ -197,6 +197,14 @@ namespace embDB
 		ugReadOnly
 	};
 
+
+	enum eStatisticType
+	{
+		eNotUseStatisic,
+		eFullStatistic,
+		eDiagramStatistic
+	};
+
 	struct SDBParams
 	{
 		QryptoALG qryptoAlg;
@@ -238,10 +246,11 @@ namespace embDB
 		bool m_bCounter;
 		uint32 m_nPageSize;
 		sFieldPropExt m_FieldPropExt;
+		eStatisticType m_Statistic;
 
 
 		SFieldProp() : m_nLenField(0), m_dataType(dtUnknown), m_dScale(0), m_nPrecision(0),
-			m_bNotNull(false), m_bUNIQUE(false), m_bCounter(false), m_nPageSize(8192)
+			m_bNotNull(false), m_bUNIQUE(false), m_bCounter(false), m_nPageSize(8192), m_Statistic(eNotUseStatisic)
 		{}
 	};
 

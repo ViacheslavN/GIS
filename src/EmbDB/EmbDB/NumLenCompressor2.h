@@ -1,13 +1,15 @@
-#ifndef _LIB_COMMON_GEO_SHAPE_NUMLEN_COMPRESSOR_2_H_
-#define _LIB_COMMON_GEO_SHAPE_NUMLEN_COMPRESSOR_2_H_
-#include "stream.h"
-#include "RangeCoder.h"
-#include "compressutils.h"
+#pragma once
+#include "CommonLibrary/FixedBitStream.h"
+#include <map>
 #include "MathUtils.h"
-#include "FixedBitStream.h"
-#include "algorithm.h"
-#include "ArithmeticCoder.h"
-namespace CommonLib
+#include "BPVector.h"
+#include "CommonLibrary/algorithm.h"
+#include "CommonLibrary/RangeCoder.h"
+#include "CommonLibrary/ArithmeticCoder.h"
+#include "CompressUtils.h"
+#include "embDB.h"
+ 
+namespace embDB
 {
 
 
@@ -24,19 +26,19 @@ namespace CommonLib
 		typedef TACEncoder64 TEncoder;
 		typedef TACDecoder64 TDecoder;
 
-		TNumLemCompressor2(uint32 nError = 100)  : m_nError(nError)
+		TNumLemCompressor2(uint32 nError = 100) : m_nError(nError)
 		{
 			clear();
 		}
-		~TNumLemCompressor2(){}
+		~TNumLemCompressor2() {}
 
 		uint16 PreAddSympol(const TValue& value)
 		{
 
-			uint16 nBitLen =  0;
-			if(value == 0)
+			uint16 nBitLen = 0;
+			if (value == 0)
 				nBitLen = 0;
-			else if(value == 1)
+			else if (value == 1)
 				nBitLen = 1;
 			else  nBitLen = m_FindBit.FMSB(value);
 
@@ -46,12 +48,12 @@ namespace CommonLib
 			assert(nBitLen < _nMaxBitsLens + 1);
 			m_BitsLensFreq[nBitLen] += 1;
 
-			if(m_FreqType != dtType32)
+			if (m_FreqType != ectUIInt32)
 			{
-				if(m_BitsLensFreq[nBitLen] > 255)
-					m_FreqType = dtType16;
-				if(m_BitsLensFreq[nBitLen] > 65535)
-					m_FreqType = dtType32;
+				if (m_BitsLensFreq[nBitLen] > 255)
+					m_FreqType = ectUInt16;
+				if (m_BitsLensFreq[nBitLen] > 65535)
+					m_FreqType = ectUIInt32;
 			}
 
 			m_nBitLen += nBitLen > 1 ? nBitLen - 1 : 0;
@@ -65,7 +67,7 @@ namespace CommonLib
 			uint16 nBitLen = 0;
 			for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 			{
-				if(m_BitsLensFreq[i] != 0)
+				if (m_BitsLensFreq[i] != 0)
 					nBitLen = i;
 			}
 			return nBitLen;
@@ -85,21 +87,21 @@ namespace CommonLib
 			memset(LensMask, 0, sizeof(uint64) + 1);
 			for (uint32 i = 0; i < nBitLen + 1; ++i)
 			{
-				uint32 nByte = i/8;
-				uint32 nBit =  i - (nByte * 8);
-				if(m_BitsLensFreq[i] != 0)
+				uint32 nByte = i / 8;
+				uint32 nBit = i - (nByte * 8);
+				if (m_BitsLensFreq[i] != 0)
 					LensMask[nByte] |= (0x01 << nBit);
 			}
-			for (uint32 i = 0; i < (nBitLen)/8 + 1; ++i)
+			for (uint32 i = 0; i < (nBitLen) / 8 + 1; ++i)
 			{
 				pStream->write((byte)LensMask[i]);
 			}
 			for (uint32 i = 0; i < nBitLen + 1; ++i)
 			{
-				if(m_BitsLensFreq[i] == 0)
+				if (m_BitsLensFreq[i] == 0)
 					continue;
 
-				switch(m_FreqType)
+				switch (m_FreqType)
 				{
 				case dtType8:
 					pStream->write((byte)m_BitsLensFreq[i]);
@@ -132,18 +134,18 @@ namespace CommonLib
 
 		uint32 EncodeSymbol(const TValue& value, CommonLib::FxBitWriteStream *pBitStream)
 		{
-			uint16 nBitLen =  0;
-			if(value == 0)
+			uint16 nBitLen = 0;
+			if (value == 0)
 				nBitLen = 0;
-			else if(value == 1)
+			else if (value == 1)
 				nBitLen = 1;
 			else  nBitLen = m_FindBit.FMSB(value);
 
 			assert(m_BitsLensFreq[nBitLen] != 0);
 
 
-			m_Encoder.EncodeSymbol(m_FreqPrev[nBitLen], m_FreqPrev[nBitLen + 1],  m_nCount);
-			if(nBitLen > 1)
+			m_Encoder.EncodeSymbol(m_FreqPrev[nBitLen], m_FreqPrev[nBitLen + 1], m_nCount);
+			if (nBitLen > 1)
 				pBitStream->writeBits(value, nBitLen - 1);
 
 			return nBitLen;
@@ -161,12 +163,12 @@ namespace CommonLib
 			clear();
 			uint32 nBitsLen = (uint32)pStream->readByte();
 			m_FreqType = (eCompressDataType)pStream->readByte();
-			 
-			
-			byte LensMask[(_nMaxBitsLens)/8 + 1];
-			memset(LensMask, 0, (_nMaxBitsLens)/8 + 1);
 
-			for (uint32 i = 0; i < (nBitsLen)/8 + 1; ++i)
+
+			byte LensMask[(_nMaxBitsLens) / 8 + 1];
+			memset(LensMask, 0, (_nMaxBitsLens) / 8 + 1);
+
+			for (uint32 i = 0; i < (nBitsLen) / 8 + 1; ++i)
 			{
 				LensMask[i] = pStream->readByte();
 			}
@@ -174,15 +176,15 @@ namespace CommonLib
 			for (uint32 i = 0; i < nBitsLen + 1; ++i)
 			{
 
-				uint32 nByte = i/8;
-				uint32 nBit  =  i - (nByte * 8);
+				uint32 nByte = i / 8;
+				uint32 nBit = i - (nByte * 8);
 
-				if(!(LensMask[nByte] & (0x01 << nBit)))
+				if (!(LensMask[nByte] & (0x01 << nBit)))
 				{
 					m_BitsLensFreq[i] = 0;
 					continue;
 				}
-				switch(m_FreqType)
+				switch (m_FreqType)
 				{
 				case dtType8:
 					m_BitsLensFreq[i] = pStream->readByte();
@@ -197,8 +199,8 @@ namespace CommonLib
 					m_nCount += m_BitsLensFreq[i];
 					break;
 				}
-				if(i > 1)
-					m_nBitLen +=m_BitsLensFreq[i] * (i - 1);
+				if (i > 1)
+					m_nBitLen += m_BitsLensFreq[i] * (i - 1);
 			}
 
 			int32 nPrevF = 0;
@@ -214,29 +216,29 @@ namespace CommonLib
 
 
 		void Init(CommonLib::IReadStream* pStream)
-		{			
+		{
 			m_Decoder.Reset(pStream);
 			ReadHeader(pStream);
-	
+
 
 		}
 
 
 		void StartDecode()
-		{			
+		{
 			m_Decoder.StartDecode();
-			
+
 		}
 
 		bool DecodeSymbol(uint32& nSymbol)
 		{
 			uint32 freq = (uint32)m_Decoder.GetFreq(m_nCount);
 			nSymbol = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens + 1, freq);
-			if(nSymbol != 0)
+			if (nSymbol != 0)
 				nSymbol--;
 
 
-			m_Decoder.DecodeSymbol(m_FreqPrev[nSymbol], m_FreqPrev[nSymbol+1], m_nCount);
+			m_Decoder.DecodeSymbol(m_FreqPrev[nSymbol], m_FreqPrev[nSymbol + 1], m_nCount);
 
 			//value += 1;
 			return true;
@@ -259,13 +261,13 @@ namespace CommonLib
 
 		double CalcRowBitSize() const
 		{
-			double dBitRowSize  = 0;
+			double dBitRowSize = 0;
 			for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 			{
-				if(m_BitsLensFreq[i] == 0)
+				if (m_BitsLensFreq[i] == 0)
 					continue;
 				double dFreq = m_BitsLensFreq[i];
-				double dLog2 = mathUtils::Log2((double)m_nCount/dFreq); 
+				double dLog2 = mathUtils::Log2((double)m_nCount / dFreq);
 				dBitRowSize += (dFreq* dLog2);
 			}
 			dBitRowSize += 64;
@@ -276,10 +278,10 @@ namespace CommonLib
 		uint32 GetHeaderSize() const
 		{
 			//uint32 nSize = _nMaxBitsLens/8  + 1;
-			uint32 nSize = 1  + 1; //maxLen + freqtype
+			uint32 nSize = 1 + 1; //maxLen + freqtype
 			for (uint32 i = 0; i < _nMaxBitsLens + 1; ++i)
 			{
-				if(m_BitsLensFreq[i] != 0)
+				if (m_BitsLensFreq[i] != 0)
 					nSize += GetSizeTypeValue(m_FreqType);
 			}
 			return nSize;
@@ -293,7 +295,7 @@ namespace CommonLib
 
 			double dBitRowSize = CalcRowBitSize();
 			uint32 nHeaderSize = GetHeaderSize();
-			return  (uint32)(dBitRowSize +7)/8  + nHeaderSize;
+			return  (uint32)(dBitRowSize + 7) / 8 + nHeaderSize;
 		}
 	private:
 
@@ -312,4 +314,3 @@ namespace CommonLib
 
 }
 
-#endif

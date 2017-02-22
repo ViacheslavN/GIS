@@ -577,7 +577,6 @@
     <ClInclude Include="GlobalParams.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IndexIteratorBase.h" />
-    <ClInclude Include="InfoIterator.h" />
     <ClInclude Include="InsertCursor.h" />
     <ClInclude Include="IntegerDiffCompress.h" />
     <ClInclude Include="IntegerDiffCompressTest.h" />
@@ -595,6 +594,7 @@
     <ClInclude Include="Counter.h" />
     <ClInclude Include="MultiKeyCompressor.h" />
     <ClInclude Include="NumLenCompress.h" />
+    <ClInclude Include="NumLenCompressor2.h" />
     <ClInclude Include="NumLenDiffCompress.h" />
     <ClInclude Include="OIDCompress.h" />
     <ClInclude Include="PageCipher.h" />
@@ -717,6 +717,8 @@
     <ClInclude Include="Transactions.h" />
     <ClInclude Include="TranStorage.h" />
     <ClInclude Include="TranUndoPageManager.h" />
+    <ClInclude Include="ValueFieldFullStatistic.h" />
+    <ClInclude Include="ValueFieldStatistic.h" />
     <ClInclude Include="VariantField.h" />
     <ClInclude Include="PageVector.h" />
     <ClInclude Include="WriteStreamPage.h" />
@@ -740,6 +742,9 @@
     <ClCompile Include="BitMap.cpp" />
     <ClCompile Include="BPTreeInfoPage.cpp" />
     <ClCompile Include="BPTreeStatistics.cpp" />
+    <ClInclude Include="BTreeInfo.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
     <ClCompile Include="CompositeIndexKey.cpp" />
     <ClCompile Include="CompressCompIndexParams.cpp" />
     <ClCompile Include="CompressStringLen.cpp" />
@@ -807,6 +812,7 @@
     <ClCompile Include="Transactions.cpp" />
     <ClCompile Include="TranStorage.cpp" />
     <ClCompile Include="TranUndoPageManager.cpp" />
+    <ClCompile Include="ValueFieldStatistic.cpp" />
     <ClCompile Include="ZLibCompressor.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -63,7 +63,9 @@ namespace embDB
 
 	enum eFieldPageType
 	{
-		FIELD_INFO_PAGE
+		FIELD_INFO_PAGE,
+		FIELD_INFO_STATISTIC,
+		FIELD_FULL_STATISTIC
 	};
 
 	enum eIndexPageType
