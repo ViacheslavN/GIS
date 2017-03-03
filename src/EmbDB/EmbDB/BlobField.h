@@ -44,11 +44,34 @@ namespace embDB
 
 
 	template<class _TBTree>
-	class TBlobValueField : public ValueFieldBase<CommonLib::CBlob, _TBTree, BlobFieldIterator<_TBTree> >
+	class TBlobVarConvertor
+	{
+	public:
+		TBlobVarConvertor() : m_pTree(nullptr)
+		{}
+
+		void convert(CommonLib::CVariant *pVar, const sBlobVal& value)
+		{
+			CommonLib::CBlob blob(this->m_pAlloc);
+			m_pTree->convert(value, blob);
+			pVar->setVal(blob);
+		}
+		void Init(_TBTree *pTree, CommonLib::alloc_t *pAlloc)
+		{
+			m_pTree = pTree;
+			m_pAlloc = pAlloc;
+		}
+	private:
+		_TBTree *m_pTree;
+		CommonLib::alloc_t *m_pAlloc;
+	};
+
+	template<class _TBTree>
+	class TBlobValueField : public ValueFieldBase<CommonLib::CBlob, _TBTree, BlobFieldIterator<_TBTree>, TBlobVarConvertor<_TBTree> >
 	{
 	public:
 		typedef  BlobFieldIterator<_TBTree> TFieldIterator;
-		typedef ValueFieldBase<CommonLib::CBlob,_TBTree, TFieldIterator> TBase;
+		typedef ValueFieldBase<CommonLib::CBlob,_TBTree, TFieldIterator, TBlobVarConvertor<_TBTree> > TBase;
 		typedef typename TBase::TBTree TBTree;
 		typedef typename TBTree::iterator  iterator;
 
@@ -57,7 +80,7 @@ namespace embDB
 
 		TBlobValueField(IDBFieldHandler* pFieldHandler,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) : TBase(pFieldHandler, pTransactions, pAlloc, nPageSize, nBTreeChacheSize) 
 		{
-
+			this->m_ConvertTypeToVar.Init(&this->m_tree, this->m_pAlloc);
 		}
 
 
@@ -74,7 +97,11 @@ namespace embDB
 			return true;
 		}
 
-
+		virtual bool removeWithIndex(int64 nOID)
+		{
+			assert(false);
+			return false;
+		}
 
 	};
 

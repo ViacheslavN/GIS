@@ -36,8 +36,19 @@ namespace embDB
 
 	//TBaseBPlusTree(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, bool bMulti = false) :
 	
+	template<class Type>
+	class TVarConvertor
+	{
+		public:
+			void convert(CommonLib::CVariant *pVar, const Type& value)
+			{
+				pVar->setVal<Type>(value);
+			}
+	};
 
-	template<class FType, class _TBTree, class TFieldIterator>
+
+
+	template<class FType, class _TBTree, class TFieldIterator, class TConverTypeToVar>
 	class ValueFieldBase : public  IValueField
 	{
 	public:
@@ -161,8 +172,18 @@ namespace embDB
 
 			virtual bool removeWithIndex(int64 nOID)
 			{ 
-				assert(false);
-				return false;
+				assert(m_pIndex.get());
+				typename  TBTree::iterator it = m_tree.find(nOID);
+				if (it.isNull())
+					return false;
+
+				CommonLib::CVariant var;
+				//var.setVal<FType>(it.value());
+
+				m_ConvertTypeToVar.convert(&var, it.value());
+
+				m_pIndex->remove(&var);
+				return	m_tree.remove(it);
 			}
 			virtual bool remove(int64 nOID)
 			{
@@ -311,14 +332,25 @@ namespace embDB
 			{
 				return m_pFieldHandler;
 			}
+
+			virtual IFieldStatisticPtr GetStatistic()
+			{
+				return m_pFieldStatistic;
+			}
+			virtual void SetStatistic(IFieldStatistic *pStatistic)
+			{
+				m_pFieldStatistic = pStatistic;
+			}
 	 protected:
 		IDBTransaction* m_pDBTransactions;
 		TBTree m_tree;
 		int64 m_nBTreeInfoPage;
 		CommonLib::alloc_t* m_pAlloc;
 		IndexFiledPtr m_pIndex;
+		IFieldStatisticPtr m_pFieldStatistic;
 		IDBFieldHandlerPtr m_pFieldHandler;
 		const sFieldInfo *m_pFieldInfo;
+		TConverTypeToVar m_ConvertTypeToVar;
 	};
 	
 
@@ -348,13 +380,13 @@ namespace embDB
 	
 	
 	template<class _FType, class _TBTree, class _FieldIterator>
-	class ValueField : public ValueFieldBase<_FType, _TBTree, _FieldIterator>
+	class ValueField : public ValueFieldBase<_FType, _TBTree, _FieldIterator,  TVarConvertor<_FType> >
 	{
 		public:
 	 
 	
 			typedef _FieldIterator TFieldIterator;
-			typedef ValueFieldBase<_FType, _TBTree, TFieldIterator> TBase;
+			typedef ValueFieldBase<_FType, _TBTree, TFieldIterator, TVarConvertor<_FType> > TBase;
 
 			ValueField(IDBFieldHandler* pFieldHandler,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) :
 			  TBase(pFieldHandler, pTransactions, pAlloc, nPageSize, nBTreeChacheSize)

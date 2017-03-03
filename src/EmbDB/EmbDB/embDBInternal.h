@@ -228,6 +228,8 @@ namespace embDB
 	struct IDBTable;
 	struct IIndexIterator;
 	struct ILogger;
+	struct IFieldStatistic;
+	struct IFieldStatisticHandler;
 
 	COMMON_LIB_REFPTR_TYPEDEF(IFieldIterator); 
 	COMMON_LIB_REFPTR_TYPEDEF(IIndexPageIterator); 
@@ -243,6 +245,8 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(IIndexIterator); 
 	COMMON_LIB_REFPTR_TYPEDEF(ILogger); 
 	COMMON_LIB_REFPTR_TYPEDEF(IDBDatabase); 
+	COMMON_LIB_REFPTR_TYPEDEF(IFieldStatistic);
+	COMMON_LIB_REFPTR_TYPEDEF(IFieldStatisticHandler);
 
 	struct IFieldIterator : public CommonLib::AutoRefCounter
 	{
@@ -333,6 +337,54 @@ namespace embDB
 	};
 
 
+
+
+	 
+	struct  IFieldStatistic : public CommonLib::AutoRefCounter
+	{
+	public:
+		IFieldStatistic(){}
+		virtual ~IFieldStatistic(){}
+
+		virtual bool IsValid() const = 0;
+		virtual bool save() = 0;
+		virtual bool clear() = 0;
+		virtual eStatisticType GetType() const = 0;
+		virtual eCalcStatistic GetCalcType() const = 0;
+
+		virtual void AddVarValue(const CommonLib::CVariant& value) = 0;
+		virtual void RemoveVarValue(const CommonLib::CVariant& value) = 0;
+
+		virtual uint64 GetCount(const CommonLib::CVariant& value) const = 0;
+		virtual uint64 GetRangeCount(const CommonLib::CVariant& left, const CommonLib::CVariant& right) const = 0;
+
+		virtual uint32 GetLastUpdateTime() const = 0;
+		virtual uint32 GetLastUpdateDate() const = 0;
+	};
+
+
+	struct IFieldStatisticHandler : public CommonLib::AutoRefCounter
+	{
+	public:
+		IFieldStatisticHandler() {}
+		virtual ~IFieldStatisticHandler() {}
+
+		virtual bool save(CommonLib::IWriteStream* pStream, IDBTransaction *pTran) = 0;
+		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage) = 0;
+
+
+		virtual IFieldStatisticPtr getFieldStatistic(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
+		virtual bool release(IFieldStatisticPtr* pInxex) = 0;
+
+		virtual bool Update(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
+
+		virtual bool lock() = 0;
+		virtual bool unlock() = 0;
+		virtual bool isCanBeRemoving() = 0;
+
+	};
+
+
 	struct IValueField: public CommonLib::AutoRefCounter
 	{
 	public:
@@ -364,6 +416,9 @@ namespace embDB
 		virtual void SetIndex(IndexFiled *pIndex) = 0;
 
 		virtual IDBFieldHandlerPtr GetFieldHandler() const= 0;
+
+		virtual IFieldStatisticPtr GetStatistic() = 0;
+		virtual void SetStatistic(IFieldStatistic *pStatistic) = 0;
 	};
 
 	
@@ -403,6 +458,11 @@ namespace embDB
 
 		virtual void setIndexHandler(IDBIndexHandler *pIndexHandler) = 0;
 		virtual IDBIndexHandlerPtr getIndexIndexHandler() = 0;
+
+		virtual void setFieldStatisticHandler(IFieldStatisticHandler *pFieldStatisticHandler) = 0;
+		virtual IFieldStatisticHandlerPtr getFieldStatisticHandler() = 0;
+
+		
 
 		virtual bool lock() =0;
 		virtual bool unlock() =0;

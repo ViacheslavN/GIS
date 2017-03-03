@@ -1,6 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_STRING_PROXY_H_
 #define _EMBEDDED_DATABASE_STRING_PROXY_H_
 #include "CommonLibrary/String.h"
+#include "CommonLibrary/Variant.h"
 namespace embDB
 {
 
@@ -58,6 +59,32 @@ namespace embDB
 			 return StrValcmp((const char *)_Left.m_pBuf, (const char *)_Right.m_pBuf) == 0;
 		}
 		 
+	};
+
+
+
+	template<class _TBTree, class TString>
+	class TStringVarConvertor
+	{
+	public:
+		TStringVarConvertor() : m_pTree(nullptr)
+		{}
+
+		void convert(CommonLib::CVariant *pVar, const TString& value)
+		{
+			CommonLib::CString sVal(this->m_pAlloc);
+			m_pTree->convert(value, sVal);
+
+			pVar->setVal(sVal);
+		}
+		void Init(_TBTree *pTree, CommonLib::alloc_t *pAlloc)
+		{
+			m_pTree = pTree;
+			m_pAlloc = pAlloc;
+		}
+	private:
+		_TBTree *m_pTree;
+		CommonLib::alloc_t *m_pAlloc;
 	};
 	
 

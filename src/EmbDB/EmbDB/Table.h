@@ -126,14 +126,13 @@ namespace embDB
 			typedef std::map<CommonLib::CString, IDBIndexHandlerPtr> TIndexByName;
 			typedef std::map<int64, IDBIndexHandlerPtr> TIndexByID;
 
+			typedef std::map<CommonLib::CString, IDBIndexHandlerPtr> TIndexByName;
 
 			typedef TPageVector<int64> TFieldPages;
- 
-			//TFieldByName m_FieldByName;
-			//TFieldByID m_FieldByID;
+  
 
 			TIndexByName m_IndexByName;
-			//TIndexByID m_IndexByID;
+	 
 
 
 			int64 m_nTablePage;

@@ -205,6 +205,12 @@ namespace embDB
 		eDiagramStatistic
 	};
 
+	enum eCalcStatistic
+	{
+		eManualCalcStat,
+		eAutoCalcStat
+	};
+
 	struct SDBParams
 	{
 		QryptoALG qryptoAlg;
@@ -232,6 +238,17 @@ namespace embDB
 		uint32 m_nBTreeChacheSize;
 	};
 
+	struct SStatisticInfo
+	{
+
+		SStatisticInfo() : m_Statistic(eNotUseStatisic), m_CalcStat(eManualCalcStat)
+		{
+
+		}
+		eStatisticType m_Statistic;
+		eCalcStatistic m_CalcStat;
+	};
+
 	struct SFieldProp
 	{
 		CommonLib::CString m_sFieldName;
@@ -246,11 +263,10 @@ namespace embDB
 		bool m_bCounter;
 		uint32 m_nPageSize;
 		sFieldPropExt m_FieldPropExt;
-		eStatisticType m_Statistic;
-
+		SStatisticInfo m_StatisticInfo;
 
 		SFieldProp() : m_nLenField(0), m_dataType(dtUnknown), m_dScale(0), m_nPrecision(0),
-			m_bNotNull(false), m_bUNIQUE(false), m_bCounter(false), m_nPageSize(8192), m_Statistic(eNotUseStatisic)
+			m_bNotNull(false), m_bUNIQUE(false), m_bCounter(false), m_nPageSize(8192)
 		{}
 	};
 

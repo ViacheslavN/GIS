@@ -64,7 +64,12 @@ namespace embDB
 	enum eFieldPageType
 	{
 		FIELD_INFO_PAGE,
-		FIELD_INFO_STATISTIC,
+		FIELD_INFO_STATISTIC
+ 	};
+
+
+	enum ePageStatisticType
+	{
 		FIELD_FULL_STATISTIC
 	};
 

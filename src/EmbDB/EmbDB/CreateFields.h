@@ -134,7 +134,7 @@ namespace embDB
 			pIndex = new TUniqueIndexNT64(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtUInteger64:
-			pIndex = new TUniqueIndexNT64(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
+			pIndex = new TUniqueIndexUINT64(pField, pDB->getBTreeAlloc(), nPageAddr, ip);
 			break;
 		case dtFloat:
 			pIndex = new TUniqueIndexFloat(pField, pDB->getBTreeAlloc(), nPageAddr, ip);

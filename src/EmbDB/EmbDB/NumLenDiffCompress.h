@@ -224,7 +224,7 @@ namespace embDB
 					else
 					{
 						pBitStream->readBits(value, nBitLen - 1);
-						value |= ((TValue)1 << nBitLen - 1);
+						value |= ((TValue)1 << (nBitLen - 1));
 					}
 					nBegin += value;
 					vecValues.push_back(nBegin);

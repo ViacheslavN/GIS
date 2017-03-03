@@ -216,7 +216,7 @@ namespace embDB
 			{
 				coord = 0;
 				pBitStream->readBits(coord, nBitLen - 1);
-				coord |= 1 << nBitLen - 1;
+				coord |= 1 << (nBitLen - 1);
 			}
 			
 		

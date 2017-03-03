@@ -338,14 +338,14 @@ namespace CommonLib
 				{
 					xDiff = 0;
 					bitStream.readBits(xDiff, nBitX - 1);
-					xDiff |= (1 << nBitX- 1);
+					xDiff |= (1 << (nBitX- 1));
 				}
 
 				if(yDiff > 1)
 				{
 					yDiff = 0;
 					bitStream.readBits(yDiff, nBitY- 1);
-					yDiff |= (1 << nBitY- 1);
+					yDiff |= (1 << (nBitY- 1));
 				}
 
 				if(bSignX)

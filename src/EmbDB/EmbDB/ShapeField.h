@@ -41,17 +41,45 @@ namespace embDB
 			((TBTree*)this->m_ParentIt.m_pTree)->convert(this->m_ParentIt.value(), shape);
 			return true;
 		}
-		
+
+	
 	};
 
 
 	template<class _TBTree>
-	class TShapeValueField : public ValueFieldBase<CommonLib::IGeoShapePtr, _TBTree, ShapeFieldIterator<_TBTree> >
+	class TShapeVarConvertor
+	{
+	public:
+		TShapeVarConvertor() : m_pTree(nullptr)
+		{}
+
+		void convert(CommonLib::CVariant *pVar, const sBlobVal& value)
+		{
+			CommonLib::IGeoShapePtr shape(new CommonLib::CGeoShape(this->m_pAlloc)); //TO DO use shape cache
+			m_pTree->convert(value, shape);
+			pVar->setVal(shape);
+		}
+		void convert(CommonLib::CVariant *pVar, CommonLib::IGeoShapePtr& shape)
+		{
+			pVar->setVal(shape);
+		}
+		void Init(_TBTree *pTree, CommonLib::alloc_t *pAlloc)
+		{
+			m_pTree = pTree;
+			m_pAlloc = pAlloc;
+		}
+	private:
+		_TBTree *m_pTree;
+		CommonLib::alloc_t *m_pAlloc;
+	};
+
+	template<class _TBTree>
+	class TShapeValueField : public ValueFieldBase<CommonLib::IGeoShapePtr, _TBTree, ShapeFieldIterator<_TBTree>, TShapeVarConvertor<_TBTree> >
 	{
 	public:
 	
 		typedef  ShapeFieldIterator<_TBTree> TFieldIterator;
-		typedef ValueFieldBase<CommonLib::IGeoShapePtr,_TBTree, TFieldIterator> TBase;
+		typedef ValueFieldBase<CommonLib::IGeoShapePtr,_TBTree, TFieldIterator, TShapeVarConvertor<_TBTree> > TBase;
 		typedef typename TBase::TBTree TBTree;
 		typedef typename TBTree::iterator  iterator;
 
@@ -65,7 +93,7 @@ namespace embDB
 
 		TShapeValueField(IDBFieldHandler* pFieldHandler,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) : TBase(pFieldHandler, pTransactions, pAlloc, nPageSize, nBTreeChacheSize) 
 		{
-
+			this->m_ConvertTypeToVar.Init(&m_tree, m_pAlloc);
 		}
 
 		~TShapeValueField()
@@ -86,52 +114,42 @@ namespace embDB
 			pFieldVal->setVal(shape);
 			return true;
 		}
-
-
-		virtual bool remove(int64 nOID)
+		virtual bool removeWithIndex(int64 nOID)
 		{
+			assert(m_pIndex.get());
 
-			if(m_pIndex.get())
+			assert(m_pIndex->GetType() == itSpatial);
+			ISpatialIndex* pSpatialIndex = dynamic_cast<ISpatialIndex*>(m_pIndex.get());
+			assert(m_pIndex.get());
+
+			typename TBTree::iterator it = this->m_tree.find(nOID);
+			if (it.isNull())
+				return false;
+
+			CommonLib::IGeoShapePtr shape(new CommonLib::CGeoShape(this->m_pAlloc)); //TO DO use shape cache
+			this->m_tree.convert(it.value(), shape);
+
+			m_tree.remove(it);
+			IIndexIteratorPtr pIndexIterator = pSpatialIndex->find(shape->getBB(), sqmByFeature);
+			if (pIndexIterator->isNull())
 			{
-				 assert(m_pIndex->GetType() == itSpatial);
-				 ISpatialIndex* pSpatialIndex = dynamic_cast<ISpatialIndex*>(m_pIndex.get());
-				 assert(m_pIndex.get());
 
-				 typename TBTree::iterator it = this->m_tree.find(nOID);
-				 if(it.isNull())
-					 return false;
-
-				 CommonLib::IGeoShapePtr shape( new CommonLib::CGeoShape(this->m_pAlloc)); //TO DO use shape cache
-				 this->m_tree.convert(it.value(), shape);
-				
-				 m_tree.remove(it);
-				 IIndexIteratorPtr pIndexIterator = pSpatialIndex->find(shape->getBB(), sqmByFeature);
-				 if(pIndexIterator->isNull())
-				 {
-		
-					 const CommonLib::bbox& bb = shape->getBB();
-					 m_pDBTransactions->error(L"Not Found shape in index RowID: %I64d, bbox xMin: %f, yMin: %f, xMax: %f, yMax: %f", nOID, bb.xMin, bb.yMax, bb.xMax, bb.yMax);
-					 return false;
-				 }
-				 while(!pIndexIterator->isNull())
-				 {
-					 if(pIndexIterator->getRowID() == nOID)
-					 {
-						 return pSpatialIndex->remove(pIndexIterator.get());
-					
-					 }
-					 pIndexIterator->next();
-				 }
-				 const CommonLib::bbox& bb = shape->getBB();
-				 m_pDBTransactions->error(L"Not Found shape in index RowID: %I64d, bbox xMin: %f, yMin: %f, xMax: %f, yMax: %f", nOID, bb.xMin, bb.yMax, bb.xMax, bb.yMax);
-				 return false;
-
+				const CommonLib::bbox& bb = shape->getBB();
+				m_pDBTransactions->error(L"Not Found shape in index RowID: %I64d, bbox xMin: %f, yMin: %f, xMax: %f, yMax: %f", nOID, bb.xMin, bb.yMax, bb.xMax, bb.yMax);
+				return false;
 			}
-			else 
-				return m_tree.remove(nOID);
+			while (!pIndexIterator->isNull())
+			{
+				if (pIndexIterator->getRowID() == nOID)
+				{
+					return pSpatialIndex->remove(pIndexIterator.get());
 
-
-
+				}
+				pIndexIterator->next();
+			}
+			const CommonLib::bbox& bb = shape->getBB();
+			m_pDBTransactions->error(L"Not Found shape in index RowID: %I64d, bbox xMin: %f, yMin: %f, xMax: %f, yMax: %f", nOID, bb.xMin, bb.yMax, bb.xMax, bb.yMax);
+			return false;
 		}
  
 	};

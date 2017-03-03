@@ -1404,6 +1404,24 @@
     <ClInclude Include="NumLenCompressor2.h">
       <Filter>utils\compress</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SignCompressor2.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ValueFieldStatisticHandler.h">
+      <Filter>DB\Fields\Statistic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

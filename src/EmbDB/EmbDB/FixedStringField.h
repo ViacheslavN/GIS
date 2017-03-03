@@ -46,11 +46,11 @@ namespace embDB
 
 
 	template<class _TBTree>
-	class TFixedStringValueField : public ValueFieldBase<CommonLib::CString, _TBTree, FixedStringFieldIterator<_TBTree> >
+	class TFixedStringValueField : public ValueFieldBase<CommonLib::CString, _TBTree, FixedStringFieldIterator<_TBTree>, TStringVarConvertor<_TBTree, sFixedStringVal>  >
 	{
 	public:
 		typedef  FixedStringFieldIterator<_TBTree> TFieldIterator;
-		typedef ValueFieldBase<CommonLib::CString,_TBTree, TFieldIterator> TBase;
+		typedef ValueFieldBase<CommonLib::CString,_TBTree, TFieldIterator, TStringVarConvertor<_TBTree, sFixedStringVal> > TBase;
 		typedef typename TBase::TBTree TBTree;
 		typedef typename TBTree::iterator  iterator;
 
@@ -59,7 +59,7 @@ namespace embDB
 
 		TFixedStringValueField( IDBFieldHandler* pFieldHandler, IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) : TBase(pFieldHandler, pTransactions, pAlloc, nPageSize, nBTreeChacheSize) 
 		{
-
+			this->m_ConvertTypeToVar.Init(&m_tree, m_pAlloc);
 		}
 
 		~TFixedStringValueField()

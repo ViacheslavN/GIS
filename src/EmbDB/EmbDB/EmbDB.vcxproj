@@ -643,6 +643,7 @@
     <ClInclude Include="ShapeField.h" />
     <ClInclude Include="ShapeTree.h" />
     <ClInclude Include="SignCompressor.h" />
+    <ClInclude Include="SignCompressor2.h" />
     <ClInclude Include="SignedNumLenDiffCompress.h" />
     <ClInclude Include="SignedNumLenDiffCompressor2.h" />
     <ClInclude Include="SimpleSearchCursor.h" />
@@ -719,6 +720,7 @@
     <ClInclude Include="TranUndoPageManager.h" />
     <ClInclude Include="ValueFieldFullStatistic.h" />
     <ClInclude Include="ValueFieldStatistic.h" />
+    <ClInclude Include="ValueFieldStatisticHandler.h" />
     <ClInclude Include="VariantField.h" />
     <ClInclude Include="PageVector.h" />
     <ClInclude Include="WriteStreamPage.h" />

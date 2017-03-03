@@ -8,10 +8,11 @@ namespace embDB
 
 
 	template<class Type>
-	class CValueFieldStatisticBase
+	class CValueFieldStatisticBase : public IFieldStatistic
 	{
 		public:
-			CValueFieldStatisticBase(IDBTransaction* pTransaction) : m_pTransaction(pTransaction), m_nRootPage(-1)
+			CValueFieldStatisticBase(CommonLib::alloc_t *pAlloc, IDBTransaction* pTransaction, bool bCheckCRC = false) : 
+				m_pTransaction(pTransaction), m_nRootPage(-1), m_bCheckCRC(bCheckCRC), m_pAlloc(pAlloc)
 			{
 
 			}
@@ -52,22 +53,11 @@ namespace embDB
 
 				return true;
 			}
-
-			virtual bool IsValid() const = 0;
-			virtual bool save() = 0;
-
-			virtual eStatisticType GetType() const = 0;
-
-			virtual void AddVarValue(const CommonLib::CVariant& value) = 0;
-			virtual void RemoveVarValue(const CommonLib::CVariant& value) = 0;
-
-			virtual void AddVarValue(const Type& value) = 0;
+ 			virtual void AddVarValue(const Type& value) = 0;
 			virtual void RemoveVarValue(const Type& value) = 0;
-
-
-			uint64 GetCount(const Type& value) const = 0;
-			uint64 GetCount(const CommonLib::CVariant& value) const = 0;
-
+ 
+			virtual uint32 GetLastUpdateTime() const { return m_nTimeUpdate; }
+			virtual uint32 GetLastUpdateDate() const { return m_nDateUpdate; }
 			
 
 		protected:
@@ -81,7 +71,11 @@ namespace embDB
 			}
 		protected:
 			IDBTransactionPtr m_pTransaction;
+			CommonLib::alloc_t *m_pAlloc;
 			int64 m_nRootPage;
+			uint32 m_nTimeUpdate;
+			uint32 m_nDateUpdate;
+			bool m_bCheckCRC;
 			
 	};
 

@@ -211,7 +211,7 @@ namespace CommonLib
 
 				nBitPart = 0;
 				bitStream.readBits(nBitPart, nPartDiff - 1);
-				nBitPart |= (1 << nPartDiff- 1);
+				nBitPart |= (1 << (nPartDiff- 1));
 			}
 
 			pShp->m_vecParts[i] = pShp->m_vecParts[i - 1] + nBitPart;

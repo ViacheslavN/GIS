@@ -37,6 +37,7 @@ namespace embDB
 			m_bOnlineCalcCompSize = pFieldProp->m_FieldPropExt.m_bOnlineCalcCompSize;
 			m_nCompCalcError = pFieldProp->m_FieldPropExt.m_nCompCalcError;
 			m_nBTreeChacheSize = pFieldProp->m_FieldPropExt.m_nBTreeChacheSize;
+			m_StatisticInfo = pFieldProp->m_StatisticInfo;
 		}
 		~CDBFieldHandlerBase(){}
 
@@ -53,7 +54,8 @@ namespace embDB
 			pStream->write(m_dScale);
 			pStream->write(m_bNoNull);
 			pStream->write(m_nBTreeChacheSize);
-			
+			pStream->write((uint16)m_StatisticInfo.m_Statistic);
+			pStream->write((uint16)m_StatisticInfo.m_CalcStat);
 
 			FilePagePtr pFieldInfoPage(pTran->getNewPage(MIN_PAGE_SIZE)); 
 			if(!pFieldInfoPage.get())
@@ -110,6 +112,11 @@ namespace embDB
 			m_bNoNull = pStream->readBool();
 			m_nBTreeChacheSize = pStream->readIntu32();
 
+			m_StatisticInfo.m_Statistic = (eStatisticType)pStream->readintu16();
+			m_StatisticInfo.m_CalcStat = (eCalcStatistic)pStream->readintu16();
+ 
+
+
 			m_nFieldInfoPage = pStream->readInt64();
 		}
 
@@ -150,6 +157,16 @@ namespace embDB
 		{
 			return m_pIndexHandler;
 		}
+
+		virtual void setFieldStatisticHandler(IFieldStatisticHandler *pFieldStatisticHandler)
+		{
+			m_pFieldStatisticHandler = pFieldStatisticHandler;
+		}
+		virtual IFieldStatisticHandlerPtr getFieldStatisticHandler()
+		{
+			return m_pFieldStatisticHandler;
+		}
+
 		virtual bool lock()
 		{
 			return true;
@@ -207,6 +224,8 @@ namespace embDB
 		CommonLib::CVariant m_defValue;
 		CommonLib::alloc_t* m_pAlloc;
 		IDBIndexHandlerPtr m_pIndexHandler;
+		IFieldStatisticHandlerPtr m_pFieldStatisticHandler;
+
 		uint64				m_nFieldInfoPage;
 		int64				m_nPageAdd;
 
@@ -215,6 +234,7 @@ namespace embDB
 		uint32 m_nCompCalcError;
 		uint32 m_nBTreeChacheSize;
 		bool m_bCheckCRC;
+		SStatisticInfo m_StatisticInfo;
 	};
 
  
