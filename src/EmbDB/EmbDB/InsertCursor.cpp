@@ -61,10 +61,10 @@ namespace embDB
 			IValueFieldPtr pValueField = m_vecInsertFields[i];
 			if(!pValue)
 			{
-				IDBFieldHandlerPtr pFieldHandler = pValueField->GetFieldHandler();
-				if(pFieldHandler->GetIsNotNull())
+				IDBFieldHolderPtr pFieldHolder = pValueField->GetFieldHolder();
+				if(pFieldHolder->GetIsNotNull())
 				{
-					m_pTran->error(L"field %s is not null ", pFieldHandler->getName().cwstr());
+					m_pTran->error(L"field %s is not null ", pFieldHolder->getName().cwstr());
 					return -1;
 				}
 				continue;

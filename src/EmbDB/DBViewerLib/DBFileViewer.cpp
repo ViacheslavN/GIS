@@ -33,9 +33,8 @@ namespace DbFileViewerLib
 	}
 	bool CDBFileViewer::open(const CommonLib::CString& sDbName,const CommonLib::CString& sWorkingPath, const CommonLib::CString& sPassword)
 	{
-		if(!isOpen())
 			return false;
-		m_pStorage= new embDB::CStorage(&m_alloc);
+	/*	m_pStorage= new embDB::CStorage(&m_alloc);
 		bool bOpen =  m_pStorage->open(sDbName, false, false, false, false, 8192);
 		if(!bOpen)
 		{
@@ -43,7 +42,7 @@ namespace DbFileViewerLib
 			m_pStorage = NULL;
 			return false;
 		}
-		return ReadHeader();
+		return ReadHeader();*/
 			
 	}
 	bool CDBFileViewer::open(embDB::CStorage* pStorage)

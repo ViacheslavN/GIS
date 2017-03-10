@@ -217,9 +217,9 @@ namespace embDB
 	struct IIndexPageIterator;
 	struct IValueField;
 	struct IDBTransaction;
-	struct IDBIndexHandler;
-	struct IDBFieldHandler;
-	struct IDBShapeFieldHandler;
+	struct IDBIndexHolder;
+	struct IDBFieldHolder;
+	struct IDBShapeFieldHolder;
 	struct IDBStorage;
 	struct IDBShema;
 	struct ILink;
@@ -229,15 +229,15 @@ namespace embDB
 	struct IIndexIterator;
 	struct ILogger;
 	struct IFieldStatistic;
-	struct IFieldStatisticHandler;
+	struct IFieldStatisticHolder;
 
 	COMMON_LIB_REFPTR_TYPEDEF(IFieldIterator); 
 	COMMON_LIB_REFPTR_TYPEDEF(IIndexPageIterator); 
 	COMMON_LIB_REFPTR_TYPEDEF(IValueField); 
 	COMMON_LIB_REFPTR_TYPEDEF(IDBTransaction);
-	COMMON_LIB_REFPTR_TYPEDEF(IDBIndexHandler);
-	COMMON_LIB_REFPTR_TYPEDEF(IDBFieldHandler);
-	COMMON_LIB_REFPTR_TYPEDEF(IDBShapeFieldHandler);
+	COMMON_LIB_REFPTR_TYPEDEF(IDBIndexHolder);
+	COMMON_LIB_REFPTR_TYPEDEF(IDBFieldHolder);
+	COMMON_LIB_REFPTR_TYPEDEF(IDBShapeFieldHolder);
 	COMMON_LIB_REFPTR_TYPEDEF(IDBShema);
 	COMMON_LIB_REFPTR_TYPEDEF(ILink);
 	COMMON_LIB_REFPTR_TYPEDEF(IDBStorage);
@@ -246,7 +246,7 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(ILogger); 
 	COMMON_LIB_REFPTR_TYPEDEF(IDBDatabase); 
 	COMMON_LIB_REFPTR_TYPEDEF(IFieldStatistic);
-	COMMON_LIB_REFPTR_TYPEDEF(IFieldStatisticHandler);
+	COMMON_LIB_REFPTR_TYPEDEF(IFieldStatisticHolder);
 
 	struct IFieldIterator : public CommonLib::AutoRefCounter
 	{
@@ -350,7 +350,8 @@ namespace embDB
 		virtual bool save() = 0;
 		virtual bool clear() = 0;
 		virtual eStatisticType GetType() const = 0;
-		virtual eCalcStatistic GetCalcType() const = 0;
+		virtual eUpdateStatisticType GetCalcType() const = 0;
+		//virtual bool IsExsist(const CommonLib::CVariant& value) = 0; //  false - really doesn't exist, true may be, may not be
 
 		virtual void AddVarValue(const CommonLib::CVariant& value) = 0;
 		virtual void RemoveVarValue(const CommonLib::CVariant& value) = 0;
@@ -363,18 +364,18 @@ namespace embDB
 	};
 
 
-	struct IFieldStatisticHandler : public CommonLib::AutoRefCounter
+	struct IFieldStatisticHolder : public CommonLib::AutoRefCounter
 	{
 	public:
-		IFieldStatisticHandler() {}
-		virtual ~IFieldStatisticHandler() {}
+		IFieldStatisticHolder() {}
+		virtual ~IFieldStatisticHolder() {}
 
 		virtual bool save(CommonLib::IWriteStream* pStream, IDBTransaction *pTran) = 0;
 		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage) = 0;
 
 
 		virtual IFieldStatisticPtr getFieldStatistic(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
-		virtual bool release(IFieldStatisticPtr* pInxex) = 0;
+		virtual bool release(IFieldStatisticPtr* pStatistic) = 0;
 
 		virtual bool Update(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
 
@@ -415,7 +416,7 @@ namespace embDB
 		virtual IndexFiledPtr GetIndex() = 0;
 		virtual void SetIndex(IndexFiled *pIndex) = 0;
 
-		virtual IDBFieldHandlerPtr GetFieldHandler() const= 0;
+		virtual IDBFieldHolderPtr GetFieldHolder() const= 0;
 
 		virtual IFieldStatisticPtr GetStatistic() = 0;
 		virtual void SetStatistic(IFieldStatistic *pStatistic) = 0;
@@ -424,11 +425,11 @@ namespace embDB
 	
 
 	
-	struct IDBIndexHandler : public IIndex
+	struct IDBIndexHolder : public IIndex
 	{
 	public:
-		IDBIndexHandler(){}
-		~IDBIndexHandler(){}
+		IDBIndexHolder(){}
+		~IDBIndexHolder(){}
  
 		virtual bool save(CommonLib::IWriteStream* pStream, IDBTransaction *pTran) = 0;
 		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage) = 0;
@@ -443,11 +444,11 @@ namespace embDB
 	};
 
 
-	struct IDBFieldHandler : public IField
+	struct IDBFieldHolder : public IField
 	{
 	public:
-		IDBFieldHandler(){}
-		~IDBFieldHandler(){}
+		IDBFieldHolder(){}
+		~IDBFieldHolder(){}
 
 
 		virtual bool save(CommonLib::IWriteStream* pStream, IDBTransaction *pTran) = 0;
@@ -456,11 +457,11 @@ namespace embDB
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage) = 0;
 		virtual bool release(IValueField* pField) = 0;
 
-		virtual void setIndexHandler(IDBIndexHandler *pIndexHandler) = 0;
-		virtual IDBIndexHandlerPtr getIndexIndexHandler() = 0;
+		virtual void setIndexHolder(IDBIndexHolder *pIndexHolder) = 0;
+		virtual IDBIndexHolderPtr getIndexIndexHolder() = 0;
 
-		virtual void setFieldStatisticHandler(IFieldStatisticHandler *pFieldStatisticHandler) = 0;
-		virtual IFieldStatisticHandlerPtr getFieldStatisticHandler() = 0;
+		virtual void setFieldStatisticHolder(IFieldStatisticHolder *pFieldStatisticHolder) = 0;
+		virtual IFieldStatisticHolderPtr getFieldStatisticHolder() = 0;
 
 		
 
@@ -473,10 +474,10 @@ namespace embDB
 		virtual uint32 GetNodePageSize() const = 0;
 	};
 
-	struct IDBShapeFieldHandler : public IDBFieldHandler
+	struct IDBShapeFieldHolder : public IDBFieldHolder
 	{
-		IDBShapeFieldHandler(){}
-		~IDBShapeFieldHandler(){}
+		IDBShapeFieldHolder(){}
+		~IDBShapeFieldHolder(){}
 
 
 		virtual  CommonLib::eShapeType GetShapeType() const = 0;

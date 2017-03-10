@@ -112,7 +112,7 @@ namespace embDB
 	template<class _FType, int FieldDataType,
 	class _TKeyCompressor = TEmptyDiffValueCompress<_FType>,
 	class _TComp = embDB::comp<_FType> >
-	class UniqueIndexFieldHandler : public CIndexHandlerBase 
+	class UniqueIndexFieldHolder : public CIndexHolderBase 
 	{
 	public:
 
@@ -137,11 +137,11 @@ namespace embDB
 
 		typedef CUniqueIndex<FType, TBTree, FieldDataType> TIndex;
 
-		UniqueIndexFieldHandler(IDBFieldHandler *pField, CommonLib::alloc_t* pAlloc, int64 nIndexPage,const SIndexProp &ip) : CIndexHandlerBase(pField, pAlloc, itUnique, nIndexPage, ip)
+		UniqueIndexFieldHolder(IDBFieldHolder *pField, CommonLib::alloc_t* pAlloc, int64 nIndexPage,const SIndexProp &ip) : CIndexHolderBase(pField, pAlloc, itUnique, nIndexPage, ip)
 		{
 
 		}
-		~UniqueIndexFieldHandler()
+		~UniqueIndexFieldHolder()
 		{
 
 		}
@@ -150,7 +150,7 @@ namespace embDB
 		{
 			TLeafCompressorParams leafCompParams;
 			TInnerCompressorParams innerCompParams;
-			return CIndexHandlerBase::save<TIndex, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, &innerCompParams, &leafCompParams);
+			return CIndexHolderBase::save<TIndex, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, &innerCompParams, &leafCompParams);
 		}
 		virtual bool load(int64 nAddr, IDBStorage *pStorage)
 		{
@@ -192,16 +192,16 @@ namespace embDB
 	typedef TBaseValueDiffCompress<uint64, uint64, UnsignedDiffNumLenCompressor64u> TUInt64KeyCompress;
  
 
-	typedef UniqueIndexFieldHandler<int64,  dtInteger64, TInt64KeyCompress > TUniqueIndexNT64;
-	typedef UniqueIndexFieldHandler<uint64, dtUInteger64, TUInt64KeyCompress > TUniqueIndexUINT64;
-	typedef UniqueIndexFieldHandler<int32,  dtInteger32, TInt32KeyCompress> TUniqueIndexINT32;
-	typedef UniqueIndexFieldHandler<uint32, dtUInteger32, TUInt32KeyCompress> TUniqueIndexUINT32;
-	typedef UniqueIndexFieldHandler<int16,  dtInteger16, TInt16KeyCompress> TUniqueIndexINT16;
-	typedef UniqueIndexFieldHandler<uint16, dtUInteger16, TUInt16KeyCompress> TUniqueIndexUINT16;
-	typedef UniqueIndexFieldHandler<int32,  dtUInteger8> TUniqueIndexINT8;
-	typedef UniqueIndexFieldHandler<uint32, dtInteger8> TUniqueIndexUINT8;
-	typedef UniqueIndexFieldHandler<double, dtDouble> TUniqueIndexDouble;
-	typedef UniqueIndexFieldHandler<float,  dtFloat> TUniqueIndexFloat;
+	typedef UniqueIndexFieldHolder<int64,  dtInteger64, TInt64KeyCompress > TUniqueIndexNT64;
+	typedef UniqueIndexFieldHolder<uint64, dtUInteger64, TUInt64KeyCompress > TUniqueIndexUINT64;
+	typedef UniqueIndexFieldHolder<int32,  dtInteger32, TInt32KeyCompress> TUniqueIndexINT32;
+	typedef UniqueIndexFieldHolder<uint32, dtUInteger32, TUInt32KeyCompress> TUniqueIndexUINT32;
+	typedef UniqueIndexFieldHolder<int16,  dtInteger16, TInt16KeyCompress> TUniqueIndexINT16;
+	typedef UniqueIndexFieldHolder<uint16, dtUInteger16, TUInt16KeyCompress> TUniqueIndexUINT16;
+	typedef UniqueIndexFieldHolder<int32,  dtUInteger8> TUniqueIndexINT8;
+	typedef UniqueIndexFieldHolder<uint32, dtInteger8> TUniqueIndexUINT8;
+	typedef UniqueIndexFieldHolder<double, dtDouble> TUniqueIndexDouble;
+	typedef UniqueIndexFieldHolder<float,  dtFloat> TUniqueIndexFloat;
 
 }
 

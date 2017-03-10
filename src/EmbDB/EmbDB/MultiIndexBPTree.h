@@ -185,7 +185,7 @@ namespace embDB
 	class _TKeyComp = embDB::MultiIndexKeyOnlyComp<_FType>,
 	class _TBaseComp = MultiIndexBaseComp<_FType>
 	>
-	class MultiIndexFieldHandler  : public CIndexHandlerBase 
+	class MultiIndexFieldHolder  : public CIndexHolderBase 
 	{
 	public:
 
@@ -205,17 +205,17 @@ namespace embDB
 
 		typedef MultiIndex<FType, TBTree, FieldDataType, TBaseComp, TKeyComp> TMultiIndex;
 
-		MultiIndexFieldHandler(IDBFieldHandler *pField, CommonLib::alloc_t* pAlloc, int64 nPageAddr, const SIndexProp &ip) : CIndexHandlerBase(pField, pAlloc, itMultiRegular, nPageAddr, ip)
+		MultiIndexFieldHolder(IDBFieldHolder *pField, CommonLib::alloc_t* pAlloc, int64 nPageAddr, const SIndexProp &ip) : CIndexHolderBase(pField, pAlloc, itMultiRegular, nPageAddr, ip)
 		{
 
 		}
-		~MultiIndexFieldHandler()
+		~MultiIndexFieldHolder()
 		{
 
 		}
 		virtual bool save(CommonLib::IWriteStream * pStream, IDBTransaction *pTran)
 		{
-			return CIndexHandlerBase::save<TMultiIndex, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc);
+			return CIndexHolderBase::save<TMultiIndex, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc);
 		}
 		
 		virtual IndexFiledPtr getIndex(IDBTransaction* pTransactions, IDBStorage *pStorage)
@@ -251,20 +251,20 @@ namespace embDB
 	typedef embDB::TMultiKeyCompressor<int8, int8, embDB::SignedDiffNumLenCompressor28i> TMultiKeyCompressor8;
 	typedef embDB::TMultiKeyCompressor<byte, byte, embDB::UnsignedDiffNumLenCompressor28u> TMultiKeyCompressor8u;
 
-	typedef MultiIndexFieldHandler<int64,  dtInteger64, TMultiKeyCompressor64> TMultiIndexNT64;
-	typedef MultiIndexFieldHandler<uint64, dtUInteger64, TMultiKeyCompressor64u> TMultiIndexUINT64;
+	typedef MultiIndexFieldHolder<int64,  dtInteger64, TMultiKeyCompressor64> TMultiIndexNT64;
+	typedef MultiIndexFieldHolder<uint64, dtUInteger64, TMultiKeyCompressor64u> TMultiIndexUINT64;
 
-	typedef MultiIndexFieldHandler<int32,  dtInteger32, TMultiKeyCompressor32> TMultiIndexINT32;
-	typedef MultiIndexFieldHandler<uint32, dtUInteger32, TMultiKeyCompressor32u> TMultiIndexUINT32;
+	typedef MultiIndexFieldHolder<int32,  dtInteger32, TMultiKeyCompressor32> TMultiIndexINT32;
+	typedef MultiIndexFieldHolder<uint32, dtUInteger32, TMultiKeyCompressor32u> TMultiIndexUINT32;
 
-	typedef MultiIndexFieldHandler<int16,  dtInteger16, TMultiKeyCompressor16> TMultiIndexINT16;
-	typedef MultiIndexFieldHandler<uint16, dtUInteger16, TMultiKeyCompressor16u> TMultiIndexUINT16;
+	typedef MultiIndexFieldHolder<int16,  dtInteger16, TMultiKeyCompressor16> TMultiIndexINT16;
+	typedef MultiIndexFieldHolder<uint16, dtUInteger16, TMultiKeyCompressor16u> TMultiIndexUINT16;
 
-	typedef MultiIndexFieldHandler<byte,  dtUInteger8, TMultiKeyCompressor8u> TMultiIndexINT8;
-	typedef MultiIndexFieldHandler<int8, dtInteger8, TMultiKeyCompressor8> TMultiIndexUINT8;
+	typedef MultiIndexFieldHolder<byte,  dtUInteger8, TMultiKeyCompressor8u> TMultiIndexINT8;
+	typedef MultiIndexFieldHolder<int8, dtInteger8, TMultiKeyCompressor8> TMultiIndexUINT8;
 
-	typedef MultiIndexFieldHandler<double, dtDouble> TMultiIndexDouble;
-	typedef MultiIndexFieldHandler<float,  dtFloat> TMultiIndexFloat;
+	typedef MultiIndexFieldHolder<double, dtDouble> TMultiIndexDouble;
+	typedef MultiIndexFieldHolder<float,  dtFloat> TMultiIndexFloat;
 }
 
 #endif

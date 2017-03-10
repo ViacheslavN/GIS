@@ -4,55 +4,55 @@
 namespace embDB
 {
 
-	static IDBFieldHandlerPtr CreateValueField(const SFieldProp* pFieldProp, CDatabase* pDB, int64 nPageAdd)
+	static IDBFieldHolderPtr CreateValueField(const SFieldProp* pFieldProp, CDatabase* pDB, int64 nPageAdd)
 	{
-		IDBFieldHandlerPtr pField;
+		IDBFieldHolderPtr pField;
 		switch(pFieldProp->m_dataType)
 		{
 		case dtInteger8:
-			pField = (IDBFieldHandler*)new TValFieldINT8(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+			pField = (IDBFieldHolder*)new TValFieldINT8(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 			break;
 		case dtUInteger8:
-			pField = (IDBFieldHandler*)new TValFieldUINT8(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+			pField = (IDBFieldHolder*)new TValFieldUINT8(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 			break;
 		case dtInteger16:
-			pField = (IDBFieldHandler*)new TValFieldINT16(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+			pField = (IDBFieldHolder*)new TValFieldINT16(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 			break;
 		case dtUInteger16:
-			pField = (IDBFieldHandler*)new TValFieldUINT16(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+			pField = (IDBFieldHolder*)new TValFieldUINT16(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 			break;
 		case dtInteger32:
-			pField = (IDBFieldHandler*)new TValFieldINT32(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+			pField = (IDBFieldHolder*)new TValFieldINT32(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 			break;
 		case dtUInteger32:
-			pField = (IDBFieldHandler*)new TValFieldUINT32(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+			pField = (IDBFieldHolder*)new TValFieldUINT32(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 			break;
 		case dtInteger64:
-			pField =(IDBFieldHandler*) new TValFieldINT64(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+			pField =(IDBFieldHolder*) new TValFieldINT64(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 			break;
 		case dtUInteger64:
-			pField = (IDBFieldHandler*)new TValFieldUINT64(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+			pField = (IDBFieldHolder*)new TValFieldUINT64(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 			break;
 		case dtFloat:
-			pField = (IDBFieldHandler*)new TValFieldFloat(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+			pField = (IDBFieldHolder*)new TValFieldFloat(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 			break;
 		case dtDouble:
-			pField = (IDBFieldHandler*)new TValFieldDouble(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+			pField = (IDBFieldHolder*)new TValFieldDouble(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 			break;
 		case dtString:
 			{
 				if(pFieldProp->m_nLenField != 0 && pFieldProp->m_nLenField < pFieldProp->m_nPageSize/25) //TO DO FIX
-					pField = (IDBFieldHandler*)new FixedStringValueFieldHandler(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+					pField = (IDBFieldHolder*)new FixedStringValueFieldHolder(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 				else
-					pField = (IDBFieldHandler*)new StringValueFieldHandler(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+					pField = (IDBFieldHolder*)new StringValueFieldHolder(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 			}
 		
 			break;
 		case dtBlob:
-			pField = (IDBFieldHandler*)new BlobValueFieldHandler(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+			pField = (IDBFieldHolder*)new BlobValueFieldHolder(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 			break;
 		case dtGeometry:
-			pField = (IDBFieldHandler*)new ShapeValueFieldHandler(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
+			pField = (IDBFieldHolder*)new ShapeValueFieldHolder(pDB->getBTreeAlloc(), pFieldProp, nPageAdd);
 			break;
 
 			
@@ -65,9 +65,9 @@ namespace embDB
 
 
 
-	static IDBIndexHandler* CreateMultiIndex(IDBFieldHandler *pField,  CDatabase* pDB, int64 nPageAddr, const SIndexProp &ip)
+	static IDBIndexHolder* CreateMultiIndex(IDBFieldHolder *pField,  CDatabase* pDB, int64 nPageAddr, const SIndexProp &ip)
 	{
-		IDBIndexHandler* pIndex = NULL;
+		IDBIndexHolder* pIndex = NULL;
 		switch(pField->getType())
 		{
 		case dtInteger8:
@@ -107,9 +107,9 @@ namespace embDB
 
 
 
-	static IDBIndexHandler* CreateUniqueIndex(IDBFieldHandler *pField, CDatabase* pDB, int64 nPageAddr, const SIndexProp &ip)
+	static IDBIndexHolder* CreateUniqueIndex(IDBFieldHolder *pField, CDatabase* pDB, int64 nPageAddr, const SIndexProp &ip)
 	{
-		IDBIndexHandler* pIndex = NULL;
+		IDBIndexHolder* pIndex = NULL;
 		switch(pField->getType())
 		{
 		case dtInteger8:

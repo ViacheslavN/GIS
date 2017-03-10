@@ -11,16 +11,16 @@ namespace embDB
 
 
 
-	SimpleSelectOpCursor::IndexSearchHandler::IndexSearchHandler (const CommonLib::CVariant& value, OpType opType, IndexFiled* pIndex) :
-		ISearhHandler(value, opType), m_bEnd(false)
+	SimpleSelectOpCursor::IndexSearchHolder::IndexSearchHolder (const CommonLib::CVariant& value, OpType opType, IndexFiled* pIndex) :
+		ISearhHolder(value, opType), m_bEnd(false)
 	{
 		m_pIndex = pIndex;
 	}
-	SimpleSelectOpCursor::IndexSearchHandler::~IndexSearchHandler()
+	SimpleSelectOpCursor::IndexSearchHolder::~IndexSearchHolder()
 	{
 
 	}
-	void SimpleSelectOpCursor::IndexSearchHandler::reset()
+	void SimpleSelectOpCursor::IndexSearchHolder::reset()
 	{
 		m_bEnd = false;
 		if(m_optType == OpEqual || m_optType == OpLess ||  m_optType == OpLessOrEqual )
@@ -41,7 +41,7 @@ namespace embDB
 
 	}
 
-	void SimpleSelectOpCursor::IndexSearchHandler::FillChache()
+	void SimpleSelectOpCursor::IndexSearchHolder::FillChache()
 	{
 
 		m_vecROWIDs.clear();
@@ -81,23 +81,23 @@ namespace embDB
 		}
 	}
 
-	SimpleSelectOpCursor::FieldSearchHandler::FieldSearchHandler(const CommonLib::CVariant& value,
-		OpType opType, IValueField* pField) : 	ISearhHandler(value, opType), m_bEnd(false)
+	SimpleSelectOpCursor::FieldSearchHolder::FieldSearchHolder(const CommonLib::CVariant& value,
+		OpType opType, IValueField* pField) : 	ISearhHolder(value, opType), m_bEnd(false)
 	{
 		m_pField = pField;
 	}
-    SimpleSelectOpCursor::FieldSearchHandler::~FieldSearchHandler()
+    SimpleSelectOpCursor::FieldSearchHolder::~FieldSearchHolder()
 	{
 
 	}
-	void SimpleSelectOpCursor::FieldSearchHandler::reset()
+	void SimpleSelectOpCursor::FieldSearchHolder::reset()
 	{
 		m_bEnd = true;
 		m_pFieldIterator = m_pField->begin();
 		FillChache();
 	}
 
-	void SimpleSelectOpCursor::FieldSearchHandler::FillChache()
+	void SimpleSelectOpCursor::FieldSearchHolder::FillChache()
 	{
 		m_vecROWIDs.clear();
 		if(m_bEnd)
@@ -126,7 +126,7 @@ namespace embDB
 
 	SimpleSelectOpCursor::SimpleSelectOpCursor(IDBTransaction* pTran, ITable* pTable, 
 		IFieldSet *pFieldSet, const wchar_t *pszField, const CommonLib::CVariant& var, OpType opType):
-		m_pSearhHandler(NULL), m_nPrevROWID(-1), m_nCurrROWID(-1), m_bEnd(false)
+		m_pSearhHolder(NULL), m_nPrevROWID(-1), m_nCurrROWID(-1), m_bEnd(false)
 	{
 		m_pTran = pTran;
 		m_pTable = (IDBTable*)pTable;
@@ -138,10 +138,10 @@ namespace embDB
 	}
 	SimpleSelectOpCursor::~SimpleSelectOpCursor()
 	{
-		if(m_pSearhHandler)
+		if(m_pSearhHolder)
 		{
-			delete m_pSearhHandler;
-			m_pSearhHandler = NULL;
+			delete m_pSearhHolder;
+			m_pSearhHolder = NULL;
 		}
 	}
 
@@ -159,14 +159,14 @@ namespace embDB
 		IndexFiledPtr pIndex = pFindField->GetIndex();
 		if(pIndex.get())
 		{
-			m_pSearhHandler = new IndexSearchHandler(m_value, m_nOpType, pIndex.get());
+			m_pSearhHolder = new IndexSearchHolder(m_value, m_nOpType, pIndex.get());
 		}
 		else
 		{
-			m_pSearhHandler = new FieldSearchHandler(m_value, m_nOpType, pFindField.get());
+			m_pSearhHolder = new FieldSearchHolder(m_value, m_nOpType, pFindField.get());
 		}
-		m_pSearhHandler->reset();
-		m_nCurrROWID = m_pSearhHandler->nextRowID();
+		m_pSearhHolder->reset();
+		m_nCurrROWID = m_pSearhHolder->nextRowID();
 
 		if(!m_pFieldSet.get())
 			m_pFieldSet = new CFieldSet();
@@ -218,7 +218,7 @@ namespace embDB
 			return false;
 
 		m_nPrevROWID = m_nCurrROWID;
-		m_nCurrROWID = m_pSearhHandler->nextRowID();
+		m_nCurrROWID = m_pSearhHolder->nextRowID();
 		if(m_nCurrROWID == -1)
 		{
 			m_bEnd = false;
@@ -255,7 +255,7 @@ namespace embDB
 			return false;
 		if(m_nCurrROWID == -1)
 		{
-			m_nCurrROWID = m_pSearhHandler->nextRowID();
+			m_nCurrROWID = m_pSearhHolder->nextRowID();
 			if(m_nCurrROWID == -1)
 			{
 				m_bEnd = false;

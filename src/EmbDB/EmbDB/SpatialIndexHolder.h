@@ -1,17 +1,17 @@
-#ifndef _EMBEDDED_DATABASE_B_SPATIAL_INDEX_HANDLER_H_
-#define _EMBEDDED_DATABASE_B_SPATIAL_INDEX_HANDLER_H_
+#ifndef _EMBEDDED_DATABASE_B_SPATIAL_INDEX_Holder_H_
+#define _EMBEDDED_DATABASE_B_SPATIAL_INDEX_Holder_H_
 #include "SpatialIndexBase.h"
 namespace embDB
 {
 	template<class _TSpatialIndex>
-	class TSpatialIndexHandler : public IDBIndexHandler
+	class TSpatialIndexHolder : public IDBIndexHolder
 	{
 	public:
 
 		 
 		typedef _TSpatialIndex TSpatialIndex;
 
-		TSpatialIndexHandler(IDBShapeFieldHandler* pField, CommonLib::alloc_t* pAlloc, int64 nPageAddr, const SIndexProp& ip) : m_pAlloc(pAlloc),m_nPageAddr(nPageAddr), m_nBTreeRootPage(-1)
+		TSpatialIndexHolder(IDBShapeFieldHolder* pField, CommonLib::alloc_t* pAlloc, int64 nPageAddr, const SIndexProp& ip) : m_pAlloc(pAlloc),m_nPageAddr(nPageAddr), m_nBTreeRootPage(-1)
 		{
 
 			m_pField = pField;
@@ -23,7 +23,7 @@ namespace embDB
 			 m_nBTreeChacheSize = ip.m_FieldPropExt.m_nBTreeChacheSize;
 
 		}
-		~TSpatialIndexHandler()
+		~TSpatialIndexHolder()
 		{}
 
 
@@ -94,7 +94,7 @@ namespace embDB
 		int64 m_nPageAddr;
 		uint32 m_nPageNodeSize;
 		CommonLib::alloc_t* m_pAlloc;
-		IDBShapeFieldHandlerPtr m_pField;
+		IDBShapeFieldHolderPtr m_pField;
 
 		CompressType m_nCompressType;
 		uint32 m_nCalcCompressError;
@@ -104,13 +104,13 @@ namespace embDB
 	};
 
 
-	typedef TSpatialIndexHandler<TIndexPoint16> THandlerIndexPoint16;
-	typedef TSpatialIndexHandler<TIndexPoint32> THandlerIndexPoint32;
-	typedef TSpatialIndexHandler<TIndexPoint64> THandlerIndexPoint64;
+	typedef TSpatialIndexHolder<TIndexPoint16> THolderIndexPoint16;
+	typedef TSpatialIndexHolder<TIndexPoint32> THolderIndexPoint32;
+	typedef TSpatialIndexHolder<TIndexPoint64> THolderIndexPoint64;
 
-	typedef TSpatialIndexHandler<TIndexRect16> THandlerIndexRect16;
-	typedef TSpatialIndexHandler<TIndexRect32> THandlerIndexRect32;
-	typedef TSpatialIndexHandler<TIndexRect64> THandlerIndexRect64;
+	typedef TSpatialIndexHolder<TIndexRect16> THolderIndexRect16;
+	typedef TSpatialIndexHolder<TIndexRect32> THolderIndexRect32;
+	typedef TSpatialIndexHolder<TIndexRect64> THolderIndexRect64;
 }
 
 #endif

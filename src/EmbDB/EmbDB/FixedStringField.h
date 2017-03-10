@@ -57,7 +57,7 @@ namespace embDB
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		TFixedStringValueField( IDBFieldHandler* pFieldHandler, IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) : TBase(pFieldHandler, pTransactions, pAlloc, nPageSize, nBTreeChacheSize) 
+		TFixedStringValueField( IDBFieldHolder* pFieldHolder, IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) : TBase(pFieldHolder, pTransactions, pAlloc, nPageSize, nBTreeChacheSize) 
 		{
 			this->m_ConvertTypeToVar.Init(&m_tree, m_pAlloc);
 		}
@@ -85,7 +85,7 @@ namespace embDB
 	};
 
 
-	class FixedStringValueFieldHandler : public CDBFieldHandlerBase<IDBFieldHandler>
+	class FixedStringValueFieldHolder : public CDBFieldHolderBase<IDBFieldHolder>
 	{
 	public:
  
@@ -94,9 +94,9 @@ namespace embDB
 		typedef TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		FixedStringValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFP, int64 nPageAdd) : CDBFieldHandlerBase<IDBFieldHandler>(pAlloc, pFP, nPageAdd)
+		FixedStringValueFieldHolder(CommonLib::alloc_t* pAlloc, const SFieldProp* pFP, int64 nPageAdd) : CDBFieldHolderBase<IDBFieldHolder>(pAlloc, pFP, nPageAdd)
 		{}
-		~FixedStringValueFieldHandler()
+		~FixedStringValueFieldHolder()
 		{}
 
 		/*virtual bool save(int64 nAddr, IDBTransaction *pTran)
@@ -108,7 +108,7 @@ namespace embDB
 			compParams.SetStringLen(m_fi.m_nLenField);
 			compParams.save(pTran);
 
-			return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE, -1, pLeafCompRootPage->getAddr());
+			return CDBFieldHolderBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE, -1, pLeafCompRootPage->getAddr());
 		}*/
 		virtual bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran)
 		{
@@ -128,11 +128,11 @@ namespace embDB
 
 			//compParams.save(pTran);
 
-			return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, &innerCompParams, &compParams);
+			return CDBFieldHolderBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, &innerCompParams, &compParams);
 		}
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
-			return CDBFieldHandlerBase::getValueField<TField>(pTransactions, pStorage);
+			return CDBFieldHolderBase::getValueField<TField>(pTransactions, pStorage);
 		}
 		virtual bool release(IValueField* pField)
 		{

@@ -82,7 +82,7 @@ namespace embDB
 			int64 getAddr();
 			//int64 getID() const {return m_nTableID;}
 			bool save(IDBTransaction *pTran);
-			//IDBFieldHandlerPtr getFieldHandler(const CommonLib::CString& name);
+			//IDBFieldHolderPtr getFieldHolder(const CommonLib::CString& name);
 
 			bool delField(IField *pField, IDBTransaction *Tran = NULL);
 			bool delField(const CommonLib::CString& sFieldName, IDBTransaction *Tran = NULL);
@@ -109,40 +109,44 @@ namespace embDB
 			bool readHeader(CommonLib::FxMemoryReadStream& stream);
 			bool createValueField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew);
 			
-			IDBIndexHandlerPtr createIndexHandler(IDBFieldHandler *pField,  const SIndexProp& ip, int64 nPageAddr);
-			IDBIndexHandlerPtr createSpatialIndexField(IDBShapeFieldHandler* pField, int64 nPageAddr, const SIndexProp& ip);
+			IDBIndexHolderPtr createIndexHolder(IDBFieldHolder *pField,  const SIndexProp& ip, int64 nPageAddr);
+			IDBIndexHolderPtr createSpatialIndexField(IDBShapeFieldHolder* pField, int64 nPageAddr, const SIndexProp& ip);
 	
 			//bool loadTableStorage(int64 nAddr);
 			bool ReadIndices(int64 nAddr, IDBTransaction *pTran);
-			bool BuildIndex(IDBIndexHandler* pIndexHandler, IDBFieldHandler *pFieldHandler, IDBTransaction* pTran);
+			bool BuildIndex(IDBIndexHolder* pIndexHolder, IDBFieldHolder *pFieldHolder, IDBTransaction* pTran);
 			eSpatialType GetSpatialType(uint64 nMaxVal, bool isPoint);
 			
 
 			
 	    private:
-			typedef std::map<CommonLib::CString, IDBFieldHandlerPtr> TFieldByName;
-			typedef std::map<int64, IDBFieldHandlerPtr> TFieldByID;
+			typedef std::map<CommonLib::CString, IDBFieldHolderPtr> TFieldByName;
+			typedef std::map<int64, IDBFieldHolderPtr> TFieldByID;
 
-			typedef std::map<CommonLib::CString, IDBIndexHandlerPtr> TIndexByName;
-			typedef std::map<int64, IDBIndexHandlerPtr> TIndexByID;
+			typedef std::map<CommonLib::CString, IDBIndexHolderPtr> TIndexByName;
+			typedef std::map<int64, IDBIndexHolderPtr> TIndexByID;
 
-			typedef std::map<CommonLib::CString, IDBIndexHandlerPtr> TIndexByName;
+			typedef std::map<CommonLib::CString, IFieldStatisticHolderPtr> FieldStatisticByName;
 
 			typedef TPageVector<int64> TFieldPages;
   
 
 			TIndexByName m_IndexByName;
-	 
+			FieldStatisticByName m_FieldStatisticByName;
 
 
 			int64 m_nTablePage;
 			int64 m_nFieldsPage;
 			int64 m_nIndexsPage;
+			int64 m_nStatisticsPage;
+
 			IDBStoragePtr m_pDBStorage;
 			CommonLib::CString m_sTableName;
 			CDatabase* m_pDB;
 			TFieldPages m_nFieldsAddr;
 			TFieldPages m_nIndexAddr;
+			TFieldPages m_nStatisticsAddr;
+
 			typedef TCounter<int64> TOIDCounter;
 			TOIDCounter m_OIDCounter;
 			IFieldsPtr m_pFields;

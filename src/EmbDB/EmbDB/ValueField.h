@@ -67,10 +67,10 @@ namespace embDB
 			}
 		};
 		TOIDIncFunctor m_OIDIncFunck;
-		ValueFieldBase( IDBFieldHandler* pFieldHandler, IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) :
+		ValueFieldBase( IDBFieldHolder* pFieldHolder, IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) :
 			  m_pDBTransactions(pTransactions),
 			  m_tree(-1, pTransactions, pAlloc, nBTreeChacheSize, nPageSize), 
-			  m_nBTreeInfoPage(-1), m_pAlloc(pAlloc), m_pFieldHandler(pFieldHandler)
+			  m_nBTreeInfoPage(-1), m_pAlloc(pAlloc), m_pFieldHolder(pFieldHolder)
 			  {
 
 
@@ -328,9 +328,9 @@ namespace embDB
 				m_pIndex = pIndex;
 			}
 
-			virtual IDBFieldHandlerPtr GetFieldHandler() const
+			virtual IDBFieldHolderPtr GetFieldHolder() const
 			{
-				return m_pFieldHandler;
+				return m_pFieldHolder;
 			}
 
 			virtual IFieldStatisticPtr GetStatistic()
@@ -348,7 +348,7 @@ namespace embDB
 		CommonLib::alloc_t* m_pAlloc;
 		IndexFiledPtr m_pIndex;
 		IFieldStatisticPtr m_pFieldStatistic;
-		IDBFieldHandlerPtr m_pFieldHandler;
+		IDBFieldHolderPtr m_pFieldHolder;
 		const sFieldInfo *m_pFieldInfo;
 		TConverTypeToVar m_ConvertTypeToVar;
 	};
@@ -388,8 +388,8 @@ namespace embDB
 			typedef _FieldIterator TFieldIterator;
 			typedef ValueFieldBase<_FType, _TBTree, TFieldIterator, TVarConvertor<_FType> > TBase;
 
-			ValueField(IDBFieldHandler* pFieldHandler,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) :
-			  TBase(pFieldHandler, pTransactions, pAlloc, nPageSize, nBTreeChacheSize)
+			ValueField(IDBFieldHolder* pFieldHolder,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) :
+			  TBase(pFieldHolder, pTransactions, pAlloc, nPageSize, nBTreeChacheSize)
 			{
 
 			}
@@ -435,7 +435,7 @@ namespace embDB
 	template<class _FType, int FieldDataType,
 		class _TLeafCompressor = embDB::TBaseLeafNodeDiffComp<int64, _FType, embDB::IDBTransaction, embDB::OIDCompressor> 	
 	>
-	class ValueFieldHandler :  CDBFieldHandlerBase<IDBFieldHandler>
+	class ValueFieldHolder :  CDBFieldHolderBase<IDBFieldHolder>
 	{
 		public:
 
@@ -459,9 +459,9 @@ namespace embDB
 			typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 			typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 	
-			ValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp, int64 nPageAdd) : CDBFieldHandlerBase<IDBFieldHandler>(pAlloc, pFieldProp, nPageAdd)
+			ValueFieldHolder(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp, int64 nPageAdd) : CDBFieldHolderBase<IDBFieldHolder>(pAlloc, pFieldProp, nPageAdd)
 			{}
-			~ValueFieldHandler()
+			~ValueFieldHolder()
 			{}
 			
 			virtual bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran)
@@ -480,7 +480,7 @@ namespace embDB
 				innerCompParams.m_nErrorCalc		  = m_nCompCalcError;
 				
 
-				return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc,&innerCompParams, &leafCompParams);
+				return CDBFieldHolderBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc,&innerCompParams, &leafCompParams);
 			}
 
 			virtual bool load(CommonLib::IReadStream* pStream,  IDBTransaction *pTran)
@@ -493,9 +493,9 @@ namespace embDB
 			{
 				TField * pField = new  TField(this, pTransactions, m_pAlloc,m_nPageSize, m_nBTreeChacheSize);
 				pField->load(m_nFieldInfoPage);
-				if(m_pIndexHandler.get())
+				if(m_pIndexHolder.get())
 				{
-					pField->SetIndex(m_pIndexHandler->getIndex(pTransactions, pStorage).get());
+					pField->SetIndex(m_pIndexHolder->getIndex(pTransactions, pStorage).get());
 				}
 				return IValueFieldPtr(pField);	
 			}
@@ -524,16 +524,16 @@ namespace embDB
 	//typedef  embDB::TBaseLeafNodeDiffComp<int64, int32, embDB::IDBTransaction, embDB::OIDCompressor,  TBaseValueCompress<int32,UnsignedNumLenCompressor32i > > TInteger32Compress;
 	//typedef  embDB::TBaseLeafNodeDiffComp<int64, int64, embDB::IDBTransaction, embDB::OIDCompressor,  TBaseValueCompress<int64, UnsignedNumLenCompressor64i> >TInteger64Compress;
 
-	typedef ValueFieldHandler<int64, dtInteger64, TInteger64Compress> TValFieldINT64;
-	typedef ValueFieldHandler<uint64,dtUInteger64, TUInteger64Compress> TValFieldUINT64;
-	typedef ValueFieldHandler<int32, dtInteger32, TInteger32Compress> TValFieldINT32;
-	typedef ValueFieldHandler<uint32,dtUInteger32, TUInteger32Compress> TValFieldUINT32;
-	typedef ValueFieldHandler<int16, dtInteger16, TInteger16Compress> TValFieldINT16;
-	typedef ValueFieldHandler<uint16,dtUInteger16, TUInteger16Compress> TValFieldUINT16;
-	typedef ValueFieldHandler<int32, dtUInteger8> TValFieldINT8;
-	typedef ValueFieldHandler<uint32,dtInteger8> TValFieldUINT8;
-	typedef ValueFieldHandler<double,dtDouble> TValFieldDouble;
-	typedef ValueFieldHandler<float, dtFloat> TValFieldFloat;
+	typedef ValueFieldHolder<int64, dtInteger64, TInteger64Compress> TValFieldINT64;
+	typedef ValueFieldHolder<uint64,dtUInteger64, TUInteger64Compress> TValFieldUINT64;
+	typedef ValueFieldHolder<int32, dtInteger32, TInteger32Compress> TValFieldINT32;
+	typedef ValueFieldHolder<uint32,dtUInteger32, TUInteger32Compress> TValFieldUINT32;
+	typedef ValueFieldHolder<int16, dtInteger16, TInteger16Compress> TValFieldINT16;
+	typedef ValueFieldHolder<uint16,dtUInteger16, TUInteger16Compress> TValFieldUINT16;
+	typedef ValueFieldHolder<int32, dtUInteger8> TValFieldINT8;
+	typedef ValueFieldHolder<uint32,dtInteger8> TValFieldUINT8;
+	typedef ValueFieldHolder<double,dtDouble> TValFieldDouble;
+	typedef ValueFieldHolder<float, dtFloat> TValFieldFloat;
  
 }
 #endif

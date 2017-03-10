@@ -104,7 +104,7 @@ namespace embDB
 	template<class _TInnerCompressor = BPInnerCompIndexCompressor,
 	class _TLeafCompressor = embDB::BPLeafCompIndexCompressor<uint64 >,
 	class _TComp = embDB::comp<CompositeIndexKey> >
-	class UniqueCompIndexFieldHandler : public CIndexHandlerBase 
+	class UniqueCompIndexFieldHolder : public CIndexHolderBase 
 	{
 	public:
 
@@ -118,18 +118,18 @@ namespace embDB
 
 		typedef CCompUniqueIndex<TBTree> TIndex;
 
-		UniqueCompIndexFieldHandler(CommonLib::alloc_t* pAlloc) : CIndexHandlerBase(pAlloc)
+		UniqueCompIndexFieldHolder(CommonLib::alloc_t* pAlloc) : CIndexHolderBase(pAlloc)
 		{
 
 		}
-		~UniqueCompIndexFieldHandler()
+		~UniqueCompIndexFieldHolder()
 		{
 
 		}
 	
 		virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
-			return CIndexHandlerBase::save<TIndex>(nAddr, pTran, m_pAlloc, INDEX_PAGE, INDEX_INFO_PAGE);
+			return CIndexHolderBase::save<TIndex>(nAddr, pTran, m_pAlloc, INDEX_PAGE, INDEX_INFO_PAGE);
 		}
 		virtual bool load(int64 nAddr, IDBStorage *pStorage)
 		{
@@ -158,7 +158,7 @@ namespace embDB
 
 	};
  
-	typedef UniqueCompIndexFieldHandler<> TUniqueCompIndexFieldHandler;
+	typedef UniqueCompIndexFieldHolder<> TUniqueCompIndexFieldHolder;
 }
 
 

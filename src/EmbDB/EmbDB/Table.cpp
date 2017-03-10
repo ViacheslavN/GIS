@@ -15,7 +15,7 @@
 #include "StringField.h"
 #include "BlobField.h"
 #include "ShapeField.h"
-#include "SpatialIndexHandler.h"
+#include "SpatialIndexHolder.h"
 #include "CreateFields.h"
 #include "Fields.h"
 #include "ReadStreamPage.h"
@@ -151,20 +151,23 @@ namespace embDB
 
 		}
 		
-		if(m_nIndexsPage == -1)
-			return true;
-
-
-		m_nIndexAddr.setFirstPage(m_nIndexsPage);
-		m_nIndexAddr.setPageSize(MIN_PAGE_SIZE);
-		m_nIndexAddr.load(m_pDBStorage.get());
-		TFieldPages::iterator it = m_nIndexAddr.begin();
-		while(!it.isNull())
+		if (m_nIndexsPage != -1)
 		{
-			if(!ReadIndex(it.value()))
-				return false;
-			it.next();
+			m_nIndexAddr.setFirstPage(m_nIndexsPage);
+			m_nIndexAddr.setPageSize(MIN_PAGE_SIZE);
+			m_nIndexAddr.load(m_pDBStorage.get());
+			TFieldPages::iterator it = m_nIndexAddr.begin();
+			while (!it.isNull())
+			{
+				if (!ReadIndex(it.value()))
+					return false;
+				it.next();
+			}
 		}
+		 
+
+
+	
 		
 		return true;
 	}
@@ -241,7 +244,7 @@ namespace embDB
 		
 		/*bool bRet = true;
 		int64 nFieldAddr = -1;
-		IDBFieldHandler* pField =  CreateValueField(fi, m_pDB, pTran);
+		IDBFieldHolder* pField =  CreateValueField(fi, m_pDB, pTran);
 		if(!pField)
 			return false;
 		if(fi->m_nFieldPage == -1)
@@ -287,9 +290,9 @@ namespace embDB
 
 		return true;
 	}
-	IDBIndexHandlerPtr CTable::createIndexHandler(IDBFieldHandler *pField, const SIndexProp& ip, int64 nPageAddr)
+	IDBIndexHolderPtr CTable::createIndexHolder(IDBFieldHolder *pField, const SIndexProp& ip, int64 nPageAddr)
 	{
-		IDBIndexHandlerPtr pIndex;
+		IDBIndexHolderPtr pIndex;
  
 		if(ip.m_indexType == itUnique)
 			pIndex = CreateUniqueIndex(pField, m_pDB, nPageAddr,  ip);
@@ -297,7 +300,7 @@ namespace embDB
 			pIndex = CreateMultiIndex(pField, m_pDB, nPageAddr,  ip);
 		else if(ip.m_indexType == itSpatial)
 		{
-			IDBShapeFieldHandler* pShapeField = dynamic_cast<IDBShapeFieldHandler*>(pField);
+			IDBShapeFieldHolder* pShapeField = dynamic_cast<IDBShapeFieldHolder*>(pField);
 			if(!pShapeField)
 			{
 				//TO DO Log
@@ -307,28 +310,28 @@ namespace embDB
 		}
 		return pIndex;
 	}
-	IDBIndexHandlerPtr  CTable::createSpatialIndexField(IDBShapeFieldHandler* pField,int64 nPageAddr, const SIndexProp& ip)
+	IDBIndexHolderPtr  CTable::createSpatialIndexField(IDBShapeFieldHolder* pField,int64 nPageAddr, const SIndexProp& ip)
 	{
-		IDBIndexHandlerPtr pSpatialIndex;
+		IDBIndexHolderPtr pSpatialIndex;
 		switch(pField->GetPointType())
 		{
 			case stPoint16:
-				pSpatialIndex = new THandlerIndexPoint16(pField, m_pDB->getBTreeAlloc(), nPageAddr, ip);
+				pSpatialIndex = new THolderIndexPoint16(pField, m_pDB->getBTreeAlloc(), nPageAddr, ip);
 				break;
 			case stPoint32:
-				pSpatialIndex = new THandlerIndexPoint32(pField, m_pDB->getBTreeAlloc(), nPageAddr, ip);
+				pSpatialIndex = new THolderIndexPoint32(pField, m_pDB->getBTreeAlloc(), nPageAddr, ip);
 				break;
 			case stPoint64:
-				pSpatialIndex = new THandlerIndexPoint64(pField, m_pDB->getBTreeAlloc(), nPageAddr, ip);
+				pSpatialIndex = new THolderIndexPoint64(pField, m_pDB->getBTreeAlloc(), nPageAddr, ip);
 				break;
 			case stRect16:
-				pSpatialIndex = new THandlerIndexRect16(pField, m_pDB->getBTreeAlloc(), nPageAddr, ip);
+				pSpatialIndex = new THolderIndexRect16(pField, m_pDB->getBTreeAlloc(), nPageAddr, ip);
 				break;
 			case stRect32:
-				pSpatialIndex = new THandlerIndexRect32(pField, m_pDB->getBTreeAlloc(), nPageAddr, ip);
+				pSpatialIndex = new THolderIndexRect32(pField, m_pDB->getBTreeAlloc(), nPageAddr, ip);
 				break;
 			case stRect64:
-				pSpatialIndex = new THandlerIndexRect64(pField, m_pDB->getBTreeAlloc(), nPageAddr, ip);
+				pSpatialIndex = new THolderIndexRect64(pField, m_pDB->getBTreeAlloc(), nPageAddr, ip);
 					break;
 		
 		}
@@ -355,7 +358,7 @@ namespace embDB
 		if(nIndex == -1)
 			return false;
 
-		IDBFieldHandler *pDBField = dynamic_cast<IDBFieldHandler *>(pField);
+		IDBFieldHolder *pDBField = dynamic_cast<IDBFieldHolder *>(pField);
 		if(!pDBField)
 		{
 			return false; //TO DO add  message
@@ -376,17 +379,17 @@ namespace embDB
 			return false;
 		}
 
-		IDBIndexHandlerPtr pIndexHandler = pDBField->getIndexIndexHandler();
-	/*	if(pIndexHandler.get())
+		IDBIndexHolderPtr pIndexHolder = pDBField->getIndexIndexHolder();
+	/*	if(pIndexHolder.get())
 		{
 
-			if(!m_nIndexAddr.remove(pIndexHandler->getFieldInfoType()->m_nFIPage, pTran))
+			if(!m_nIndexAddr.remove(pIndexHolder->getFieldInfoType()->m_nFIPage, pTran))
 			{
 				pDBField->unlock();
 				pTran->error(L""); //TO DO add  message
 				return false;
 			}
-			int nIdx = m_pIndexs->FindField(pIndexHandler->getName());
+			int nIdx = m_pIndexs->FindField(pIndexHolder->getName());
 			if(nIdx != -1)
 			{
 				m_pIndexs->RemoveField(nIdx);
@@ -474,7 +477,7 @@ namespace embDB
 			stream.write(sFP.m_nPageSize);
 			stream.write(sFP.m_nLenField);
 
-			IDBFieldHandlerPtr pField =  CreateValueField(&sFP, m_pDB, pFieldInfoPage->getAddr());
+			IDBFieldHolderPtr pField =  CreateValueField(&sFP, m_pDB, pFieldInfoPage->getAddr());
 			if(!pField.get())
 				return IFieldPtr(); // TO DO Error
 
@@ -585,7 +588,7 @@ namespace embDB
 		double dScale = 1/pow(10., nScaleX);
 		int64 nMaxVal = int64(dMaxCoord/dScale);
 		SpatialDataType = GetSpatialType(nMaxVal, isPoint);
-		IDBShapeFieldHandlerPtr pShapeFieldHandler; 
+		IDBShapeFieldHolderPtr pShapeFieldHolder; 
 		{
 
 			FilePagePtr pFieldInfoPage = pDBTran->getNewPage(nFieldInfoPageSize);
@@ -598,8 +601,8 @@ namespace embDB
 			stream.write(fp.m_nPageSize);
 			stream.write(fp.m_nLenField);
 
-			ShapeValueFieldHandler *pShapeField = new  ShapeValueFieldHandler(m_pDB->getBTreeAlloc(), &fp, pFieldInfoPage->getAddr());
-			pShapeFieldHandler = pShapeField;
+			ShapeValueFieldHolder *pShapeField = new  ShapeValueFieldHolder(m_pDB->getBTreeAlloc(), &fp, pFieldInfoPage->getAddr());
+			pShapeFieldHolder = pShapeField;
 			
 			pShapeField->SetBoundingBox(extent);
 			pShapeField->SetPointType(SpatialDataType);
@@ -621,7 +624,7 @@ namespace embDB
 			stream.Save();
 	
 		}
-		m_pFields->AddField((IField*)pShapeFieldHandler.get());
+		m_pFields->AddField((IField*)pShapeFieldHolder.get());
 		if(bCreateIndex)
 		{
 	
@@ -649,7 +652,7 @@ namespace embDB
 		if(!pField.get())
 			return false;
 
-		IDBFieldHandler* pFieldHandler = (IDBFieldHandler*)pField.get();
+		IDBFieldHolder* pFieldHolder = (IDBFieldHolder*)pField.get();
 
 
 	
@@ -672,7 +675,7 @@ namespace embDB
 				return false; // TO DO Error
 			}
 
-			IDBIndexHandlerPtr pIndex = createIndexHandler(pFieldHandler, ip, pFieldInfoPage->getAddr());
+			IDBIndexHolderPtr pIndex = createIndexHolder(pFieldHolder, ip, pFieldInfoPage->getAddr());
 			if(!pIndex.get())
 			{
 				 
@@ -688,7 +691,7 @@ namespace embDB
 
 			stream.Save();
 
-			pFieldHandler->setIndexHandler(pIndex.get());
+			pFieldHolder->setIndexHolder(pIndex.get());
 			m_IndexByName.insert(std::make_pair(sFieldName, pIndex));
 			m_nIndexAddr.push(pFieldInfoPage->getAddr(), pDBTran.get());
 		}
@@ -697,9 +700,9 @@ namespace embDB
 		TIndexByName::iterator idx_it = m_IndexByName.find(sFieldName);
 		assert(idx_it != m_IndexByName.end());
 
-		IDBIndexHandlerPtr pIndex = idx_it->second;
+		IDBIndexHolderPtr pIndex = idx_it->second;
 
-		BuildIndex(pIndex.get(), pFieldHandler, pDBTran.get());
+		BuildIndex(pIndex.get(), pFieldHolder, pDBTran.get());
 
 		 
 
@@ -734,9 +737,9 @@ namespace embDB
 
 		ip.m_nNodePageSize = stream.readIntu32();
 
-		IDBFieldHandler* pFieldHandler = (IDBFieldHandler*)pField.get();
+		IDBFieldHolder* pFieldHolder = (IDBFieldHolder*)pField.get();
 
-		IDBIndexHandlerPtr pIndex = createIndexHandler(pFieldHandler, ip, pPage->getAddr());
+		IDBIndexHolderPtr pIndex = createIndexHolder(pFieldHolder, ip, pPage->getAddr());
 		if(!pIndex.get())
 		{
 			//TO DO Error
@@ -745,7 +748,7 @@ namespace embDB
 
 		if(!pIndex->load(&stream, m_pDBStorage.get()))
 			return false;
-		pFieldHandler->setIndexHandler(pIndex.get());
+		pFieldHolder->setIndexHolder(pIndex.get());
 		m_IndexByName.insert(std::make_pair(sFieldName, pIndex));
 		return true;
 
@@ -763,7 +766,7 @@ namespace embDB
 		stream.read(sFP.m_nLenField);
 
 	
-		IDBFieldHandlerPtr pField =  CreateValueField(&sFP, m_pDB, nAddr);
+		IDBFieldHolderPtr pField =  CreateValueField(&sFP, m_pDB, nAddr);
 		if(!pField.get())
 			return false;
 
@@ -802,10 +805,10 @@ namespace embDB
 
 
 
-	bool CTable::BuildIndex(IDBIndexHandler* pIndexHandler, IDBFieldHandler *pFieldHandler, IDBTransaction* pTran)
+	bool CTable::BuildIndex(IDBIndexHolder* pIndexHolder, IDBFieldHolder *pFieldHolder, IDBTransaction* pTran)
 	{
-		IValueFieldPtr pField = pFieldHandler->getValueField(pTran,  m_pDBStorage.get());
-		IndexFiledPtr pIndex =	pIndexHandler->getIndex(pTran, m_pDBStorage.get());
+		IValueFieldPtr pField = pFieldHolder->getValueField(pTran,  m_pDBStorage.get());
+		IndexFiledPtr pIndex =	pIndexHolder->getIndex(pTran, m_pDBStorage.get());
 
 		 if(!pField.get() || !pIndex.get())
 			 return false;

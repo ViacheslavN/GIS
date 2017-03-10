@@ -15,12 +15,12 @@ namespace embDB
 	class CStorage;
 
 	template<class I>
-	class CDBFieldHandlerBase  : public I
+	class CDBFieldHolderBase  : public I
 	{
 	public:
 
-		CDBFieldHandlerBase(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp, int64 nPageAdd) : m_pAlloc(pAlloc), 
-			m_pIndexHandler(0), m_nFieldInfoPage(-1), m_nPageAdd(nPageAdd), m_bCheckCRC(CGlobalParams::Instance().GetCheckCRC())
+		CDBFieldHolderBase(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp, int64 nPageAdd) : m_pAlloc(pAlloc), 
+			m_pIndexHolder(0), m_nFieldInfoPage(-1), m_nPageAdd(nPageAdd), m_bCheckCRC(CGlobalParams::Instance().GetCheckCRC())
 		{
 			assert(pFieldProp);
 
@@ -39,7 +39,7 @@ namespace embDB
 			m_nBTreeChacheSize = pFieldProp->m_FieldPropExt.m_nBTreeChacheSize;
 			m_StatisticInfo = pFieldProp->m_StatisticInfo;
 		}
-		~CDBFieldHandlerBase(){}
+		~CDBFieldHolderBase(){}
 
 
 
@@ -113,7 +113,7 @@ namespace embDB
 			m_nBTreeChacheSize = pStream->readIntu32();
 
 			m_StatisticInfo.m_Statistic = (eStatisticType)pStream->readintu16();
-			m_StatisticInfo.m_CalcStat = (eCalcStatistic)pStream->readintu16();
+			m_StatisticInfo.m_CalcStat = (eUpdateStatisticType)pStream->readintu16();
  
 
 
@@ -136,9 +136,9 @@ namespace embDB
 		{
 			TField * pField = new  TField(this, pTransactions, m_pAlloc, m_nPageSize, m_nBTreeChacheSize);
 			pField->load(m_nFieldInfoPage);
-			if(m_pIndexHandler.get())
+			if(m_pIndexHolder.get())
 			{
-				IndexFiledPtr pIndex = m_pIndexHandler->getIndex(pTransactions, pStorage);
+				IndexFiledPtr pIndex = m_pIndexHolder->getIndex(pTransactions, pStorage);
 				pField->SetIndex(pIndex.get());
 			}
 			return IValueFieldPtr(pField);	
@@ -149,22 +149,22 @@ namespace embDB
 			return true;
 		}
 
-		virtual void setIndexHandler(IDBIndexHandler *pIndexHandler)
+		virtual void setIndexHolder(IDBIndexHolder *pIndexHolder)
 		{
-			m_pIndexHandler = pIndexHandler;
+			m_pIndexHolder = pIndexHolder;
 		}
-		virtual IDBIndexHandlerPtr getIndexIndexHandler()
+		virtual IDBIndexHolderPtr getIndexIndexHolder()
 		{
-			return m_pIndexHandler;
+			return m_pIndexHolder;
 		}
 
-		virtual void setFieldStatisticHandler(IFieldStatisticHandler *pFieldStatisticHandler)
+		virtual void setFieldStatisticHolder(IFieldStatisticHolder *pFieldStatisticHolder)
 		{
-			m_pFieldStatisticHandler = pFieldStatisticHandler;
+			m_pFieldStatisticHolder = pFieldStatisticHolder;
 		}
-		virtual IFieldStatisticHandlerPtr getFieldStatisticHandler()
+		virtual IFieldStatisticHolderPtr getFieldStatisticHolder()
 		{
-			return m_pFieldStatisticHandler;
+			return m_pFieldStatisticHolder;
 		}
 
 		virtual bool lock()
@@ -223,8 +223,8 @@ namespace embDB
 		uint32				m_nPageSize;
 		CommonLib::CVariant m_defValue;
 		CommonLib::alloc_t* m_pAlloc;
-		IDBIndexHandlerPtr m_pIndexHandler;
-		IFieldStatisticHandlerPtr m_pFieldStatisticHandler;
+		IDBIndexHolderPtr m_pIndexHolder;
+		IFieldStatisticHolderPtr m_pFieldStatisticHolder;
 
 		uint64				m_nFieldInfoPage;
 		int64				m_nPageAdd;

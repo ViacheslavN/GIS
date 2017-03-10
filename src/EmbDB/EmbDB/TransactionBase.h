@@ -50,11 +50,11 @@ namespace embDB
 				if(!pField.get())
 					return IValueFieldPtr();
 
-				IDBFieldHandler *pFieldHandler = dynamic_cast<IDBFieldHandler*>(pField.get());
-				if(!pFieldHandler)
+				IDBFieldHolder *pFieldHolder = dynamic_cast<IDBFieldHolder*>(pField.get());
+				if(!pFieldHolder)
 					return  IValueFieldPtr();
 
-				IValueFieldPtr pValueField = pFieldHandler->getValueField(this, m_pDBStorage.get());
+				IValueFieldPtr pValueField = pFieldHolder->getValueField(this, m_pDBStorage.get());
 
 				m_mapValueField.insert(std::make_pair(key, pValueField));
 				return pValueField;
@@ -90,10 +90,10 @@ namespace embDB
 				if(!pField.get())
 					return ICursorPtr(); //TO DO Error
 
-				IDBFieldHandlerPtr pFieldHandler(pField->GetFieldHandler());
+				IDBFieldHolderPtr pFieldHolder(pField->GetFieldHolder());
 
 
-				if(pFieldHandler->getType() != dtGeometry)
+				if(pFieldHolder->getType() != dtGeometry)
 				{
 					return ICursorPtr(); //TO DO Error
 				}

@@ -650,7 +650,7 @@
     <ClInclude Include="SimpleSelectCursor.h" />
     <ClInclude Include="SimpleSelectOpCursor.h" />
     <ClInclude Include="SpatialIndexBase.h" />
-    <ClInclude Include="SpatialIndexHandler.h" />
+    <ClInclude Include="SpatialIndexHolder.h" />
     <ClInclude Include="Statement.h" />
     <ClInclude Include="ReadStreamPage.h" />
     <ClInclude Include="StreamPageIngo.h" />
@@ -720,8 +720,7 @@
     <ClInclude Include="TranUndoPageManager.h" />
     <ClInclude Include="ValueFieldFullStatistic.h" />
     <ClInclude Include="ValueFieldStatistic.h" />
-    <ClInclude Include="ValueFieldStatisticHandler.h" />
-    <ClInclude Include="VariantField.h" />
+    <ClInclude Include="ValueFieldStatisticHolder.h" />
     <ClInclude Include="PageVector.h" />
     <ClInclude Include="WriteStreamPage.h" />
     <ClInclude Include="ZLibCompressor.h" />
@@ -744,7 +743,7 @@
     <ClCompile Include="BitMap.cpp" />
     <ClCompile Include="BPTreeInfoPage.cpp" />
     <ClCompile Include="BPTreeStatistics.cpp" />
-    <ClInclude Include="BTreeInfo.h">
+    <ClInclude Include="BTreeVisualInfo.h">
       <FileType>CppCode</FileType>
     </ClInclude>
     <ClCompile Include="CompositeIndexKey.cpp" />

@@ -8,15 +8,15 @@ namespace embDB
 
 
 	template<class Type>
-	class CValueFieldStatisticBase : public IFieldStatistic
+	class TValueFieldStatisticBase : public IFieldStatistic
 	{
 		public:
-			CValueFieldStatisticBase(CommonLib::alloc_t *pAlloc, IDBTransaction* pTransaction, bool bCheckCRC = false) : 
+			TValueFieldStatisticBase(CommonLib::alloc_t *pAlloc, IDBTransaction* pTransaction, bool bCheckCRC = false) :
 				m_pTransaction(pTransaction), m_nRootPage(-1), m_bCheckCRC(bCheckCRC), m_pAlloc(pAlloc)
 			{
 
 			}
-			virtual ~CValueFieldStatisticBase()
+			virtual ~TValueFieldStatisticBase()
 			{
 
 			}
@@ -45,7 +45,7 @@ namespace embDB
 				if (!pFieldInfoPage.get())
 					return false; // TO DO Error
 
-				ReadStreamPage stream(m_pTransaction.get(), MIN_PAGE_SIZE, bCheckCRC, FIELD_PAGE, FIELD_STATISTIC);
+				ReadStreamPage stream(m_pTransaction.get(), MIN_PAGE_SIZE, bCheckCRC, FIELD_PAGE, FIELD_INFO_STATISTIC);
 				stream.open(pFieldInfoPage);
 
 				if (!LoadCustom(&stream))
@@ -53,8 +53,7 @@ namespace embDB
 
 				return true;
 			}
- 			virtual void AddVarValue(const Type& value) = 0;
-			virtual void RemoveVarValue(const Type& value) = 0;
+
  
 			virtual uint32 GetLastUpdateTime() const { return m_nTimeUpdate; }
 			virtual uint32 GetLastUpdateDate() const { return m_nDateUpdate; }

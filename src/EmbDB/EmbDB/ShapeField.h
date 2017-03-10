@@ -91,7 +91,7 @@ namespace embDB
 
 		}*/
 
-		TShapeValueField(IDBFieldHandler* pFieldHandler,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) : TBase(pFieldHandler, pTransactions, pAlloc, nPageSize, nBTreeChacheSize) 
+		TShapeValueField(IDBFieldHolder* pFieldHolder,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) : TBase(pFieldHolder, pTransactions, pAlloc, nPageSize, nBTreeChacheSize) 
 		{
 			this->m_ConvertTypeToVar.Init(&m_tree, m_pAlloc);
 		}
@@ -155,19 +155,19 @@ namespace embDB
 	};
 
 
-	class ShapeValueFieldHandler : public CDBFieldHandlerBase<IDBShapeFieldHandler>
+	class ShapeValueFieldHolder : public CDBFieldHolderBase<IDBShapeFieldHolder>
 	{
 	public:
 
-		typedef CDBFieldHandlerBase<IDBShapeFieldHandler> TBase;
+		typedef CDBFieldHolderBase<IDBShapeFieldHolder> TBase;
 		typedef TBPShapeTree<IDBTransaction> TBTree;
 		typedef TShapeValueField<TBTree> TField;
 		typedef TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef TBTree::TLeafCompressorParams TLeafCompressorParams;
-		ShapeValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp *pFP, int64 nPageAdd) : 
+		ShapeValueFieldHolder(CommonLib::alloc_t* pAlloc, const SFieldProp *pFP, int64 nPageAdd) : 
 			TBase(pAlloc, pFP, nPageAdd)
 		{}
-		~ShapeValueFieldHandler()
+		~ShapeValueFieldHolder()
 		{}
 
 		virtual bool save(CommonLib::IWriteStream* pStream,   IDBTransaction *pTran)
@@ -230,7 +230,7 @@ namespace embDB
 		}
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
-			return CDBFieldHandlerBase::getValueField<TField>(pTransactions, pStorage);
+			return CDBFieldHolderBase::getValueField<TField>(pTransactions, pStorage);
 		}
 		virtual bool release(IValueField* pField)
 		{

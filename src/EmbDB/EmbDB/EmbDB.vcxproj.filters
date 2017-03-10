@@ -333,9 +333,6 @@
     <ClInclude Include="DBMagicSymbol.h">
       <Filter>DB</Filter>
     </ClInclude>
-    <ClInclude Include="VariantField.h">
-      <Filter>DB\Fields</Filter>
-    </ClInclude>
     <ClInclude Include="BTreeNodeRO.h">
       <Filter>DB\BPTrees\BTreeNotUse\BtreeReadOnly</Filter>
     </ClInclude>
@@ -784,9 +781,6 @@
       <Filter>DB\Fields\Index\UniqueIndex</Filter>
     </ClInclude>
     <ClInclude Include="SpatialIndexBase.h">
-      <Filter>DB\Fields\Index\spatial</Filter>
-    </ClInclude>
-    <ClInclude Include="SpatialIndexHandler.h">
       <Filter>DB\Fields\Index\spatial</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
@@ -1380,9 +1374,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BTreeInfo.h">
-      <Filter>SDK\internal\visual</Filter>
-    </ClInclude>
     <ClInclude Include="ValueFieldStatistic.h">
       <Filter>DB\Fields\Statistic</Filter>
     </ClInclude>
@@ -1419,7 +1410,25 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ValueFieldStatisticHandler.h">
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreeVisualInfo.h">
+      <Filter>SDK\internal\visual</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialIndexHolder.h">
+      <Filter>DB\Fields\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="ValueFieldStatisticHolder.h">
       <Filter>DB\Fields\Statistic</Filter>
     </ClInclude>
   </ItemGroup>

@@ -57,7 +57,7 @@ namespace embDB
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		TStringValueField( IDBFieldHandler* pFieldHandler,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) : TBase(pFieldHandler, pTransactions, pAlloc, nPageSize, nBTreeChacheSize) 
+		TStringValueField( IDBFieldHolder* pFieldHolder,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) : TBase(pFieldHolder, pTransactions, pAlloc, nPageSize, nBTreeChacheSize) 
 		{
 			this->m_ConvertTypeToVar.Init(&m_tree, m_pAlloc);
 		}
@@ -81,7 +81,7 @@ namespace embDB
 	};
 
 
-	class StringValueFieldHandler : public CDBFieldHandlerBase<IDBFieldHandler>
+	class StringValueFieldHolder : public CDBFieldHolderBase<IDBFieldHolder>
 	{
 	public:
 
@@ -91,9 +91,9 @@ namespace embDB
 		typedef TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		StringValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp *pFP, int64 nPageAdd) : CDBFieldHandlerBase(pAlloc, pFP, nPageAdd)
+		StringValueFieldHolder(CommonLib::alloc_t* pAlloc, const SFieldProp *pFP, int64 nPageAdd) : CDBFieldHolderBase(pAlloc, pFP, nPageAdd)
 		{}
-		~StringValueFieldHandler()
+		~StringValueFieldHolder()
 		{}
 
 		virtual bool save(CommonLib::IWriteStream* pStream,    IDBTransaction *pTran)
@@ -111,14 +111,14 @@ namespace embDB
 
 			
 
-			if(!CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, &compInnerParams, &compParams))
+			if(!CDBFieldHolderBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, &compInnerParams, &compParams))
 				return false;
 
 			return true;
  
 		}
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
-		{return CDBFieldHandlerBase::getValueField<TField>(pTransactions, pStorage);
+		{return CDBFieldHolderBase::getValueField<TField>(pTransactions, pStorage);
 		}
 		virtual bool release(IValueField* pField)
 		{

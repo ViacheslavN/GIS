@@ -107,7 +107,7 @@ namespace embDB
 	 
 	};
 	template<class _TSpatialBPTree, class _TPointType, class _TSpatialObject>
-	class OIDSpatialFieldHandler : public IDBFieldHandler
+	class OIDSpatialFieldHolder : public IDBFieldHolder
 	{
 		public:
 
@@ -117,11 +117,11 @@ namespace embDB
 			typedef _TSpatialObject TSpatialObject;
 			typedef OIDSpatialField<TSpatialBPTree, TPointType, TSpatialObject>  TOIDSpatialField;
 
-			OIDSpatialFieldHandler(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc), m_pIndexHandler(NULL)
+			OIDSpatialFieldHolder(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc), m_pIndexHolder(NULL)
 			{
 
 			}
-			~OIDSpatialFieldHandler()
+			~OIDSpatialFieldHolder()
 			{
 
 			}
@@ -212,19 +212,19 @@ namespace embDB
 				return true;
 			}
 
-			virtual void setIndexHandler(IDBIndexHandler *pIndexHandler)
+			virtual void setIndexHolder(IDBIndexHolder *pIndexHolder)
 			{
-				m_pIndexHandler = pIndexHandler;
+				m_pIndexHolder = pIndexHolder;
 			}
-			virtual IDBIndexHandler* getIndexIndexHandler()
+			virtual IDBIndexHolder* getIndexIndexHolder()
 			{
-				return m_pIndexHandler;
+				return m_pIndexHolder;
 			}
 
 		private:
 			sFieldInfo m_fi;
 			CommonLib::alloc_t* m_pAlloc;
-			IDBIndexHandler* m_pIndexHandler;
+			IDBIndexHolder* m_pIndexHolder;
 	};
 	/*
 
@@ -252,14 +252,14 @@ namespace embDB
 		embDB:: BPSpatialRectLeafNodeMapSimpleCompressor<embDB::ZOrderRect2DU64, uint64 > > TBPMapRect64;
 
 
-	typedef OIDSpatialFieldHandler<TBPMapPoint16, uint16, CommonLib::TPoint2Du16> TPoint16Field;
-	typedef OIDSpatialFieldHandler<TBPMapPoint32, uint32, CommonLib::TPoint2Du32> TPoint32Field;
-	typedef OIDSpatialFieldHandler<TBPMapPoint64, uint64, CommonLib::TPoint2Du64> TPoint64Field;
+	typedef OIDSpatialFieldHolder<TBPMapPoint16, uint16, CommonLib::TPoint2Du16> TPoint16Field;
+	typedef OIDSpatialFieldHolder<TBPMapPoint32, uint32, CommonLib::TPoint2Du32> TPoint32Field;
+	typedef OIDSpatialFieldHolder<TBPMapPoint64, uint64, CommonLib::TPoint2Du64> TPoint64Field;
 
 
-	typedef OIDSpatialFieldHandler<TBPMapRect16, uint16, CommonLib::TRect2Du16> TRect16Field;
-	typedef OIDSpatialFieldHandler<TBPMapRect32, uint32, CommonLib::TRect2Du32> TRect32Field;
-	typedef OIDSpatialFieldHandler<TBPMapRect64, uint64, CommonLib::TRect2Du64> TRect64Field;*/
+	typedef OIDSpatialFieldHolder<TBPMapRect16, uint16, CommonLib::TRect2Du16> TRect16Field;
+	typedef OIDSpatialFieldHolder<TBPMapRect32, uint32, CommonLib::TRect2Du32> TRect32Field;
+	typedef OIDSpatialFieldHolder<TBPMapRect64, uint64, CommonLib::TRect2Du64> TRect64Field;*/
 }
 
 

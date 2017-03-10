@@ -36,6 +36,9 @@
     <ClInclude Include="PageInfoBase.h">
       <Filter>Pages</Filter>
     </ClInclude>
+    <ClInclude Include="DBFileVieweLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

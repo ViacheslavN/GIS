@@ -205,10 +205,10 @@ namespace embDB
 		eDiagramStatistic
 	};
 
-	enum eCalcStatistic
+	enum eUpdateStatisticType
 	{
-		eManualCalcStat,
-		eAutoCalcStat
+		eManualUpdateStat,
+		eOnlineUpdateStat
 	};
 
 	struct SDBParams
@@ -241,12 +241,12 @@ namespace embDB
 	struct SStatisticInfo
 	{
 
-		SStatisticInfo() : m_Statistic(eNotUseStatisic), m_CalcStat(eManualCalcStat)
+		SStatisticInfo() : m_Statistic(eNotUseStatisic), m_CalcStat(eManualUpdateStat)
 		{
 
 		}
 		eStatisticType m_Statistic;
-		eCalcStatistic m_CalcStat;
+		eUpdateStatisticType m_CalcStat;
 	};
 
 	struct SFieldProp

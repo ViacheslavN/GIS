@@ -7,6 +7,7 @@ namespace embDB
 	struct INodeStatistic;
 	struct IBtreeNodeInfo;
 	struct IBPTreeInfo;
+	struct ICompressorInfo;
 
 
 	COMMON_LIB_REFPTR_TYPEDEF(ITreeStatistic);
@@ -27,8 +28,10 @@ namespace embDB
 		virtual CommonLib::CString GetTextInfo() = 0;
 		virtual CommonLib::CString  GetHTMLInfo() = 0;
 
-		uint64 GetInnerNodeCount() const;
-		uint64 GetLeafNodeCount() const;
+		virtual uint64 GetInnerNodeCount() const = 0;
+		virtual uint64 GetLeafNodeCount() const = 0;
+		
+		virtual IBtreeNodeInfoPtr GetNodeInfo(int64 nAddr) = 0;
 
 	};
 

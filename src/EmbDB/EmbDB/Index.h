@@ -89,17 +89,17 @@ protected:
 
 
 
-class CIndexHandlerBase : public IDBIndexHandler
+class CIndexHolderBase : public IDBIndexHolder
 {
 public:
 
-	CIndexHandlerBase(IDBFieldHandler *pField, CommonLib::alloc_t* pAlloc,  indexTypes type, int64 nIndexPage, const SIndexProp &ip) : m_pAlloc(pAlloc), m_IndexType(type),
+	CIndexHolderBase(IDBFieldHolder *pField, CommonLib::alloc_t* pAlloc,  indexTypes type, int64 nIndexPage, const SIndexProp &ip) : m_pAlloc(pAlloc), m_IndexType(type),
 		m_nIndexPage(nIndexPage), m_nBTreeRootPage(-1)
 	{
 		m_pField = pField;
 		m_nNodePageSize = ip.m_nNodePageSize;
 	}
-	~CIndexHandlerBase(){}
+	~CIndexHolderBase(){}
 
 	template<class TField, class TInnerCompParams, class TLeafCompParams>
 	bool save(CommonLib::IWriteStream* pStream, IDBTransaction *pTran, CommonLib::alloc_t *pAlloc,  TInnerCompParams* pInnerParams = NULL, TLeafCompParams* pLeafParams = NULL  )
@@ -148,7 +148,7 @@ public:
 protected:
 	indexTypes m_IndexType;
 	CommonLib::alloc_t* m_pAlloc;
-	IDBFieldHandlerPtr m_pField;
+	IDBFieldHolderPtr m_pField;
 	int64 m_nIndexPage;
 	int64 m_nBTreeRootPage;
 	uint32 m_nNodePageSize;

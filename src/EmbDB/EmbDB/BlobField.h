@@ -78,7 +78,7 @@ namespace embDB
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		TBlobValueField(IDBFieldHandler* pFieldHandler,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) : TBase(pFieldHandler, pTransactions, pAlloc, nPageSize, nBTreeChacheSize) 
+		TBlobValueField(IDBFieldHolder* pFieldHolder,  IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) : TBase(pFieldHolder, pTransactions, pAlloc, nPageSize, nBTreeChacheSize) 
 		{
 			this->m_ConvertTypeToVar.Init(&this->m_tree, this->m_pAlloc);
 		}
@@ -106,25 +106,25 @@ namespace embDB
 	};
 
 
-	class BlobValueFieldHandler : public CDBFieldHandlerBase<IDBFieldHandler>
+	class BlobValueFieldHolder : public CDBFieldHolderBase<IDBFieldHolder>
 	{
 	public:
-		typedef CDBFieldHandlerBase<IDBFieldHandler> TBase;
+		typedef CDBFieldHolderBase<IDBFieldHolder> TBase;
 		typedef TBPBlobTree<IDBTransaction> TBTree;
 		typedef TBlobValueField<TBTree> TField;
 
 		typedef TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef TBTree::TLeafCompressorParams TLeafCompressorParams;
 
-		BlobValueFieldHandler(CommonLib::alloc_t* pAlloc, const SFieldProp* pFP, int64 nPageAdd) : 
+		BlobValueFieldHolder(CommonLib::alloc_t* pAlloc, const SFieldProp* pFP, int64 nPageAdd) : 
 			TBase(pAlloc, pFP, nPageAdd)
 		{}
-		~BlobValueFieldHandler()
+		~BlobValueFieldHolder()
 		{}
 
 		/*virtual bool save(int64 nAddr, IDBTransaction *pTran)
 		{
-			return CDBFieldHandlerBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE);
+			return CDBFieldHolderBase::save<TField>(nAddr, pTran, m_pAlloc, FIELD_PAGE, FIELD_INFO_PAGE);
 		}*/
 		virtual bool save(CommonLib::IWriteStream* pStream,  IDBTransaction *pTran)
 		{
@@ -138,11 +138,11 @@ namespace embDB
 			innerCompParams.m_bCalcOnlineSize = m_bOnlineCalcCompSize;
 			innerCompParams.m_nErrorCalc		  = m_nCompCalcError;
 	
-			return CDBFieldHandlerBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, &innerCompParams, &leafCompParams);
+			return CDBFieldHolderBase::save<TField, TInnerCompressorParams, TLeafCompressorParams>(pStream, pTran, m_pAlloc, &innerCompParams, &leafCompParams);
 		}
 		virtual IValueFieldPtr getValueField(IDBTransaction* pTransactions, IDBStorage *pStorage)
 		{
-			return CDBFieldHandlerBase::getValueField<TField>(pTransactions, pStorage);
+			return CDBFieldHolderBase::getValueField<TField>(pTransactions, pStorage);
 		}
 		virtual bool release(IValueField* pField)
 		{

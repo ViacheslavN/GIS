@@ -99,19 +99,19 @@ namespace embDB
 		  {
 			 return true;// return m_tree.saveBTreeInfo();
 		  }
-		  virtual bool load(int64 nBTreeRootPage, IDBShapeFieldHandler* pHandlerField)
+		  virtual bool load(int64 nBTreeRootPage, IDBShapeFieldHolder* pHolderField)
 		  {
 			  m_nBTreeRootPage = nBTreeRootPage;
 
 
-			  m_dOffsetX = pHandlerField->GetOffsetX();
-			  m_dOffsetY = pHandlerField->GetOffsetY();
-			  m_nScaleX = pHandlerField->GetScaleX();
-			  m_nScaleY = pHandlerField->GetScaleY();
+			  m_dOffsetX = pHolderField->GetOffsetX();
+			  m_dOffsetY = pHolderField->GetOffsetY();
+			  m_nScaleX = pHolderField->GetScaleX();
+			  m_nScaleY = pHolderField->GetScaleY();
 
-			  m_extent = pHandlerField->GetBoundingBox();
-			  m_Type = pHandlerField->GetPointType();
-			  m_ShapeType = pHandlerField->GetShapeType();
+			  m_extent = pHolderField->GetBoundingBox();
+			  m_Type = pHolderField->GetPointType();
+			  m_ShapeType = pHolderField->GetShapeType();
 
 			  m_dCalcScaleX = 1/pow(10., m_nScaleX);
 			  m_dCalcScaleY = 1/pow(10., m_nScaleY);

@@ -123,10 +123,10 @@ namespace embDB
 			}
 		};
 
-		struct ISearhHandler
+		struct ISearhHolder
 		{
 			public:
-				ISearhHandler(const CommonLib::CVariant& value, OpType opType) :m_value(value), m_optType(opType),
+				ISearhHolder(const CommonLib::CVariant& value, OpType opType) :m_value(value), m_optType(opType),
 					m_nCacheCount(1000000), m_pValueValidator(NULL), m_bEnd(false), m_nCurrRowID(0)
 				{
 					switch(opType)
@@ -150,7 +150,7 @@ namespace embDB
 
 					assert(m_pValueValidator != NULL);
 				}
-				virtual ~ISearhHandler()
+				virtual ~ISearhHolder()
 				{
 					if(m_pValueValidator)
 					{
@@ -196,11 +196,11 @@ namespace embDB
 		};
 
 
-		struct IndexSearchHandler : public ISearhHandler
+		struct IndexSearchHolder : public ISearhHolder
 		{
 			public:
-				IndexSearchHandler(const CommonLib::CVariant& value, OpType opType, IndexFiled* pIndex);
-				virtual ~IndexSearchHandler();
+				IndexSearchHolder(const CommonLib::CVariant& value, OpType opType, IndexFiled* pIndex);
+				virtual ~IndexSearchHolder();
 				virtual void reset();
 			private:
 				virtual void FillChache();
@@ -212,11 +212,11 @@ namespace embDB
 
 		};
 
-		struct FieldSearchHandler : public ISearhHandler
+		struct FieldSearchHolder : public ISearhHolder
 		{
 		public:
-			FieldSearchHandler(const CommonLib::CVariant& value, OpType opType, IValueField* pIndex);
-			virtual ~FieldSearchHandler();
+			FieldSearchHolder(const CommonLib::CVariant& value, OpType opType, IValueField* pIndex);
+			virtual ~FieldSearchHolder();
 			virtual void reset();
 		private:
 			virtual void FillChache();
@@ -238,7 +238,7 @@ namespace embDB
 		IFieldSetPtr	  m_pFieldSet;
 		IFieldsPtr		  m_pFields;
 
-		ISearhHandler	*m_pSearhHandler;
+		ISearhHolder	*m_pSearhHolder;
 		int32 m_nIterIndex;
 
 		struct SField

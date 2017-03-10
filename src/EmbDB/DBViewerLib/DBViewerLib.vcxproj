@@ -261,6 +261,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DBFileVieweLib.h" />
     <ClInclude Include="PageInfo.h" />
     <ClInclude Include="DBFileViewer.h" />
     <ClInclude Include="PageInfoBase.h" />

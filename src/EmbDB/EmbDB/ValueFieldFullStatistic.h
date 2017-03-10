@@ -6,16 +6,17 @@
 #include "SignCompressor2.h"
 namespace embDB
 {
-	template<class Type>
-	class CValueFieldFullStatistic : public CValueFieldStatisticBase<Type>
+	template<class _Type>
+	class TValueFieldFullStatistic : public TValueFieldStatisticBase<_Type>
 	{
 	public:
+		typedef _Type Type;
 		static const uint32 nMaxStatisticsCount = 1000000;
 
 		typedef std::map<Type, uint64> TMapValues;
 
-		CValueFieldFullStatistic(CommonLib::alloc_t *pAlloc, IDBTransaction* pTransaction, uint32 nPageSize = PAGE_SIZE_65K, bool bCheckCRC = false) :
-			CValueFieldStatisticBase<Type>(pAlloc, pTransaction, bCheckCRC),
+		TValueFieldFullStatistic(CommonLib::alloc_t *pAlloc, IDBTransaction* pTransaction, uint32 nPageSize = PAGE_SIZE_65K, bool bCheckCRC = false) :
+			TValueFieldStatisticBase<_Type>(pAlloc, pTransaction, bCheckCRC),
 			m_nPageSize(nPageSize), m_bValid(true), m_nStreamPage(-1)
 		{
 			
@@ -45,9 +46,6 @@ namespace embDB
 		virtual bool LoadCustom(ReadStreamPage* stream)
 		{
 			m_nStreamPage = stream.readInt64();
-
-		 
-
 
 			return true;
 		}
@@ -144,7 +142,19 @@ namespace embDB
 				return it->second;
 			return 0;
 		}
+		uint64 GetRangeCount(const CommonLib::CVariant& left, const CommonLib::CVariant& right) const
+		{
+			auto it_lb = m_mapValues.lower_bound(left.Get<Type>());
+			auto it_ub = m_mapValues.upper_bound(right.Get<Type>());
 
+			uint64 nCount = 0;
+			for (; it_lb != it_ub; ++it_lb)
+			{
+				nCount += it_lb->second;
+			}
+
+			return nCount;
+		}
 	
 
 		void saveImp(bool bInit)
@@ -171,6 +181,12 @@ namespace embDB
 			m_nDateUpdate = stream.readIntu32();
 			m_nTimeUpdate = stream.readIntu32();
 			uint32 nCount = stream.readIntu32();
+			uint32 nRowSize = GetRowSize(nCount);
+			if (nRowSize < (m_nPageSize - GetHeaderSize()))
+			{
+				ReadRowData(nCount, &stream);
+				return;
+			}
 		}
 
 
@@ -180,7 +196,7 @@ namespace embDB
 			if (m_mapValues.size() == 0)
 				return;
 
-			uint32 nRowSize = GetRowSize();
+ 			uint32 nRowSize = GetRowSize(m_mapValues.size());
 			if (nRowSize < (m_nPageSize - GetHeaderSize()))
 			{
 				WriteRowData(pStream);
@@ -208,9 +224,9 @@ namespace embDB
 
 		}
 
-		const uint32 GetRowSize() const
+		const uint32 GetRowSize(uint32 nCount) const
 		{
-			return m_mapValues.size() * (sizeof(Type) + sizeof(uint64));
+			return nCount * (sizeof(Type) + sizeof(uint64));
 		}
 		const uint32 GetHeaderSize()
 		{
@@ -229,6 +245,20 @@ namespace embDB
 			}
 		}
 
+		void ReadRowData(CommonLib::IReadStream *pStream)
+		{
+			Type key;
+			uint64 nCount;
+			for (uint32 i = 0; i < sz; ++i)
+			{
+				pStream->read(key);
+				pStream->read(nCount);
+
+				m_mapValues.insert(std::make_pair(key, nCount));
+			}
+
+		}
+
 	private:
 		TMapValues m_mapValues;
 		typedef TNumLemCompressor2<uint64, TFindMostSigBit, 64> TNumLen;
@@ -240,4 +270,9 @@ namespace embDB
 		int64 m_nStreamPage;
 		CommonLib::alloc_t *m_pAlloc;
 	};
+
+	typedef TValueFieldFullStatistic<char>	 TCharFullStatistic;
+	typedef TValueFieldFullStatistic<byte>	 TByteFullStatistic;
+	typedef TValueFieldFullStatistic<uint16> TUint16FullStatistic;
+	typedef TValueFieldFullStatistic<int16>  TInt16FullStatistic;
 }
