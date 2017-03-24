@@ -173,7 +173,7 @@ void TestDoubleCompress()
 	embDB::double_cast dVal, dVal1;
 
 	dVal.val = sqrt(2.);//45654.17775000000;
-	dVal.val = 1532e-3;
+	dVal.val = 119.63954411173253;
 	uint32 n4, d1;
 	
 	CommonLib::CString str1;

@@ -17,8 +17,8 @@ class IStream
 public:
 	virtual uint32 size() const = 0;
 	virtual uint64 size64() const = 0;
-	virtual bool seek(uint32 position, enSeekOffset offset ) = 0;
-	virtual bool seek64(uint64 position, enSeekOffset offset ) = 0;
+	virtual bool seek(int32 position, enSeekOffset offset ) = 0;
+	virtual bool seek64(int64 position, enSeekOffset offset ) = 0;
 	virtual uint32 pos() const = 0;
 	virtual uint64 pos64() const = 0;
 	virtual void reset() = 0;
@@ -344,7 +344,7 @@ public:
 	{
 		return (uint64)m_nSize;
 	}
-	virtual bool seek(uint32 position, enSeekOffset offset )
+	virtual bool seek(int32 position, enSeekOffset offset )
 	{
 		if(!m_pBuffer)
 			return false;
@@ -378,9 +378,9 @@ public:
 		m_nPos = newpos;
 		return true;
 	}
-	virtual bool seek64(uint64 position, enSeekOffset offset )
+	virtual bool seek64(int64 position, enSeekOffset offset )
 	{
-		return seek((uint32)position, offset);
+		return seek((int32)position, offset);
 	}
 	virtual uint32 pos() const
 	{

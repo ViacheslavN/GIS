@@ -23,9 +23,7 @@ namespace embDB
 		if(bNew)
 		{
 			return save(NULL);
-			
 		}
-		
 		return LoadSchema();
 	}
 	bool CSchema::close()
@@ -45,9 +43,7 @@ namespace embDB
 		{
 			return false;
 		}
-	 
-		
-		FilePagePtr pPage = pDBTran->getNewPage(nTableInfoPageSize);
+	 	FilePagePtr pPage = pDBTran->getNewPage(nTableInfoPageSize);
 		if(!pPage.get())
 			return false;
 		CTable* pTable = new CTable(m_pDB, pPage.get(), pszTableName/*, m_nLastTableID++*/);

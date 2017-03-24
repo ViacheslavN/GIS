@@ -9,9 +9,26 @@ namespace embDB
 	{
 		ectByte = 0,
 		ectUInt16 = 1,
-		ectUIInt32 = 2,
+		ectUInt32 = 2,
 		ectUInt64 = 3
 	};
+
+
+	static uint32 GetSizeTypeValue(eCompressDataType type)
+	{
+		switch (type)
+		{
+		case ectByte:
+			return 1;
+		case ectUInt16:
+			return 2;
+		case ectUInt32:
+			return 4;
+		case ectUInt64:
+			return 8;
+		}
+		return 0;
+	}
 
 	template<class TValue>
 	double CalcRowBitSize(const TValue *pFreq, uint32 nFreqCount, uint32 nDiffsLen, uint32 nCount)
@@ -41,7 +58,7 @@ namespace embDB
 		else if(nValue - 1 < 0xFFFF)
 			return ectUInt16;
 		else if(nValue - 1 < 0xFFFFFFFF)
-			return ectUIInt32;
+			return ectUInt32;
 		return ectUInt64;
 
 	}
@@ -57,7 +74,7 @@ namespace embDB
 		case ectUInt16:
 			return nDiffsLen * sizeof(uint16);
 			break;
-		case ectUIInt32:
+		case ectUInt32:
 			return nDiffsLen * sizeof(uint32);
 			break;
 		case ectUInt64:
@@ -81,7 +98,7 @@ namespace embDB
 		case ectUInt16:
 			pStream->write((uint16)value);
 			break;
-		case ectUIInt32:
+		case ectUInt32:
 			pStream->write((uint32)value);
 			break;
 		case ectUInt64:
@@ -101,7 +118,7 @@ namespace embDB
 		case ectUInt16:
 			pStream->readintu16(value);
 			break;
-		case ectUIInt32:
+		case ectUInt32:
 			pStream->readIntu32(value);
 			break;
 		case ectUInt64:
@@ -122,7 +139,7 @@ namespace embDB
 		case ectUInt16:
 			return (TValue)pStream->readintu16();
 			break;
-		case ectUIInt32:
+		case ectUInt32:
 			return (TValue)pStream->readIntu32();
 			break;
 		case ectUInt64:

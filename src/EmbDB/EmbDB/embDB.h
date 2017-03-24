@@ -200,15 +200,17 @@ namespace embDB
 
 	enum eStatisticType
 	{
-		eNotUseStatisic,
-		eFullStatistic,
-		eDiagramStatistic
+		stNotUseStatisic,
+		stFullStatistic,
+		stDiagramStatistic,
+		stBloomFilter,
+		stLogLog
 	};
 
 	enum eUpdateStatisticType
 	{
-		eManualUpdateStat,
-		eOnlineUpdateStat
+		usManualUpdateStat,
+		usOnlineUpdateStat
 	};
 
 	struct SDBParams
@@ -241,12 +243,14 @@ namespace embDB
 	struct SStatisticInfo
 	{
 
-		SStatisticInfo() : m_Statistic(eNotUseStatisic), m_CalcStat(eManualUpdateStat)
+		SStatisticInfo() : m_Statistic(stNotUseStatisic), m_UpdateStat(usManualUpdateStat),
+			m_nPageSize(8192)
 		{
 
 		}
 		eStatisticType m_Statistic;
-		eUpdateStatisticType m_CalcStat;
+		eUpdateStatisticType m_UpdateStat;
+		uint32 m_nPageSize;
 	};
 
 	struct SFieldProp
@@ -263,7 +267,6 @@ namespace embDB
 		bool m_bCounter;
 		uint32 m_nPageSize;
 		sFieldPropExt m_FieldPropExt;
-		SStatisticInfo m_StatisticInfo;
 
 		SFieldProp() : m_nLenField(0), m_dataType(dtUnknown), m_dScale(0), m_nPrecision(0),
 			m_bNotNull(false), m_bUNIQUE(false), m_bCounter(false), m_nPageSize(8192)
@@ -280,6 +283,8 @@ namespace embDB
 
 		}
 	};
+ 
+
 	enum eTransactionDataType
 	{
 		eTT_UNDEFINED=1,  //предпологатеься что тип может быть любой

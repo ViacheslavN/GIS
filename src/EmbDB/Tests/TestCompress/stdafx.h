@@ -15,4 +15,5 @@
 #include "CommonLibrary/MemoryStream.h"
 #include "../../EmbDB/embDBLib.h"
 #include "zlib/zlib_lib.h"
+#include "ShapeLib/shape_lib.h"
 // TODO: reference additional headers your program requires here

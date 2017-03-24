@@ -121,8 +121,8 @@ namespace embDB
 	ITransactionPtr CDBTranManager::CreateTransaction(eTransactionDataType trType, IDBConnection *pConn, eDBTransationType trDbType)
 	{
 		CommonLib::CString sFileName;
-		long nDate = 0;
-		long nTime = 0;
+		uint32 nDate = 0;
+		uint32 nTime = 0;
 		nDate = CommonLib::TimeUtils::GetCurrentDate(&nTime);
 		sFileName.format(L"\\%d_%d_%I64d", nDate, nTime, m_nTranID++);
 		while(CommonLib::FileSystem::isFileExisit(sFileName.wstr()))

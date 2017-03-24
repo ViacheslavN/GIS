@@ -11,8 +11,8 @@ namespace embDB
 	class TValueFieldStatisticBase : public IFieldStatistic
 	{
 		public:
-			TValueFieldStatisticBase(CommonLib::alloc_t *pAlloc, IDBTransaction* pTransaction, bool bCheckCRC = false) :
-				m_pTransaction(pTransaction), m_nRootPage(-1), m_bCheckCRC(bCheckCRC), m_pAlloc(pAlloc)
+			TValueFieldStatisticBase(CommonLib::alloc_t *pAlloc, IDBTransaction* pTransaction, const SStatisticInfo& si, bool bCheckCRC = false) :
+				m_pTransaction(pTransaction), m_nRootPage(-1), m_bCheckCRC(bCheckCRC), m_pAlloc(pAlloc), m_si(si), m_nDateUpdate(0), m_nTimeUpdate(0)
 			{
 
 			}
@@ -30,7 +30,6 @@ namespace embDB
 
 				WriteStreamPage stream(m_pTransaction.get(), MIN_PAGE_SIZE, bCheckCRC, FIELD_PAGE, FIELD_INFO_STATISTIC);
 				stream.open(pFieldInfoPage);
-				stream.write((uint32)GetType());
 
 				if (!InitCustom(&stream))
 					return false;  // TO DO Error
@@ -58,7 +57,7 @@ namespace embDB
 			virtual uint32 GetLastUpdateTime() const { return m_nTimeUpdate; }
 			virtual uint32 GetLastUpdateDate() const { return m_nDateUpdate; }
 			
-
+			virtual embDB::eUpdateStatisticType  GetCalcType(void) const { return m_si.m_UpdateStat; }
 		protected:
 			virtual bool InitCustom(WriteStreamPage* stream)
 			{
@@ -75,6 +74,7 @@ namespace embDB
 			uint32 m_nTimeUpdate;
 			uint32 m_nDateUpdate;
 			bool m_bCheckCRC;
+			SStatisticInfo m_si;
 			
 	};
 

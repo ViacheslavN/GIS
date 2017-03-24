@@ -161,12 +161,12 @@ namespace embDB
 
 
 
-				if(m_nTypeFreq != ectUIInt32)
+				if(m_nTypeFreq != ectUInt32)
 				{
 					if(m_BitsLensFreq[nBitLen] > 255)
 						m_nTypeFreq = ectUInt16;
 					if(m_BitsLensFreq[nBitLen] > 65535)
-						m_nTypeFreq = ectUIInt32;
+						m_nTypeFreq = ectUInt32;
 				}
 				
 				if(!m_bOnlineCalcSize)
@@ -228,10 +228,10 @@ namespace embDB
 					{
 						if(m_BitsLensFreq[i] > 65535)
 						{
-							m_nTypeFreq = ectUIInt32;
+							m_nTypeFreq = ectUInt32;
 							break;
 						}
-						if(m_nTypeFreq != ectUIInt32)
+						if(m_nTypeFreq != ectUInt32)
 						{
 							if(m_BitsLensFreq[nBitLen] > 255)
 								m_nTypeFreq = ectUInt16;
@@ -502,7 +502,7 @@ namespace embDB
 					case ectUInt16:
 						pStream->write((uint16)m_BitsLensFreq[i]);
 						break;
-					case ectUIInt32:
+					case ectUInt32:
 						pStream->write((uint32)m_BitsLensFreq[i]);
 						break;
 					}
@@ -555,7 +555,7 @@ namespace embDB
 						m_BitsLensFreq[i] = pStream->readintu16();
 						m_nCount += m_BitsLensFreq[i];
 						break;
-					case ectUIInt32:
+					case ectUInt32:
 						m_BitsLensFreq[i] = pStream->readIntu32();
 						m_nCount += m_BitsLensFreq[i];
 						break;

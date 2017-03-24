@@ -1431,6 +1431,15 @@
     <ClInclude Include="ValueFieldStatisticHolder.h">
       <Filter>DB\Fields\Statistic</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateStatistic.h">
+      <Filter>DB\Table</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

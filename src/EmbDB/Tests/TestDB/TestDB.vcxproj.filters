@@ -69,5 +69,8 @@
     <ClCompile Include="TestSP16.cpp">
       <Filter>TestSpIndex</Filter>
     </ClCompile>
+    <ClCompile Include="TestDBWithStat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

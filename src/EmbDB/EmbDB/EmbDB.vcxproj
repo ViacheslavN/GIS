@@ -546,6 +546,7 @@
     <ClInclude Include="CounterField.h" />
     <ClInclude Include="CRC.h" />
     <ClInclude Include="CreateFields.h" />
+    <ClInclude Include="CreateStatistic.h" />
     <ClInclude Include="Crypto\AES128.h" />
     <ClInclude Include="Crypto\AES256.h" />
     <ClInclude Include="Crypto\BaseAES.h" />

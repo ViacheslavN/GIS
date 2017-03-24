@@ -370,6 +370,7 @@ namespace embDB
 		IFieldStatisticHolder() {}
 		virtual ~IFieldStatisticHolder() {}
 
+ 
 		virtual bool save(CommonLib::IWriteStream* pStream, IDBTransaction *pTran) = 0;
 		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage) = 0;
 
@@ -645,6 +646,9 @@ namespace embDB
 		virtual bool deleteField(IField* pField) = 0;
 		virtual bool createIndex(const CommonLib::CString& sName, SIndexProp& ip, ITransaction *pTran) = 0;
 		virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip) = 0;
+		virtual bool createStatistic(const CommonLib::CString& sName, const SStatisticInfo& ip, ITransaction *pTran) = 0;
+		virtual bool UpdateStatistic(const CommonLib::CString& sName, ITransaction *pTran) = 0;
+
 
 		virtual int64 GetNextOID() = 0;
 		virtual bool commit(IDBTransaction *pTran) = 0;

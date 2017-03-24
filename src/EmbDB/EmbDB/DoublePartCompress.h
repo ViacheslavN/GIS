@@ -44,12 +44,12 @@ namespace embDB
 				if(m_BitsLensFreq[nBitLen] == 1)
 					m_nDiffsLen += 1;
 
-				if(m_nTypeFreq != ectUIInt32)
+				if(m_nTypeFreq != ectUInt32)
 				{
 					if(m_BitsLensFreq[nBitLen] > 255)
 						m_nTypeFreq = ectUInt16;
 					if(m_BitsLensFreq[nBitLen] > 65535)
-						m_nTypeFreq = ectUIInt32;
+						m_nTypeFreq = ectUInt32;
 				}
 
 				m_nLenBitSize  += nBitLen > 1 ? nBitLen - 1 : 0;
@@ -74,10 +74,10 @@ namespace embDB
 					{
 						if(m_BitsLensFreq[i] > 65535)
 						{
-							m_nTypeFreq = ectUIInt32;
+							m_nTypeFreq = ectUInt32;
 							break;
 						}
-						if(m_nTypeFreq != ectUIInt32)
+						if(m_nTypeFreq != ectUInt32)
 						{
 							if(m_BitsLensFreq[nBitLen] > 255)
 								m_nTypeFreq = ectUInt16;

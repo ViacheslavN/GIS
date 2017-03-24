@@ -24,10 +24,10 @@ namespace CommonLib
 		m_nCurrBit++;
 	 
 	}
-	bool FxBitWriteStream::attach(IStream *pStream, int32 nPos, int32 nSize)
+	bool FxBitWriteStream::attach(IStream *pStream, int32 nPos, int32 nSize, bool bSeek)
 	{
 
-		if(!TBase::attach(pStream, nPos, nSize))
+		if(!TBase::attach(pStream, nPos, nSize, bSeek))
 			return false;
 		m_pBuffer[0] = 0;
 		return true;

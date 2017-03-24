@@ -168,6 +168,7 @@
     </ClCompile>
     <ClCompile Include="testAddFieldDB.cpp" />
     <ClCompile Include="TestDB.cpp" />
+    <ClCompile Include="TestDBWithStat.cpp" />
     <ClCompile Include="TestSP16.cpp" />
     <ClCompile Include="TestSpIndex.cpp" />
   </ItemGroup>

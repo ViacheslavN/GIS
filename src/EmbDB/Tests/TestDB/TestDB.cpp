@@ -13,12 +13,13 @@
 void TestSpatialField(embDB::CDatabase& db);
 void TestAddFieldDB();
 void TestSpIndexFromShapeFile();
+void TestDBWithStat();
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//TestAddFieldDB();
-	TestSpIndexFromShapeFile();
+	///TestSpIndexFromShapeFile();
 
-
+	TestDBWithStat();
 	/*embDB::CFileLogger flogger(L"D:\\db\\1.log", false, true);
 
 

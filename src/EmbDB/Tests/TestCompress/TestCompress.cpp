@@ -20,8 +20,12 @@ void TestDoubleCompress();
 void ZlibTest();
 void TestStringCompress();
 void TestSignCompress();
+void TestCompressShape();
 int _tmain(int argc, _TCHAR* argv[])
 {
+
+
+	//TestCompressShape();
 
 	/*CommonLib::CWriteFileStream File;
 	File.open(L"D:\\test\\files\\1aaa.txt", CommonLib::ofmCreateAlways, CommonLib::arWrite, CommonLib::smNoMode);
@@ -40,10 +44,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//ZlibTest();
 	//TestDiffComp();
 	//TestNumLen();
-	//TestDoubleCompress();
+	TestDoubleCompress();
 	//TestBWTSort();
 
-	TestSignCompress();
+//	TestSignCompress();
 	return 0;
 
 

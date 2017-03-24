@@ -37,7 +37,6 @@ namespace embDB
 			m_bOnlineCalcCompSize = pFieldProp->m_FieldPropExt.m_bOnlineCalcCompSize;
 			m_nCompCalcError = pFieldProp->m_FieldPropExt.m_nCompCalcError;
 			m_nBTreeChacheSize = pFieldProp->m_FieldPropExt.m_nBTreeChacheSize;
-			m_StatisticInfo = pFieldProp->m_StatisticInfo;
 		}
 		~CDBFieldHolderBase(){}
 
@@ -54,8 +53,6 @@ namespace embDB
 			pStream->write(m_dScale);
 			pStream->write(m_bNoNull);
 			pStream->write(m_nBTreeChacheSize);
-			pStream->write((uint16)m_StatisticInfo.m_Statistic);
-			pStream->write((uint16)m_StatisticInfo.m_CalcStat);
 
 			FilePagePtr pFieldInfoPage(pTran->getNewPage(MIN_PAGE_SIZE)); 
 			if(!pFieldInfoPage.get())
@@ -111,11 +108,6 @@ namespace embDB
 			m_dScale = pStream->readDouble();
 			m_bNoNull = pStream->readBool();
 			m_nBTreeChacheSize = pStream->readIntu32();
-
-			m_StatisticInfo.m_Statistic = (eStatisticType)pStream->readintu16();
-			m_StatisticInfo.m_CalcStat = (eUpdateStatisticType)pStream->readintu16();
- 
-
 
 			m_nFieldInfoPage = pStream->readInt64();
 		}
@@ -234,7 +226,6 @@ namespace embDB
 		uint32 m_nCompCalcError;
 		uint32 m_nBTreeChacheSize;
 		bool m_bCheckCRC;
-		SStatisticInfo m_StatisticInfo;
 	};
 
  

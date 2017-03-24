@@ -4,7 +4,7 @@
 #include "CommonLibrary/PodVector.h"
 #include "CommonLibrary/algorithm.h"
 #include "CommonLibrary/FixedMemoryStream.h"
-#include "NumLenCompress.h"
+#include "NumLenCompressor2.h"
 #include "CommonLibrary/BitsVector.h"
 namespace embDB
 {
@@ -325,7 +325,7 @@ namespace embDB
 
 
 		template<class Type>
-		void CompressPos(IWriteStream *pStream) const
+		void CompressPos(CommonLib::IWriteStream *pStream) const
 		{
 
 			int32 nPrevPos = -1;
@@ -349,7 +349,7 @@ namespace embDB
 
 
 						bitStream.attach(pStream, pStream->pos(), nByteSize);
-						pStream->seek(nByteSize, soFromCurrent);
+						pStream->seek(nByteSize, CommonLib::soFromCurrent);
 					}
 					else
 					{
@@ -400,7 +400,7 @@ namespace embDB
 			CommonLib::FxBitReadStream bitStream;
 
 			bitStream.attach(pStream, pStream->pos(), nByteSize);
-			pStream->seek(nByteSize, soFromCurrent);
+			pStream->seek(nByteSize, CommonLib::soFromCurrent);
 
 			uint32 nCount = m_NumLen32.GetCount();
 			uint32 nBitLen = 0;

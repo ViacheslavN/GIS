@@ -295,7 +295,10 @@ namespace embDB
 	{
 		return m_pAlloc.get();
 	}
-	
+	CommonLib::alloc_t*  CDatabase::getCommonAlloc()
+	{
+		return m_pAlloc.get();
+	}
 	ITransactionPtr CDatabase::startTransaction(eTransactionDataType trType, uint64 nUserID, IDBConnection *pConn, eDBTransationType trDbType)
 	{
 		if(!m_bOpen)

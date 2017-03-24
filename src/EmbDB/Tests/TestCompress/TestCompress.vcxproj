@@ -105,7 +105,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../../CommonLibrary/Output;../../Output;../../../ThirdParty/zlib/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../CommonLibrary/Output;../../Output;../../../ThirdParty/zlib/lib;../../../ThirdParty/ShapeLib/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -188,6 +188,7 @@
     <ClCompile Include="TestDoubleCompress.cpp" />
     <ClCompile Include="testNumLem.cpp" />
     <ClCompile Include="testRange.cpp" />
+    <ClCompile Include="TestShapeCompress.cpp" />
     <ClCompile Include="testStaticRange.cpp" />
     <ClCompile Include="zlibTest.cpp" />
   </ItemGroup>

@@ -43,6 +43,9 @@
     <Filter Include="signCompres">
       <UniqueIdentifier>{3b2b5a58-fe16-4d39-aaa3-6b9a18cb2085}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TestShapeCompress">
+      <UniqueIdentifier>{bfc18b6f-5df4-4aae-bce9-195a55dae02b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="TestAC.h">
@@ -129,6 +132,9 @@
     </ClCompile>
     <ClCompile Include="signCompess.cpp">
       <Filter>signCompres</Filter>
+    </ClCompile>
+    <ClCompile Include="TestShapeCompress.cpp">
+      <Filter>TestShapeCompress</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

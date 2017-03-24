@@ -23,8 +23,8 @@ namespace embDB
 		//typedef TRangeEncoder64 TEncoder;
 		//typedef TRangeDecoder64 TDecoder;
 
-		typedef TACEncoder64 TEncoder;
-		typedef TACDecoder64 TDecoder;
+		typedef CommonLib::TACEncoder64 TEncoder;
+		typedef CommonLib::TACDecoder64 TDecoder;
 
 		TNumLemCompressor2(uint32 nError = 100) : m_nError(nError)
 		{
@@ -48,13 +48,12 @@ namespace embDB
 			assert(nBitLen < _nMaxBitsLens + 1);
 			m_BitsLensFreq[nBitLen] += 1;
 
-			if (m_FreqType != ectUIInt32)
-			{
-				if (m_BitsLensFreq[nBitLen] > 255)
-					m_FreqType = ectUInt16;
-				if (m_BitsLensFreq[nBitLen] > 65535)
-					m_FreqType = ectUIInt32;
-			}
+			if (m_FreqType != ectUInt64 && m_BitsLensFreq[nBitLen] > 0xFFFFFFFF - 1)
+				m_FreqType = ectUInt64;
+			else if(m_FreqType != ectUInt32 && m_BitsLensFreq[nBitLen] > 65535)
+				m_FreqType = ectUInt32;
+			else if (m_FreqType != ectUInt16 && m_BitsLensFreq[nBitLen] > 255)
+				m_FreqType = ectUInt16;
 
 			m_nBitLen += nBitLen > 1 ? nBitLen - 1 : 0;
 			m_nCount += 1;
@@ -103,14 +102,17 @@ namespace embDB
 
 				switch (m_FreqType)
 				{
-				case dtType8:
+				case ectByte:
 					pStream->write((byte)m_BitsLensFreq[i]);
 					break;
-				case dtType16:
+				case ectUInt16:
 					pStream->write((uint16)m_BitsLensFreq[i]);
 					break;
-				case dtType32:
+				case ectUInt32:
 					pStream->write((uint32)m_BitsLensFreq[i]);
+					break;
+				case ectUInt64:
+					pStream->write((uint64)m_BitsLensFreq[i]);
 					break;
 				}
 
@@ -186,16 +188,20 @@ namespace embDB
 				}
 				switch (m_FreqType)
 				{
-				case dtType8:
+				case ectByte:
 					m_BitsLensFreq[i] = pStream->readByte();
 					m_nCount += m_BitsLensFreq[i];
 					break;
-				case dtType16:
+				case ectUInt16:
 					m_BitsLensFreq[i] = pStream->readintu16();
 					m_nCount += m_BitsLensFreq[i];
 					break;
-				case dtType32:
+				case ectUInt32:
 					m_BitsLensFreq[i] = pStream->readIntu32();
+					m_nCount += m_BitsLensFreq[i];
+					break;
+				case ectUInt64:
+					m_BitsLensFreq[i] = pStream->readIntu64();
 					m_nCount += m_BitsLensFreq[i];
 					break;
 				}
@@ -229,18 +235,15 @@ namespace embDB
 			m_Decoder.StartDecode();
 
 		}
-
-		bool DecodeSymbol(uint32& nSymbol)
+		template<class TSum>
+		bool DecodeSymbol(TSum& nSymbol)
 		{
-			uint32 freq = (uint32)m_Decoder.GetFreq(m_nCount);
-			nSymbol = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens + 1, freq);
+			uint64 freq =  m_Decoder.GetFreq(m_nCount);
+			nSymbol = (TSum)CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens + 1, freq);
 			if (nSymbol != 0)
 				nSymbol--;
 
-
 			m_Decoder.DecodeSymbol(m_FreqPrev[nSymbol], m_FreqPrev[nSymbol + 1], m_nCount);
-
-			//value += 1;
 			return true;
 		}
 
@@ -249,7 +252,7 @@ namespace embDB
 			memset(m_BitsLensFreq, 0, sizeof(m_BitsLensFreq));
 			memset(m_FreqPrev, 0, sizeof(m_FreqPrev));
 			m_nCount = 0;
-			m_FreqType = dtType8;
+			m_FreqType = ectByte;
 			m_nBitLen = 0;
 		}
 
@@ -299,11 +302,11 @@ namespace embDB
 		}
 	private:
 
-		uint32 m_BitsLensFreq[_nMaxBitsLens + 1];
-		uint32 m_FreqPrev[_nMaxBitsLens + 1 + 1];
+		uint64 m_BitsLensFreq[_nMaxBitsLens + 1];
+		uint64 m_FreqPrev[_nMaxBitsLens + 1 + 1];
 		TFindBit m_FindBit;
-		uint32 m_nCount;
-		uint32 m_nBitLen;
+		uint64 m_nCount;
+		uint64 m_nBitLen;
 		eCompressDataType m_FreqType;
 
 		TEncoder m_Encoder;

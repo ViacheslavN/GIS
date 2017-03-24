@@ -40,6 +40,7 @@ namespace embDB
 		static const uint32 nTableFieldsPageSize = MIN_PAGE_SIZE;
 		static const uint32 nTableIndexPageSize = MIN_PAGE_SIZE;
 		static const uint32 nFieldInfoPageSize = MIN_PAGE_SIZE;
+		static const uint32 nStatisticPageSize = MIN_PAGE_SIZE;
 
 		static const uint32 nMaxFieldNameLen = 128;
 		static const uint32 nMaxFieldAliasLen = 128;
@@ -61,8 +62,11 @@ namespace embDB
 			virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, 
 					const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, ITransaction *pTran, bool bCreateIndex = true, uint32 nPageSize = 8192);
 			virtual bool createIndex(const CommonLib::CString& sFieldName, SIndexProp& ip, ITransaction *pTran);
+			virtual bool createStatistic(const CommonLib::CString& sFieldName, const SStatisticInfo& si, ITransaction *pTran);
+			virtual bool UpdateStatistic(const CommonLib::CString& sName, ITransaction *pTran);
+
 			
-			
+
 			virtual bool deleteField(IField* pField);
 	 
 			virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip);
@@ -106,9 +110,12 @@ namespace embDB
 		private:
 			bool ReadField(int64 nAddr);
 			bool ReadIndex(int64 nAddr);
+			bool ReadStatistic(int64 nAddr);
 			bool readHeader(CommonLib::FxMemoryReadStream& stream);
 			bool createValueField(sFieldInfo* fi, IDBTransaction *pTran, bool bNew);
-			
+	
+
+
 			IDBIndexHolderPtr createIndexHolder(IDBFieldHolder *pField,  const SIndexProp& ip, int64 nPageAddr);
 			IDBIndexHolderPtr createSpatialIndexField(IDBShapeFieldHolder* pField, int64 nPageAddr, const SIndexProp& ip);
 	
@@ -117,6 +124,7 @@ namespace embDB
 			bool BuildIndex(IDBIndexHolder* pIndexHolder, IDBFieldHolder *pFieldHolder, IDBTransaction* pTran);
 			eSpatialType GetSpatialType(uint64 nMaxVal, bool isPoint);
 			
+			bool BuildStatistic(IFieldStatisticHolder* pStatisticHolder, IDBFieldHolder *pFieldHolder, IDBTransaction* pTran);
 
 			
 	    private:

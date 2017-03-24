@@ -1,6 +1,7 @@
 #include "stdafx.h"
-#include "TimeUtils.h"
 #include "general.h"
+#include "TimeUtils.h"
+
 #ifdef ANDROID
 	#include <time.h>  
 #endif
@@ -11,9 +12,9 @@ namespace CommonLib
 	namespace TimeUtils
 	{
 
-		long GetCurrentTimeMs()
+		uint32 GetCurrentTimeMs()
 		{
-			long nRet = 0;
+			uint32 nRet = 0;
 #ifdef WIN32
 			SYSTEMTIME st = {0};
 			::GetLocalTime(&st);
@@ -37,9 +38,9 @@ namespace CommonLib
 #endif
 			return nRet;
 		}
-		long GetCurrentDate(long* pnTimeMs)
+		uint32 GetCurrentDate(uint32* pnTimeMs)
 		{
-			long nRet = 0;
+			uint32 nRet = 0;
 #ifdef WIN32
 			SYSTEMTIME st = {0};
 			::GetLocalTime(&st);
@@ -50,7 +51,7 @@ namespace CommonLib
 
 			if (pnTimeMs != NULL)
 			{
-				long& nTimeMs = *pnTimeMs;
+				uint32& nTimeMs = *pnTimeMs;
 				nTimeMs = st.wHour;
 				nTimeMs *= 100; nTimeMs += st.wMinute;
 				nTimeMs *= 100; nTimeMs += st.wSecond;
@@ -66,7 +67,7 @@ namespace CommonLib
 			nRet *= 100; nRet += timeinfo.tm_mday;
 			if (pnTimeMs != NULL)
 			{
-				long& nTimeMs = *pnTimeMs;
+				uint32& nTimeMs = *pnTimeMs;
 				nTimeMs = timeinfo.tm_hour;
 				nTimeMs *= 100; nTimeMs += timeinfo.tm_min;
 				nTimeMs *= 100; nTimeMs += timeinfo.tm_sec;

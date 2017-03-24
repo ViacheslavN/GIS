@@ -20,6 +20,8 @@
 #include "Fields.h"
 #include "ReadStreamPage.h"
 #include "WriteStreamPage.h"
+#include "ValueFieldStatisticHolder.h"
+#include "CreateStatistic.h"
 
 namespace embDB
 {
@@ -29,12 +31,15 @@ namespace embDB
 		m_nIndexsPage(-1),
 		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE, pDB->getCheckCRC()),
 		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE, pDB->getCheckCRC()),
-		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE, pDB->getCheckCRC())
+		m_nStatisticsAddr(-1, 0, TABLE_PAGE, TABLE_STATISTICS_LIST_PAGE, pDB->getCheckCRC()),
+		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE, pDB->getCheckCRC()),
+		m_nStatisticsPage(-1)
+
 	{
 		m_pDBStorage = pDB->getDBStorage();
 		m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
 		m_nIndexAddr.setPageSize(MIN_PAGE_SIZE);
-		
+		m_nStatisticsAddr.setPageSize(MIN_PAGE_SIZE);
 		m_pFields = new CFields();
 		//m_pIndexs = new CFields();
 	}
@@ -46,12 +51,14 @@ namespace embDB
 		m_nIndexsPage(-1),
 		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE, pDB->getCheckCRC()),
 		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE, pDB->getCheckCRC()),
-		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE, pDB->getCheckCRC())
+		m_nStatisticsAddr(-1, 0, TABLE_PAGE, TABLE_STATISTICS_LIST_PAGE, pDB->getCheckCRC()),
+		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE, pDB->getCheckCRC()),
+		m_nStatisticsPage(-1)
 	{
 		m_pDBStorage = pDB->getDBStorage();
 		m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
 		m_nIndexAddr.setPageSize(MIN_PAGE_SIZE);
-		
+		m_nStatisticsAddr.setPageSize(MIN_PAGE_SIZE);
 		m_pFields = new CFields();
 		//m_pIndexs = new CFields();
 	}
@@ -63,12 +70,14 @@ namespace embDB
 		m_nIndexsPage(-1),
 		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE, pDB->getCheckCRC()),
 		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE, pDB->getCheckCRC()),
-		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE, pDB->getCheckCRC())
+		m_nStatisticsAddr(-1, 0, TABLE_PAGE, TABLE_STATISTICS_LIST_PAGE, pDB->getCheckCRC()),
+		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE, pDB->getCheckCRC()),
+		m_nStatisticsPage(-1)
 	{
 		m_pDBStorage = pDB->getDBStorage();
 		m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
 		m_nIndexAddr.setPageSize(MIN_PAGE_SIZE);
-		
+		m_nStatisticsAddr.setPageSize(MIN_PAGE_SIZE);
 		m_pFields = new CFields();
 		//m_pIndexs = new CFields();
 	}
@@ -127,6 +136,7 @@ namespace embDB
 
 		m_nFieldsPage = stream.readInt64();
 		m_nIndexsPage = stream.readInt64();
+		m_nStatisticsPage = stream.readInt64();
 		int64 nCounterOIDPage = stream.readInt64();
 
 
@@ -166,8 +176,19 @@ namespace embDB
 		}
 		 
 
-
-	
+		if(m_nStatisticsPage != -1)
+		{
+			m_nStatisticsAddr.setFirstPage(m_nStatisticsPage);
+			m_nStatisticsAddr.setPageSize(MIN_PAGE_SIZE);
+			m_nStatisticsAddr.load(m_pDBStorage.get());
+			TFieldPages::iterator it = m_nStatisticsAddr.begin();
+			while (!it.isNull())
+			{
+				if (!ReadStatistic(it.value()))
+					return false;
+				it.next();
+			}
+		}
 		
 		return true;
 	}
@@ -212,8 +233,18 @@ namespace embDB
 			m_nIndexAddr.setFirstPage(m_nIndexsPage);
 
 		}
+		if (m_nStatisticsPage == -1)
+		{
+			FilePagePtr pPage = pTran->getNewPage(nStatisticPageSize);
+			if (!pPage.get())
+				return false;
+			m_nStatisticsPage = pPage->getAddr();
+			m_nStatisticsAddr.setFirstPage(m_nStatisticsPage);
+
+		}
 		stream.write(m_nFieldsPage);
 		stream.write(m_nIndexsPage);
+		stream.write(m_nStatisticsPage);
 		stream.write(m_OIDCounter.GetPage());
 		header.writeCRC32(stream);
 		pTran->saveFilePage(pFPage);
@@ -653,9 +684,6 @@ namespace embDB
 			return false;
 
 		IDBFieldHolder* pFieldHolder = (IDBFieldHolder*)pField.get();
-
-
-	
 		IDBTransactionPtr pDBTran;
 		if(pTran)
 		{
@@ -751,8 +779,8 @@ namespace embDB
 		pFieldHolder->setIndexHolder(pIndex.get());
 		m_IndexByName.insert(std::make_pair(sFieldName, pIndex));
 		return true;
-
 	}
+
 	bool CTable::ReadField(int64 nAddr)
 	{
 		ReadStreamPage stream(m_pDBStorage.get(), MIN_PAGE_SIZE,m_pDB->getCheckCRC(), TABLE_PAGE, TABLE_FIELD_PAGE);
@@ -778,7 +806,153 @@ namespace embDB
 		return true;
 
 	}
+	bool  CTable::createStatistic(const CommonLib::CString& sFieldName, const SStatisticInfo& si, ITransaction *pTran)
+	{
+		if (!pTran)
+			return false;
 
+		const FieldStatisticByName::iterator it = m_FieldStatisticByName.find(sFieldName);
+		if (it != m_FieldStatisticByName.end())
+			return false;
+
+		IFieldPtr pField = m_pFields->GetField(sFieldName);
+		if (!pField.get())
+			return false;
+
+		IDBFieldHolder* pFieldHolder = (IDBFieldHolder*)pField.get();
+		IDBTransactionPtr pDBTran;
+		if (pTran)
+		{
+			if (pTran->getType() != eTT_DDL)
+				return false; // TO DO Error
+
+			pDBTran = (IDBTransaction*)pTran;
+
+		}
+		{
+			FilePagePtr pStatisticdInfoPage = pDBTran->getNewPage(nFieldInfoPageSize);
+			if (!pStatisticdInfoPage.get())
+			{
+				return false; // TO DO Error
+			}
+
+			IFieldStatisticHolderPtr pStatistic = CreateStatisticHolder(pField->getType(), si, m_pDB);
+			if (!pStatistic.get())
+			{
+				return false; // TO DO Error
+			}
+
+			WriteStreamPage stream(pDBTran.get(), nFieldInfoPageSize, m_pDB->getCheckCRC(), FIELD_PAGE, FIELD_INFO_STATISTIC);
+			stream.open(pStatisticdInfoPage);
+			stream.write((uint32)si.m_Statistic);
+			stream.write((uint32)si.m_UpdateStat);
+			stream.write(sFieldName);
+			stream.write(si.m_nPageSize);
+			pStatistic->save(&stream, pDBTran.get());
+
+			stream.Save();
+
+			pFieldHolder->setFieldStatisticHolder(pStatistic.get());
+			m_FieldStatisticByName.insert(std::make_pair(sFieldName, pStatistic));
+			m_nStatisticsAddr.push(pStatisticdInfoPage->getAddr(), pDBTran.get());
+		}
+
+		return true;
+	}
+
+	
+	bool CTable::ReadStatistic(int64 nAddr)
+	{
+		CommonLib::FxMemoryReadStream stream;
+		FilePagePtr pPage = m_pDBStorage->getFilePage(nAddr, nFieldInfoPageSize);
+		if (!pPage.get())
+			return false;
+		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
+		SStatisticInfo si;
+		sFilePageHeader header(stream, pPage->getPageSize(), m_pDB->getCheckCRC());
+		if (!header.isValid())
+		{
+			//TO DO log
+			return false;
+		}
+		if (header.m_nObjectPageType != FIELD_PAGE || header.m_nSubObjectPageType != FIELD_INFO_STATISTIC)
+		{
+			return false;
+		}
+
+		si.m_Statistic = (eStatisticType)stream.readIntu32();
+		si.m_UpdateStat = (eUpdateStatisticType)stream.readIntu32();
+		CommonLib::CString sFieldName;
+		stream.read(sFieldName);
+
+		IFieldPtr pField = m_pFields->GetField(sFieldName);
+		if (!pField.get())
+			return false;
+
+		si.m_nPageSize = stream.readIntu32();
+
+		IDBFieldHolder* pFieldHolder = (IDBFieldHolder*)pField.get();
+		
+		IFieldStatisticHolderPtr pStatistic = CreateStatisticHolder(pField->getType(), si, m_pDB);
+		if (!pStatistic.get())
+		{
+			return false; // TO DO Error
+		}
+		
+		if (!pStatistic->load(&stream, m_pDBStorage.get()))
+			return false;
+		pFieldHolder->setFieldStatisticHolder(pStatistic.get());
+		m_FieldStatisticByName.insert(std::make_pair(sFieldName, pStatistic));
+		return true;
+	}
+	bool CTable::UpdateStatistic(const CommonLib::CString& sFieldName, ITransaction *pTran)
+	{
+		auto it = m_FieldStatisticByName.find(sFieldName);
+		if (it == m_FieldStatisticByName.end())
+		{
+			return false;   // TO DO Error
+		}
+		IFieldStatisticHolderPtr pStatHolder = it->second;
+
+		IDBTransactionPtr pDBTran;
+		if (pTran)
+		{
+			if (pTran->getType() != eTT_MODIFY && pTran->getType() != eTT_UNDEFINED)
+				return false; // TO DO Error
+
+			pDBTran = (IDBTransaction*)pTran;
+
+		}
+		IFieldPtr pField = m_pFields->GetField(sFieldName);
+		if (!pField.get())
+			return false;
+
+		IDBFieldHolder* pFieldHolder = (IDBFieldHolder*)pField.get();
+
+		IValueFieldPtr pValueField = pFieldHolder->getValueField(pDBTran.get(), m_pDBStorage.get());
+		IFieldStatisticPtr pStatistic = pStatHolder->getFieldStatistic(pDBTran.get(), m_pDBStorage.get());
+
+		if (!pField.get() || !pStatistic.get())
+			return false;
+
+		IFieldIteratorPtr pFieldIterator = pValueField->begin();
+ 
+		pStatistic->clear();
+
+		CommonLib::CVariant val;
+		while (!pFieldIterator->isNull())
+		{
+			if (!pFieldIterator->getVal(&val))
+				return false;
+
+			pStatistic->AddVarValue(val);
+
+			pFieldIterator->next();
+		}
+		
+		pStatistic->save();
+		return true;
+	}
 	bool CTable::deleteField(IField* pField)
 	{
 		return delField(pField);
