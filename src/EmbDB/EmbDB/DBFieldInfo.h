@@ -20,7 +20,7 @@ namespace embDB
 	public:
 
 		CDBFieldHolderBase(CommonLib::alloc_t* pAlloc, const SFieldProp* pFieldProp, int64 nPageAdd) : m_pAlloc(pAlloc), 
-			m_pIndexHolder(0), m_nFieldInfoPage(-1), m_nPageAdd(nPageAdd), m_bCheckCRC(CGlobalParams::Instance().GetCheckCRC())
+			m_pIndexHolder(0), m_nFieldInfoPage(-1), m_nPageAdd(nPageAdd), m_bCheckCRC(CGlobalParams::Instance().GetCheckCRC()), m_bIsUnique(false)
 		{
 			assert(pFieldProp);
 
@@ -37,6 +37,7 @@ namespace embDB
 			m_bOnlineCalcCompSize = pFieldProp->m_FieldPropExt.m_bOnlineCalcCompSize;
 			m_nCompCalcError = pFieldProp->m_FieldPropExt.m_nCompCalcError;
 			m_nBTreeChacheSize = pFieldProp->m_FieldPropExt.m_nBTreeChacheSize;
+			m_bIsUnique = pFieldProp->m_bUNIQUE;
 		}
 		~CDBFieldHolderBase(){}
 
@@ -53,6 +54,7 @@ namespace embDB
 			pStream->write(m_dScale);
 			pStream->write(m_bNoNull);
 			pStream->write(m_nBTreeChacheSize);
+			pStream->write(m_bIsUnique);
 
 			FilePagePtr pFieldInfoPage(pTran->getNewPage(MIN_PAGE_SIZE)); 
 			if(!pFieldInfoPage.get())
@@ -108,6 +110,7 @@ namespace embDB
 			m_dScale = pStream->readDouble();
 			m_bNoNull = pStream->readBool();
 			m_nBTreeChacheSize = pStream->readIntu32();
+			m_bIsUnique = pStream->readBool();
 
 			m_nFieldInfoPage = pStream->readInt64();
 		}
@@ -159,6 +162,15 @@ namespace embDB
 			return m_pFieldStatisticHolder;
 		}
 
+		virtual IUniqueCheckPtr GetUniqueCheck()
+		{
+			return m_pUniqueCheck;
+		}
+		virtual void SetUniqueCheck(IUniqueCheck *pUniqueCheck)
+		{
+			m_pUniqueCheck = pUniqueCheck;
+		}
+
 		virtual bool lock()
 		{
 			return true;
@@ -201,6 +213,10 @@ namespace embDB
 		{
 			return m_nPrecision;
 		}
+		virtual bool GetIsUnique() const
+		{
+			return m_bIsUnique;
+		}
 		
 		virtual int64 GetPageAddr() const {return m_nPageAdd;}
 		virtual uint32 GetNodePageSize() const {return m_nPageSize;}
@@ -210,6 +226,7 @@ namespace embDB
 		eDataTypes			m_FieldType;
 		uint32				m_nLenField;
 		bool				m_bNoNull;
+		bool				m_bIsUnique;
 		double				m_dScale;
 		int32				m_nPrecision;
 		uint32				m_nPageSize;
@@ -217,6 +234,7 @@ namespace embDB
 		CommonLib::alloc_t* m_pAlloc;
 		IDBIndexHolderPtr m_pIndexHolder;
 		IFieldStatisticHolderPtr m_pFieldStatisticHolder;
+		IUniqueCheckPtr		m_pUniqueCheck;
 
 		uint64				m_nFieldInfoPage;
 		int64				m_nPageAdd;

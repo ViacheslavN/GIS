@@ -523,6 +523,14 @@ namespace embDB
 
 			stream.Save();
 			m_pFields->AddField(pField.get());
+
+			if (sFP.m_bUNIQUE)
+			{
+				SIndexProp idx;
+				idx.m_indexType = itUnique;
+				if (!createIndex(sFP.m_sFieldName, idx, pDBTran.get()))
+					return IFieldPtr(); // TO DO Error
+			}
 		}
 		
 		 

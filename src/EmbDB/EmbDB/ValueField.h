@@ -210,19 +210,34 @@ namespace embDB
 			}
 			virtual bool insert (int64 nOID, CommonLib::CVariant* pVariant, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
+
+				if (!CheckUnique(pVariant))
+					return false; //TO DO log
+
 				bool bRet = insertImpl(nOID, pVariant->Get<FType>(), pFromIter, pRetIter);
-				if(bRet && m_pIndex.get())
+				if (bRet  && (m_pIndex.get() || m_pUniqueCheck.get()))
 				{
-					m_pIndex->insert(pVariant, nOID);
+					if (m_pIndex.get())
+						m_pIndex->insert(pVariant, nOID);
+
+					if (m_pUniqueCheck.get())
+						m_pUniqueCheck->insert(pVariant);
 				}
 				return bRet;
 			}
 			virtual int64 insert (CommonLib::CVariant* pVariant, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{
+				if (!CheckUnique(pVariant))
+					return false; //TO DO log
+
 				int64 nOID =  insertImpl(pVariant->Get<FType>(), pFromIter, pRetIter);
-				if(nOID != 0 && m_pIndex.get())
+				if(nOID != 0 && (m_pIndex.get() || m_pUniqueCheck.get()))
 				{
-					m_pIndex->insert(pVariant, nOID);
+					if(m_pIndex.get())
+						m_pIndex->insert(pVariant, nOID);
+
+					if (m_pUniqueCheck.get())
+						m_pUniqueCheck->insert(pVariant);
 				}
 				return nOID;
 			}
@@ -341,6 +356,26 @@ namespace embDB
 			{
 				m_pFieldStatistic = pStatistic;
 			}
+			virtual IUniqueCheckPtr GetUniqueCheck()
+			{
+				return m_pUniqueCheck;
+			}
+			virtual void SetUniqueCheck(IUniqueCheckPtr *pUniqueCheck)
+			{
+				m_pUniqueCheck = pUniqueCheck;
+			}
+
+
+			bool CheckUnique(const CommonLib::CVariant *pVar)
+			{
+				if (!m_pFieldHolder->GetIsUnique())
+					return true;
+				if (m_pUniqueCheck.get())
+					return m_pUniqueCheck->IsExsist(pVar);
+				if(m_pIndex.get())
+					return m_pIndex->IsExsist(pVar);
+				return false; //TO DO error
+			}
 	 protected:
 		IDBTransaction* m_pDBTransactions;
 		TBTree m_tree;
@@ -348,6 +383,7 @@ namespace embDB
 		CommonLib::alloc_t* m_pAlloc;
 		IndexFiledPtr m_pIndex;
 		IFieldStatisticPtr m_pFieldStatistic;
+		IUniqueCheckPtr m_pUniqueCheck;
 		IDBFieldHolderPtr m_pFieldHolder;
 		const sFieldInfo *m_pFieldInfo;
 		TConverTypeToVar m_ConvertTypeToVar;

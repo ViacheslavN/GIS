@@ -42,6 +42,19 @@ namespace embDB
 				return false;
 			}
 			IValueFieldPtr pValueField = m_pTran->GetField(m_pTable->getName().cwstr(), pField->getName().cwstr());
+
+		/*	IUniqueCheckPtr pUniqueCheck =  pValueField->GetUniqueCheck();
+			if (!pUniqueCheck.get())
+			{
+				IndexFiledPtr pIndex =  pValueField->GetIndex();
+				if (pIndex.get() && pIndex->GetType() == itUnique)
+				{
+
+				}
+			}
+			*/
+		
+
 			m_vecInsertFields.push_back(pValueField);
 		}
 

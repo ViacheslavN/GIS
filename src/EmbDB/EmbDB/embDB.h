@@ -357,6 +357,7 @@ namespace embDB
 		virtual double GetScale() const = 0;
 		virtual const CommonLib::CVariant& 	GetDefaultValue() const  = 0;
 		virtual int  GetPrecision() const  = 0;
+		virtual bool GetIsUnique() const = 0;
 	};
 
 

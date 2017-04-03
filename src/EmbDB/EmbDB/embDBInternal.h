@@ -230,6 +230,7 @@ namespace embDB
 	struct ILogger;
 	struct IFieldStatistic;
 	struct IFieldStatisticHolder;
+	struct IUniqueCheck;
 
 	COMMON_LIB_REFPTR_TYPEDEF(IFieldIterator); 
 	COMMON_LIB_REFPTR_TYPEDEF(IIndexPageIterator); 
@@ -247,6 +248,7 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(IDBDatabase); 
 	COMMON_LIB_REFPTR_TYPEDEF(IFieldStatistic);
 	COMMON_LIB_REFPTR_TYPEDEF(IFieldStatisticHolder);
+	COMMON_LIB_REFPTR_TYPEDEF(IUniqueCheck);
 
 	struct IFieldIterator : public CommonLib::AutoRefCounter
 	{
@@ -387,6 +389,17 @@ namespace embDB
 	};
 
 
+	struct IUniqueCheck : public CommonLib::AutoRefCounter
+	{
+		public:
+			IUniqueCheck(){}
+			virtual ~IUniqueCheck(){}
+
+			virtual bool IsExsist(CommonLib::CVariant* pVar) = 0;
+			virtual bool remove(CommonLib::CVariant* pVar) = 0;
+			virtual bool insert(CommonLib::CVariant* pVar) = 0;
+	};
+
 	struct IValueField: public CommonLib::AutoRefCounter
 	{
 	public:
@@ -421,6 +434,9 @@ namespace embDB
 
 		virtual IFieldStatisticPtr GetStatistic() = 0;
 		virtual void SetStatistic(IFieldStatistic *pStatistic) = 0;
+
+		virtual IUniqueCheckPtr GetUniqueCheck() = 0;
+		virtual void SetUniqueCheck(IUniqueCheck *pUniqueCheck) = 0;
 	};
 
 	
