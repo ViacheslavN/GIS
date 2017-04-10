@@ -69,7 +69,6 @@ namespace CommonLib
 			return m_File.Flush();
 		}
 
-
 		virtual uint32 size() const
 		{
 			return (uint32)m_File.getFileSize();
@@ -78,11 +77,11 @@ namespace CommonLib
 		{
 			return m_File.getFileSize();
 		}
-		virtual bool seek(uint32 position, enSeekOffset offset )
+		virtual bool seek(int32 position, enSeekOffset offset )
 		{
 			return m_File.setFilePos(position, offset);
 		}
-		virtual bool seek64(uint64 position, enSeekOffset offset )
+		virtual bool seek64(int64 position, enSeekOffset offset )
 		{
 			return m_File.setFilePos64(position, offset);
 		}

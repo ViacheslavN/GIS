@@ -303,13 +303,14 @@ namespace embDB
 		TIndexFiled() {}
 		virtual ~TIndexFiled() {}
 		virtual indexTypes GetType() const = 0;
-		virtual bool insert (TKeyType* pIndexKey, int64 nOID, TIterator* pFromIter = NULL, TIterator** pRetIter = NULL) = 0;
-		virtual bool update (TKeyType* pOldIndexKey, TKeyType* pNewIndexKey, int64 nOID, TIterator* pFromIter = NULL, TIterator** pRetIter = NULL) = 0;
-		virtual bool remove (TKeyType* pIndexKey, TIterator** pRetIter = NULL) = 0;
+		virtual bool insert (const TKeyType* pIndexKey, int64 nOID, TIterator* pFromIter = NULL, TIterator** pRetIter = NULL) = 0;
+		virtual bool update (const TKeyType* pOldIndexKey, TKeyType* pNewIndexKey, int64 nOID, TIterator* pFromIter = NULL, TIterator** pRetIter = NULL) = 0;
+		virtual bool remove (const TKeyType* pIndexKey, TIterator** pRetIter = NULL) = 0;
 		virtual bool remove (IIndexIterator* pIter ) = 0;
-		virtual TIteratorPtr find(TKeyType* pIndexKey) = 0;
-		virtual TIteratorPtr lower_bound(TKeyType* pIndexKey) = 0;
-		virtual TIteratorPtr upper_bound(TKeyType* pIndexKey) = 0;
+		virtual TIteratorPtr find(const TKeyType* pIndexKey) = 0;
+		virtual TIteratorPtr lower_bound(const TKeyType* pIndexKey) = 0;
+		virtual TIteratorPtr upper_bound(const TKeyType* pIndexKey) = 0;
+		virtual bool IsExsist(const TKeyType* pIndexKey) = 0;
 		virtual bool commit() = 0;
 	};
 	
@@ -395,9 +396,9 @@ namespace embDB
 			IUniqueCheck(){}
 			virtual ~IUniqueCheck(){}
 
-			virtual bool IsExsist(CommonLib::CVariant* pVar) = 0;
-			virtual bool remove(CommonLib::CVariant* pVar) = 0;
-			virtual bool insert(CommonLib::CVariant* pVar) = 0;
+			virtual bool IsExsist(const CommonLib::CVariant* pVar) = 0;
+			virtual bool remove(const CommonLib::CVariant* pVar) = 0;
+			virtual bool insert(const CommonLib::CVariant* pVar) = 0;
 	};
 
 	struct IValueField: public CommonLib::AutoRefCounter

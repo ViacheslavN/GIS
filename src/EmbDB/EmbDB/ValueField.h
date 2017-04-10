@@ -360,11 +360,11 @@ namespace embDB
 			{
 				return m_pUniqueCheck;
 			}
-			virtual void SetUniqueCheck(IUniqueCheckPtr *pUniqueCheck)
+			virtual void SetUniqueCheck(IUniqueCheck *pUniqueCheck)
 			{
 				m_pUniqueCheck = pUniqueCheck;
 			}
-
+ 
 
 			bool CheckUnique(const CommonLib::CVariant *pVar)
 			{

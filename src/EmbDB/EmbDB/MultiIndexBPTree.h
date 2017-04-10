@@ -59,7 +59,7 @@ namespace embDB
 
 		virtual indexTypes GetType() const  {return itMultiRegular;}
 
-		virtual bool insert (/*IVariant* pIndexKey*/CommonLib::CVariant *pValue, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		virtual bool insert (/*IVariant* pIndexKey*/const CommonLib::CVariant *pValue, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
 
 			iterator *pFromIterator = NULL;
@@ -87,7 +87,7 @@ namespace embDB
 			}
 			return bRet;
 		}
-		virtual bool update (CommonLib::CVariant* pOldIndexKey, CommonLib::CVariant *pNewIndexKey, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		virtual bool update (const CommonLib::CVariant* pOldIndexKey, CommonLib::CVariant *pNewIndexKey, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
 			//FType val;
 			//pIndexKey->getVal(val);
@@ -95,7 +95,7 @@ namespace embDB
 			return true;
 			 
 		}
-		virtual bool remove (CommonLib::CVariant* pIndexKey, IIndexIterator** pRetIter = NULL)
+		virtual bool remove (const CommonLib::CVariant* pIndexKey, IIndexIterator** pRetIter = NULL)
 		{
 			return true;
 		}
@@ -103,7 +103,7 @@ namespace embDB
 		{
 			return true;
 		}
-		virtual IIndexIteratorPtr find(CommonLib::CVariant* pIndexKey)
+		virtual IIndexIteratorPtr find(const CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -113,7 +113,19 @@ namespace embDB
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
-		virtual IIndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
+
+		virtual bool IsExsist(const CommonLib::CVariant* pIndexKey)
+		{
+
+			FType val;
+			pIndexKey->getVal(val);
+			TIndexTuple index(val, 0);
+
+			typename TBTree::iterator it = this->m_tree.find(m_CompKeyOnly, index);
+			return !it.isNull();
+		}
+
+		virtual IIndexIteratorPtr lower_bound(const CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -123,7 +135,7 @@ namespace embDB
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
-		virtual IIndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
+		virtual IIndexIteratorPtr upper_bound(const CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -135,7 +147,7 @@ namespace embDB
 		}
 
 
-		IIndexIteratorPtr find(CommonLib::CVariant* pIndexKey, int64 nOID)
+		IIndexIteratorPtr find(const CommonLib::CVariant* pIndexKey, int64 nOID)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -145,7 +157,7 @@ namespace embDB
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
-		IIndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey, int64 nOID)
+		IIndexIteratorPtr lower_bound(const CommonLib::CVariant* pIndexKey, int64 nOID)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -155,7 +167,7 @@ namespace embDB
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
-		IIndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey, int64 nOID)
+		IIndexIteratorPtr upper_bound(const CommonLib::CVariant* pIndexKey, int64 nOID)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -165,7 +177,7 @@ namespace embDB
 			TMultiIndexIterator *pIndexIterator = new TMultiIndexIterator(it, this);
 			return IIndexIteratorPtr(pIndexIterator);
 		}
-		bool remove (CommonLib::CVariant* pIndexKey, int64 nOID)
+		bool remove (const CommonLib::CVariant* pIndexKey, int64 nOID)
 		{
 			FType val;
 			pIndexKey->getVal(val);

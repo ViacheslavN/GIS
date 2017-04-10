@@ -28,7 +28,7 @@ namespace embDB
 		~CUniqueIndex(){}
 		virtual indexTypes GetType() const  {return itUnique;}
 
-		virtual bool insert (CommonLib::CVariant* pIndexKey, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		virtual bool insert (const CommonLib::CVariant* pIndexKey, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
 
 			iterator *pFromIterator = NULL;
@@ -54,7 +54,7 @@ namespace embDB
 			}
 			return bRet;
 		}
-		virtual bool update (CommonLib::CVariant* pOldIndexKey, CommonLib::CVariant* pNewIndexKey, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
+		virtual bool update (const CommonLib::CVariant* pOldIndexKey, CommonLib::CVariant* pNewIndexKey, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		{
 			//FType val;
 			//pIndexKey->getVal(val);
@@ -62,15 +62,24 @@ namespace embDB
 			return true;
 
 		}
-		virtual bool remove (CommonLib::CVariant* pIndexKey, IIndexIterator** pRetIter = NULL)
+		virtual bool remove (const CommonLib::CVariant* pIndexKey, IIndexIterator** pRetIter = NULL)
 		{
 			return true;
 		}
-		virtual bool remove (IIndexIterator* pIter )
+		virtual bool remove ( IIndexIterator* pIter )
 		{
 			return true;
 		}
-		virtual IIndexIteratorPtr find(CommonLib::CVariant* pIndexKey)
+
+		virtual bool IsExsist(const CommonLib::CVariant* pIndexKey)
+		{
+			FType val;
+			pIndexKey->getVal(val);
+			typename TBTree::iterator it = this->m_tree.find(val);
+			return !it.isNull();
+		}
+
+		virtual IIndexIteratorPtr find(const CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -78,7 +87,7 @@ namespace embDB
 			IndexIterator *pIndexIterator = new IndexIterator(it, this); // TO DO use
 			return IIndexIteratorPtr(pIndexIterator);
 		}
-		virtual IIndexIteratorPtr lower_bound(CommonLib::CVariant* pIndexKey)
+		virtual IIndexIteratorPtr lower_bound(const CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -87,7 +96,7 @@ namespace embDB
 			IndexIterator *pIndexIterator = new IndexIterator(it, this);  // TO DO use
 			return IIndexIteratorPtr(pIndexIterator);
 		}
-		virtual IIndexIteratorPtr upper_bound(CommonLib::CVariant* pIndexKey)
+		virtual IIndexIteratorPtr upper_bound(const CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
@@ -96,7 +105,7 @@ namespace embDB
 			return IIndexIteratorPtr(pIndexIterator);
 		}
 
-		bool remove (CommonLib::CVariant* pIndexKey)
+		bool remove (const CommonLib::CVariant* pIndexKey)
 		{
 			FType val;
 			pIndexKey->getVal(val);
