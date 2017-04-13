@@ -259,6 +259,12 @@
     <Filter Include="DB\Fields\Statistic">
       <UniqueIdentifier>{3230f4fd-5978-491d-b61d-e229a35c9f20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\BPTrees\BTreePlusv3">
+      <UniqueIdentifier>{d34237d0-6a12-4965-9e11-e3e557efe342}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\BPTrees\BTreePlusv3\BPSetv3">
+      <UniqueIdentifier>{785e0bc4-7628-4827-ad37-2c50171cc212}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -1439,6 +1445,18 @@
     </ClInclude>
     <ClInclude Include="CreateStatistic.h">
       <Filter>DB\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BPTreeLeafNodeSetV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BPTreeNodeSetV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

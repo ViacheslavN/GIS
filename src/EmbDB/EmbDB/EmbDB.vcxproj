@@ -529,6 +529,8 @@
     <ClInclude Include="BPTreeSPLeafNodeMap.h" />
     <ClInclude Include="BPVector.h" />
     <ClInclude Include="BPVectorNoPod.h" />
+    <ClInclude Include="BTreePlusv3\BPTreeLeafNodeSetV3.h" />
+    <ClInclude Include="BTreePlusv3\BPTreeNodeSetV3.h" />
     <ClInclude Include="CacheLRU.h" />
     <ClInclude Include="CacheLRU_2Q.h" />
     <ClInclude Include="CacheLRU_2Q_Ptr.h" />
