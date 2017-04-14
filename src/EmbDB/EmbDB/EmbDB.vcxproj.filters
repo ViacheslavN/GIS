@@ -1458,6 +1458,15 @@
     <ClInclude Include="BTreePlusv3\BPTreeNodeSetV3.h">
       <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BPLeafNodeSetSimpleCompressorV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

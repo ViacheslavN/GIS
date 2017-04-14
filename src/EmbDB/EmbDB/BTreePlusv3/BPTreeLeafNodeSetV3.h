@@ -22,7 +22,7 @@ namespace embDB
 		typedef typename _TCompressor::TLeafCompressorParams TLeafCompressorParams;
 
 		BPTreeLeafNodeSetv3Base(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
-			/*m_leafKeyMemSet(pAlloc),*/ m_Compressor(pAlloc, m_leafKeyMemSet), m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti),
+			/*m_leafKeyMemSet(pAlloc),*/ m_Compressor(pAlloc, m_leafKeyMemSet, nPageSize), m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti),
 			m_pAlloc(pAlloc), m_bMinSplit(false), m_nPageSize(nPageSize)
 
 		{
@@ -206,7 +206,7 @@ namespace embDB
 
 
 
-		int  SplitIn(BPTreeLeafNodeSetv2Base *pNode, TKey* pSplitKey)
+		int  SplitIn(BPTreeLeafNodeSetv3Base *pNode, TKey* pSplitKey)
 		{
 
 			TLeafMemSet& newNodeMemSet = pNode->m_leafKeyMemSet;
@@ -232,7 +232,7 @@ namespace embDB
 		}
 
 
-		int  SplitIn(BPTreeLeafNodeSetv2Base *pLeftNode, BPTreeLeafNodeSetv2Base *pRightNode, TKey* pSplitKey)
+		int  SplitIn(BPTreeLeafNodeSetv3Base *pLeftNode, BPTreeLeafNodeSetv3Base *pRightNode, TKey* pSplitKey)
 		{
 
 			TVector& leftNodeMemSet = pLeftNode->m_leafKeyMemSet;
@@ -292,7 +292,7 @@ namespace embDB
 		}
 
 
-		bool UnionWith(BPTreeLeafNodeSetv2Base* pNode, bool bLeft,
+		bool UnionWith(BPTreeLeafNodeSetv3Base* pNode, bool bLeft,
 			int *nCheckIndex = 0)
 		{
 			UnionVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft, nCheckIndex);
@@ -330,7 +330,7 @@ namespace embDB
 			return true;
 		}
 
-		bool AlignmentOf(BPTreeLeafNodeSetv2Base* pNode, bool bFromLeft)
+		bool AlignmentOf(BPTreeLeafNodeSetv3Base* pNode, bool bFromLeft)
 		{
 			TVector& nodeMemset = pNode->m_leafKeyMemSet;
 			TCompressor& pNodeComp = pNode->m_Compressor;
@@ -358,12 +358,12 @@ namespace embDB
 			m_pCompressor = nullptr;
 
 		}
-		bool IsHaveUnion(BPTreeLeafNodeSetv2Base *pNode)
+		bool IsHaveUnion(BPTreeLeafNodeSetv3Base *pNode)
 		{
 
 			return this->m_Compressor.IsHaveUnion(pNode.m_Compressor);
 		}
-		bool IsHaveAlignment(BPTreeLeafNodeSetv2Base *pNode)
+		bool IsHaveAlignment(BPTreeLeafNodeSetv3Base *pNode)
 		{
 			return this->m_Compressor.IsHaveAlignment(pNode.m_Compressor);
 		}
@@ -390,11 +390,11 @@ namespace embDB
 
 	template<typename _TKey,
 		class _Transaction, class _TCompressor>
-		class BPTreeLeafNodeSetv2 : public  BPTreeLeafNodeSetv2Base <_TKey, _Transaction, _TCompressor>
+		class BPTreeLeafNodeSetv3 : public  BPTreeLeafNodeSetv3Base <_TKey, _Transaction, _TCompressor>
 	{
 	public:
 
-		typedef BPTreeLeafNodeSetv2Base <_TKey, _Transaction, _TCompressor> TBase;
+		typedef BPTreeLeafNodeSetv3Base <_TKey, _Transaction, _TCompressor> TBase;
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;
 		typedef typename TBase::Transaction Transaction;
@@ -404,13 +404,15 @@ namespace embDB
 		typedef typename TBase::TLeafMemSet TLeafMemSet;
 		typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
 
-		BPTreeLeafNodeSetv2(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) : TBase(pAlloc, bMulti, nPageSize)
+		BPTreeLeafNodeSetv3(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
+			TBase(pAlloc, bMulti, nPageSize), m_Compressor(pAlloc, this->m_nPageSize - 2 * sizeof(TLink), this->m_leafKeyMemSet)
 		{}
 
 
 		bool init(TLeafCompressorParams *pParams = NULL, Transaction* pTransaction = NULL)
 		{
 		//	this->m_pCompressor = new TCompressor(this->m_nPageSize - 2 * sizeof(TLink), pTransaction, this->m_pAlloc, pParams, &this->m_leafKeyMemSet);
+			this->m_Compressor.init(pParams, pTransaction);
 			return true;
 		}
 
@@ -425,18 +427,17 @@ namespace embDB
 		{
 			stream.read(this->m_nNext);
 			stream.read(this->m_nPrev);
-			return this->m_pCompressor->Load(this->m_leafKeyMemSet, stream);
+			return this->m_Compressor.Load(this->m_leafKeyMemSet, stream);
 		}
 
 
-		bool IsHaveUnion(BPTreeLeafNodeSetv2 *pNode)
-		{
+		bool IsUnion(BPTreeLeafNodeSetv3 *pNode)		{
 
-			return this->m_pCompressor.IsHaveUnion(pNode->m_Compressor);
+			return this->m_Compressor.IsUnion(pNode->m_Compressor);
 		}
-		bool IsHaveAlignment(BPTreeLeafNodeSetv2 *pNode)
+		bool IsAlignment(BPTreeLeafNodeSetv3 *pNode)
 		{
-			return this->m_pCompressor.IsHaveAlignment(pNode->m_Compressor);
+			return this->m_Compressor.IsAlignment(pNode->m_Compressor);
 		}
 	};
 
