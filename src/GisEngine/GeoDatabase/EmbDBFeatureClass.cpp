@@ -261,7 +261,7 @@ namespace GisEngine
 		if(!pEmbDBShapeField.get())
 			return false;
 
-		embDB::IDBShapeFieldHandler *pShapeValueField = dynamic_cast<embDB::IDBShapeFieldHandler *>(pEmbDBShapeField.get());
+		embDB::IDBShapeFieldHolder *pShapeValueField = dynamic_cast<embDB::IDBShapeFieldHolder *>(pEmbDBShapeField.get());
 		if(!pShapeValueField)
 			return false;
 
