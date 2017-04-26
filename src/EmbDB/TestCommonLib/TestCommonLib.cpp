@@ -51,7 +51,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 
 
-
+	testAlloc();
 	CommonLib::CBitsVector bitVectors;
 
 	bool bBit = false;
