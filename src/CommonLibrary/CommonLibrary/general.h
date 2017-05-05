@@ -40,6 +40,8 @@
 #include <map>
 #include <memory>
 #include <algorithm>
+#include <limits>
+#include <functional>
 
 #include "GeneralTypes.h"
 #define  _CHECK_MEM

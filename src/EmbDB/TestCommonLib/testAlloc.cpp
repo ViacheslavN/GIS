@@ -127,20 +127,22 @@ private:
 
 };    //    end of class Allocator 
 
-typedef Allocator<int> TAlloc;
-typedef std::vector<int, TAlloc> TVector;
+typedef Allocator<int64> TAlloc;
+typedef std::vector<int64, TAlloc> TVector;
 
 void testAlloc ()
 {
 	CommonLib::simple_alloc_t alloc;
-
+	int64 nSize = std::numeric_limits<int64>::max() / sizeof(__int64);
 	TAlloc vecalloc(&alloc);
+
+	int64 nSize1 = vecalloc.max_size();
 	{
 		TVector * pv = new TVector( TAlloc() );
 		pv->push_back(1);
 	 
 
-		TVector v(TAlloc());
+		TVector v{ (TAlloc(&alloc)) };
 		v.push_back(1);
 		 
 		/*v.push_back(1);

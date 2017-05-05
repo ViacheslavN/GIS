@@ -5,6 +5,7 @@
 #include "../embDBInternal.h"
 #include "../BTBaseNode.h"
 #include "../CompressorParams.h"
+#include "../STLAlloc.h"
 namespace embDB
 {
 	template<typename _TKey,
@@ -17,12 +18,13 @@ namespace embDB
 		typedef _TKey TKey;
 		typedef _Transaction Transaction;
 		typedef _TCompressor TCompressor;
-		typedef std::vector<TKey> TVector;
+		typedef STLAllocator<TKey> TAlloc;
+		typedef std::vector<TKey, TAlloc> TLeafMemSet;
 
 		typedef typename _TCompressor::TLeafCompressorParams TLeafCompressorParams;
 
 		BPTreeLeafNodeSetv3Base(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
-			/*m_leafKeyMemSet(pAlloc),*/ m_Compressor(pAlloc, m_leafKeyMemSet, nPageSize), m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti),
+			m_leafKeyMemSet(TAlloc(pAlloc)), m_Compressor(nPageSize, pAlloc), m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti),
 			m_pAlloc(pAlloc), m_bMinSplit(false), m_nPageSize(nPageSize)
 
 		{
@@ -33,7 +35,10 @@ namespace embDB
 			 
 		}
 
-
+		virtual bool init(TLeafCompressorParams *pParams = NULL, Transaction* pTransaction = NULL)
+		{
+			return m_Compressor.init(pParams, pTransaction);
+		}
 
 		virtual bool isLeaf() const { return true; }
 		virtual uint32 size() const
@@ -262,7 +267,7 @@ namespace embDB
 		}
 		uint32 tupleSize() const
 		{
-			return m_pCompressor->tupleSize();
+			return m_Compressor.tupleSize();
 		}
 		const TKey& key(uint32 nIndex) const
 		{
@@ -354,9 +359,7 @@ namespace embDB
 		virtual void clear()
 		{
 			m_leafKeyMemSet.clear();
-			delete m_pCompressor;
-			m_pCompressor = nullptr;
-
+			m_Compressor.clear();
 		}
 		bool IsHaveUnion(BPTreeLeafNodeSetv3Base *pNode)
 		{
@@ -378,7 +381,7 @@ namespace embDB
 
 	public:
 		TCompressor  m_Compressor;
-		TVector m_leafKeyMemSet;
+		TLeafMemSet m_leafKeyMemSet;
 		TLink m_nNext;
 		TLink m_nPrev;
 		bool m_bMulti;
@@ -405,7 +408,7 @@ namespace embDB
 		typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
 
 		BPTreeLeafNodeSetv3(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
-			TBase(pAlloc, bMulti, nPageSize), m_Compressor(pAlloc, this->m_nPageSize - 2 * sizeof(TLink), this->m_leafKeyMemSet)
+			TBase(pAlloc, bMulti, nPageSize) 
 		{}
 
 

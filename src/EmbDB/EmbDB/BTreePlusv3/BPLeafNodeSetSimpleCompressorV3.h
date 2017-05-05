@@ -4,26 +4,35 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/alloc_t.h"
 #include "../CompressorParams.h"
+#include "../STLAlloc.h"
 namespace embDB
 {
 
 	template<typename _TKey>
-	class BPLeafNodeSetSimpleCompressorV2
+	class BPLeafNodeSetSimpleCompressorV3
 	{
 	public:
 		typedef _TKey TKey;
-		typedef  std::vector<TKey> TLeafMemSet;
 		typedef CompressorParamsBaseImp TLeafCompressorParams;
+		typedef STLAllocator<TKey> TAlloc;
+		typedef std::vector<TKey, TAlloc> TLeafMemSet;
 
-		BPLeafNodeSetSimpleCompressorV2(uint32 nPageSize, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL, TLeafMemSet *pLeafMemSet = NULL) : m_nCount(0),
-			m_nPageSize(nPageSize)
+		BPLeafNodeSetSimpleCompressorV3(uint32 nPageSize,  CommonLib::alloc_t *pAlloc = nullptr, TLeafCompressorParams *pParams = nullptr ) : m_nCount(0),
+			m_nPageSize(nPageSize) 
 		{}
 		template<typename _Transactions  >
 		static TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
 		{
 			return new TLeafCompressorParams();
 		}
-		virtual ~BPLeafNodeSetSimpleCompressorV2() {}
+		virtual ~BPLeafNodeSetSimpleCompressorV3() {}
+
+		template<typename _Transactions  >
+		bool  init(TLeafCompressorParams *pParams, _Transactions *pTran)
+		{
+			return true;
+		}
+
 		virtual bool Load(TLeafMemSet& Set, CommonLib::FxMemoryReadStream& stream)
 		{
 			CommonLib::FxMemoryReadStream KeyStreams;
@@ -65,7 +74,7 @@ namespace embDB
 			return true;
 		}
 
-		virtual bool insert(int nIndex, const TKey& key)
+		virtual bool insert(int nIndex,  const TKey& key, const TLeafMemSet& vector)
 		{
 			m_nCount++;
 			return true;
@@ -80,11 +89,11 @@ namespace embDB
 			m_nCount = Set.size();
 			return true;
 		}
-		virtual bool update(int nIndex, const TKey& key)
+		virtual bool update(int nIndex, const TKey& key, const TLeafMemSet& vector)
 		{
 			return true;
 		}
-		virtual bool remove(int nIndex, const TKey& key)
+		virtual bool remove(int nIndex, const TKey& key, const TLeafMemSet& vector)
 		{
 			m_nCount--;
 			return true;
@@ -113,14 +122,14 @@ namespace embDB
 		{
 			return  sizeof(TKey);
 		}
-		void SplitIn(uint32 nBegin, uint32 nEnd, BPLeafNodeSetSimpleCompressorV2 *pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPLeafNodeSetSimpleCompressorV3 *pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
 		{
 			uint32 nSize = nEnd - nBegin;
 
 			m_nCount -= nSize;
 			pCompressor->m_nCount += nSize;
 		}
-		bool IsHaveUnion(BPLeafNodeSetSimpleCompressorV2 *pCompressor) const
+		bool IsHaveUnion(BPLeafNodeSetSimpleCompressorV3 *pCompressor) const
 		{
 			uint32 nNoCompSize = m_nCount * (sizeof(TKey));
 			uint32 nNoCompSizeUnion = pCompressor->m_nCount * (sizeof(TKey));
@@ -129,7 +138,7 @@ namespace embDB
 
 
 		}
-		bool IsHaveAlignment(BPLeafNodeSetSimpleCompressorV2 *pCompressor) const
+		bool IsHaveAlignment(BPLeafNodeSetSimpleCompressorV3 *pCompressor) const
 		{
 			uint32 nNoCompSize = m_nCount * (sizeof(TKey));
 			return nNoCompSize < (m_nPageSize - headSize());
@@ -138,6 +147,11 @@ namespace embDB
 		{
 			uint32 nNoCompSize = m_nCount * sizeof(TKey);
 			return nNoCompSize < (m_nPageSize - headSize()) / 2;
+		}
+
+		void clear()
+		{
+			m_nCount = 0;
 		}
 	private:
 		uint32 m_nCount;
