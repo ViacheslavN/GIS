@@ -243,12 +243,10 @@ namespace embDB
 			m_pBaseNode->setFlags(nFlag, bSet);
 		}
 		template<class TComp>
-		TLink findNodeInsert(const TComp& comp, const TKey& key)
+		TLink findNodeInsert(const TComp& comp, const TKey& key, int32& nIndex)
 		{
 			assert(!m_bIsLeaf);
-			int32 nIndex = -1;
-			return m_InnerNode.upper_bound(comp, key, nIndex);
-
+			return m_InnerNode.findNodeInsert(comp, key, nIndex);
 		}
 		/*TLink findNext(const TKey& key , int32& nIndex)
 		{

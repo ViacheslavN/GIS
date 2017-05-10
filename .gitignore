@@ -46,6 +46,7 @@ Thumbs.db
 *.idb
 *.map
 *.exp
+*.res
 *.opendb*.lastbuildstate
 *.unsuccessfulbuild
 [Bb]in

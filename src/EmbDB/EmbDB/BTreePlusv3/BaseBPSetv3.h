@@ -320,7 +320,13 @@ namespace embDB
 			if (bIsRoot)
 				pNode->setFlags(ROOT_NODE, true);
 			else
+			{
+				if (m_Cache.size() > m_nChacheSize)
+				{
+					m_Cache.remove_back();
+				}
 				m_Cache.AddElem(pNode->m_nPageAddr, pNode);
+			}
 			return TBTreeNodePtr(pNode);
 		}
 
@@ -338,15 +344,25 @@ namespace embDB
 			//	pNode->PreSave(m_pTransaction);
 			if (pNode->isLeaf())
 			{
-				CheckLeafNode(pNode, true, NULL);
+				CheckLeafNode(pNode, true);
 			}
 			else if (pNode->isNeedSplit())
 			{
-				splitInnerNode(pNode);
+				TBTreeNodePtr pParent = getParentNode(pNode);
+				splitInnerNode(pNode, pParent);
 			}
 		}
 
-
+		TBTreeNodePtr getParentNode(TBTreeNode *pNode)
+		{
+			TBTreeNodePtr pParent = pNode->parentNodePtr();
+			if (!pParent.get())
+			{
+				pParent = getNode(pNode->parentAddr());
+				pNode->setParent(pParent, pNode->foundIndex());
+			}
+			return pParent;
+		}
 
 		TBTreeNodePtr getNode(TLink nAddr, bool bIsRoot = false, bool bNotMove = false, bool bCheckCache = false)
 		{
@@ -377,7 +393,7 @@ namespace embDB
 				{
 					if (m_Cache.size() > m_nChacheSize)
 					{
-						TBTreeNodePtr pDelNode = m_Cache.remove_back();
+						m_Cache.remove_back();
 					/*	if (pDelNode)
 						{
 							if (pDelNode->getFlags() & CHANGE_NODE)
@@ -400,17 +416,14 @@ namespace embDB
 		}
 
 
-		bool CheckLeafNode(TBTreeNode *pNode, bool bPreSave, int *pInIndex = NULL)
-		{
-
-			return true;
-		}
-
-		bool splitInnerNode(TBTreeNode *pInNode)
-		{
-
-			return true;
-		}
+		void CheckLeafNode(TBTreeNode* pNode, bool bPreSave);
+		void TransformRootToInner();
+		void SplitRootInnerNode();
+		void SetParentInChildCacheOnly(TBTreeNodePtr& pNode);
+		int splitLeafNode(TBTreeNode *pNode, TBTreeNode *pNewNode, TBTreeNodePtr& pParentNode);
+		void SetParentNext(TBTreeNode *pNode, TBTreeNode* pNodeNext);
+		void splitInnerNode(TBTreeNode *pInNode, TBTreeNodePtr& pParentNode);
+	
 
 		TBTreeNodePtr findLeafNodeForInsert(const TKey& key);
 		bool insert(const TKey& key);

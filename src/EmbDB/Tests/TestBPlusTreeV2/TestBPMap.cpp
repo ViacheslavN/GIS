@@ -351,7 +351,7 @@ void testBPTreeMapImpl (int64 nCount, size_t nPageSize, int32 nCacheStorageSize,
 
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran1.data", &storage, 1);
 			tran.begin();
-			insertINBTreeMap <TBtree, TTran,  TKey, TValue>(nCacheBPTreeSize, nCount, 0, nStep, &tran, alloc, nTreeRootPage,  bCheckCRC);
+			insertINBTreeMap <TBtree, TTran,  TKey, TValue>(nCacheBPTreeSize, 0, nCount, nStep, &tran, alloc, nTreeRootPage,  bCheckCRC);
 			std::cout << "File Size " << storage.getFileSize() <<	std::endl;
 			storage.close();
 		}
@@ -462,5 +462,5 @@ void TestBRteeMap()
 	int64 nCount = 1000000;
 		size_t nPageSize = 8192;
 
-	testBPTreeMapImpl<TBInt64Map,  embDB::CTransaction, int64, int64>(nCount, nPageSize, 50, 2, false);
+	testBPTreeMapImpl<TBInt64Map,  embDB::CTransaction, int64, int64>(nCount, nPageSize, 50, 50, false);
 }

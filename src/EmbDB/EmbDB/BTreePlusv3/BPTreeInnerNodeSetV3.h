@@ -78,26 +78,53 @@ namespace embDB
 		}
 
 		template<class TComp>
-		TLink upper_bound(const TComp& comp, const TKey& key, int32& nIndex)
+		TLink findNodeInsert(const TComp& comp, const TKey& key, int32& nIndex)
 		{
-			nIndex = m_innerKeyMemSet.upper_bound(key, comp);
-			if (nIndex == -1)
+			nIndex = -1;
+			if (!m_bMulti)
+			{		
+				return lower_bound(comp, key, nIndex);
+			}
+
+			auto it = std::upper_bound(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), key, comp);
+			if (it == m_innerKeyMemSet.end())
 				return -1;
-			if (nIndex == 0) //меньше всех ключей
+			if (it == m_innerKeyMemSet.begin()) //меньше всех ключей
 			{
 				nIndex = -1;
 				return m_nLess;
 			}
-			nIndex--;
+			--it;
+			nIndex = std::distance(m_innerKeyMemSet.begin(), it);
+			return m_innerLinkMemSet[nIndex];
+		}
+
+		template<class TComp>
+		TLink upper_bound(const TComp& comp, const TKey& key, int32& nIndex)
+		{
+			auto it = std::upper_bound(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), key, comp);
+			if (it == m_innerKeyMemSet.end())
+				return -1;
+			if (it == m_innerKeyMemSet.begin()) //меньше всех ключей
+			{
+				nIndex = -1;
+				return m_nLess;
+			}
+			nIndex = std::distance(m_innerKeyMemSet.begin(), it);
 			return m_innerLinkMemSet[nIndex];
 		}
 		template<class TComp>
-		TLink lower_bound(const TComp& comp, const TKey& key, short& nType, int32& nIndex)
+		TLink lower_bound(const TComp& comp, const TKey& key, int32& nIndex)
 		{
-			nIndex = m_innerKeyMemSet.lower_bound(key, nType, comp);
-			if (nIndex == -1)
-				return -1;
-			if (nType == FIND_KEY)
+			auto it = std::lower_bound(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), key, comp);
+			if (it == m_innerKeyMemSet.end())
+			{
+				nIndex = m_innerKeyMemSet.size() - 1;
+				return  m_innerLinkMemSet[nIndex];
+			}
+
+			nIndex = std::distance(m_innerKeyMemSet.begin(), it);
+			if (comp.EQ(key, m_innerKeyMemSet[nIndex]))
 				return m_innerLinkMemSet[nIndex];
 
 			if (nIndex == 0) //меньше всех ключей
@@ -105,9 +132,6 @@ namespace embDB
 				nIndex = -1;
 				return m_nLess;
 			}
-			//	if(nIndex == m_innerKeyMemSet.size())
-			nIndex--;
-			//nIndex--;
 			return m_innerLinkMemSet[nIndex];
 		}
 
@@ -124,28 +148,28 @@ namespace embDB
 			}
 			else
 			{
-				short nType = 0;
+				
 				if (m_bMulti)
-					nIndex = m_innerKeyMemSet.upper_bound(key, comp);
+				{
+					auto it = std::upper_bound(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), key, comp);
+					nIndex = std::distance(m_innerKeyMemSet.begin(), it);
+					m_innerKeyMemSet.insert(it, key);
+				}
 				else
 				{
-					nIndex = m_innerKeyMemSet.lower_bound(key, nType, comp);
-					if (nType == FIND_KEY)
-					{
-						//TO LOGs
+					auto it = std::lower_bound(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), key, comp);
+					if (it != m_innerKeyMemSet.end() && comp.EQ(key, (*it)))
 						return false;
-					}
+
+					nIndex = std::distance(m_innerKeyMemSet.begin(), it);
+					m_innerKeyMemSet.insert(it, key);
+					
 				}
 
-
-				m_innerKeyMemSet.insert(key, nIndex);
-				m_innerLinkMemSet.insert(nLink, nIndex);
+				m_innerLinkMemSet.insert(m_innerLinkMemSet.begin() + nIndex, nLink);
+			
 			}
-
-
-
-			bool bRet = m_Compressor.insert(nIndex, key, nLink);
-
+			bool bRet = m_Compressor.insert(nIndex, key, nLink, m_innerKeyMemSet, m_innerLinkMemSet);
 			return bRet ? nIndex : -1;
 		}
 		template<class TComp>
@@ -216,26 +240,26 @@ namespace embDB
 				newNodeKeySet.push_back(m_innerKeyMemSet[nSplitIndex]);
 				newNodeLinkSet.push_back(m_innerLinkMemSet[nSplitIndex]);
 
-				m_Compressor.remove(nSplitIndex, m_innerKeyMemSet[nSplitIndex], m_innerLinkMemSet[nSplitIndex]);
-				pNewNodeComp.insert(0, newNodeKeySet[0], newNodeLinkSet[0]);
+				m_Compressor.remove(nSplitIndex, m_innerKeyMemSet[nSplitIndex], m_innerLinkMemSet[nSplitIndex], m_innerKeyMemSet, m_innerLinkMemSet);
+				pNewNodeComp.insert(0, newNodeKeySet[0], newNodeLinkSet[0], newNodeKeySet, newNodeLinkSet);
 				while (true)
 				{
 
 					if (!this->isNeedSplit())
 						break;
 
-					m_Compressor.remove(nLessIndex, m_innerKeyMemSet[nLessIndex], m_innerLinkMemSet[nLessIndex]);
+					m_Compressor.remove(nLessIndex, m_innerKeyMemSet[nLessIndex], m_innerLinkMemSet[nLessIndex], m_innerKeyMemSet, m_innerLinkMemSet);
 
 					newNodeKeySet.push_back(m_innerKeyMemSet[nLessIndex]);
 					newNodeLinkSet.push_back(m_innerLinkMemSet[nLessIndex]);
 
-					pNewNodeComp.insert(newNodeKeySet.size() - 1, newNodeKeySet.back(), newNodeLinkSet.back());
+					pNewNodeComp.insert(newNodeKeySet.size() - 1, newNodeKeySet.back(), newNodeLinkSet.back(), newNodeKeySet, newNodeLinkSet);
 
 					--nLessIndex;
 				}
 				assert(nLessIndex > 0);
 
-				m_Compressor.remove(nLessIndex, m_innerKeyMemSet[nLessIndex], m_innerLinkMemSet[nLessIndex]);
+				m_Compressor.remove(nLessIndex, m_innerKeyMemSet[nLessIndex], m_innerLinkMemSet[nLessIndex], m_innerKeyMemSet, m_innerLinkMemSet);
 
 				*pSplitKey = m_innerKeyMemSet[nLessIndex];
 				pNode->m_nLess = m_innerLinkMemSet[nLessIndex];
@@ -249,8 +273,8 @@ namespace embDB
 			{
 				uint32 nSize = m_innerKeyMemSet.size() / 2;
 
-				newNodeKeySet.copy(m_innerKeyMemSet, 0, nSize + 1, m_innerKeyMemSet.size());
-				newNodeLinkSet.copy(m_innerLinkMemSet, 0, nSize + 1, m_innerLinkMemSet.size());
+				newNodeKeySet.insert(newNodeKeySet.begin(), m_innerKeyMemSet.begin()+ nSize + 1, m_innerKeyMemSet.end());
+				newNodeLinkSet.insert(newNodeLinkSet.begin(), m_innerLinkMemSet.begin() + nSize + 1, m_innerLinkMemSet.end());
 
 				m_Compressor.SplitIn(nSize + 1, m_innerKeyMemSet.size(), pNewNodeComp);
 
@@ -260,7 +284,7 @@ namespace embDB
 				*pSplitKey = m_innerKeyMemSet[nNewSize];
 				pNode->m_nLess = m_innerLinkMemSet[nNewSize];
 
-				m_Compressor.remove(nNewSize, m_innerKeyMemSet[nNewSize], m_innerLinkMemSet[nNewSize]);
+				m_Compressor.remove(nNewSize, m_innerKeyMemSet[nNewSize], m_innerLinkMemSet[nNewSize], m_innerKeyMemSet, m_innerLinkMemSet);
 
 
 				assert(pNode->m_nLess != -1);
@@ -283,26 +307,26 @@ namespace embDB
 
 			TKeyMemSet& LeftKeySet = pLeftNode->m_innerKeyMemSet;
 			TLinkMemSet& LeftLinkSet = pLeftNode->m_innerLinkMemSet;
-			TCompressor* pLeftNodeComp = pLeftNode->m_pCompressor;
+			TCompressor& pLeftNodeComp = pLeftNode->m_Compressor;
 
 			TKeyMemSet& RightKeySet = pRightNode->m_innerKeyMemSet;
 			TLinkMemSet& RightLinkSet = pRightNode->m_innerLinkMemSet;
-			TCompressor& pRightNodeComp = pRightNode->m_pCompressor;
+			TCompressor& pRightNodeComp = pRightNode->m_Compressor;
 
 			int nSize = m_innerKeyMemSet.size() / 2;
 
-			LeftKeySet.copy(m_innerKeyMemSet, 0, 0, nSize);
-			LeftLinkSet.copy(m_innerLinkMemSet, 0, 0, nSize);
+			LeftKeySet.insert(LeftKeySet.begin(), m_innerKeyMemSet.begin(), m_innerKeyMemSet.begin() + nSize);
+			LeftLinkSet.insert(LeftLinkSet.begin(), m_innerLinkMemSet.begin(), m_innerLinkMemSet.begin() + nSize);
 			pLeftNode->m_nLess = m_nLess;
 
-			pLeftNodeComp->recalc(LeftKeySet, LeftLinkSet);
+			pLeftNodeComp.recalc(LeftKeySet, LeftLinkSet);
 
 			*pSplitKey = m_innerKeyMemSet[nSize];
 			pRightNode->m_nLess = m_innerLinkMemSet[nSize];
 
 
-			RightKeySet.copy(m_innerKeyMemSet, 0, nSize + 1, m_innerKeyMemSet.size());
-			RightLinkSet.copy(m_innerLinkMemSet, 0, nSize + 1, m_innerKeyMemSet.size());
+			RightKeySet.insert(RightKeySet.begin(), m_innerKeyMemSet.begin() + nSize, m_innerKeyMemSet.end());
+			RightLinkSet.insert(RightLinkSet.begin(), m_innerLinkMemSet.begin() + nSize, m_innerLinkMemSet.end());
 			pRightNodeComp.recalc(RightKeySet, RightLinkSet);
 
 

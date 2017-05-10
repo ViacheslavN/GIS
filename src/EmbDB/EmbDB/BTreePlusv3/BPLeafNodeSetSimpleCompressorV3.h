@@ -122,23 +122,23 @@ namespace embDB
 		{
 			return  sizeof(TKey);
 		}
-		void SplitIn(uint32 nBegin, uint32 nEnd, BPLeafNodeSetSimpleCompressorV3 *pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
+		void SplitIn(uint32 nBegin, uint32 nEnd, BPLeafNodeSetSimpleCompressorV3& pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
 		{
 			uint32 nSize = nEnd - nBegin;
 
 			m_nCount -= nSize;
-			pCompressor->m_nCount += nSize;
+			pCompressor.m_nCount += nSize;
 		}
-		bool IsHaveUnion(BPLeafNodeSetSimpleCompressorV3 *pCompressor) const
+		bool IsHaveUnion(BPLeafNodeSetSimpleCompressorV3 &pCompressor) const
 		{
 			uint32 nNoCompSize = m_nCount * (sizeof(TKey));
-			uint32 nNoCompSizeUnion = pCompressor->m_nCount * (sizeof(TKey));
+			uint32 nNoCompSizeUnion = pCompressor.m_nCount * (sizeof(TKey));
 
 			return (nNoCompSize + nNoCompSizeUnion) < (m_nPageSize - headSize());
 
 
 		}
-		bool IsHaveAlignment(BPLeafNodeSetSimpleCompressorV3 *pCompressor) const
+		bool IsHaveAlignment(BPLeafNodeSetSimpleCompressorV3 &pCompressor) const
 		{
 			uint32 nNoCompSize = m_nCount * (sizeof(TKey));
 			return nNoCompSize < (m_nPageSize - headSize());

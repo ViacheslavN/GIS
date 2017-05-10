@@ -24,7 +24,7 @@ namespace embDB
 		typedef typename _TCompressor::TLeafCompressorParams TLeafCompressorParams;
 
 		BPTreeLeafNodeSetv3Base(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
-			m_leafKeyMemSet(TAlloc(pAlloc)), m_Compressor(nPageSize, pAlloc), m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti),
+			m_leafKeyMemSet(TAlloc(pAlloc)), m_Compressor(nPageSize - 2*sizeof(TLink) , pAlloc), m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti),
 			m_pAlloc(pAlloc), m_bMinSplit(false), m_nPageSize(nPageSize)
 
 		{
@@ -105,7 +105,7 @@ namespace embDB
 			int32 nIndex = 0;
 			if (!insertImp(comp, key, nIndex, nInsertLeafIndex))
 				return -1;
-			if (!m_Compressor.insert(nIndex, key))
+			if (!m_Compressor.insert(nIndex, key, m_leafKeyMemSet))
 				return -1;
 			return nIndex;
 		}
@@ -220,10 +220,10 @@ namespace embDB
 
 			if (m_bMinSplit)
 			{
-				m_pCompressor->remove(m_leafKeyMemSet.size() - 1, m_leafKeyMemSet.back());
+				m_Compressor.remove(m_leafKeyMemSet.size() - 1, m_leafKeyMemSet.back(), m_leafKeyMemSet);
 				int nSplitIndex = SplitOne(m_leafKeyMemSet, newNodeMemSet, pSplitKey);
 
-				NewNodeComp.insert(0, newNodeMemSet[0]);
+				NewNodeComp.insert(0, newNodeMemSet[0], newNodeMemSet);
 				return nSplitIndex;
 			}
 			else
@@ -240,11 +240,11 @@ namespace embDB
 		int  SplitIn(BPTreeLeafNodeSetv3Base *pLeftNode, BPTreeLeafNodeSetv3Base *pRightNode, TKey* pSplitKey)
 		{
 
-			TVector& leftNodeMemSet = pLeftNode->m_leafKeyMemSet;
-			TCompressor& pleftNodeComp = pLeftNode->m_pCompressor;
+			TLeafMemSet& leftNodeMemSet = pLeftNode->m_leafKeyMemSet;
+			TCompressor& pleftNodeComp = pLeftNode->m_Compressor;
 
-			TVector& rightNodeMemSet = pRightNode->m_leafKeyMemSet;
-			TCompressor& pRightNodeComp = pRightNode->m_pCompressor;
+			TLeafMemSet& rightNodeMemSet = pRightNode->m_leafKeyMemSet;
+			TCompressor& pRightNodeComp = pRightNode->m_Compressor;
 
 
 			uint32 nSize = m_leafKeyMemSet.size() / 2;
@@ -253,7 +253,7 @@ namespace embDB
 				*pSplitKey = m_leafKeyMemSet[nSize];
 
 			SplitInVec(m_leafKeyMemSet, leftNodeMemSet, 0, nSize);
-			SplitInVec(m_leafKeyMemSet, rightNodeMemSet, nSize, m_leafKeyMemSet.size());
+			SplitInVec(m_leafKeyMemSet, rightNodeMemSet, nSize, m_leafKeyMemSet.size() - nSize);
 
 			pleftNodeComp.recalc(leftNodeMemSet);
 			pRightNodeComp.recalc(rightNodeMemSet);

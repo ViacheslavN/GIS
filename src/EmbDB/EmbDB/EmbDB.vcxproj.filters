@@ -1500,6 +1500,18 @@
     <ClInclude Include="BTreePlusv3\BaseBPSet3Insert.h">
       <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BaseBPSet3Delete.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BaseBPSet3Search.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
