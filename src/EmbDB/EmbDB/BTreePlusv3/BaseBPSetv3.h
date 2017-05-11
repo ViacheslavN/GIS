@@ -364,7 +364,7 @@ namespace embDB
 			return pParent;
 		}
 
-		TBTreeNodePtr getNode(TLink nAddr, bool bIsRoot = false, bool bNotMove = false, bool bCheckCache = false)
+		TBTreeNodePtr getNode(TLink nAddr, bool bNotMove = false, bool bCheckCache = true)
 		{
 
 			if (nAddr == -1)
@@ -382,40 +382,22 @@ namespace embDB
 				{
 					return TBTreeNodePtr(NULL);
 				}
-				pBNode = CreateNode(nAddr, false);//new TBTreeNode(-1, m_pAlloc, nAddr, m_bMulti, false, m_bCheckCRC32,  m_InnerCompParams.get(),  m_LeafCompParams.get());
+				pBNode = CreateNode(nAddr, false);
 				if (!pBNode->LoadFromPage(pFilePage.get(), m_pTransaction))
-				{
-				 
 					return TBTreeNodePtr(nullptr);
-				}
 				pBNode->SetMinSplit(m_bMinSplit);
 				if (bCheckCache)
 				{
 					if (m_Cache.size() > m_nChacheSize)
-					{
 						m_Cache.remove_back();
-					/*	if (pDelNode)
-						{
-							if (pDelNode->getFlags() & CHANGE_NODE)
-							{
-								//pDelNode->Save(m_pTransaction);
-								SaveNode(pDelNode.get());
-								if (m_pBPTreeStatistics)
-									m_pBPTreeStatistics->SaveNode(pDelNode->isLeaf());
-							}
-							delete pDelNode;
-						}*/
-					}
 				}
-				if (bIsRoot)
-					pBNode->setFlags(ROOT_NODE, true);
-				else
-					m_Cache.AddElem(pBNode->m_nPageAddr, pBNode, bNotMove);
+				m_Cache.AddElem(pBNode->m_nPageAddr, pBNode, bNotMove);
 			}
 			return pBNode;
 		}
 
-
+		TBTreeNodePtr findLeafNodeForInsert(const TKey& key);
+		bool insert(const TKey& key);
 		void CheckLeafNode(TBTreeNode* pNode, bool bPreSave);
 		void TransformRootToInner();
 		void SplitRootInnerNode();
@@ -424,9 +406,10 @@ namespace embDB
 		void SetParentNext(TBTreeNode *pNode, TBTreeNode* pNodeNext);
 		void splitInnerNode(TBTreeNode *pInNode, TBTreeNodePtr& pParentNode);
 	
+		
 
-		TBTreeNodePtr findLeafNodeForInsert(const TKey& key);
-		bool insert(const TKey& key);
+		template<class TIterator, class TComparator>
+		TIterator find(const TComparator& comp, const TKey& key, TIterator *pFromIterator = NULL, bool bFindNext = true);
 		
 
 	protected:
@@ -457,4 +440,5 @@ namespace embDB
 #define  BPSETBASE_DECLARATION  TBPlusTreeSetV3<_TKey, _TComp, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode, _TBTreeNode>
 
 #include "BaseBPSet3Insert.h"
+#include "BaseBPSet3Search.h"
 }

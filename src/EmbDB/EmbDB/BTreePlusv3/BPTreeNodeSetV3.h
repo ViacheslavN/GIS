@@ -1,10 +1,11 @@
 #pragma 
+
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "../CompressorParams.h"
 #include "BPTreeInnerNodeSetv3.h"
 #include "BPTreeLeafNodeSetv3.h"
-#include "CommonLibrary/IRefCnt.h"
+ 
 namespace embDB
 {
 
@@ -260,10 +261,10 @@ namespace embDB
 			return m_LeafNode.binary_search(comp, key);
 		}
 		template<class TComp>
-		TLink inner_lower_bound(const TComp& comp, const TKey& key, short& nType, int32& nIndex)
+		TLink inner_lower_bound(const TComp& comp, const TKey& key,  int32& nIndex)
 		{
 			assert(!m_bIsLeaf);
-			return m_InnerNode.lower_bound(comp, key, nType, nIndex);
+			return m_InnerNode.lower_bound(comp, key, nIndex);
 		}
 		template<class TComp>
 		TLink  inner_upper_bound(const TComp& comp, const TKey& key, int32& nIndex)

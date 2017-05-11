@@ -10,7 +10,9 @@ bool BPSETBASE_DECLARATION::insert(const TKey& key)
 
 	if (pNode->insertInLeaf(m_comp, key) == -1)
 		return false;
-	
+
+	pNode->setFlags(CHANGE_NODE, true);
+
 	CheckLeafNode(pNode.get(), false);
 	return true;
 }
@@ -241,7 +243,7 @@ void BPSETBASE_DECLARATION::splitInnerNode(TBTreeNode *pNode, TBTreeNodePtr& pPa
 	}
 
 	TBTreeNodePtr pNodeNewRight = newNode(false, false);
-	pNodeNewRight->setFlags(CHANGE_NODE, true);
+	
 
 	TKey nMedianKey;
 	if (!pNode->splitIn(pNodeNewRight.get(), &nMedianKey))
@@ -252,4 +254,6 @@ void BPSETBASE_DECLARATION::splitInnerNode(TBTreeNode *pNode, TBTreeNodePtr& pPa
 	int nIndex = pParentNode->insertInInnerNode(m_comp, nMedianKey, pNodeNewRight->m_nPageAddr);
 	pNodeNewRight->setParent(pParentNode, nIndex);
 	pParentNode->setFlags(CHANGE_NODE, true);
+	pNodeNewRight->setFlags(CHANGE_NODE, true);
+	pNode->setFlags(CHANGE_NODE, true);
 }

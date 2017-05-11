@@ -185,7 +185,7 @@ namespace embDB
 				{
 					m_BackList.remove(pNode, false);
 					cacheVal.m_type = TOP;
-					m_TopList.push_back(pNode);
+					m_TopList.push_top(pNode);
 				}
 				
 			}
