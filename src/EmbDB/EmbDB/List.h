@@ -17,7 +17,7 @@ public:
 	{
 	public:
 
-		TListNode(const Type& val) : m_val(val), m_pNext(0), m_pPrev(0)
+		TListNode(const Type& val) : m_val(val), m_pNext(nullptr), m_pPrev(nullptr)
 		{
 		}
 
@@ -36,21 +36,27 @@ public:
 	class iterator
 	{
 	public:
-		iterator(TNode*  pNode = NULL) : m_pNode(pNode)
+		iterator(TNode*  pNode = nullptr) : m_pNode(pNode)
 		{}
 		bool next()
 		{
+			if (!m_pNode)
+				return false;
+
 			m_pNode = m_pNode->m_pNext;
-			return m_pNode != NULL;
+			return m_pNode != nullptr;
 		}
 		bool back()
 		{
+			if (!m_pNode)
+				return false;
+
 			m_pNode = m_pNode->m_pPrev;
-			return m_pNode != NULL;
+			return m_pNode != nullptr;
 		}
 		bool IsNull()
 		{
-			return m_pNode == NULL;
+			return m_pNode == nullptr;
 		}
 
 		TypeVal & value(){return m_pNode->m_val;}
@@ -85,10 +91,13 @@ public:
 		TNode* pElem =  new (m_pAlloc->alloc(sizeof(TNode))) TNode(val);
 		return push_top(pElem);
 	}
-
+ 
 
 	iterator push_back(TNode* pElem)
 	{
+		assert(!m_pBack || m_pBack->m_pNext == nullptr);
+		assert(!m_pBegin || m_pBegin->m_pPrev == nullptr);
+
 		if(m_pBack == pElem)
 			return iterator(pElem);
 
@@ -102,13 +111,15 @@ public:
 			m_pBack->m_pNext = pElem;
 			m_pBack = pElem;
 		}
-
+		assert(!m_pBack || m_pBack->m_pNext == nullptr);
+		assert(!m_pBegin || m_pBegin->m_pPrev == nullptr);
 		m_nSize++;
 		return iterator(pElem);
 	}
 	iterator push_top(TNode* pElem)
 	{
-
+		assert(!m_pBack || m_pBack->m_pNext == nullptr);
+		assert(!m_pBegin || m_pBegin->m_pPrev == nullptr);
 		if(m_pBegin == pElem)
 			return iterator(pElem);
 
@@ -122,7 +133,8 @@ public:
 			pElem->m_pPrev = nullptr;
 			m_pBegin = pElem;
 		}
-
+		assert(!m_pBack || m_pBack->m_pNext == nullptr);
+		assert(!m_pBegin || m_pBegin->m_pPrev == nullptr);
 		m_nSize++;
 		return iterator(pElem);
 	}
@@ -140,8 +152,8 @@ public:
 		{
 			pNode->~TListNode();
 			m_pAlloc->free(pNode);
-			m_pBegin = 0;
-			m_pBack = 0;
+			m_pBegin = nullptr;
+			m_pBack = nullptr;
 			return;
 		}
 		while(pNextNode)
@@ -154,8 +166,8 @@ public:
 		pNode->~TListNode();
 		m_pAlloc->free(pNode);
 
-		m_pBegin = 0;
-		m_pBack = 0;
+		m_pBegin = nullptr;
+		m_pBack = nullptr;
 		m_nSize = 0;
 	}
 	iterator begin() {return iterator(m_pBegin);}
@@ -179,6 +191,9 @@ public:
 			m_pBegin = pElem;
 			pNode->m_pNext = pElem;
 		}
+		assert(!m_pBack || m_pBack->m_pNext == nullptr);
+		assert(!m_pBegin || m_pBegin->m_pPrev == nullptr);
+
 		m_nSize++;
 		return iterator(pElem);
 	}
@@ -186,7 +201,8 @@ public:
 	{		
 		if(!pNode)
 			return iterator(NULL);
-
+		assert(!m_pBack || m_pBack->m_pNext == nullptr);
+		assert(!m_pBegin || m_pBegin->m_pPrev == nullptr);
  
 
 		TNode *pPrev = pNode->m_pPrev;
@@ -219,7 +235,8 @@ public:
 			pNode->m_pNext = nullptr;
 			pNode->m_pPrev = nullptr;
 		}
- 
+		assert(!m_pBack || m_pBack->m_pNext == nullptr);
+		assert(!m_pBegin|| m_pBegin->m_pPrev == nullptr);
 		m_nSize--;
 		return iterator(pNext);
 	}

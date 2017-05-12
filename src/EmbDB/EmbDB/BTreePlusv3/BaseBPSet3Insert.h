@@ -14,6 +14,7 @@ bool BPSETBASE_DECLARATION::insert(const TKey& key)
 	pNode->setFlags(CHANGE_NODE, true);
 
 	CheckLeafNode(pNode.get(), false);
+ 
 	return true;
 }
 
@@ -179,7 +180,7 @@ int BPSETBASE_DECLARATION::splitLeafNode(TBTreeNode *pNode, TBTreeNode *pNewNode
 	pNode->m_LeafNode.m_nNext = pNewNode->m_nPageAddr;
 	pNewNode->m_LeafNode.m_nPrev = pNode->m_nPageAddr;
 
-
+	pNode->setFlags(CHANGE_NODE, true);
 	pNewNode->setFlags(CHANGE_NODE, true);
 	pParentNode->setFlags(CHANGE_NODE, true);
 	return nSplitIndex;

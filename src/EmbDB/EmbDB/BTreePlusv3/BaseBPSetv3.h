@@ -391,7 +391,7 @@ namespace embDB
 					if (m_Cache.size() > m_nChacheSize)
 						m_Cache.remove_back();
 				}
-				m_Cache.AddElem(pBNode->m_nPageAddr, pBNode, bNotMove);
+				m_Cache.AddElem(pBNode->m_nPageAddr, pBNode);
 			}
 			return pBNode;
 		}

@@ -326,7 +326,7 @@ namespace embDB
 	//	uint32 nType = 0;
 		int64 nAddr = m_pDBStorage->getNewPageAddr(nSize/*, &nType*/);
 
-		int64 nTranAddr = m_TranStorage.getNewPageAddr(m_nPageSize);
+		int64 nTranAddr = m_TranStorage.getNewPageAddr(nSize);
 		CFilePage *pFilePage = new CFilePage(m_pAlloc, nSize, nAddr);
 		pFilePage->setFlag(eFP_NEW, true);
 

@@ -132,6 +132,7 @@ namespace embDB
 				nIndex = -1;
 				return m_nLess;
 			}
+			--nIndex;
 			return m_innerLinkMemSet[nIndex];
 		}
 
