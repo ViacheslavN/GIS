@@ -118,7 +118,7 @@ namespace embDB
 			return std::distance(m_leafKeyMemSet.begin(), it);
 		}
 		template<class TComp>
-		uint32 lower_bound(TComp& comp, const TKey& key, short& nType)
+		uint32 lower_bound(TComp& comp, const TKey& key)
 		{
 			auto it = std::lower_bound(m_leafKeyMemSet.begin(), m_leafKeyMemSet.end(), key, comp);
 			return std::distance(m_leafKeyMemSet.begin(), it);

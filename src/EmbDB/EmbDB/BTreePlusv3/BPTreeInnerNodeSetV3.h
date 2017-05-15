@@ -100,6 +100,31 @@ namespace embDB
 		}
 
 		template<class TComp>
+		TLink findNodeRemove(const TComp& comp, const TKey& key, int32& nIndex)
+		{
+			nIndex = -1;
+			if (!m_bMulti)
+			{
+				return lower_bound(comp, key, nIndex);
+			}
+
+			auto it = std::upper_bound(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), key, comp);
+			if (it == m_innerKeyMemSet.end())
+				return -1;
+			if (it == m_innerKeyMemSet.begin()) //меньше всех ключей
+			{
+				nIndex = -1;
+				return m_nLess;
+			}
+			--it;
+			nIndex = std::distance(m_innerKeyMemSet.begin(), it);
+			return m_innerLinkMemSet[nIndex];
+		}
+
+
+		
+
+		template<class TComp>
 		TLink upper_bound(const TComp& comp, const TKey& key, int32& nIndex)
 		{
 			auto it = std::upper_bound(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), key, comp);

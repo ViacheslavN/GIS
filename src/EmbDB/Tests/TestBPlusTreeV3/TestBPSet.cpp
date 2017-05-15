@@ -2,8 +2,11 @@
 #include "stdafx.h"
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
-#include "../../EmbDB/BTreePlusv3/BaseBPSetv3.h"
-#include "../../EmbDB/BTreePlusv3/BPIteratorSetV3.h"
+/*#include "../../EmbDB/BTreePlusv3/BaseBPSetv3.h"
+#include "../../EmbDB/BTreePlusv3/BPIteratorSetV3.h"*/
+
+
+#include "../../EmbDB/BTreePlusv3/BPSetv3.h"
 
 #include "../../EmbDB/Transactions.h"
 #include "../../EmbDB/DirectTransactions.h"
@@ -33,9 +36,9 @@ typedef embDB::BPLeafNodeSetSimpleCompressorV3<int64> TLeafCompess;
 typedef embDB::BPTreeLeafNodeSetv3<int64, embDB::IDBTransaction, TLeafCompess> TLeafNode;
 typedef embDB::BPTreeNodeSetv3<int64, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode> TBTreeNode;
 
-typedef embDB::TBPSetIteratorV3<int64, TComparator, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode, TBTreeNode> TIterator;
+//typedef embDB::TBPSetIteratorV3<int64, TComparator, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode, TBTreeNode> TIterator;
 
-typedef embDB::TBPlusTreeSetV3<int64, TComparator, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode, TBTreeNode> TBPSet64;
+typedef embDB::TBPSetV3<int64, TComparator, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode, TBTreeNode> TBPSet64;
 
 
 
@@ -65,7 +68,7 @@ void searchINBTreeMap(uint32 nPageSize, int32 nCacheBPTreeSize, int64 nStart, in
 		int64 nCount = nEndStart - nStart;
 		for (__int64 i = nStart; i < nEndStart; ++i)
 		{
-			TIterator it = tree.find<TIterator, TComparator>(m_comp, TKey(i));
+			auto it = tree.find(TKey(i));
 			if (it.isNull())
 			{
 				std::cout << "Not found " << i << std::endl;
@@ -88,7 +91,7 @@ void searchINBTreeMap(uint32 nPageSize, int32 nCacheBPTreeSize, int64 nStart, in
 		int64 nCount = nStart - nEndStart;
 		for (__int64 i = nStart; i > nEndStart; --i)
 		{
-			TIterator it = tree.find<TIterator, TComparator>(m_comp, TKey(i));
+			auto it = tree.find(TKey(i));
 			if (it.isNull())
 			{
 				std::cout << "Not found " << i << std::endl;
@@ -257,7 +260,7 @@ void testBPTreeSetImpl(int64 nCount, uint32 nTranCache, size_t nPageSize, int32 
 
 void TestBPSetPlusTree()
 {
-	int64 nCount = 1000000000;
+	int64 nCount = 10000000;
 	size_t nPageSize = 8192;
 	uint32 nTranCache = 10;
 

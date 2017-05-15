@@ -249,6 +249,15 @@ namespace embDB
 			assert(!m_bIsLeaf);
 			return m_InnerNode.findNodeInsert(comp, key, nIndex);
 		}
+		template<class TComp>
+		TLink findNodeRemove(const TComp& comp, const TKey& key, int32& nIndex)
+		{
+			assert(!m_bIsLeaf);
+			return m_InnerNode.findNodeInsert(comp, key, nIndex);
+		}
+
+		
+
 		/*TLink findNext(const TKey& key , int32& nIndex)
 		{
 		assert(!m_bIsLeaf);
@@ -273,10 +282,10 @@ namespace embDB
 			return m_InnerNode.upper_bound(comp, key, nIndex);
 		}
 		template<class TComp>
-		int32 leaf_lower_bound(const TComp& comp, const TKey& key, short& nType)
+		int32 leaf_lower_bound(const TComp& comp, const TKey& key)
 		{
 			assert(m_bIsLeaf);
-			return m_LeafNode.lower_bound(comp, key, nType);
+			return m_LeafNode.lower_bound(comp, key);
 		}
 		template<class TComp>
 		int32  leaf_upper_bound(const TComp& comp, const TKey& key)

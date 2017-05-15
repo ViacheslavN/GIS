@@ -27,7 +27,7 @@ namespace embDB
 		class _TLeafNode = BPTreeLeafNodeSetv3<_TKey,  _Transaction, _TLeafCompess>,
 		class _TBTreeNode = BPTreeNodeSetv3<_TKey, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode>
 	>
-	class TBPlusTreeSetV3
+	class TBPlusTreeSetBaseV3
 	{
 	public: 
 
@@ -48,7 +48,7 @@ namespace embDB
 		typedef typename TInnerNode::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TLeafNode::TLeafCompressorParams TLeafCompressorParams;
 
-		TBPlusTreeSetV3(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, uint32 nNodesPageSize, bool bMulti = false, bool bCheckCRC32 = true) :
+		TBPlusTreeSetBaseV3(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, uint32 nNodesPageSize, bool bMulti = false, bool bCheckCRC32 = true) :
 			m_nPageBTreeInfo(nPageBTreeInfo), m_pTransaction(pTransaction), m_pAlloc(pAlloc), m_nChacheSize(nChacheSize)
 			, m_bChangeRoot(false), m_nRootAddr(-1), m_bMulti(bMulti)
 			, m_Cache(pAlloc)
@@ -63,7 +63,7 @@ namespace embDB
 			 
 
 		}
-		~TBPlusTreeSetV3()
+		~TBPlusTreeSetBaseV3()
 		{
 			 
 		}
@@ -301,7 +301,7 @@ namespace embDB
 		{
 
 			return TBTreeNodePtr(new TBTreeNode(-1, m_pAlloc, nAddr, m_bMulti, bIsLeaf, m_bCheckCRC32, m_nNodesPageSize, m_InnerCompParams.get(),
-				m_LeafCompParams.get()), std::bind(&TBPlusTreeSetV3::deleteNodePtr, this, std::placeholders::_1));
+				m_LeafCompParams.get()), std::bind(&TBPlusTreeSetBaseV3::deleteNodePtr, this, std::placeholders::_1));
 	 
 		}
 		void deleteNodePtr(TBTreeNode* pNode)
@@ -395,7 +395,7 @@ namespace embDB
 			}
 			return pBNode;
 		}
-
+		/*insert*/
 		TBTreeNodePtr findLeafNodeForInsert(const TKey& key);
 		bool insert(const TKey& key);
 		void CheckLeafNode(TBTreeNode* pNode, bool bPreSave);
@@ -407,10 +407,31 @@ namespace embDB
 		void splitInnerNode(TBTreeNode *pInNode, TBTreeNodePtr& pParentNode);
 	
 		
-
+		/*search*/
 		template<class TIterator, class TComparator>
 		TIterator find(const TComparator& comp, const TKey& key, TIterator *pFromIterator = NULL, bool bFindNext = true);
-		
+
+		template<class TIterator>
+		TIterator begin();
+
+		template<class TIterator>
+		TIterator last();
+
+		template<class TIterator, class TComparator>
+		TIterator upper_bound(const TComparator& comp, const TKey& key, TIterator *pFromIterator = NULL, bool bFindNext = true);
+
+		template<class TIterator, class TComparator>
+		TIterator lower_bound(const TComparator& comp, const TKey& key, TIterator *pFromIterator = NULL, bool bFindNext = true);
+
+
+		/*remove*/
+		bool remove(const TKey& key);
+		TBTreeNodePtr findLeafNodeForRemove(const TKey& key);
+		bool RemoveFromLeafNode(TBTreeNodePtr& pLeafNode, int32 nIndex, const TKey& key);
+		bool RemoveFromInnerNode(TBTreeNodePtr& pNode,  const TKey& key);
+		void deleteNode(TBTreeNode* pNode);
+		void UnionLeafNode(TBTreeNode* pParentNode, TBTreeNode* pLeafNode, TBTreeNode*pDonorNode, bool bLeft);
+		void AlignmentLeafNode(TBTreeNode* pParentNode, TBTreeNode* pLeafNode, TBTreeNode* pDonorNode, bool bLeft);
 
 	protected:
 		TComp		 m_comp;
@@ -437,8 +458,9 @@ namespace embDB
 		bool m_bMinSplit;
 	};
 #define  BPSETBASE_TEMPLATE_PARAMS template <class _TKey, class _TComp, class _Transaction, class _TInnerCompess,class _TLeafCompess, class _TInnerNode, class _TLeafNode, class _TBTreeNode>
-#define  BPSETBASE_DECLARATION  TBPlusTreeSetV3<_TKey, _TComp, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode, _TBTreeNode>
+#define  BPSETBASE_DECLARATION  TBPlusTreeSetBaseV3<_TKey, _TComp, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode, _TBTreeNode>
 
 #include "BaseBPSet3Insert.h"
 #include "BaseBPSet3Search.h"
+#include "BaseBPSet3Delete.h"
 }

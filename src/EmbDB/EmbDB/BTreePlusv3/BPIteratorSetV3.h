@@ -5,28 +5,27 @@ namespace embDB
 {
 	
 
-	template <class _TKey, class _TComp, class _Transaction, class _TInnerCompess, class _TLeafCompess,
-		class _TInnerNode, class _TLeafNode, class _TBTreeNode>
+	template <class _TKey, class _TLeafNode, class _TBTreeNode, class _TBTree>
 		class TBPSetIteratorV3
 	{
 	public:
 		//typedef _Traits Traits;
 		typedef _TKey      TKey;
-		typedef _TComp	   TComp;
+	//	typedef _TComp	   TComp;
 		typedef int64     TLink;
-		typedef _Transaction  Transaction;
-		typedef _TInnerCompess TInnerCompess;
-		typedef _TLeafCompess TLeafCompess;
-		typedef _TInnerNode	TInnerNode;
+	//	typedef _Transaction  Transaction;
+	//	typedef _TInnerCompess TInnerCompess;
+	//	typedef _TLeafCompess TLeafCompess;
+	//	typedef _TInnerNode	TInnerNode;
 		typedef _TLeafNode TBTreeLeafNode;
 		typedef _TBTreeNode TBTreeNode;
 		typedef std::shared_ptr<TBTreeNode> TBTreeNodePtr;
 
 		typedef STLAllocator<TKey> TAlloc;
 		typedef std::vector<TKey, TAlloc> TKeyMemSet;
+		typedef _TBTree TBTree;
  
- 
-		typedef TBPlusTreeSetV3<TKey, TComp, Transaction, TInnerCompess, TLeafCompess, TInnerNode, TBTreeLeafNode, TBTreeNode> TBTree;
+		//typedef TBPSetV3<TKey, TComp, Transaction, TInnerCompess, TLeafCompess, TInnerNode, TBTreeLeafNode, TBTreeNode> TBTree;
 
 		TBPSetIteratorV3(TBTree *pTree, TBTreeNodePtr& pCurNode, int32 nIndex) :
 			m_pTree(pTree), m_pCurNode(pCurNode), m_nIndex(nIndex)

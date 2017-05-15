@@ -535,6 +535,7 @@
     <ClInclude Include="BTreePlusv3\BPInnerNodeSimpleCompressorV3.h" />
     <ClInclude Include="BTreePlusv3\BPIteratorSetV3.h" />
     <ClInclude Include="BTreePlusv3\BPLeafNodeSetSimpleCompressorV3.h" />
+    <ClInclude Include="BTreePlusv3\BPSetv3.h" />
     <ClInclude Include="BTreePlusv3\BPTreeInnerNodeSetV3.h" />
     <ClInclude Include="BTreePlusv3\BPTreeLeafNodeSetV3.h" />
     <ClInclude Include="BTreePlusv3\BPTreeNodeSetV3.h" />
