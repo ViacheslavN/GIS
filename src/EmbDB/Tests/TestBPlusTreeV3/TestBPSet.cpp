@@ -45,7 +45,7 @@ typedef embDB::TBPSetV3<int64, TComparator, embDB::IDBTransaction, TInnerCompess
 
 
 template<class TBtree, class Tran, class TKey, class TValue>
-void searchINBTreeMap(uint32 nPageSize, int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64& nTreeRootPage, bool bCheckCRC)
+void searchINBTreeSet(uint32 nPageSize, int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64& nTreeRootPage, bool bCheckCRC)
 {
    std::cout << "Search Test" << std::endl;
 	 
@@ -117,7 +117,7 @@ void searchINBTreeMap(uint32 nPageSize, int32 nCacheBPTreeSize, int64 nStart, in
 
 
 template<class TBtree, class Tran, class TKey, class TValue>
-void insertINBTreeMap(uint32 nPageSize, int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64& nTreeRootPage, bool bCheckCRC)
+void insertINBTreeSet(uint32 nPageSize, int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64& nTreeRootPage, bool bCheckCRC)
 {
 	std::cout << "Insert Test" << std::endl;
  
@@ -188,6 +188,97 @@ void insertINBTreeMap(uint32 nPageSize, int32 nCacheBPTreeSize, int64 nStart, in
 
 
 
+
+
+template<class TBtree, class Tran, class TKey>
+void removeFromBTreeSet(uint32 nPageSize, int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64 nTreeRootPage, bool bCheckCRC)
+{
+	std::cout << "Remove Test" << std::endl;
+	CommonLib::TimeUtils::CDebugTime time;
+	double tmRemove = 0;
+	double treeCom = 0;
+	double tranCom = 0;
+ 
+	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, nPageSize, false, bCheckCRC);
+	tree.loadBTreeInfo();
+
+	time.start();
+	int64 i = nStart;
+	int64 n = 0;
+
+
+	if (nStart < nEndStart)
+	{
+		int64 nCount = nEndStart - nStart;
+		for (; i < nEndStart; ++i)
+		{
+
+
+			if (!tree.remove(TKey(i)))
+			{
+				std::cout << "Error remove,  not found " << i << std::endl;
+			}
+			n++;
+			auto it = tree.find(TKey(i));
+			if (!it.isNull())
+			{
+				std::cout << "Error remove,  found " << i << std::endl;
+
+			}
+
+
+			if (i%nStep == 0)
+			{
+				std::cout << n << "  " << (n * 100) / nCount << " %" << '\r';
+			}
+		}
+
+	}
+	else
+	{
+
+		int64 nCount = nStart - nEndStart;
+
+		for (; i > nEndStart; --i)
+		{
+
+			if (!tree.remove(TKey(i)))
+			{
+				std::cout << "Error remove,  not found " << i << std::endl;
+			}
+
+			auto it = tree.find(TKey(i));
+			if (!it.isNull())
+			{
+				std::cout << "Error remove,  found " << i << std::endl;
+
+			}
+			n++;
+			if (i%nStep == 0)
+			{
+				std::cout << n << "  " << (n * 100) / nCount << " %" << '\r';
+			}
+		}
+	}
+	tmRemove = time.stop();
+	time.start();
+	tree.commit();
+
+	treeCom = time.stop();
+	time.start();
+
+	pTran->commit();
+	tranCom = time.stop();
+	pTran->OutDebugInfo();
+ 
+
+	std::cout << "Remove end key start: " << nStart << " key end: " << nEndStart << " Total time: " << (tmRemove + treeCom + tranCom) <<
+		" time remove: " << tmRemove << " time tree commit: " << treeCom << " Tran commit: " << tranCom << std::endl;
+
+}
+
+
+
 template<class TBtree, class TTran, class TKey, class TValue>
 void testBPTreeSetImpl(int64 nCount, uint32 nTranCache, size_t nPageSize, int32 nCacheStorageSize, int32 nCacheBPTreeSize, bool bCheckCRC)
 {
@@ -232,9 +323,10 @@ void testBPTreeSetImpl(int64 nCount, uint32 nTranCache, size_t nPageSize, int32 
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran1.data", &storage, 1, nTranCache);
 			tran.begin();
 			tran.SetLogger(&log);
-			insertINBTreeMap <TBtree, TTran, TKey, TValue>(nPageSize, nCacheBPTreeSize, 0, nCount, nStep, &tran, alloc, nTreeRootPage, bCheckCRC);
+			insertINBTreeSet <TBtree, TTran, TKey, TValue>(nPageSize, nCacheBPTreeSize, 0, nCount, nStep, &tran, alloc, nTreeRootPage, bCheckCRC);
 			std::cout << "File Size " << storage.getFileSize() << std::endl;
 			storage.close();
+ 
 		}
 
 		{
@@ -249,8 +341,20 @@ void testBPTreeSetImpl(int64 nCount, uint32 nTranCache, size_t nPageSize, int32 
 			tran1.begin();
 			tran1.SetLogger(&log);
 
-			searchINBTreeMap <TBtree, TTran, TKey, TKey>(nPageSize, nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage, bCheckCRC);
+			searchINBTreeSet <TBtree, TTran, TKey, TKey>(nPageSize, nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage, bCheckCRC);
 			tran1.commit();
+			storage.close();
+		}
+
+
+		{
+			embDB::CConsolLogger log;
+			log.AddRef();
+			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran1.data", &storage, 1, nTranCache);
+			tran.begin();
+			tran.SetLogger(&log);
+			removeFromBTreeSet <TBtree, TTran, TKey>(nPageSize, nCacheBPTreeSize, 0, nCount, nStep, &tran, alloc, nTreeRootPage, bCheckCRC);
+			std::cout << "File Size " << storage.getFileSize() << std::endl;
 			storage.close();
 		}
 

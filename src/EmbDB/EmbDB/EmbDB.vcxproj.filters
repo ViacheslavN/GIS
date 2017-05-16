@@ -1530,6 +1530,12 @@
     <ClInclude Include="BTreePlusv3\BPSetv3.h">
       <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

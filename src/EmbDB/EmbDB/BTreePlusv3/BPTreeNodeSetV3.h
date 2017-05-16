@@ -351,7 +351,7 @@ namespace embDB
 
 
 
-		int32 search(const TKey& key)
+	/*	int32 search(const TKey& key)
 		{
 			assert(m_bIsLeaf);
 			if (m_bIsLeaf)
@@ -359,7 +359,7 @@ namespace embDB
 				return m_LeafNode.binary_search(key);
 			}
 			return -1;
-		}
+		}*/
 
 		TLink backLink()
 		{

@@ -226,25 +226,12 @@ namespace embDB
 		}
 
 
-		bool removeByIndex(int32 nIndex)
+		void removeByIndex(int32 nIndex)
 		{
-			m_Compressor.remove(nIndex, m_innerKeyMemSet[nIndex], m_innerLinkMemSet[nIndex]);
-			bool bRet = m_innerKeyMemSet.remove(nIndex);
-			if (!bRet)
-			{
-				//TO DO Logs
-				assert(false);
-				return false;
-			}
-			bRet = m_innerLinkMemSet.remove(nIndex);
-			if (!bRet)
-			{
-				//TO DO Logs
-				assert(false);
-				return false;
-			}
+			m_Compressor.remove(nIndex, m_innerKeyMemSet[nIndex], m_innerLinkMemSet[nIndex], m_innerKeyMemSet, m_innerLinkMemSet);
+			m_innerKeyMemSet.erase(m_innerKeyMemSet.begin() + nIndex);
+			m_innerLinkMemSet.erase(m_innerLinkMemSet.begin() + nIndex);
 
-			return true;
 		}
 
 		bool SplitIn(BPTreeInnerNodeSetv3 *pNode, TKey* pSplitKey)
@@ -382,7 +369,7 @@ namespace embDB
 
 		void updateLink(int32 nIndex, TLink nLink)
 		{
-			m_pCompressor->update(nIndex, m_innerKeyMemSet[nIndex], nLink);
+			m_Compressor.updateLink(nIndex, nLink, m_innerKeyMemSet, m_innerLinkMemSet);
 			m_innerLinkMemSet[nIndex] = nLink;
 
 		}
@@ -390,7 +377,7 @@ namespace embDB
 
 		void updateKey(int32 nIndex, const TKey& key)
 		{
-			m_pCompressor->update(nIndex, key, m_innerLinkMemSet[nIndex]);
+			m_Compressor.updateKey(nIndex, key, m_innerKeyMemSet, m_innerLinkMemSet);
 			m_innerKeyMemSet[nIndex] = key;
 
 		}
@@ -409,10 +396,14 @@ namespace embDB
 
 
 
-				pNode->m_innerKeyMemSet.push_back(m_innerKeyMemSet);
-				pNode->m_innerLinkMemSet.push_back(m_innerLinkMemSet);
+				pNode->m_innerKeyMemSet.reserve(pNode->m_innerKeyMemSet.size() + m_innerKeyMemSet.size());
+				pNode->m_innerLinkMemSet.reserve(pNode->m_innerLinkMemSet.size() + m_innerLinkMemSet.size());
 
+		 
+				std::move(pNode->m_innerKeyMemSet.begin(), pNode->m_innerKeyMemSet.end(), std::inserter(m_innerKeyMemSet, m_innerKeyMemSet.end()));
+				std::move(pNode->m_innerLinkMemSet.begin(), pNode->m_innerLinkMemSet.end(), std::inserter(m_innerLinkMemSet, m_innerLinkMemSet.end()));
 
+				
 				pNode->m_innerLinkMemSet.swap(m_innerLinkMemSet);
 				pNode->m_innerKeyMemSet.swap(m_innerKeyMemSet);
 
@@ -429,10 +420,12 @@ namespace embDB
 				}
 
 
+				m_innerKeyMemSet.reserve(pNode->m_innerKeyMemSet.size() + m_innerKeyMemSet.size());
+				m_innerLinkMemSet.reserve(pNode->m_innerLinkMemSet.size() + m_innerLinkMemSet.size());
 
 
-				m_innerKeyMemSet.push_back(pNode->m_innerKeyMemSet);
-				m_innerLinkMemSet.push_back(pNode->m_innerLinkMemSet);
+				std::move(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), std::inserter(pNode->m_innerKeyMemSet, pNode->m_innerKeyMemSet.end()));
+				std::move(m_innerLinkMemSet.begin(), m_innerLinkMemSet.end(), std::inserter(pNode->m_innerLinkMemSet, pNode->m_innerLinkMemSet.end()));
 
 				m_Compressor.recalc(m_innerKeyMemSet, m_innerLinkMemSet);
 			}
@@ -441,30 +434,31 @@ namespace embDB
 		bool AlignmentOf(BPTreeInnerNodeSetv3* pNode, const TKey& LessMin, bool bLeft)
 		{
 			int nCnt = ((m_innerKeyMemSet.size() + pNode->m_innerKeyMemSet.size())) / 2 - m_innerKeyMemSet.size();
-			//assert(nCnt > 0);
+	 
 			if (nCnt < 2 && !m_innerKeyMemSet.empty())
-				return false; //оставим все при своих
-
-
+				return false;  
+			
 			if (bLeft)
 			{
 
-
 				uint32 oldSize = m_innerKeyMemSet.size();
 
-				m_innerKeyMemSet.mover(0, nCnt);
-				m_innerLinkMemSet.mover(0, nCnt);
 
-				m_innerKeyMemSet[nCnt - 1] = LessMin;
-				m_innerLinkMemSet[nCnt - 1] = m_nLess;
+				m_innerKeyMemSet.reserve(m_innerKeyMemSet.size() + nCnt + 1); //1 for less elem
+				m_innerLinkMemSet.reserve(m_innerLinkMemSet.size() + nCnt + 1); //1 for less elem
 
-				//m_pCompressor->insert(nCnt - 1, LessMin, m_nLess);
 
+				m_innerKeyMemSet.push_back(LessMin);
+				m_innerLinkMemSet.push_back(m_nLess);
+
+		
 				uint32 newSize = pNode->m_innerLinkMemSet.size() - nCnt;
-
-
-				m_innerKeyMemSet.copy(pNode->m_innerKeyMemSet, 0, newSize + 1, pNode->m_innerKeyMemSet.size());
-				m_innerLinkMemSet.copy(pNode->m_innerLinkMemSet, 0, newSize + 1, pNode->m_innerLinkMemSet.size());
+				
+				std::move(pNode->m_innerKeyMemSet.begin(), pNode->m_innerKeyMemSet.end(), std::inserter(m_innerKeyMemSet, m_innerKeyMemSet.end()));
+				std::move(pNode->m_innerLinkMemSet.begin(), pNode->m_innerLinkMemSet.end(), std::inserter(m_innerLinkMemSet, m_innerLinkMemSet.end()));
+				
+				std::rotate(m_innerKeyMemSet.begin(), m_innerKeyMemSet.begin() + oldSize, m_innerKeyMemSet.end());
+				std::rotate(m_innerLinkMemSet.begin(), m_innerLinkMemSet.begin() + oldSize, m_innerLinkMemSet.end());
 
 				m_pCompressor.recalc(m_innerKeyMemSet, m_innerLinkMemSet);
 
@@ -511,11 +505,11 @@ namespace embDB
 
 		bool IsHaveUnion(BPTreeInnerNodeSetv3 *pNode)
 		{
-			return this->m_Compressor.IsHaveUnion(pNode.m_Compressor);
+			return this->m_Compressor.IsHaveUnion(pNode->m_Compressor);
 		}
 		bool IsHaveAlignment(BPTreeInnerNodeSetv3 *pNode)
 		{
-			return this->m_Compressor.IsHaveAlignment(pNode.m_Compressor);
+			return this->m_Compressor.IsHaveAlignment(pNode->m_Compressor);
 		}
 		bool isHalfEmpty() const
 		{

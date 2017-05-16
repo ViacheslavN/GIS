@@ -401,7 +401,7 @@ namespace embDB
 		void CheckLeafNode(TBTreeNode* pNode, bool bPreSave);
 		void TransformRootToInner();
 		void SplitRootInnerNode();
-		void SetParentInChildCacheOnly(TBTreeNodePtr& pNode);
+		void SetParentInChildCacheOnly(TBTreeNodePtr&  pNode);
 		int splitLeafNode(TBTreeNode *pNode, TBTreeNode *pNewNode, TBTreeNodePtr& pParentNode);
 		void SetParentNext(TBTreeNode *pNode, TBTreeNode* pNodeNext);
 		void splitInnerNode(TBTreeNode *pInNode, TBTreeNodePtr& pParentNode);
@@ -427,12 +427,14 @@ namespace embDB
 		/*remove*/
 		bool remove(const TKey& key);
 		TBTreeNodePtr findLeafNodeForRemove(const TKey& key);
-		bool RemoveFromLeafNode(TBTreeNodePtr& pLeafNode, int32 nIndex, const TKey& key);
-		bool RemoveFromInnerNode(TBTreeNodePtr& pNode,  const TKey& key);
+		void RemoveFromLeafNode(TBTreeNodePtr& pLeafNode, int32 nIndex, const TKey& key);
+		void RemoveFromInnerNode(TBTreeNodePtr pNode,  const TKey& key);
 		void deleteNode(TBTreeNode* pNode);
 		void UnionLeafNode(TBTreeNode* pParentNode, TBTreeNode* pLeafNode, TBTreeNode*pDonorNode, bool bLeft);
 		void AlignmentLeafNode(TBTreeNode* pParentNode, TBTreeNode* pLeafNode, TBTreeNode* pDonorNode, bool bLeft);
-
+		TBTreeNodePtr  getMinimumNode(TBTreeNodePtr pNode);
+		void UnionInnerNode(TBTreeNodePtr& pParentNode, TBTreeNodePtr& pNode, TBTreeNodePtr& pDonorNode, bool bLeft);
+		void AlignmentInnerNode(TBTreeNodePtr& pParentNode, TBTreeNodePtr& pNode, TBTreeNodePtr&pDonorNode, bool bLeft);
 	protected:
 		TComp		 m_comp;
 		TBTreeNodePtr m_pRoot;

@@ -170,7 +170,7 @@ namespace embDB
 		}
 		bool removeByIndex(int32 nIndex)
 		{
-			m_Compressor.remove(nIndex, m_leafKeyMemSet[nIndex]);
+			m_Compressor.remove(nIndex, m_leafKeyMemSet[nIndex], m_leafKeyMemSet);
 			m_leafKeyMemSet.erase(std::next(m_leafKeyMemSet.begin(), nIndex));
 			return true;
 		}
@@ -285,12 +285,15 @@ namespace embDB
 			{
 				if (nCheckIndex)
 					*nCheckIndex += srcVec.size();
-				srcVec.insert(srcVec.end(), dstVec.begin(), dstVec.end());
+
+				srcVec.reserve(srcVec.size() + dstVec.size());
+				std::move(dstVec.begin(), dstVec.end(), std::inserter(srcVec, srcVec.end()));
 				srcVec.swap(dstVec);
 			}
 			else
 			{
-				dstVec.insert(dstVec.end(), srcVec.begin(), srcVec.end());
+				dstVec.reserve(srcVec.size() + dstVec.size());
+				std::move(srcVec.begin(), srcVec.end(), std::inserter(dstVec, dstVec.end()));
 				srcVec.clear();
 			}
 			return true;
@@ -302,11 +305,8 @@ namespace embDB
 		{
 			UnionVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft, nCheckIndex);
 
-			/*if(!bLeft)
-			m_pCompressor->add(pNode->m_leafKeyMemSet);
-
-			if(bLeft)*/
-			this->m_pCompressor->recalc(this->m_leafKeyMemSet);
+ 
+			this->m_Compressor.recalc(this->m_leafKeyMemSet);
 			return true;
 		}
 
@@ -318,26 +318,29 @@ namespace embDB
 			int nCnt = ((dstVec.size() + srcVec.size())) / 2 - dstVec.size();
 			if (nCnt <= 0)
 				return false; //оставим все при своих
+
+			uint32 newSize = srcVec.size() - nCnt;
 			if (bFromLeft)
 			{
 				if (nCheckIndex)
 					*nCheckIndex += nCnt;
 
-				uint32 newSize = srcVec.size() - nCnt;
-				dstVec.insert(srcVec, 0, newSize, srcVec.size());
+			
+				dstVec.insert(dstVec.begin(), srcVec.begin() + nCnt, srcVec.end());
 				srcVec.resize(newSize);
 			}
 			else
 			{
-				dstVec.copy(srcVec, dstVec.size(), 0, nCnt);
-				srcVec.movel(nCnt, nCnt);
+				dstVec.insert(dstVec.end(), srcVec.begin() + nCnt, srcVec.end());
+				std::rotate(srcVec.begin(), srcVec.begin() + nCnt, srcVec.end());
+				srcVec.resize(newSize);
 			}
 			return true;
 		}
 
 		bool AlignmentOf(BPTreeLeafNodeSetv3Base* pNode, bool bFromLeft)
 		{
-			TVector& nodeMemset = pNode->m_leafKeyMemSet;
+			auto& nodeMemset = pNode->m_leafKeyMemSet;
 			TCompressor& pNodeComp = pNode->m_Compressor;
 			if (!AlignmentOfVec(m_leafKeyMemSet, nodeMemset, bFromLeft))
 				return false;
@@ -364,11 +367,11 @@ namespace embDB
 		bool IsHaveUnion(BPTreeLeafNodeSetv3Base *pNode)
 		{
 
-			return this->m_Compressor.IsHaveUnion(pNode.m_Compressor);
+			return this->m_Compressor.IsHaveUnion(pNode->m_Compressor);
 		}
 		bool IsHaveAlignment(BPTreeLeafNodeSetv3Base *pNode)
 		{
-			return this->m_Compressor.IsHaveAlignment(pNode.m_Compressor);
+			return this->m_Compressor.IsHaveAlignment(pNode->m_Compressor);
 		}
 		bool isHalfEmpty() const
 		{

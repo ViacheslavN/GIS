@@ -118,6 +118,14 @@ namespace embDB
 		{
 			return true;
 		}
+		virtual bool updateKey(int nIndex, const TKey& key, const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
+		{
+			return true;
+		}
+		virtual bool updateLink(int nIndex, TLink link, const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
+		{
+			return true;
+		}
 		virtual uint32 size() const
 		{
 			return (sizeof(TKey) + sizeof(TLink)) *  m_nCount + sizeof(uint32);

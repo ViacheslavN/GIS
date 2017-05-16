@@ -42,7 +42,7 @@
 #include <algorithm>
 #include <limits>
 #include <functional>
-
+#include <iterator>
 #include "GeneralTypes.h"
 #define  _CHECK_MEM
 

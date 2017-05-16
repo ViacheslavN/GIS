@@ -83,8 +83,15 @@ namespace embDB
 		}
 		inline void destroy(pointer p) { p->~T(); }
 
-		inline bool operator==(STLAllocator const&) { return true; }
-		inline bool operator!=(STLAllocator const& a) { return !operator==(a); }
+		
+		inline bool operator==(STLAllocator const& a) const
+		{ 
+			return true; 
+		}
+		inline bool operator!=(STLAllocator const& a) const
+		{
+			return !operator==(a); 
+		}
 
 		CommonLib::alloc_t* GetAlloc() { return m_pAlloc; }
 		const CommonLib::alloc_t* GetAlloc() const { return m_pAlloc; }
