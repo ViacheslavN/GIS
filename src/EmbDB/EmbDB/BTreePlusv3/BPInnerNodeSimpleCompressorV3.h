@@ -132,6 +132,7 @@ namespace embDB
 		}
 		virtual bool isNeedSplit() const
 		{
+
 			return m_nPageSize < size();
 		}
 
@@ -166,6 +167,7 @@ namespace embDB
 		}
 		bool IsHaveUnion(BPInnerNodeSimpleCompressorV3& pCompressor) const
 		{
+
 			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(TLink));
 			uint32 nNoCompSizeUnion = pCompressor.m_nCount * (sizeof(TKey) + sizeof(TLink));
 
@@ -180,6 +182,7 @@ namespace embDB
 		}
 		bool isHalfEmpty() const
 		{
+
 			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(TLink));
 			return nNoCompSize  < (m_nPageSize - headSize()) / 2;
 		}

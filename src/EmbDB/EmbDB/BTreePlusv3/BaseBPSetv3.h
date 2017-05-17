@@ -152,7 +152,7 @@ namespace embDB
 		{
 			if (!m_pRoot.get())
 				return true;
-			std::vector<TBTreeNode*> vecNodes;
+			std::vector<TBTreeNodePtr> vecNodes;
 			{
 				typename TNodesCache::iterator it = m_Cache.begin();
 				while (!it.isNull())
@@ -160,7 +160,7 @@ namespace embDB
 					TBTreeNodePtr pBNode = it.object();
 					if (pBNode->getFlags() & CHANGE_NODE)
 					{
-						vecNodes.push_back(pBNode.get());
+						vecNodes.push_back(pBNode);
 
 					}
 					it.next();
@@ -171,8 +171,8 @@ namespace embDB
 
 			for (size_t i = 0, sz = vecNodes.size(); i < sz; ++i)
 			{
-				TBTreeNode* pBNode = vecNodes[i];
-				 CheckNodeBeforeSave(pBNode);
+				TBTreeNodePtr& pBNode = vecNodes[i];
+				 CheckNodeBeforeSave(pBNode.get());
 			}
 
 
@@ -306,6 +306,11 @@ namespace embDB
 		}
 		void deleteNodePtr(TBTreeNode* pNode)
 		{
+			if (pNode->getFlags() & REMOVE_NODE)
+			{
+				delete pNode;
+				return;
+			}
 			if (pNode->getFlags() & CHANGE_NODE)
 				SaveNode(pNode, true);
 			delete pNode;

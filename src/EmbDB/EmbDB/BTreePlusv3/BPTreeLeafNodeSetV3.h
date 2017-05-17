@@ -178,8 +178,9 @@ namespace embDB
 		int SplitInVec(TVector& src, TVector& dst, TVecVal* pSplitVal, int32 _nBegin = -1, int32 _nEnd = -1)
 		{
 			uint32 nBegin = _nBegin == -1 ? src.size() / 2 : _nBegin;
-			uint32 nEnd = _nEnd == -1 ? src.size() - 1 : _nEnd;
-			dst.insert(dst.begin(),  std::next(src.begin(), nBegin), std::next(src.begin(), nEnd));
+			uint32 nEnd = _nEnd == -1 ? src.size() : _nEnd;
+
+			std::move(std::next(src.begin(), nBegin), std::next(src.begin(), nEnd), std::inserter(dst, dst.begin()));
 			src.resize(src.size() - (nEnd - nBegin));
 
 			if (pSplitVal)
@@ -229,7 +230,8 @@ namespace embDB
 			else
 			{
 				int nSplitIndex = SplitInVec(m_leafKeyMemSet, newNodeMemSet, pSplitKey);
-				m_Compressor.SplitIn(0, nSplitIndex, NewNodeComp);
+				m_Compressor.recalc(m_leafKeyMemSet);
+				NewNodeComp.recalc(newNodeMemSet);
 				return nSplitIndex;
 			}
 
@@ -320,19 +322,21 @@ namespace embDB
 				return false; //оставим все при своих
 
 			uint32 newSize = srcVec.size() - nCnt;
+			dstVec.reserve(dstVec.size() + nCnt);
 			if (bFromLeft)
 			{
 				if (nCheckIndex)
 					*nCheckIndex += nCnt;
-
-			
-				dstVec.insert(dstVec.begin(), srcVec.begin() + nCnt, srcVec.end());
+				uint32 oldSize = dstVec.size();
+				
+				std::move(std::next(srcVec.begin(), newSize), srcVec.end(), std::inserter(dstVec, dstVec.end()));
+				std::rotate(dstVec.begin(), std::next(dstVec.begin(), oldSize), dstVec.end());
 				srcVec.resize(newSize);
 			}
 			else
 			{
-				dstVec.insert(dstVec.end(), srcVec.begin() + nCnt, srcVec.end());
-				std::rotate(srcVec.begin(), srcVec.begin() + nCnt, srcVec.end());
+				std::move(srcVec.begin(), std::next(srcVec.begin(), nCnt), std::inserter(dstVec, dstVec.end()));
+				std::rotate(srcVec.begin(), std::next(srcVec.begin(), nCnt), srcVec.end());
 				srcVec.resize(newSize);
 			}
 			return true;

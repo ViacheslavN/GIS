@@ -131,6 +131,7 @@ namespace embDB
 		}
 		bool IsHaveUnion(BPLeafNodeSetSimpleCompressorV3 &pCompressor) const
 		{
+
 			uint32 nNoCompSize = m_nCount * (sizeof(TKey));
 			uint32 nNoCompSizeUnion = pCompressor.m_nCount * (sizeof(TKey));
 
@@ -145,6 +146,7 @@ namespace embDB
 		}
 		bool isHalfEmpty() const
 		{
+
 			uint32 nNoCompSize = m_nCount * sizeof(TKey);
 			return nNoCompSize < (m_nPageSize - headSize()) / 2;
 		}

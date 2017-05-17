@@ -264,7 +264,8 @@ namespace embDB
 		{
 			m_TranPerfCounter.ReadDBPage();
 			pPage->setAddr(nAddr);
-			FilePagePtr pStoragePage =  m_pDBStorage->getFilePage(nAddr, bRead, bNeedDecrypt);
+			FilePagePtr pStoragePage =  m_pDBStorage->getFilePage(nAddr, nSize, bRead, bNeedDecrypt);
+			assert(pStoragePage.get());
 			pPage->copyFrom(pStoragePage.get());
 		}
 
@@ -307,11 +308,18 @@ namespace embDB
 	}
 	void CTransaction::dropFilePage(FilePagePtr pPage)
 	{
+		if (pPage->getFlags() & (eFP_NEW|eFP_INNER_TRAN_PAGE))
+			return;
+
 		addUndoPage(pPage, true);
 		m_vecRemovePages.push_back(pPage->getAddr());
 	}
 	void CTransaction::dropFilePage(int64 nAddr, uint32 nSize)
 	{
+		uint32 nFlags = m_PageChache.GetPageFlags(nAddr);
+		if (nFlags & (eFP_NEW | eFP_INNER_TRAN_PAGE))
+			return;
+
 		FilePagePtr pRemPage = m_pDBStorage->getFilePage(nAddr, nSize);
 		addUndoPage(pRemPage);
 		m_vecRemovePages.push_back(nAddr);

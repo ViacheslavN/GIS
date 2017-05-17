@@ -58,6 +58,8 @@ namespace embDB
 		  void clear();
 		  bool savePageForUndo(IDBTransaction *pTran);
 		  bool savePageForRedo(CTranRedoPageManager *pRepoPageManager);
+
+		  uint32 GetPageFlags(int64 nAddr);
 	public:
 		struct TPageFreeChecker
 		{

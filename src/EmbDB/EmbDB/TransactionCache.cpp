@@ -237,4 +237,16 @@ namespace embDB
 		m_Chache.clear();
 		m_pages.clear();
 	}
+
+	uint32 CTransactionsCache::GetPageFlags(int64 nAddr)
+	{
+		FilePagePtr pPage = m_Chache.GetElem(nAddr);
+		if (pPage.get())
+			return pPage->getFlags();
+		TPages::iterator it = m_pages.find(nAddr);
+		if (it == m_pages.end())
+			return 0;
+		sFileTranPageInfo& PageInfo = it->second;
+		return PageInfo.m_nFlags;
+	}
 } 

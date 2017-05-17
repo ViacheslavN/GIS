@@ -286,27 +286,25 @@ namespace embDB
 			{
 				uint32 nSize = m_innerKeyMemSet.size() / 2;
 
-				newNodeKeySet.insert(newNodeKeySet.begin(), m_innerKeyMemSet.begin()+ nSize + 1, m_innerKeyMemSet.end());
-				newNodeLinkSet.insert(newNodeLinkSet.begin(), m_innerLinkMemSet.begin() + nSize + 1, m_innerLinkMemSet.end());
 
-				m_Compressor.SplitIn(nSize + 1, m_innerKeyMemSet.size(), pNewNodeComp);
+				std::move(m_innerKeyMemSet.begin() + nSize + 1, m_innerKeyMemSet.end(), std::inserter(newNodeKeySet, newNodeKeySet.begin()));
+				std::move(m_innerLinkMemSet.begin() + nSize + 1, m_innerLinkMemSet.end(), std::inserter(newNodeLinkSet, newNodeLinkSet.begin()));
+
+
 
 				uint32 nNewSize = nSize;
 
 
 				*pSplitKey = m_innerKeyMemSet[nNewSize];
 				pNode->m_nLess = m_innerLinkMemSet[nNewSize];
-
-				m_Compressor.remove(nNewSize, m_innerKeyMemSet[nNewSize], m_innerLinkMemSet[nNewSize], m_innerKeyMemSet, m_innerLinkMemSet);
-
+				
 
 				assert(pNode->m_nLess != -1);
 
 				m_innerKeyMemSet.resize(nNewSize);
 				m_innerLinkMemSet.resize(nNewSize);
+
 				m_Compressor.recalc(m_innerKeyMemSet, m_innerLinkMemSet);
-
-
 				pNewNodeComp.recalc(newNodeKeySet, newNodeLinkSet);
 			}
 
@@ -328,8 +326,11 @@ namespace embDB
 
 			int nSize = m_innerKeyMemSet.size() / 2;
 
-			LeftKeySet.insert(LeftKeySet.begin(), m_innerKeyMemSet.begin(), m_innerKeyMemSet.begin() + nSize);
-			LeftLinkSet.insert(LeftLinkSet.begin(), m_innerLinkMemSet.begin(), m_innerLinkMemSet.begin() + nSize);
+
+			std::move(m_innerKeyMemSet.begin(), m_innerKeyMemSet.begin() + nSize, std::inserter(LeftKeySet, LeftKeySet.begin()));
+			std::move(m_innerLinkMemSet.begin(), m_innerLinkMemSet.begin() + nSize, std::inserter(LeftLinkSet, LeftLinkSet.begin()));
+
+ 
 			pLeftNode->m_nLess = m_nLess;
 
 			pLeftNodeComp.recalc(LeftKeySet, LeftLinkSet);
@@ -337,9 +338,10 @@ namespace embDB
 			*pSplitKey = m_innerKeyMemSet[nSize];
 			pRightNode->m_nLess = m_innerLinkMemSet[nSize];
 
+			std::move(m_innerKeyMemSet.begin() + nSize + 1, m_innerKeyMemSet.end() , std::inserter(RightKeySet, RightKeySet.begin()));
+			std::move(m_innerLinkMemSet.begin() + nSize + 1, m_innerLinkMemSet.end(), std::inserter(RightLinkSet, RightLinkSet.begin()));
 
-			RightKeySet.insert(RightKeySet.begin(), m_innerKeyMemSet.begin() + nSize, m_innerKeyMemSet.end());
-			RightLinkSet.insert(RightLinkSet.begin(), m_innerLinkMemSet.begin() + nSize, m_innerLinkMemSet.end());
+			 
 			pRightNodeComp.recalc(RightKeySet, RightLinkSet);
 
 
@@ -400,8 +402,8 @@ namespace embDB
 				pNode->m_innerLinkMemSet.reserve(pNode->m_innerLinkMemSet.size() + m_innerLinkMemSet.size());
 
 		 
-				std::move(pNode->m_innerKeyMemSet.begin(), pNode->m_innerKeyMemSet.end(), std::inserter(m_innerKeyMemSet, m_innerKeyMemSet.end()));
-				std::move(pNode->m_innerLinkMemSet.begin(), pNode->m_innerLinkMemSet.end(), std::inserter(m_innerLinkMemSet, m_innerLinkMemSet.end()));
+				std::move(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), std::inserter(pNode->m_innerKeyMemSet, pNode->m_innerKeyMemSet.end()));
+				std::move(m_innerLinkMemSet.begin(), m_innerLinkMemSet.end(), std::inserter(pNode->m_innerLinkMemSet, pNode->m_innerLinkMemSet.end()));
 
 				
 				pNode->m_innerLinkMemSet.swap(m_innerLinkMemSet);
@@ -424,8 +426,8 @@ namespace embDB
 				m_innerLinkMemSet.reserve(pNode->m_innerLinkMemSet.size() + m_innerLinkMemSet.size());
 
 
-				std::move(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), std::inserter(pNode->m_innerKeyMemSet, pNode->m_innerKeyMemSet.end()));
-				std::move(m_innerLinkMemSet.begin(), m_innerLinkMemSet.end(), std::inserter(pNode->m_innerLinkMemSet, pNode->m_innerLinkMemSet.end()));
+				std::move(pNode->m_innerKeyMemSet.begin(), pNode->m_innerKeyMemSet.end(), std::inserter(m_innerKeyMemSet, m_innerKeyMemSet.end()));
+				std::move(pNode->m_innerLinkMemSet.begin(), pNode->m_innerLinkMemSet.end(), std::inserter(m_innerLinkMemSet, m_innerLinkMemSet.end()));
 
 				m_Compressor.recalc(m_innerKeyMemSet, m_innerLinkMemSet);
 			}
@@ -438,6 +440,8 @@ namespace embDB
 			if (nCnt < 2 && !m_innerKeyMemSet.empty())
 				return false;  
 			
+			uint32 newSize = pNode->m_innerLinkMemSet.size() - nCnt;
+
 			if (bLeft)
 			{
 
@@ -449,18 +453,16 @@ namespace embDB
 
 
 				m_innerKeyMemSet.push_back(LessMin);
-				m_innerLinkMemSet.push_back(m_nLess);
-
-		
-				uint32 newSize = pNode->m_innerLinkMemSet.size() - nCnt;
+				m_innerLinkMemSet.push_back(m_nLess);		
 				
-				std::move(pNode->m_innerKeyMemSet.begin(), pNode->m_innerKeyMemSet.end(), std::inserter(m_innerKeyMemSet, m_innerKeyMemSet.end()));
-				std::move(pNode->m_innerLinkMemSet.begin(), pNode->m_innerLinkMemSet.end(), std::inserter(m_innerLinkMemSet, m_innerLinkMemSet.end()));
 				
-				std::rotate(m_innerKeyMemSet.begin(), m_innerKeyMemSet.begin() + oldSize, m_innerKeyMemSet.end());
-				std::rotate(m_innerLinkMemSet.begin(), m_innerLinkMemSet.begin() + oldSize, m_innerLinkMemSet.end());
+				std::move(std::next(pNode->m_innerKeyMemSet.begin(), newSize), pNode->m_innerKeyMemSet.end(), std::inserter(m_innerKeyMemSet, m_innerKeyMemSet.end()));
+				std::move(std::next(pNode->m_innerLinkMemSet.begin(), newSize), pNode->m_innerLinkMemSet.end(), std::inserter(m_innerLinkMemSet, m_innerLinkMemSet.end()));
+				
+				std::rotate(m_innerKeyMemSet.begin(), std::next(m_innerKeyMemSet.begin(), oldSize), m_innerKeyMemSet.end());
+				std::rotate(m_innerLinkMemSet.begin(), std::next(m_innerLinkMemSet.begin(), oldSize), m_innerLinkMemSet.end());
 
-				m_pCompressor.recalc(m_innerKeyMemSet, m_innerLinkMemSet);
+				m_Compressor.recalc(m_innerKeyMemSet, m_innerLinkMemSet);
 
 				m_nLess = pNode->m_innerLinkMemSet[newSize];
 
@@ -471,16 +473,27 @@ namespace embDB
 			}
 			else
 			{
+
+				m_innerKeyMemSet.reserve(m_innerKeyMemSet.size() + nCnt + 1); //1 for less elem
+				m_innerLinkMemSet.reserve(m_innerLinkMemSet.size() + nCnt + 1); //1 for less elem
+
 				m_innerKeyMemSet.push_back(LessMin);
 				m_innerLinkMemSet.push_back(pNode->m_nLess);
 
-				m_innerKeyMemSet.copy(pNode->m_innerKeyMemSet, m_innerKeyMemSet.size(), 0, nCnt - 1);
-				m_innerLinkMemSet.copy(pNode->m_innerLinkMemSet, m_innerLinkMemSet.size(), 0, nCnt - 1);
+
+				std::move(pNode->m_innerKeyMemSet.begin(), std::next(pNode->m_innerKeyMemSet.begin(), nCnt - 1), std::inserter(m_innerKeyMemSet, m_innerKeyMemSet.end()));
+				std::move(pNode->m_innerLinkMemSet.begin(), std::next(pNode->m_innerLinkMemSet.begin(), nCnt - 1), std::inserter(m_innerLinkMemSet, m_innerLinkMemSet.end()));
+				 
 
 				pNode->m_nLess = pNode->m_innerLinkMemSet[nCnt - 1];
 
-				pNode->m_innerKeyMemSet.movel(nCnt, nCnt);
-				pNode->m_innerLinkMemSet.movel(nCnt, nCnt);
+
+
+				std::rotate(pNode->m_innerKeyMemSet.begin(), std::next(pNode->m_innerKeyMemSet.begin(), nCnt), pNode->m_innerKeyMemSet.end());
+				std::rotate(pNode->m_innerLinkMemSet.begin(), std::next(pNode->m_innerLinkMemSet.begin(), nCnt), pNode->m_innerLinkMemSet.end());
+				pNode->m_innerKeyMemSet.resize(newSize);
+				pNode->m_innerLinkMemSet.resize(newSize);
+ 
 
 				m_Compressor.recalc(m_innerKeyMemSet, m_innerLinkMemSet);
 				pNode->m_Compressor.recalc(pNode->m_innerKeyMemSet, pNode->m_innerLinkMemSet);
