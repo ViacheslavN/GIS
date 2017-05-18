@@ -287,8 +287,8 @@ namespace embDB
 				uint32 nSize = m_innerKeyMemSet.size() / 2;
 
 
-				std::move(m_innerKeyMemSet.begin() + nSize + 1, m_innerKeyMemSet.end(), std::inserter(newNodeKeySet, newNodeKeySet.begin()));
-				std::move(m_innerLinkMemSet.begin() + nSize + 1, m_innerLinkMemSet.end(), std::inserter(newNodeLinkSet, newNodeLinkSet.begin()));
+				std::move(std::next(m_innerKeyMemSet.begin(),  nSize + 1), m_innerKeyMemSet.end(), std::inserter(newNodeKeySet, newNodeKeySet.begin()));
+				std::move(std::next(m_innerLinkMemSet.begin(),  nSize + 1), m_innerLinkMemSet.end(), std::inserter(newNodeLinkSet, newNodeLinkSet.begin()));
 
 
 
@@ -451,14 +451,13 @@ namespace embDB
 				m_innerKeyMemSet.reserve(m_innerKeyMemSet.size() + nCnt + 1); //1 for less elem
 				m_innerLinkMemSet.reserve(m_innerLinkMemSet.size() + nCnt + 1); //1 for less elem
 
-
+				
+				std::move(std::next(pNode->m_innerKeyMemSet.begin(), newSize + 1), pNode->m_innerKeyMemSet.end(), std::inserter(m_innerKeyMemSet, m_innerKeyMemSet.end()));
+				std::move(std::next(pNode->m_innerLinkMemSet.begin(), newSize + 1), pNode->m_innerLinkMemSet.end(), std::inserter(m_innerLinkMemSet, m_innerLinkMemSet.end()));
+				
 				m_innerKeyMemSet.push_back(LessMin);
-				m_innerLinkMemSet.push_back(m_nLess);		
-				
-				
-				std::move(std::next(pNode->m_innerKeyMemSet.begin(), newSize), pNode->m_innerKeyMemSet.end(), std::inserter(m_innerKeyMemSet, m_innerKeyMemSet.end()));
-				std::move(std::next(pNode->m_innerLinkMemSet.begin(), newSize), pNode->m_innerLinkMemSet.end(), std::inserter(m_innerLinkMemSet, m_innerLinkMemSet.end()));
-				
+				m_innerLinkMemSet.push_back(m_nLess);
+
 				std::rotate(m_innerKeyMemSet.begin(), std::next(m_innerKeyMemSet.begin(), oldSize), m_innerKeyMemSet.end());
 				std::rotate(m_innerLinkMemSet.begin(), std::next(m_innerLinkMemSet.begin(), oldSize), m_innerLinkMemSet.end());
 

@@ -366,7 +366,50 @@ namespace embDB
 				pParent = getNode(pNode->parentAddr());
 				pNode->setParent(pParent, pNode->foundIndex());
 			}
+
+			if (!pParent.get() && pNode->addr() != m_nRootAddr)
+			{
+				FindParent(pNode);
+				pParent = pNode->parentNodePtr();
+				if (!pParent.get())
+				{
+					pParent = getNode(pNode->parentAddr());
+					pNode->setParent(pParent, pNode->foundIndex());
+				}
+			}
+
 			return pParent;
+		}
+
+		void  FindParent(TBTreeNode *pCheckNode)
+		{
+			assert(pCheckNode->count() != 0);
+
+			const TKey& key = pCheckNode->key(0);
+			int32 nIndex = -1;
+			int64 nNextAddr = m_pRoot->inner_lower_bound(m_comp, key, nIndex);
+			TBTreeNodePtr pParent = m_pRoot;
+			for (;;)
+			{
+				if (nNextAddr == -1)
+				{
+					break;
+				}
+				if (pCheckNode->addr() == nNextAddr)
+				{
+					pCheckNode->setParent(pParent, nIndex);
+					break;
+				}
+				
+				TBTreeNodePtr pNode = getNode(nNextAddr);
+				if (!pNode.get())
+				{
+					break;
+				}
+				pNode->setParent(pParent, nIndex);				
+				nNextAddr = pNode->inner_lower_bound(m_comp, key, nIndex);
+				pParent = pNode;
+			}
 		}
 
 		TBTreeNodePtr getNode(TLink nAddr, bool bNotMove = false, bool bCheckCache = true)

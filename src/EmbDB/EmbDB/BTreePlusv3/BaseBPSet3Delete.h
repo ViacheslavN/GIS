@@ -297,13 +297,13 @@ void BPSETBASE_DECLARATION::RemoveFromInnerNode(TBTreeNodePtr pCheckNode, const 
 		}
 		if (!(pCheckNode->getFlags() & CHECK_REM_NODE))
 		{
-			pCheckNode = getNode(pCheckNode->parentAddr());//		break;
+			pCheckNode = getParentNode(pCheckNode.get());//		break;
 			continue;
 		}
 		pCheckNode->setFlags(CHECK_REM_NODE, false);
 		if (!pCheckNode->isHalfEmpty())
 		{
-			pCheckNode = getNode(pCheckNode->parentAddr());
+			pCheckNode = getParentNode(pCheckNode.get()); 
 			continue;
 		}
 

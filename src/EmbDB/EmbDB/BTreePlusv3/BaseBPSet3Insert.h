@@ -77,6 +77,7 @@ void BPSETBASE_DECLARATION::CheckLeafNode(TBTreeNode *pNode, bool bPreSave)
 		TBTreeNodePtr pParentNode = getParentNode(pCheckNode.get());	
 		if (!pParentNode.get())
 		{
+			assert(pCheckNode->addr() == m_nRootAddr);
 			SplitRootInnerNode();
 			break;
 		}
@@ -211,7 +212,7 @@ void BPSETBASE_DECLARATION::SetParentNext(TBTreeNode *pNode, TBTreeNode* pNodeNe
 			break;
 		}
 		nFoundIndex = pParent->foundIndex();
-		pParent = getNode(pParent->parentAddr());
+		pParent = getParentNode(pParent.get());
 
 	}
 	if (!pParent.get())

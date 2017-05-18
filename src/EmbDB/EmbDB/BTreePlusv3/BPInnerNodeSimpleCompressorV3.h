@@ -168,7 +168,7 @@ namespace embDB
 		bool IsHaveUnion(BPInnerNodeSimpleCompressorV3& pCompressor) const
 		{
 
-			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(TLink));
+			uint32 nNoCompSize = (m_nCount + 1) * (sizeof(TKey) + sizeof(TLink)); // 1 for less elem
 			uint32 nNoCompSizeUnion = pCompressor.m_nCount * (sizeof(TKey) + sizeof(TLink));
 
 			return (nNoCompSize + nNoCompSizeUnion) < (m_nPageSize - headSize());
