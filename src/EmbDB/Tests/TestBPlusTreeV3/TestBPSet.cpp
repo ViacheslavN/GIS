@@ -7,11 +7,14 @@
 
 
 #include "../../EmbDB/BTreePlusv3/BPSetv3.h"
-
+#include "../../EmbDB/BTreePlusv3/BPSetInfoTreeV3.h"
 #include "../../EmbDB/Transactions.h"
 #include "../../EmbDB/DirectTransactions.h"
 #include "../../EmbDB/ConsolLog.h"
 #include "CommonLibrary/DebugTime.h"
+
+#include "BPInnerNodeSimpleCompressor.h"
+#include "BPLeafNodeSetSimpleCompressorV3.h"
 
 /*
 template <	class _TKey, class _TComp, class _Transaction,
@@ -31,14 +34,21 @@ class TBPSetIteratorV3
 */
 typedef embDB::comp<int64> TComparator;
 typedef embDB::BPInnerNodeSimpleCompressorV3<int64> TInnerCompess;
-typedef embDB::BPTreeInnerNodeSetv3<int64, embDB::IDBTransaction, TInnerCompess> TInnerNode;
 typedef embDB::BPLeafNodeSetSimpleCompressorV3<int64> TLeafCompess;
+
+
+//typedef BPInnerNodeSimpleCompressor<int64> TInnerCompess;
+//typedef BPLeafNodeSetSimpleCompressor<int64> TLeafCompess;
+
+typedef embDB::BPTreeInnerNodeSetv3<int64, embDB::IDBTransaction, TInnerCompess> TInnerNode;
+
 typedef embDB::BPTreeLeafNodeSetv3<int64, embDB::IDBTransaction, TLeafCompess> TLeafNode;
 typedef embDB::BPTreeNodeSetv3<int64, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode> TBTreeNode;
 
 //typedef embDB::TBPSetIteratorV3<int64, TComparator, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode, TBTreeNode> TIterator;
 
 typedef embDB::TBPSetV3<int64, TComparator, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode, TBTreeNode> TBPSet64;
+typedef embDB::TBPSetInfoTreeV3<int64, TBTreeNode, TBPSet64> TBSetInfo;
 
 
 
@@ -115,6 +125,40 @@ void searchINBTreeSet(uint32 nPageSize, int32 nCacheBPTreeSize, int64 nStart, in
 }
 
 
+template<class TBtree, class Tran, class TKey, class TValue>
+void infoTreeSet(uint32 nPageSize, int32 nCacheBPTreeSize,  Tran* pTran, CommonLib::alloc_t *pAlloc, int64& nTreeRootPage, bool bCheckCRC)
+{
+	std::cout << "Read Info Tree" << std::endl;
+
+	CommonLib::TimeUtils::CDebugTime time;
+	double tmInsert = 0;
+	double treeCom = 0;
+	double tranCom = 0;
+	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, nPageSize, false, bCheckCRC);
+	tree.loadBTreeInfo();
+
+	TBSetInfo setInfo(&tree);
+	setInfo.CalcNodesInTree();
+
+	 
+	std::cout << "Inner Nodes: " << setInfo.m_nInnerNodeCount << " Leaf Nodes: " << setInfo.m_nLeafNodeCount << " Keys: "  << setInfo.m_nKeyCount;
+	if (setInfo.m_setHeights.size() == 1)
+		std::cout <<" Height: " << *setInfo.m_setHeights.begin() << std::endl;
+	else
+	{
+		std::cout << " Heights:";
+		auto it = setInfo.m_setHeights.begin();
+		auto end = setInfo.m_setHeights.end();
+
+		for (; it != end; ++it)
+		{
+
+			std::cout << " " << *it;
+		}
+		std::cout  << std::endl;
+	}
+
+}
 
 template<class TBtree, class Tran, class TKey, class TValue>
 void insertINBTreeSet(uint32 nPageSize, int32 nCacheBPTreeSize, int64 nStart, int64 nEndStart, int64 nStep, Tran* pTran, CommonLib::alloc_t *pAlloc, int64& nTreeRootPage, bool bCheckCRC)
@@ -339,6 +383,25 @@ void testBPTreeSetImpl(int64 nCount, uint32 nTranCache, size_t nPageSize, int32 
  
 		}
 
+
+		
+		{
+			embDB::CStorage storage(alloc, nCacheStorageSize);
+			storage.AddRef();
+			storage.open(L"d:\\dbplus.data", false, false, false, false);
+			storage.setStoragePageInfo(nStorageInfoPage);
+			storage.loadStorageInfo();
+			embDB::CConsolLogger log;
+			log.AddRef();
+			TTran tran1(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1, nTranCache);
+			tran1.begin();
+			tran1.SetLogger(&log);
+
+			infoTreeSet <TBtree, TTran, TKey, TKey>(nPageSize, nCacheBPTreeSize,  &tran1, alloc, nTreeRootPage, bCheckCRC);
+			tran1.commit();
+			storage.close();
+		}
+
 		{
 			embDB::CStorage storage(alloc, nCacheStorageSize);
 			storage.AddRef();
@@ -387,11 +450,29 @@ void testBPTreeSetImpl(int64 nCount, uint32 nTranCache, size_t nPageSize, int32 
 			tran1.begin();
 			tran1.SetLogger(&log);
 
+			infoTreeSet <TBtree, TTran, TKey, TKey>(nPageSize, nCacheBPTreeSize, &tran1, alloc, nTreeRootPage, bCheckCRC);
+			tran1.commit();
+			storage.close();
+		}
+
+
+		{
+			embDB::CStorage storage(alloc, nCacheStorageSize);
+			storage.AddRef();
+			storage.open(L"d:\\dbplus.data", false, false, false, false);
+			storage.setStoragePageInfo(nStorageInfoPage);
+			storage.loadStorageInfo();
+			embDB::CConsolLogger log;
+			log.AddRef();
+			TTran tran1(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1, nTranCache);
+			tran1.begin();
+			tran1.SetLogger(&log);
+
 			searchINBTreeSet <TBtree, TTran, TKey, TKey>(nPageSize, nCacheBPTreeSize, nRemoveCnt, nCount, nStep, &tran1, alloc, nTreeRootPage, bCheckCRC);
 			tran1.commit();
 			storage.close();
 		}
-		return;
+		 
 		{
 			embDB::CStorage storage(alloc, nCacheStorageSize);
 			storage.AddRef();
@@ -404,12 +485,27 @@ void testBPTreeSetImpl(int64 nCount, uint32 nTranCache, size_t nPageSize, int32 
 			TTran tran(alloc, embDB::rtUndo, embDB::eTT_UNDEFINED, "d:\\tran1.data", &storage, 1, nTranCache);
 			tran.begin();
 			tran.SetLogger(&log);
-			insertINBTreeSet <TBtree, TTran, TKey, TValue>(nPageSize, nCacheBPTreeSize, nRemoveCnt, 0, nStep, &tran, alloc, nTreeRootPage, bCheckCRC);
+			insertINBTreeSet <TBtree, TTran, TKey, TValue>(nPageSize, nCacheBPTreeSize, 0, nRemoveCnt, nStep, &tran, alloc, nTreeRootPage, bCheckCRC);
 			std::cout << "File Size " << storage.getFileSize() << std::endl;
 			storage.close();
 
 		}
+		{
+			embDB::CStorage storage(alloc, nCacheStorageSize);
+			storage.AddRef();
+			storage.open(L"d:\\dbplus.data", false, false, false, false);
+			storage.setStoragePageInfo(nStorageInfoPage);
+			storage.loadStorageInfo();
+			embDB::CConsolLogger log;
+			log.AddRef();
+			TTran tran1(alloc, embDB::rtUndo, embDB::eTT_SELECT, "d:\\tran2.data", &storage, 1, nTranCache);
+			tran1.begin();
+			tran1.SetLogger(&log);
 
+			infoTreeSet <TBtree, TTran, TKey, TKey>(nPageSize, nCacheBPTreeSize, &tran1, alloc, nTreeRootPage, bCheckCRC);
+			tran1.commit();
+			storage.close();
+		}
 		{
 			embDB::CStorage storage(alloc, nCacheStorageSize);
 			storage.AddRef();
@@ -432,11 +528,11 @@ void testBPTreeSetImpl(int64 nCount, uint32 nTranCache, size_t nPageSize, int32 
 
 void TestBPSetPlusTree()
 {
-	int64 nCount = 10000000;
-	size_t nPageSize = 256;
+	int64 nCount = 100000000;
+	size_t nPageSize = 8192;
 	uint32 nTranCache = 10;
 
-	testBPTreeSetImpl<TBPSet64, embDB::CTransaction, int64, int64>(nCount, nTranCache, nPageSize,  50, 1, true);
+	testBPTreeSetImpl<TBPSet64, embDB::CTransaction, int64, int64>(nCount, nTranCache, nPageSize,  50, 5, true);
 
 
 

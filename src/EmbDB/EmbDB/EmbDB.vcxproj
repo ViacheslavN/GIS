@@ -532,11 +532,15 @@
     <ClInclude Include="BTreePlusv3\BaseBPSet3Delete.h" />
     <ClInclude Include="BTreePlusv3\BaseBPSet3Search.h" />
     <ClInclude Include="BTreePlusv3\BaseBPSetv3.h" />
+    <ClInclude Include="BTreePlusv3\BPIteratorMapV3.h" />
+    <ClInclude Include="BTreePlusv3\BPMapv3.h" />
+    <ClInclude Include="BTreePlusv3\BPSetInfoTreeV3.h" />
     <ClInclude Include="BTreePlusv3\BPInnerNodeSimpleCompressorV3.h" />
     <ClInclude Include="BTreePlusv3\BPIteratorSetV3.h" />
     <ClInclude Include="BTreePlusv3\BPLeafNodeSetSimpleCompressorV3.h" />
     <ClInclude Include="BTreePlusv3\BPSetv3.h" />
     <ClInclude Include="BTreePlusv3\BPTreeInnerNodeSetV3.h" />
+    <ClInclude Include="BTreePlusv3\BPTreeLeafNodeMapV3.h" />
     <ClInclude Include="BTreePlusv3\BPTreeLeafNodeSetV3.h" />
     <ClInclude Include="BTreePlusv3\BPTreeNodeSetV3.h" />
     <ClInclude Include="BTreePlusv3\BaseBPSet3Insert.h" />

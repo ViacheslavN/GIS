@@ -147,6 +147,8 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BPInnerNodeSimpleCompressor.h" />
+    <ClInclude Include="BPLeafNodeSetSimpleCompressorV3.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

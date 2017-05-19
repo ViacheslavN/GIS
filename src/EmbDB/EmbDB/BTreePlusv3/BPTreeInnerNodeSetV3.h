@@ -437,7 +437,7 @@ namespace embDB
 		{
 			int nCnt = ((m_innerKeyMemSet.size() + pNode->m_innerKeyMemSet.size())) / 2 - m_innerKeyMemSet.size();
 	 
-			if (nCnt < 2 && !m_innerKeyMemSet.empty())
+			if (nCnt < 1 && !m_innerKeyMemSet.empty())
 				return false;  
 			
 			uint32 newSize = pNode->m_innerLinkMemSet.size() - nCnt;

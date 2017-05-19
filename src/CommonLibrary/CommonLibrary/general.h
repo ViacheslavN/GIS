@@ -44,6 +44,7 @@
 #include <functional>
 #include <iterator>
 #include <iostream>
+#include <stack>
 #include "GeneralTypes.h"
 #define  _CHECK_MEM
 

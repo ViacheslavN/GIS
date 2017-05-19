@@ -265,6 +265,9 @@
     <Filter Include="DB\BPTrees\BTreePlusv3\BPSetv3">
       <UniqueIdentifier>{785e0bc4-7628-4827-ad37-2c50171cc212}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\BPTrees\BTreePlusv3\BPMapv3">
+      <UniqueIdentifier>{1c0f31e0-eaca-4577-aa2e-d1426a02be25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -1535,6 +1538,24 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BPSetInfoTreeV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BPMapv3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BPIteratorMapV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BPTreeLeafNodeMapV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

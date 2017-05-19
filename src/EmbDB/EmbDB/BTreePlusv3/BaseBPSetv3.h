@@ -443,6 +443,17 @@ namespace embDB
 			}
 			return pBNode;
 		}
+
+
+		TBTreeNodePtr root()
+		{
+			if (!m_pRoot.get())
+			{
+				m_pRoot = getNode(m_nRootAddr);
+			}
+			return m_pRoot;
+		}
+
 		/*insert*/
 		TBTreeNodePtr findLeafNodeForInsert(const TKey& key);
 		bool insert(const TKey& key);
