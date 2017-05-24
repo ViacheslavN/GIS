@@ -53,7 +53,7 @@ bool BPSETBASE_DECLARATION::remove(const TKey& key)
 
 
 BPSETBASE_TEMPLATE_PARAMS
-void BPSETBASE_DECLARATION::RemoveFromLeafNode(TBTreeNodePtr& pNode, int32 nIndex, const TKey& key)
+void BPSETBASE_DECLARATION::RemoveFromLeafNode(TBTreeNodePtr pNode, int32 nIndex, const TKey& key)
 {
 	
 	pNode->removeByIndex(nIndex);
@@ -394,7 +394,7 @@ void BPSETBASE_DECLARATION::RemoveFromInnerNode(TBTreeNodePtr pCheckNode, const 
 
 
 BPSETBASE_TEMPLATE_PARAMS
-void BPSETBASE_DECLARATION::UnionInnerNode(TBTreeNodePtr& pParentNode, TBTreeNodePtr& pNode, TBTreeNodePtr& pDonorNode, bool bLeft)
+void BPSETBASE_DECLARATION::UnionInnerNode(TBTreeNodePtr pParentNode, TBTreeNodePtr pNode, TBTreeNodePtr pDonorNode, bool bLeft)
 {
 
 	TBTreeNodePtr pMinNode = bLeft ? getMinimumNode(getNode(pNode->less())) : getMinimumNode(getNode(pDonorNode->less()));
@@ -418,7 +418,7 @@ void BPSETBASE_DECLARATION::UnionInnerNode(TBTreeNodePtr& pParentNode, TBTreeNod
 
 
 BPSETBASE_TEMPLATE_PARAMS
-void BPSETBASE_DECLARATION::AlignmentInnerNode(TBTreeNodePtr& pParentNode, TBTreeNodePtr& pNode, TBTreeNodePtr& pDonorNode, bool bLeft)
+void BPSETBASE_DECLARATION::AlignmentInnerNode(TBTreeNodePtr pParentNode, TBTreeNodePtr pNode, TBTreeNodePtr pDonorNode, bool bLeft)
 {
 
 	TBTreeNodePtr pMinNode = bLeft ? getMinimumNode(getNode(pNode->less())) : getMinimumNode(getNode(pDonorNode->less()));

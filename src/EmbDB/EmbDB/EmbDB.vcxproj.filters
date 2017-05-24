@@ -1557,6 +1557,24 @@
     <ClInclude Include="BTreePlusv3\BPTreeLeafNodeMapV3.h">
       <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BPLeafNodeMapSimpleCompressorV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BPTreeNodeMapV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

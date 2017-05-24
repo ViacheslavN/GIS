@@ -1,4 +1,4 @@
-#pragma 
+#pragma once
 
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
@@ -440,7 +440,7 @@ namespace embDB
 		}
 	
 
-		void setParent(std::shared_ptr<BPTreeNodeSetv3>& pNode, int32 nFoundIndex = -1)
+		void setParent(std::shared_ptr<BPTreeNodeSetv3> pNode, int32 nFoundIndex = -1)
 		{
 
 			m_pParent =  pNode;

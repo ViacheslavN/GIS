@@ -4,9 +4,12 @@
 #include "stdafx.h"
 
 void TestBPSetPlusTree();
+void TestBPMapPlusTree();
 int main()
 {
-	TestBPSetPlusTree();
+	//TestBPSetPlusTree();
+
+	TestBPMapPlusTree();
     return 0;
 }
 

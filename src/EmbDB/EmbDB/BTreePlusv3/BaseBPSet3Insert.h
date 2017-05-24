@@ -142,7 +142,7 @@ void BPSETBASE_DECLARATION::SplitRootInnerNode()
 }
 
 BPSETBASE_TEMPLATE_PARAMS
-void BPSETBASE_DECLARATION::SetParentInChildCacheOnly(TBTreeNodePtr& pNode)
+void BPSETBASE_DECLARATION::SetParentInChildCacheOnly(TBTreeNodePtr pNode)
 {
 	assert(!pNode->isLeaf());
 	TBTreeNodePtr pLessNode = m_Cache.GetElem(pNode->less(), true);
@@ -157,7 +157,7 @@ void BPSETBASE_DECLARATION::SetParentInChildCacheOnly(TBTreeNodePtr& pNode)
 }
 
 BPSETBASE_TEMPLATE_PARAMS
-int BPSETBASE_DECLARATION::splitLeafNode(TBTreeNode *pNode, TBTreeNode *pNewNode, TBTreeNodePtr& pParentNode)
+int BPSETBASE_DECLARATION::splitLeafNode(TBTreeNode *pNode, TBTreeNode *pNewNode, TBTreeNodePtr pParentNode)
 {
 	assert(pNewNode->isLeaf());
 	assert(pNode->isLeaf());
@@ -236,7 +236,7 @@ void BPSETBASE_DECLARATION::SetParentNext(TBTreeNode *pNode, TBTreeNode* pNodeNe
 
 
 BPSETBASE_TEMPLATE_PARAMS
-void BPSETBASE_DECLARATION::splitInnerNode(TBTreeNode *pNode, TBTreeNodePtr& pParentNode)
+void BPSETBASE_DECLARATION::splitInnerNode(TBTreeNode *pNode, TBTreeNodePtr pParentNode)
 {
 	if (!pParentNode.get())
 	{

@@ -19,12 +19,12 @@ namespace embDB
 		typedef _Transaction Transaction;
 		typedef _TCompressor TCompressor;
 		typedef STLAllocator<TKey> TAlloc;
-		typedef std::vector<TKey, TAlloc> TLeafMemSet;
+		typedef std::vector<TKey, TAlloc> TKeyMemSet;
 
 		typedef typename _TCompressor::TLeafCompressorParams TLeafCompressorParams;
 
 		BPTreeLeafNodeSetv3Base(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
-			m_leafKeyMemSet(TAlloc(pAlloc)), m_Compressor(nPageSize - 2*sizeof(TLink) , pAlloc), m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti),
+			m_KeyMemSet(TAlloc(pAlloc)), m_Compressor(nPageSize - 2*sizeof(TLink) , pAlloc), m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti),
 			m_pAlloc(pAlloc), m_bMinSplit(false), m_nPageSize(nPageSize)
 
 		{
@@ -67,9 +67,9 @@ namespace embDB
 		bool insertImp(TComp& comp, const TKey& key, int32& nIndex, int nInsertLeafIndex = -1)
 		{
 			nIndex = -1;
-			if (m_leafKeyMemSet.empty())
+			if (m_KeyMemSet.empty())
 			{
-				m_leafKeyMemSet.push_back(key);
+				m_KeyMemSet.push_back(key);
 				nIndex = 0;
 			}
 			else
@@ -80,20 +80,20 @@ namespace embDB
 				{
 					if (m_bMulti)
 					{
-						auto it = std::upper_bound(m_leafKeyMemSet.begin(), m_leafKeyMemSet.end(), key, comp);
-						nIndex = std::distance(m_leafKeyMemSet.begin(), it);
-						m_leafKeyMemSet.insert(it, key);
+						auto it = std::upper_bound(m_KeyMemSet.begin(), m_KeyMemSet.end(), key, comp);
+						nIndex = std::distance(m_KeyMemSet.begin(), it);
+						m_KeyMemSet.insert(it, key);
 					}
 					else
 					{
-						auto it = std::lower_bound(m_leafKeyMemSet.begin(), m_leafKeyMemSet.end(), key, comp);
-						if(it != m_leafKeyMemSet.end() && comp.EQ(*it, key))
+						auto it = std::lower_bound(m_KeyMemSet.begin(), m_KeyMemSet.end(), key, comp);
+						if(it != m_KeyMemSet.end() && comp.EQ(*it, key))
 						{
 							//TO DO logs
 							return false;
 						}
-						nIndex = std::distance(m_leafKeyMemSet.begin(), it);
-						m_leafKeyMemSet.insert(it, key);
+						nIndex = std::distance(m_KeyMemSet.begin(), it);
+						m_KeyMemSet.insert(it, key);
 					}
 				}
 			}
@@ -105,7 +105,7 @@ namespace embDB
 			int32 nIndex = 0;
 			if (!insertImp(comp, key, nIndex, nInsertLeafIndex))
 				return -1;
-			if (!m_Compressor.insert(nIndex, key, m_leafKeyMemSet))
+			if (!m_Compressor.insert(nIndex, key, m_KeyMemSet))
 				return -1;
 			return nIndex;
 		}
@@ -114,24 +114,24 @@ namespace embDB
 		template<class TComp>
 		uint32 upper_bound(TComp& comp, const TKey& key)
 		{
-			auto it = std::upper_bound(m_leafKeyMemSet.begin(), m_leafKeyMemSet.end(), key, comp);
-			return std::distance(m_leafKeyMemSet.begin(), it);
+			auto it = std::upper_bound(m_KeyMemSet.begin(), m_KeyMemSet.end(), key, comp);
+			return std::distance(m_KeyMemSet.begin(), it);
 		}
 		template<class TComp>
 		uint32 lower_bound(TComp& comp, const TKey& key)
 		{
-			auto it = std::lower_bound(m_leafKeyMemSet.begin(), m_leafKeyMemSet.end(), key, comp);
-			return std::distance(m_leafKeyMemSet.begin(), it);
+			auto it = std::lower_bound(m_KeyMemSet.begin(), m_KeyMemSet.end(), key, comp);
+			return std::distance(m_KeyMemSet.begin(), it);
 		}
 		template<class TComp>
 		int32 binary_search(TComp& comp, const TKey& key)
 		{
-			auto it = std::lower_bound(m_leafKeyMemSet.begin(), m_leafKeyMemSet.end(), key, comp);
-			if (it == m_leafKeyMemSet.end())
+			auto it = std::lower_bound(m_KeyMemSet.begin(), m_KeyMemSet.end(), key, comp);
+			if (it == m_KeyMemSet.end())
 				return -1;
 
 			if (comp.EQ(*it, key))
-				return std::distance(m_leafKeyMemSet.begin(), it);
+				return std::distance(m_KeyMemSet.begin(), it);
 
 			return -1;
 		}
@@ -147,22 +147,22 @@ namespace embDB
 	 		if (m_bMulti)
 			{
 		 
-				auto it = std::upper_bound(m_leafKeyMemSet.begin(), m_leafKeyMemSet.end(), key, comp);
-				if (it == m_leafKeyMemSet.end())
+				auto it = std::upper_bound(m_KeyMemSet.begin(), m_KeyMemSet.end(), key, comp);
+				if (it == m_KeyMemSet.end())
 					return false;
-				if (it != m_leafKeyMemSet.begin())
+				if (it != m_KeyMemSet.begin())
 				--it;
-				nIndex = std::distance(m_leafKeyMemSet.begin(), it);
+				nIndex = std::distance(m_KeyMemSet.begin(), it);
 			
 			}
 			else
 			{
-				auto it = std::lower_bound(m_leafKeyMemSet.begin(), m_leafKeyMemSet.end(), key, comp);
-				if (it == m_leafKeyMemSet.end())
+				auto it = std::lower_bound(m_KeyMemSet.begin(), m_KeyMemSet.end(), key, comp);
+				if (it == m_KeyMemSet.end())
 					return false;
-				nIndex = std::distance(m_leafKeyMemSet.begin(), it);
+				nIndex = std::distance(m_KeyMemSet.begin(), it);
 			}
-			if (!comp.EQ(m_leafKeyMemSet[nIndex], key))
+			if (!comp.EQ(m_KeyMemSet[nIndex], key))
 				return false;
  
 			removeByIndex(nIndex);
@@ -170,8 +170,8 @@ namespace embDB
 		}
 		bool removeByIndex(int32 nIndex)
 		{
-			m_Compressor.remove(nIndex, m_leafKeyMemSet[nIndex], m_leafKeyMemSet);
-			m_leafKeyMemSet.erase(std::next(m_leafKeyMemSet.begin(), nIndex));
+			m_Compressor.remove(nIndex, m_KeyMemSet[nIndex], m_KeyMemSet);
+			m_KeyMemSet.erase(std::next(m_KeyMemSet.begin(), nIndex));
 			return true;
 		}
 		template<class TVector, class TVecVal>
@@ -209,53 +209,44 @@ namespace embDB
 
 		}
 
-
-
-
 		int  SplitIn(BPTreeLeafNodeSetv3Base *pNode, TKey* pSplitKey)
 		{
-
-			TLeafMemSet& newNodeMemSet = pNode->m_leafKeyMemSet;
+			TKeyMemSet& newNodeMemSet = pNode->m_KeyMemSet;
 			TCompressor& NewNodeComp = pNode->m_Compressor;
-
 
 			if (m_bMinSplit)
 			{
-				m_Compressor.remove(m_leafKeyMemSet.size() - 1, m_leafKeyMemSet.back(), m_leafKeyMemSet);
-				int nSplitIndex = SplitOne(m_leafKeyMemSet, newNodeMemSet, pSplitKey);
+				m_Compressor.remove(m_KeyMemSet.size() - 1, m_KeyMemSet.back(), m_KeyMemSet);
+				int nSplitIndex = SplitOne(m_KeyMemSet, newNodeMemSet, pSplitKey);
 
 				NewNodeComp.insert(0, newNodeMemSet[0], newNodeMemSet);
 				return nSplitIndex;
 			}
 			else
 			{
-				int nSplitIndex = SplitInVec(m_leafKeyMemSet, newNodeMemSet, pSplitKey);
-				m_Compressor.recalc(m_leafKeyMemSet);
+				int nSplitIndex = SplitInVec(m_KeyMemSet, newNodeMemSet, pSplitKey);
+				m_Compressor.recalc(m_KeyMemSet);
 				NewNodeComp.recalc(newNodeMemSet);
 				return nSplitIndex;
 			}
-
-
 		}
-
-
 		int  SplitIn(BPTreeLeafNodeSetv3Base *pLeftNode, BPTreeLeafNodeSetv3Base *pRightNode, TKey* pSplitKey)
 		{
 
-			TLeafMemSet& leftNodeMemSet = pLeftNode->m_leafKeyMemSet;
+			TKeyMemSet& leftNodeMemSet = pLeftNode->m_KeyMemSet;
 			TCompressor& pleftNodeComp = pLeftNode->m_Compressor;
 
-			TLeafMemSet& rightNodeMemSet = pRightNode->m_leafKeyMemSet;
+			TKeyMemSet& rightNodeMemSet = pRightNode->m_KeyMemSet;
 			TCompressor& pRightNodeComp = pRightNode->m_Compressor;
 
 
-			uint32 nSize = m_leafKeyMemSet.size() / 2;
+			uint32 nSize = m_KeyMemSet.size() / 2;
 
 			if (pSplitKey)
-				*pSplitKey = m_leafKeyMemSet[nSize];
+				*pSplitKey = m_KeyMemSet[nSize];
 
-			SplitInVec(m_leafKeyMemSet, leftNodeMemSet, 0, nSize);
-			SplitInVec(m_leafKeyMemSet, rightNodeMemSet, nSize, m_leafKeyMemSet.size() - nSize);
+			SplitInVec(m_KeyMemSet, leftNodeMemSet, 0, nSize);
+			SplitInVec(m_KeyMemSet, rightNodeMemSet, nSize, m_KeyMemSet.size() - nSize);
 
 			pleftNodeComp.recalc(leftNodeMemSet);
 			pRightNodeComp.recalc(rightNodeMemSet);
@@ -265,7 +256,7 @@ namespace embDB
 
 		uint32 count() const
 		{
-			return m_leafKeyMemSet.size();
+			return m_KeyMemSet.size();
 		}
 		uint32 tupleSize() const
 		{
@@ -273,11 +264,11 @@ namespace embDB
 		}
 		const TKey& key(uint32 nIndex) const
 		{
-			return m_leafKeyMemSet[nIndex];
+			return m_KeyMemSet[nIndex];
 		}
 		TKey& key(uint32 nIndex)
 		{
-			return m_leafKeyMemSet[nIndex];
+			return m_KeyMemSet[nIndex];
 		}
 
 		template<class TVector>
@@ -305,10 +296,10 @@ namespace embDB
 		bool UnionWith(BPTreeLeafNodeSetv3Base* pNode, bool bLeft,
 			int *nCheckIndex = 0)
 		{
-			UnionVec(m_leafKeyMemSet, pNode->m_leafKeyMemSet, bLeft, nCheckIndex);
+			UnionVec(m_KeyMemSet, pNode->m_KeyMemSet, bLeft, nCheckIndex);
 
  
-			this->m_Compressor.recalc(this->m_leafKeyMemSet);
+			this->m_Compressor.recalc(this->m_KeyMemSet);
 			return true;
 		}
 
@@ -344,19 +335,19 @@ namespace embDB
 
 		bool AlignmentOf(BPTreeLeafNodeSetv3Base* pNode, bool bFromLeft)
 		{
-			auto& nodeMemset = pNode->m_leafKeyMemSet;
+			auto& nodeMemset = pNode->m_KeyMemSet;
 			TCompressor& pNodeComp = pNode->m_Compressor;
-			if (!AlignmentOfVec(m_leafKeyMemSet, nodeMemset, bFromLeft))
+			if (!AlignmentOfVec(m_KeyMemSet, nodeMemset, bFromLeft))
 				return false;
 			pNodeComp.recalc(nodeMemset);
-			m_Compressor.recalc(m_leafKeyMemSet);
+			m_Compressor.recalc(m_KeyMemSet);
 
 			return true;
 		}
 		template<class TComp>
 		bool isKey(TComp& comp, const TKey& key, uint32 nIndex)
 		{
-			return comp.EQ(key, m_leafKeyMemSet[nIndex]);
+			return comp.EQ(key, m_KeyMemSet[nIndex]);
 		}
 
 		void SetMinSplit(bool bMinSplit)
@@ -365,7 +356,7 @@ namespace embDB
 		}
 		virtual void clear()
 		{
-			m_leafKeyMemSet.clear();
+			m_KeyMemSet.clear();
 			m_Compressor.clear();
 		}
 		bool IsHaveUnion(BPTreeLeafNodeSetv3Base *pNode)
@@ -388,7 +379,7 @@ namespace embDB
 
 	public:
 		TCompressor  m_Compressor;
-		TLeafMemSet m_leafKeyMemSet;
+		TKeyMemSet m_KeyMemSet;
 		TLink m_nNext;
 		TLink m_nPrev;
 		bool m_bMulti;
@@ -411,7 +402,7 @@ namespace embDB
 
 
 		typedef typename TBase::TCompressor TCompressor;
-		typedef typename TBase::TLeafMemSet TLeafMemSet;
+		typedef typename TBase::TKeyMemSet TLeafMemSet;
 		typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
 
 		BPTreeLeafNodeSetv3(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
@@ -431,13 +422,13 @@ namespace embDB
 		{
 			stream.write(this->m_nNext);
 			stream.write(this->m_nPrev);
-			return this->m_Compressor.Write(this->m_leafKeyMemSet, stream);
+			return this->m_Compressor.Write(this->m_KeyMemSet, stream);
 		}
 		virtual bool Load(CommonLib::FxMemoryReadStream& stream)
 		{
 			stream.read(this->m_nNext);
 			stream.read(this->m_nPrev);
-			return this->m_Compressor.Load(this->m_leafKeyMemSet, stream);
+			return this->m_Compressor.Load(this->m_KeyMemSet, stream);
 		}
 
 

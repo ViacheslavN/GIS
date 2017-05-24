@@ -171,7 +171,7 @@ namespace embDB
 
 			for (size_t i = 0, sz = vecNodes.size(); i < sz; ++i)
 			{
-				TBTreeNodePtr& pBNode = vecNodes[i];
+				TBTreeNodePtr pBNode = vecNodes[i];
 				 CheckNodeBeforeSave(pBNode.get());
 			}
 
@@ -360,7 +360,7 @@ namespace embDB
 
 		TBTreeNodePtr getParentNode(TBTreeNode *pNode)
 		{
-			TBTreeNodePtr pParent = pNode->parentNodePtr();
+			TBTreeNodePtr pParent = std::static_pointer_cast<TBTreeNode>(pNode->parentNodePtr());
 			if (!pParent.get())
 			{
 				pParent = getNode(pNode->parentAddr());
@@ -370,7 +370,7 @@ namespace embDB
 			if (!pParent.get() && pNode->addr() != m_nRootAddr)
 			{
 				FindParent(pNode);
-				pParent = pNode->parentNodePtr();
+				pParent = std::static_pointer_cast<TBTreeNode>(pNode->parentNodePtr());
 				if (!pParent.get())
 				{
 					pParent = getNode(pNode->parentAddr());
@@ -460,10 +460,10 @@ namespace embDB
 		void CheckLeafNode(TBTreeNode* pNode, bool bPreSave);
 		void TransformRootToInner();
 		void SplitRootInnerNode();
-		void SetParentInChildCacheOnly(TBTreeNodePtr&  pNode);
-		int splitLeafNode(TBTreeNode *pNode, TBTreeNode *pNewNode, TBTreeNodePtr& pParentNode);
+		void SetParentInChildCacheOnly(TBTreeNodePtr  pNode);
+		int splitLeafNode(TBTreeNode *pNode, TBTreeNode *pNewNode, TBTreeNodePtr pParentNode);
 		void SetParentNext(TBTreeNode *pNode, TBTreeNode* pNodeNext);
-		void splitInnerNode(TBTreeNode *pInNode, TBTreeNodePtr& pParentNode);
+		void splitInnerNode(TBTreeNode *pInNode, TBTreeNodePtr pParentNode);
 	
 		
 		/*search*/
@@ -486,14 +486,14 @@ namespace embDB
 		/*remove*/
 		bool remove(const TKey& key);
 		TBTreeNodePtr findLeafNodeForRemove(const TKey& key);
-		void RemoveFromLeafNode(TBTreeNodePtr& pLeafNode, int32 nIndex, const TKey& key);
+		void RemoveFromLeafNode(TBTreeNodePtr pLeafNode, int32 nIndex, const TKey& key);
 		void RemoveFromInnerNode(TBTreeNodePtr pNode,  const TKey& key);
 		void deleteNode(TBTreeNode* pNode);
 		void UnionLeafNode(TBTreeNode* pParentNode, TBTreeNode* pLeafNode, TBTreeNode*pDonorNode, bool bLeft);
 		void AlignmentLeafNode(TBTreeNode* pParentNode, TBTreeNode* pLeafNode, TBTreeNode* pDonorNode, bool bLeft);
 		TBTreeNodePtr  getMinimumNode(TBTreeNodePtr pNode);
-		void UnionInnerNode(TBTreeNodePtr& pParentNode, TBTreeNodePtr& pNode, TBTreeNodePtr& pDonorNode, bool bLeft);
-		void AlignmentInnerNode(TBTreeNodePtr& pParentNode, TBTreeNodePtr& pNode, TBTreeNodePtr&pDonorNode, bool bLeft);
+		void UnionInnerNode(TBTreeNodePtr pParentNode, TBTreeNodePtr pNode, TBTreeNodePtr pDonorNode, bool bLeft);
+		void AlignmentInnerNode(TBTreeNodePtr pParentNode, TBTreeNodePtr pNode, TBTreeNodePtr pDonorNode, bool bLeft);
 	protected:
 		TComp		 m_comp;
 		TBTreeNodePtr m_pRoot;
@@ -515,7 +515,7 @@ namespace embDB
 
 		std::auto_ptr<TLeafCompressorParams> m_LeafCompParams;
 		std::auto_ptr<TInnerCompressorParams> m_InnerCompParams;
-		uint32 m_nStateTree;
+
 		bool m_bMinSplit;
 	};
 #define  BPSETBASE_TEMPLATE_PARAMS template <class _TKey, class _TComp, class _Transaction, class _TInnerCompess,class _TLeafCompess, class _TInnerNode, class _TLeafNode, class _TBTreeNode>

@@ -148,7 +148,6 @@ namespace embDB
 
 			return (nNoCompSize + nNoCompSizeUnion) < (m_nPageSize - headSize());
 
-
 		}
 		bool IsHaveAlignment(BPLeafNodeMapSimpleCompressorV2 *pCompressor) const
 		{
