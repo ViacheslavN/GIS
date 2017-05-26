@@ -1575,6 +1575,21 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BaseDIffEncoder.h">
+      <Filter>DB\BPTrees\BTreePlusv3</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\EmptyEncoder.h">
+      <Filter>DB\BPTrees\BTreePlusv3</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BaseEncoder.h">
+      <Filter>DB\BPTrees\BTreePlusv3</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1759,6 +1774,9 @@
     </ClCompile>
     <ClCompile Include="ValueFieldStatistic.cpp">
       <Filter>DB\Fields\Statistic</Filter>
+    </ClCompile>
+    <ClCompile Include="BTreePlusv3\BaseNodeCompressor.h">
+      <Filter>DB\BPTrees\BTreePlusv3</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

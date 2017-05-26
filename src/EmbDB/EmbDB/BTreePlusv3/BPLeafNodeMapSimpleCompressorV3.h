@@ -140,13 +140,13 @@ namespace embDB
 		{
 			return  (sizeof(TKey) + sizeof(TValue));
 		}
-		void SplitIn(uint32 nBegin, uint32 nEnd, BPLeafNodeMapSimpleCompressorV3& pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
+		/*void SplitIn(uint32 nBegin, uint32 nEnd, BPLeafNodeMapSimpleCompressorV3& pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
 		{
 			uint32 nSize = nEnd - nBegin;
 
 			m_nCount -= nSize;
 			pCompressor.m_nCount += nSize;
-		}
+		}*/
 		bool IsHaveUnion(BPLeafNodeMapSimpleCompressorV3 &pCompressor) const
 		{
 			uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(TValue));

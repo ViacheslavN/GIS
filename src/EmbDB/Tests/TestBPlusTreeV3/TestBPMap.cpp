@@ -402,7 +402,7 @@ void testBPTreeMapImpl(int64 nCount, uint32 nTranCache, size_t nPageSize, int32 
 			tran1.begin();
 			tran1.SetLogger(&log);
 
-			searchINBTreeMap <TBtree, TTran, TKey, TKey>(nPageSize, nCacheBPTreeSize, nCount, 0, nStep, &tran1, alloc, nTreeRootPage, bCheckCRC);
+			searchINBTreeMap <TBtree, TTran, TKey, TKey>(nPageSize, nCacheBPTreeSize, 0, nCount, nStep, &tran1, alloc, nTreeRootPage, bCheckCRC);
 			tran1.commit();
 			storage.close();
 		}
@@ -520,7 +520,7 @@ void TestBPMapPlusTree()
 	size_t nPageSize = 8192;
 	uint32 nTranCache = 10;
 
-	testBPTreeMapImpl<TBPMap64, embDB::CTransaction, int64, int64>(nCount, nTranCache, nPageSize, 50, 5, true);
+	testBPTreeMapImpl<TBPMap64, embDB::CTransaction, int64, int64>(nCount, nTranCache, nPageSize, 50, 50, true);
 
 
 
