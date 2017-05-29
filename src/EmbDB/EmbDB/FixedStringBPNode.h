@@ -11,7 +11,7 @@
 #include "BaseLeafNodeCompDiff.h"
 #include "BaseInnerNodeDIffCompress2.h"
 #include "BaseValueDiffCompressor.h"
-#include "SignedNumLenDiffCompress.h"
+#include "utils/compress/SignedNumLenDiffCompress.h"
 
 
 

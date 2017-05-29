@@ -7,10 +7,10 @@
 #include "BPVectorNoPod.h"
 #include "BlobCompressorParams.h"
 #include "BlobVal.h"
-#include "ReadStreamPage.h"
-#include "WriteStreamPage.h"
+#include "utils/streams/ReadStreamPage.h"
+#include "utils/streams/WriteStreamPage.h"
 #include "BaseLeafNodeCompDiff.h"
-#include "SignedNumLenDiffCompressor2.h"
+#include "utils/compress/SignedNumLenDiffCompressor2.h"
 namespace embDB
 {
 

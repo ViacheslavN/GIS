@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Table.h"
 #include "DBMagicSymbol.h"
-#include "PageVector.h"
+#include "utils/PageVector.h"
 #include "storage.h"
 #include <vector>
 #include "DBFieldInfo.h"
@@ -18,8 +18,8 @@
 #include "SpatialIndexHolder.h"
 #include "CreateFields.h"
 #include "Fields.h"
-#include "ReadStreamPage.h"
-#include "WriteStreamPage.h"
+#include "utils/streams/ReadStreamPage.h"
+#include "utils/streams/WriteStreamPage.h"
 #include "ValueFieldStatisticHolder.h"
 #include "CreateStatistic.h"
 

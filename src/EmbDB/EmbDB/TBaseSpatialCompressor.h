@@ -6,7 +6,7 @@
  
 #include "RectZOrderCompressor.h"
 #include "CompressorParams.h"
-#include "UnsignedIntegerNumLenComp.h"
+#include "utils/compress/UnsignedIntegerNumLenComp.h"
 namespace embDB
 {
 	template <class _TZorderType, class _TZOrderCompressor>

@@ -7,8 +7,8 @@
 #include "BPVectorNoPod.h"
 #include "StringCompressorParams.h"
 #include "StringVal.h"
-#include "ReadStreamPage.h"
-#include "WriteStreamPage.h"
+#include "utils/streams/ReadStreamPage.h"
+#include "utils/streams/WriteStreamPage.h"
 namespace embDB
 {
 

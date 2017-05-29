@@ -8,13 +8,13 @@
 #include "CommonLibrary/stream.h"
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CommonLibrary/RangeCoder.h"
-#include "NumLenCompress.h"
+#include "utils/compress/NumLenCompress.h"
 #include "CompressorParams.h"
-#include "SignedNumLenDiffCompressor2.h"
+#include "utils/compress/SignedNumLenDiffCompressor2.h"
 #include "StringVal.h"
-#include "ZLibCompressor.h"
+#include "utils/compress/zlib/ZLibCompressor.h"
 #include <algorithm>
-#include "PageAlloc.h"
+#include "utils/alloc/PageAlloc.h"
 namespace embDB
 {
 

@@ -6,10 +6,10 @@
 
 #include "../embDBInternal.h"
 #include "../CompressorParams.h"
-#include "../CacheLRU_2Q.h"
+#include "../utils/CacheLRU_2Q.h"
 
-#include "../WriteStreamPage.h"
-#include "../ReadStreamPage.h"
+#include "../utils/streams/WriteStreamPage.h"
+#include "../utils/streams/ReadStreamPage.h"
 #include "../BPTreeStatistics.h"
 
 #include "BPTreeNodeSetV3.h"

@@ -3,13 +3,13 @@
 
 #include "BaseBPMapv2.h"
 #include "FixedStringBPNode.h"
-#include "PageAlloc.h"
+#include "utils/alloc/PageAlloc.h"
 
 #include "BaseInnerNodeDIffCompress.h"
 #include "BaseLeafNodeCompDiff.h"
 #include "BaseInnerNodeDIffCompress2.h"
 #include "BaseValueDiffCompressor.h"
-#include "SignedNumLenDiffCompress.h"
+#include "utils/compress/SignedNumLenDiffCompress.h"
 
 namespace embDB
 {

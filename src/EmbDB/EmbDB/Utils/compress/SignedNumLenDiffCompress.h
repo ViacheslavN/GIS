@@ -4,7 +4,7 @@
 #include "CommonLibrary/FixedBitStream.h"
 #include <map>
 #include <set>
-#include "MathUtils.h"
+#include "../MathUtils.h"
 #include "BPVector.h"
 #include "NumLenCompress.h"
 #include "CommonLibrary/RangeCoder.h"

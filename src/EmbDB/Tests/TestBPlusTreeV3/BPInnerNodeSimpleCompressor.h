@@ -1,7 +1,7 @@
 #pragma once
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/alloc_t.h"
-#include "../../EmbDB/STLAlloc.h"
+#include "../../EmbDB/Utils/alloc/STLAlloc.h"
 
 	template<typename _TKey >
 	class BPInnerNodeSimpleCompressor

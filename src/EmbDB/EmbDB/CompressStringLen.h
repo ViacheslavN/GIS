@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_COMPRESS_STRING_LEN_H_
 #define _EMBEDDED_DATABASE_COMPRESS_STRING_LEN_H_
 
-#include "SignedNumLenDiffCompressor2.h"
+#include "utils/compress/SignedNumLenDiffCompressor2.h"
 
 
 namespace embDB

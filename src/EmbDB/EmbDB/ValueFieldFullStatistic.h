@@ -1,11 +1,11 @@
 #pragma once
 
 
-#include "WriteStreamPage.h"
-#include "ReadStreamPage.h"
+#include "utils/streams/WriteStreamPage.h"
+#include "utils/streams/ReadStreamPage.h"
 #include "ValueFieldStatistic.h"
-#include "SignCompressor2.h"
-#include "NumLenCompressor2.h"
+#include "Utils/compress/SignCompressor2.h"
+#include "Utils/compress/NumLenCompressor2.h"
 #include "CommonLibrary/TimeUtils.h"
 #include "CommonLibrary/FixedBitStream.h"
 

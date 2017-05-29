@@ -5,7 +5,7 @@
 #include "CommonLibrary/String.h"
 #include "embDBInternal.h"
 #include "RBMap.h"
-#include "List.h"
+//#include "List.h"
 
 #include "DBConfig.h"
 #include "embDBInternal.h"
@@ -14,10 +14,10 @@
 	#include "FreePageManage.h"
 #endif
 #include "StorageInfo.h"
-#include "MemPageCache.h"
+#include "utils/alloc/MemPageCache.h"
 #include "PageCipher.h"
-#include "CacheLRU.h"
-#include "CacheLRU_2Q.h"
+#include "utils/CacheLRU.h"
+#include "utils/CacheLRU_2Q.h"
 #include <iostream>
 #include <memory>
 

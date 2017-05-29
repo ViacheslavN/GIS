@@ -2,7 +2,7 @@
 #define  _EMBEDDED_DATABASE_Z_LIB_COMPRESSOR_H_
 
 #include "CommonLibrary/MemoryStream.h"
-#include "StringVal.h"
+#include "../../../StringVal.h"
 #include "zlib/zlib.h"
 namespace embDB
 {

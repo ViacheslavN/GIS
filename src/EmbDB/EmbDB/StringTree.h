@@ -3,7 +3,7 @@
 
 #include "BaseBPMapv2.h"
 #include "StringBPNode.h"
-#include "PageAlloc.h"
+#include "utils/alloc/PageAlloc.h"
 namespace embDB
 {
 

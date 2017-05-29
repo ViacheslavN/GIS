@@ -6,9 +6,9 @@
 #include <set>
 #include <vector>
 #include <map>
-#include "NumLenCompress.h"
-#include "NumLenDiffCompress.h"
-#include "IntegerDiffCompress.h"
+#include "utils/compress/NumLenCompress.h"
+#include "utils/compress/NumLenDiffCompress.h"
+#include "utils/compress/IntegerDiffCompress.h"
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CommonLibrary/RangeCoder.h"
 #include "BPVector.h"

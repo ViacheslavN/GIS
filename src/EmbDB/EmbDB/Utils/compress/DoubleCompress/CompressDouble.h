@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_DOUBLE_COMPRESS_H_
 #include "CommonLibrary/FixedBitStream.h"
 #include <map>
-#include "MathUtils.h"
+#include "../MathUtils.h"
 #include "BPVector.h"
 #include "SignCompressor.h"
 #include "DoublePartCompress.h"

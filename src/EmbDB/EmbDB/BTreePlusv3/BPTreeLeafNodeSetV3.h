@@ -5,7 +5,7 @@
 #include "../embDBInternal.h"
 #include "../BTBaseNode.h"
 #include "../CompressorParams.h"
-#include "../STLAlloc.h"
+#include "../Utils/alloc/STLAlloc.h"
 namespace embDB
 {
 	template<typename _TKey,

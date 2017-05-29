@@ -5,7 +5,7 @@
 #include "Commonlibrary/alloc_t.h"
 #include "FilePageType.h"
 #include "CommonLibrary/FixedMemoryStream.h"
-#include "CRC.h"
+#include "utils/CRC.h"
 #include "CommonLibrary/IRefCnt.h"
 
 namespace embDB

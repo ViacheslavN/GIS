@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_WRITE_STREAM_PAGE_H_
 #define _EMBEDDED_DATABASE_WRITE_STREAM_PAGE_H_
 #include "CommonLibrary/String.h"
-#include "embDBInternal.h"
+#include "../../embDBInternal.h"
 #include "CommonLibrary/stream.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 namespace embDB

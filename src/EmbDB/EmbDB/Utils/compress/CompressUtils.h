@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_COMPRESS_UTILS_H_
 #define _EMBEDDED_DATABASE_COMPRESS_UTILS_H_
-#include "MathUtils.h"
+#include "../MathUtils.h"
 
 namespace embDB
 {

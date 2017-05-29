@@ -285,9 +285,6 @@
     <ClInclude Include="BaseRBTree.h">
       <Filter>DB\BPTrees\memorytree\RBTree</Filter>
     </ClInclude>
-    <ClInclude Include="simple_stack.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="RBSet.h">
       <Filter>DB\BPTrees\memorytree\set</Filter>
     </ClInclude>
@@ -423,9 +420,6 @@
     <ClInclude Include="StorageInfo.h">
       <Filter>storage</Filter>
     </ClInclude>
-    <ClInclude Include="ListDBPage.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\BPTrees\BTreePlus\Compressors</Filter>
     </ClInclude>
@@ -479,9 +473,6 @@
     </ClInclude>
     <ClInclude Include="BPMapTraits.h">
       <Filter>DB\BPTrees\BTreePlus\BPMap</Filter>
-    </ClInclude>
-    <ClInclude Include="simple_vector.h">
-      <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="BPSetROTraits.h">
       <Filter>DB\BPTrees\BTreePlus\BPSet\ReadOnly</Filter>
@@ -549,20 +540,11 @@
     <ClInclude Include="CompressorParams.h">
       <Filter>DB\BPTrees\BTreePlus\Compressors</Filter>
     </ClInclude>
-    <ClInclude Include="CRC.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="SpatialOIDField.h">
       <Filter>DB\Fields</Filter>
     </ClInclude>
     <ClInclude Include="SpatialVariant.h">
       <Filter>DB\Fields</Filter>
-    </ClInclude>
-    <ClInclude Include="PageVector.h">
-      <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="BitMap.h">
-      <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="BaseBPSetv2.h">
       <Filter>DB\BPTrees\BtreePlusv2\BPSetv2</Filter>
@@ -603,17 +585,11 @@
     <ClInclude Include="BPLeafNodeMapSimpleCompressorV2.h">
       <Filter>DB\BPTrees\BtreePlusv2\Compressors</Filter>
     </ClInclude>
-    <ClInclude Include="PageVectorLazySave.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="TranPerfCounter.h">
       <Filter>DB\transactions</Filter>
     </ClInclude>
     <ClInclude Include="TranRedoPageManager.h">
       <Filter>DB\transactions</Filter>
-    </ClInclude>
-    <ClInclude Include="MemPageCache.h">
-      <Filter>utils\alloc</Filter>
     </ClInclude>
     <ClInclude Include="MultiIndexBPTree.h">
       <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
@@ -687,20 +663,8 @@
     <ClInclude Include="DirectTransactions.h">
       <Filter>DB\transactions\DirectTran</Filter>
     </ClInclude>
-    <ClInclude Include="CacheLRU.h">
-      <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="List.h">
-      <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="CacheLRU_2Q.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="StringCompressorParams.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="PageAlloc.h">
-      <Filter>utils\alloc</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringField.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
@@ -843,12 +807,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WriteStreamPage.h">
-      <Filter>utils\streams</Filter>
-    </ClInclude>
-    <ClInclude Include="ReadStreamPage.h">
-      <Filter>utils\streams</Filter>
-    </ClInclude>
     <ClInclude Include="SimpleSelectCursor.h">
       <Filter>DB\transactions\Cursors</Filter>
     </ClInclude>
@@ -893,15 +851,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IntegerDiffCompressTest.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="IntegerDiffCompress.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="NumLenDiffCompress.h">
-      <Filter>utils\compress</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
@@ -1011,9 +960,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SignedNumLenDiffCompress.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
     <ClInclude Include="BaseInnerNodeDIffCompress2.h">
       <Filter>DB\Fields\compress</Filter>
     </ClInclude>
@@ -1053,15 +999,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FormatDouble.h">
-      <Filter>utils\compress\DoubleCompress</Filter>
-    </ClInclude>
-    <ClInclude Include="DoublePartCompress.h">
-      <Filter>utils\compress\DoubleCompress</Filter>
-    </ClInclude>
-    <ClInclude Include="CompressUtils.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1074,20 +1011,11 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CompressDoubleDiff.h">
-      <Filter>utils\compress\DoubleCompress</Filter>
-    </ClInclude>
-    <ClInclude Include="CompressDouble.h">
-      <Filter>utils\compress\DoubleCompress</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SignCompressor.h">
-      <Filter>utils\compress</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1110,9 +1038,6 @@
     <ClInclude Include="FixedStringZLibCompressor.h">
       <Filter>DB\Fields\string\fixedStringField\compress\ZLIB</Filter>
     </ClInclude>
-    <ClInclude Include="ZLibCompressor.h">
-      <Filter>utils\compress\zlib</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1122,17 +1047,11 @@
     <ClInclude Include="CompressStringLen.h">
       <Filter>DB\Fields\string\fixedStringField\compress</Filter>
     </ClInclude>
-    <ClInclude Include="SignedNumLenDiffCompressor2.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MathUtils.h">
-      <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1160,9 +1079,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UnsignedNumLenDiffCompressor2.h">
-      <Filter>utils\compress</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1338,9 +1254,6 @@
     <ClInclude Include="DBConfig.h">
       <Filter>DB\transactions</Filter>
     </ClInclude>
-    <ClInclude Include="CacheLRU_2Q_Ptr.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1367,9 +1280,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NumLenCompress.h">
-      <Filter>utils\compress</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1401,17 +1311,11 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NumLenCompressor2.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SignCompressor2.h">
-      <Filter>utils\compress</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1475,9 +1379,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="STLAlloc.h">
-      <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1590,6 +1491,126 @@
     <ClInclude Include="BTreePlusv3\BaseEncoder.h">
       <Filter>DB\BPTrees\BTreePlusv3</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\BaseNodeCompressor.h">
+      <Filter>DB\BPTrees\BTreePlusv3</Filter>
+    </ClInclude>
+    <ClInclude Include="BTreePlusv3\UnsignedNumLenEncoder.h">
+      <Filter>DB\BPTrees\BTreePlusv3</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\BitUtils.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\alloc\MemPageCache.h">
+      <Filter>utils\alloc</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\alloc\STLAlloc.h">
+      <Filter>utils\alloc</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\DoubleCompress\CompressDouble.h">
+      <Filter>utils\compress\DoubleCompress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\DoubleCompress\CompressDoubleDiff.h">
+      <Filter>utils\compress\DoubleCompress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\DoubleCompress\DoublePartCompress.h">
+      <Filter>utils\compress\DoubleCompress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\DoubleCompress\FormatDouble.h">
+      <Filter>utils\compress\DoubleCompress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\zlib\ZLibCompressor.h">
+      <Filter>utils\compress\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\CompressUtils.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\IntegerDiffCompress.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\IntegerDiffCompressTest.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\NumLenCompress.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\NumLenCompressor2.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\NumLenDiffCompress.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\NumLenDiffCompressZOrder.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\SignCompressor.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\SignCompressor2.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\SignedNumLenDiffCompress.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\SignedNumLenDiffCompressor2.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\UnsignedIntegerNumLenComp.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\UnsignedNumLenDiffCompressor2.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\alloc\PageAlloc.h">
+      <Filter>utils\alloc</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\BitMap.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\CacheLRU.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\CacheLRU_2Q.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\CacheLRU_2Q_Ptr.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\CRC.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\List.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\ListDBPage.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\MathUtils.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\PageVector.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\PageVectorLazySave.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\simple_stack.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\simple_vector.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\streams\ReadStreamPage.h">
+      <Filter>utils\streams</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\streams\WriteStreamPage.h">
+      <Filter>utils\streams</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1646,20 +1667,11 @@
     <ClCompile Include="SpatialRectQuery.cpp">
       <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
     </ClCompile>
-    <ClCompile Include="CRC.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
-    <ClCompile Include="BitMap.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
     <ClCompile Include="TranPerfCounter.cpp">
       <Filter>DB\transactions</Filter>
     </ClCompile>
     <ClCompile Include="TranRedoPageManager.cpp">
       <Filter>DB\transactions</Filter>
-    </ClCompile>
-    <ClCompile Include="MemPageCache.cpp">
-      <Filter>utils\alloc</Filter>
     </ClCompile>
     <ClCompile Include="Table.cpp">
       <Filter>DB\Table</Filter>
@@ -1678,9 +1690,6 @@
     </ClCompile>
     <ClCompile Include="CompositeIndexKey.cpp">
       <Filter>DB\Fields\Index\CompositeIndex</Filter>
-    </ClCompile>
-    <ClCompile Include="PageAlloc.cpp">
-      <Filter>utils\alloc</Filter>
     </ClCompile>
     <ClCompile Include="InsertCursor.cpp">
       <Filter>DB\transactions\Cursors\InsertCursor</Filter>
@@ -1709,14 +1718,8 @@
     <ClCompile Include="LinkCompress.cpp">
       <Filter>DB\Fields\compress</Filter>
     </ClCompile>
-    <ClCompile Include="MathUtils.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
     <ClCompile Include="BPTreeStatistics.cpp">
       <Filter>DB\BPTrees\BtreePlusv2</Filter>
-    </ClCompile>
-    <ClCompile Include="ZLibCompressor.cpp">
-      <Filter>utils\compress\zlib</Filter>
     </ClCompile>
     <ClCompile Include="CompressStringLen.cpp">
       <Filter>DB\Fields\string\fixedStringField\compress</Filter>
@@ -1775,8 +1778,26 @@
     <ClCompile Include="ValueFieldStatistic.cpp">
       <Filter>DB\Fields\Statistic</Filter>
     </ClCompile>
-    <ClCompile Include="BTreePlusv3\BaseNodeCompressor.h">
-      <Filter>DB\BPTrees\BTreePlusv3</Filter>
+    <ClCompile Include="Utils\alloc\MemPageCache.cpp">
+      <Filter>utils\alloc</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\compress\zlib\ZLibCompressor.cpp">
+      <Filter>utils\compress\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\alloc\PageAlloc.cpp">
+      <Filter>utils\alloc</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\BitMap.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\CRC.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\ListDBPage.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\MathUtils.cpp">
+      <Filter>utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

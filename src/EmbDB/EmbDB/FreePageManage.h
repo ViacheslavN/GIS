@@ -2,14 +2,14 @@
 #define _EMBEDDED_DATABASE_FREE_PAGE_MANAGER_H_
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
-#include "simple_stack.h"
+#include "utils/simple_stack.h"
 //#include "BaseBPSet.h"
 #include "DirectTransactions.h"
 #include "BTVector.h"
-#include "BitMap.h"
+#include "utils/BitMap.h"
 #include <map>
-#include "PageVector.h"
-#include "PageVectorLazySave.h"
+#include "utils/PageVector.h"
+#include "utils/PageVectorLazySave.h"
 namespace embDB
 {
 	class CStorage;

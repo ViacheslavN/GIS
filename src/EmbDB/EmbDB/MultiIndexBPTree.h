@@ -5,7 +5,7 @@
 #include "BPMultiInnerIndexNodeCompressor.h"
 #include "BPMultiIndexLeafNodeCompressor.h"
 #include "MultiIndex.h"
-#include "UnsignedNumLenDiffCompressor2.h"
+#include "utils/compress/UnsignedNumLenDiffCompressor2.h"
 #include "MultiKeyCompressor.h"
 namespace embDB
 {

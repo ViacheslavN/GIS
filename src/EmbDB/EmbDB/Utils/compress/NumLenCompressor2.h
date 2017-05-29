@@ -1,7 +1,7 @@
 #pragma once
 #include "CommonLibrary/FixedBitStream.h"
 #include <map>
-#include "MathUtils.h"
+#include "../MathUtils.h"
 #include "BPVector.h"
 #include "CommonLibrary/algorithm.h"
 #include "CommonLibrary/RangeCoder.h"

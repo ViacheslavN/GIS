@@ -14,7 +14,7 @@
 #include "BaseInnerNodeDIffCompress.h"
 #include "BaseInnerNodeDIffCompress2.h"
 #include "BaseValueDiffCompressor.h"
-#include "SignedNumLenDiffCompress.h"
+#include "utils/compress/SignedNumLenDiffCompress.h"
 #include "BaseLeafNodeCompDiff2.h"
 #include "BaseValueCompressor.h"
 namespace embDB

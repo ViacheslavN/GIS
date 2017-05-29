@@ -1,6 +1,6 @@
 #pragma once
 #include "../CompressorParams.h"
-#include "../STLAlloc.h"
+#include "../Utils/alloc/STLAlloc.h"
 namespace embDB
 {
 	template <class _TValue, class _TCompressorParams = CompressorParamsBaseImp>

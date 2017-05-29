@@ -4,7 +4,7 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/alloc_t.h"
 #include "../CompressorParams.h"
-#include "../STLAlloc.h"
+#include "../Utils/alloc/STLAlloc.h"
 namespace embDB
 {
 

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SpatialPointQuery.h"
 #include "BackTableZPoint16Bit.h"
-#include "MathUtils.h"
+#include "utils/MathUtils.h"
 namespace embDB
 {
 	void ZOrderPoint2DU16::getXY(uint16& x, uint16& y)  const

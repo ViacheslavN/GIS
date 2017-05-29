@@ -3,7 +3,7 @@
 
 #include "BaseBPMapv2.h"
 #include "BlobBPNode.h"
-#include "PageAlloc.h"
+#include "utils/alloc/PageAlloc.h"
 #include "ShapeCompressorParams.h"
 #include "CommonLibrary/GeoShape.h"
 #include "BlobTree.h"

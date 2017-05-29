@@ -6,7 +6,7 @@
 #include "Key.h"
 #include "MultiIndexBase.h"
 #include "BaseValueDiffCompressor.h"
-#include "SignedNumLenDiffCompress.h"
+#include "utils/compress/SignedNumLenDiffCompress.h"
 namespace embDB
 {
 

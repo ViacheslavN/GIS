@@ -3,10 +3,17 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/alloc_t.h"
 #include "../CompressorParams.h"
-#include "../STLAlloc.h"
+#include "../Utils/alloc/STLAlloc.h"
  
 namespace embDB
 {
+	template<class _TType>
+	struct TDefSign{typedef _TType TSignType;};
+
+	template<> struct TDefSign< byte >{	typedef char TSignType;	};
+	template<> struct TDefSign< uint16 >{typedef int16 TSignType;};
+	template<> struct TDefSign< uint32 > { typedef int32 TSignType; };
+	template<> struct TDefSign< uint64 > { typedef int64 TSignType; };
 
 
 	template<class _TValue,   class _TEncoder, class _TCompressorParams = CompressorParamsBaseImp>
@@ -19,10 +26,11 @@ namespace embDB
 		typedef std::vector<TValue, TAlloc> TValueMemSet;
 		typedef _TCompressorParams TCompressorParams;
 		typedef _TEncoder TEncoder;
+		typedef typename TDefSign<TValue>::TSignType TSignValue
 
 
 		TBaseValueDiffEncoder(CommonLib::alloc_t *pAlloc, uint32 nPageSize, CompressorParamsBaseImp *pParams) :
-			m_compressor(pParams->m_compressType, pParams->m_nErrorCalc, pParams->m_bCalcOnlineSize)
+			m_compressor(pParams)
 		{}
 
 		~TBaseValueDiffEncoder()
@@ -58,7 +66,7 @@ namespace embDB
 				}
 			}
 		}
-		void AddDiffSymbol(TValue& nValue)
+		void AddDiffSymbol(TSignValue& nValue)
 		{
 			m_encoder.AddSymbol(nValue);
 		}
@@ -86,43 +94,43 @@ namespace embDB
 
 						AddDiffSymbol(nNewSymbol);
 
-
 						RemoveDiffSymbol(nValue - nPrev);
 						RemoveDiffSymbol(nNext - nValue);
 					}
 				}
 			}
 		}
-		void RemoveDiffSymbol(TValue& nValue)
+		void RemoveDiffSymbol(TSignValue& nValue)
 		{
 			m_encoder.RemoveSymbol(nValue);
 		}
 
 		uint32 GetCompressSize() const
 		{
-			return m_encoder.GetCompressSize();
+			return m_encoder.GetCompressSize() + sizeof(TValue);
 		}
 
 		void encode(const TValueMemSet& vecValues, CommonLib::IWriteStream *pStream)
 		{
-			assert(m_encoder.count() == vecValues.size())
-
+			assert(m_encoder.count() == vecValues.size() - 1)
+			pStream->write(vecValues[0]);
 			m_encoder.BeginEncoding(pStream);
-			m_encoder.encodeSymbol(vecValues[0]);
-			
+
 			for (size_t i = 1; i < vecValues.size(); ++i)
 			{
-				m_encoder.encodeSymbol(vecValues[i] - vecValues[i - 1]);
+				m_encoder.encodeSymbol(TSignValue(vecValues[i] - vecValues[i - 1]));
 			}
 
 			m_encoder.FinishEncoding(pStream);
 		}
 		void decode(uint32 nCount, TValueMemSet& vecValues, CommonLib::IReadStream *pStream)
 		{
+			TValue val;
+			pStream->read(val);
 			m_encoder.BeginDecoding(pStream);
-			assert(m_encoder.count() == nCount)
 
-			vecValues.push_back(m_encoder.decodeSymbol());
+			assert(m_encoder.count() == nCount - 1);
+			vecValues.push_back(val);
 
 			for (size_t i = 1; i < nCount; ++i)
 			{

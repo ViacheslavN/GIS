@@ -3,7 +3,7 @@
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CompressorParams.h"
-#include "UnsignedNumLenDiffCompressor2.h"
+#include "utils/compress/UnsignedNumLenDiffCompressor2.h"
 #include "EmptyMultiKeyCompress.h"
 namespace embDB
 {

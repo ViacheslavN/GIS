@@ -5,7 +5,7 @@
 #include "Commonlibrary/alloc_t.h"
 #include "BPTreeNodeSetV2.h"
 #include "embDBInternal.h"
-#include "simple_stack.h"
+//#include "simple_stack.h"
 #include "DBMagicSymbol.h"
 #include "BPTreeStatistics.h"
 #include "BPInnerNodeSimpleCompressorV2.h"
@@ -14,10 +14,10 @@
 #include "CompressorParams.h"
 #include "BPIteratorSetV2.h"
 #include "CommonLibrary/delegate.h"
-#include "CacheLRU.h"
+#include "utils/CacheLRU.h"
 #include "DBConfig.h"
-#include "WriteStreamPage.h"
-#include "ReadStreamPage.h"
+#include "utils/streams/WriteStreamPage.h"
+#include "utils/streams/ReadStreamPage.h"
 #include <memory>
 #include "BPTreeStatistics.h"
 namespace embDB

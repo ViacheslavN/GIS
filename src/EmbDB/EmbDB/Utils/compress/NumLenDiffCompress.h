@@ -3,7 +3,7 @@
 
 #include "CommonLibrary/FixedBitStream.h"
 #include <map>
-#include "MathUtils.h"
+#include "../MathUtils.h"
 #include "BPVector.h"
 #include "NumLenCompress.h"
 namespace embDB

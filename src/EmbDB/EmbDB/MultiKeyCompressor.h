@@ -1,7 +1,7 @@
 #ifndef  _EMBEDDED_DATABASE_MULTI_KEY_COMPRESS_H_
 #define  _EMBEDDED_DATABASE_MULTI_KEY_COMPRESS_H_
 #include "CompressorParams.h"
-#include "SignedNumLenDiffCompressor2.h"
+#include "utils/compress/SignedNumLenDiffCompressor2.h"
 namespace embDB
 {
 	template <class _TKey, class _TSignedKey, class _TNumLenKeyCompressor>
