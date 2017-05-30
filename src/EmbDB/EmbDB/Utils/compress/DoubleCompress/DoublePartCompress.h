@@ -133,7 +133,7 @@ namespace embDB
 			uint32 m_nCount;
 			uint32 m_nError;
 
-			TSignCompressor m_nSignCompressor;
+			TSignEncoder m_nSignCompressor;
 			 
 	};
 }

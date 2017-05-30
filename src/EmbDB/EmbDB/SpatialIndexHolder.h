@@ -32,7 +32,7 @@ namespace embDB
 		virtual bool load(CommonLib::IReadStream* pStream, IDBStorage *pStorage)
 		{
 			m_nBTreeRootPage = pStream->readInt64();
-			m_nCompressType = (CompressType)pStream->readintu16();
+			m_nCompressType = (EncoderType)pStream->readintu16();
 			m_nCalcCompressError = pStream->readIntu32();
 			m_bOnlineCalcCompSize = pStream->readBool();
 			m_nBTreeChacheSize =  pStream->readIntu32();
@@ -96,7 +96,7 @@ namespace embDB
 		CommonLib::alloc_t* m_pAlloc;
 		IDBShapeFieldHolderPtr m_pField;
 
-		CompressType m_nCompressType;
+		EncoderType m_nCompressType;
 		uint32 m_nCalcCompressError;
 		bool m_bOnlineCalcCompSize;
 		uint32 m_nBTreeChacheSize;

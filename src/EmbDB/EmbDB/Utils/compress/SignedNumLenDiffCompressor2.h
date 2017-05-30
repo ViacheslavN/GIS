@@ -41,7 +41,7 @@ namespace embDB
 		typedef typename TBase::TACDecoder		 TACDecoder;
  
 
-		TSignedDiffNumLenCompressor2(CompressType type, uint32 nError = 200, bool bOnlineCalcSize = false) :
+		TSignedDiffNumLenCompressor2(EncoderType type, uint32 nError = 200, bool bOnlineCalcSize = false) :
 		TBase(type, nError, bOnlineCalcSize), m_nFlag(0), m_pWriteStream(0)
 		{
 		}
@@ -99,7 +99,7 @@ namespace embDB
  
 			uint32 nBitSize = (this->m_nLenBitSize +7)/8;
 
-			m_SignCompressor.BeginCompress(m_pWriteStream);
+			m_SignCompressor.BeginEncoding(m_pWriteStream);
 
 			m_WriteBitStream.attach(m_pWriteStream, m_pWriteStream->pos(), nBitSize);
 			m_pWriteStream->seek(nBitSize, CommonLib::soFromCurrent);
@@ -149,7 +149,7 @@ namespace embDB
 			}
  
 			uint32 nBitSize = (this->m_nLenBitSize + 7)/8;
-			m_SignCompressor.BeginDecompress(m_pReadStream, this->m_nCount);
+			m_SignCompressor.BeginDecoding(m_pReadStream, this->m_nCount);
 
 			m_readBitStream.attach(m_pReadStream, m_pReadStream->pos(), nBitSize);
 			m_pReadStream->seek(nBitSize, CommonLib::soFromCurrent);
@@ -182,7 +182,7 @@ namespace embDB
 
 	private:
 		byte m_nFlag;
-		TSignCompressor m_SignCompressor;
+		TSignEncoder m_SignCompressor;
 		CommonLib::FxBitWriteStream m_WriteBitStream;
 		CommonLib::FxBitReadStream m_readBitStream;
 		CommonLib::IWriteStream* m_pWriteStream;

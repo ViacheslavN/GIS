@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_PAGE_CRYPTO_H_
 #define _EMBEDDED_DATABASE_PAGE_CRYPTO_H_
 #include "embDB.h"
-#include "FilePage.h"
+#include "storage/FilePage.h"
 #include <vector>
 #include "BlockClipher.h"
 namespace embDB

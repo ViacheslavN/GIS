@@ -47,7 +47,7 @@ namespace embDB
 		
 		virtual bool load(CommonLib::IReadStream *pStream, IDBTransaction* pTran)
 		{
-			m_compressType = (CompressType)pStream->readintu16();
+			m_compressType = (EncoderType)pStream->readintu16();
 			m_bCalcOnlineSize = pStream->readBool();
 			m_nErrorCalc	= pStream->readIntu32();
 			m_nMaxRowCoeff  = pStream->readintu16();
@@ -67,7 +67,7 @@ namespace embDB
 
 		}
  
-		CompressType m_compressType;
+		EncoderType m_compressType;
 		bool m_bCalcOnlineSize;
 		uint32 m_nErrorCalc;
 		uint16 m_nMaxRowCoeff;

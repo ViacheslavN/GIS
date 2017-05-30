@@ -6,7 +6,7 @@
 #include "BaseLeafNodeCompDiff.h"
 #include "FixedStringACCompressor.h"
 #include "FixedStringZLibCompressor.h"
-#include "GlobalParams.h"
+#include "DB/GlobalParams.h"
 namespace embDB
 {
 	class TFixedCompress

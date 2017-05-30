@@ -112,7 +112,7 @@ namespace embDB
 		typedef typename TBase::TACDecoder		 TACDecoder;
 
 
-		TSignedDiffNumLenCompressor(CompressType nType, uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : TBase(nType, nError, bOnlineCalcSize)
+		TSignedDiffNumLenCompressor(EncoderType nType, uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : TBase(nType, nError, bOnlineCalcSize)
 		{
 		}
 		uint16 AddSymbol(TSignValue symbol)
@@ -175,7 +175,7 @@ namespace embDB
 
 
 			
-			m_SignCompressor.BeginCompress(pStream);
+			m_SignCompressor.BeginEncoding(pStream);
 
 			bitStream.attach(pStream, pStream->pos(), nBitSize);
 			pStream->seek(nBitSize, CommonLib::soFromCurrent);
@@ -243,7 +243,7 @@ namespace embDB
 			CommonLib::FxBitReadStream bitStream;
 
 
-			m_SignCompressor.BeginDecompress(pStream, nSize - 1);
+			m_SignCompressor.BeginDecoding(pStream, nSize - 1);
 
 			bitStream.attach(pStream, pStream->pos(), nBitSize);
 			pStream->seek(nBitSize, CommonLib::soFromCurrent);
@@ -342,7 +342,7 @@ namespace embDB
 			return true;
 		}
 		private:
-			TSignCompressor m_SignCompressor;
+			TSignEncoder m_SignCompressor;
 	};
 
 

@@ -153,7 +153,7 @@ protected:
 	int64 m_nBTreeRootPage;
 	uint32 m_nNodePageSize;
 
-	CompressType m_CompressType;
+	EncoderType m_CompressType;
 	bool m_bOnlineCalcCompSize;
 	uint32 m_nCompCalcError;
 

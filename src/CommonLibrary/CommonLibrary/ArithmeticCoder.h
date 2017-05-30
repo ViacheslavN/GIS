@@ -48,16 +48,18 @@ namespace CommonLib
 		}
 
 
-		void BitsPlusFollow(bool bBit)
+		bool BitsPlusFollow(bool bBit)
 		{
-			writeBit(bBit);
+			if (!writeBit(bBit))
+				return false;
 
 			for (; m_nScale > 0; m_nScale--)
 			{
-				writeBit(!bBit);
+				if (!writeBit(!bBit))
+					return false;
 			}
 
-
+			return true;
 		}
 		virtual bool EncodeSymbol(TCodeValue nLowCount, TCodeValue nHightCount, TCodeValue nTotalCount)
 		{
@@ -69,11 +71,14 @@ namespace CommonLib
 			{
 				if(m_nHigh < _Half)
 				{
-					BitsPlusFollow(false);
+					if (!BitsPlusFollow(false))
+						return false;
 				}
 				else if(m_nLow >= _Half)
 				{
-					BitsPlusFollow(true);
+					if (!BitsPlusFollow(true))
+						return false;
+
 					m_nLow -= _Half;
 					m_nHigh -= _Half;
 				}
@@ -94,40 +99,34 @@ namespace CommonLib
 		virtual bool EncodeFinish()
 		{
 			m_nScale += 1;  
-			if (m_nLow < _FirstQuarter) 
+		/*	if (m_nLow < _FirstQuarter) 
 				BitsPlusFollow(false); 
 
-			else BitsPlusFollow(true);     
+			else BitsPlusFollow(true);   */  
 
+			if (!BitsPlusFollow(m_nLow < _FirstQuarter ? false : true))
+				return false;
 
 			 
 			if(m_nCurrBit != 0)
 			{
+				if (m_pStream->size() - m_pStream->pos() < 1)
+					return false;
+
 				m_pStream->write(m_nBitsBuf);
 				m_nCurrBit = 0;
 			}
-
-		/*	uint32 nSize = m_pStream->pos() - m_nBeginPos;
-
-			if(nSize < _nValueBits/8)
-			{
-				for (uint32 i = 0, sz = (_nValueBits/8 - nSize) * 8;  i< sz; ++i)
-					writeBit(false);
-			}
-
-		
-	
-			if(m_nCurrBit != 0)
-				m_pStream->write(m_nBitsBuf);
-			m_nCurrBit = 0;*/
 			return true;
 				 
 		}
 
-		void writeBit(bool bBit)
+		bool writeBit(bool bBit)
 		{
 			if(m_nCurrBit > 7)
 			{
+				if (m_pStream->size() - m_pStream->pos() < 1)
+					return false;
+
 				m_pStream->write(m_nBitsBuf);
 				m_nBitsBuf = 0;
 				m_nCurrBit = 0;
@@ -138,6 +137,7 @@ namespace CommonLib
 #ifdef _DEBUG
 			m_nBitsWrite++;
 #endif
+			return true;
 		}
 
 	private:

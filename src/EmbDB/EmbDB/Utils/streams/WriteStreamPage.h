@@ -227,7 +227,7 @@ namespace embDB
 					  header.writeCRC32(m_stream);
 
 				  }
-				  m_stream.seek(-sizeof(int64), CommonLib::soFromEnd);
+				  m_stream.seek(-int32(sizeof(int64)), CommonLib::soFromEnd);
 				  m_stream.write(m_nNextPage);
 				  m_pTran->saveFilePage(m_pPage);
 			  }
@@ -251,7 +251,7 @@ namespace embDB
 			 
 			  CommonLib::FxMemoryReadStream stream;
 			  stream.attachBuffer(m_stream.buffer(), m_stream.size());
-			  stream.seek(-sizeof(uint64), CommonLib::soFromEnd);
+			  stream.seek(-int32(sizeof(int64)), CommonLib::soFromEnd);
 			  m_nNextPage = stream.readInt64();
 
 		  }

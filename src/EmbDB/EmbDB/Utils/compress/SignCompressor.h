@@ -10,7 +10,7 @@ namespace embDB
 {
 
 //	template<class _TEncoder, class _TDecoder>
-	class TSignCompressor
+	class TSignEncoder
 	{
 	public:
 		enum eCompressType
@@ -18,16 +18,13 @@ namespace embDB
 			ONE_SIGN = 0,
 			COMPRESS_POS = 1,
 			NO_COMPRESS =2
-
-
 		};
 
-
-		TSignCompressor()
+		TSignEncoder()
 		{
 			clear();
 		}
-		~TSignCompressor(){}
+		~TSignEncoder(){}
 
 
 		void clear()
@@ -78,7 +75,7 @@ namespace embDB
 		{
 			return m_nSigns[0] + m_nSigns[1] ;
 		}
-		void BeginCompress(CommonLib::IWriteStream *pStream)
+		void BeginEncoding(CommonLib::IWriteStream *pStream)
 		{
 
 			byte nFlag = 0;
@@ -103,8 +100,7 @@ namespace embDB
 				{
 					m_compreesType = NO_COMPRESS;
 					pStream->write((byte)m_compreesType);
-					m_bitWriteStream.attach(pStream, pStream->pos(), nByteSize - 1);
-					pStream->seek(nByteSize - 1, CommonLib::soFromCurrent);
+					m_bitWriteStream.attach(pStream, pStream->pos(), nByteSize - 1, true);
 				}
 				else
 				{
@@ -120,14 +116,9 @@ namespace embDB
 					m_WriteStream.attach(pStream, pStream->pos(), nBytePosCodeSize);
 					m_WriteStream.write(nFlag);
 					WriteCompressValue( m_DataType, nMinCount,&m_WriteStream);
-
 					pStream->seek(nBytePosCodeSize, CommonLib::soFromCurrent);
-
-
 				}
 			}
-
-
 		}
 
 		void EncodeSign(bool bSign, uint32 nPos)
@@ -149,7 +140,9 @@ namespace embDB
 		}
 
 
-		void BeginDecompress(CommonLib::IReadStream *pStream, uint32 nCount)
+
+
+		void BeginDecoding(CommonLib::IReadStream *pStream, uint32 nCount)
 		{
 			byte nFlag = pStream->readByte();
 			m_compreesType = (eCompressType)(nFlag & 0x03);

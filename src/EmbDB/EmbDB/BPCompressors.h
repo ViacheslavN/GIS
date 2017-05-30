@@ -73,10 +73,6 @@ namespace embDB
 		virtual uint32 size(bool bLeaf) const = 0;
 	};
 
-	dsdvvds
-
-
-
 
 	template<typename _TKey, typename _TValue, typename _TComp>
 	class BPLeafNodeCompressorBase

@@ -40,9 +40,6 @@
     <Filter Include="DB\transactions">
       <UniqueIdentifier>{5aaff920-23c0-4a9a-8591-59c16dc5195c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\transactions\readonly">
-      <UniqueIdentifier>{3399dcb5-687e-4c20-a3ef-83e7fa7432e3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB\transactions\DirectTran">
       <UniqueIdentifier>{0b3d5f68-2ee7-4511-8b39-2960eca6dc1a}</UniqueIdentifier>
     </Filter>
@@ -268,6 +265,9 @@
     <Filter Include="DB\BPTrees\BTreePlusv3\BPMapv3">
       <UniqueIdentifier>{1c0f31e0-eaca-4577-aa2e-d1426a02be25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="utils\compress\NumLen">
+      <UniqueIdentifier>{50e6d9c6-f897-49f0-b4fb-e8445bc17902}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -309,12 +309,6 @@
     <ClInclude Include="BaseRBMultiTree.h">
       <Filter>DB\BPTrees\memorytree\RBTree</Filter>
     </ClInclude>
-    <ClInclude Include="storage.h">
-      <Filter>storage</Filter>
-    </ClInclude>
-    <ClInclude Include="FilePage.h">
-      <Filter>storage</Filter>
-    </ClInclude>
     <ClInclude Include="Key.h">
       <Filter>DB\BPTrees\BtreePlusv2\key</Filter>
     </ClInclude>
@@ -327,32 +321,11 @@
     <ClInclude Include="SimpleCompessor.h">
       <Filter>DB\BPTrees\BTreeNotUse\BTreeNodeLoader\Compressors</Filter>
     </ClInclude>
-    <ClInclude Include="FilePageType.h">
-      <Filter>storage</Filter>
-    </ClInclude>
-    <ClInclude Include="Schema.h">
-      <Filter>DB</Filter>
-    </ClInclude>
-    <ClInclude Include="FreePageManage.h">
-      <Filter>storage</Filter>
-    </ClInclude>
-    <ClInclude Include="DBMagicSymbol.h">
-      <Filter>DB</Filter>
-    </ClInclude>
     <ClInclude Include="BTreeNodeRO.h">
       <Filter>DB\BPTrees\BTreeNotUse\BtreeReadOnly</Filter>
     </ClInclude>
     <ClInclude Include="BaseBTreeRO.h">
       <Filter>DB\BPTrees\BTreeNotUse\BtreeReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="Transactions.h">
-      <Filter>DB\transactions</Filter>
-    </ClInclude>
-    <ClInclude Include="TranStorage.h">
-      <Filter>DB\transactions</Filter>
-    </ClInclude>
-    <ClInclude Include="TransactionCache.h">
-      <Filter>DB\transactions</Filter>
     </ClInclude>
     <ClInclude Include="BPCompressors.h">
       <Filter>DB\BPTrees\BTreePlus\Compressors</Filter>
@@ -393,32 +366,14 @@
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>DB\BPTrees\BTreePlus</Filter>
     </ClInclude>
-    <ClInclude Include="TranLogManager.h">
-      <Filter>DB\transactions</Filter>
-    </ClInclude>
-    <ClInclude Include="TranUndoPageManager.h">
-      <Filter>DB\transactions</Filter>
-    </ClInclude>
-    <ClInclude Include="TranLogStateManager.h">
-      <Filter>DB\transactions</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeInfoPage.h">
-      <Filter>DB\transactions</Filter>
-    </ClInclude>
     <ClInclude Include="BPInneOIDNodeCompressor.h">
       <Filter>DB\BPTrees\BTreePlus\Compressors\OIDNodeCompressor</Filter>
     </ClInclude>
     <ClInclude Include="HuffmanOIDComp.h">
       <Filter>DB\BPTrees\BTreePlus\Compressors\OIDNodeCompressor</Filter>
     </ClInclude>
-    <ClInclude Include="DBStateManager.h">
-      <Filter>DB</Filter>
-    </ClInclude>
     <ClInclude Include="BPTree.h">
       <Filter>DB\BPTrees\BTreePlus</Filter>
-    </ClInclude>
-    <ClInclude Include="StorageInfo.h">
-      <Filter>storage</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\BPTrees\BTreePlus\Compressors</Filter>
@@ -585,12 +540,6 @@
     <ClInclude Include="BPLeafNodeMapSimpleCompressorV2.h">
       <Filter>DB\BPTrees\BtreePlusv2\Compressors</Filter>
     </ClInclude>
-    <ClInclude Include="TranPerfCounter.h">
-      <Filter>DB\transactions</Filter>
-    </ClInclude>
-    <ClInclude Include="TranRedoPageManager.h">
-      <Filter>DB\transactions</Filter>
-    </ClInclude>
     <ClInclude Include="MultiIndexBPTree.h">
       <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
     </ClInclude>
@@ -609,15 +558,6 @@
     <ClInclude Include="DBFieldInfo.h">
       <Filter>DB\Fields</Filter>
     </ClInclude>
-    <ClInclude Include="Table.h">
-      <Filter>DB\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="CreateFields.h">
-      <Filter>DB\Table</Filter>
-    </ClInclude>
-    <ClInclude Include="TableHeader.h">
-      <Filter>DB\Table</Filter>
-    </ClInclude>
     <ClInclude Include="LeafCounterCompress.h">
       <Filter>DB\Fields\Counters</Filter>
     </ClInclude>
@@ -626,9 +566,6 @@
     </ClInclude>
     <ClInclude Include="ValueField.h">
       <Filter>DB\Fields</Filter>
-    </ClInclude>
-    <ClInclude Include="RowIDCounter.h">
-      <Filter>DB\Table</Filter>
     </ClInclude>
     <ClInclude Include="UniqueIndex.h">
       <Filter>DB\Fields\Index\UniqueIndex</Filter>
@@ -659,9 +596,6 @@
     </ClInclude>
     <ClInclude Include="UniqueCompIndexBase.h">
       <Filter>DB\Fields\Index\CompositeIndex\Unique</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectTransactions.h">
-      <Filter>DB\transactions\DirectTran</Filter>
     </ClInclude>
     <ClInclude Include="StringCompressorParams.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
@@ -759,9 +693,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InsertCursor.h">
-      <Filter>DB\transactions\Cursors\InsertCursor</Filter>
-    </ClInclude>
     <ClInclude Include="embDB.h">
       <Filter>SDK</Filter>
     </ClInclude>
@@ -771,17 +702,11 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransactionBase.h">
-      <Filter>DB\transactions</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="embDBLib.h">
       <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="Counter.h">
-      <Filter>DB\Table</Filter>
     </ClInclude>
     <ClInclude Include="Fields.h">
       <Filter>SDK</Filter>
@@ -795,9 +720,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleSearchCursor.h">
-      <Filter>DB\transactions\Cursors</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -807,14 +729,8 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleSelectCursor.h">
-      <Filter>DB\transactions\Cursors</Filter>
-    </ClInclude>
     <ClInclude Include="FieldIteratorBase.h">
       <Filter>DB\Fields</Filter>
-    </ClInclude>
-    <ClInclude Include="DeleteCursor.h">
-      <Filter>DB\transactions\Cursors</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
@@ -1086,9 +1002,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleSelectOpCursor.h">
-      <Filter>DB\transactions\Cursors\SelectOpCursor</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1106,9 +1019,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GlobalParams.h">
-      <Filter>DB</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1212,24 +1122,6 @@
     <ClInclude Include="ConsolLog.h">
       <Filter>DB\Logs\ConsolLog</Filter>
     </ClInclude>
-    <ClInclude Include="Database.h">
-      <Filter>DB\Database</Filter>
-    </ClInclude>
-    <ClInclude Include="DBTranManager.h">
-      <Filter>DB\Database</Filter>
-    </ClInclude>
-    <ClInclude Include="Connection.h">
-      <Filter>DB\Database</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeStatistics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UserCryptoManager.h">
-      <Filter>DB\Database</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1248,11 +1140,11 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectTranUndoManager.h">
-      <Filter>DB\transactions\DirectTran</Filter>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DBConfig.h">
-      <Filter>DB\transactions</Filter>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1350,29 +1242,17 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CreateStatistic.h">
-      <Filter>DB\Table</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BTreePlusv3\BPTreeLeafNodeSetV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreePlusv3\BPTreeNodeSetV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreePlusv3\BPLeafNodeSetSimpleCompressorV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1386,53 +1266,17 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BTreePlusv3\BPTreeInnerNodeSetV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreePlusv3\BPInnerNodeSimpleCompressorV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreePlusv3\BaseBPSetv3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BTreePlusv3\BaseBPSet3Insert.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreePlusv3\BaseBPSet3Delete.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreePlusv3\BaseBPSet3Search.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeStatistics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreePlusv3\BPIteratorSetV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeStatistics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreePlusv3\BPSetv3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1446,29 +1290,17 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BTreePlusv3\BPSetInfoTreeV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreePlusv3\BPMapv3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreePlusv3\BPIteratorMapV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreePlusv3\BPTreeLeafNodeMapV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BTreePlusv3\BPLeafNodeMapSimpleCompressorV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BTreePlusv3\BPTreeNodeMapV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1482,26 +1314,17 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BTreePlusv3\BaseDIffEncoder.h">
-      <Filter>DB\BPTrees\BTreePlusv3</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreePlusv3\EmptyEncoder.h">
-      <Filter>DB\BPTrees\BTreePlusv3</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreePlusv3\BaseEncoder.h">
-      <Filter>DB\BPTrees\BTreePlusv3</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BTreePlusv3\BaseNodeCompressor.h">
-      <Filter>DB\BPTrees\BTreePlusv3</Filter>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BTreePlusv3\UnsignedNumLenEncoder.h">
-      <Filter>DB\BPTrees\BTreePlusv3</Filter>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utils\BitUtils.h">
       <Filter>utils</Filter>
@@ -1611,6 +1434,198 @@
     <ClInclude Include="Utils\streams\WriteStreamPage.h">
       <Filter>utils\streams</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="storage\FilePage.h">
+      <Filter>storage</Filter>
+    </ClInclude>
+    <ClInclude Include="storage\FilePageType.h">
+      <Filter>storage</Filter>
+    </ClInclude>
+    <ClInclude Include="storage\FreePageManage.h">
+      <Filter>storage</Filter>
+    </ClInclude>
+    <ClInclude Include="storage\storage.h">
+      <Filter>storage</Filter>
+    </ClInclude>
+    <ClInclude Include="storage\StorageInfo.h">
+      <Filter>storage</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\EmptyEncoder.h">
+      <Filter>DB\BPTrees\BTreePlusv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseBPSet3Delete.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseBPSet3Insert.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseBPSet3Search.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseBPSetv3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPInnerNodeSimpleCompressorV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseNodeCompressor.h">
+      <Filter>DB\BPTrees\BTreePlusv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPIteratorSetV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPSetv3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPSetInfoTreeV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPMapv3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPIteratorMapV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPLeafNodeMapSimpleCompressorV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPLeafNodeSetSimpleCompressorV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPTreeInnerNodeSetV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeSetV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeMapV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPTreeNodeMapV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPTreeNodeSetV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\Cursors\InsertCursor\InsertCursor.h">
+      <Filter>DB\transactions\Cursors\InsertCursor</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\Cursors\SelectOpCursor\SimpleSearchCursor.h">
+      <Filter>DB\transactions\Cursors\SelectOpCursor</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\Cursors\SelectOpCursor\SimpleSelectCursor.h">
+      <Filter>DB\transactions\Cursors\SelectOpCursor</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\Cursors\SelectOpCursor\SimpleSelectOpCursor.h">
+      <Filter>DB\transactions\Cursors\SelectOpCursor</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\DirectTran\DirectTransactions.h">
+      <Filter>DB\transactions\DirectTran</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\DirectTran\DirectTranUndoManager.h">
+      <Filter>DB\transactions\DirectTran</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\TranLogger.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\TranLogManager.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\TranLogStateManager.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\TranPerfCounter.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\TranRedoPageManager.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\TransactionBase.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\TransactionCache.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\Transactions.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\TranStorage.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\TranUndoPageManager.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Connection.h">
+      <Filter>DB\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Database.h">
+      <Filter>DB\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\DBStateManager.h">
+      <Filter>DB\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\DBTranManager.h">
+      <Filter>DB\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\GlobalParams.h">
+      <Filter>DB\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\UserCryptoManager.h">
+      <Filter>DB\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Schema.h">
+      <Filter>DB\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Table\Counter.h">
+      <Filter>DB\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Table\CreateFields.h">
+      <Filter>DB\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Table\CreateStatistic.h">
+      <Filter>DB\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Table\Table.h">
+      <Filter>DB\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Table\TableHeader.h">
+      <Filter>DB\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\NumLen\NumLenBaseEncoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\NumLen\BaseNumLenEncoder.h">
+      <Filter>utils\compress\NumLen</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\NumLen\UnsignedNumLenEncoder.h">
+      <Filter>utils\compress\NumLen</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\NumLen\SignedNumLenEncoder.h">
+      <Filter>utils\compress\NumLen</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseDIffEncoder.h">
+      <Filter>DB\BPTrees\BTreePlusv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseEncoder.h">
+      <Filter>DB\BPTrees\BTreePlusv3</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1622,62 +1637,11 @@
     <ClCompile Include="BaseRBMultiTree.cpp">
       <Filter>DB\BPTrees\memorytree\RBTree</Filter>
     </ClCompile>
-    <ClCompile Include="FilePage.cpp">
-      <Filter>storage</Filter>
-    </ClCompile>
-    <ClCompile Include="storage.cpp">
-      <Filter>storage</Filter>
-    </ClCompile>
-    <ClCompile Include="Schema.cpp">
-      <Filter>DB</Filter>
-    </ClCompile>
-    <ClCompile Include="FreePageManage.cpp">
-      <Filter>storage</Filter>
-    </ClCompile>
-    <ClCompile Include="Transactions.cpp">
-      <Filter>DB\transactions</Filter>
-    </ClCompile>
-    <ClCompile Include="TranStorage.cpp">
-      <Filter>DB\transactions</Filter>
-    </ClCompile>
-    <ClCompile Include="TransactionCache.cpp">
-      <Filter>DB\transactions</Filter>
-    </ClCompile>
-    <ClCompile Include="TranUndoPageManager.cpp">
-      <Filter>DB\transactions</Filter>
-    </ClCompile>
-    <ClCompile Include="BPTreeInfoPage.cpp">
-      <Filter>DB\transactions</Filter>
-    </ClCompile>
-    <ClCompile Include="TranLogStateManager.cpp">
-      <Filter>DB\transactions</Filter>
-    </ClCompile>
-    <ClCompile Include="DBStateManager.cpp">
-      <Filter>DB</Filter>
-    </ClCompile>
-    <ClCompile Include="StorageInfo.cpp">
-      <Filter>storage</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectTransactions.cpp">
-      <Filter>DB\transactions\DirectTran</Filter>
-    </ClCompile>
     <ClCompile Include="SpatialPointQuery.cpp">
       <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
     </ClCompile>
     <ClCompile Include="SpatialRectQuery.cpp">
       <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
-    </ClCompile>
-    <ClCompile Include="TranPerfCounter.cpp">
-      <Filter>DB\transactions</Filter>
-    </ClCompile>
-    <ClCompile Include="TranRedoPageManager.cpp">
-      <Filter>DB\transactions</Filter>
-    </ClCompile>
-    <ClCompile Include="Table.cpp">
-      <Filter>DB\Table</Filter>
-    </ClCompile>
-    <ClCompile Include="TableHeader.cpp">
-      <Filter>DB\Table</Filter>
     </ClCompile>
     <ClCompile Include="ValueField.cpp">
       <Filter>DB\Fields</Filter>
@@ -1691,9 +1655,6 @@
     <ClCompile Include="CompositeIndexKey.cpp">
       <Filter>DB\Fields\Index\CompositeIndex</Filter>
     </ClCompile>
-    <ClCompile Include="InsertCursor.cpp">
-      <Filter>DB\transactions\Cursors\InsertCursor</Filter>
-    </ClCompile>
     <ClCompile Include="Fields.cpp">
       <Filter>SDK</Filter>
     </ClCompile>
@@ -1702,15 +1663,6 @@
     </ClCompile>
     <ClCompile Include="Row.cpp">
       <Filter>SDK</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleSearchCursor.cpp">
-      <Filter>DB\transactions\Cursors</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleSelectCursor.cpp">
-      <Filter>DB\transactions\Cursors</Filter>
-    </ClCompile>
-    <ClCompile Include="DeleteCursor.cpp">
-      <Filter>DB\transactions\Cursors</Filter>
     </ClCompile>
     <ClCompile Include="OIDCompress.cpp">
       <Filter>DB\Fields\compress</Filter>
@@ -1723,12 +1675,6 @@
     </ClCompile>
     <ClCompile Include="CompressStringLen.cpp">
       <Filter>DB\Fields\string\fixedStringField\compress</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleSelectOpCursor.cpp">
-      <Filter>DB\transactions\Cursors\SelectOpCursor</Filter>
-    </ClCompile>
-    <ClCompile Include="GlobalParams.cpp">
-      <Filter>DB</Filter>
     </ClCompile>
     <ClCompile Include="PageCipher.cpp">
       <Filter>Crypto</Filter>
@@ -1757,21 +1703,6 @@
     <ClCompile Include="ConsolLog.cpp">
       <Filter>DB\Logs\ConsolLog</Filter>
     </ClCompile>
-    <ClCompile Include="Database.cpp">
-      <Filter>DB\Database</Filter>
-    </ClCompile>
-    <ClCompile Include="DBTranManager.cpp">
-      <Filter>DB\Database</Filter>
-    </ClCompile>
-    <ClCompile Include="Connection.cpp">
-      <Filter>DB\Database</Filter>
-    </ClCompile>
-    <ClCompile Include="UserCryptoManager.cpp">
-      <Filter>DB\Database</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectTranUndoManager.cpp">
-      <Filter>DB\transactions\DirectTran</Filter>
-    </ClCompile>
     <ClCompile Include="FileLog.cpp">
       <Filter>DB\Logs\FileLog</Filter>
     </ClCompile>
@@ -1798,6 +1729,84 @@
     </ClCompile>
     <ClCompile Include="Utils\MathUtils.cpp">
       <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="storage\FilePage.cpp">
+      <Filter>storage</Filter>
+    </ClCompile>
+    <ClCompile Include="storage\FreePageManage.cpp">
+      <Filter>storage</Filter>
+    </ClCompile>
+    <ClCompile Include="storage\storage.cpp">
+      <Filter>storage</Filter>
+    </ClCompile>
+    <ClCompile Include="storage\StorageInfo.cpp">
+      <Filter>storage</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\Cursors\InsertCursor\InsertCursor.cpp">
+      <Filter>DB\transactions\Cursors\InsertCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\Cursors\SelectOpCursor\SimpleSearchCursor.cpp">
+      <Filter>DB\transactions\Cursors\SelectOpCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\Cursors\SelectOpCursor\SimpleSelectCursor.cpp">
+      <Filter>DB\transactions\Cursors\SelectOpCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\Cursors\SelectOpCursor\SimpleSelectOpCursor.cpp">
+      <Filter>DB\transactions\Cursors\SelectOpCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\DirectTran\DirectTransactions.cpp">
+      <Filter>DB\transactions\DirectTran</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\DirectTran\DirectTranUndoManager.cpp">
+      <Filter>DB\transactions\DirectTran</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\TranLogStateManager.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\TranPerfCounter.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\TranRedoPageManager.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\TransactionCache.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\Transactions.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\TranStorage.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\TranUndoPageManager.cpp">
+      <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Connection.cpp">
+      <Filter>DB\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Database.cpp">
+      <Filter>DB\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\DBStateManager.cpp">
+      <Filter>DB\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\DBTranManager.cpp">
+      <Filter>DB\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\GlobalParams.cpp">
+      <Filter>DB\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\UserCryptoManager.cpp">
+      <Filter>DB\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Schema.cpp">
+      <Filter>DB\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Table\Table.cpp">
+      <Filter>DB\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Table\TableHeader.cpp">
+      <Filter>DB\Table</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -186,7 +186,7 @@ namespace embDB
 			TExponentCompressor m_ExponentCompressor;
 
 
-			TSignCompressor m_SignCompressor;
+			TSignEncoder m_SignCompressor;
 			
 	};
 

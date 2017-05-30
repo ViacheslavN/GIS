@@ -5,8 +5,8 @@
 #include "../../EmbDB/BTreePlusv3/BPIteratorSetV3.h"*/
 
 
-#include "../../EmbDB/BTreePlusv3/BPSetv3.h"
-#include "../../EmbDB/BTreePlusv3/BPSetInfoTreeV3.h"
+#include "../../EmbDB/DB/BTreePlus/BPSetv3.h"
+#include "../../EmbDB/DB/BTreePlus/BPSetInfoTreeV3.h"
 #include "../../EmbDB/Transactions.h"
 #include "../../EmbDB/DirectTransactions.h"
 #include "../../EmbDB/ConsolLog.h"

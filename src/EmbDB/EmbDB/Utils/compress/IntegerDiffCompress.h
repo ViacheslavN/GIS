@@ -74,7 +74,7 @@ template<class _TValue,
 			};
 	 
 
-			TUnsignedIntegerDiffCompress(CompressType nType, uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : m_nCount(0),  m_nFlags(0),
+			TUnsignedIntegerDiffCompress(EncoderType nType, uint32 nError = 200 /*0.5%*/, bool bOnlineCalcSize = false) : m_nCount(0),  m_nFlags(0),
 						m_nTypeFreq(etfByte), m_nError(nError), m_dBitRowSize(0), m_bOnlineCalcSize(bOnlineCalcSize)
 			{
 				
@@ -493,7 +493,7 @@ template<class _TValue,
 			eTypeFreq m_nTypeFreq;
 			mutable double m_dBitRowSize;
 			bool m_bOnlineCalcSize;
-			CompressType m_nType;
+			EncoderType m_nType;
 	};
 }
 

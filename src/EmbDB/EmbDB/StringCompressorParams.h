@@ -4,7 +4,7 @@
 #include "embDBInternal.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "StreamPageIngo.h"
-#include "GlobalParams.h"
+#include "DB/GlobalParams.h"
 namespace embDB
 {
 

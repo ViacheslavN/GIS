@@ -132,7 +132,7 @@ namespace embDB
 			
 	 
 
-			TUnsignedNumLenCompressor(CompressType nType, uint32 nError = 200, bool bOnlineCalcSize = false) : m_nLenBitSize(0), m_nCount(0), m_nDiffsLen(0), m_nFlags(0),
+			TUnsignedNumLenCompressor(EncoderType nType, uint32 nError = 200, bool bOnlineCalcSize = false) : m_nLenBitSize(0), m_nCount(0), m_nDiffsLen(0), m_nFlags(0),
 						m_nTypeFreq(ectByte), m_nError(nError), m_dBitRowSize(0.), m_bOnlineCalcSize(bOnlineCalcSize), m_nType(nType)
 			{
 				 memset(m_BitsLensFreq, 0, sizeof(m_BitsLensFreq));
@@ -627,7 +627,7 @@ namespace embDB
 
 			mutable double m_dBitRowSize;
 			bool m_bOnlineCalcSize;
-			CompressType m_nType;
+			EncoderType m_nType;
 
 	};
 

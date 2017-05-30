@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_EMB_DB_INTERNAL_H_
 
 #include "embDB.h"
-#include "FilePage.h"
+#include "storage/FilePage.h"
 
 
 #define MIN_PAGE_SIZE			256

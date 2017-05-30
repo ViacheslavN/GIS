@@ -124,7 +124,7 @@ namespace embDB
 		  }
 
 
-		  virtual bool init(int64 nBTreeRootPage, CompressType nType, uint32 nCompCalcError, bool bOnlineCalcCompSize )
+		  virtual bool init(int64 nBTreeRootPage, EncoderType nType, uint32 nCompCalcError, bool bOnlineCalcCompSize )
 		  {
 
 			  TLeafCompressorParams leafCompParams;

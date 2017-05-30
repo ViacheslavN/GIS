@@ -5,9 +5,9 @@
 #include "../../EmbDB/BTreePlusv3/BPIteratorSetV3.h"*/
 
 
-#include "../../EmbDB/BTreePlusv3/BPMapv3.h"
-#include "../../EmbDB/BTreePlusv3/BPLeafNodeMapSimpleCompressorV3.h"
-#include "../../EmbDB/BTreePlusv3/BPSetInfoTreeV3.h"
+#include "../../EmbDB/DB/BTreePlus/BPMapv3.h"
+#include "../../EmbDB/DB/BTreePlus/BPLeafNodeMapSimpleCompressorV3.h"
+#include "../../EmbDB/DB/BTreePlus/BPSetInfoTreeV3.h"
 #include "../../EmbDB/Transactions.h"
 #include "../../EmbDB/DirectTransactions.h"
 #include "../../EmbDB/ConsolLog.h"

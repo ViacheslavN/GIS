@@ -163,7 +163,7 @@ namespace embDB
 
 	
 
-	enum CompressType
+	enum EncoderType
 	{
 		ACCoding,
 		RangeCoding,
@@ -234,7 +234,7 @@ namespace embDB
 
 		}
 
-		CompressType m_CompressType; 
+		EncoderType m_CompressType; 
 		uint32 m_nCompCalcError; 
 		bool m_bOnlineCalcCompSize;  
 		uint32 m_nBTreeChacheSize;

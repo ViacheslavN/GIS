@@ -69,7 +69,7 @@ namespace embDB
 		UnsignedNumLenCompressor64 m_MantisaCompressor;
 		TExponentCompressor  m_ExponentCompressor;
 
-		TSignCompressor m_SignCompressor;
+		TSignEncoder m_SignCompressor;
 
 	};
 

@@ -25,7 +25,7 @@ namespace embDB
 			typedef CommonLib::BaseACEncoder<uint64> TEncoder;
 			typedef CommonLib::BaseACDecoder<uint64> TDecoder;
 
-			TBaseZOrderCompressor(CompressType nType, uint32 nError = 200 , bool bOnlineCalcSize = false) :
+			TBaseZOrderCompressor(EncoderType nType, uint32 nError = 200 , bool bOnlineCalcSize = false) :
 					TBase(nType, nError, bOnlineCalcSize)
 			{
  

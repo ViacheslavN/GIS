@@ -8,7 +8,7 @@
 #include "CommonLibrary/SpatialKey.h"
 
 #include "CommonLibrary/BoundaryBox.h"
-#include "GlobalParams.h"
+#include "DB/GlobalParams.h"
 
 namespace embDB
 {
@@ -239,7 +239,7 @@ namespace embDB
 		uint64				m_nFieldInfoPage;
 		int64				m_nPageAdd;
 
-		CompressType m_CompressType;
+		EncoderType m_CompressType;
 		bool m_bOnlineCalcCompSize;
 		uint32 m_nCompCalcError;
 		uint32 m_nBTreeChacheSize;
