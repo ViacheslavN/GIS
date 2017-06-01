@@ -2,8 +2,8 @@
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/alloc_t.h"
-#include "../CompressorParams.h"
-#include "../Utils/alloc/STLAlloc.h"
+#include "../../CompressorParams.h"
+#include "../../Utils/alloc/STLAlloc.h"
  
 namespace embDB
 {
@@ -16,15 +16,15 @@ namespace embDB
 	public:
 
 		typedef _TValue TValue;
-		typedef STLAllocator<TKey> TAlloc;
+		typedef STLAllocator<TValue> TAlloc;
 		typedef std::vector<TValue, TAlloc> TValueMemSet;
 		typedef _TCompressorParams TCompressorParams;
 		typedef _TEncoder TEncoder;
-		typedef typename TDefSign<TValue>::TSignType TSignValue
+		typedef typename TDefSign<TValue>::TSignType TSignValue;
 
 
-		TBaseValueDiffEncoder(CommonLib::alloc_t *pAlloc, uint32 nPageSize, CompressorParamsBaseImp *pParams) :
-			m_compressor(pParams)
+		TBaseValueDiffEncoder(uint32 nPageSize, CommonLib::alloc_t *pAlloc, CompressorParamsBaseImp *pParams) :
+			m_encoder(nPageSize, pAlloc, pParams)
 		{}
 
 		~TBaseValueDiffEncoder()
@@ -60,7 +60,7 @@ namespace embDB
 				}
 			}
 		}
-		void AddDiffSymbol(TSignValue& nValue)
+		void AddDiffSymbol(TSignValue nValue)
 		{
 			m_encoder.AddSymbol(nValue);
 		}
@@ -94,7 +94,7 @@ namespace embDB
 				}
 			}
 		}
-		void RemoveDiffSymbol(TSignValue& nValue)
+		void RemoveDiffSymbol(TSignValue nValue)
 		{
 			m_encoder.RemoveSymbol(nValue);
 		}
@@ -106,7 +106,7 @@ namespace embDB
 
 		bool encode(const TValueMemSet& vecValues, CommonLib::IWriteStream *pStream)
 		{
-			assert(m_encoder.count() == vecValues.size() - 1)
+			assert(m_encoder.count() == vecValues.size() - 1);
 			pStream->write(vecValues[0]);
 			if (!m_encoder.BeginEncoding(pStream))
 				return false;
@@ -130,7 +130,7 @@ namespace embDB
 
 			for (size_t i = 1; i < nCount; ++i)
 			{
-				vecValues.push_back(m_encoder.decodeSymbol() - vecValues[i - 1]);
+				vecValues.push_back(m_encoder.decodeSymbol() + vecValues[i - 1]);
 			}
 
 			m_encoder.FinishDecoding();

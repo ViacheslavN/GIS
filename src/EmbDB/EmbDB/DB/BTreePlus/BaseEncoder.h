@@ -2,8 +2,8 @@
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/alloc_t.h"
-#include "../CompressorParams.h"
-#include "../Utils/alloc/STLAlloc.h"
+#include "../../CompressorParams.h"
+#include "../../Utils/alloc/STLAlloc.h"
 
 namespace embDB
 {
@@ -15,14 +15,14 @@ namespace embDB
 	public:
 
 		typedef _TValue TValue;
-		typedef STLAllocator<TKey> TAlloc;
+		typedef STLAllocator<TValue> TAlloc;
 		typedef std::vector<TValue, TAlloc> TValueMemSet;
 		typedef _TCompressorParams TCompressorParams;
 		typedef _TEncoder TEncoder;
 
 
-		TBaseValueEncoder(CommonLib::alloc_t *pAlloc, uint32 nPageSize, CompressorParamsBaseImp *pParams) :
-			m_compressor(pParams)
+		TBaseValueEncoder(uint32 nPageSize, CommonLib::alloc_t *pAlloc, CompressorParamsBaseImp *pParams) :
+			m_encoder(nPageSize, pAlloc, pParams)
 		{}
 
 		~TBaseValueEncoder()

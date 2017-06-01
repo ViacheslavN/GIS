@@ -4,12 +4,12 @@
 #include "Commonlibrary/alloc_t.h"
 #include "CommonLibrary/delegate.h"
 
-#include "../embDBInternal.h"
-#include "../CompressorParams.h"
-#include "../utils/CacheLRU_2Q.h"
+#include "../../embDBInternal.h"
+#include "../../CompressorParams.h"
+#include "../../utils/CacheLRU_2Q.h"
 
-#include "../utils/streams/WriteStreamPage.h"
-#include "../utils/streams/ReadStreamPage.h"
+#include "../../utils/streams/WriteStreamPage.h"
+#include "../../utils/streams/ReadStreamPage.h"
  
 
 #include "BPTreeNodeSetV3.h"
@@ -434,12 +434,17 @@ namespace embDB
 				if (!pBNode->LoadFromPage(pFilePage.get(), m_pTransaction))
 					return TBTreeNodePtr(nullptr);
 				pBNode->SetMinSplit(m_bMinSplit);
-				if (bCheckCache)
+				if (nAddr != m_nRootAddr)
 				{
-					if (m_Cache.size() > m_nChacheSize)
-						m_Cache.remove_back();
+					if (bCheckCache)
+					{
+						if (m_Cache.size() > m_nChacheSize)
+							m_Cache.remove_back();
+					}
+
+					m_Cache.AddElem(pBNode->m_nPageAddr, pBNode);
 				}
-				m_Cache.AddElem(pBNode->m_nPageAddr, pBNode);
+				
 			}
 			return pBNode;
 		}

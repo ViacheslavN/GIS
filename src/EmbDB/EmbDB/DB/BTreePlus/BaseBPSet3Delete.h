@@ -142,7 +142,7 @@ void BPSETBASE_DECLARATION::RemoveFromLeafNode(TBTreeNodePtr pNode, int32 nIndex
 	assert(pDonorNode.get());
 	bool bUnion = pNode->IsHaveUnion(pDonorNode.get());
 	bool bAlignment = false;
-	if (!bUnion)
+	if (!bUnion && !m_bMinSplit)
 	{
 		bAlignment = pNode->IsHaveAlignment(pDonorNode.get());
 	} 
@@ -367,7 +367,7 @@ void BPSETBASE_DECLARATION::RemoveFromInnerNode(TBTreeNodePtr pCheckNode, const 
 		bool bAlignment = false;
 
 		bUnion = pCheckNode->IsHaveUnion(pDonorNode.get());
-		if (!bUnion)
+		if (!bUnion && !m_bMinSplit)
 		{
 			bAlignment = pCheckNode->IsHaveAlignment(pDonorNode.get());
 		}

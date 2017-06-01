@@ -7,8 +7,8 @@
 
 #include "../../EmbDB/DB/BTreePlus/BPSetv3.h"
 #include "../../EmbDB/DB/BTreePlus/BPSetInfoTreeV3.h"
-#include "../../EmbDB/Transactions.h"
-#include "../../EmbDB/DirectTransactions.h"
+#include "../../EmbDB/DB/transactions/Transactions.h"
+#include "../../EmbDB/DB/transactions/DirectTran/DirectTransactions.h"
 #include "../../EmbDB/ConsolLog.h"
 #include "CommonLibrary/DebugTime.h"
 

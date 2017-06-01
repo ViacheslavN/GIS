@@ -1,7 +1,7 @@
 #pragma once
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/alloc_t.h"
-#include "../Utils/alloc/STLAlloc.h"
+#include "../../Utils/alloc/STLAlloc.h"
 namespace embDB
 {
 
@@ -12,25 +12,25 @@ namespace embDB
 
 		typedef _TKey TKey;
 		typedef  int64 TLink;
-		typedef CompressorParamsBaseImp TInnerCompressorParams;
+		typedef CompressorParamsBaseImp TCompressorParams;
 		typedef STLAllocator<TKey> TAlloc;
 		typedef std::vector<TKey, TAlloc> TKeyMemSet;
 		typedef std::vector<TLink, TAlloc> TLinkMemSet;
 
 
 		template<typename _Transactions  >
-		static TInnerCompressorParams *LoadCompressorParams(_Transactions *pTran)
+		static TCompressorParams *LoadCompressorParams(_Transactions *pTran)
 		{
-			return new TInnerCompressorParams();
+			return new TCompressorParams();
 		}
 
 		template<typename _Transactions  >
-		bool  init(TInnerCompressorParams *pParams , _Transactions *pTran)
+		bool  init(TCompressorParams *pParams , _Transactions *pTran)
 		{
 			return true;
 		}
 
-		BPInnerNodeSimpleCompressorV3(uint32 nPageSize,  CommonLib::alloc_t *pAlloc = nullptr, TInnerCompressorParams *pParams = nullptr) :
+		BPInnerNodeSimpleCompressorV3(uint32 nPageSize,  CommonLib::alloc_t *pAlloc = nullptr, TCompressorParams *pParams = nullptr) :
 			m_nCount(0), m_nPageSize(nPageSize)
 		{}
 		virtual ~BPInnerNodeSimpleCompressorV3() {}
@@ -114,11 +114,11 @@ namespace embDB
 			m_nCount--;
 			return true;
 		}
-		virtual bool update(int nIndex, const TKey& key, TLink link, const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
+		virtual bool updateValue(int nIndex, TLink newLink, TLink oldLink,  const TLinkMemSet& linkSet, const TKeyMemSet& keySet)
 		{
 			return true;
 		}
-		virtual bool updateKey(int nIndex, const TKey& key, const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
+		virtual bool updateKey(int nIndex, const TKey& newKey, const TKey& oldKey, const TKeyMemSet& keySet, const TLinkMemSet& linkSet)
 		{
 			return true;
 		}

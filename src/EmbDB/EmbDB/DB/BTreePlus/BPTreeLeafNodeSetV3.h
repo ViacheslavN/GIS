@@ -2,10 +2,10 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 //#include "RBMap.h"
-#include "../embDBInternal.h"
-#include "../BTBaseNode.h"
-#include "../CompressorParams.h"
-#include "../Utils/alloc/STLAlloc.h"
+#include "../../embDBInternal.h"
+#include "../../BTBaseNode.h"
+#include "../../CompressorParams.h"
+#include "../../Utils/alloc/STLAlloc.h"
 namespace embDB
 {
 	template<typename _TKey,
@@ -21,7 +21,7 @@ namespace embDB
 		typedef STLAllocator<TKey> TAlloc;
 		typedef std::vector<TKey, TAlloc> TKeyMemSet;
 
-		typedef typename _TCompressor::TLeafCompressorParams TLeafCompressorParams;
+		typedef typename _TCompressor::TCompressorParams TLeafCompressorParams;
 
 		BPTreeLeafNodeSetv3Base(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
 			m_KeyMemSet(TAlloc(pAlloc)), m_Compressor(nPageSize - 2*sizeof(TLink) , pAlloc), m_nNext(-1), m_nPrev(-1), m_bMulti(bMulti),

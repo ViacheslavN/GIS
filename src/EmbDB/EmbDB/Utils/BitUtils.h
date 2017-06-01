@@ -16,8 +16,10 @@ namespace embDB
 			56, 45, 25, 31, 35, 16,  9, 12,
 			44, 24, 15,  8, 23,  7,  6,  5 };
 
-		inline int log2(uint64  value)
+		inline int32 log2(uint64  value)
 		{
+			assert(value != 0);
+
 			value |= value >> 1;
 			value |= value >> 2;
 			value |= value >> 4;
@@ -27,14 +29,22 @@ namespace embDB
 			return tab64[((uint64_t)((value - (value >> 1)) * 0x07EDD5E59A4E28C2)) >> 58];
 		}
 
+
+		inline int32 log2(int64  value)
+		{
+			return log2(uint64(value));
+		}
+
 		static const int tab32[32] = {
 			0,  9,  1, 10, 13, 21,  2, 29,
 			11, 14, 16, 18, 22, 25,  3, 30,
 			8, 12, 20, 28, 15, 17, 24,  7,
 			19, 27, 23,  6, 26,  5,  4, 31 };
 
-		inline int log2(uint32 value)
+		inline int32 log2(uint32 value)
 		{
+			assert(value != 0);
+
 			value |= value >> 1;
 			value |= value >> 2;
 			value |= value >> 4;
@@ -43,8 +53,10 @@ namespace embDB
 			return tab32[(uint32)(value * 0x07C4ACDD) >> 27];
 		}
 
-		inline int log2(uint16 value)
+		inline int32 log2(uint16 value)
 		{
+			assert(value != 0);
+
 			value |= value >> 1;
 			value |= value >> 2;
 			value |= value >> 4;

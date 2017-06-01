@@ -580,6 +580,7 @@
     <ClInclude Include="DB\Table\CreateStatistic.h" />
     <ClInclude Include="DB\Table\Table.h" />
     <ClInclude Include="DB\Table\TableHeader.h" />
+    <ClInclude Include="DB\transactions\Cursors\deletecursor.h" />
     <ClInclude Include="DB\transactions\Cursors\InsertCursor\InsertCursor.h" />
     <ClInclude Include="DB\transactions\Cursors\SelectOpCursor\SimpleSearchCursor.h" />
     <ClInclude Include="DB\transactions\Cursors\SelectOpCursor\SimpleSelectCursor.h" />
@@ -788,6 +789,7 @@
     <ClCompile Include="DB\Schema.cpp" />
     <ClCompile Include="DB\Table\Table.cpp" />
     <ClCompile Include="DB\Table\TableHeader.cpp" />
+    <ClCompile Include="DB\transactions\Cursors\DeleteCursor.cpp" />
     <ClCompile Include="DB\transactions\Cursors\InsertCursor\InsertCursor.cpp" />
     <ClCompile Include="DB\transactions\Cursors\SelectOpCursor\SimpleSearchCursor.cpp" />
     <ClCompile Include="DB\transactions\Cursors\SelectOpCursor\SimpleSelectCursor.cpp" />

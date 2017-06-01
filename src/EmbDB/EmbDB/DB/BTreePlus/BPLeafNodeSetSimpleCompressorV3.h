@@ -3,8 +3,8 @@
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/alloc_t.h"
-#include "../CompressorParams.h"
-#include "../Utils/alloc/STLAlloc.h"
+#include "../../CompressorParams.h"
+#include "../../Utils/alloc/STLAlloc.h"
 namespace embDB
 {
 
@@ -13,22 +13,22 @@ namespace embDB
 	{
 	public:
 		typedef _TKey TKey;
-		typedef CompressorParamsBaseImp TLeafCompressorParams;
+		typedef CompressorParamsBaseImp TCompressorParams;
 		typedef STLAllocator<TKey> TAlloc;
 		typedef std::vector<TKey, TAlloc> TLeafMemSet;
 
-		BPLeafNodeSetSimpleCompressorV3(uint32 nPageSize,  CommonLib::alloc_t *pAlloc = nullptr, TLeafCompressorParams *pParams = nullptr ) : m_nCount(0),
+		BPLeafNodeSetSimpleCompressorV3(uint32 nPageSize,  CommonLib::alloc_t *pAlloc = nullptr, TCompressorParams *pParams = nullptr ) : m_nCount(0),
 			m_nPageSize(nPageSize) 
 		{}
 		template<typename _Transactions  >
-		static TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
+		static TCompressorParams *LoadCompressorParams(_Transactions *pTran)
 		{
-			return new TLeafCompressorParams();
+			return new TCompressorParams();
 		}
 		virtual ~BPLeafNodeSetSimpleCompressorV3() {}
 
 		template<typename _Transactions  >
-		bool  init(TLeafCompressorParams *pParams, _Transactions *pTran)
+		bool  init(TCompressorParams *pParams, _Transactions *pTran)
 		{
 			return true;
 		}

@@ -3,10 +3,10 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 
-#include "../embDBInternal.h"
-#include "../BTBaseNode.h"
-#include "../CompressorParams.h"
-#include "../Utils/alloc/STLAlloc.h"
+#include "../../embDBInternal.h"
+#include "../../BTBaseNode.h"
+#include "../../CompressorParams.h"
+#include "../../Utils/alloc/STLAlloc.h"
 
 namespace embDB
 {
@@ -24,7 +24,7 @@ namespace embDB
 
 	public:
 
-		typedef typename _TCompressor::TInnerCompressorParams TInnerCompressorParams;
+		typedef typename _TCompressor::TCompressorParams TInnerCompressorParams;
 
 		BPTreeInnerNodeSetv3(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
 			m_nLess(-1), m_innerKeyMemSet(TAlloc(pAlloc)), m_innerLinkMemSet(TAlloc(pAlloc)), m_bMulti(bMulti),
@@ -253,8 +253,15 @@ namespace embDB
 				newNodeKeySet.push_back(m_innerKeyMemSet[nSplitIndex]);
 				newNodeLinkSet.push_back(m_innerLinkMemSet[nSplitIndex]);
 
+
+	
+
 				m_Compressor.remove(nSplitIndex, m_innerKeyMemSet[nSplitIndex], m_innerLinkMemSet[nSplitIndex], m_innerKeyMemSet, m_innerLinkMemSet);
 				pNewNodeComp.insert(0, newNodeKeySet[0], newNodeLinkSet[0], newNodeKeySet, newNodeLinkSet);
+
+				m_innerKeyMemSet.resize(nSplitIndex);
+				m_innerLinkMemSet.resize(nSplitIndex);
+
 				while (true)
 				{
 
@@ -263,8 +270,13 @@ namespace embDB
 
 					m_Compressor.remove(nLessIndex, m_innerKeyMemSet[nLessIndex], m_innerLinkMemSet[nLessIndex], m_innerKeyMemSet, m_innerLinkMemSet);
 
-					newNodeKeySet.push_back(m_innerKeyMemSet[nLessIndex]);
-					newNodeLinkSet.push_back(m_innerLinkMemSet[nLessIndex]);
+
+					newNodeKeySet.insert(newNodeKeySet.begin(), m_innerKeyMemSet[nLessIndex]);
+					newNodeLinkSet.insert(newNodeLinkSet.begin(), m_innerLinkMemSet[nLessIndex]);
+
+
+					m_innerKeyMemSet.resize(nLessIndex);
+					m_innerLinkMemSet.resize(nLessIndex);
 
 					pNewNodeComp.insert(newNodeKeySet.size() - 1, newNodeKeySet.back(), newNodeLinkSet.back(), newNodeKeySet, newNodeLinkSet);
 
@@ -324,8 +336,10 @@ namespace embDB
 			TLinkMemSet& RightLinkSet = pRightNode->m_innerLinkMemSet;
 			TCompressor& pRightNodeComp = pRightNode->m_Compressor;
 
-			int nSize = m_innerKeyMemSet.size() / 2;
+			//int nSize = m_innerKeyMemSet.size() / 2;
 
+
+			uint32 nSize = m_bMinSplit ? this->m_innerKeyMemSet.size() - 2 : this->m_innerKeyMemSet.size() / 2;
 
 			std::move(m_innerKeyMemSet.begin(), m_innerKeyMemSet.begin() + nSize, std::inserter(LeftKeySet, LeftKeySet.begin()));
 			std::move(m_innerLinkMemSet.begin(), m_innerLinkMemSet.begin() + nSize, std::inserter(LeftLinkSet, LeftLinkSet.begin()));
@@ -371,7 +385,7 @@ namespace embDB
 
 		void updateLink(int32 nIndex, TLink nLink)
 		{
-			m_Compressor.updateLink(nIndex, nLink, m_innerKeyMemSet, m_innerLinkMemSet);
+			m_Compressor.updateValue(nIndex, nLink, m_innerLinkMemSet[nIndex], m_innerLinkMemSet, m_innerKeyMemSet);
 			m_innerLinkMemSet[nIndex] = nLink;
 
 		}
@@ -379,7 +393,7 @@ namespace embDB
 
 		void updateKey(int32 nIndex, const TKey& key)
 		{
-			m_Compressor.updateKey(nIndex, key, m_innerKeyMemSet, m_innerLinkMemSet);
+			m_Compressor.updateKey(nIndex, key, m_innerKeyMemSet[nIndex], m_innerKeyMemSet, m_innerLinkMemSet);
 			m_innerKeyMemSet[nIndex] = key;
 
 		}

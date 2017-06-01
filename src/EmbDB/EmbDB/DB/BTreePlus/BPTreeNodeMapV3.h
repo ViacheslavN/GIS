@@ -1,7 +1,7 @@
 #pragma once
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
-#include "../CompressorParams.h"
+#include "../../CompressorParams.h"
 #include "BPTreeNodeSetV3.h"
 #include "BPTreeLeafNodeMapv3.h"
 

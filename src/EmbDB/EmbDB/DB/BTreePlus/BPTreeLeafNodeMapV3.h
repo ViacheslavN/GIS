@@ -68,28 +68,24 @@ namespace embDB
 				{
 
 					this->m_Compressor.remove(nSplitIndex, this->m_KeyMemSet[nSplitIndex], this->m_ValueMemSet[nSplitIndex], this->m_KeyMemSet, this->m_ValueMemSet);
+
+					pNode->m_KeyMemSet.insert(pNode->m_KeyMemSet.begin(), this->m_KeyMemSet[nSplitIndex]);
+					pNode->m_ValueMemSet.insert(pNode->m_ValueMemSet.begin(), this->m_ValueMemSet[nSplitIndex]);
+
+					this->m_KeyMemSet.resize(nSplitIndex);
+					this->m_ValueMemSet.resize(nSplitIndex);
+
+					pNewNodeComp.insert(pNode->m_KeyMemSet.size() - 1, pNode->m_KeyMemSet.back(), pNode->m_ValueMemSet.back(), pNode->m_KeyMemSet, pNode->m_ValueMemSet);
+
+
 					if (!this->isNeedSplit())
 						break;
+
 					--nSplitIndex;
 				}
+				if (pSplitKey)
+					*pSplitKey = pNode->m_KeyMemSet[0];
 
-				assert(nSplitIndex > 0);
-				int nCount = this->m_KeyMemSet.size() - nSplitIndex;
-				if (nCount == 1)
-				{
-					this->SplitOne(this->m_KeyMemSet, pNode->m_KeyMemSet, pSplitKey);
-					this->SplitOne(this->m_ValueMemSet, pNode->m_ValueMemSet, (TValue*)NULL);
-					pNewNodeComp.insert(0, pNode->m_KeyMemSet[0], pNode->m_ValueMemSet[0], pNode->m_KeyMemSet, pNode->m_ValueMemSet);
-				}
-				else
-				{
-					uint32 nSize = this->m_ValueMemSet.size();
-					this->SplitInVec(this->m_KeyMemSet, pNode->m_KeyMemSet, pSplitKey, nSplitIndex);
-					this->SplitInVec(this->m_ValueMemSet, pNode->m_ValueMemSet, (TValue*)NULL, nSplitIndex);
-
-					m_Compressor.recalc(m_KeyMemSet,m_ValueMemSet);
-					pNewNodeComp.recalc(pNode->m_KeyMemSet, pNode->m_ValueMemSet);
-				}
 				return nSplitIndex;
 			}
 			else
@@ -116,7 +112,7 @@ namespace embDB
 			TCompressor& pRightNodeComp = pRightNode->m_Compressor;
 
 
-			uint32 nSize = this->m_KeyMemSet.size() / 2;
+			uint32 nSize = m_bMinSplit? this->m_KeyMemSet.size() - 1 : this->m_KeyMemSet.size() / 2;
 
 			if (pSplitKey)
 				*pSplitKey = this->m_KeyMemSet[nSize];

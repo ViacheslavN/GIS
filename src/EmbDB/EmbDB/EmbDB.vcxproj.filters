@@ -1626,6 +1626,15 @@
     <ClInclude Include="DB\BTreePlus\BaseEncoder.h">
       <Filter>DB\BPTrees\BTreePlusv3</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\Cursors\deletecursor.h">
+      <Filter>DB\transactions\Cursors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1807,6 +1816,9 @@
     </ClCompile>
     <ClCompile Include="DB\Table\TableHeader.cpp">
       <Filter>DB\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\Cursors\DeleteCursor.cpp">
+      <Filter>DB\transactions\Cursors</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

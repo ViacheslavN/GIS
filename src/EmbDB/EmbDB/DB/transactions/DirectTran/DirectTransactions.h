@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_C_DIRECT_TRANSACTIONS_H_
 #define _EMBEDDED_DATABASE_C_DIRECT_TRANSACTIONS_H_
 
-#include "embDBInternal.h"
+#include "../../../embDBInternal.h"
 #include "CommonLibrary/alloc_t.h"
 #include <set>
 #include <iostream>

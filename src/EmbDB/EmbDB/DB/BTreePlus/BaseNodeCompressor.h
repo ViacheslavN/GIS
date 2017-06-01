@@ -2,15 +2,15 @@
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/alloc_t.h"
-#include "../CompressorParams.h"
-#include "../Utils/alloc/STLAlloc.h"
+#include "../../CompressorParams.h"
+#include "../../Utils/alloc/STLAlloc.h"
 
 namespace embDB
 {
 
 	template<class _TKey, class _TValue, class _Transaction = IDBTransaction, class _TKeyEncoder = TEmptyValueEncoder<_TKey>, class _TValueEncoder = TEmptyValueEncoder<_TValue>
 		, class _TCompressorParams = CompressorParamsBaseImp>
-			class TBaseLeafNodeCompressor
+			class TBaseNodeCompressor
 		{
 		public:
 			typedef _TKey TKey;
@@ -25,8 +25,8 @@ namespace embDB
 			typedef std::vector<TValue, TAlloc> TValueMemSet;
 
 
-			TBaseLeafNodeCompressor(uint32 nPageSize, CommonLib::alloc_t *pAlloc = nullptr, TCompressorParams *pParams = nullptr) : m_nCount(0)
-				m_nPageSize(nPageSize), m_KeyEncoder(pAlloc,  pParams), m_ValueEncoder(pAlloc, pParams)
+			TBaseNodeCompressor(uint32 nPageSize, CommonLib::alloc_t *pAlloc = nullptr, TCompressorParams *pParams = nullptr) : m_nCount(0),
+				m_nPageSize(nPageSize), m_KeyEncoder(nPageSize, pAlloc,  pParams), m_ValueEncoder(nPageSize, pAlloc, pParams)
 			{}
 
 			template<typename _Transactions  >
@@ -35,7 +35,13 @@ namespace embDB
 				return new TCompressorParams();
 			}
 
-			virtual ~TBaseLeafNodeCompressor() {}
+			template<typename _Transactions  >
+			bool  init(TCompressorParams *pParams, _Transactions *pTran)
+			{
+				return true;
+			}
+
+			virtual ~TBaseNodeCompressor() {}
 			virtual bool Load(TKeyMemSet& vecKeys, TValueMemSet& vecValues, CommonLib::FxMemoryReadStream& stream)
 			{
 
@@ -73,8 +79,8 @@ namespace embDB
 				CommonLib::FxMemoryWriteStream ValueStream;
 				CommonLib::FxMemoryWriteStream KeyStream;
 
-				uint32 nKeySize = m_KeyCompressor.GetCompressSize();
-				uint32 nValueSize = m_ValueCompressor.GetCompressSize();
+				uint32 nKeySize = m_KeyEncoder.GetCompressSize();
+				uint32 nValueSize = m_ValueEncoder.GetCompressSize();
 
 
 				stream.write(nKeySize);
@@ -114,24 +120,29 @@ namespace embDB
 				for (uint32 i = 0, sz = vecKeys.size(); i < sz; ++i)
 				{
 					m_nCount += 1;
-					m_KeyCompressor.AddSymbol(m_nCount, i, vecKeys[i], vecKeys);
+					m_KeyEncoder.AddSymbol(m_nCount, i, vecKeys[i], vecKeys);
 					m_ValueEncoder.AddSymbol(m_nCount, i, vecValues[i], vecValues);
 					
 				}
 
 				return true;
 			}
-			virtual bool update(uint32 nIndex, const TKey& key, const TValue& OldValue, const TValue& newValue, const TValueMemSet& vecValues)
+			virtual bool updateValue(uint32 nIndex, const TValue& newValue, const TValue& OldValue, const TValueMemSet& vecValues, const TKeyMemSet& vecKeys)
 			{
-				m_ValueCompressor.RemoveSymbol(m_nCount, nIndex, OldValue, newValue, vecValues);
+				m_ValueEncoder.RemoveSymbol(m_nCount, nIndex, OldValue, vecValues);
 				m_ValueEncoder.AddSymbol(m_nCount, nIndex, newValue, vecValues);
-
+				return true;
+			}
+			virtual bool updateKey(uint32 nIndex, const TKey& NewKey, const TKey& OldTKey,  const TKeyMemSet& vecKeys, const TValueMemSet& vecValues)
+			{
+				m_KeyEncoder.RemoveSymbol(m_nCount, nIndex, OldTKey, vecKeys);
+				m_KeyEncoder.AddSymbol(m_nCount, nIndex, NewKey, vecKeys);
 				return true;
 			}
 			virtual bool remove(uint32 nIndex, const TKey& key, const TValue& value, const TKeyMemSet& vecKeys, const TValueMemSet& vecValues)
 			{
 				m_nCount--;
-				m_KeyCompressor.RemoveSymbol(m_nCount, nIndex, key, vecKeys);
+				m_KeyEncoder.RemoveSymbol(m_nCount, nIndex, key, vecKeys);
 				m_ValueEncoder.RemoveSymbol(m_nCount, nIndex, value, vecValues);
 
 				return true;
@@ -142,6 +153,9 @@ namespace embDB
 			}
 			virtual bool isNeedSplit() const
 			{
+				if (m_nCount > m_nPageSize * 8) //max bits for elem
+					return true;
+
 				return !(m_nPageSize > size());
 			}
 			virtual uint32 count() const
@@ -154,43 +168,35 @@ namespace embDB
 			}
 			uint32 rowSize() const
 			{
-				return  m_ValueEncoder.GetCompressSize() + m_KeyCompressor.GetCompressSize();
+				return  m_ValueEncoder.GetCompressSize() + m_KeyEncoder.GetCompressSize();
 			}
 			uint32 tupleSize() const
 			{
 				return  (sizeof(TKey) + sizeof(TValue));
 			}
 			
-			virtual void recalc(const TKeyMemSet& vecKeys, const TValueMemSet& vecValues)
-			{
-				clear();
-				for (uint32 i = 0, sz = m_pKeyMemSet->size(); i < sz; ++i)
-				{			 
-					m_nCount++;
-					m_KeyEncoder.AddSymbol(m_nCount, i, vecKeys[i], vecKeys);
-					m_ValueEncoder.AddSymbol(m_nCount, i, vecValues[i], vecValues);
-				}
-
-
-			}
+			 
 
 			virtual void recalcKey(const TKeyMemSet& vecKeys)
 			{
 				m_nCount = 0;
 				m_KeyEncoder.clear();
-				for (uint32 i = 1, sz = vecKeys; i < sz; ++i)
+				for (uint32 i = 0, sz = vecKeys.size(); i < sz; ++i)
 				{
 					m_nCount++;
-					m_KeyEncoder.AddSymbol(m_nCount, nIndex, vecKeys[i], vecValues);
+					m_KeyEncoder.AddSymbol(m_nCount, i, vecKeys[i], vecKeys);
 				}
 			}
 
 
-			bool IsHaveUnion(TBaseLeafNodeComp *pCompressor) const
+			bool IsHaveUnion(TBaseNodeCompressor& pCompressor) const
 			{
-				return (rowSize() + pCompressor->rowSize()) < (m_nPageSize - headSize());
+				if ((m_nCount + pCompressor.m_nCount) > m_nPageSize * 8) //max bits for elem
+					return false;
+				
+				return (rowSize() + pCompressor.rowSize()) < (m_nPageSize - headSize());
 			}
-			bool IsHaveAlignment(TBaseLeafNodeComp *pCompressor) const
+			bool IsHaveAlignment(TBaseNodeCompressor& pCompressor) const
 			{
 				uint32 nNoCompSize = m_nCount * (sizeof(TKey) + sizeof(TValue));
 				return nNoCompSize < (m_nPageSize - headSize());

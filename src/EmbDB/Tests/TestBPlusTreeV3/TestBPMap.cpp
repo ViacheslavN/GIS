@@ -8,17 +8,45 @@
 #include "../../EmbDB/DB/BTreePlus/BPMapv3.h"
 #include "../../EmbDB/DB/BTreePlus/BPLeafNodeMapSimpleCompressorV3.h"
 #include "../../EmbDB/DB/BTreePlus/BPSetInfoTreeV3.h"
-#include "../../EmbDB/Transactions.h"
-#include "../../EmbDB/DirectTransactions.h"
+#include "../../EmbDB/DB/transactions/Transactions.h"
+#include "../../EmbDB/DB/transactions/DirectTran/DirectTransactions.h"
 #include "../../EmbDB/ConsolLog.h"
 #include "CommonLibrary/DebugTime.h"
  
+#include "../../EmbDB/DB/BTreePlus/BaseDIffEncoder.h"
+#include "../../EmbDB/DB/BTreePlus/BaseEncoder.h"
+#include "../../EmbDB/DB/BTreePlus/BaseNodeCompressor.h"
+#include "../../EmbDB/Utils/compress/NumLen/UnsignedNumLenEncoder.h"
+#include "../../EmbDB/Utils/compress/NumLen/SignedNumLenEncoder.h"
+
+
+
+typedef embDB::UnsignedNumLenEncoder<int64, CommonLib::TACEncoder64, CommonLib::TACDecoder64, embDB::CompressorParamsBaseImp, 64> TUnsignedNumLenEncoder64;
+typedef embDB::SignedNumLenEncoder<int64, CommonLib::TACEncoder64, CommonLib::TACDecoder64, embDB::CompressorParamsBaseImp, 64> SignedNumLenEncoder64;
+
+typedef embDB::TBaseValueDiffEncoder<int64, TUnsignedNumLenEncoder64> TUnsignedDiffEncoder;
+typedef embDB::TBaseValueDiffEncoder<int64, SignedNumLenEncoder64> TSignedDiffEncoder;
+
+
+typedef embDB::TBaseValueEncoder<int64, TUnsignedNumLenEncoder64> TUnsignedEncoder;
+typedef embDB::TBaseValueEncoder<int64, TUnsignedNumLenEncoder64> TSignedEncoder;
+
+
+typedef embDB::TBaseNodeCompressor<int64, int64, embDB::IDBTransaction, TUnsignedDiffEncoder, TSignedDiffEncoder> TInnerNodeLinkDiffComp;
+typedef embDB::TBaseNodeCompressor<int64, int64, embDB::IDBTransaction, TUnsignedDiffEncoder, TUnsignedDiffEncoder> TLeafNodeLinkDiffComp;
 
 
 
 typedef embDB::comp<int64> TComparator;
+
+/**
 typedef embDB::BPInnerNodeSimpleCompressorV3<int64> TInnerCompess;
 typedef embDB::BPLeafNodeMapSimpleCompressorV3<int64, int64> TLeafCompess;
+*/
+
+typedef TInnerNodeLinkDiffComp TInnerCompess;
+typedef TLeafNodeLinkDiffComp TLeafCompess;
+
 
 typedef embDB::BPTreeInnerNodeSetv3<int64, embDB::IDBTransaction, TInnerCompess> TInnerNode;
 
@@ -516,7 +544,7 @@ void testBPTreeMapImpl(int64 nCount, uint32 nTranCache, size_t nPageSize, int32 
 
 void TestBPMapPlusTree()
 {
-	int64 nCount = 1000000000;
+	int64 nCount = 1000000;
 	size_t nPageSize = 8192;
 	uint32 nTranCache = 10;
 

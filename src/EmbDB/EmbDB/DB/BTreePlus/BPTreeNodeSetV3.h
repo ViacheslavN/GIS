@@ -2,7 +2,7 @@
 
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
-#include "../CompressorParams.h"
+#include "../../CompressorParams.h"
 #include "BPTreeInnerNodeSetv3.h"
 #include "BPTreeLeafNodeSetv3.h"
  
@@ -28,8 +28,8 @@ namespace embDB
 		typedef _TInnerNode TInnerNode;
 		typedef _TLeafNode  TLeafNode;
 
-		typedef typename TInnerCompressor::TInnerCompressorParams TInnerCompressorParams;
-		typedef typename TLeafCompressor::TLeafCompressorParams TLeafCompressorParams;
+		typedef typename TInnerCompressor::TCompressorParams TInnerCompressorParams;
+		typedef typename TLeafCompressor::TCompressorParams TLeafCompressorParams;
 
 
 		BPTreeNodeSetv3(int64 nParentAddr, CommonLib::alloc_t *pAlloc, int64 nPageAddr, bool bMulti, bool  bIsLeaf, bool bCheckCRC32,

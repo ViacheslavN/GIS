@@ -12,6 +12,7 @@
 #include "CommonLibrary/BitsVector.h"
 void testAlloc ();
 
+#include "../EmbDB/Utils/BitUtils.h"
 
 class Int128
 {
@@ -49,6 +50,12 @@ private:
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+
+
+
+	
+
+
 
 
 	testAlloc();
@@ -105,7 +112,19 @@ int _tmain(int argc, _TCHAR* argv[])
 	bitWrite.attach(&memStream, 0, 50);
 	bitRead.attach(&memStream, 0, 50);
 
+	uint32 nVal1111 = 32;
 	int64 nValue = 0;
+	int len = embDB::BitsUtils::log2(nVal1111);
+
+
+	int len2 = embDB::BitsUtils::log2((uint32)1);
+	int len3 = embDB::BitsUtils::log2((uint32)2);
+
+	bitWrite.writeBits(nVal1111, len + 1);
+ 	bitRead.readBits(nValue, len);
+
+
+
 	bitWrite.writeBits(nValue, 1);
 	nValue = -1024;
 	bitWrite.writeBits(nValue, 64);

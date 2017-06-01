@@ -5,26 +5,18 @@
 namespace embDB
 {
 
-	template<class _TType>
-	struct TDefSign { typedef _TType TSignType; };
-
-	template<> struct TDefSign< byte > { typedef char TSignType; };
-	template<> struct TDefSign< uint16 > { typedef int16 TSignType; };
-	template<> struct TDefSign< uint32 > { typedef int32 TSignType; };
-	template<> struct TDefSign< uint64 > { typedef int64 TSignType; };
-
-	template<class _TValue, class _TCoder, class _TEncoder, class _TCompParams, uint32 _nMaxBitsLens>
-	class SignedNumLenEncoder : public TBaseNumLenEncoder<_TValue, _TCoder, _TCompParams, _nMaxBitsLens>
+	template<class _TValue, class _TEncoder, class _TDecoder, class _TCompParams, uint32 _nMaxBitsLens>
+	class SignedNumLenEncoder : public TBaseNumLenEncoder<_TValue, _TEncoder, _TDecoder, _TCompParams, _nMaxBitsLens>
 	{
 	public:
-		typedef TBaseNumLenEncoder<_TValue, _TCoder, _TCompParams, _nMaxBitsLens> TBase;
+		typedef TBaseNumLenEncoder<_TValue, _TEncoder, _TDecoder, _TCompParams, _nMaxBitsLens> TBase;
 		typedef	typename TBase::TValue TValue;
-		typedef typename TBase::TCoder TCoder;
 		typedef typename TBase::TEncoder TEncoder;
+		typedef typename TBase::TDecoder TDecoder;
 		typedef typename TBase::TCompParams TCompParams;
-		typedef typename TDefSign<TValue>::TSignType TSignValue
+		typedef typename TDefSign<TValue>::TSignType TSignValue;
 
-		SignedNumLenEncoder(CommonLib::alloc_t* pAlloc = nullptr, TCompParams *pCompParams = nullptr) : TBase(pAlloc, pCompParams)
+		SignedNumLenEncoder(uint32 nPageSize, CommonLib::alloc_t* pAlloc = nullptr, TCompParams *pCompParams = nullptr) : TBase(nPageSize,pAlloc, pCompParams)
 		{}
 
 
@@ -35,16 +27,18 @@ namespace embDB
 			TBase::clear();
 		}
 
-		void AddSymbol(TValue symbol)
-		{
-			m_signEncode.AddSymbol(false);
-			TBase::AddSymbol(symbol);
-		}
+ 
 
 		void AddSymbol(TSignValue symbol)
 		{
-			m_signEncode.AddSymbol(symbol > 0 ? true : false);
+			m_signEncode.AddSymbol(symbol > 0 ? false : true);
 			TBase::AddSymbol(abs(symbol));
+		}
+
+		void RemoveSymbol(TSignValue symbol)
+		{
+			m_signEncode.RemoveSymbol(symbol > 0 ? false : true);
+			TBase::RemoveSymbol(abs(symbol));
 		}
 
 		uint32 GetCompressSize() const
@@ -72,13 +66,11 @@ namespace embDB
 		{
 			uint32 nBitLen = 0;
 
-			m_signEncode.EncodeSign(symbol > 0 ? false : true, m_nPos)
+			m_signEncode.EncodeSign(symbol > 0 ? false : true, m_nPos);
 			symbol = abs(symbol);
-			if (symbol == 0)
-				nBitLen = 0;
-			else if (symbol == 1)
-				nBitLen = 1;
-			else  nBitLen = BitsUtils::log2(symbol);
+			if (symbol < 2)
+				nBitLen = symbol;
+			else  nBitLen = BitsUtils::log2(symbol) + 1;
 
 			assert(m_BitsLensFreq[nBitLen] != 0);
 
@@ -86,17 +78,17 @@ namespace embDB
 				return false;
 
 			if (nBitLen > 1)
-				m_bitWStream.writeBits(value, nBitLen - 1);
+				m_bitWStream.writeBits(symbol, nBitLen - 1);
 			m_nPos += 1;
 			return true;
 		}
-		void FinishEncoding(CommonLib::IWriteStream *pStream)
+		bool FinishEncoding(CommonLib::IWriteStream *pStream)
 		{
 			return m_Encoder.EncodeFinish();
 		}
 
 
-		void BeginDecoding(CommonLib::IWriteStream *pStream)
+		void BeginDecoding(CommonLib::IReadStream *pStream)
 		{
 			m_nPos = 0;
 			ReadHeader(pStream);
@@ -110,29 +102,28 @@ namespace embDB
 			m_signEncode.BeginDecoding(pStream, this->m_nCount);
 			m_Decoder.Reset(pStream);
 			m_Decoder.StartDecode();
-
-
-			m_nPos += 1;
 		}
-		TSignValue encodeSymbol()
+		TSignValue decodeSymbol()
 		{
 			uint32 freq = (uint32)m_Decoder.GetFreq(m_nCount);
-			TSignValue symbol = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens + 1, freq);
-			if (symbol != 0)
-				symbol--;
+			TSignValue symbol = 0;
+			int32 nBitLen = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens + 1, freq);
+			if (nBitLen != 0)
+				nBitLen--;
 
-			m_Decoder.DecodeSymbol(m_FreqPrev[symbol], m_FreqPrev[symbol + 1], m_nCount);
+			m_Decoder.DecodeSymbol(m_FreqPrev[nBitLen], m_FreqPrev[nBitLen + 1], m_nCount);
 
-			if (symbol > 1)
+			if (nBitLen > 1)
 			{
-				uint32 nBitLen = symbol - 1;
-				m_bitRStream.readBits(symbol, nBitLen);
-				symbol |= ((TValue)1 << (nBitLen));
+				m_bitRStream.readBits(symbol, nBitLen - 1);
+				symbol |= ((TValue)1 << (nBitLen - 1));
 			}
+			else
+				symbol = nBitLen;
 
-			if (m_signEncode.DecodeSign(nPos))
+			if (m_signEncode.DecodeSign(m_nPos))
 				symbol = -symbol;
-			nPos += 1;
+			m_nPos += 1;
 			return symbol;
 		}
 
