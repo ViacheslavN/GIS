@@ -486,13 +486,6 @@
     <ClInclude Include="BaseValueDiffCompressor.h" />
     <ClInclude Include="BaseRBMultiTree.h" />
     <ClInclude Include="BaseRBTree.h" />
-    <ClInclude Include="BlobBPNode.h" />
-    <ClInclude Include="BlobCompressorParams.h" />
-    <ClInclude Include="BlobField.h" />
-    <ClInclude Include="BlobLeafNode.h" />
-    <ClInclude Include="BlobLeafNodeCompressor.h" />
-    <ClInclude Include="BlobTree.h" />
-    <ClInclude Include="BlobVal.h" />
     <ClInclude Include="BlockClipher.h" />
     <ClInclude Include="BPCompressors.h" />
     <ClInclude Include="BPInneOIDNodeCompressor.h" />
@@ -534,7 +527,6 @@
     <ClInclude Include="CompositeIndexKey.h" />
     <ClInclude Include="CompressorParams.h" />
     <ClInclude Include="CompressCompIndexParams.h" />
-    <ClInclude Include="CompressStringLen.h" />
     <ClInclude Include="ConsolLog.h" />
     <ClInclude Include="CounterField.h" />
     <ClInclude Include="Crypto\AES128.h" />
@@ -573,6 +565,38 @@
     <ClInclude Include="DB\Database.h" />
     <ClInclude Include="DB\DBStateManager.h" />
     <ClInclude Include="DB\DBTranManager.h" />
+    <ClInclude Include="DB\Fields\blob\BlobBPNode.h" />
+    <ClInclude Include="DB\Fields\blob\BlobCompressorParams.h" />
+    <ClInclude Include="DB\Fields\blob\BlobField.h" />
+    <ClInclude Include="DB\Fields\blob\BlobLeafNode.h" />
+    <ClInclude Include="DB\Fields\blob\BlobLeafNodeCompressor.h" />
+    <ClInclude Include="DB\Fields\blob\BlobTree.h" />
+    <ClInclude Include="DB\Fields\blob\BlobVal.h" />
+    <ClInclude Include="DB\Fields\shape\ShapeCompressorParams.h" />
+    <ClInclude Include="DB\Fields\shape\ShapeField.h" />
+    <ClInclude Include="DB\Fields\shape\ShapeLeafNodeCompressor.h" />
+    <ClInclude Include="DB\Fields\shape\ShapeTree.h" />
+    <ClInclude Include="DB\Fields\shape\ShapeValue.h" />
+    <ClInclude Include="DB\Fields\Statistics\ValueFieldFullStatistic.h" />
+    <ClInclude Include="DB\Fields\Statistics\ValueFieldStatistic.h" />
+    <ClInclude Include="DB\Fields\Statistics\ValueFieldStatisticHolder.h" />
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringACCompressor.h" />
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringBPLeafNode.h" />
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringBPNode.h" />
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringBWTCompressor.h" />
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringCompressor.h" />
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringField.h" />
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringLeafCompressor.h" />
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringTree.h" />
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringZLibCompressor.h" />
+    <ClInclude Include="DB\Fields\StringField\LeafStringCompress.h" />
+    <ClInclude Include="DB\Fields\StringField\StringBPLeafNode.h" />
+    <ClInclude Include="DB\Fields\StringField\StringBPNode.h" />
+    <ClInclude Include="DB\Fields\StringField\StringCompressorParams.h" />
+    <ClInclude Include="DB\Fields\StringField\StringField.h" />
+    <ClInclude Include="DB\Fields\StringField\StringTree.h" />
+    <ClInclude Include="DB\Fields\StringField\StringVal.h" />
+    <ClInclude Include="DB\Fields\ValueField.h" />
     <ClInclude Include="DB\GlobalParams.h" />
     <ClInclude Include="DB\Schema.h" />
     <ClInclude Include="DB\Table\Counter.h" />
@@ -607,14 +631,9 @@
     <ClInclude Include="Fields.h" />
     <ClInclude Include="FieldSet.h" />
     <ClInclude Include="FileLog.h" />
-    <ClInclude Include="FixedStringBWTCompressor.h" />
-    <ClInclude Include="FixedStringCompressor.h" />
-    <ClInclude Include="FixedStringField.h" />
-    <ClInclude Include="FixedStringZLibCompressor.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IndexIteratorBase.h" />
     <ClInclude Include="LeafCounterCompress.h" />
-    <ClInclude Include="LeafStringCompress.h" />
     <ClInclude Include="LinkCompress.h" />
     <ClInclude Include="LinkDiffCompress.h" />
     <ClInclude Include="LogBase.h" />
@@ -654,10 +673,6 @@
     <ClInclude Include="PointZOrderCompressor.h" />
     <ClInclude Include="RandomGenerator.h" />
     <ClInclude Include="RectZOrderCompressor.h" />
-    <ClInclude Include="ShapeComp.h" />
-    <ClInclude Include="ShapeCompressorParams.h" />
-    <ClInclude Include="ShapeField.h" />
-    <ClInclude Include="ShapeTree.h" />
     <ClInclude Include="SpatialIndexBase.h" />
     <ClInclude Include="SpatialIndexHolder.h" />
     <ClInclude Include="Statement.h" />
@@ -667,17 +682,7 @@
     <ClInclude Include="storage\storage.h" />
     <ClInclude Include="storage\StorageInfo.h" />
     <ClInclude Include="StreamPageIngo.h" />
-    <ClInclude Include="FixedStringBPLeafNode.h" />
-    <ClInclude Include="FixedStringBPNode.h" />
-    <ClInclude Include="FixedStringACCompressor.h" />
-    <ClInclude Include="StringBPLeafNode.h" />
-    <ClInclude Include="StringBPNode.h" />
-    <ClInclude Include="StringCompressorParams.h" />
     <ClInclude Include="FixedStringLeafCompressor.h" />
-    <ClInclude Include="FixedStringTree.h" />
-    <ClInclude Include="StringField.h" />
-    <ClInclude Include="StringTree.h" />
-    <ClInclude Include="StringVal.h" />
     <ClInclude Include="TBaseSpatialCompressor.h" />
     <ClInclude Include="EmptyMultiKeyCompress.h" />
     <ClInclude Include="UniqueCompIndexBase.h" />
@@ -722,7 +727,6 @@
     <ClInclude Include="Utils\simple_vector.h" />
     <ClInclude Include="Utils\streams\ReadStreamPage.h" />
     <ClInclude Include="Utils\streams\WriteStreamPage.h" />
-    <ClInclude Include="ValueField.h" />
     <ClInclude Include="Key.h" />
     <ClInclude Include="MapIteratorImp.h" />
     <ClInclude Include="NodeLoader.h" />
@@ -741,16 +745,12 @@
     <ClInclude Include="SpatialKey.h" />
     <ClInclude Include="SpatialPointQuery.h" />
     <ClInclude Include="SpatialRectQuery.h" />
-    <ClInclude Include="SpatialVariant.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="tableZPoint8Bit.h" />
     <ClInclude Include="tableZRect8Bit.h" />
     <ClInclude Include="tableZRectBack4Bit.h" />
     <ClInclude Include="tableZRect16Bit.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="ValueFieldFullStatistic.h" />
-    <ClInclude Include="ValueFieldStatistic.h" />
-    <ClInclude Include="ValueFieldStatisticHolder.h" />
     <ClInclude Include="ZOrderCompressBase.h" />
   </ItemGroup>
   <ItemGroup>
@@ -774,7 +774,6 @@
     </ClInclude>
     <ClCompile Include="CompositeIndexKey.cpp" />
     <ClCompile Include="CompressCompIndexParams.cpp" />
-    <ClCompile Include="CompressStringLen.cpp" />
     <ClCompile Include="ConsolLog.cpp" />
     <ClCompile Include="Crypto\BaseAES.cpp" />
     <ClCompile Include="Crypto\BaseHash.cpp" />
@@ -785,6 +784,8 @@
     <ClCompile Include="DB\Database.cpp" />
     <ClCompile Include="DB\DBStateManager.cpp" />
     <ClCompile Include="DB\DBTranManager.cpp" />
+    <ClCompile Include="DB\Fields\Statistics\ValueFieldStatistic.cpp" />
+    <ClCompile Include="DB\Fields\ValueField.cpp" />
     <ClCompile Include="DB\GlobalParams.cpp" />
     <ClCompile Include="DB\Schema.cpp" />
     <ClCompile Include="DB\Table\Table.cpp" />
@@ -828,7 +829,6 @@
     <ClCompile Include="Utils\CRC.cpp" />
     <ClCompile Include="Utils\ListDBPage.cpp" />
     <ClCompile Include="Utils\MathUtils.cpp" />
-    <ClCompile Include="ValueField.cpp" />
     <ClCompile Include="SpatialPointQuery.cpp" />
     <ClCompile Include="SpatialRectQuery.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -845,7 +845,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ValueFieldStatistic.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -498,9 +498,6 @@
     <ClInclude Include="SpatialOIDField.h">
       <Filter>DB\Fields</Filter>
     </ClInclude>
-    <ClInclude Include="SpatialVariant.h">
-      <Filter>DB\Fields</Filter>
-    </ClInclude>
     <ClInclude Include="BaseBPSetv2.h">
       <Filter>DB\BPTrees\BtreePlusv2\BPSetv2</Filter>
     </ClInclude>
@@ -564,9 +561,6 @@
     <ClInclude Include="CounterField.h">
       <Filter>DB\Fields\Counters</Filter>
     </ClInclude>
-    <ClInclude Include="ValueField.h">
-      <Filter>DB\Fields</Filter>
-    </ClInclude>
     <ClInclude Include="UniqueIndex.h">
       <Filter>DB\Fields\Index\UniqueIndex</Filter>
     </ClInclude>
@@ -597,53 +591,8 @@
     <ClInclude Include="UniqueCompIndexBase.h">
       <Filter>DB\Fields\Index\CompositeIndex\Unique</Filter>
     </ClInclude>
-    <ClInclude Include="StringCompressorParams.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringField.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="BlobVal.h">
-      <Filter>DB\Fields\blob</Filter>
-    </ClInclude>
-    <ClInclude Include="BlobLeafNodeCompressor.h">
-      <Filter>DB\Fields\blob</Filter>
-    </ClInclude>
-    <ClInclude Include="BlobCompressorParams.h">
-      <Filter>DB\Fields\blob</Filter>
-    </ClInclude>
-    <ClInclude Include="BlobLeafNode.h">
-      <Filter>DB\Fields\blob</Filter>
-    </ClInclude>
-    <ClInclude Include="BlobTree.h">
-      <Filter>DB\Fields\blob</Filter>
-    </ClInclude>
-    <ClInclude Include="StreamPageIngo.h">
-      <Filter>DB\Fields\blob</Filter>
-    </ClInclude>
-    <ClInclude Include="LeafStringCompress.h">
-      <Filter>DB\Fields\string\StringField</Filter>
-    </ClInclude>
-    <ClInclude Include="StringVal.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringTree.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringBPLeafNode.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringBPNode.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="StringBPLeafNode.h">
-      <Filter>DB\Fields\string\StringField</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="StringBPNode.h">
-      <Filter>DB\Fields\string\StringField</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
@@ -651,35 +600,17 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StringField.h">
-      <Filter>DB\Fields\string\StringField</Filter>
-    </ClInclude>
-    <ClInclude Include="ShapeComp.h">
-      <Filter>DB\Fields\shape</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShapeCompressorParams.h">
-      <Filter>DB\Fields\shape</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
-    <ClInclude Include="BlobBPNode.h">
-      <Filter>DB\Fields\blob</Filter>
-    </ClInclude>
-    <ClInclude Include="BlobField.h">
-      <Filter>DB\Fields\blob</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ShapeField.h">
-      <Filter>DB\Fields\shape</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
@@ -734,9 +665,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ShapeTree.h">
-      <Filter>DB\Fields\shape</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
@@ -846,9 +774,6 @@
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FixedStringCompressor.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
@@ -857,9 +782,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="StringTree.h">
-      <Filter>DB\Fields</Filter>
     </ClInclude>
     <ClInclude Include="UnsignedIntegerNumLenComp.h">
       <Filter>DB\Fields\compress</Filter>
@@ -893,9 +815,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringACCompressor.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -948,20 +867,11 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FixedStringBWTCompressor.h">
-      <Filter>DB\Fields\string\fixedStringField\compress\BWT_DC</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringZLibCompressor.h">
-      <Filter>DB\Fields\string\fixedStringField\compress\ZLIB</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CompressStringLen.h">
-      <Filter>DB\Fields\string\fixedStringField\compress</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1185,17 +1095,11 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ValueFieldStatistic.h">
-      <Filter>DB\Fields\Statistic</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ValueFieldFullStatistic.h">
-      <Filter>DB\Fields\Statistic</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1232,9 +1136,6 @@
     </ClInclude>
     <ClInclude Include="SpatialIndexHolder.h">
       <Filter>DB\Fields\Index\spatial</Filter>
-    </ClInclude>
-    <ClInclude Include="ValueFieldStatisticHolder.h">
-      <Filter>DB\Fields\Statistic</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1635,6 +1536,111 @@
     <ClInclude Include="DB\transactions\Cursors\deletecursor.h">
       <Filter>DB\transactions\Cursors</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\ValueField.h">
+      <Filter>DB\Fields</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\Statistics\ValueFieldFullStatistic.h">
+      <Filter>DB\Fields\Statistic</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\Statistics\ValueFieldStatistic.h">
+      <Filter>DB\Fields\Statistic</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\Statistics\ValueFieldStatisticHolder.h">
+      <Filter>DB\Fields\Statistic</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\LeafStringCompress.h">
+      <Filter>DB\Fields\string\StringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\StringBPLeafNode.h">
+      <Filter>DB\Fields\string\StringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\StringBPNode.h">
+      <Filter>DB\Fields\string\StringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\StringCompressorParams.h">
+      <Filter>DB\Fields\string\StringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\StringField.h">
+      <Filter>DB\Fields\string\StringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\StringTree.h">
+      <Filter>DB\Fields\string\StringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\StringVal.h">
+      <Filter>DB\Fields\string\StringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringACCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringBPLeafNode.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringBPNode.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringField.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringLeafCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringTree.h">
+      <Filter>DB\Fields\string\fixedStringField</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringBWTCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField\compress\BWT_DC</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringZLibCompressor.h">
+      <Filter>DB\Fields\string\fixedStringField\compress\ZLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamPageIngo.h">
+      <Filter>DB\Fields</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\blob\BlobBPNode.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\blob\BlobCompressorParams.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\blob\BlobField.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\blob\BlobLeafNode.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\blob\BlobLeafNodeCompressor.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\blob\BlobTree.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\blob\BlobVal.h">
+      <Filter>DB\Fields\blob</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\shape\ShapeCompressorParams.h">
+      <Filter>DB\Fields\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\shape\ShapeField.h">
+      <Filter>DB\Fields\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\shape\ShapeLeafNodeCompressor.h">
+      <Filter>DB\Fields\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\shape\ShapeTree.h">
+      <Filter>DB\Fields\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\shape\ShapeValue.h">
+      <Filter>DB\Fields\shape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1651,9 +1657,6 @@
     </ClCompile>
     <ClCompile Include="SpatialRectQuery.cpp">
       <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
-    </ClCompile>
-    <ClCompile Include="ValueField.cpp">
-      <Filter>DB\Fields</Filter>
     </ClCompile>
     <ClCompile Include="Statement.cpp">
       <Filter>DB\SQL</Filter>
@@ -1681,9 +1684,6 @@
     </ClCompile>
     <ClCompile Include="BPTreeStatistics.cpp">
       <Filter>DB\BPTrees\BtreePlusv2</Filter>
-    </ClCompile>
-    <ClCompile Include="CompressStringLen.cpp">
-      <Filter>DB\Fields\string\fixedStringField\compress</Filter>
     </ClCompile>
     <ClCompile Include="PageCipher.cpp">
       <Filter>Crypto</Filter>
@@ -1714,9 +1714,6 @@
     </ClCompile>
     <ClCompile Include="FileLog.cpp">
       <Filter>DB\Logs\FileLog</Filter>
-    </ClCompile>
-    <ClCompile Include="ValueFieldStatistic.cpp">
-      <Filter>DB\Fields\Statistic</Filter>
     </ClCompile>
     <ClCompile Include="Utils\alloc\MemPageCache.cpp">
       <Filter>utils\alloc</Filter>
@@ -1819,6 +1816,12 @@
     </ClCompile>
     <ClCompile Include="DB\transactions\Cursors\DeleteCursor.cpp">
       <Filter>DB\transactions\Cursors</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Fields\ValueField.cpp">
+      <Filter>DB\Fields</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Fields\Statistics\ValueFieldStatistic.cpp">
+      <Filter>DB\Fields\Statistic</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "BPTreeLeafNodeMapv2.h"
-#include "StringVal.h"
+#include "../StringVal.h"
 #include "FixedStringLeafCompressor.h"
 #include "utils/alloc/PageAlloc.h"
 #include "FixedStringCompressor.h"

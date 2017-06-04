@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_FIXED_STRING_FIELD_H_
 #define _EMBEDDED_DATABASE_FIXED_STRING_FIELD_H_
 
-#include "ValueField.h"
+#include "DB/Fields/ValueField.h"
 #include "FixedStringTree.h"
 #include "FieldIteratorBase.h"
 namespace embDB

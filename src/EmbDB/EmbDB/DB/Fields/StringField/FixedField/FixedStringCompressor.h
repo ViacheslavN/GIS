@@ -1,8 +1,8 @@
 #ifndef _EMBEDDED_DATABASE_FIXED_STRING_LEAF_COMPRESSOR_H_
 #define _EMBEDDED_DATABASE_FIXED_STRING_LEAF_COMPRESSOR_H_
 #include "BPVector.h"
-#include "StringVal.h"
-#include "StringCompressorParams.h"
+#include "../StringVal.h"
+#include "../StringCompressorParams.h"
 #include "BaseLeafNodeCompDiff.h"
 #include "FixedStringACCompressor.h"
 #include "FixedStringZLibCompressor.h"

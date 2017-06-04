@@ -5,9 +5,9 @@
 #include "CommonLibrary/blob.h"
 #include "CompressorParams.h"
 #include "BPVectorNoPod.h"
-#include "StringCompressorParams.h"
+#include "../StringCompressorParams.h"
 #include "CommonLibrary/PodVector.h"
-#include "StringVal.h"
+#include "../StringVal.h"
 #include "FixedStringCompressor.h"
 #include "OIDCompress.h"
 namespace embDB
