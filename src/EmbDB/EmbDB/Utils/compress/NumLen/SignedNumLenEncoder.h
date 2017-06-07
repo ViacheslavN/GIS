@@ -15,6 +15,7 @@ namespace embDB
 		typedef typename TBase::TDecoder TDecoder;
 		typedef typename TBase::TCompParams TCompParams;
 		typedef typename TDefSign<TValue>::TSignType TSignValue;
+	
 
 		SignedNumLenEncoder(uint32 nPageSize, CommonLib::alloc_t* pAlloc = nullptr, TCompParams *pCompParams = nullptr) : TBase(nPageSize,pAlloc, pCompParams)
 		{}

@@ -130,7 +130,7 @@ namespace embDB
 
 			for (size_t i = 1; i < nCount; ++i)
 			{
-				vecValues.push_back(m_encoder.decodeSymbol() + vecValues[i - 1]);
+				vecValues.push_back(m_encoder.decodeSymbol() + (TSignValue)vecValues[i - 1]);
 			}
 
 			m_encoder.FinishDecoding();

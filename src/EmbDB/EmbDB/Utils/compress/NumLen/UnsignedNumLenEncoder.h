@@ -12,6 +12,7 @@ namespace embDB
 			typedef typename TBase::TEncoder TEncoder;
 			typedef typename TBase::TDecoder TDecoder;
 			typedef typename TBase::TCompParams TCompParams;
+		
 
 			UnsignedNumLenEncoder(uint32 nPageSize, CommonLib::alloc_t* pAlloc = nullptr, TCompParams *pCompParams = nullptr) : TBase(nPageSize, pAlloc, pCompParams)
 			{}
@@ -30,8 +31,12 @@ namespace embDB
 				m_Encoder.Reset(pStream);
 				return true;
 			}
+
 			bool encodeSymbol(TValue symbol)
 			{
+
+				assert(!(symbol < 0));
+
 				uint16 nBitLen = 0;
 				if (symbol < 2)
 					nBitLen = symbol;

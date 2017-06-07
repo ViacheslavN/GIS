@@ -46,9 +46,6 @@
     <Filter Include="utils\alloc">
       <UniqueIdentifier>{8ecce2e9-4a53-4216-8369-71db1bd724d5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\Fields\Index">
-      <UniqueIdentifier>{ddffc1ac-0c56-45f3-9228-e39b6a9381fc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB\BPTrees">
       <UniqueIdentifier>{6bc92130-c22f-4075-b6e5-80493240829f}</UniqueIdentifier>
     </Filter>
@@ -127,23 +124,11 @@
     <Filter Include="DB\BPTrees\BTreeNotUse\BtreeReadOnly">
       <UniqueIdentifier>{b956d9ef-3293-41e6-905f-153d9d2395b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\Fields\Index\MultiIndex">
-      <UniqueIdentifier>{fee05596-0675-4063-a3fc-45a32f4886b0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\Fields\Index\MultiIndex\IndexTrees">
-      <UniqueIdentifier>{4dd52fc2-fbe7-4d46-a3bb-ac12299dbc45}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\Fields\Index\CompositeIndex">
-      <UniqueIdentifier>{0ca594cb-78b3-4676-83cc-a5b5efaa1c13}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB\Statistics">
       <UniqueIdentifier>{7fccf5ab-64b0-424f-b3de-80d04da6abe2}</UniqueIdentifier>
     </Filter>
     <Filter Include="DB\Fields\Counters">
       <UniqueIdentifier>{bd557f27-de7f-414a-9a85-7a7cd002971a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\Fields\Index\UniqueIndex">
-      <UniqueIdentifier>{2d679e2c-b1df-465a-8fb7-6a5940c03102}</UniqueIdentifier>
     </Filter>
     <Filter Include="Crypto">
       <UniqueIdentifier>{874a85fe-0a8c-45f7-b307-87b60ff208e3}</UniqueIdentifier>
@@ -153,9 +138,6 @@
     </Filter>
     <Filter Include="DB\SQL">
       <UniqueIdentifier>{743b6d1b-87df-4ccd-92d7-c20e07f94960}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\Fields\Index\CompositeIndex\Unique">
-      <UniqueIdentifier>{61a6c7f1-dc87-4aea-8cbd-b974d2a9c49c}</UniqueIdentifier>
     </Filter>
     <Filter Include="DB\transactions\Cursors">
       <UniqueIdentifier>{708db2ec-51a0-416b-a46d-bf850201e87d}</UniqueIdentifier>
@@ -187,20 +169,11 @@
     <Filter Include="DB\Table">
       <UniqueIdentifier>{8e35fad5-4a97-4f20-93b7-810c27bd7cbc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\Fields\Index\spatial">
-      <UniqueIdentifier>{a0a506b6-5750-4b96-bab7-a3a3f317054d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB\Fields\compress">
       <UniqueIdentifier>{bbd38a03-aabd-4438-89db-283f84891ca8}</UniqueIdentifier>
     </Filter>
     <Filter Include="utils\compress">
       <UniqueIdentifier>{046c345b-17e3-41f1-98fb-47665bf81d58}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\Fields\Index\spatial\point">
-      <UniqueIdentifier>{f2806348-b06d-4fe1-8dee-eff5dc524b30}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\Fields\Index\spatial\rect">
-      <UniqueIdentifier>{1da75630-edf6-4989-8598-e5b9a30065a3}</UniqueIdentifier>
     </Filter>
     <Filter Include="utils\compress\DoubleCompress">
       <UniqueIdentifier>{3dff7309-705b-41fb-81f5-e43ea8b8dbf5}</UniqueIdentifier>
@@ -267,6 +240,33 @@
     </Filter>
     <Filter Include="utils\compress\NumLen">
       <UniqueIdentifier>{50e6d9c6-f897-49f0-b4fb-e8445bc17902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index">
+      <UniqueIdentifier>{ddffc1ac-0c56-45f3-9228-e39b6a9381fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\MultiIndex">
+      <UniqueIdentifier>{fee05596-0675-4063-a3fc-45a32f4886b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\MultiIndex\IndexTrees">
+      <UniqueIdentifier>{4dd52fc2-fbe7-4d46-a3bb-ac12299dbc45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\CompositeIndex">
+      <UniqueIdentifier>{0ca594cb-78b3-4676-83cc-a5b5efaa1c13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\CompositeIndex\Unique">
+      <UniqueIdentifier>{61a6c7f1-dc87-4aea-8cbd-b974d2a9c49c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\UniqueIndex">
+      <UniqueIdentifier>{2d679e2c-b1df-465a-8fb7-6a5940c03102}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\spatial">
+      <UniqueIdentifier>{a0a506b6-5750-4b96-bab7-a3a3f317054d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\spatial\point">
+      <UniqueIdentifier>{f2806348-b06d-4fe1-8dee-eff5dc524b30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\Index\spatial\rectangle">
+      <UniqueIdentifier>{1da75630-edf6-4989-8598-e5b9a30065a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -537,21 +537,6 @@
     <ClInclude Include="BPLeafNodeMapSimpleCompressorV2.h">
       <Filter>DB\BPTrees\BtreePlusv2\Compressors</Filter>
     </ClInclude>
-    <ClInclude Include="MultiIndexBPTree.h">
-      <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
-    </ClInclude>
-    <ClInclude Include="MultiIndexBase.h">
-      <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
-    </ClInclude>
-    <ClInclude Include="BPMultiIndexLeafNodeCompressor.h">
-      <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
-    </ClInclude>
-    <ClInclude Include="BPMultiInnerIndexNodeCompressor.h">
-      <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
-    </ClInclude>
-    <ClInclude Include="MultiIndex.h">
-      <Filter>DB\Fields\Index\MultiIndex</Filter>
-    </ClInclude>
     <ClInclude Include="DBFieldInfo.h">
       <Filter>DB\Fields</Filter>
     </ClInclude>
@@ -560,9 +545,6 @@
     </ClInclude>
     <ClInclude Include="CounterField.h">
       <Filter>DB\Fields\Counters</Filter>
-    </ClInclude>
-    <ClInclude Include="UniqueIndex.h">
-      <Filter>DB\Fields\Index\UniqueIndex</Filter>
     </ClInclude>
     <ClInclude Include="BPMapPointSpatialIteratorOld.h">
       <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
@@ -573,24 +555,9 @@
     <ClInclude Include="Statement.h">
       <Filter>DB\SQL</Filter>
     </ClInclude>
-    <ClInclude Include="CompIndexInnerCompressor.h">
-      <Filter>DB\Fields\Index\CompositeIndex\Unique</Filter>
-    </ClInclude>
-    <ClInclude Include="CompIndexLeafCompressor.h">
-      <Filter>DB\Fields\Index\CompositeIndex\Unique</Filter>
-    </ClInclude>
-    <ClInclude Include="CompressCompIndexParams.h">
-      <Filter>DB\Fields\Index\CompositeIndex</Filter>
-    </ClInclude>
     <ClInclude Include="BPVectorNoPod.h">
       <Filter>DB\BPTrees\BtreePlusv2</Filter>
     </ClInclude>
-    <ClInclude Include="CompositeIndexKey.h">
-      <Filter>DB\Fields\Index\CompositeIndex</Filter>
-    </ClInclude>
-    <ClInclude Include="UniqueCompIndexBase.h">
-      <Filter>DB\Fields\Index\CompositeIndex\Unique</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
@@ -614,12 +581,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Index.h">
-      <Filter>DB\Fields\Index\UniqueIndex</Filter>
-    </ClInclude>
-    <ClInclude Include="SpatialIndexBase.h">
-      <Filter>DB\Fields\Index\spatial</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
@@ -653,9 +614,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IndexIteratorBase.h">
-      <Filter>DB\Fields\Index</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
@@ -729,15 +687,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PointZOrderCompressor.h">
-      <Filter>DB\Fields\Index\spatial\point</Filter>
-    </ClInclude>
-    <ClInclude Include="RectZOrderCompressor.h">
-      <Filter>DB\Fields\Index\spatial\rect</Filter>
-    </ClInclude>
-    <ClInclude Include="ZOrderCompressBase.h">
-      <Filter>DB\Fields\Index\spatial</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -761,9 +710,6 @@
     </ClInclude>
     <ClInclude Include="BaseLeafNodeCompDiff.h">
       <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="TBaseSpatialCompressor.h">
-      <Filter>DB\Fields\Index\spatial</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
@@ -917,12 +863,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EmptyMultiKeyCompress.h">
-      <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
-    </ClInclude>
-    <ClInclude Include="MultiKeyCompressor.h">
-      <Filter>DB\Fields\Index\MultiIndex\IndexTrees</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1133,9 +1073,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpatialIndexHolder.h">
-      <Filter>DB\Fields\Index\spatial</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1401,9 +1338,6 @@
     <ClInclude Include="DB\BTreePlus\BPTreeInnerNodeSetV3.h">
       <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
     </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeSetV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
-    </ClInclude>
     <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeMapV3.h">
       <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
     </ClInclude>
@@ -1641,6 +1575,90 @@
     <ClInclude Include="DB\Fields\shape\ShapeValue.h">
       <Filter>DB\Fields\shape</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\CompositeIndex\Unique\CompIndexInnerCompressor.h">
+      <Filter>DB\Index\CompositeIndex\Unique</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\CompositeIndex\Unique\CompIndexLeafCompressor.h">
+      <Filter>DB\Index\CompositeIndex\Unique</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\CompositeIndex\Unique\UniqueCompIndexBase.h">
+      <Filter>DB\Index\CompositeIndex\Unique</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\CompositeIndex\CompositeIndexKey.h">
+      <Filter>DB\Index\CompositeIndex</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\CompositeIndex\CompressCompIndexParams.h">
+      <Filter>DB\Index\CompositeIndex</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\MultiIndex\IndexTrees\BPMultiIndexLeafNodeCompressor.h">
+      <Filter>DB\Index\MultiIndex\IndexTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\MultiIndex\IndexTrees\BPMultiInnerIndexNodeCompressor.h">
+      <Filter>DB\Index\MultiIndex\IndexTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\MultiIndex\IndexTrees\EmptyMultiKeyCompress.h">
+      <Filter>DB\Index\MultiIndex\IndexTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\MultiIndex\IndexTrees\MultiIndexBase.h">
+      <Filter>DB\Index\MultiIndex\IndexTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\MultiIndex\IndexTrees\MultiIndexBPTree.h">
+      <Filter>DB\Index\MultiIndex\IndexTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\MultiIndex\IndexTrees\MultiKeyCompressor.h">
+      <Filter>DB\Index\MultiIndex\IndexTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\MultiIndex\MultiIndex.h">
+      <Filter>DB\Index\MultiIndex</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\spatial\point\PointZOrderCompressor.h">
+      <Filter>DB\Index\spatial\point</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\spatial\rectangle\RectZOrderCompressor.h">
+      <Filter>DB\Index\spatial\rectangle</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\spatial\SpatialIndexBase.h">
+      <Filter>DB\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\spatial\SpatialIndexHolder.h">
+      <Filter>DB\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\spatial\TBaseSpatialCompressor.h">
+      <Filter>DB\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\spatial\ZOrderCompressBase.h">
+      <Filter>DB\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\IndexIteratorBase.h">
+      <Filter>DB\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\UniqueIndex\Index.h">
+      <Filter>DB\Index\UniqueIndex</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Indexs\UniqueIndex\UniqueIndex.h">
+      <Filter>DB\Index\UniqueIndex</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseLeafNodeSetCompressor.h">
+      <Filter>DB\BPTrees\BTreePlusv3</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\Fields\BaseFieldEncoders.h">
+      <Filter>DB\Fields</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeSetV3.h">
+      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1660,12 +1678,6 @@
     </ClCompile>
     <ClCompile Include="Statement.cpp">
       <Filter>DB\SQL</Filter>
-    </ClCompile>
-    <ClCompile Include="CompressCompIndexParams.cpp">
-      <Filter>DB\Fields\Index\CompositeIndex</Filter>
-    </ClCompile>
-    <ClCompile Include="CompositeIndexKey.cpp">
-      <Filter>DB\Fields\Index\CompositeIndex</Filter>
     </ClCompile>
     <ClCompile Include="Fields.cpp">
       <Filter>SDK</Filter>
@@ -1822,6 +1834,12 @@
     </ClCompile>
     <ClCompile Include="DB\Fields\Statistics\ValueFieldStatistic.cpp">
       <Filter>DB\Fields\Statistic</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Indexs\CompositeIndex\CompositeIndexKey.cpp">
+      <Filter>DB\Index\CompositeIndex</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\Indexs\CompositeIndex\CompressCompIndexParams.cpp">
+      <Filter>DB\Index\CompositeIndex</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

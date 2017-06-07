@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_RECT_ZORDER_COMPRESOR_H_
 
 
-#include "PointZOrderCompressor.h"
+#include "../point/PointZOrderCompressor.h"
 
 
 namespace embDB

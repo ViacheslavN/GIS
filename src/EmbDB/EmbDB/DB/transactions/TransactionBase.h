@@ -3,7 +3,7 @@
 #include "../../embDBInternal.h"
 #include "CommonLibrary/HashKey.h"
 #include "Cursors/InsertCursor/InsertCursor.h"
-#include "../../SpatialIndexBase.h"
+#include "../Indexs/spatial/SpatialIndexBase.h"
 #include "Cursors/SelectOpCursor/SimpleSearchCursor.h"
 #include "Cursors/SelectOpCursor/SimpleSelectCursor.h"
 #include "Cursors/DeleteCursor.h"

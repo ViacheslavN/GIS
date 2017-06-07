@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_POINT_ZORDER_COMPRESOR_H_
 #define _EMBEDDED_DATABASE_POINT_ZORDER_COMPRESOR_H_
 
-#include "ZOrderCompressBase.h"
+#include "../ZOrderCompressBase.h"
 //#include "CommonLibrary/FileStream.h"
 
 

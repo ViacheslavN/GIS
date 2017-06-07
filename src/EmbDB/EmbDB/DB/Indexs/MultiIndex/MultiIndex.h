@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_B_MULTI_INDEX_H_
 #define _EMBEDDED_DATABASE_B_MULTI_INDEX_H_
-#include "Index.h"
+#include "../UniqueIndex/Index.h"
  
 namespace embDB
 

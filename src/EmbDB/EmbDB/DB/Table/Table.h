@@ -12,7 +12,8 @@
 #include <map>
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "utils/PageVector.h"
-#include "Index.h"
+#include "../Indexs/UniqueIndex/Index.h"
+
 #include "Counter.h"
 namespace embDB
 {

@@ -125,7 +125,7 @@ namespace embDB
 
 
 		template<class TKeyFunctor>
-		bool insertLast(TKeyFunctor& keyFunctor, const TValue& value, TKey* pKey = NULL)
+		bool insertLast(TKeyFunctor& keyFunctor, const TValue& value, TKey* pKey = NULL, iterator* pFromIterator = NULL, iterator* pRetIterator = NULL)
 		{
 
 			iterator it = last();
@@ -152,6 +152,17 @@ namespace embDB
 				return false;
 			it.value() = value; //TO DO set node change....
 			return true;
+		}
+
+
+
+		void remove(const iterator& it)
+		{
+			TBase::template remove<iterator>(it);
+		}
+		bool remove(const TKey& key)
+		{
+			return TBase::remove(key);
 		}
 	};
 

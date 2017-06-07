@@ -1,10 +1,10 @@
 #ifndef _EMBEDDED_DATABASE_BASE_ZORDER_COMPRESOR_H_
 #define _EMBEDDED_DATABASE_BASE_ZORDER_COMPRESOR_H_
 
-#include "utils/compress/NumLenCompress.h"
+#include "../../../utils/compress/NumLenCompress.h"
 #include "CommonLibrary/RangeCoder.h"
 #include "CommonLibrary/ArithmeticCoder.h"
-#include "utils/compress/SignCompressor.h"
+#include "../../../utils/compress/SignCompressor.h"
 namespace embDB
 {
 	template<class _ZOrder, class _TPointType, uint32 _nMaxBitsLens, uint32 _nPointNum>

@@ -499,6 +499,18 @@ namespace embDB
 		TBTreeNodePtr  getMinimumNode(TBTreeNodePtr pNode);
 		void UnionInnerNode(TBTreeNodePtr pParentNode, TBTreeNodePtr pNode, TBTreeNodePtr pDonorNode, bool bLeft);
 		void AlignmentInnerNode(TBTreeNodePtr pParentNode, TBTreeNodePtr pNode, TBTreeNodePtr pDonorNode, bool bLeft);
+
+
+		template<class TIterator>
+		void remove(const TIterator& it)
+		{
+			if (it.isNull())
+				return;
+
+			RemoveFromLeafNode(it.m_pCurNode, it.m_nIndex, it.key());
+		}
+
+
 	protected:
 		TComp		 m_comp;
 		TBTreeNodePtr m_pRoot;

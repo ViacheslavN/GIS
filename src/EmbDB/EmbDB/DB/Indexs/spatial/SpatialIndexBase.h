@@ -1,17 +1,17 @@
 #ifndef _EMBEDDED_DATABASE_B_SPATIAL_INDEX_H_
 #define _EMBEDDED_DATABASE_B_SPATIAL_INDEX_H_
-#include "embDBInternal.h"
+#include "../../embDBInternal.h"
 #include "CommonLibrary/BoundaryBox.h"
 #include "CommonLibrary/SpatialKey.h"
-#include "SpatialPointQuery.h"
-#include "SpatialRectQuery.h"
-#include "RectSpatialBPMapTree.h"
-#include "IndexIteratorBase.h"
+#include "../../SpatialPointQuery.h"
+#include "../../SpatialRectQuery.h"
+#include "../../RectSpatialBPMapTree.h"
+#include "../IndexIteratorBase.h"
 
-#include "BaseInnerNodeDIffCompress.h"
-#include "BaseLeafNodeCompDiff.h"
-#include "PointZOrderCompressor.h"
-#include "RectZOrderCompressor.h"
+#include "../../BaseInnerNodeDIffCompress.h"
+#include "../../BaseLeafNodeCompDiff.h"
+#include "point/PointZOrderCompressor.h"
+#include "rectangle/RectZOrderCompressor.h"
 #include "TBaseSpatialCompressor.h"
 
 namespace embDB

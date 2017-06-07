@@ -2,11 +2,11 @@
 #define _EMBEDDED_DATABASE_SPATIAL_RECT_COMPRESSOR_H_
 
 
-#include "BPVector.h"
+#include "../../../BPVector.h"
  
-#include "RectZOrderCompressor.h"
-#include "CompressorParams.h"
-#include "utils/compress/UnsignedIntegerNumLenComp.h"
+#include "rectangle/RectZOrderCompressor.h"
+#include "../../../CompressorParams.h"
+#include "../../../utils/compress/UnsignedIntegerNumLenComp.h"
 namespace embDB
 {
 	template <class _TZorderType, class _TZOrderCompressor>

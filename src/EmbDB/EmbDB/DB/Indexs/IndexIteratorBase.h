@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_I_INDEX_ITERATOR_BASE_H_
 #define _EMBEDDED_DATABASE_I_INDEX_ITERATOR_BASE_H_
-#include "embDBInternal.h"
+#include "../../embDBInternal.h"
 namespace embDB
 {
 

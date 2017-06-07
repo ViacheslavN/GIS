@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_CREATE_FIELDS_H_
 #define _EMBEDDED_DATABASE_CREATE_FIELDS_H_
-
+#include "../Indexs/MultiIndex/IndexTrees/MultiIndexBPTree.h"
 namespace embDB
 {
 

@@ -18,10 +18,11 @@ namespace embDB
 		typedef typename TBase::TKeyMemSet TKeyMemSet;
 		typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
 		typedef typename TBase::TAlloc TAlloc;
-		typedef std::vector<TValue, TAlloc> TValueMemSet;
+		typedef STLAllocator<TValue> TValueAlloc;
+		typedef std::vector<TValue, TValueAlloc> TValueMemSet;
 
 		BPTreeLeafNodeMapv3(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
-			TBase(pAlloc, bMulti, nPageSize), m_ValueMemSet(TAlloc(pAlloc))
+			TBase(pAlloc, bMulti, nPageSize), m_ValueMemSet(TValueAlloc(pAlloc))
 		{
 
 		}

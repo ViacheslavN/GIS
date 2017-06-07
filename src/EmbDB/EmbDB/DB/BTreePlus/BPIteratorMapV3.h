@@ -6,11 +6,11 @@ namespace embDB
 
 
 	template <class _TKey,  class _TValue, class _TLeafNode, class _TBTreeNode, class _TBTree>
-	class TBPMapIteratorV3  : public TBPSetIteratorV3<_TValue, _TLeafNode, _TBTreeNode, _TBTree>
+	class TBPMapIteratorV3  : public TBPSetIteratorV3<_TKey, _TLeafNode, _TBTreeNode, _TBTree>
 	{
 	public:
 		
-		typedef TBPSetIteratorV3<_TValue, _TLeafNode, _TBTreeNode, _TBTree> TBase;
+		typedef TBPSetIteratorV3<_TKey, _TLeafNode, _TBTreeNode, _TBTree> TBase;
 		
 		typedef _TValue		TValue;
 	 
@@ -29,7 +29,7 @@ namespace embDB
 		{
 			return this->m_pCurLeafNode->value((uint32)m_nIndex);
 		}
-		TKey& value()
+		TValue& value()
 		{
 			return this->m_pCurLeafNode->value((uint32)m_nIndex);
 		}

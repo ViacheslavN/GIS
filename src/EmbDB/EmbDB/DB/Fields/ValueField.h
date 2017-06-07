@@ -24,6 +24,11 @@
 
 
 
+#include "BaseFieldEncoders.h"
+#include "../BTreePlus/BPMapv3.h"
+
+
+
 namespace embDB
 {
 
@@ -131,7 +136,7 @@ namespace embDB
 					assert(pFromIterator);
 					pFromIterator = &pFieldIterator->m_ParentIt;
 				}
-				bool bRet =  m_tree.insert(nOID, value, pFromIterator, pRetIter ? &RetIterator : NULL);
+				bool bRet =  m_tree.insert(nOID, value/*, pFromIterator, pRetIter ? &RetIterator : NULL*/);
 
 
 				if(pRetIter)
@@ -190,7 +195,8 @@ namespace embDB
 				m_ConvertTypeToVar.convert(&var, it.value());
 
 				m_pIndex->remove(&var);
-				return	m_tree.remove(it);
+				m_tree.remove(it);
+				return true;
 			}
 			virtual bool remove(int64 nOID)
 			{
@@ -209,7 +215,6 @@ namespace embDB
 			{
 				if(pRetIter)
 				{
-					typename TBTree::iterator retIt;
 					return m_tree.remove(nOID);
 				}
 				else
@@ -469,7 +474,8 @@ namespace embDB
 					assert(pMulitIndex);
 					pMulitIndex->remove(&var, nOID);
 				}
-				return this->m_tree.remove(it);
+				 this->m_tree.remove(it);
+				 return true;
 			}
 			
 		
@@ -484,15 +490,17 @@ namespace embDB
 
 			typedef _FType FType;
 
-			typedef TBaseValueDiffCompress<int64, int64, SignedDiffNumLenCompressor64i> TInnerLinkCompress;
-			typedef embDB::TBPBaseInnerNodeDiffCompressor2<int64, embDB::OIDCompressor, TInnerLinkCompress>  TInnerCompressor;
+		//	typedef TBaseValueDiffCompress<int64, int64, SignedDiffNumLenCompressor64i> TInnerLinkCompress;
+		//	typedef embDB::TBPBaseInnerNodeDiffCompressor2<int64, embDB::OIDCompressor, TInnerLinkCompress>  TInnerCompressor;
+
+			typedef TInnerNodeLinkDiffComp TInnerCompressor;
 
 			//typedef embDB::TBPBaseInnerNodeDiffCompressor<int64, embDB::OIDCompressor, embDB::InnerLinkCompress>	TInnerCompressor;
 			typedef _TLeafCompressor TLeafCompressor;
 
 
 
-			typedef embDB::TBPMapV2<int64, FType, embDB::comp<int64>, 
+			typedef embDB::TBPMapV3<int64, FType, embDB::comp<int64>, 
 			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
  
 			typedef typename TBTree::iterator  iterator;
@@ -567,16 +575,16 @@ namespace embDB
 	//typedef  embDB::TBaseLeafNodeDiffComp<int64, int32, embDB::IDBTransaction, embDB::OIDCompressor,  TBaseValueCompress<int32,UnsignedNumLenCompressor32i > > TInteger32Compress;
 	//typedef  embDB::TBaseLeafNodeDiffComp<int64, int64, embDB::IDBTransaction, embDB::OIDCompressor,  TBaseValueCompress<int64, UnsignedNumLenCompressor64i> >TInteger64Compress;
 
-	typedef ValueFieldHolder<int64, dtInteger64, TInteger64Compress> TValFieldINT64;
-	typedef ValueFieldHolder<uint64,dtUInteger64, TUInteger64Compress> TValFieldUINT64;
-	typedef ValueFieldHolder<int32, dtInteger32, TInteger32Compress> TValFieldINT32;
-	typedef ValueFieldHolder<uint32,dtUInteger32, TUInteger32Compress> TValFieldUINT32;
-	typedef ValueFieldHolder<int16, dtInteger16, TInteger16Compress> TValFieldINT16;
-	typedef ValueFieldHolder<uint16,dtUInteger16, TUInteger16Compress> TValFieldUINT16;
-	typedef ValueFieldHolder<int32, dtUInteger8> TValFieldINT8;
-	typedef ValueFieldHolder<uint32,dtInteger8> TValFieldUINT8;
-	typedef ValueFieldHolder<double,dtDouble> TValFieldDouble;
-	typedef ValueFieldHolder<float, dtFloat> TValFieldFloat;
+	typedef ValueFieldHolder<int64, dtInteger64, TLeafNodeLinkDiffComp64> TValFieldINT64;
+	typedef ValueFieldHolder<uint64,dtUInteger64, TLeafNodeLinkDiffCompU64> TValFieldUINT64;
+	typedef ValueFieldHolder<int32, dtInteger32, TLeafNodeLinkDiffComp32> TValFieldINT32;
+	typedef ValueFieldHolder<uint32,dtUInteger32, TLeafNodeLinkDiffCompU32> TValFieldUINT32;
+	typedef ValueFieldHolder<int16, dtInteger16, TLeafNodeLinkDiffComp16> TValFieldINT16;
+	typedef ValueFieldHolder<uint16,dtUInteger16, TLeafNodeLinkDiffCompU16> TValFieldUINT16;
+	typedef ValueFieldHolder<byte, dtUInteger8, TLeafNodeLinkDiffCompU8> TValFieldINT8;
+	typedef ValueFieldHolder<int8, dtInteger8, TLeafNodeLinkDiffComp8> TValFieldUINT8;
+	typedef ValueFieldHolder<double,dtDouble, TLeafNodeLinkDiffCompDouble> TValFieldDouble;
+	typedef ValueFieldHolder<float, dtFloat, TLeafNodeLinkDiffCompFloat> TValFieldFloat;
  
 }
 #endif

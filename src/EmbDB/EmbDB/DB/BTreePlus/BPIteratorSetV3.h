@@ -100,7 +100,7 @@ namespace embDB
 
 			if (m_pCurNode->next() != -1)
 			{
-				TBTreeNodePtr pNode = m_pTree->getNode(m_pCurNode->next(), false, false, true);  
+				TBTreeNodePtr pNode = m_pTree->getNode(m_pCurNode->next());  
 				if (!pNode.get())
 				{
 					m_pTree->getTransactions()->error(L"BTree Iter error load next node %I64d", m_pCurNode->next());
@@ -133,7 +133,7 @@ namespace embDB
 
 			if (m_pCurNode->prev() != -1)
 			{
-				TBTreeNodePtr pNode = m_pTree->getNode(m_pCurNode->prev(), false, true); //TO DO set busy
+				TBTreeNodePtr pNode = m_pTree->getNode(m_pCurNode->prev()); //TO DO set busy
 				if (!pNode.get())
 				{
 					m_pTree->getTransactions()->error(L"BTree Iter error load prev node %I64d", m_pCurNode->next());
@@ -169,7 +169,7 @@ namespace embDB
 				return true;
 			}
 
-			TBTreeNodePtr pNode = m_pTree->getNode(nAddr, false, true);
+			TBTreeNodePtr pNode = m_pTree->getNode(nAddr);
 			if (!pNode.get())
 			{
 				m_pTree->getTransactions()->error(L"BTree Iter error set addr node %I64d", nAddr);

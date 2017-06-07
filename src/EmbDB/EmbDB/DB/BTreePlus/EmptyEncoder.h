@@ -1,6 +1,6 @@
 #pragma once
-#include "../CompressorParams.h"
-#include "../Utils/alloc/STLAlloc.h"
+#include "../../CompressorParams.h"
+#include "../../Utils/alloc/STLAlloc.h"
 namespace embDB
 {
 	template <class _TValue, class _TCompressorParams = CompressorParamsBaseImp>
@@ -9,10 +9,10 @@ namespace embDB
 	public:
 
 		typedef _TValue TValue;
-		typedef STLAllocator<TKey> TAlloc;
+		typedef STLAllocator<TValue> TAlloc;
 		typedef std::vector<TValue, TAlloc> TValueMemSet;
 		typedef _TCompressorParams TCompressorParams;
-		TEmptyValueEncoder(CommonLib::alloc_t* pAlloc,  TCompressorParams *pParams) : m_nCount(0)
+		TEmptyValueEncoder(uint32 nPageSize, CommonLib::alloc_t* pAlloc,  TCompressorParams *pParams) : m_nCount(0)
 		{
 
 		}
@@ -29,8 +29,7 @@ namespace embDB
 		{
 			m_nCount--;
 		}
-
-
+		
 
 		uint32 GetCompressSize() const
 		{

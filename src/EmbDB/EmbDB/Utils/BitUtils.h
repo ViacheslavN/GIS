@@ -53,6 +53,12 @@ namespace embDB
 			return tab32[(uint32)(value * 0x07C4ACDD) >> 27];
 		}
 
+		inline int32 log2(int32 value)
+		{
+			return log2(uint32(value));
+		}
+
+
 		inline int32 log2(uint16 value)
 		{
 			assert(value != 0);
@@ -62,6 +68,11 @@ namespace embDB
 			value |= value >> 4;
 			value |= value >> 8;
 			return tab32[(uint32)(value * 0x07C4ACDD) >> 27];
+		}
+
+		inline int32 log2(int16 value)
+		{
+			return log2(uint16(value));
 		}
 	}
 

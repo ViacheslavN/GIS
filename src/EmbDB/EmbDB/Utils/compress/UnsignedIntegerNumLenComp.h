@@ -4,12 +4,12 @@
 #include <vector>
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/alloc_t.h"
-#include "BPVector.h"
+#include "../../BPVector.h"
 #include "CommonLibrary/stream.h"
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CommonLibrary/RangeCoder.h"
 #include "NumLenCompress.h"
-#include "CompressorParams.h"
+#include "../../CompressorParams.h"
 namespace embDB
 {
 

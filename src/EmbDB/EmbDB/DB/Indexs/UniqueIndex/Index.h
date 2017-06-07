@@ -3,7 +3,7 @@
 #include "BaseBPMapv2.h"
 #include "embDBInternal.h"
 #include "DBFieldInfo.h"
-#include "IndexIteratorBase.h"
+#include "../IndexIteratorBase.h"
  
 
 #include "BaseInnerNodeDIffCompress.h"

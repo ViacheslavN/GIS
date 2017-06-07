@@ -81,7 +81,7 @@ TIterator BPSETBASE_DECLARATION::begin()
 			break;
 		}
 		TBTreeNodePtr pNode = getNode(nNextAddr);
- 		pNode->setParent(pParent.get());
+ 		pNode->setParent(pParent);
 		if (pNode->isLeaf())
 		{
 			pFindBTNode = pNode;
@@ -121,7 +121,7 @@ TIterator BPSETBASE_DECLARATION::last()
 			break;
 		}
 		TBTreeNodePtr pNode = getNode(nNextAddr);
-		pNode->setParent(pParent.get(), nIndex);
+		pNode->setParent(pParent, nIndex);
 
 		if (pNode->isLeaf())
 		{
@@ -165,7 +165,7 @@ TIterator BPSETBASE_DECLARATION::upper_bound(const TComparator& comp, const TKey
 			break;
 		}
 		TBTreeNodePtr pNode = getNode(nNextAddr);
-		pNode->setParent(pParent.get(), nIndex);
+		pNode->setParent(pParent, nIndex);
 		if (pNode->isLeaf())
 		{
 			return TIterator(this, pNode, pNode->leaf_upper_bound(comp, key));
@@ -200,7 +200,7 @@ TIterator BPSETBASE_DECLARATION::lower_bound(const TComparator& comp, const TKey
 	nIndex = -1;
 	if (m_pRoot->isLeaf())
 	{
-		return TIterator(this, m_pRoot, m_pRoot->leaf_lower_bound(comp, key, nIndex));
+		return TIterator(this, m_pRoot, m_pRoot->leaf_lower_bound(comp, key));
 	}
 
 	int64 nNextAddr = m_pRoot->inner_lower_bound(comp, key, nIndex);
@@ -212,16 +212,16 @@ TIterator BPSETBASE_DECLARATION::lower_bound(const TComparator& comp, const TKey
 			break;
 		}
 		TBTreeNodePtr pNode = getNode(nNextAddr);
-		pNode->setParent(pParent.get(), nIndex);
+		pNode->setParent(pParent, nIndex);
 		if (pNode->isLeaf())
 		{
 			int nLeafIndex = pNode->leaf_lower_bound(comp, key);
 			if (nLeafIndex != -1)
-				return TIterator(this, pNode, pNode->leaf_lower_bound(comp, key));
+				return TIterator(this, pNode, nLeafIndex);
 			else if (nIndex < (pParent->count() - 1))
 			{
 				TBTreeNodePtr pNode = getNode(pParent->link(nIndex + 1));
-				pNode->setParent(pParent.get(), nIndex + 1);
+				pNode->setParent(pParent, nIndex + 1);
 				return TIterator(this, pNode, 0);
 			}
 
