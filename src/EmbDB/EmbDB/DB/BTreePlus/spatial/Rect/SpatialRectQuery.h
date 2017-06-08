@@ -176,6 +176,12 @@ namespace embDB
 		{
 			return _Left.m_nZValue[1] == _Right.m_nZValue[1] && _Left.m_nZValue[0] == _Right.m_nZValue[0];
 		}
+
+		bool operator()(const ZOrderRect2DU32& _Left, const ZOrderRect2DU32& _Right) const
+		{
+			return LE(_Left, _Right);
+		}
+
 	};
 
 	struct ZOrderRect2DU64
@@ -305,6 +311,11 @@ namespace embDB
 		{
 			return _Left.m_nZValue[3] == _Right.m_nZValue[3] &&  _Left.m_nZValue[2] == _Right.m_nZValue[2] && _Left.m_nZValue[1] == _Right.m_nZValue[1] &&
 				_Left.m_nZValue[1] == _Right.m_nZValue[1] && _Left.m_nZValue[0] == _Right.m_nZValue[0];
+		}
+
+		bool operator()(const ZOrderRect2DU64& _Left, const ZOrderRect2DU64& _Right) const
+		{
+			return LE(_Left, _Right);
 		}
 	};
 

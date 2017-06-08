@@ -25,7 +25,7 @@ namespace embDB
 		typedef _TLeafNode TBTreeLeafNode;
 		typedef  _TBTreeNode TBTreeNode;
 		typedef TRect2D<TPointType>         TRect;
-		typedef CommonLib::IRefCntPtr<TBTreeNode> TBTreeNodePtr;
+		typedef std::shared_ptr<TBTreeNode> TBTreeNodePtr;
 		TComp m_comp;
 
 		typedef TBPPointSpatialMap<_TCoord, _TValue, _TComp, _Transaction,	_TInnerCompess ,_TLeafCompess,

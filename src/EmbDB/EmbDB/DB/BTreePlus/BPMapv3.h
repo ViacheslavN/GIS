@@ -1,3 +1,4 @@
+#pragma once
 #include "BaseBPSetv3.h"
 #include "BPTreeNodeMapV3.h"
 #include "BPIteratorMapV3.h"
@@ -42,13 +43,11 @@ namespace embDB
 
 
 
-
+		TComp& getComp() { return m_comp; }
 
 
 		bool insert(const TKey& key, const TValue& value )
 		{
-			
-
 			bool bRet = false;
 			TBTreeNodePtr pNode = this->findLeafNodeForInsert(key);
 			if (pNode.get())

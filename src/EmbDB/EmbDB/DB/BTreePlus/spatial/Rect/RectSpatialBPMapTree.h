@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_DATABASE_BP_MAP_RECT_SPATIAL_H_
 #define _EMBEDDED_DATABASE_BP_MAP_RECT_SPATIAL_H_
 #include "CommonLibrary/SpatialKey.h"
-#include "PointSpatialBPMapTree.h"
+#include "../Point/PointSpatialBPMapTree.h"
 
 namespace embDB
 {
@@ -15,7 +15,7 @@ namespace embDB
 	{
 	public:
 		typedef TBPPointSpatialMap<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess > TBase;
-		typedef TBPMapV2<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess > TSubBase;
+		typedef TBPMapV3<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess > TSubBase;
 
 			TBPRectSpatialMap(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, uint32 nNodePageSize):
 			TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nNodePageSize)
@@ -31,7 +31,7 @@ namespace embDB
 		typedef typename TBase::TBTreeNode  TBTreeNode;
 		typedef typename TBase::TLeafNode  TLeafNode;
 		typedef typename TBase::iterator iterator;
-		typedef CommonLib::IRefCntPtr<TBTreeNode> TBTreeNodePtr;
+		typedef std::shared_ptr<TBTreeNode> TBTreeNodePtr;
 
 		/*template <class _TCoord, class _TValue, class _TComp, 	class _TInnerCompess ,	class _TLeafCompess,
 		class _Transaction,	class _TBTreeNode, class _TLeftMemset,  class _TLeftNode>*/
@@ -80,7 +80,7 @@ namespace embDB
 
 
 			typename TBase::iterator it = TBase::lower_bound(zKeyMin);
-			return TSpatialIterator(this, it.m_pCurNode.get(), it.m_nIndex, zKeyMin, zKeyMax, rectQuery);
+			return TSpatialIterator(this, it.m_pCurNode, it.m_nIndex, zKeyMin, zKeyMax, rectQuery);
 
 
 			/*
@@ -102,7 +102,7 @@ namespace embDB
 
 
 			TPointKey key(xMin /*+ m_shiftX*/, yMin /*+ m_shiftY*/, xMax /*+ m_shiftX*/, yMax/* + m_shiftY*/);
-			return TSubBase::insert(key, val,  pFromIterator, pRetItertor ); 
+			return TSubBase::insert(key, val/*,  pFromIterator, pRetItertor*/ ); 
 		}
 
 

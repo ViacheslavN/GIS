@@ -6,13 +6,13 @@ namespace embDB
 {
 
 	template<class _TValue, class _TEncoder, class _TDecoder, class _TCompParams, uint32 _nMaxBitsLens>
-	class SignedNumLenEncoder : public TBaseNumLenEncoder<_TValue, _TEncoder, _TDecoder, _TCompParams, _nMaxBitsLens>
+	class SignedNumLenEncoder : public TBaseNumLenEncoder<_TValue,_TCompParams, _nMaxBitsLens>
 	{
 	public:
-		typedef TBaseNumLenEncoder<_TValue, _TEncoder, _TDecoder, _TCompParams, _nMaxBitsLens> TBase;
+		typedef TBaseNumLenEncoder<_TValue,  _TCompParams, _nMaxBitsLens> TBase;
 		typedef	typename TBase::TValue TValue;
-		typedef typename TBase::TEncoder TEncoder;
-		typedef typename TBase::TDecoder TDecoder;
+		typedef typename _TEncoder TEncoder;
+		typedef typename _TDecoder TDecoder;
 		typedef typename TBase::TCompParams TCompParams;
 		typedef typename TDefSign<TValue>::TSignType TSignValue;
 	
@@ -104,10 +104,12 @@ namespace embDB
 			m_Decoder.Reset(pStream);
 			m_Decoder.StartDecode();
 		}
-		TSignValue decodeSymbol()
+
+
+		void decodeSymbol(TSignValue& symbol)
 		{
+			symbol = 0;
 			uint32 freq = (uint32)m_Decoder.GetFreq(m_nCount);
-			TSignValue symbol = 0;
 			int32 nBitLen = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens + 1, freq);
 			if (nBitLen != 0)
 				nBitLen--;
@@ -125,6 +127,12 @@ namespace embDB
 			if (m_signEncode.DecodeSign(m_nPos))
 				symbol = -symbol;
 			m_nPos += 1;
+		}
+
+		TSignValue decodeSymbol()
+		{
+			TSignValue symbol;
+			decodeSymbol(symbol);
 			return symbol;
 		}
 

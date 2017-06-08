@@ -4,13 +4,13 @@
 namespace embDB
 {
 	template<class _TValue, class _TEncoder, class _TDecoder, class _TCompParams, uint32 _nMaxBitsLens>
-	class UnsignedNumLenEncoder : public TBaseNumLenEncoder<_TValue, _TEncoder, _TDecoder, _TCompParams, _nMaxBitsLens>
+	class UnsignedNumLenEncoder : public TBaseNumLenEncoder<_TValue,_TCompParams, _nMaxBitsLens>
 	{
 		public:
-			typedef TBaseNumLenEncoder<_TValue, _TEncoder, _TDecoder, _TCompParams, _nMaxBitsLens> TBase;
+			typedef TBaseNumLenEncoder<_TValue, _TCompParams, _nMaxBitsLens> TBase;
 			typedef	typename TBase::TValue TValue;
-			typedef typename TBase::TEncoder TEncoder;
-			typedef typename TBase::TDecoder TDecoder;
+			typedef typename _TEncoder TEncoder;
+			typedef typename _TDecoder TDecoder;
 			typedef typename TBase::TCompParams TCompParams;
 		
 
@@ -71,10 +71,10 @@ namespace embDB
 				m_Decoder.StartDecode();
 				
 			}
-			TValue decodeSymbol()
+			void decodeSymbol(TValue& symbol)
 			{
+				symbol = 0;
 				uint32 freq = (uint32)m_Decoder.GetFreq(m_nCount);
-				TValue symbol = 0;
 				int32 nBitLen = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens + 1, freq);
 				if (nBitLen != 0)
 					nBitLen--;
@@ -88,7 +88,11 @@ namespace embDB
 				}
 				else
 					symbol = nBitLen;
-
+			}
+			TValue decodeSymbol()
+			{
+				TValue symbol = 0;
+				decodeSymbol(symbol);
 				return symbol;
 			}
 

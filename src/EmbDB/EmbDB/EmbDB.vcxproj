@@ -467,7 +467,6 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BackTableZPoint16Bit.h" />
     <ClInclude Include="BaseBPMapRO.h" />
     <ClInclude Include="BaseBPMapv2.h" />
     <ClInclude Include="BaseBPTreeSetRO.h" />
@@ -509,15 +508,12 @@
     <ClInclude Include="BPMapIteratorRO.h" />
     <ClInclude Include="BPMapNodeRO.h" />
     <ClInclude Include="BaseBPSetv2.h" />
-    <ClInclude Include="BPMapPointSpatialIterator.h" />
-    <ClInclude Include="BPMapRectSplitSpatialIterator.h" />
     <ClInclude Include="BPTreeStatistics.h" />
     <ClInclude Include="BPTreeInnerNodeSetv2.h" />
     <ClInclude Include="BPTreeLeafNodeMapv2.h" />
     <ClInclude Include="BPTreeLeafNodeSetv2.h" />
     <ClInclude Include="BPTreeNodeMapV2.h" />
     <ClInclude Include="BPTreeNodeSetV2.h" />
-    <ClInclude Include="BPTreeSPLeafNodeMap.h" />
     <ClInclude Include="BPVector.h" />
     <ClInclude Include="BPVectorNoPod.h" />
     <ClInclude Include="CompressorParams.h" />
@@ -556,6 +552,22 @@
     <ClInclude Include="DB\BTreePlus\BPTreeNodeMapV3.h" />
     <ClInclude Include="DB\BTreePlus\BPTreeNodeSetV3.h" />
     <ClInclude Include="DB\BTreePlus\EmptyEncoder.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Point\BackTableZPoint16Bit.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Point\BPMapPointSpatialIterator.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Point\BPMapPointSpatialIteratorOld.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Point\BPMapRectSplitSpatialIterator.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Point\PointSpatialBPMapTree.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Point\PointSpatialInnerCompress.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Point\PointSpatialLeafCompress.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Point\SpatialPointCompressor.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Point\SpatialPointQuery.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Point\tableZPoint8Bit.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Rect\RectSpatialBPMapTree.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Rect\SpatialRectQuery.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Rect\tableZRect16Bit.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Rect\tableZRect8Bit.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\Rect\tableZRectBack4Bit.h" />
+    <ClInclude Include="DB\BTreePlus\spatial\SpatialEncoders.h" />
     <ClInclude Include="DB\Connection.h" />
     <ClInclude Include="DB\Database.h" />
     <ClInclude Include="DB\DBStateManager.h" />
@@ -611,7 +623,6 @@
     <ClInclude Include="DB\Indexs\spatial\rectangle\RectZOrderCompressor.h" />
     <ClInclude Include="DB\Indexs\spatial\SpatialIndexBase.h" />
     <ClInclude Include="DB\Indexs\spatial\SpatialIndexHolder.h" />
-    <ClInclude Include="DB\Indexs\spatial\TBaseSpatialCompressor.h" />
     <ClInclude Include="DB\Indexs\spatial\ZOrderCompressBase.h" />
     <ClInclude Include="DB\Indexs\UniqueIndex\Index.h" />
     <ClInclude Include="DB\Indexs\UniqueIndex\UniqueIndex.h" />
@@ -733,8 +744,6 @@
     <ClInclude Include="Key.h" />
     <ClInclude Include="MapIteratorImp.h" />
     <ClInclude Include="NodeLoader.h" />
-    <ClInclude Include="PointSpatialBPMapTree.h" />
-    <ClInclude Include="BPMapPointSpatialIteratorOld.h" />
     <ClInclude Include="SpatialOIDField.h" />
     <ClInclude Include="RBMap.h" />
     <ClInclude Include="RBMuitiSet.h" />
@@ -742,17 +751,10 @@
     <ClInclude Include="RBSet.h" />
     <ClInclude Include="RBSetIteratorImp.h" />
     <ClInclude Include="RBSimpleMuitiSetIterator.h" />
-    <ClInclude Include="RectSpatialBPMapTree.h" />
     <ClInclude Include="Row.h" />
     <ClInclude Include="SimpleCompessor.h" />
     <ClInclude Include="SpatialKey.h" />
-    <ClInclude Include="SpatialPointQuery.h" />
-    <ClInclude Include="SpatialRectQuery.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="tableZPoint8Bit.h" />
-    <ClInclude Include="tableZRect8Bit.h" />
-    <ClInclude Include="tableZRectBack4Bit.h" />
-    <ClInclude Include="tableZRect16Bit.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -780,6 +782,8 @@
     <ClCompile Include="Crypto\CryptoPP\AESBaseCryptoPP.cpp" />
     <ClCompile Include="Crypto\SHA256.cpp" />
     <ClCompile Include="Crypto\SHA512.cpp" />
+    <ClCompile Include="DB\BTreePlus\spatial\Point\SpatialPointQuery.cpp" />
+    <ClCompile Include="DB\BTreePlus\spatial\Rect\SpatialRectQuery.cpp" />
     <ClCompile Include="DB\Connection.cpp" />
     <ClCompile Include="DB\Database.cpp" />
     <ClCompile Include="DB\DBStateManager.cpp" />
@@ -831,8 +835,6 @@
     <ClCompile Include="Utils\CRC.cpp" />
     <ClCompile Include="Utils\ListDBPage.cpp" />
     <ClCompile Include="Utils\MathUtils.cpp" />
-    <ClCompile Include="SpatialPointQuery.cpp" />
-    <ClCompile Include="SpatialRectQuery.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -24,7 +24,7 @@ namespace embDB
 		typedef  typename TBase::TLinkCompressor TLinkCompressor;
 		typedef  typename TBase::TInnerCompressorParams TInnerCompressorParams;
 
-
+		typedef TInnerCompressorParams TCompressorParams;
  
 
 

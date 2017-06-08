@@ -1,5 +1,4 @@
-#ifndef _EMBEDDED_DATABASE_FIELD_BASE_LEAF_NODE_COMPRESS_H_
-#define _EMBEDDED_DATABASE_FIELD_BASE_LEAF_NODE_COMPRESS_H_
+#pragma once
 
 
 namespace embDB
@@ -20,6 +19,7 @@ namespace embDB
 			typedef  TBPVector<TKey> TKeyMemSet;
 			typedef  TBPVector<TValue> TValueMemSet;
 			typedef _TLeafCompressorParams TLeafCompressorParams;
+			typedef TLeafCompressorParams TCompressorParams;
 
 
 			TBaseLeafNodeComp(uint32 nPageSize, Transaction *pTran, CommonLib::alloc_t *pAlloc = 0, TLeafCompressorParams *pParams = NULL,
@@ -36,6 +36,12 @@ namespace embDB
 		static TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
 		{
 			return new TLeafCompressorParams();
+		}
+
+		template<typename _Transactions  >
+		bool  init(TCompressorParams *pParams, _Transactions *pTran)
+		{
+			return true;
 		}
 
 		virtual ~TBaseLeafNodeComp(){}
@@ -256,4 +262,3 @@ namespace embDB
 	};
 }
 
-#endif

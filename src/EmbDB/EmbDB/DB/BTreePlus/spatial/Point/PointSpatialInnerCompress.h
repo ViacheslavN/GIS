@@ -2,12 +2,11 @@
 #define _EMBEDDED_DATABASE_SPATIAL_POINT_BTREE_PLUS_INNER_NODE_COMPRESSOR_H_
 
 #include "CommonLibrary/FixedMemoryStream.h"
-#include "CompressorParams.h"
-#include "BPVector.h"
+#include "../../../../CompressorParams.h"
 #include "SpatialPointCompressor.h"
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CommonLibrary/RangeCoder.h"
-#include "LinkCompress.h"
+#include "../../../../LinkCompress.h"
 namespace embDB
 {
 
@@ -19,8 +18,13 @@ namespace embDB
 		typedef _ZOrderType ZOrderType;
 		typedef typename ZOrderType::TPointType TPointType;
 		typedef int64 TLink;
-		typedef  TBPVector<ZOrderType> TKeyMemSet;
-		typedef  TBPVector<TLink> TLinkMemSet;
+
+		typedef STLAllocator<TLink> TLinkAlloc;
+		typedef std::vector<TLink, TLinkAlloc> TLinkMemSet;
+
+		typedef STLAllocator<ZOrderType> TKeyAlloc;
+		typedef std::vector<ZOrderType, TKeyAlloc> TKeyMemSet;
+ 
 		typedef CompressorParamsBaseImp TInnerCompressorParams;
 		typedef TSpatialPointCompress<ZOrderType, TPointType> TZOrderCompressor;
 

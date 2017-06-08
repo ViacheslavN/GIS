@@ -53,7 +53,7 @@ namespace embDB
 		typedef _TLeafNode TBTreeLeafNode;
 		typedef  _TBTreeNode TBTreeNode;
 		typedef CommonLib::TRect2D<TPointType>         TRect;
-		typedef CommonLib::IRefCntPtr<TBTreeNode> TBTreeNodePtr;
+		typedef std::shared_ptr<TBTreeNode> TBTreeNodePtr;
 		TComp m_comp;
 
 		typedef TBPPointSpatialMap<_TCoord, _TValue, _TComp, _Transaction,	_TInnerCompess ,_TLeafCompess,
@@ -69,7 +69,7 @@ namespace embDB
 		{}
 
 
-		TBPTSpatialRectSplitIterator(TBTree *pTree, TBTreeNode *pCurNode, int32 nIndex, 
+		TBPTSpatialRectSplitIterator(TBTree *pTree, TBTreeNodePtr pCurNode, int32 nIndex, 
 			TPointKey& zMin, TPointKey& zMax, TRect& QueryRect) : 
 		m_pTree(pTree), m_zMin(zMin), m_zMax(zMax), m_QueryRect(QueryRect), m_nIndex(nIndex)
 		{		
@@ -230,9 +230,8 @@ namespace embDB
 					{
 						//TSubQuery nPrev = m_CurrentSpatialQuery;
 						m_CurrentSpatialQuery = m_Queries.top();
-
-						short nType = 0;
-						int32 nIndex = m_pCurNode->leaf_lower_bound(m_pTree->getComp(), m_CurrentSpatialQuery.m_zMin,  nType);
+ 
+						int32 nIndex = m_pCurNode->leaf_lower_bound(m_pTree->getComp(), m_CurrentSpatialQuery.m_zMin);
 						if(nIndex != -1)
 						{
 							CreateSubQuery();
@@ -314,7 +313,7 @@ namespace embDB
 			if(!m_pCurNode.get())
 				return false;
 
-			m_pTree->ClearChache();
+			//m_pTree->ClearChache();
 			m_nIndex++;
 			return CheckIndex();
 		}

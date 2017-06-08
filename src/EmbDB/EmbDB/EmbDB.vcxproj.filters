@@ -459,36 +459,6 @@
     <ClInclude Include="BPMapIteratorRO.h">
       <Filter>DB\BPTrees\BTreePlus\BPMap\ReadOnly</Filter>
     </ClInclude>
-    <ClInclude Include="PointSpatialBPMapTree.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClInclude>
-    <ClInclude Include="SpatialPointQuery.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClInclude>
-    <ClInclude Include="BackTableZPoint16Bit.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClInclude>
-    <ClInclude Include="tableZPoint8Bit.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClInclude>
-    <ClInclude Include="RectSpatialBPMapTree.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeSPLeafNodeMap.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClInclude>
-    <ClInclude Include="SpatialRectQuery.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
-    </ClInclude>
-    <ClInclude Include="tableZRectBack4Bit.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
-    </ClInclude>
-    <ClInclude Include="tableZRect16Bit.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
-    </ClInclude>
-    <ClInclude Include="tableZRect8Bit.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
-    </ClInclude>
     <ClInclude Include="SpatialKey.h">
       <Filter>SDK</Filter>
     </ClInclude>
@@ -545,12 +515,6 @@
     </ClInclude>
     <ClInclude Include="CounterField.h">
       <Filter>DB\Fields\Counters</Filter>
-    </ClInclude>
-    <ClInclude Include="BPMapPointSpatialIteratorOld.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClInclude>
-    <ClInclude Include="BPMapPointSpatialIterator.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
     </ClInclude>
     <ClInclude Include="Statement.h">
       <Filter>DB\SQL</Filter>
@@ -803,9 +767,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BPMapRectSplitSpatialIterator.h">
-      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1629,9 +1590,6 @@
     <ClInclude Include="DB\Indexs\spatial\SpatialIndexHolder.h">
       <Filter>DB\Index\spatial</Filter>
     </ClInclude>
-    <ClInclude Include="DB\Indexs\spatial\TBaseSpatialCompressor.h">
-      <Filter>DB\Index\spatial</Filter>
-    </ClInclude>
     <ClInclude Include="DB\Indexs\spatial\ZOrderCompressBase.h">
       <Filter>DB\Index\spatial</Filter>
     </ClInclude>
@@ -1659,6 +1617,60 @@
     <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeSetV3.h">
       <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Point\BackTableZPoint16Bit.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Point\BPMapPointSpatialIterator.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Point\BPMapPointSpatialIteratorOld.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Point\BPMapRectSplitSpatialIterator.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Point\PointSpatialBPMapTree.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Point\PointSpatialInnerCompress.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Point\PointSpatialLeafCompress.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Point\SpatialPointCompressor.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Point\SpatialPointQuery.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Point\tableZPoint8Bit.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Rect\SpatialRectQuery.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Rect\tableZRect8Bit.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Rect\tableZRect16Bit.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Rect\tableZRectBack4Bit.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\Rect\RectSpatialBPMapTree.h">
+      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\spatial\SpatialEncoders.h">
+      <Filter>DB\Index\spatial</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1669,12 +1681,6 @@
     </ClCompile>
     <ClCompile Include="BaseRBMultiTree.cpp">
       <Filter>DB\BPTrees\memorytree\RBTree</Filter>
-    </ClCompile>
-    <ClCompile Include="SpatialPointQuery.cpp">
-      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
-    </ClCompile>
-    <ClCompile Include="SpatialRectQuery.cpp">
-      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
     </ClCompile>
     <ClCompile Include="Statement.cpp">
       <Filter>DB\SQL</Filter>
@@ -1840,6 +1846,12 @@
     </ClCompile>
     <ClCompile Include="DB\Indexs\CompositeIndex\CompressCompIndexParams.cpp">
       <Filter>DB\Index\CompositeIndex</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\BTreePlus\spatial\Point\SpatialPointQuery.cpp">
+      <Filter>DB\BPTrees\spatial\Z-Order\Point</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\BTreePlus\spatial\Rect\SpatialRectQuery.cpp">
+      <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

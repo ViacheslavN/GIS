@@ -18,16 +18,17 @@ namespace embDB
 		typedef _Transaction Transaction;
 		typedef _TCompressor TCompressor;
 
-		typedef STLAllocator<TKey> TAlloc;
-		typedef std::vector<TKey, TAlloc> TKeyMemSet;
-		typedef std::vector<TLink, TAlloc> TLinkMemSet;
+		typedef STLAllocator<TKey> TKeyAlloc;
+		typedef STLAllocator<TLink> TLinkAlloc;
+		typedef std::vector<TKey, TKeyAlloc> TKeyMemSet;
+		typedef std::vector<TLink, TLinkAlloc> TLinkMemSet;
 
 	public:
 
 		typedef typename _TCompressor::TCompressorParams TInnerCompressorParams;
 
 		BPTreeInnerNodeSetv3(CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
-			m_nLess(-1), m_innerKeyMemSet(TAlloc(pAlloc)), m_innerLinkMemSet(TAlloc(pAlloc)), m_bMulti(bMulti),
+			m_nLess(-1), m_innerKeyMemSet(TKeyAlloc(pAlloc)), m_innerLinkMemSet(TLinkAlloc(pAlloc)), m_bMulti(bMulti),
 			m_pAlloc(pAlloc), m_bMinSplit(false), m_nPageSize(nPageSize), m_Compressor(nPageSize - sizeof(TLink), pAlloc)
 		{
 

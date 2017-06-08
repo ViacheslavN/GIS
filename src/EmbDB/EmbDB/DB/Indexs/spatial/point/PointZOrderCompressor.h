@@ -7,87 +7,97 @@
 
 namespace embDB
 {
-	template<class _ZOrder, class _TCoord, uint32 _nMaxBitsLens>
-	class TPointZOrderCompressor : public TBaseZOrderCompressor<_ZOrder, _TCoord, _nMaxBitsLens, 2>
+	template<class _ZOrder, class _TCoord, uint32 _nMaxBitsLens, class _TCompressorParams = CompressorParamsBaseImp>
+	class TPointZOrderCompressor : public TBaseZOrderCompressor<_ZOrder, _TCoord, _nMaxBitsLens, _TCompressorParams>
 	
 	{
 		public:
-
-
 			typedef _ZOrder ZOrder;
 			typedef _TCoord TCoord;
 
+			typedef  TBaseZOrderCompressor<_ZOrder, _TCoord, _nMaxBitsLens, _TCompressorParams> TBase;
+
+			TPointZOrderCompressor(uint32 nPageSize, CommonLib::alloc_t* pAlloc = nullptr, _TCompressorParams *pCompParams = nullptr) :
+					TBase(nPageSize, pAlloc, pCompParams)
+			{}
 
 
-			typedef TBaseZOrderCompressor<_ZOrder, _TCoord, _nMaxBitsLens, 2> TBase;
-			typedef typename TBase::TEncoder TEncoder;
-			typedef typename TBase::TDecoder TDecoder;
-
-			TPointZOrderCompressor(EncoderType nType, uint32 nError = 200 , bool bOnlineCalcSize = false) :
-					TBase(nType, nError, bOnlineCalcSize)
-			{
- 
-			}
-
-
-			virtual void AddZOrder(const ZOrder& zOrder)
+			void AddSymbol(const ZOrder& zOrder)
 			{
 				TCoord x = 0, y = 0;
 				zOrder.getXY(x, y);
-				this->AddSymbol(x);
-				this->AddSymbol(y);
+				this->m_PointEncoder.AddSymbol(x);
+				this->m_PointEncoder.AddSymbol(y);
 			}
 
-			virtual void RemoveZOrder(const ZOrder& zOrder)
+			void RemoveSymbol(const ZOrder& zOrder)
 			{
 				TCoord x = 0, y = 0;
 				zOrder.getXY(x, y);
-				this->RemoveSymbol(x);
-				this->RemoveSymbol(y);
+				this->m_PointEncoder.RemoveSymbol(x);
+				this->m_PointEncoder.RemoveSymbol(y);
 			}
  
-
-
-			virtual void WriteZorder(const ZOrder& zOrder, CommonLib::IWriteStream* pStream)
+			bool encodeSymbol(const ZOrder& zOrder)
 			{
 				TCoord x = 0, y = 0;
 				zOrder.getXY(x, y);
-				pStream->write(x);
-				pStream->write(y);
-			}
-
-			virtual void ReadZorder(ZOrder& zOrder, CommonLib::IReadStream* pStream)
-			{
-				TCoord x = 0, y = 0;
-				pStream->read(x);
-				pStream->read(y);
-
-				zOrder.setZOrder(x, y);
-			}
-
-			virtual bool compressZOrder(TEncoder* pEncoder, CommonLib::FxBitWriteStream *pBitStream, const ZOrder& zOrder, uint32 *FreqPrev)
-			{
-				TCoord x = 0, y = 0;
-				zOrder.getXY(x, y);
-
-				if(!this->compressCoord(pEncoder, pBitStream, x, FreqPrev))
+				if (!this->m_PointEncoder.encodeSymbol(x))
 					return false;
-				return this->compressCoord(pEncoder, pBitStream, y, FreqPrev);
+				return this->m_PointEncoder.encodeSymbol(y);
 			}
 
 
-
-
-			virtual void DecompressZOrder(TDecoder* pDecoder, CommonLib::FxBitReadStream *pBitStream, ZOrder& zOrder, uint32 *FreqPrev)
+			void decodeSymbol(ZOrder& zOrder)
 			{
 				TCoord x = 0, y = 0;
-				 this->decompressCoord(pDecoder, pBitStream, x, FreqPrev);
-				 this->decompressCoord(pDecoder, pBitStream, y, FreqPrev);
+				 
+				this->m_PointEncoder.decodeSymbol(x);
+				this->m_PointEncoder.decodeSymbol(y);
+
 				zOrder.setZOrder(x, y);
 			}
-
  
 	};
+
+
+
+	template<class _ZOrder,class  _TCoord, class _TEncoder, class _TCompressorParams = CompressorParamsBaseImp>
+	class TBasePointCompressor : public TBaseValueDiffEncoder<_ZOrder, _ZOrder, _TEncoder, _TCompressorParams>
+	{
+	public:
+		typedef TBaseValueDiffEncoder<_ZOrder, _ZOrder, _TEncoder, _TCompressorParams> TBase;
+
+		typedef _ZOrder ZOrder;
+		typedef _TCoord TCoord;
+
+		TBasePointCompressor(uint32 nPageSize, CommonLib::alloc_t* pAlloc = nullptr, _TCompressorParams *pCompParams = nullptr) :
+			TBase(nPageSize, pAlloc, pCompParams)
+		{}
+
+		virtual void Write(const ZOrder& zOrder, CommonLib::IWriteStream *pStream)
+		{
+			TCoord x = 0, y = 0;
+			zOrder.getXY(x, y);
+
+			pStream->write(x);
+			pStream->write(y);
+		}
+
+		virtual void Read(ZOrder& zOrder, CommonLib::IReadStream *pStream)
+		{
+			TCoord x = 0, y = 0;
+
+			pStream->read(x);
+			pStream->read(y);
+			zOrder.setZOrder(x, y);
+		}
+		virtual uint32 GetValueSize() const
+		{
+			return sizeof(TCoord) * 2;
+		}
+	};
+
 	
 }
 

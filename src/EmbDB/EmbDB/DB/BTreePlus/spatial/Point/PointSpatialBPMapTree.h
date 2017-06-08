@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_BP_MAP_POINT_SPATIAL_H_
 #define _EMBEDDED_DATABASE_BP_MAP_POINT_SPATIAL_H_
-#include "BaseBPMapv2.h"
+#include  "../../BPMapv3.h"
  
 //#include "PointSpatialBPMaTraits.h"
 #include "CommonLibrary/SpatialKey.h"
@@ -12,15 +12,15 @@ namespace embDB
 	class _Transaction,
 	class _TInnerCompess,	
 	class _TLeafCompess,
-	class _TInnerNode = BPTreeInnerNodeSetv2<_TCoord,/* _TComp,*/ _Transaction, _TInnerCompess>,
-	class _TLeafNode =  BPTreeLeafNodeMapv2<_TCoord, _TValue, /* _TComp, */_Transaction, _TLeafCompess>, 
-	class _TBTreeNode = BPTreeNodeMapv2<_TCoord, _TValue, /* _TComp,*/ _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode>
+	class _TInnerNode = BPTreeInnerNodeSetv3<_TCoord,/* _TComp,*/ _Transaction, _TInnerCompess>,
+	class _TLeafNode =  BPTreeLeafNodeMapv3<_TCoord, _TValue, /* _TComp, */_Transaction, _TLeafCompess>, 
+	class _TBTreeNode = BPTreeNodeMapv3<_TCoord, _TValue, /* _TComp,*/ _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode>
 	>
-    class TBPPointSpatialMap : public TBPMapV2<_TCoord, _TValue,  _TComp, _Transaction,
+    class TBPPointSpatialMap : public TBPMapV3<_TCoord, _TValue,  _TComp, _Transaction,
 		_TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode, _TBTreeNode>
 	{
 	public:
-		typedef TBPMapV2<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode, _TBTreeNode > TBase;
+		typedef TBPMapV3<_TCoord, _TValue, _TComp, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode, _TBTreeNode > TBase;
 
 			TBPPointSpatialMap(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, uint32 nNodePageSize):
 			TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nNodePageSize, true)/*,
@@ -95,7 +95,7 @@ namespace embDB
 			TPointKey zKeyMin(xMin, yMin);
 			TPointKey zKeyMax(xMax, yMax);
 			typename TBase::iterator it = TBase::lower_bound(zKeyMin);
-			return TSpatialIterator(this, it.m_pCurNode.get(), it.m_nIndex, zKeyMin, zKeyMax, rectQuery);
+			return TSpatialIterator(this, it.m_pCurNode, it.m_nIndex, zKeyMin, zKeyMax, rectQuery);
 		}
 
 	protected:

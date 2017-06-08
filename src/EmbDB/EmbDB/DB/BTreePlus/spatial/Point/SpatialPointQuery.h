@@ -264,6 +264,11 @@ namespace embDB
 		{
 			return (_Left.m_nZValue == _Right.m_nZValue);
 		}
+
+		bool operator()(const PontType& _Left, const PontType& _Right)
+		{
+			return (_Left.m_nZValue < _Right.m_nZValue);
+		}
 	};
 
  
@@ -361,6 +366,10 @@ namespace embDB
 		bool EQ(const ZOrderPoint2DU64& _Left, const ZOrderPoint2DU64& _Right) const
 		{
 			return (_Left.m_nZValue[0] == _Right.m_nZValue[0] && _Left.m_nZValue[1] == _Right.m_nZValue[1]);
+		}
+		bool operator()(const ZOrderPoint2DU64& _Left, const ZOrderPoint2DU64& _Right) const
+		{
+			return LE(_Left, _Right);
 		}
 	};
 

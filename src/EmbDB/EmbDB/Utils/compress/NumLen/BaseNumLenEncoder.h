@@ -7,13 +7,11 @@
 
 namespace embDB
 {
-	template<class _TValue, class _TEncoder, class _TDecoder, class _TCompParams, uint32 _nMaxBitsLens>
+	template<class _TValue,  class _TCompParams, uint32 _nMaxBitsLens>
 	class TBaseNumLenEncoder
 	{
 		public:
 			typedef _TValue TValue;
-			typedef _TEncoder TEncoder;
-			typedef _TDecoder TDecoder;
 			typedef _TCompParams TCompParams;
 
 			TBaseNumLenEncoder(uint32 nPageSize, CommonLib::alloc_t* pAlloc = nullptr, TCompParams *pCompParams = nullptr) : m_nError(100), m_bOnlineCalcSize(true), m_nTypeFreq(ectByte)

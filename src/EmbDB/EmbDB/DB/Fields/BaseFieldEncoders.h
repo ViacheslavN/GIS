@@ -33,19 +33,19 @@ namespace embDB
 	typedef SignedNumLenEncoder<byte, CommonLib::TACEncoder64, CommonLib::TACDecoder64, CompressorParamsBaseImp, 8> SignedNumLenEncoderU8;
 
 
-	typedef TBaseValueDiffEncoder<int64, TUnsignedNumLenEncoder64> TUnsignedDiffEncoder64;
+	typedef TValueDiffEncoder<int64, int64, TUnsignedNumLenEncoder64> TUnsignedDiffEncoder64;
 
-	typedef TBaseValueDiffEncoder<int64, SignedNumLenEncoder64> TSignedDiffEncoder64;
-	typedef TBaseValueDiffEncoder<uint64, SignedNumLenEncoderU64> TSignedDiffEncoderU64;
+	typedef TValueDiffEncoder<int64, int64, SignedNumLenEncoder64> TSignedDiffEncoder64;
+	typedef TValueDiffEncoder<uint64, int64, SignedNumLenEncoderU64> TSignedDiffEncoderU64;
 
-	typedef TBaseValueDiffEncoder<int32, SignedNumLenEncoder32> TSignedDiffEncoder32;
-	typedef TBaseValueDiffEncoder<uint32, SignedNumLenEncoderU32> TSignedDiffEncoderU32;
+	typedef TValueDiffEncoder<int32, int32, SignedNumLenEncoder32> TSignedDiffEncoder32;
+	typedef TValueDiffEncoder<uint32, int32, SignedNumLenEncoderU32> TSignedDiffEncoderU32;
 
-	typedef TBaseValueDiffEncoder<int16, SignedNumLenEncoder16> TSignedDiffEncoder16;
-	typedef TBaseValueDiffEncoder<uint16, SignedNumLenEncoderU16> TSignedDiffEncoderU16;
+	typedef TValueDiffEncoder<int16, int16, SignedNumLenEncoder16> TSignedDiffEncoder16;
+	typedef TValueDiffEncoder<uint16, int16, SignedNumLenEncoderU16> TSignedDiffEncoderU16;
 
-	typedef TBaseValueDiffEncoder<int8, SignedNumLenEncoder8> TSignedDiffEncoder8;
-	typedef TBaseValueDiffEncoder<byte, SignedNumLenEncoderU8> TSignedDiffEncoderU8;
+	typedef TValueDiffEncoder<int8, int8, SignedNumLenEncoder8> TSignedDiffEncoder8;
+	typedef TValueDiffEncoder<byte, int8, SignedNumLenEncoderU8> TSignedDiffEncoderU8;
 	
 	typedef TEmptyValueEncoder<double, CompressorParamsBaseImp> TDoubleEncoder;
 	typedef TEmptyValueEncoder<float, CompressorParamsBaseImp> TFloatEncoder;
