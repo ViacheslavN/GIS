@@ -3,120 +3,39 @@
 #include "BPVector.h"
 #include "../StringVal.h"
 #include "../StringCompressorParams.h"
-#include "BaseLeafNodeCompDiff.h"
+#include "../../../BTreePlus/BaseNodeCompressor.h"
+#include "../../BaseFieldEncoders.h"
 #include "FixedStringACCompressor.h"
 #include "FixedStringZLibCompressor.h"
 #include "DB/GlobalParams.h"
 namespace embDB
 {
-	class TFixedCompress
-	{
-	public:
-
- 
-		typedef  TBPVector<sFixedStringVal> TValueMemSet;
-		TFixedCompress(CommonLib::alloc_t *pAlloc, StringFieldCompressorParams *pParams) : m_nCount(0), m_pAlloc(pAlloc), m_pParams(pParams), m_nStringDataSize(0)
-		{
-
-		}
-		~TFixedCompress()
-		{
-			Free();
-		}
-
-		void init(TValueMemSet* pVecValues)
-		{
-			m_pValueMemset = pVecValues;
-		}
-		void AddSymbol(uint32 nSize,  int nIndex, const sFixedStringVal& value, const TValueMemSet& vecValues)
-		{
-			m_nCount++;
-			m_nStringDataSize += value.m_nLen;
-		}
-		void RemoveSymbol(uint32 nSize,  int nIndex, const sFixedStringVal& value, const TValueMemSet& vecValues)
-		{
-			m_nCount--;
-			m_nStringDataSize -= value.m_nLen;
-		}
-
-
-
-		uint32 GetCompressSize() const
-		{
-			return m_nStringDataSize;
-		}
-
-		bool compress( const TValueMemSet& vecValues, CommonLib::IWriteStream *pStream)
-		{
-			assert(m_nCount == vecValues.size());
-
-			for (uint32 i = 0, sz = vecValues.size(); i < sz; ++i)
-			{
-				pStream->write(vecValues[i].m_pBuf, vecValues[i].m_nLen);
-			}
-			return true;
-		}
-		bool decompress(uint32 nSize, TValueMemSet& vecValues, CommonLib::FxMemoryReadStream *pStream)
-		{
-			m_nStringDataSize = 0;
-			sFixedStringVal sString;
-			for (uint32 i = 0, sz = nSize; i < sz; ++i)
-			{
-				
-
-				sString.m_nLen  = (uint32)strlen((const char*)pStream->buffer() + pStream->pos()) + 1;
-				m_nStringDataSize += sString.m_nLen;
-				sString.m_pBuf = (byte*)m_pAlloc->alloc(sString.m_nLen);
-				memcpy(sString.m_pBuf, pStream->buffer() + pStream->pos(), sString.m_nLen);
-				
-				pStream->seek(sString.m_nLen, CommonLib::soFromCurrent);
-				vecValues.push_back(sString);
-			}
-
-			m_nCount = nSize;
-			return true;
-		}
-		void clear()
-		{
-			m_nCount = 0;
-			m_nStringDataSize = 0;
-
-		}
-
-		uint32 count() const
-		{
-			return m_nCount;
-		}
-		void Free()
-		{
-			for (uint32 i = 0; i < m_pValueMemset->size(); ++i )
-			{
-				sFixedStringVal& val = (*m_pValueMemset)[i];
-				m_pAlloc->free(val.m_pBuf);
-			}
-		}
-	private:
-		uint32 m_nCount;
-		CommonLib::alloc_t* m_pAlloc;
-		StringFieldCompressorParams *m_pParams;
-		uint32 m_nStringDataSize;
-		TValueMemSet* m_pValueMemset;
-	};
-
 
 	template<class _TKey, class _Transaction>
-	class TBPFixedStringLeafCompressor : public TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor, TFixedStringZlibCompressor, StringFieldCompressorParams> 
+	class TBPFixedStringLeafCompressor : public TBaseNodeCompressor<_TKey, CommonLib::CString, _Transaction, TSignedDiffEncoder64, TFixedStringZlibCompressor, StringFieldCompressorParams>
 	{
-		public:
-			typedef TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, OIDCompressor, TFixedStringZlibCompressor, StringFieldCompressorParams>  TBase;
 
-			TBPFixedStringLeafCompressor(uint32 nPageSize, _Transaction *pTran, CommonLib::alloc_t *pAlloc,  typename TBase::TLeafCompressorParams *pParams,
-				typename TBase::TKeyMemSet *pKeyMemset, typename TBase::TValueMemSet *pValueMemSet, CommonLib::alloc_t *pPageAlloc = NULL) : TBase(nPageSize, pTran, pAlloc, pParams, pKeyMemset, pValueMemSet)
+		typedef STLAllocator<CommonLib::CString> TValueAlloc;
+		typedef std::vector<CommonLib::CString, TValueAlloc> TValueMemSet;
+
+
+		public:
+			typedef TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, TSignedDiffEncoder64, TFixedStringZlibCompressor, StringFieldCompressorParams>  TBase;
+
+			TBPFixedStringLeafCompressor(uint32 nPageSize, CommonLib::alloc_t *pAlloc,  typename TBase::TLeafCompressorParams *pParams) : TBase(nPageSize, pAlloc, pParams)
 			{
 
-				this->m_ValueCompressor.init(pValueMemSet, pPageAlloc, pTran->getType());
+				//this->m_ValueCompressor.init(pValueMemSet, pPageAlloc, pTran->getType());
 
 			}
+
+			template<typename _Transactions  >
+			bool  init(TCompressorParams *pParams, _Transactions *pTran)
+			{
+				this->m_ValueCompressor.init(pParams->m_StringCoding; pTran->getType());
+				return true;
+			}
+
 			~TBPFixedStringLeafCompressor()
 			{				
 				this->m_ValueCompressor.Free();

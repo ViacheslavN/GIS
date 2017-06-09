@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_B_PLUS_TREE_V2_FIXED_STRING_LEAF_NODE_MAP_H_
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
-#include "BPTreeLeafNodeMapv2.h"
+#include "../../../BTreePlus/BPTreeLeafNodeMapv3.h"
 #include "../StringVal.h"
 #include "FixedStringLeafCompressor.h"
 #include "utils/alloc/PageAlloc.h"
@@ -11,12 +11,12 @@
 namespace embDB
 {
 	template<typename _TKey, typename _Transaction>
-	class TFixedStringLeafNode : public  BPTreeLeafNodeMapv2<_TKey, sFixedStringVal, _Transaction, 
-		TBPFixedStringLeafCompressor<_TKey, _Transaction> /*BPFixedStringLeafNodeCompressor<_TKey, _Transaction>*/ >
+	class TFixedStringLeafNode : public  BPTreeLeafNodeMapv3<_TKey, CommonLib::CString, _Transaction, 
+		TBPFixedStringLeafCompressor<_TKey, _Transaction> >
 	{
 	public:
 		typedef   BPTreeLeafNodeMapv2<_TKey, sFixedStringVal, _Transaction, 
-			 TBPFixedStringLeafCompressor<_TKey, _Transaction> /*BPFixedStringLeafNodeCompressor<_TKey, _Transaction>*/ > TBase;
+			 TBPFixedStringLeafCompressor<_TKey, _Transaction> > TBase;
 		typedef sFixedStringVal TValue;
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;
@@ -24,7 +24,7 @@ namespace embDB
 		typedef typename TBase::TCompressor TCompressor;
 		typedef typename TBase::TLeafMemSet TLeafMemSet;
 		typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
-		typedef TBPVector<sFixedStringVal>		TValueMemSet;
+		typedef typename TBase::TValueMemSet TValueMemSet;
 
 		TFixedStringLeafNode( CommonLib::alloc_t *pAlloc, bool bMulti, uint32 nPageSize) :
 		TBase(pAlloc, bMulti, nPageSize), m_pPageAlloc(NULL)
@@ -79,7 +79,7 @@ namespace embDB
 		int  SplitIn(TFixedStringLeafNode *pLeftNode, TFixedStringLeafNode *pRightNode, TKey* pSplitKey)
 		{
 
-			int nSplitIndex = this->m_pCompressor->GetSplitIndex();
+			int nSplitIndex = this->m_pCompressor->GetSplitIndex(m_ValueMemSet);
 			
 			
 			return TBase::SplitIn(pLeftNode, pRightNode, pSplitKey, nSplitIndex);
@@ -87,7 +87,7 @@ namespace embDB
 
 		virtual  void PreSave()
 		{
-			this->m_pCompressor->PreSave();
+			this->m_pCompressor->PreSave(m_ValueMemSet);
 		}
 	public:
 		CommonLib::alloc_t *m_pPageAlloc;

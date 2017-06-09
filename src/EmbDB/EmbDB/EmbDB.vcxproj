@@ -590,11 +590,9 @@
     <ClInclude Include="DB\Fields\Statistics\ValueFieldStatisticHolder.h" />
     <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringACCompressor.h" />
     <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringBPLeafNode.h" />
-    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringBPNode.h" />
     <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringBWTCompressor.h" />
     <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringCompressor.h" />
     <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringField.h" />
-    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringLeafCompressor.h" />
     <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringTree.h" />
     <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringZLibCompressor.h" />
     <ClInclude Include="DB\Fields\StringField\LeafStringCompress.h" />

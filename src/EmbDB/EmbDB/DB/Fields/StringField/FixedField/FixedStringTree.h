@@ -1,8 +1,9 @@
 #ifndef _EMBEDDED_DATABASE_B_PLUS_V2_TREE_FIXED_STRING_H_
 #define _EMBEDDED_DATABASE_B_PLUS_V2_TREE_FIXED_STRING_H_
 
-#include "BaseBPMapv2.h"
-#include "FixedStringBPNode.h"
+#include  "../../../BTreePlus/BPMapv3.h"
+#include "../../BaseFieldEncoders.h"
+ 
 #include "utils/alloc/PageAlloc.h"
 
 #include "BaseInnerNodeDIffCompress.h"
@@ -14,25 +15,21 @@
 namespace embDB
 {
  
-
-typedef TBaseValueDiffCompress<int64, int64, SignedDiffNumLenCompressor64i> TInnerLinkCompress;
  	
 template<class _TKey, class _Transaction>
-class TBPFixedString : public TBPMapV2<_TKey, sFixedStringVal, comp<_TKey>, _Transaction, 
-		 embDB::TBPBaseInnerNodeDiffCompressor2<_TKey,  embDB::OIDCompressor, TInnerLinkCompress> ,
+class TBPFixedString : public TBPMapV3<_TKey, CommonLib::CString, comp<_TKey>, _Transaction, 
+		TInnerNodeLinkDiffComp,
 		 TBPFixedStringLeafCompressor<_TKey, _Transaction> , 
-		 BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
-		 TFixedStringLeafNode<_TKey, _Transaction>,
-		 BPFixedStringTreeNodeMapv2<_TKey, _Transaction>	>
+		 BPTreeInnerNodeSetv3<_TKey, _Transaction, TInnerNodeLinkDiffComp >,
+		 TFixedStringLeafNode<_TKey, _Transaction>	>
 {
 public:
 
-	typedef TBPMapV2<_TKey, sFixedStringVal, comp<_TKey>, _Transaction, 
-		embDB::TBPBaseInnerNodeDiffCompressor2<_TKey, embDB::OIDCompressor, TInnerLinkCompress>  ,
-		TBPFixedStringLeafCompressor<_TKey, _Transaction> /*BPFixedStringLeafNodeCompressor<_TKey, _Transaction>*/, 
-		BPTreeInnerNodeSetv2<_TKey, _Transaction, BPInnerNodeSimpleCompressorV2<_TKey> >, 
-		TFixedStringLeafNode<_TKey, _Transaction>,
-		BPFixedStringTreeNodeMapv2<_TKey, _Transaction>	> TBase;
+	typedef TBPMapV3<_TKey, CommonLib::CString, , comp<_TKey>, _Transaction,
+		TInnerNodeLinkDiffComp,
+		TBPFixedStringLeafCompressor<_TKey, _Transaction>, 	
+		BPTreeInnerNodeSetv2<_TKey, _Transaction, TInnerNodeLinkDiffComp >,
+		TFixedStringLeafNode<_TKey, _Transaction> > TBase;
 
 	typedef typename TBase::TKey TKey; 
 	typedef typename TBase::TInnerCompressorParams TInnerCompressorParams;
@@ -51,15 +48,15 @@ public:
 		  this->DeleteNodes();
 	  }
 
-	  virtual TBTreeNode* CreateNode(int64 nAdd, bool bIsLeaf)
+	/*  virtual TBTreeNode* CreateNode(int64 nAdd, bool bIsLeaf)
 	  {
 		  TBTreeNode *pNode = new TBTreeNode(-1, this->m_pAlloc, nAdd, this->m_bMulti, bIsLeaf, this->m_bCheckCRC32, this->m_nNodesPageSize, this->m_InnerCompParams.get(),
 			  this->m_LeafCompParams.get());
 		  pNode->m_LeafNode.SetPageAlloc((CommonLib::alloc_t*)&m_PageAlloc);
 		return pNode;
-	  }
+	  }*/
 
-	  void convert(const CommonLib::CString& sString, sFixedStringVal& sValue)
+	/*  void convert(const CommonLib::CString& sString, sFixedStringVal& sValue)
 	  {
 		  if(this->m_LeafCompParams->GetStringCoding() == embDB::scASCII)
 		  {
@@ -74,7 +71,7 @@ public:
 			  sValue.m_pBuf = (byte*)m_PageAlloc.alloc(sValue.m_nLen);
 			  sString.exportToUTF8((char*)sValue.m_pBuf, sValue.m_nLen);
 		  }
-	  }
+	  }*/
 	  void convert(const sFixedStringVal& sStrVal, CommonLib::CString& sString) 
 	  {
 		  CommonLib::CString sVal(this->m_pAlloc);
@@ -88,7 +85,7 @@ public:
 		  }
 	  }
 		  
-	  bool insert(int64 nValue, const CommonLib::CString& sString, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
+/*	  bool insert(int64 nValue, const CommonLib::CString& sString, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
 	  {
 		  embDB::sFixedStringVal sValue;
 		  convert(sString, sValue);
@@ -107,7 +104,7 @@ public:
 		  embDB::sFixedStringVal sValue;
 		  convert(sString, sValue);
 		  return TBase::insertLast(keyFunctor, sValue, pKey, pFromIterator, pRetIterator);
-	  }
+	  }*/
 	private:
 		CPageAlloc m_PageAlloc;
 };

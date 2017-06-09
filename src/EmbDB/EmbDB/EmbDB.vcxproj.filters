@@ -1476,16 +1476,10 @@
     <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringBPLeafNode.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
-    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringBPNode.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
     <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
     <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringField.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
     <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringTree.h">
@@ -1670,6 +1664,12 @@
     </ClInclude>
     <ClInclude Include="DB\BTreePlus\spatial\SpatialEncoders.h">
       <Filter>DB\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

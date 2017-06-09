@@ -4,17 +4,17 @@
 #include <vector>
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/alloc_t.h"
-#include "BPVector.h"
 #include "CommonLibrary/stream.h"
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CommonLibrary/RangeCoder.h"
-#include "utils/compress/NumLenCompress.h"
 #include "CompressorParams.h"
-#include "utils/compress/SignedNumLenDiffCompressor2.h"
-#include "../StringVal.h"
+#include "CommonLibrary/String.h"
+
 #include "utils/compress/zlib/ZLibCompressor.h"
 #include <algorithm>
 #include "utils/alloc/PageAlloc.h"
+#include "../../BaseFieldEncoders.h"
+
 namespace embDB
 {
 
@@ -22,7 +22,9 @@ namespace embDB
 	class TFixedStringZlibCompressor
 	{
 	public:
-		typedef embDB::TBPVector<sFixedStringVal> TValueMemSet;
+ 
+		typedef STLAllocator<CommonLib::CString> TValueAlloc;
+		typedef std::vector<CommonLib::CString, TValueAlloc> TValueMemSet;
 
 		struct sStringBloc
 		{
@@ -42,9 +44,9 @@ namespace embDB
 		};
 
 		TFixedStringZlibCompressor(CommonLib::alloc_t *pAlloc, uint32 nPageSize,
-			CompressorParamsBaseImp *pParams, uint32 nError = 200): 
-			m_nStrings(0), m_nPageSize(nPageSize), m_lenCompressor(ACCoding, nError, false), /*m_pCurrBloc(0),*/
-				m_pAlloc(pAlloc),m_pValueMemset(0), m_nTranType(eTT_UNDEFINED), m_bMinSplit(true), m_bDirty(false)
+			CompressorParamsBaseImp *pParams): 
+			m_nStrings(0), m_nPageSize(nPageSize), m_lenCompressor(nPageSize, pAlloc, pParams), /*m_pCurrBloc(0),*/
+				m_pAlloc(pAlloc), m_nTranType(eTT_UNDEFINED), m_bMinSplit(true), m_bDirty(false), m_StringCoding(scUTF8)
 		{
 			assert(pParams);
 			m_nMaxRowCoeff = pParams->m_nMaxRowCoeff;
@@ -54,66 +56,68 @@ namespace embDB
 		{
 			 DeleteBlocs();
 		}
-		void init(TValueMemSet* pVecValues, CommonLib::alloc_t *pPageAlloc, int nTranType = eTT_UNDEFINED)
+		void init(eStringCoding stringCoding = scUTF8, int nTranType = eTT_UNDEFINED)
 		{
-			m_pValueMemset = pVecValues;
+			//m_pValueMemset = pVecValues;
 			m_nTranType = nTranType;
-			m_pPageAlloc = pPageAlloc;
+			m_StringCoding = scUTF8;
+			//m_pPageAlloc = pPageAlloc;
 		}
 
 
-		void AddSymbol(uint32 nSize,  int nIndex, const sFixedStringVal& nValue, const TValueMemSet& vecValues)
+		void AddSymbol(uint32 nSize,  int nIndex, const CommonLib::CString& string, const TValueMemSet& vecValues)
 		{
-			AddLen(nSize, nIndex, nValue, vecValues);
-			AddString(nIndex, nValue, vecValues);
+			AddLen(nSize, nIndex, string, vecValues);
+			AddString(nIndex, string, vecValues);
 		}
 
-		void AddLen(uint32 nSize,  int nIndex, const sFixedStringVal& nValue, const TValueMemSet& vecValues)
+		void AddLen(uint32 nSize,  int nIndex, const CommonLib::CString& string, const TValueMemSet& vecValues)
 		{
 			if(nSize > 1)
 			{
 				if(nIndex == 0)
 				{
-					AddDiffSymbol(vecValues[nIndex + 1].m_nLen - nValue.m_nLen); 
+					AddDiffSymbol(vecValues[nIndex + 1].length() - string.length());
 				}
 				else
 				{
-					const sFixedStringVal& nPrev =  vecValues[nIndex - 1];
+					const CommonLib::CString& sPrev =  vecValues[nIndex - 1];
 					if(nIndex == nSize - 1)
 					{
-						AddDiffSymbol(nValue.m_nLen - nPrev.m_nLen); 
+						AddDiffSymbol(string.length() - sPrev.length());
 					}
 					else
 					{
-						const sFixedStringVal& nNext =  vecValues[nIndex + 1];
-						int32 nOldLen = nNext.m_nLen - nPrev.m_nLen;
+						const CommonLib::CString& sNext =  vecValues[nIndex + 1];
+						int32 nOldLen = sNext.length() - sPrev.length();
 
 						RemoveDiffSymbol(nOldLen);
 
 
-						AddDiffSymbol(nValue.m_nLen - nPrev.m_nLen); 
-						AddDiffSymbol(nNext.m_nLen - nValue.m_nLen); 
+						AddDiffSymbol(string.length() - sPrev.length());
+						AddDiffSymbol(sNext.length() - string.length());
 					}
 				}
 			}
 
 		}
 
-		void RemoveSymbol(uint32 nSize,  int nIndex, const sFixedStringVal& nValue, const TValueMemSet& vecValues)
+		void RemoveSymbol(uint32 nSize,  int nIndex, const CommonLib::CString& sString, const TValueMemSet& vecValues)
 		{
 			m_bDirty = true;
-			m_pPageAlloc->free(nValue.m_pBuf);
-			//RemoveLen(nSize, nIndex, nValue, vecValues);
-			//RemoveString(nIndex, nValue);
+
+			//m_pAlloc->free(nValue.m_pBuf);
+			RemoveLen(nSize, nIndex, sString, vecValues);
+			RemoveString(nIndex, sString);
 		}
 
-		void RemoveLen(uint32 nSize,  int nIndex, const sFixedStringVal& nValue, const TValueMemSet& vecValues)
+		void RemoveLen(uint32 nSize,  int nIndex, const CommonLib::CString& string, const TValueMemSet& vecValues)
 		{
 			if(vecValues.size() > 1)
 			{
 				if(nIndex == 0)
 				{
-					RemoveDiffSymbol(vecValues[nIndex + 1].m_nLen - nValue.m_nLen); 
+					RemoveDiffSymbol(vecValues[nIndex + 1].length() - string.length());
 				}
 				else
 				{
@@ -121,20 +125,20 @@ namespace embDB
 					if(nIndex == vecValues.size() - 1)
 					{
 
-						RemoveDiffSymbol(nValue.m_nLen - vecValues[nIndex - 1].m_nLen); 
+						RemoveDiffSymbol(string.length() - vecValues[nIndex - 1].length());
 					}
 					else
 					{
-						const sFixedStringVal& nPrev =  vecValues[nIndex - 1];
+						const CommonLib::CString& sPrev =  vecValues[nIndex - 1];
 
-						const sFixedStringVal& nNext =  vecValues[nIndex + 1];
-						int32 nNewSymbol = nNext.m_nLen - nPrev.m_nLen;
+						const CommonLib::CString& sNext =  vecValues[nIndex + 1];
+						int32 nNewSymbol = sNext.length() - sPrev.length();
 
 						AddDiffSymbol(nNewSymbol);
 
 
-						RemoveDiffSymbol(nValue.m_nLen - nPrev.m_nLen); 
-						RemoveDiffSymbol(nNext.m_nLen - nValue.m_nLen); 
+						RemoveDiffSymbol(string.length() - sPrev.length());
+						RemoveDiffSymbol(sNext.length() - string.length());
 					}
 				}
 			}
@@ -148,7 +152,7 @@ namespace embDB
 			  m_lenCompressor.AddSymbol(nLen);
 		}
 
-		void AddString(uint32 nIndex, const sFixedStringVal& string, const TValueMemSet& vecValues)
+		void AddString(uint32 nIndex, const CommonLib::CString& string, const TValueMemSet& vecValues)
 		{
 
 			sStringBloc *pCurrBloc = NULL;
@@ -188,7 +192,7 @@ namespace embDB
 			else
 			{
 				pCurrBloc->m_nCount += 1;
-				pCurrBloc->m_nRowSize += string.m_nLen;		
+				pCurrBloc->m_nRowSize += string.length();		
 				pCurrBloc->m_bDirty = true;
 				if(pCurrBloc->m_nRowSize > m_nPageSize * m_nMaxRowCoeff)
 				{
@@ -217,7 +221,7 @@ namespace embDB
 		}
 
 
-		void SplitBloc(size_t nBlocIDx, sStringBloc *pBloc, uint32 nIndex, const sFixedStringVal& string, const TValueMemSet& vecValues)
+		void SplitBloc(size_t nBlocIDx, sStringBloc *pBloc, uint32 nIndex, const CommonLib::CString& string, const TValueMemSet& vecValues)
 		{
 			sStringBloc *pNewBloc = new sStringBloc(m_pAlloc);
 			m_vecStringBloc.insert(m_vecStringBloc.begin() + nBlocIDx + 1, pNewBloc);
@@ -227,7 +231,7 @@ namespace embDB
 				CompressBlock(pBloc, vecValues);
 				pNewBloc->m_nBeginIndex = pBloc->m_nBeginIndex + pBloc->m_nCount;
 				pNewBloc->m_nCount += 1;
-				pNewBloc->m_nRowSize += string.m_nLen;		
+				pNewBloc->m_nRowSize += string.length();		
 				
 			}
 			else
@@ -236,7 +240,7 @@ namespace embDB
 				uint32 nRowSize = pBloc->m_nRowSize;
 				for (uint32 nSplitIndex = pBloc->m_nBeginIndex + pBloc->m_nCount - 1; nSplitIndex >= pBloc->m_nBeginIndex; --nSplitIndex )
 				{
-					nRowSize -= vecValues[nSplitIndex].m_nLen;
+					nRowSize -= vecValues[nSplitIndex].length();
 					if(nRowSize < m_nPageSize)
 						break;
 				}
@@ -259,11 +263,41 @@ namespace embDB
 		void CompressBlock(sStringBloc *pBloc, const TValueMemSet& vecValues)
 		{
 			
+			std::vector<byte> vecAlloc;
+
 			if(pBloc->m_nCount != 0 &&  pBloc->m_bDirty)
 			{
 				embDB::CZlibCompressor compressor;
 				pBloc->m_compressBlocStream.seek(0, CommonLib::soFromBegin);
-				compressor.compress(&vecValues[0] + pBloc->m_nBeginIndex,pBloc->m_nCount,  &pBloc->m_compressBlocStream);
+
+				for (size_t i = 0; i < pBloc->m_nCount; ++i)
+				{
+					const CommonLib::CString& string = vecValues[i + pBloc->m_nBeginIndex];
+					size_t nSize = 0;
+
+					if (m_StringCoding == embDB::scASCII)
+					{
+						nSize = string.length() + 1;
+						if (vecAlloc.size() < nSize)
+							vecAlloc.resize(nSize);
+
+						strcpy((char*)&vecAlloc[0], sString.cstr());
+						sValue.m_pBuf[sValue.m_nLen] = 0;
+					}
+					else if (this->m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
+					{
+						nSize = sString.calcUTF8Length() + 1;
+						if (vecAlloc.size() < nSize)
+							vecAlloc.resize(nSize);
+						sString.exportToUTF8((char*)&vecAlloc[0], nSize);
+					}
+
+
+
+					compressor.compress(&vecAlloc[0], nSize, &pBloc->m_compressBlocStream);
+				}
+
+				//compressor.compress(&vecValues[0] + pBloc->m_nBeginIndex,pBloc->m_nCount,  &pBloc->m_compressBlocStream);
 				pBloc->m_nCompressSize = pBloc->m_compressBlocStream.pos();
 			    pBloc->m_bDirty = false;
 			}
@@ -273,7 +307,7 @@ namespace embDB
 
 	 
 
-		void RemoveString(int nIndex, const sFixedStringVal& string)
+		void RemoveString(int nIndex, const CommonLib::CString& string)
 		{
 			sStringBloc *pCurrBloc = NULL;
 			sStringBloc findBlock;
@@ -299,7 +333,7 @@ namespace embDB
 			assert(pCurrBloc->m_nRowSize >= string.m_nLen);
 
 			pCurrBloc->m_bDirty = true;
-			pCurrBloc->m_nRowSize -= string.m_nLen;
+			pCurrBloc->m_nRowSize -= string.length();
 			pCurrBloc->m_nCount--;
 			m_nStrings--;
 
@@ -311,7 +345,7 @@ namespace embDB
 			}
 			 
 
-			m_pPageAlloc->free(string.m_pBuf);
+			//m_pAlloc->free(string.m_pBuf);
 			if(m_vecStringBloc.size() == 1 || pCurrBloc->m_nRowSize > m_nPageSize /2)
 				return;
 		
@@ -389,11 +423,11 @@ namespace embDB
 		}
 		void Free()
 		{
-			for (uint32 i = 0; i < m_pValueMemset->size(); ++i )
+			/*for (uint32 i = 0; i < m_pValueMemset->size(); ++i )
 			{
 				sFixedStringVal& val = (*m_pValueMemset)[i];
-				m_pPageAlloc->free(val.m_pBuf);
-			}
+				m_pAlloc->free(val.m_pBuf);
+			}*/
 		}
 		void clear()
 		{
@@ -416,22 +450,24 @@ namespace embDB
 
 		bool compress(const TValueMemSet& vecValues, CommonLib::IWriteStream* pStream)
 		{			
-
-		 
+					 
 			uint32 nBeginPos = pStream->pos();
 
 			pStream->write(uint16(0));
-			pStream->write(uint16(vecValues[0].m_nLen));
+			pStream->write(uint16(vecValues[0].length()));
 
-			m_lenCompressor.BeginEncode(pStream);
+			if (!m_lenCompressor.BeginEncoding(pStream))
+				return false;
 			
 			for (size_t i = 1; i < vecValues.size(); ++i)
 			{
-				int32 nLen1 = (int32)vecValues[i].m_nLen;
-				int32 nLen2 = (int32)vecValues[i -1].m_nLen;
-				m_lenCompressor.EncodeSymbol(vecValues[i].m_nLen - vecValues[i -1].m_nLen, i -1);	
+				int32 nLen1 = (int32)vecValues[i].length();
+				int32 nLen2 = (int32)vecValues[i -1].length();
+				if (!m_lenCompressor.encodeSymbol(nLen1 - nLen2))
+					return false;
 			}
-			m_lenCompressor.EncodeFinish();
+			if (!m_lenCompressor.FinishEncoding(pStream))
+				return false;
 
 			uint32 nPos = pStream->pos();
 
@@ -477,7 +513,7 @@ namespace embDB
 
 			stringCompressStream.attach(pStream, nCompressStringBlock, pStream->size() - nCompressStringBlock);
 
-			m_lenCompressor.BeginDecode(pStream);
+			m_lenCompressor.BeginDecoding(pStream);
 			uint32 nBeginBloc = 0;
 			CommonLib::CWriteMemoryStream decodeStream;
 			CommonLib::FxMemoryReadStream  stringStream;
@@ -492,7 +528,7 @@ namespace embDB
 			{
 		
 				if(i != 0)
-					m_lenCompressor.DecodeSymbol(nNextLen, i - 1);
+					m_lenCompressor.decodeSymbol(nNextLen);
 				nLen += nNextLen;
 				
 				if(!pCurrBloc || bNewBloc)
@@ -513,9 +549,19 @@ namespace embDB
 					compressor.BeginDecode(pCurrBloc->m_compressBlocStream.buffer(), pCurrBloc->m_compressBlocStream.pos());
 				}
 
-				sFixedStringVal string;
+				CommonLib::CString string;
+
+				if (this->m_LeafCompParams->GetStringCoding() == embDB::scASCII)
+				{
+					sString.loadFromASCII((const char*)sStrVal.m_pBuf);
+				}
+				else if (this->m_LeafCompParams->GetStringCoding() == embDB::scUTF8)
+				{
+					sString.loadFromUTF8((const char*)sStrVal.m_pBuf);
+				}
+
 				string.m_nLen = nLen;
-				string.m_pBuf = (byte*)m_pPageAlloc->alloc(nLen);
+				string.m_pBuf = (byte*)m_pAlloc->alloc(nLen);
 
 				pCurrBloc->m_nRowSize += (nLen - 1);
 			 
@@ -725,16 +771,17 @@ namespace embDB
 		uint32 m_nStrings;
 		uint32 m_nPageSize;
 		bool m_bMinSplit;
-		SignedDiffNumLenCompressor232i   m_lenCompressor;
+		SignedNumLenEncoder32   m_lenCompressor;
 		
 
 		
 
 		std::vector<sStringBloc*> m_vecStringBloc;
 		CommonLib::alloc_t* m_pAlloc;
-		CommonLib::alloc_t* m_pPageAlloc;
-		TValueMemSet* m_pValueMemset;
+		//CommonLib::alloc_t* m_pPageAlloc;
+		//TValueMemSet* m_pValueMemset;
 		int m_nTranType;
+		eStringCoding m_StringCoding;
 		short m_nMaxRowCoeff;
 		bool m_bDirty;
  
