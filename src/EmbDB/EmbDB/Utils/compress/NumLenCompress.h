@@ -4,12 +4,12 @@
 #include "CommonLibrary/FixedBitStream.h"
 #include <map>
 #include "../MathUtils.h"
-#include "BPVector.h"
+#include "../../BPVector.h"
 #include "CommonLibrary/algorithm.h"
 #include "CommonLibrary/RangeCoder.h"
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CompressUtils.h"
-#include "embDB.h"
+#include "../../embDB.h"
 namespace embDB
 {
 	

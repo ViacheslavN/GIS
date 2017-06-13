@@ -4,7 +4,7 @@
 #include "Commonlibrary/alloc_t.h"
 #include "../../../BTreePlus/BPTreeLeafNodeMapv3.h"
 #include "../StringVal.h"
-#include "FixedStringLeafCompressor.h"
+
 #include "utils/alloc/PageAlloc.h"
 #include "FixedStringCompressor.h"
 #include "FixedStringZLibCompressor.h"
@@ -15,14 +15,14 @@ namespace embDB
 		TBPFixedStringLeafCompressor<_TKey, _Transaction> >
 	{
 	public:
-		typedef   BPTreeLeafNodeMapv2<_TKey, sFixedStringVal, _Transaction, 
+		typedef   BPTreeLeafNodeMapv3<_TKey, CommonLib::CString, _Transaction,
 			 TBPFixedStringLeafCompressor<_TKey, _Transaction> > TBase;
 		typedef sFixedStringVal TValue;
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;
 		typedef typename TBase::Transaction Transaction;
 		typedef typename TBase::TCompressor TCompressor;
-		typedef typename TBase::TLeafMemSet TLeafMemSet;
+		typedef typename TBase::TKeyMemSet TKeyMemSet;
 		typedef typename TBase::TLeafCompressorParams TLeafCompressorParams;
 		typedef typename TBase::TValueMemSet TValueMemSet;
 
@@ -33,15 +33,15 @@ namespace embDB
 		}
 		~TFixedStringLeafNode()
 		{
-			if(this->m_pCompressor)
-				this->m_pCompressor->Free();
+		
+			this->m_Compressor.Free();
 		}
 
 
 		virtual bool init(TLeafCompressorParams *pParams , Transaction* pTransaction)
 		{
-			assert(!this->m_pCompressor);
-			this->m_pCompressor = new TCompressor(this->m_nPageSize - 2* sizeof(TLink), pTransaction, m_pAlloc, pParams, &this->m_leafKeyMemSet, &this->m_leafValueMemSet, m_pPageAlloc);
+			 
+			this->m_Compressor.init(pParams, pTransaction);
 			return true;
 		}
 
@@ -52,26 +52,23 @@ namespace embDB
 		void SetPageAlloc(CommonLib::alloc_t *pPageAlloc)
 		{
 			assert(pPageAlloc != NULL);
-			assert(this->m_pCompressor == NULL);
 			m_pPageAlloc = pPageAlloc;
 		}
 		int SplitIn(TFixedStringLeafNode *pNode, TKey* pSplitKey)
 		{
-			TCompressor* pNewNodeComp = pNode->m_pCompressor;
-			
-			//uint32 nFreeSize = m_nPageSize - 2 *sizeof(TLink);
-
-
-
-			int nSplitIndex = this->m_pCompressor->GetSplitIndex();
+			TCompressor& pNewNodeComp = pNode->m_Compressor;
+			int nSplitIndex = this->m_Compressor.GetSplitIndex(pNode->m_ValueMemSet);
 			assert(nSplitIndex != 0);
-			uint32 nSize = this->m_leafValueMemSet.size();
+			uint32 nSize = this->m_ValueMemSet.size();
 			
-			this->SplitInVec(this->m_leafValueMemSet, pNode->m_leafValueMemSet, (TValue*)NULL, nSplitIndex);
-			this->SplitInVec(this->m_leafKeyMemSet, pNode->m_leafKeyMemSet, pSplitKey, nSplitIndex);
-			this->m_pCompressor->SplitIn(nSplitIndex, nSize, pNewNodeComp);
+			this->SplitInVec(this->m_ValueMemSet, pNode->m_ValueMemSet, nSplitIndex, nSize - nSplitIndex);
+			this->SplitInVec(this->m_KeyMemSet, pNode->m_KeyMemSet, nSplitIndex, nSize - nSplitIndex);
+			//this->m_Compressor.SplitIn(nSplitIndex, nSize, pNewNodeComp);
 		
+			*pSplitKey = pNode->m_KeyMemSet[0];
 
+			this->m_Compressor.recalc(m_KeyMemSet, m_ValueMemSet);
+			pNewNodeComp.recalc(pNode->m_KeyMemSet, pNode->m_ValueMemSet);
 			return nSplitIndex;
 		
 		}
@@ -79,15 +76,13 @@ namespace embDB
 		int  SplitIn(TFixedStringLeafNode *pLeftNode, TFixedStringLeafNode *pRightNode, TKey* pSplitKey)
 		{
 
-			int nSplitIndex = this->m_pCompressor->GetSplitIndex(m_ValueMemSet);
-			
-			
+			int nSplitIndex = this->m_Compressor.GetSplitIndex(m_ValueMemSet);			
 			return TBase::SplitIn(pLeftNode, pRightNode, pSplitKey, nSplitIndex);
 		}
 
 		virtual  void PreSave()
 		{
-			this->m_pCompressor->PreSave(m_ValueMemSet);
+			this->m_Compressor.PreSave(m_ValueMemSet);
 		}
 	public:
 		CommonLib::alloc_t *m_pPageAlloc;

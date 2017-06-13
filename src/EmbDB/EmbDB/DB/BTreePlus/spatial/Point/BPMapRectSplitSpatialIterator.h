@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_B_PLUS_TREE_SPATIAL_RECT_SPLIT_ITERATOR_H_
 //#include "PointSpatialBPMaTraits.h"
 #include "CommonLibrary/SpatialKey.h"
-#include "utils/simple_stack.h"
+#include "../../../../utils/simple_stack.h"
 namespace embDB
 {
 	template<class _TCoord, class _TValue, class _TComp, 

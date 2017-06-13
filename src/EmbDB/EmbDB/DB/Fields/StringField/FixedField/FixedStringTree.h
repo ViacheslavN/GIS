@@ -3,32 +3,27 @@
 
 #include  "../../../BTreePlus/BPMapv3.h"
 #include "../../BaseFieldEncoders.h"
- 
 #include "utils/alloc/PageAlloc.h"
 
-#include "BaseInnerNodeDIffCompress.h"
-#include "BaseLeafNodeCompDiff.h"
-#include "BaseInnerNodeDIffCompress2.h"
-#include "BaseValueDiffCompressor.h"
 #include "utils/compress/SignedNumLenDiffCompress.h"
-
+#include "FixedStringCompressor.h"
+#include "FixedStringBPLeafNode.h"
 namespace embDB
 {
  
  	
 template<class _TKey, class _Transaction>
 class TBPFixedString : public TBPMapV3<_TKey, CommonLib::CString, comp<_TKey>, _Transaction, 
-		TInnerNodeLinkDiffComp,
-		 TBPFixedStringLeafCompressor<_TKey, _Transaction> , 
+		TInnerNodeLinkDiffComp,	 TBPFixedStringLeafCompressor<_TKey, _Transaction> , 
 		 BPTreeInnerNodeSetv3<_TKey, _Transaction, TInnerNodeLinkDiffComp >,
 		 TFixedStringLeafNode<_TKey, _Transaction>	>
 {
 public:
 
-	typedef TBPMapV3<_TKey, CommonLib::CString, , comp<_TKey>, _Transaction,
+	typedef TBPMapV3<_TKey, CommonLib::CString, comp<_TKey>, _Transaction,
 		TInnerNodeLinkDiffComp,
 		TBPFixedStringLeafCompressor<_TKey, _Transaction>, 	
-		BPTreeInnerNodeSetv2<_TKey, _Transaction, TInnerNodeLinkDiffComp >,
+		BPTreeInnerNodeSetv3<_TKey, _Transaction, TInnerNodeLinkDiffComp >,
 		TFixedStringLeafNode<_TKey, _Transaction> > TBase;
 
 	typedef typename TBase::TKey TKey; 
@@ -38,14 +33,14 @@ public:
 	typedef typename TBase::iterator iterator; 
 
 	TBPFixedString(int64 nPageBTreeInfo, embDB::IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, uint32 nPageSize, bool bMulti = false, bool bCheckCRC32 = true) :
-	  TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nPageSize, bMulti, bCheckCRC32), m_PageAlloc(pAlloc, 1024*1024, 2)
+	  TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nPageSize, bMulti, bCheckCRC32)/*, m_PageAlloc(pAlloc, 1024*1024, 2)*/
 	  {
 
 	  }
 
 	  ~TBPFixedString()
 	  {
-		  this->DeleteNodes();
+		//  this->DeleteNodes();
 	  }
 
 	/*  virtual TBTreeNode* CreateNode(int64 nAdd, bool bIsLeaf)
@@ -106,7 +101,7 @@ public:
 		  return TBase::insertLast(keyFunctor, sValue, pKey, pFromIterator, pRetIterator);
 	  }*/
 	private:
-		CPageAlloc m_PageAlloc;
+		//CPageAlloc m_PageAlloc;
 };
 
 }

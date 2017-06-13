@@ -24,8 +24,8 @@
 typedef embDB::UnsignedNumLenEncoder<int64, CommonLib::TACEncoder64, CommonLib::TACDecoder64, embDB::CompressorParamsBaseImp, 64> TUnsignedNumLenEncoder64;
 typedef embDB::SignedNumLenEncoder<int64, CommonLib::TACEncoder64, CommonLib::TACDecoder64, embDB::CompressorParamsBaseImp, 64> SignedNumLenEncoder64;
 
-typedef embDB::TBaseValueDiffEncoder<int64, TUnsignedNumLenEncoder64> TUnsignedDiffEncoder;
-typedef embDB::TBaseValueDiffEncoder<int64, SignedNumLenEncoder64> TSignedDiffEncoder;
+typedef embDB::TValueDiffEncoder<int64, int64, TUnsignedNumLenEncoder64> TUnsignedDiffEncoder;
+typedef embDB::TValueDiffEncoder<int64, int64, SignedNumLenEncoder64> TSignedDiffEncoder;
 
 
 typedef embDB::TBaseValueEncoder<int64, TUnsignedNumLenEncoder64> TUnsignedEncoder;

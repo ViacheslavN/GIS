@@ -27,30 +27,31 @@ namespace embDB
 	
 		virtual bool getVal(CommonLib::CVariant* pVal)
 		{
-			const sFixedStringVal& sString= this->m_ParentIt.value();
+			/*const sFixedStringVal& sString= this->m_ParentIt.value();
 			CommonLib::CString sVal;
 
 			((TBTree*)this->m_ParentIt.m_pTree)->convert(this->m_ParentIt.value(), sVal);
-
+			*/
 			
-			pVal->setVal(sVal);
+			pVal->setVal(this->m_ParentIt.value());
 			return true;
 		}
 
 		virtual bool getVal(CommonLib::CString& sValue)
 		{
-			((TBTree*)this->m_ParentIt.m_pTree)->convert(this->m_ParentIt.value(), sValue);
+			//((TBTree*)this->m_ParentIt.m_pTree)->convert(this->m_ParentIt.value(), sValue);
+			sValue = this->m_ParentIt.value();
 			return true;
 		}
 	};
 
 
 	template<class _TBTree>
-	class TFixedStringValueField : public ValueFieldBase<CommonLib::CString, _TBTree, FixedStringFieldIterator<_TBTree>, TStringVarConvertor<_TBTree, sFixedStringVal>  >
+	class TFixedStringValueField : public ValueFieldBase<CommonLib::CString, _TBTree, FixedStringFieldIterator<_TBTree>, TVarConvertor<CommonLib::CString>  >
 	{
 	public:
 		typedef  FixedStringFieldIterator<_TBTree> TFieldIterator;
-		typedef ValueFieldBase<CommonLib::CString,_TBTree, TFieldIterator, TStringVarConvertor<_TBTree, sFixedStringVal> > TBase;
+		typedef ValueFieldBase<CommonLib::CString,_TBTree, TFieldIterator, TVarConvertor<CommonLib::CString> > TBase;
 		typedef typename TBase::TBTree TBTree;
 		typedef typename TBTree::iterator  iterator;
 
@@ -59,7 +60,7 @@ namespace embDB
 
 		TFixedStringValueField( IDBFieldHolder* pFieldHolder, IDBTransaction* pTransactions, CommonLib::alloc_t* pAlloc, uint32 nPageSize, uint32 nBTreeChacheSize) : TBase(pFieldHolder, pTransactions, pAlloc, nPageSize, nBTreeChacheSize) 
 		{
-			this->m_ConvertTypeToVar.Init(&m_tree, m_pAlloc);
+			//this->m_ConvertTypeToVar.Init(&m_tree, m_pAlloc);
 		}
 
 		~TFixedStringValueField()
@@ -73,10 +74,10 @@ namespace embDB
 			if(it.isNull())
 				return false;
 		 
-			CommonLib::CString sVal(this->m_pAlloc);
-			this->m_tree.convert(it.value(), sVal);
+		//	CommonLib::CString sVal(this->m_pAlloc);
+		//	this->m_tree.convert(it.value(), sVal);
 
-			pFieldVal->setVal(sVal);
+			pFieldVal->setVal(it.value());
 			return true;
 		}
 

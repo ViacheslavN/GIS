@@ -20,9 +20,9 @@ namespace embDB
 
 
 		public:
-			typedef TBaseLeafNodeDiffComp<_TKey, sFixedStringVal, _Transaction, TSignedDiffEncoder64, TFixedStringZlibCompressor, StringFieldCompressorParams>  TBase;
+			typedef TBaseNodeCompressor<_TKey, CommonLib::CString, _Transaction, TSignedDiffEncoder64, TFixedStringZlibCompressor, StringFieldCompressorParams>  TBase;
 
-			TBPFixedStringLeafCompressor(uint32 nPageSize, CommonLib::alloc_t *pAlloc,  typename TBase::TLeafCompressorParams *pParams) : TBase(nPageSize, pAlloc, pParams)
+			TBPFixedStringLeafCompressor(uint32 nPageSize, CommonLib::alloc_t *pAlloc,  typename TBase::TCompressorParams *pParams = nullptr) : TBase(nPageSize, pAlloc, pParams)
 			{
 
 				//this->m_ValueCompressor.init(pValueMemSet, pPageAlloc, pTran->getType());
@@ -32,34 +32,34 @@ namespace embDB
 			template<typename _Transactions  >
 			bool  init(TCompressorParams *pParams, _Transactions *pTran)
 			{
-				this->m_ValueCompressor.init(pParams->m_StringCoding; pTran->getType());
+				this->m_ValueEncoder.init(pParams, pTran->getType());
 				return true;
 			}
 
 			~TBPFixedStringLeafCompressor()
 			{				
-				this->m_ValueCompressor.Free();
+				this->m_ValueEncoder.Free();
 			}
 			void Free()
 			{
-				this->m_ValueCompressor.Free();
+				this->m_ValueEncoder.Free();
 			}
 
 			template<typename _Transactions  >
-			static typename TBase::TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
+			static typename TBase::TCompressorParams *LoadCompressorParams(_Transactions *pTran)
 			{
 				return new StringFieldCompressorParams();
 			}
 
 
-			uint32 GetSplitIndex() const
+			uint32 GetSplitIndex(const TValueMemSet& vevStrings) const
 			{
 
-				uint32 nFreePage = this->m_nPageSize - this->m_KeyCompressor.GetCompressSize();
+				uint32 nFreePage = this->m_nPageSize - this->m_KeyEncoder.GetCompressSize();
 
-				return this->m_ValueCompressor.GetSplitIndex(nFreePage);
+				return this->m_ValueEncoder.GetSplitIndex(nFreePage, vevStrings);
 			}
-			void SplitIn(uint32 nBegin, uint32 nEnd, TBPFixedStringLeafCompressor *pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
+			/*void SplitIn(uint32 nBegin, uint32 nEnd, TBPFixedStringLeafCompressor *pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
 			{
 
 				uint32 nSize = nEnd- nBegin;
@@ -71,24 +71,24 @@ namespace embDB
 
 				this->m_ValueCompressor.SplitIn( nBegin,  nEnd, &pCompressor->m_ValueCompressor);
 
-			}
+			}*/
 
-			void PreSave()
+			void PreSave(const TValueMemSet& vecStrings)
 			{
-				this->m_ValueCompressor.PreSave();
+				this->m_ValueEncoder.PreSave(vecStrings);
 			}
 			bool isHalfEmpty() const
 			{
-				uint32 nNoCompSize = this->m_nCount * (sizeof(TKey) + sizeof(uint16));
+				/*uint32 nNoCompSize = this->m_nCount * (sizeof(TKey) + sizeof(uint16));
 				for (uint32 i = 0, sz = this->m_pValueMemSet->size(); i< sz; ++i)
 				{
 
 					nNoCompSize += this->m_pValueMemSet->GetAt(i).m_nLen;
-				}
+				}*/
 				
 
 
-				return nNoCompSize < (this->m_nPageSize - this->headSize())/2;
+				return this->m_ValueEncoder.GetNoComressSize() < (this->m_nPageSize - this->headSize())/2;
 			}
 
 	};

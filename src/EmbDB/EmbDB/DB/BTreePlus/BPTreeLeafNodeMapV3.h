@@ -57,13 +57,13 @@ namespace embDB
 			return nIndex;
 		}
 
-		int SplitIn(BPTreeLeafNodeMapv3 *pNode, TKey* pSplitKey)
+		int SplitIn(BPTreeLeafNodeMapv3 *pNode, TKey* pSplitKey, int nSplitIndex = -1)
 		{
 			TCompressor& pNewNodeComp = pNode->m_Compressor;
 			if (this->m_bMinSplit)
 			{
-
-				int nSplitIndex = this->m_KeyMemSet.size() - 1;
+				if(nSplitIndex == -1)
+					nSplitIndex = this->m_KeyMemSet.size() - 1;
 
 				while (true)
 				{
@@ -91,9 +91,19 @@ namespace embDB
 			}
 			else
 			{
+				if (nSplitIndex != -1)
+				{
+					this->SplitInVec(this->m_KeyMemSet, pNode->m_KeyMemSet, pSplitKey, nSplitIndex, this->m_KeyMemSet.size() - nSplitIndex);
+					this->SplitInVec(this->m_ValueMemSet, pNode->m_ValueMemSet, (TValue*)NULL, nSplitIndex, this->m_ValueMemSet.size() - nSplitIndex);
+				}
+				else
+				{
 
-				int nSplitIndex = this->SplitInVec(this->m_KeyMemSet, pNode->m_KeyMemSet, pSplitKey);
-				this->SplitInVec(this->m_ValueMemSet, pNode->m_ValueMemSet, (TValue*)NULL);
+					nSplitIndex = this->SplitInVec(this->m_KeyMemSet, pNode->m_KeyMemSet, pSplitKey);
+					this->SplitInVec(this->m_ValueMemSet, pNode->m_ValueMemSet, (TValue*)NULL);
+				}
+
+				this->m_Compressor.recalc(m_KeyMemSet, m_ValueMemSet);
 				pNewNodeComp.recalc(pNode->m_KeyMemSet, pNode->m_ValueMemSet);
 				return nSplitIndex;
 			}
@@ -101,7 +111,7 @@ namespace embDB
 
 
 
-		int  SplitIn(BPTreeLeafNodeMapv3 *pLeftNode, BPTreeLeafNodeMapv3 *pRightNode, TKey* pSplitKey)
+		int  SplitIn(BPTreeLeafNodeMapv3 *pLeftNode, BPTreeLeafNodeMapv3 *pRightNode, TKey* pSplitKey, int nSplitIndex = -1)
 		{
 
 			TKeyMemSet& leftNodeMemSet = pLeftNode->m_KeyMemSet;
@@ -113,7 +123,11 @@ namespace embDB
 			TCompressor& pRightNodeComp = pRightNode->m_Compressor;
 
 
-			uint32 nSize = m_bMinSplit? this->m_KeyMemSet.size() - 1 : this->m_KeyMemSet.size() / 2;
+			uint32 nSize = 0;
+			if (nSplitIndex != -1)
+				nSize = nSplitIndex;
+			else
+				nSize = m_bMinSplit? this->m_KeyMemSet.size() - 1 : this->m_KeyMemSet.size() / 2;
 
 			if (pSplitKey)
 				*pSplitKey = this->m_KeyMemSet[nSize];
