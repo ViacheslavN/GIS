@@ -115,6 +115,12 @@ namespace embDB
 			m_nRowSize -= sString.length();
 		}
 
+		void UpdateSymbol(uint32 nIndex, CommonLib::CString& newString, const CommonLib::CString& OldValue, const TValueMemSet& vecValues)
+		{
+			RemoveSymbol(vecValues.size(), nIndex, OldValue, vecValues);
+			AddSymbol(vecValues.size(), nIndex, newString, vecValues);
+		}
+
 		void RemoveLen(uint32 nSize,  int nIndex, const CommonLib::CString& string, const TValueMemSet& vecValues)
 		{
 			if(vecValues.size() > 1)

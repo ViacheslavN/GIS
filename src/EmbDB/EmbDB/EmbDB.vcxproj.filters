@@ -1452,12 +1452,6 @@
     <ClInclude Include="DB\Fields\StringField\LeafStringCompress.h">
       <Filter>DB\Fields\string\StringField</Filter>
     </ClInclude>
-    <ClInclude Include="DB\Fields\StringField\StringBPLeafNode.h">
-      <Filter>DB\Fields\string\StringField</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\Fields\StringField\StringBPNode.h">
-      <Filter>DB\Fields\string\StringField</Filter>
-    </ClInclude>
     <ClInclude Include="DB\Fields\StringField\StringCompressorParams.h">
       <Filter>DB\Fields\string\StringField</Filter>
     </ClInclude>
@@ -1494,16 +1488,10 @@
     <ClInclude Include="StreamPageIngo.h">
       <Filter>DB\Fields</Filter>
     </ClInclude>
-    <ClInclude Include="DB\Fields\blob\BlobBPNode.h">
-      <Filter>DB\Fields\blob</Filter>
-    </ClInclude>
     <ClInclude Include="DB\Fields\blob\BlobCompressorParams.h">
       <Filter>DB\Fields\blob</Filter>
     </ClInclude>
     <ClInclude Include="DB\Fields\blob\BlobField.h">
-      <Filter>DB\Fields\blob</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\Fields\blob\BlobLeafNode.h">
       <Filter>DB\Fields\blob</Filter>
     </ClInclude>
     <ClInclude Include="DB\Fields\blob\BlobLeafNodeCompressor.h">
@@ -1521,13 +1509,7 @@
     <ClInclude Include="DB\Fields\shape\ShapeField.h">
       <Filter>DB\Fields\shape</Filter>
     </ClInclude>
-    <ClInclude Include="DB\Fields\shape\ShapeLeafNodeCompressor.h">
-      <Filter>DB\Fields\shape</Filter>
-    </ClInclude>
     <ClInclude Include="DB\Fields\shape\ShapeTree.h">
-      <Filter>DB\Fields\shape</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\Fields\shape\ShapeValue.h">
       <Filter>DB\Fields\shape</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
@@ -1664,6 +1646,12 @@
     </ClInclude>
     <ClInclude Include="DB\BTreePlus\spatial\SpatialEncoders.h">
       <Filter>DB\Index\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>

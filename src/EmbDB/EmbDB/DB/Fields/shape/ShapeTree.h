@@ -1,15 +1,13 @@
 #ifndef _EMBEDDED_DATABASE_B_PLUS_V2_SHAPE_BLOB_H_
 #define _EMBEDDED_DATABASE_B_PLUS_V2_SHAPE_BLOB_H_
 
-#include "BaseBPMapv2.h"
-#include "../blob/BlobBPNode.h"
-#include "utils/alloc/PageAlloc.h"
 #include "ShapeCompressorParams.h"
 #include "CommonLibrary/GeoShape.h"
 #include "../blob/BlobTree.h"
 namespace embDB
 {
 
+	typedef TBaseNodeCompressor<int64, sBlobVal, IDBTransaction, TSignedDiffEncoder64, BlobCompressor<ShapeFieldCompressorParams>, ShapeFieldCompressorParams> ShapeLeafNodeCompressor;
 
 	template<class _Transaction>
 	class TBPShapeTree : public TBPBlobTree<_Transaction, ShapeFieldCompressorParams> 
@@ -24,23 +22,16 @@ namespace embDB
 		typedef typename TBase::TKey      TKey;
 
 		TBPShapeTree(int64 nPageBTreeInfo, embDB::IDBTransaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, uint32 nNodesPageSize, bool bMulti = false, bool bCheckCRC32 = true) :
-		TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nNodesPageSize, bMulti, bCheckCRC32), m_PageAlloc(pAlloc, 1024*1024, 2)
+		TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nNodesPageSize, bMulti, bCheckCRC32)/*, m_PageAlloc(pAlloc, 1024*1024, 2)*/
 		{
 
 		}
 
 		~TBPShapeTree()
 		{
-			this->DeleteNodes();
+ 
 		}
-
-		virtual TBTreeNode* CreateNode(int64 nAdd, bool bIsLeaf)
-		{
-			TBTreeNode *pNode = new TBTreeNode(-1, this->m_pAlloc, nAdd, this->m_bMulti, bIsLeaf, this->m_bCheckCRC32, this->m_nNodesPageSize,  this->m_InnerCompParams.get(),
-				this->m_LeafCompParams.get());
-			pNode->m_LeafNode.SetPageAlloc(&m_PageAlloc);
-			return pNode;
-		}
+ 
 
 
 		CommonLib::eCompressDataType SpatialDataToCompressData(embDB::eSpatialType spatialType)
@@ -86,14 +77,17 @@ namespace embDB
 			if(stream.size())
 			{
 				sValue.m_nSize = stream.size();
-				sValue.m_pBuf = (byte*)this->m_pAlloc->alloc(stream.size());
-				memcpy(sValue.m_pBuf, stream.buffer(), stream.size());
+				//sValue.m_pBuf = (byte*)this->m_pAlloc->alloc(stream.size());
+				//memcpy(sValue.m_pBuf, stream.buffer(), stream.size());
+				sValue.m_blob.resize(sValue.m_nSize);
+				memcpy(sValue.m_blob.buffer(), stream.buffer(), stream.size());
+			 
 			}
-			else
+		/*	else
 			{
 				sValue.m_nSize = 0;
 				sValue.m_pBuf = NULL;
-			}
+			}*/
 		}
 		void convert(const sBlobVal& blobVal, CommonLib::IGeoShapePtr& shape) 
 		{
@@ -103,9 +97,9 @@ namespace embDB
 			if(!blobVal.m_nSize)
 				return;
 
-			if(blobVal.m_nSize < this->m_LeafCompParams->GetMaxPageBlobSize())
+			/*if(blobVal.m_nSize < this->m_LeafCompParams->GetMaxPageBlobSize())
 			{
-				 stream.attachBuffer(blobVal.m_pBuf, blobVal.m_nSize);
+				
 			}
 			else
 			{
@@ -113,8 +107,8 @@ namespace embDB
 				embDB::ReadStreamPagePtr pReadStream = this->m_LeafCompParams->GetReadStream(this->m_pTransaction, blobVal.m_nPage, blobVal.m_nBeginPos);
 				pReadStream->read(m_CacheBlob.buffer(), blobVal.m_nSize);
 				stream.attachBuffer(m_CacheBlob.buffer(), m_CacheBlob.size());
-			}
-
+			}*/
+			stream.attachBuffer(const_cast<byte*>(blobVal.m_blob.buffer()), blobVal.m_blob.size());
 			CommonLib::CGeoShape::compress_params shp_params;
 			ShapeFieldCompressorParams *pShapeParams = TBase::GetLeafCompressorParams();
 			assert(pShapeParams);
@@ -132,7 +126,7 @@ namespace embDB
 		{
 			sBlobVal sValue;
 			convert(shape, sValue);
-			return TSubBase::insert(nValue, sValue, pFromIterator, pRetItertor);
+			return TSubBase::insert(nValue, sValue/*, pFromIterator, pRetItertor*/);
 
 		}
 		bool update(const TKey& key, const CommonLib::IGeoShapePtr& shape)
@@ -146,11 +140,10 @@ namespace embDB
 		{
 			sBlobVal sValue;
 			convert(shape, sValue);
-			return TSubBase::insertLast(keyFunctor, sValue, pKey, pFromIterator, pRetIterator);
+			return TSubBase::insertLast(keyFunctor, sValue, pKey/*, pFromIterator, pRetIterator*/);
 		}
 
 	private:
-		CPageAlloc m_PageAlloc;
 		CommonLib::CBlob m_CacheBlob; //
 
 	};

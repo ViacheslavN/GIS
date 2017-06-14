@@ -129,10 +129,13 @@ namespace embDB
 
 				return true;
 			}
-			virtual bool updateValue(uint32 nIndex, const TValue& newValue, const TValue& OldValue, const TValueMemSet& vecValues, const TKeyMemSet& vecKeys)
+			virtual bool updateValue(uint32 nIndex, TValue& newValue, const TValue& OldValue, const TValueMemSet& vecValues, const TKeyMemSet& vecKeys)
 			{
-				m_ValueEncoder.RemoveSymbol(m_nCount, nIndex, OldValue, vecValues);
-				m_ValueEncoder.AddSymbol(m_nCount, nIndex, newValue, vecValues);
+				//	m_ValueEncoder.RemoveSymbol(m_nCount, nIndex, OldValue, vecValues);
+				//	m_ValueEncoder.AddSymbol(m_nCount, nIndex, newValue, vecValues);
+
+				m_ValueEncoder.UpdateSymbol(nIndex, newValue, OldValue, vecValues);
+
 				return true;
 			}
 			virtual bool updateKey(uint32 nIndex, const TKey& NewKey, const TKey& OldTKey,  const TKeyMemSet& vecKeys, const TValueMemSet& vecValues)

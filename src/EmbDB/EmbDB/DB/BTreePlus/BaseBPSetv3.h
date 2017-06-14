@@ -509,7 +509,14 @@ namespace embDB
 
 			RemoveFromLeafNode(it.m_pCurNode, it.m_nIndex, it.key());
 		}
-
+		TInnerCompressorParams* GetInnerCompressorParams()
+		{
+			return m_InnerCompParams.get();
+		}
+		TLeafCompressorParams* GetLeafCompressorParams()
+		{
+			return m_LeafCompParams.get();
+		}
 
 	protected:
 		TComp		 m_comp;

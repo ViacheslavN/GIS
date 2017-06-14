@@ -29,6 +29,11 @@ namespace embDB
 		{
 			m_nCount--;
 		}
+
+		void UpdateSymbol(int nIndex, TValue& newValue, const TValue& oldValue, const TValueMemSet& vecValues)
+		{
+			 
+		}
 		
 
 		uint32 GetCompressSize() const

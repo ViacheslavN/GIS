@@ -1,353 +1,245 @@
-#ifndef _EMBEDDED_DATABASE_STRING_LEAF_NODE_COMPRESSOR_H_
-#define _EMBEDDED_DATABASE_STRING_LEAF_NODE_COMPRESSOR_H_
+#pragma once
 
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/blob.h"
 #include "CompressorParams.h"
-#include "BPVectorNoPod.h"
 #include "StringCompressorParams.h"
-#include "StringVal.h"
 #include "utils/streams/ReadStreamPage.h"
 #include "utils/streams/WriteStreamPage.h"
+
+#include "../../BTreePlus/BaseNodeCompressor.h"
+#include "StringVal.h"
+
 namespace embDB
 {
 
 
-	template<class _TKey = int64, 
-	 class _Transaction = IDBTransaction>
 	class BPStringLeafNodeCompressor  
 	{
 	public:
 
-
-		typedef _TKey TKey;
-
-		typedef  TBPVector<TKey> TLeafKeyMemSet;
-		typedef  TBPVector<sStringVal> TLeafValueMemSet;
-
-		typedef StringFieldCompressorParams TLeafCompressorParams;
-		typedef _Transaction Transaction;
+		typedef STLAllocator<sStringVal> TValueAlloc;
+		typedef std::vector<sStringVal, TValueAlloc> TValueMemSet;
 
 
 
-		template<typename _Transactions  >
-		static TLeafCompressorParams *LoadCompressorParams(_Transactions *pTran)
-		{
-			TLeafCompressorParams *pInnerComp = new TLeafCompressorParams();
-			return pInnerComp;
-		}
-
-		BPStringLeafNodeCompressor(uint32 nPageSize, Transaction *pTransaction, CommonLib::alloc_t *pAlloc, 
-			TLeafCompressorParams *pParams,
-			TLeafKeyMemSet *pKeyMemset, TLeafValueMemSet *pValueMemSet) : m_nCount(0), 
-			m_pTransaction(pTransaction),
-			m_pAlloc(pAlloc), m_pLeafCompParams(pParams),		m_nStringDataSize(0), m_pValueMemset(pValueMemSet),
-			m_nPageSize(nPageSize)
-		{
-
-			assert(m_pTransaction);
-			assert(m_pAlloc);
-			assert(m_pLeafCompParams);
-			assert(m_pValueMemset);
 
 
-			m_nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();
-
-		}
+		BPStringLeafNodeCompressor(uint32 nPageSize, CommonLib::alloc_t* pAlloc, StringFieldCompressorParams *pParams) : m_nCount(0),
+			m_nStringDataSize(0),m_nPageSize(nPageSize), m_StringCoding(scUTF8), m_pLeafCompParams(nullptr)
+		{}
 
 
 		virtual ~BPStringLeafNodeCompressor()
+		{}
+
+
+		template<typename _Transactions  >
+		bool  init(StringFieldCompressorParams *pParams, _Transactions *pTran)
 		{
-			Clear();
-			
-		}
-		void Clear()
-		{
-			if(!m_pValueMemset)
-				return;
+			m_pLeafCompParams = pParams;
+			assert(m_pLeafCompParams);
+			m_nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();
+			m_StringCoding = m_pLeafCompParams->GetStringCoding();
 
-			for (uint32 i = 0; i < m_pValueMemset->size(); ++i )
-			{
-				sStringVal& val = (*m_pValueMemset)[i];
-				if(val.m_pBuf)
-					m_pAlloc->free(val.m_pBuf);
-			}
-		}
-		virtual bool Load(TLeafKeyMemSet& keySet, TLeafValueMemSet& valueSet, CommonLib::FxMemoryReadStream& stream)
-		{
-		
-
-			CommonLib::FxMemoryReadStream KeyStream;
-			CommonLib::FxMemoryReadStream ValueStream;
-
-
-			eStringCoding sCode = m_pLeafCompParams->GetStringCoding();
-			uint32 nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();
-
-			m_nStringDataSize = 0;
-			m_nCount = stream.readInt32();
-			if(!m_nCount)
-				return true;
-
-		
-			keySet.reserve(m_nCount);
-			valueSet.reserve(m_nCount);
-
-			uint32 nKeySize =  m_nCount * sizeof(TKey);
- 
-			KeyStream.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
-			ValueStream.attachBuffer(stream.buffer() + stream.pos() + nKeySize, stream.size() -  stream.pos() -  nKeySize);
-
-			TKey nKey;
-
-			for (uint32 nIndex = 0; nIndex < m_nCount; ++nIndex)
-			{
-				KeyStream.read(nKey);
-
-				sStringVal sString;
-				sString.m_bChange = false;
-
-				/*sString.m_nLen  = strlen((const char*)ValueStream.buffer() + ValueStream.pos()) + 1;
-				m_nStringDataSize += sString.m_nLen;
-
-				sString.m_pBuf = (byte*)m_pAlloc->alloc(sString.m_nLen);
-				memcpy(sString.m_pBuf, ValueStream.buffer() + ValueStream.pos(), sString.m_nLen);*/
-
-				sString.m_nLen = ValueStream.readIntu32();
-	 
-				m_nStringDataSize += sizeof(uint32);
-				if(sString.m_nLen < nMaxPageLen)
-				{
-					sString.m_pBuf = (byte*)m_pAlloc->alloc(sString.m_nLen);
-					memcpy(sString.m_pBuf, ValueStream.buffer() + ValueStream.pos(), sString.m_nLen);
-					ValueStream.seek(sString.m_nLen, CommonLib::soFromCurrent);
-
-					m_nStringDataSize += (sizeof(uint32) + sString.m_nLen );
-				}
-				else
-				{
-					sString.m_nPage = ValueStream.readIntu64();
-					sString.m_nPos = ValueStream.readIntu32();
-					m_nStringDataSize += (sizeof(uint32) + sizeof(uint64));
-					 
-				}
-				
-				valueSet.push_back(sString);
-				keySet.push_back(nKey);
-			}
-			assert(KeyStream.pos() < stream.size());
+			m_pTransaction = pTran;
 			return true;
 		}
-		virtual bool Write(TLeafKeyMemSet& keySet, TLeafValueMemSet& valueSet, CommonLib::FxMemoryWriteStream& stream)
+
+		void AddSymbol(uint32 nSize, int nIndex, const sStringVal& string, const TValueMemSet& vecValues)
 		{
-			uint32 nSize = (uint32)keySet.size();
-			assert(m_nCount == nSize);
-			stream.write(nSize);
-			if(!nSize)
-				return true;
+			m_nCount++;
+			if (string.m_nLen < m_pLeafCompParams->GetMaxPageStringSize())
+			{
+				m_nStringDataSize += (sizeof(uint32) + string.m_nLen);
+			}
+			else
+			{
+				m_nStringDataSize += (sizeof(uint32) + sizeof(uint64));
+			}
+		}
+		void RemoveSymbol(uint32 nSize, int nIndex, const sStringVal& string, const TValueMemSet& vecValues)
+		{
+			m_nCount--;
+			if (string.m_nLen < m_pLeafCompParams->GetMaxPageStringSize())
+			{
+				m_nStringDataSize -= (sizeof(uint32) + string.m_nLen);
+			}
+			else
+			{
+				m_nStringDataSize -= (sizeof(uint32) + sizeof(uint64));
+			}
+		}
+		void UpdateSymbol(int nIndex, sStringVal& sNewStr, const sStringVal& sOldStr, const TValueMemSet& vecValues)
+		{
 
-			CommonLib::FxMemoryWriteStream KeyStream;
-			CommonLib::FxMemoryWriteStream ValueStream;
+			int oldSize = sOldStr.m_nLen;
+			sNewStr.m_nOldLen = oldSize;
+			sNewStr.m_bChange = true;
+			m_nStringDataSize += (sNewStr.m_nLen - oldSize);
+			return;
+		}
 
-		 
-			uint32 nKeySize =  m_nCount * sizeof(TKey);
-	
+		uint32 GetCompressSize() const
+		{
+			return m_nCount * m_nStringDataSize;
+		}
 
-			KeyStream.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
-			ValueStream.attachBuffer(stream.buffer() + stream.pos() + nKeySize, m_nStringDataSize);
-			stream.seek(stream.pos() + nKeySize + m_nStringDataSize, CommonLib::soFromBegin);		
+		uint32 GetLenString(const CommonLib::CString& string)
+		{
+	 		if (m_StringCoding == scASCII)
+				return string.length();
+			else
+				return string.calcUTF8Length();
+		}
 
+		void WriteString(const sStringVal& string, CommonLib::CBlob bufForUff8, CommonLib::IWriteStream *pStream)
+		{
+			if (m_StringCoding == embDB::scASCII)
+			{
+				//strcpy((char*)&bufForUff8[0], string.cstr());
+				//bufForUff8[string.length()] = 0;
+
+				pStream->write(string.m_string.cstr());
+			}
+			else if (m_StringCoding == embDB::scUTF8)
+			{
+				if (bufForUff8.size() < string.m_nLen)
+					bufForUff8.resize(string.m_nLen);
+
+				string.m_string.exportToUTF8((char*)&bufForUff8[0], string.m_nLen);
+				pStream->write(bufForUff8.buffer(), string.m_nLen);
+			}
+
+		}
+
+
+		void ReadString(sStringVal& string, CommonLib::CBlob bufForUff8, CommonLib::IReadStream *pStream)
+		{
+			if (string.m_nLen == 0)
+				return;
+
+			if (bufForUff8.size() < string.m_nLen)
+				bufForUff8.resize(string.m_nLen);
+			pStream->read(bufForUff8.buffer(), string.m_nLen);
+
+			if (m_StringCoding == embDB::scASCII)
+				string.m_string.loadFromASCII((const char*)bufForUff8.buffer(), string.m_nLen);
+			else if (m_StringCoding == embDB::scUTF8)
+				string.m_string.loadFromUTF8((char*)&bufForUff8[0]);
+		}
+
+		bool encode(const TValueMemSet& vecValues, CommonLib::IWriteStream *pStream)
+		{
+			assert(m_nCount == vecValues.size());
 			uint32 nMaxPageLen = m_pLeafCompParams->GetMaxPageStringSize();
 
 
 			CommonLib::CBlob bufForUff8;
-		 	for (uint32 i = 0, sz = keySet.size(); i < sz; ++i )
+
+			for (uint32 i = 0, sz = vecValues.size(); i < sz; ++i)
 			{
-				KeyStream.write(keySet[i]);
+				const sStringVal& string = vecValues[i];
+				int64 nPage = string.m_nPage;
+				int32 nPos = string.m_nPos;
 
-				sStringVal& sString = valueSet[i];
-
-
-				ValueStream.write(sString.m_nLen);
-				if(sString.m_nLen < nMaxPageLen)
+				pStream->write(string.m_nLen);
+				if (string.m_nLen < nMaxPageLen)
 				{
-					
-					ValueStream.write(sString.m_pBuf, sString.m_nLen);
+					WriteString(string, bufForUff8, pStream);
 				}
 				else
 				{
-				
-					if(sString.m_bChange || sString.m_nPage == -1)
+
+					if (string.m_bChange || nPage == -1)
 					{
 						WriteStreamPagePtr pWriteStream;
-						if(sString.m_nOldLen >= sString.m_nLen && sString.m_nPage != -1)
-							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction, sString.m_nPage, sString.m_nPos);
+						if (string.m_nOldLen >= string.m_nLen && nPage != -1)
+							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction.get(), nPage, nPos);
 						else
 						{
-							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction);
-							sString.m_nPage = -1;
-						}
-						 
-						if(sString.m_nPage == -1)
-						{
-							sString.m_nPage = pWriteStream->GetPage();
-							sString.m_nPos = pWriteStream->GetPos();
+							pWriteStream = m_pLeafCompParams->GetWriteStream(m_pTransaction.get());
+							nPage = -1;
 						}
 
-						pWriteStream->write(sString.m_pBuf, sString.m_nLen);
+						if (nPage == -1)
+						{
+							nPage = pWriteStream->GetPage();
+							nPos = pWriteStream->GetPos();
+						}
+						WriteString(string, bufForUff8, pWriteStream.get());
 					}
 
-					ValueStream.write(sString.m_nPage);
-					ValueStream.write((uint32)sString.m_nPos);
+					pStream->write(nPage);
+					pStream->write(nPos);
 				}
 
-				
+
 
 			}
 			return true;
 		}
-
-		virtual bool insert(int nIndex, TKey key, /*const CommonLib::CString&*/ const sStringVal& sStr)
+		bool decode(uint32 nSize, TValueMemSet& vecValues, CommonLib::IReadStream *pStream)
 		{
-			m_nCount++;
-			m_nStringDataSize += GetStingSize(sStr);
-				
-			return true;
-		}
-		virtual bool add(const TLeafKeyMemSet& keySet, const TLeafValueMemSet& valuekSet)
-		{
-			for (uint32 i = 0, sz = keySet.size(); i < sz; 	++i)
+			CommonLib::CBlob bufForUff8;
+			for (uint32 i = 0, sz = nSize; i < sz; ++i)
 			{
-				insert(i, keySet[i], valuekSet[i]);
+				sStringVal string;
+				string.m_bChange = false;
+				string.m_nLen = pStream->readIntu32();
+
+			
+				if (string.m_nLen < m_pLeafCompParams->GetMaxPageStringSize())
+				{
+			 		m_nStringDataSize += (sizeof(uint32) + string.m_nLen);
+					ReadString(string, bufForUff8, pStream);
+				}
+				else
+				{
+					string.m_nPage = pStream->readIntu64();
+					string.m_nPos = pStream->readIntu32();
+					m_nStringDataSize += (sizeof(uint32) + sizeof(uint64));
+
+
+					embDB::ReadStreamPagePtr pReadStream = m_pLeafCompParams->GetReadStream(m_pTransaction.get(), string.m_nPage, string.m_nPos);
+					ReadString(string, bufForUff8, pReadStream.get());
+
+				}
+
+				vecValues.push_back(string);
 			}
 
+			m_nCount = nSize;
 			return true;
-		}
-		virtual bool recalc(const TLeafKeyMemSet& keySet, const TLeafValueMemSet& valueSet)
-		{
-
-		
-			m_nCount = 0;
-			m_nStringDataSize = 0;
-			for (uint32 i = 0, sz = keySet.size(); i < sz; 	++i)
-			{
-				insert(i, keySet[i], valueSet[i]);
-			}
-		
-
-			return true;
-		}
-		virtual bool remove(int nIndex, TKey key, const sStringVal& sStr)
-		{
-			m_nCount--;
-			m_nStringDataSize -=GetStingSize(sStr);
-			return true;
-		}
-		virtual bool update(int nIndex, TKey key, sStringVal& sStr)
-		{
-			assert(m_pValueMemset);
-			int oldSize = GetStingSize((*m_pValueMemset)[nIndex]);
-			int newSize = GetStingSize(sStr); 
-			sStr.m_nOldLen = oldSize;
-			sStr.m_bChange = true;
-			m_nStringDataSize += (newSize - oldSize);
-			return true;
-		}
-		virtual uint32 size() const
-		{
-			return (sizeof(TKey) *  m_nCount )  + sizeof(uint32) + m_nStringDataSize;
-		}
-		virtual bool isNeedSplit() const
-		{
-			return m_nPageSize < size();
-		}
-		virtual uint32 count() const
-		{
-			return m_nCount;
-		}
-		uint32 headSize() const
-		{
-			return  sizeof(uint32);
-		}
-		uint32 rowSize() const
-		{
-			return (sizeof(TKey) *  m_nCount ) + m_nStringDataSize;
 		}
 		void clear()
 		{
 			m_nCount = 0;
+			m_nStringDataSize = 0;
 		}
-		uint32 tupleSize() const
+
+		uint32 count() const
 		{
-			return  (m_nMaxPageLen  + sizeof(uint32) + sizeof(TKey));
-		}
-		void SplitIn(uint32 nBegin, uint32 nEnd, BPStringLeafNodeCompressor *pCompressor, bool bRecalcSrc = true, bool bRecalcDst = true)
-		{
-			uint32 nSplitStringDataSize = 0;
-			for (uint32 i  = nBegin; i < nEnd; ++i)
-			{
-				nSplitStringDataSize += GetStingSize((*m_pValueMemset)[i]);
-			}
-			
-
-
-			uint32 nCount = nEnd - nBegin;
-
-
-			pCompressor->m_nCount = m_nCount - nCount;
-			pCompressor->m_nStringDataSize = m_nStringDataSize - nSplitStringDataSize;
-
-			m_nCount = nCount;
-			m_nStringDataSize = nSplitStringDataSize; 
-
+			return m_nCount;
 		}
 
-		bool IsHaveUnion(BPStringLeafNodeCompressor *pCompressor) const
-		{
+		
 
-			return (rowSize() + pCompressor->rowSize()) < (m_nPageSize - headSize());
-
-
-		}
-		bool IsHaveAlignment(BPStringLeafNodeCompressor *pCompressor) const
-		{
-			 
-			return false;
-		}
-		bool isHalfEmpty() const
-		{ 
-			return rowSize()  < (m_nPageSize - headSize())/2;
-		}
-	private:
-		int GetStingSize(const sStringVal& sStr) const 
-		{
-			
-			uint32 nSize = sizeof(uint32);
-			if(sStr.m_nLen < m_nMaxPageLen)
-			{
-				nSize += (sStr.m_nLen);
-			}
-			else
-			{
-				nSize += sizeof(uint32);
-				nSize += sizeof(uint64);
-			}
-			return nSize;
-
-		}
-	
 	private:
 
 		uint32 m_nStringDataSize;
 		uint32 m_nCount;
 		uint32 m_nMaxPageLen;
- 
-		CommonLib::alloc_t* m_pAlloc;
-		TLeafCompressorParams *m_pLeafCompParams;
-		TLeafValueMemSet *m_pValueMemset;
-		Transaction		*m_pTransaction;
+		eStringCoding m_StringCoding;
+ 		CommonLib::alloc_t* m_pAlloc;
 		uint32 m_nPageSize;
+		StringFieldCompressorParams *m_pLeafCompParams;
+		IDBTransactionPtr m_pTransaction;
 	};
+
+
+	typedef TBaseNodeCompressor<int64, sStringVal, IDBTransaction, TSignedDiffEncoder64, BPStringLeafNodeCompressor, StringFieldCompressorParams> TBPStringLeafCompressor;
+
+	
 }
 
-#endif

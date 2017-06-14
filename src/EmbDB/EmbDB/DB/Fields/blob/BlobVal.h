@@ -11,12 +11,12 @@ namespace embDB
 	struct sBlobVal  
 	{
 		uint32 m_nSize;
-		mutable uint32 m_nBeginPos;
 		uint32 m_nOldSize;
-		mutable int64 m_nPage;
-		byte* m_pBuf;
+		uint32 m_nBeginPos;
+		int64 m_nPage;
+		CommonLib::CBlob m_blob;
 		bool m_bChange;
-		sBlobVal() : m_nSize(0), m_nBeginPos(0), m_nPage(-1), m_pBuf(0), m_bChange(false), m_nOldSize(0)
+		sBlobVal() : m_nSize(0), m_nBeginPos(0), m_nPage(-1), m_bChange(false), m_nOldSize(0)
 		{}
 
 

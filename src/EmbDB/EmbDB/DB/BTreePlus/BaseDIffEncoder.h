@@ -36,7 +36,7 @@ namespace embDB
 		virtual uint32 GetValueSize() const = 0;
 		
 
-		void AddSymbol(uint32 nSize, int nIndex, TValue nValue, const TValueMemSet& vecValues)
+		void AddSymbol(uint32 nSize, int nIndex, const TValue& nValue, const TValueMemSet& vecValues)
 		{
 			if (nSize > 1)
 			{
@@ -70,7 +70,7 @@ namespace embDB
 		{
 			m_encoder.AddSymbol(nValue);
 		}
-		void RemoveSymbol(uint32 nSize, int nIndex, TValue nValue, const TValueMemSet& vecValues)
+		void RemoveSymbol(uint32 nSize, int nIndex, const TValue& nValue, const TValueMemSet& vecValues)
 		{
 			if (vecValues.size() > 1)
 			{
@@ -103,6 +103,12 @@ namespace embDB
 		void RemoveDiffSymbol(TSignValue nValue)
 		{
 			m_encoder.RemoveSymbol(nValue);
+		}
+
+		void UpdateSymbol(uint32 nIndex, TValue& newValue, const TValue& OldValue, const TValueMemSet& vecValues)
+		{
+			RemoveSymbol(vecValues.size(), nIndex, OldValue, vecValues);
+			AddSymbol(vecValues.size(), nIndex, newValue, vecValues);
 		}
 
 		uint32 GetCompressSize() const

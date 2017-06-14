@@ -573,18 +573,14 @@
     <ClInclude Include="DB\DBStateManager.h" />
     <ClInclude Include="DB\DBTranManager.h" />
     <ClInclude Include="DB\Fields\BaseFieldEncoders.h" />
-    <ClInclude Include="DB\Fields\blob\BlobBPNode.h" />
     <ClInclude Include="DB\Fields\blob\BlobCompressorParams.h" />
     <ClInclude Include="DB\Fields\blob\BlobField.h" />
-    <ClInclude Include="DB\Fields\blob\BlobLeafNode.h" />
     <ClInclude Include="DB\Fields\blob\BlobLeafNodeCompressor.h" />
     <ClInclude Include="DB\Fields\blob\BlobTree.h" />
     <ClInclude Include="DB\Fields\blob\BlobVal.h" />
     <ClInclude Include="DB\Fields\shape\ShapeCompressorParams.h" />
     <ClInclude Include="DB\Fields\shape\ShapeField.h" />
-    <ClInclude Include="DB\Fields\shape\ShapeLeafNodeCompressor.h" />
     <ClInclude Include="DB\Fields\shape\ShapeTree.h" />
-    <ClInclude Include="DB\Fields\shape\ShapeValue.h" />
     <ClInclude Include="DB\Fields\Statistics\ValueFieldFullStatistic.h" />
     <ClInclude Include="DB\Fields\Statistics\ValueFieldStatistic.h" />
     <ClInclude Include="DB\Fields\Statistics\ValueFieldStatisticHolder.h" />
@@ -596,8 +592,6 @@
     <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringTree.h" />
     <ClInclude Include="DB\Fields\StringField\FixedField\FixedStringZLibCompressor.h" />
     <ClInclude Include="DB\Fields\StringField\LeafStringCompress.h" />
-    <ClInclude Include="DB\Fields\StringField\StringBPLeafNode.h" />
-    <ClInclude Include="DB\Fields\StringField\StringBPNode.h" />
     <ClInclude Include="DB\Fields\StringField\StringCompressorParams.h" />
     <ClInclude Include="DB\Fields\StringField\StringField.h" />
     <ClInclude Include="DB\Fields\StringField\StringTree.h" />

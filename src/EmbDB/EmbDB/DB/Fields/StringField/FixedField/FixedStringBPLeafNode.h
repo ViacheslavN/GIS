@@ -3,7 +3,7 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "../../../BTreePlus/BPTreeLeafNodeMapv3.h"
-#include "../StringVal.h"
+ 
 
 #include "utils/alloc/PageAlloc.h"
 #include "FixedStringCompressor.h"
@@ -17,7 +17,7 @@ namespace embDB
 	public:
 		typedef   BPTreeLeafNodeMapv3<_TKey, CommonLib::CString, _Transaction,
 			 TBPFixedStringLeafCompressor<_TKey, _Transaction> > TBase;
-		typedef sFixedStringVal TValue;
+
 		typedef typename TBase::TLink TLink;
 		typedef typename TBase::TKey TKey;
 		typedef typename TBase::Transaction Transaction;
