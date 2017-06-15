@@ -8,12 +8,11 @@
 namespace embDB
 {
 
-	template<class _TKey, class _TValue, class _Transaction = IDBTransaction, class _TKeyEncoder = TEmptyValueEncoder<_TKey>, class _TCompressorParams = CompressorParamsBaseImp>
-			class TBaseLeafNodeSetCompressor
+		template<class _TKey,class _Transaction = IDBTransaction, class _TKeyEncoder = TEmptyValueEncoder<_TKey>, class _TCompressorParams = CompressorParamsBaseImp>
+		class TBaseLeafNodeSetCompressor
 		{
 		public:
 			typedef _TKey TKey;
-			typedef _TValue TValue;
 			typedef _TKeyEncoder TKeyEncoder;
 			typedef _Transaction Transaction;
 
@@ -39,7 +38,7 @@ namespace embDB
 				return true;
 			}
 
-			virtual ~TBaseNodeCompressor() {}
+			virtual ~TBaseLeafNodeSetCompressor() {}
 			virtual bool Load(TKeyMemSet& vecKeys,  CommonLib::FxMemoryReadStream& stream)
 			{
 
@@ -57,7 +56,7 @@ namespace embDB
 				m_KeyEncoder.decode(m_nCount, vecKeys, &KeyStream);
 				return true;
 			}
-			virtual bool Write(TKeyMemSet& vecKeys, TValueMemSet& vecValues, CommonLib::FxMemoryWriteStream& stream)
+			virtual bool Write(TKeyMemSet& vecKeys,   CommonLib::FxMemoryWriteStream& stream)
 			{
 				uint32 nSize = (uint32)vecKeys.size();
 				assert(m_nCount == nSize);
@@ -65,14 +64,11 @@ namespace embDB
 				if (!nSize)
 					return true;
 
-				CommonLib::FxMemoryWriteStream ValueStream;
+	 
 				uint32 nKeySize = m_KeyEncoder.GetCompressSize();
 
 				stream.write(nKeySize);
-
-				KeyStream.attachBuffer(stream.buffer() + stream.pos(), nKeySize);
-				stream.seek(stream.pos() + nKeySize, CommonLib::soFromBegin);
-				return m_KeyEncoder.encode(vecKeys, &KeyStream);;
+ 				return m_KeyEncoder.encode(vecKeys, &stream);
 			}
 			virtual bool insert(int nIndex, const TKey& key,const TKeyMemSet& vecKeys)
 			{
@@ -135,11 +131,11 @@ namespace embDB
 			}
 			uint32 rowSize() const
 			{
-				return  m_ValueEncoder.GetCompressSize() + m_KeyEncoder.GetCompressSize();
+				return   m_KeyEncoder.GetCompressSize();
 			}
 			uint32 tupleSize() const
 			{
-				return  (sizeof(TKey) + sizeof(TValue));
+				return  sizeof(TKey);
 			}
 
 
@@ -156,14 +152,14 @@ namespace embDB
 			}
 
 
-			bool IsHaveUnion(TBaseNodeCompressor& pCompressor) const
+			bool IsHaveUnion(TBaseLeafNodeSetCompressor& pCompressor) const
 			{
 				if ((m_nCount + pCompressor.m_nCount) > m_nPageSize * 8) //max bits for elem
 					return false;
 
 				return (rowSize() + pCompressor.rowSize()) < (m_nPageSize - headSize());
 			}
-			bool IsHaveAlignment(TBaseNodeCompressor& pCompressor) const
+			bool IsHaveAlignment(TBaseLeafNodeSetCompressor& pCompressor) const
 			{
 				uint32 nNoCompSize = m_nCount * sizeof(TKey);
 				return nNoCompSize < (m_nPageSize - headSize());

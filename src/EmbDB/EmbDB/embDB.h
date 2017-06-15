@@ -161,7 +161,11 @@ namespace embDB
 		eTMMultiTransactions
 	};
 
-	
+	enum DBTranlogMode
+	{
+		eTranExclusiveLog,
+		eWAL
+	};
 
 	enum EncoderType
 	{

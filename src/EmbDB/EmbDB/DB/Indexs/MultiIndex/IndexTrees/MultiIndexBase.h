@@ -17,6 +17,14 @@ public:
 
 	TKey m_key;
 	int64  m_nRowID;
+
+	IndexTuple& operator- (const IndexTuple& index)
+	{
+		m_key -= index.m_key;
+		m_nRowID -= index.m_nRowID;
+		return *this;
+	}
+
 };
 
 template <class _TKey>
@@ -37,6 +45,11 @@ class MultiIndexBaseComp
 	{
 		return (_Left. m_key  == _Right. m_key &&  _Left. m_nRowID  == _Right. m_nRowID);
 	}
+
+	bool operator() (const TIndex& _Left, const TIndex& _Right) const
+	{
+		return LE(_Left, _Right);
+	}
 };
 
 template <class _TKey>
@@ -54,6 +67,10 @@ public:
 	bool EQ(const TIndex& _Left, const TIndex& _Right) const
 	{
 		return _Left. m_key  == _Right. m_key ;
+	}
+	bool operator() (const TIndex& _Left, const TIndex& _Right) const
+	{
+		return LE(_Left, _Right);
 	}
 };
 

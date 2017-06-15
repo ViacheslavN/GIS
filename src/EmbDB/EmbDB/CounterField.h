@@ -1,10 +1,9 @@
 #ifndef _EMBEDDED_DATABASE_COUNTER_FIELD_H_
 #define _EMBEDDED_DATABASE_COUNTER_FIELD_H_
-#include "BaseBPMapv2.h"
 #include "embDBInternal.h"
 #include "DBFieldInfo.h"
-#include "Index.h"
 #include "DB/Fields/ValueField.h"
+
 namespace embDB
 {
 

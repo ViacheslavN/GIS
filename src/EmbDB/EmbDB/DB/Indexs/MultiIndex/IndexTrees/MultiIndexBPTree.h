@@ -1,12 +1,16 @@
 #ifndef _EMBEDDED_DATABASE_B_MULTI_INDEX_BP_TREE_H_
 #define _EMBEDDED_DATABASE_B_MULTI_INDEX_BP_TREE_H_
-#include "BaseBPSetv2.h"
+#include "../../../BTreePlus/BPSetv3.h"
 #include "MultiIndexBase.h"
-#include "BPMultiInnerIndexNodeCompressor.h"
-#include "BPMultiIndexLeafNodeCompressor.h"
+//#include "BPMultiInnerIndexNodeCompressor.h"
+//#include "BPMultiIndexLeafNodeCompressor.h"
 #include "../MultiIndex.h"
-#include "utils/compress/UnsignedNumLenDiffCompressor2.h"
+ 
 #include "MultiKeyCompressor.h"
+#include "../../../Fields/BaseFieldEncoders.h"
+#include "../../../BTreePlus/BaseDIffEncoder.h"
+#include "../../../BTreePlus/BaseLeafNodeSetCompressor.h"
+#include "EmptyMultiKeyCompress.h"
 namespace embDB
 {
 	template<class TIterator>
@@ -75,7 +79,7 @@ namespace embDB
 			pIndexKey->getVal(val);*/
 			FType val = pValue->Get<FType>();
 			TIndexTuple index(val, nOID);
-			bool bRet =  this->m_tree.insert(index, pFromIterator, pRetIter ? &RetIterator : NULL);
+			bool bRet =  this->m_tree.insert(index/*, pFromIterator, pRetIter ? &RetIterator : NULL*/);
 
 
 			if(pRetIter)
@@ -202,15 +206,16 @@ namespace embDB
 	public:
 
 		typedef _FType FType;
+		typedef IndexTuple<FType> TIndexTuple;
 		typedef _TMultiKeyCompressor TMultiKeyCompressor;
-		typedef embDB::BPMultiIndexInnerNodeCompressor<FType, embDB::IDBTransaction, TMultiKeyCompressor> TInnerCompressor;
-		typedef embDB::BPLeafNodeMultiIndexCompressor<FType, embDB::IDBTransaction, TMultiKeyCompressor>    TLeafCompressor;
- 		typedef IndexTuple<FType> TIndexTuple;
+		typedef TBaseNodeCompressor<TIndexTuple, int64, embDB::IDBTransaction, TMultiKeyCompressor, TSignedDiffEncoder64> TInnerCompressor;
+		typedef TBaseLeafNodeSetCompressor<TIndexTuple, embDB::IDBTransaction, TMultiKeyCompressor>    TLeafCompressor;
+ 	
 
 		typedef _TBaseComp  TBaseComp;
 		typedef _TKeyComp  TKeyComp;
 
-		typedef embDB::TBPSetV2<TIndexTuple, TBaseComp, 
+		typedef embDB::TBPSetV3<TIndexTuple, TBaseComp, 
 			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;
@@ -251,17 +256,17 @@ namespace embDB
 
 	};
 
-	typedef embDB::TMultiKeyCompressor<int64, int64, embDB::SignedDiffNumLenCompressor264i> TMultiKeyCompressor64;
-	typedef embDB::TMultiKeyCompressor<uint64, uint64, embDB::UnsignedDiffNumLenCompressor264u> TMultiKeyCompressor64u;
+	typedef TMultiKeyCompressor<int64,  TUnsignedNumLenEncoder64> TMultiKeyCompressor64;
+	typedef TMultiKeyCompressor<uint64,  TUnsignedNumLenEncoderU64> TMultiKeyCompressor64u;
 
-	typedef embDB::TMultiKeyCompressor<int32, int32, embDB::SignedDiffNumLenCompressor232i> TMultiKeyCompressor32;
-	typedef embDB::TMultiKeyCompressor<uint32, uint32, embDB::UnsignedDiffNumLenCompressor232u> TMultiKeyCompressor32u;
+	typedef TMultiKeyCompressor<int32, TUnsignedNumLenEncoder32> TMultiKeyCompressor32;
+	typedef TMultiKeyCompressor<uint32, TUnsignedNumLenEncoderU32> TMultiKeyCompressor32u;
 
-	typedef embDB::TMultiKeyCompressor<int16, int16, embDB::SignedDiffNumLenCompressor216i> TMultiKeyCompressor16;
-	typedef embDB::TMultiKeyCompressor<uint16, uint16, embDB::UnsignedDiffNumLenCompressor216u> TMultiKeyCompressor16u;
+	typedef TMultiKeyCompressor<int16, TUnsignedNumLenEncoder16> TMultiKeyCompressor16;
+	typedef TMultiKeyCompressor<uint16, TUnsignedNumLenEncoderU16> TMultiKeyCompressor16u;
 
-	typedef embDB::TMultiKeyCompressor<int8, int8, embDB::SignedDiffNumLenCompressor28i> TMultiKeyCompressor8;
-	typedef embDB::TMultiKeyCompressor<byte, byte, embDB::UnsignedDiffNumLenCompressor28u> TMultiKeyCompressor8u;
+	typedef TMultiKeyCompressor<int8, TUnsignedNumLenEncoder8> TMultiKeyCompressor8;
+	typedef TMultiKeyCompressor<byte, TUnsignedNumLenEncoderU8> TMultiKeyCompressor8u;
 
 	typedef MultiIndexFieldHolder<int64,  dtInteger64, TMultiKeyCompressor64> TMultiIndexNT64;
 	typedef MultiIndexFieldHolder<uint64, dtUInteger64, TMultiKeyCompressor64u> TMultiIndexUINT64;

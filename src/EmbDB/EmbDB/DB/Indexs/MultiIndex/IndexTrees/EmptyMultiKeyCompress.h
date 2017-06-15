@@ -7,10 +7,13 @@ namespace embDB
 	class TEmptyMultiKeyCompress
 	{
 	public:
+
 		typedef _TKey TKey;
 		typedef IndexTuple<TKey> TIndex;
-		typedef TBPVector<TIndex> TLeafMemSet;
-		TEmptyMultiKeyCompress(CommonLib::alloc_t* pAlloc, uint32 nPageSize, CompressorParamsBaseImp *pParams) : m_nCount(0)
+		typedef STLAllocator<TIndex> TKeyAlloc;
+		typedef std::vector<TIndex, TKeyAlloc> TLeafMemSet;
+
+		TEmptyMultiKeyCompress(uint32 nPageSize, CommonLib::alloc_t* pAlloc,  CompressorParamsBaseImp *pParams) : m_nCount(0)
 		{
 
 		}
@@ -38,7 +41,7 @@ namespace embDB
 			return (m_nCount + 1) * sizeof(TIndex);
 		}
 
-		bool compress( const TLeafMemSet& vecValues, CommonLib::IWriteStream *pStream)
+		bool encode( const TLeafMemSet& vecValues, CommonLib::IWriteStream *pStream)
 		{
 			assert(m_nCount == vecValues.size());
 
@@ -49,7 +52,7 @@ namespace embDB
 			}
 			return true;
 		}
-		bool decompress(uint32 nSize, TLeafMemSet& vecValues, CommonLib::IReadStream *pStream)
+		bool decode(uint32 nSize, TLeafMemSet& vecValues, CommonLib::IReadStream *pStream)
 		{
 			TIndex value;
 			for (uint32 i = 0, sz = nSize; i < sz; ++i)

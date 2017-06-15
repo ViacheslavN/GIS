@@ -1,24 +1,26 @@
 #ifndef  _EMBEDDED_DATABASE_MULTI_KEY_COMPRESS_H_
 #define  _EMBEDDED_DATABASE_MULTI_KEY_COMPRESS_H_
 #include "CompressorParams.h"
-#include "utils/compress/SignedNumLenDiffCompressor2.h"
+#include "../../../Fields/BaseFieldEncoders.h"
 namespace embDB
 {
-	template <class _TKey, class _TSignedKey, class _TNumLenKeyCompressor>
+	template <class _TKey, class _TNumLenKeyCompressor>
 	class TMultiKeyCompressor
 	{
 	public:
 		typedef _TKey TKey;
-		typedef _TSignedKey TSignedKey;
 		typedef _TNumLenKeyCompressor TNumLenKeyCompressor;
-		typedef SignedDiffNumLenCompressor264i TRowIDCompressor;
+		typedef SignedNumLenEncoder64 TRowIDCompressor;
 
+		typedef _TKey TKey;
 		typedef IndexTuple<TKey> TIndex;
-		typedef TBPVector<TIndex> TLeafMemSet;
-		TMultiKeyCompressor(CommonLib::alloc_t* pAlloc, uint32 nPageSize, CompressorParamsBaseImp *pParams) 
+		typedef STLAllocator<TIndex> TAlloc;
+		typedef std::vector<TIndex, TAlloc> TLeafMemSet;
+ 
+		TMultiKeyCompressor(uint32 nPageSize, CommonLib::alloc_t* pAlloc, CompressorParamsBaseImp *pParams)
 			: m_nCount(0), 
-			m_NumLenKeyCompressor(pParams->m_compressType, pParams->m_nErrorCalc, pParams->m_bCalcOnlineSize)
-			,m_RowIDCompressor(pParams->m_compressType, pParams->m_nErrorCalc, pParams->m_bCalcOnlineSize)
+			m_NumLenKeyCompressor(nPageSize, pAlloc, pParams)
+			,m_RowIDCompressor(nPageSize, pAlloc, pParams)
 		{
 
 		}
@@ -91,7 +93,7 @@ namespace embDB
 
 		void AddDiffSymbol(const TIndex& value, const TIndex& valuePrev)
 		{
-			TSignedKey diffKey = value.m_key - valuePrev.m_key;
+			TKey diffKey = value.m_key - valuePrev.m_key;
 			int64 diffRowID = value.m_nRowID - valuePrev.m_nRowID;
 
 			m_NumLenKeyCompressor.AddSymbol(diffKey);
@@ -102,7 +104,7 @@ namespace embDB
 
 		void RemoveDiffSymbol(const TIndex& value, const TIndex& valuePrev)
 		{
-			TSignedKey diffKey = value.m_key - valuePrev.m_key;
+			TKey diffKey = value.m_key - valuePrev.m_key;
 			int64 diffRowID = value.m_nRowID - valuePrev.m_nRowID;
 
 			m_NumLenKeyCompressor.RemoveSymbol(diffKey);
@@ -116,7 +118,7 @@ namespace embDB
 				+ 2 * sizeof(uint32) + sizeof(TIndex);
 		}
 
-		bool compress( const TLeafMemSet& vecValues, CommonLib::IWriteStream *pStream)
+		bool encode( const TLeafMemSet& vecValues, CommonLib::IWriteStream *pStream)
 		{
 
 			if(vecValues.empty())
@@ -143,25 +145,31 @@ namespace embDB
 			RowIDStreams.attach(pStream,  pStream->pos() + nKeySize, nROWIDSize);
 
 
-			m_NumLenKeyCompressor.BeginEncode(&KeyStreams);
-			m_RowIDCompressor.BeginEncode(&RowIDStreams);
+			if (!m_NumLenKeyCompressor.BeginEncoding(&KeyStreams))
+				return false;
+			if (!m_RowIDCompressor.BeginEncoding(&RowIDStreams))
+				return false;
 
 			for (uint32 i = 1, sz = vecValues.size(); i < sz; ++i)
 			{
 
-				TSignedKey diffKey = vecValues[i].m_key - vecValues[i -1].m_key;
+				TKey diffKey = vecValues[i].m_key - vecValues[i -1].m_key;
 				int64 diffRowID = vecValues[i].m_nRowID - vecValues[i -1].m_nRowID;
-				m_NumLenKeyCompressor.EncodeSymbol(diffKey, i -1);
-				m_RowIDCompressor.EncodeSymbol(diffRowID, i -1);
+				if (!m_NumLenKeyCompressor.encodeSymbol(diffKey))
+					return false;
+				if (!m_RowIDCompressor.encodeSymbol(diffRowID))
+					return false;
 			}
 
 
-			m_NumLenKeyCompressor.EncodeFinish();
-			m_RowIDCompressor.EncodeFinish();
+			if (!m_NumLenKeyCompressor.FinishEncoding(&KeyStreams))
+				return false;
+			if (!m_RowIDCompressor.FinishEncoding(&RowIDStreams))
+				return false;
 			pStream->seek(pStream->pos() + nKeySize + nROWIDSize, CommonLib::soFromBegin);			
 			return true;
 		}
-		bool decompress(uint32 nSize, TLeafMemSet& vecValues, CommonLib::IReadStream *pStream)
+		bool decode(uint32 nSize, TLeafMemSet& vecValues, CommonLib::IReadStream *pStream)
 		{
 			if(nSize == 0)
 				return true;
@@ -169,11 +177,7 @@ namespace embDB
 			uint32 nKeySize = pStream->readIntu32();
 			uint32 nROWIDSize = pStream->readIntu32();
 
-		
-
-
 			TIndex value;
-
 
 			pStream->read(value.m_key);
 			pStream->read(value.m_nRowID);
@@ -185,18 +189,18 @@ namespace embDB
 
 
 
-			m_NumLenKeyCompressor.BeginDecode(&KeyStreams);
-			m_RowIDCompressor.BeginDecode(&RowIDStreams);
+			m_NumLenKeyCompressor.BeginDecoding(&KeyStreams);
+			m_RowIDCompressor.BeginDecoding(&RowIDStreams);
 			
 			vecValues.push_back(value);
 		
 			for (uint32 i = 1, sz = nSize; i < sz; ++i)
 			{
-				TSignedKey nDiffkey;
+				TKey nDiffkey;
 				int64   nDiffRow;
 
-				m_NumLenKeyCompressor.DecodeSymbol(nDiffkey, i -1);
-			    m_RowIDCompressor.DecodeSymbol(nDiffRow, i -1);
+				m_NumLenKeyCompressor.decodeSymbol(nDiffkey);
+			    m_RowIDCompressor.decodeSymbol(nDiffRow);
 
 				value.m_key += nDiffkey;
 				value.m_nRowID += nDiffRow;

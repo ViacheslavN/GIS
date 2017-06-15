@@ -604,8 +604,6 @@
     <ClInclude Include="DB\Indexs\CompositeIndex\Unique\CompIndexLeafCompressor.h" />
     <ClInclude Include="DB\Indexs\CompositeIndex\Unique\UniqueCompIndexBase.h" />
     <ClInclude Include="DB\Indexs\IndexIteratorBase.h" />
-    <ClInclude Include="DB\Indexs\MultiIndex\IndexTrees\BPMultiIndexLeafNodeCompressor.h" />
-    <ClInclude Include="DB\Indexs\MultiIndex\IndexTrees\BPMultiInnerIndexNodeCompressor.h" />
     <ClInclude Include="DB\Indexs\MultiIndex\IndexTrees\EmptyMultiKeyCompress.h" />
     <ClInclude Include="DB\Indexs\MultiIndex\IndexTrees\MultiIndexBase.h" />
     <ClInclude Include="DB\Indexs\MultiIndex\IndexTrees\MultiIndexBPTree.h" />

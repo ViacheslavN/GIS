@@ -28,9 +28,9 @@ namespace embDB
 		typedef typename TBase::TInnerNode TInnerNode;
 		typedef typename TBase::TLeafNode	TLeafNode;
 		typedef typename TBase::TBTreeNode TBTreeNode;
-
-		typedef TBPSetIteratorV3<TKey,  TLeafNode, TBTreeNode, TBase> iterator;
 	public:
+		typedef TBPSetIteratorV3<TKey,  TLeafNode, TBTreeNode, TBase> iterator;
+
 		TBPSetV3(int64 nPageBTreeInfo, _Transaction* pTransaction, CommonLib::alloc_t* pAlloc, uint32 nChacheSize, uint32 nNodePageSize, bool bMulti = false, bool bCheckCRC32 = true) :
 			TBase(nPageBTreeInfo, pTransaction, pAlloc, nChacheSize, nNodePageSize, bMulti, bCheckCRC32)
 		{
@@ -41,7 +41,29 @@ namespace embDB
 		{
 			return TBase::template find<iterator, TComp>(this->m_comp, key, pFromIterator, bFindNext);
 		}
+		template<class _TCustComp>
+		iterator find(_TCustComp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
+		{
+			return TBase::template find<iterator, _TCustComp>(comp, key, pFromIterator, bFindNext);
+		}
 
-
+		iterator upper_bound(const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
+		{
+			return TBase::template upper_bound<iterator>(this->m_comp, key, pFromIterator, bFindNext);
+		}
+		iterator lower_bound(const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
+		{
+			return TBase::template lower_bound<iterator>(this->m_comp, key, pFromIterator, bFindNext);
+		}
+		template<class _Comp>
+		iterator upper_bound(const _Comp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
+		{
+			return TBase::template upper_bound<iterator, _Comp>(comp, key, pFromIterator, bFindNext);
+		}
+		template<class _Comp>
+		iterator lower_bound(const _Comp& comp, const TKey& key, iterator *pFromIterator = NULL, bool bFindNext = true)
+		{
+			return TBase::template lower_bound<iterator, _Comp>(comp, key, pFromIterator, bFindNext);
+		}
 	};
 }

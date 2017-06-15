@@ -1,9 +1,15 @@
 #ifndef _EMBEDDED_DATABASE_UNIQUE_INDEX_H_
 #define _EMBEDDED_DATABASE_UNIQUE_INDEX_H_
-#include "BaseBPMapv2.h"
+
 #include "embDBInternal.h"
 #include "DBFieldInfo.h"
 #include "Index.h"
+
+#include "../../BTreePlus/BPMapv3.h"
+#include "../../BTreePlus/BaseNodeCompressor.h"
+#include "../../BTreePlus/BaseDIffEncoder.h"
+#include "../../Fields/BaseFieldEncoders.h"
+
 
 namespace embDB
 {
@@ -42,7 +48,7 @@ namespace embDB
 
 			FType val;
 			pIndexKey->getVal(val);
-			bool bRet =  this->m_tree.insert(val, nOID, pFromIterator, pRetIter ? &RetIterator : NULL);
+			bool bRet =  this->m_tree.insert(val, nOID/*, pFromIterator, pRetIter ? &RetIterator : NULL*/);
 
 
 			if(pRetIter)
@@ -118,8 +124,13 @@ namespace embDB
 		}
 	};
 
+
+
+
+
+
 	template<class _FType, int FieldDataType,
-	class _TKeyCompressor = TEmptyDiffValueCompress<_FType>,
+	class _TKeyEncoder= TEmptyValueEncoder<_FType>,
 	class _TComp = embDB::comp<_FType> >
 	class UniqueIndexFieldHolder : public CIndexHolderBase 
 	{
@@ -127,18 +138,17 @@ namespace embDB
 
 		typedef _FType FType;
 		typedef _TComp TComp;
-		typedef _TKeyCompressor TKeyCompressor;
+		typedef _TKeyEncoder TKeyEncoder;
+
+		typedef TValueDiffEncoder<int64, int64, SignedNumLenEncoder64> TOIDEncoder;
+		typedef TValueDiffEncoder<int64, int64, SignedNumLenEncoder64> TLinkEncoder;
+  
+		typedef TBaseNodeCompressor<_FType, int64, embDB::IDBTransaction, TKeyEncoder, TLinkEncoder>  TInnerCompressor;
+		typedef TBaseNodeCompressor<FType, int64, embDB::IDBTransaction, TKeyEncoder, TOIDEncoder> TLeafCompressor;
 
 
-		typedef TBaseValueDiffCompress<int64, int64, SignedDiffNumLenCompressor64i> TOIDCompressor;
-		typedef TBaseValueDiffCompress<int64, int64, SignedDiffNumLenCompressor64i> TInnerLinkCompress;
-		typedef embDB::TBPBaseInnerNodeDiffCompressor2<_FType, TKeyCompressor, TInnerLinkCompress>  TInnerCompressor;
 
-		typedef  embDB::TBaseLeafNodeDiffComp2<FType, int64, embDB::IDBTransaction, TKeyCompressor, TOIDCompressor> TLeafCompressor;
-
-
-
-		typedef embDB::TBPMapV2<FType, int64, TComp, 
+		typedef embDB::TBPMapV3<FType, int64, TComp, 
 			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
 
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
@@ -191,22 +201,23 @@ namespace embDB
 	};
 
 
-	typedef TBaseValueDiffCompress<int16, int16, SignedDiffNumLenCompressor16i> TInt16KeyCompress;
-	typedef TBaseValueDiffCompress<uint16, uint16, UnsignedDiffNumLenCompressor16u> TUInt16KeyCompress;
 
-	typedef TBaseValueDiffCompress<int32, int32, SignedDiffNumLenCompressor32i> TInt32KeyCompress;
-	typedef TBaseValueDiffCompress<uint32, uint32, UnsignedDiffNumLenCompressor32u> TUInt32KeyCompress;
-	
-	typedef TBaseValueDiffCompress<int64, int64, SignedDiffNumLenCompressor64i> TInt64KeyCompress;
-	typedef TBaseValueDiffCompress<uint64, uint64, UnsignedDiffNumLenCompressor64u> TUInt64KeyCompress;
- 
+	typedef TValueDiffEncoder<int16, int16, TUnsignedNumLenEncoder16> TInt16KeyEncoder;
+	typedef TValueDiffEncoder<uint16, uint16, TUnsignedNumLenEncoderU16> TUInt16KeyEncoder;
 
-	typedef UniqueIndexFieldHolder<int64,  dtInteger64, TInt64KeyCompress > TUniqueIndexNT64;
-	typedef UniqueIndexFieldHolder<uint64, dtUInteger64, TUInt64KeyCompress > TUniqueIndexUINT64;
-	typedef UniqueIndexFieldHolder<int32,  dtInteger32, TInt32KeyCompress> TUniqueIndexINT32;
-	typedef UniqueIndexFieldHolder<uint32, dtUInteger32, TUInt32KeyCompress> TUniqueIndexUINT32;
-	typedef UniqueIndexFieldHolder<int16,  dtInteger16, TInt16KeyCompress> TUniqueIndexINT16;
-	typedef UniqueIndexFieldHolder<uint16, dtUInteger16, TUInt16KeyCompress> TUniqueIndexUINT16;
+	typedef TValueDiffEncoder<int32, int32, TUnsignedNumLenEncoder32> TInt32KeyEncoder;
+	typedef TValueDiffEncoder<uint32, uint32, TUnsignedNumLenEncoderU32> TUInt32KeyEncoder;
+
+	typedef TValueDiffEncoder<int64, int64, TUnsignedNumLenEncoder64> TInt64KeyEncoder;
+	typedef TValueDiffEncoder<uint64, uint64, TUnsignedNumLenEncoderU64> TUInt64KeyEncoder;
+
+
+	typedef UniqueIndexFieldHolder<int64,  dtInteger64, TInt64KeyEncoder > TUniqueIndexNT64;
+	typedef UniqueIndexFieldHolder<uint64, dtUInteger64, TUInt64KeyEncoder > TUniqueIndexUINT64;
+	typedef UniqueIndexFieldHolder<int32,  dtInteger32, TInt32KeyEncoder> TUniqueIndexINT32;
+	typedef UniqueIndexFieldHolder<uint32, dtUInteger32, TUInt32KeyEncoder> TUniqueIndexUINT32;
+	typedef UniqueIndexFieldHolder<int16,  dtInteger16, TInt16KeyEncoder> TUniqueIndexINT16;
+	typedef UniqueIndexFieldHolder<uint16, dtUInteger16, TUInt16KeyEncoder> TUniqueIndexUINT16;
 	typedef UniqueIndexFieldHolder<int32,  dtUInteger8> TUniqueIndexINT8;
 	typedef UniqueIndexFieldHolder<uint32, dtInteger8> TUniqueIndexUINT8;
 	typedef UniqueIndexFieldHolder<double, dtDouble> TUniqueIndexDouble;

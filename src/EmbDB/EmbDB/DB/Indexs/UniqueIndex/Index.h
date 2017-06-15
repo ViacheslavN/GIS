@@ -1,20 +1,11 @@
 #ifndef _EMBEDDED_DATABASE_B_INDEX_H_
 #define _EMBEDDED_DATABASE_B_INDEX_H_
-#include "BaseBPMapv2.h"
+ 
 #include "embDBInternal.h"
 #include "DBFieldInfo.h"
 #include "../IndexIteratorBase.h"
  
-
-#include "BaseInnerNodeDIffCompress.h"
-#include "BaseLeafNodeCompDiff.h"
-#include "BaseInnerNodeDIffCompress.h"
-#include "BaseInnerNodeDIffCompress2.h"
-#include "BaseValueDiffCompressor.h"
-#include "utils/compress/SignedNumLenDiffCompress.h"
-#include "BaseLeafNodeCompDiff2.h"
-#include "BaseValueCompressor.h"
-#include "EmptyValueDIffCompress.h"
+ 
 
 namespace embDB
 
