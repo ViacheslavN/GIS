@@ -3,8 +3,8 @@
 //#include "VariantField.h"
 namespace embDB
 {
-	CompositeIndexKey::CompositeIndexKey(CommonLib::alloc_t *pAlloc) : m_pAlloc(pAlloc),
-		m_vecVariants(pAlloc)
+	CompositeIndexKey::CompositeIndexKey(CommonLib::alloc_t *pAlloc) : m_pAlloc(pAlloc)
+		//m_vecVariants(pAlloc)
 	{}
 	CompositeIndexKey::~CompositeIndexKey()
 	{
@@ -23,7 +23,7 @@ namespace embDB
 		m_pAlloc = NULL;
 	}
 	CompositeIndexKey::CompositeIndexKey(const CompositeIndexKey& key) : 
-		m_pAlloc(key.m_pAlloc), m_vecVariants(key.m_pAlloc)
+		m_pAlloc(key.m_pAlloc)/*, m_vecVariants(key.m_pAlloc)*/
 	{
 		if(key.getSize() == 0)
 			return;
@@ -56,7 +56,7 @@ namespace embDB
 
 		clear();
 		m_pAlloc = key.m_pAlloc;
-		m_vecVariants.setAlloc(m_pAlloc);
+		//m_vecVariants.setAlloc(m_pAlloc);
 		m_vecVariants.reserve(key.getSize());
 		for (uint32 i = 0, sz = key.getSize(); i < sz; ++i)
 		{

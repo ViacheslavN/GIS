@@ -5,7 +5,7 @@
 #include "DBFieldInfo.h"
 #include "Index.h"
 
-#include "../../BTreePlus/BPMapv3.h"
+#include "../../BTreePlus/BPMap.h"
 #include "../../BTreePlus/BaseNodeCompressor.h"
 #include "../../BTreePlus/BaseDIffEncoder.h"
 #include "../../Fields/BaseFieldEncoders.h"
@@ -148,7 +148,7 @@ namespace embDB
 
 
 
-		typedef embDB::TBPMapV3<FType, int64, TComp, 
+		typedef embDB::TBPMap<FType, int64, TComp, 
 			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
 
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;

@@ -1,13 +1,12 @@
 #include "stdafx.h"
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
-/*#include "../../EmbDB/BTreePlusv3/BaseBPSetv3.h"
-#include "../../EmbDB/BTreePlusv3/BPIteratorSetV3.h"*/
 
 
-#include "../../EmbDB/DB/BTreePlus/BPMapv3.h"
-#include "../../EmbDB/DB/BTreePlus/BPLeafNodeMapSimpleCompressorV3.h"
-#include "../../EmbDB/DB/BTreePlus/BPSetInfoTreeV3.h"
+
+#include "../../EmbDB/DB/BTreePlus/BPMap.h"
+#include "../../EmbDB/DB/BTreePlus/BPLeafNodeMapSimpleCompressor.h"
+#include "../../EmbDB/DB/BTreePlus/BPSetInfoTree.h"
 #include "../../EmbDB/DB/transactions/Transactions.h"
 #include "../../EmbDB/DB/transactions/DirectTran/DirectTransactions.h"
 #include "../../EmbDB/ConsolLog.h"
@@ -40,21 +39,21 @@ typedef embDB::TBaseNodeCompressor<int64, int64, embDB::IDBTransaction, TUnsigne
 typedef embDB::comp<int64> TComparator;
 
 /**
-typedef embDB::BPInnerNodeSimpleCompressorV3<int64> TInnerCompess;
-typedef embDB::BPLeafNodeMapSimpleCompressorV3<int64, int64> TLeafCompess;
+typedef embDB::BPInnerNodeSimpleCompressor<int64> TInnerCompess;
+typedef embDB::BPLeafNodeMapSimpleCompressor<int64, int64> TLeafCompess;
 */
 
 typedef TInnerNodeLinkDiffComp TInnerCompess;
 typedef TLeafNodeLinkDiffComp TLeafCompess;
 
 
-typedef embDB::BPTreeInnerNodeSetv3<int64, embDB::IDBTransaction, TInnerCompess> TInnerNode;
+typedef embDB::BPTreeInnerNodeSet<int64, embDB::IDBTransaction, TInnerCompess> TInnerNode;
 
-typedef embDB::BPTreeLeafNodeMapv3<int64, int64, embDB::IDBTransaction, TLeafCompess> TLeafNode;
-typedef embDB::BPTreeNodeMapv3<int64, int64, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode> TBTreeNode;
+typedef embDB::BPTreeLeafNodeMap<int64, int64, embDB::IDBTransaction, TLeafCompess> TLeafNode;
+typedef embDB::BPTreeNodeMap<int64, int64, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode> TBTreeNode;
 
-typedef embDB::TBPMapV3<int64, int64, TComparator, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode, TBTreeNode> TBPMap64;
-typedef embDB::TBPSetInfoTreeV3<int64, TBTreeNode, TBPMap64> TBSetInfo;
+typedef embDB::TBPMap<int64, int64, TComparator, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode, TBTreeNode> TBPMap64;
+typedef embDB::TBPSetInfoTree<int64, TBTreeNode, TBPMap64> TBSetInfo;
 
 
 

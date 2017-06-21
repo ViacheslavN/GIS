@@ -1,31 +1,12 @@
 #ifndef _EMBEDDED_DATABASE_FIELD_VALUE_H_
 #define _EMBEDDED_DATABASE_FIELD_VALUE_H_
 #include "embDBInternal.h"
-#include "Key.h"
-#include "BaseBPMapv2.h"
 //#include "VariantField.h"
 #include "DBFieldInfo.h"
 #include "DB/Database.h"
-#include "DBMagicSymbol.h"
-//#include "BaseBPTreeRO.h"
 #include "FieldIteratorBase.h"
-
-
-
-#include "BaseInnerNodeDIffCompress.h"
-#include "BaseLeafNodeCompDiff.h"
-#include "BaseInnerNodeDIffCompress.h"
-#include "BaseInnerNodeDIffCompress2.h"
-#include "BaseValueDiffCompressor.h"
-#include "utils/compress/SignedNumLenDiffCompress.h"
-#include "BaseLeafNodeCompDiff2.h"
-#include "BaseValueCompressor.h"
-
-
-
-
 #include "BaseFieldEncoders.h"
-#include "../BTreePlus/BPMapv3.h"
+#include "../BTreePlus/BPMap.h"
 
 
 
@@ -482,25 +463,18 @@ namespace embDB
 	};
 	
 	template<class _FType, int FieldDataType,
-		class _TLeafCompressor = embDB::TBaseLeafNodeDiffComp<int64, _FType, embDB::IDBTransaction, embDB::OIDCompressor> 	
+		class _TLeafCompressor/* = embDB::TBaseNodeCompressor<int64, _FType, embDB::IDBTransaction, embDB::OIDCompressor>*/
 	>
 	class ValueFieldHolder :  CDBFieldHolderBase<IDBFieldHolder>
 	{
 		public:
 
 			typedef _FType FType;
-
-		//	typedef TBaseValueDiffCompress<int64, int64, SignedDiffNumLenCompressor64i> TInnerLinkCompress;
-		//	typedef embDB::TBPBaseInnerNodeDiffCompressor2<int64, embDB::OIDCompressor, TInnerLinkCompress>  TInnerCompressor;
-
 			typedef TInnerNodeLinkDiffComp TInnerCompressor;
-
-			//typedef embDB::TBPBaseInnerNodeDiffCompressor<int64, embDB::OIDCompressor, embDB::InnerLinkCompress>	TInnerCompressor;
 			typedef _TLeafCompressor TLeafCompressor;
+			
 
-
-
-			typedef embDB::TBPMapV3<int64, FType, embDB::comp<int64>, 
+			typedef embDB::TBPMap<int64, FType, comp<int64>, 
 			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
  
 			typedef typename TBTree::iterator  iterator;
@@ -561,21 +535,10 @@ namespace embDB
 			}
 	};
 
-	typedef  embDB::TBaseLeafNodeDiffComp2<int64, int32, embDB::IDBTransaction, embDB::OIDCompressor, TBaseValueDiffCompress<int32, int32, SignedDiffNumLenCompressor32i> > TInteger32Compress;
-    typedef  embDB::TBaseLeafNodeDiffComp2<int64, uint32, embDB::IDBTransaction, embDB::OIDCompressor, TBaseValueDiffCompress<uint32, int32, SignedDiffNumLenCompressor32u> > TUInteger32Compress;
-	
-	typedef  embDB::TBaseLeafNodeDiffComp2<int64, int64, embDB::IDBTransaction, embDB::OIDCompressor, TBaseValueDiffCompress<int64, int32, SignedDiffNumLenCompressor64i> >TInteger64Compress;
-	typedef  embDB::TBaseLeafNodeDiffComp2<int64, uint64, embDB::IDBTransaction, embDB::OIDCompressor, TBaseValueDiffCompress<uint64, int64, SignedDiffNumLenCompressor64u> >TUInteger64Compress;
-
-	typedef  embDB::TBaseLeafNodeDiffComp2<int64, int16, embDB::IDBTransaction, embDB::OIDCompressor, TBaseValueDiffCompress<int16, int16, SignedDiffNumLenCompressor16i> > TInteger16Compress;
-	typedef  embDB::TBaseLeafNodeDiffComp2<int64, uint16, embDB::IDBTransaction, embDB::OIDCompressor, TBaseValueDiffCompress<uint16, int16, SignedDiffNumLenCompressor16u> > TUInteger16Compress;
+ 
 
 
-
-	//typedef  embDB::TBaseLeafNodeDiffComp<int64, int32, embDB::IDBTransaction, embDB::OIDCompressor,  TBaseValueCompress<int32,UnsignedNumLenCompressor32i > > TInteger32Compress;
-	//typedef  embDB::TBaseLeafNodeDiffComp<int64, int64, embDB::IDBTransaction, embDB::OIDCompressor,  TBaseValueCompress<int64, UnsignedNumLenCompressor64i> >TInteger64Compress;
-
-	typedef ValueFieldHolder<int64, dtInteger64, TLeafNodeLinkDiffComp64> TValFieldINT64;
+ 	typedef ValueFieldHolder<int64, dtInteger64, TLeafNodeLinkDiffComp64> TValFieldINT64;
 	typedef ValueFieldHolder<uint64,dtUInteger64, TLeafNodeLinkDiffCompU64> TValFieldUINT64;
 	typedef ValueFieldHolder<int32, dtInteger32, TLeafNodeLinkDiffComp32> TValFieldINT32;
 	typedef ValueFieldHolder<uint32,dtUInteger32, TLeafNodeLinkDiffCompU32> TValFieldUINT32;

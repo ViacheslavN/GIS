@@ -11,13 +11,13 @@
 #include <tchar.h>
 
 
-#include "../../EmbDB/Database.h"
+#include "../../EmbDB/DB/Database.h"
 //#include "../../EmbDB/VariantField.h"
 //#include "../../EmbDB/IField.h"
-#include "../../EmbDB/Table.h"
-#include "../../EmbDB/ValueField.h"
-#include "../../EmbDB/Transactions.h"
-#include "../../EmbDB/BitMap.h"
+#include "../../EmbDB/DB/Table/Table.h"
+#include "../../EmbDB/DB/Fields/ValueField.h"
+#include "../../EmbDB/DB/transactions/Transactions.h"
+#include "../../EmbDB/Utils/BitMap.h"
 
 #include "CommonLibrary/CommonLib_lib.h"
 #include "../../EmbDB/embDBLib.h"

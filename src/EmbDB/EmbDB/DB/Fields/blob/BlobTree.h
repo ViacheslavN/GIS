@@ -2,20 +2,20 @@
 #define _EMBEDDED_DATABASE_B_PLUS_V2_TREE_BLOB_H_
 
 
-#include  "../../BTreePlus/BPMapv3.h"
+#include  "../../BTreePlus/BPMap.h"
 #include "../BaseFieldEncoders.h"
 #include "BlobLeafNodeCompressor.h"
 namespace embDB
 {
 	
 	template<class _Transaction, class _TCompParams = BlobFieldCompressorParams>
-	class TBPBlobTree : public TBPMapV3<int64, sBlobVal, comp<int64>, _Transaction, 
+	class TBPBlobTree : public TBPMap<int64, sBlobVal, comp<int64>, _Transaction, 
 		TInnerNodeLinkDiffComp,
 		BlobLeafNodeCompressor<_TCompParams> >
 	{
 	public:
 
-		typedef TBPMapV3<int64, sBlobVal, comp<int64>, _Transaction,
+		typedef TBPMap<int64, sBlobVal, comp<int64>, _Transaction,
 			TInnerNodeLinkDiffComp, BlobLeafNodeCompressor<_TCompParams> > TBase;
 
 

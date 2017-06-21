@@ -3,13 +3,12 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 #include "../utils/simple_stack.h"
-//#include "BaseBPSet.h"
-//#include "DirectTransactions.h"
-#include "../BTVector.h"
+ 
 #include "../utils/BitMap.h"
 #include <map>
 #include "../utils/PageVector.h"
 #include "../utils/PageVectorLazySave.h"
+#include "embDBInternal.h"
 namespace embDB
 {
 	class CStorage;
@@ -55,15 +54,7 @@ namespace embDB
 					return m_BitMap.setBit(uint32(nBit - m_nBeginAddr), bSet);
 				}
 				int64 m_nAddr;
-				/*
-
-				a[i] = i * Len
-				b[i] =  i * Len - 1
-
-
-				
-				*/
-
+ 
 				TFreePages m_FreePages;
 				CBitMap		m_BitMap;
 				bool m_bChange;

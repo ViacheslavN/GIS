@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_B_PLUS_V2_TREE_STRING_H_
 
 
-#include  "../../BTreePlus/BPMapv3.h"
+#include  "../../BTreePlus/BPMap.h"
 #include "../BaseFieldEncoders.h"
 #include "LeafStringCompress.h"
 
@@ -11,13 +11,13 @@ namespace embDB
 
 
 	template<class _TKey, class _Transaction>
-	class TBPStringTree : public TBPMapV3<_TKey, sStringVal, comp<_TKey>, _Transaction,
+	class TBPStringTree : public TBPMap<_TKey, sStringVal, comp<_TKey>, _Transaction,
 		TInnerNodeLinkDiffComp,
 		TBPStringLeafCompressor >
 	{
 	public:
 
-		typedef TBPMapV3 < _TKey, sStringVal, comp<_TKey>, _Transaction,	TInnerNodeLinkDiffComp, TBPStringLeafCompressor >  TBase;
+		typedef TBPMap < _TKey, sStringVal, comp<_TKey>, _Transaction,	TInnerNodeLinkDiffComp, TBPStringLeafCompressor >  TBase;
 
 
 		typedef typename TBase::TBTreeNode TBTreeNode;

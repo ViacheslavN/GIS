@@ -4,7 +4,6 @@
 #include "../StringCompressorParams.h"
 #include "../../../BTreePlus/BaseNodeCompressor.h"
 #include "../../BaseFieldEncoders.h"
-#include "FixedStringACCompressor.h"
 #include "FixedStringZLibCompressor.h"
 #include "DB/GlobalParams.h"
 namespace embDB

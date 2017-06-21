@@ -2,7 +2,7 @@
 #define _EMBEDDED_DATABASE_B_PLUS_TREE_V2_FIXED_STRING_LEAF_NODE_MAP_H_
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
-#include "../../../BTreePlus/BPTreeLeafNodeMapv3.h"
+#include "../../../BTreePlus/BPTreeLeafNodeMap.h"
  
 
 #include "utils/alloc/PageAlloc.h"
@@ -11,11 +11,11 @@
 namespace embDB
 {
 	template<typename _TKey, typename _Transaction>
-	class TFixedStringLeafNode : public  BPTreeLeafNodeMapv3<_TKey, CommonLib::CString, _Transaction, 
+	class TFixedStringLeafNode : public  BPTreeLeafNodeMap<_TKey, CommonLib::CString, _Transaction, 
 		TBPFixedStringLeafCompressor<_TKey, _Transaction> >
 	{
 	public:
-		typedef   BPTreeLeafNodeMapv3<_TKey, CommonLib::CString, _Transaction,
+		typedef   BPTreeLeafNodeMap<_TKey, CommonLib::CString, _Transaction,
 			 TBPFixedStringLeafCompressor<_TKey, _Transaction> > TBase;
 
 		typedef typename TBase::TLink TLink;

@@ -4,7 +4,7 @@
 #include <vector>
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/alloc_t.h"
-#include "BPVector.h"
+ 
 #include "CommonLibrary/stream.h"
 #include "CommonLibrary/ArithmeticCoder.h"
 #include "CommonLibrary/RangeCoder.h"

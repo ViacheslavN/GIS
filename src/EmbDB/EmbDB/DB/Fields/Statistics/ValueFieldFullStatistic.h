@@ -4,8 +4,7 @@
 #include "utils/streams/WriteStreamPage.h"
 #include "utils/streams/ReadStreamPage.h"
 #include "ValueFieldStatistic.h"
-#include "Utils/compress/SignCompressor2.h"
-#include "Utils/compress/NumLenCompressor2.h"
+#include "Utils/compress/NumLen/SignedNumLenEncoder.h"
 #include "CommonLibrary/TimeUtils.h"
 #include "CommonLibrary/FixedBitStream.h"
 
@@ -18,16 +17,12 @@ namespace embDB
 		typedef _Type Type;
 		static const uint32 nMaxStatisticsCount = 1000000;
 
-		typedef std::map<Type, uint64> TMapValues;
+		typedef std::map<Type, int64> TMapValues;
 
 		TValueFieldFullStatistic(CommonLib::alloc_t *pAlloc, IDBTransaction* pTransaction, const SStatisticInfo& si, bool bCheckCRC = false, uint32 nPageSize = PAGE_SIZE_65K) :
 			TValueFieldStatisticBase<_Type>(pAlloc, pTransaction, si, bCheckCRC),
-			m_nPageSize(nPageSize), m_bValid(true), m_nStreamPage(-1)
-		{
-			
-			
-			
-		}
+			m_nPageSize(nPageSize), m_bValid(true), m_nStreamPage(-1), m_NumLenKey(nPageSize, pAlloc, nullptr), m_NumLenCount(nPageSize, pAlloc, nullptr)
+		{	}
 
 		virtual eStatisticType GetType() const { return stFullStatistic; }
 
@@ -227,66 +222,26 @@ namespace embDB
 			stream.read(keyStream.buffer(), nKeySize);
 			stream.read(countStream.buffer(), nCountSize);
 
-
-			m_NumLenKey.Init(&keyStream);
-			m_NumLenCount.Init(&countStream);
-
-			uint32 nBitKeySize = (m_NumLenKey.GetBitsLen() + 7)/8;
-			uint32 nBitCountSize = (m_NumLenCount.GetBitsLen() + 7) / 8;
-
-			keyBits.attach(&keyStream, keyStream.pos(), nBitKeySize, true);
-			countsBits.attach(&countStream, countStream.pos(), nBitKeySize, true);
-
-
-
-
 			Type key = 0;
-			Type TempKey;
-			uint64 nNum;
-			keyStream.read(key);
+			int64 nNum = 0;
 
-			m_NumLenKey.StartDecode();
-			m_NumLenCount.StartDecode();
+			Type diffKey = 0;
+			int64 diffNum = 0;
 
-		 
-			m_NumLenCount.DecodeSymbol(nNum);
-			uint32 nBitPart = nNum;
+			m_NumLenKey.BeginDecoding(&keyStream);
+			m_NumLenCount.BeginDecoding(&countStream);
 
-			if (nBitPart > 1)
-			{
-				nNum = 0;
-				countsBits.readBits(nNum, nBitPart - 1);
-				nNum |= (1 << (nBitPart - 1));
-			}
-
-			m_mapValues.insert(std::make_pair(key, nNum));
-
-			for (uint32 i = 1; i < nCount; ++i )
+			for (uint32 i = 0; i < nCount; ++i )
 			{
 			
-				m_NumLenKey.DecodeSymbol(TempKey);
-				nBitPart = TempKey;
-				if (nBitPart > 1)
-				{
-					TempKey = 0;
-					keyBits.readBits(TempKey, nBitPart - 1);
-					TempKey |= (1 << (nBitPart - 1));
-				}
-				
-				key += TempKey;
-
-				m_NumLenCount.DecodeSymbol(nNum);
-				nBitPart = nNum;
-				if (nBitPart > 1)
-				{
-					nNum = 0;
-					countsBits.readBits(nNum, nBitPart - 1);
-					nNum |= (1 << (nBitPart - 1));
-				}
-
+				m_NumLenKey.decodeSymbol(diffKey);
+				m_NumLenCount.decodeSymbol(diffNum);
+				key += diffKey;
+				nNum += diffNum;
 				m_mapValues.insert(std::make_pair(key, nNum));
 			}
-			
+			m_NumLenKey.FinishDecoding();
+			m_NumLenCount.FinishDecoding();
 			return true;
 		}
 
@@ -311,22 +266,20 @@ namespace embDB
 			m_NumLenCount.clear();
 
 			Type nPrev = it->first;
-			m_NumLenCount.PreAddSympol(it->second);
+			uint64 nCountPrev = it->second;
 			++it;
 
 			for (; it != end; ++it)
 			{
-				m_NumLenKey.PreAddSympol(it->first - nPrev);
-				m_NumLenCount.PreAddSympol(it->second);
+				m_NumLenKey.AddSymbol(it->first - nPrev);
+				m_NumLenCount.AddSymbol(it->second - nCountPrev);
 				nPrev = it->first;
+				nCountPrev = it->second;
 			}
 
 			uint32 nKeySize = m_NumLenKey.GetCompressSize();
-			uint32 nBitKeySize =(m_NumLenKey.GetBitsLen() + 7) / 8;
-
 			uint32 nCountSize = m_NumLenCount.GetCompressSize();
-			uint32 nBitCountSize = (m_NumLenCount.GetBitsLen() + 7) / 8;
-
+	
 			CommonLib::CWriteMemoryStream keyStream(m_pAlloc);
 			CommonLib::CWriteMemoryStream countStream(m_pAlloc);
 			CommonLib::FxBitWriteStream keyBits;
@@ -336,34 +289,31 @@ namespace embDB
 			countStream.resize(nCountSize * 2);
 
 
-			m_NumLenKey.BeginEncode(&keyStream);
-			m_NumLenKey.WriteHeader(&keyStream);
-
-			m_NumLenCount.BeginEncode(&countStream);
-			m_NumLenCount.WriteHeader(&countStream);
-
-			keyBits.attach(&keyStream, keyStream.pos(), nBitKeySize, true);
-			countsBits.attach(&countStream, countStream.pos(), nBitCountSize, true);
+			m_NumLenKey.BeginEncoding(&keyStream);
+			m_NumLenCount.BeginEncoding(&countStream);
 
 			it = m_mapValues.begin();
-
-			keyStream.write(it->first);
-			m_NumLenCount.EncodeSymbol(it->second, &countsBits);
 			nPrev = it->first;
+			nCountPrev = it->second;
 			++it;			
 			for (; it != end; ++it)
 			{
-				m_NumLenKey.EncodeSymbol(it->first - nPrev, &keyBits);
-				m_NumLenCount.EncodeSymbol(it->second, &countsBits);
+				m_NumLenKey.encodeSymbol(it->first - nPrev);
+				m_NumLenCount.encodeSymbol(it->second - nCountPrev);
 				nPrev = it->first;
-
+				nCountPrev = it->second;
 			}
 
-			m_NumLenKey.EncodeFinish();
-			m_NumLenCount.EncodeFinish();
+			m_NumLenKey.FinishEncoding(&keyStream);
+			m_NumLenCount.FinishEncoding(&countStream);
 
 			pStream->write(keyStream.pos());
 			pStream->write(countStream.pos());
+
+			it = m_mapValues.begin();
+
+			pStream->write(it->first);
+			pStream->write(it->second);
 
 			pStream->write(keyStream.buffer(), keyStream.pos());		
 			pStream->write(countStream.buffer(), countStream.pos());
@@ -407,10 +357,10 @@ namespace embDB
 
 	private:
 		TMapValues m_mapValues;
-		typedef TNumLemCompressor2<uint64, TFindMostSigBit, 64> TNumLen;
-		TNumLen m_NumLenKey;
-		TNumLen m_NumLenCount;
-		TSignCompressor2 m_SignCompressor;
+		typedef UnsignedNumLenEncoder<Type, CommonLib::TACEncoder64, CommonLib::TACDecoder64, CompressorParamsBaseImp, 64> TKeyNumLen;
+		typedef SignedNumLenEncoder<int64, CommonLib::TACEncoder64, CommonLib::TACDecoder64, CompressorParamsBaseImp, 64> TCountNumLen;
+		TKeyNumLen m_NumLenKey;
+		TCountNumLen m_NumLenCount;
 		uint32 m_nPageSize;
 		bool m_bValid;
 		int64 m_nStreamPage;

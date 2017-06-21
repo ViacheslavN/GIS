@@ -467,90 +467,45 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseBPMapRO.h" />
-    <ClInclude Include="BaseBPMapv2.h" />
-    <ClInclude Include="BaseBPTreeSetRO.h" />
-    <ClInclude Include="BaseBPSet.h" />
-    <ClInclude Include="BaseBPMap.h" />
-    <ClInclude Include="BaseBPTree.h" />
-    <ClInclude Include="BaseBPTreeRO.h" />
-    <ClInclude Include="BaseBTreeRO.h" />
-    <ClInclude Include="BaseInnerNodeCompress.h" />
-    <ClInclude Include="BaseInnerNodeDIffCompress.h" />
-    <ClInclude Include="BaseInnerNodeDIffCompress2.h" />
-    <ClInclude Include="BaseLeafNodeComp.h" />
-    <ClInclude Include="BaseLeafNodeCompDiff.h" />
-    <ClInclude Include="BaseLeafNodeCompDiff2.h" />
-    <ClInclude Include="BaseValueCompressor.h" />
-    <ClInclude Include="BaseValueDiffCompressor.h" />
-    <ClInclude Include="BaseRBMultiTree.h" />
-    <ClInclude Include="BaseRBTree.h" />
-    <ClInclude Include="BlockClipher.h" />
-    <ClInclude Include="BPCompressors.h" />
-    <ClInclude Include="BPInneOIDNodeCompressor.h" />
-    <ClInclude Include="BPInnerNodeSetROSimpleCompressor.h" />
-    <ClInclude Include="BPInnerNodeSetSimpleCompressor.h" />
-    <ClInclude Include="BPInnerNodeSimpleCompressor.h" />
-    <ClInclude Include="BPInnerNodeSimpleCompressorV2.h" />
-    <ClInclude Include="BPIterator.h" />
-    <ClInclude Include="BPIteratorMap.h" />
-    <ClInclude Include="BPIteratorMapV2.h" />
-    <ClInclude Include="BPIteratorRO.h" />
-    <ClInclude Include="BPIteratorSet.h" />
-    <ClInclude Include="BPIteratorSetV2.h" />
-    <ClInclude Include="BPLeafNodeMapROSimpleCompressor.h" />
-    <ClInclude Include="BPLeafNodeMapSimpleCompressor.h" />
-    <ClInclude Include="BPLeafNodeMapSimpleCompressorV2.h" />
-    <ClInclude Include="BPLeafNodeROSetSimpleCompressor.h" />
-    <ClInclude Include="BPLeafNodeSetSimpleCompressor.h" />
-    <ClInclude Include="BPLeafNodeSetSimpleCompressorV2.h" />
-    <ClInclude Include="BPLeafNodeSimpleCompressor.h" />
-    <ClInclude Include="BPMapIteratorRO.h" />
-    <ClInclude Include="BPMapNodeRO.h" />
-    <ClInclude Include="BaseBPSetv2.h" />
-    <ClInclude Include="BPTreeStatistics.h" />
-    <ClInclude Include="BPTreeInnerNodeSetv2.h" />
-    <ClInclude Include="BPTreeLeafNodeMapv2.h" />
-    <ClInclude Include="BPTreeLeafNodeSetv2.h" />
-    <ClInclude Include="BPTreeNodeMapV2.h" />
-    <ClInclude Include="BPTreeNodeSetV2.h" />
-    <ClInclude Include="BPVector.h" />
-    <ClInclude Include="BPVectorNoPod.h" />
-    <ClInclude Include="CompressorParams.h" />
     <ClInclude Include="ConsolLog.h" />
     <ClInclude Include="CounterField.h" />
     <ClInclude Include="Crypto\AES128.h" />
     <ClInclude Include="Crypto\AES256.h" />
     <ClInclude Include="Crypto\BaseAES.h" />
     <ClInclude Include="Crypto\BaseHash.h" />
+    <ClInclude Include="Crypto\BlockClipher.h" />
     <ClInclude Include="Crypto\CryptoPP\AES128.h" />
     <ClInclude Include="Crypto\CryptoPP\AES256.h" />
     <ClInclude Include="Crypto\CryptoPP\AESBaseCryptoPP.h" />
     <ClInclude Include="Crypto\HMAC.h" />
+    <ClInclude Include="Crypto\PageCipher.h" />
     <ClInclude Include="Crypto\pbkdf2.h" />
+    <ClInclude Include="Crypto\pbkdf2Impl.h" />
+    <ClInclude Include="Crypto\RandomGenerator.h" />
     <ClInclude Include="Crypto\SHA256.h" />
     <ClInclude Include="Crypto\SHA512.h" />
-    <ClInclude Include="DB\BTreePlus\BaseBPSet3Delete.h" />
-    <ClInclude Include="DB\BTreePlus\BaseBPSet3Insert.h" />
-    <ClInclude Include="DB\BTreePlus\BaseBPSet3Search.h" />
-    <ClInclude Include="DB\BTreePlus\BaseBPSetv3.h" />
+    <ClInclude Include="DB\BTreePlus\BaseBPSetDelete.h" />
+    <ClInclude Include="DB\BTreePlus\BaseBPSetInsert.h" />
+    <ClInclude Include="DB\BTreePlus\BaseBPSetSearch.h" />
+    <ClInclude Include="DB\BTreePlus\BaseBPSet.h" />
     <ClInclude Include="DB\BTreePlus\BaseDIffEncoder.h" />
     <ClInclude Include="DB\BTreePlus\BaseEncoder.h" />
     <ClInclude Include="DB\BTreePlus\BaseLeafNodeSetCompressor.h" />
     <ClInclude Include="DB\BTreePlus\BaseNodeCompressor.h" />
-    <ClInclude Include="DB\BTreePlus\BPInnerNodeSimpleCompressorV3.h" />
-    <ClInclude Include="DB\BTreePlus\BPIteratorMapV3.h" />
-    <ClInclude Include="DB\BTreePlus\BPIteratorSetV3.h" />
-    <ClInclude Include="DB\BTreePlus\BPLeafNodeMapSimpleCompressorV3.h" />
-    <ClInclude Include="DB\BTreePlus\BPLeafNodeSetSimpleCompressorV3.h" />
-    <ClInclude Include="DB\BTreePlus\BPMapv3.h" />
-    <ClInclude Include="DB\BTreePlus\BPSetInfoTreeV3.h" />
-    <ClInclude Include="DB\BTreePlus\BPSetv3.h" />
-    <ClInclude Include="DB\BTreePlus\BPTreeInnerNodeSetV3.h" />
-    <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeMapV3.h" />
-    <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeSetV3.h" />
-    <ClInclude Include="DB\BTreePlus\BPTreeNodeMapV3.h" />
-    <ClInclude Include="DB\BTreePlus\BPTreeNodeSetV3.h" />
+    <ClInclude Include="DB\BTreePlus\BPInnerNodeSimpleCompressor.h" />
+    <ClInclude Include="DB\BTreePlus\BPIteratorMap.h" />
+    <ClInclude Include="DB\BTreePlus\BPIteratorSet.h" />
+    <ClInclude Include="DB\BTreePlus\BPLeafNodeMapSimpleCompressor.h" />
+    <ClInclude Include="DB\BTreePlus\BPLeafNodeSetSimpleCompressor.h" />
+    <ClInclude Include="DB\BTreePlus\BPMap.h" />
+    <ClInclude Include="DB\BTreePlus\BPSetInfoTree.h" />
+    <ClInclude Include="DB\BTreePlus\BPSet.h" />
+    <ClInclude Include="DB\BTreePlus\BPTreeInnerNodeSet.h" />
+    <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeMap.h" />
+    <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeSet.h" />
+    <ClInclude Include="DB\BTreePlus\BPTreeNodeMap.h" />
+    <ClInclude Include="DB\BTreePlus\BPTreeNodeSet.h" />
+    <ClInclude Include="DB\BTreePlus\btbasenode.h" />
     <ClInclude Include="DB\BTreePlus\EmptyEncoder.h" />
     <ClInclude Include="DB\BTreePlus\spatial\Point\BackTableZPoint16Bit.h" />
     <ClInclude Include="DB\BTreePlus\spatial\Point\BPMapPointSpatialIterator.h" />
@@ -643,46 +598,14 @@
     <ClInclude Include="embDB.h" />
     <ClInclude Include="embDBInternal.h" />
     <ClInclude Include="embDBLib.h" />
-    <ClInclude Include="EmptyValueCompress.h" />
-    <ClInclude Include="EmptyValueDIffCompress.h" />
     <ClInclude Include="FieldIteratorBase.h" />
     <ClInclude Include="Fields.h" />
     <ClInclude Include="FieldSet.h" />
     <ClInclude Include="FileLog.h" />
     <ClInclude Include="LeafCounterCompress.h" />
-    <ClInclude Include="LinkCompress.h" />
-    <ClInclude Include="LinkDiffCompress.h" />
     <ClInclude Include="LogBase.h" />
     <ClInclude Include="LogHolder.h" />
-    <ClInclude Include="OIDCompress.h" />
-    <ClInclude Include="PageCipher.h" />
-    <ClInclude Include="BPMapTraits.h" />
-    <ClInclude Include="BPSetIteratorRO.h" />
-    <ClInclude Include="BPSetNodeRO.h" />
-    <ClInclude Include="BPSetROTraits.h" />
-    <ClInclude Include="BPSetTraits.h" />
-    <ClInclude Include="BPSimpleCompessor.h" />
-    <ClInclude Include="BPTree.h" />
-    <ClInclude Include="BPTreeInnerNode.h" />
-    <ClInclude Include="BPNodeRO.h" />
-    <ClInclude Include="BPTreeInnerNodeSet.h" />
-    <ClInclude Include="BPTreeLeafFixedStringNode.h" />
-    <ClInclude Include="BPTreeLeafNode.h" />
-    <ClInclude Include="BPTreeLeafNodeMap.h" />
-    <ClInclude Include="BPTreeLeafNodeSet.h" />
-    <ClInclude Include="BPTreeNode.h" />
-    <ClInclude Include="BPTreeNodeMap.h" />
-    <ClInclude Include="BPTreeNodeSet.h" />
-    <ClInclude Include="BPTreeStatistics.h" />
-    <ClInclude Include="BTBaseNode.h" />
-    <ClInclude Include="BTreeNodeRO.h" />
-    <ClInclude Include="BTVector.h" />
-    <ClInclude Include="Compressors.h" />
     <ClInclude Include="DBFieldInfo.h" />
-    <ClInclude Include="FixedStringLeafCompressor.h" />
-    <ClInclude Include="HuffmanOIDComp.h" />
-    <ClInclude Include="PBKDF2.h" />
-    <ClInclude Include="RandomGenerator.h" />
     <ClInclude Include="Statement.h" />
     <ClInclude Include="storage\FilePage.h" />
     <ClInclude Include="storage\FilePageType.h" />
@@ -690,8 +613,6 @@
     <ClInclude Include="storage\storage.h" />
     <ClInclude Include="storage\StorageInfo.h" />
     <ClInclude Include="StreamPageIngo.h" />
-    <ClInclude Include="FixedStringLeafCompressor.h" />
-    <ClInclude Include="UnsignedIntegerNumLenComp.h" />
     <ClInclude Include="Utils\alloc\MemPageCache.h" />
     <ClInclude Include="Utils\alloc\PageAlloc.h" />
     <ClInclude Include="Utils\alloc\STLAlloc.h" />
@@ -705,21 +626,11 @@
     <ClInclude Include="Utils\compress\DoubleCompress\CompressDoubleDiff.h" />
     <ClInclude Include="Utils\compress\DoubleCompress\DoublePartCompress.h" />
     <ClInclude Include="Utils\compress\DoubleCompress\FormatDouble.h" />
-    <ClInclude Include="Utils\compress\IntegerDiffCompress.h" />
-    <ClInclude Include="Utils\compress\IntegerDiffCompressTest.h" />
-    <ClInclude Include="Utils\compress\NumLenCompress.h" />
-    <ClInclude Include="Utils\compress\NumLenCompressor2.h" />
-    <ClInclude Include="Utils\compress\NumLenDiffCompress.h" />
-    <ClInclude Include="Utils\compress\NumLenDiffCompressZOrder.h" />
     <ClInclude Include="Utils\compress\NumLen\BaseNumLenEncoder.h" />
     <ClInclude Include="Utils\compress\NumLen\SignedNumLenEncoder.h" />
     <ClInclude Include="Utils\compress\NumLen\UnsignedNumLenEncoder.h" />
     <ClInclude Include="Utils\compress\SignCompressor.h" />
     <ClInclude Include="Utils\compress\SignCompressor2.h" />
-    <ClInclude Include="Utils\compress\SignedNumLenDiffCompress.h" />
-    <ClInclude Include="Utils\compress\SignedNumLenDiffCompressor2.h" />
-    <ClInclude Include="Utils\compress\UnsignedIntegerNumLenComp.h" />
-    <ClInclude Include="Utils\compress\UnsignedNumLenDiffCompressor2.h" />
     <ClInclude Include="Utils\compress\zlib\ZLibCompressor.h" />
     <ClInclude Include="Utils\CRC.h" />
     <ClInclude Include="Utils\List.h" />
@@ -731,38 +642,12 @@
     <ClInclude Include="Utils\simple_vector.h" />
     <ClInclude Include="Utils\streams\ReadStreamPage.h" />
     <ClInclude Include="Utils\streams\WriteStreamPage.h" />
-    <ClInclude Include="Key.h" />
-    <ClInclude Include="MapIteratorImp.h" />
-    <ClInclude Include="NodeLoader.h" />
-    <ClInclude Include="SpatialOIDField.h" />
-    <ClInclude Include="RBMap.h" />
-    <ClInclude Include="RBMuitiSet.h" />
-    <ClInclude Include="RBMuitiSetIteratorImp.h" />
-    <ClInclude Include="RBSet.h" />
-    <ClInclude Include="RBSetIteratorImp.h" />
-    <ClInclude Include="RBSimpleMuitiSetIterator.h" />
     <ClInclude Include="Row.h" />
-    <ClInclude Include="SimpleCompessor.h" />
     <ClInclude Include="SpatialKey.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseRBMultiTree.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="BaseRBTree.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="BPTreeStatistics.cpp" />
     <ClInclude Include="BTreeVisualInfo.h">
       <FileType>CppCode</FileType>
     </ClInclude>
@@ -770,6 +655,9 @@
     <ClCompile Include="Crypto\BaseAES.cpp" />
     <ClCompile Include="Crypto\BaseHash.cpp" />
     <ClCompile Include="Crypto\CryptoPP\AESBaseCryptoPP.cpp" />
+    <ClCompile Include="Crypto\PageCipher.cpp" />
+    <ClCompile Include="Crypto\PBKDF2.cpp" />
+    <ClCompile Include="Crypto\RandomGenerator.cpp" />
     <ClCompile Include="Crypto\SHA256.cpp" />
     <ClCompile Include="Crypto\SHA512.cpp" />
     <ClCompile Include="DB\BTreePlus\spatial\Point\SpatialPointQuery.cpp" />
@@ -804,11 +692,6 @@
     <ClCompile Include="Fields.cpp" />
     <ClCompile Include="FieldSet.cpp" />
     <ClCompile Include="FileLog.cpp" />
-    <ClCompile Include="LinkCompress.cpp" />
-    <ClCompile Include="OIDCompress.cpp" />
-    <ClCompile Include="PageCipher.cpp" />
-    <ClCompile Include="PBKDF2.cpp" />
-    <ClCompile Include="RandomGenerator.cpp" />
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="Statement.cpp" />
     <ClCompile Include="storage\FilePage.cpp" />

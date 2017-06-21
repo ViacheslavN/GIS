@@ -1,53 +1,52 @@
 #include "stdafx.h"
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
-/*#include "../../EmbDB/BTreePlusv3/BaseBPSetv3.h"
-#include "../../EmbDB/BTreePlusv3/BPIteratorSetV3.h"*/
 
 
-#include "../../EmbDB/DB/BTreePlus/BPSetv3.h"
-#include "../../EmbDB/DB/BTreePlus/BPSetInfoTreeV3.h"
+
+#include "../../EmbDB/DB/BTreePlus/BPSet.h"
+#include "../../EmbDB/DB/BTreePlus/BPSetInfoTree.h"
 #include "../../EmbDB/DB/transactions/Transactions.h"
 #include "../../EmbDB/DB/transactions/DirectTran/DirectTransactions.h"
 #include "../../EmbDB/ConsolLog.h"
 #include "CommonLibrary/DebugTime.h"
 
 #include "BPInnerNodeSimpleCompressor.h"
-#include "BPLeafNodeSetSimpleCompressorV3.h"
+#include "BPLeafNodeSetSimpleCompressor.h"
 
 /*
 template <	class _TKey, class _TComp, class _Transaction,
-class _TInnerCompess = BPInnerNodeSimpleCompressorV3<_TKey>,
-class _TLeafCompess = BPLeafNodeSetSimpleCompressorV3<_TKey>,
-class _TInnerNode = BPTreeInnerNodeSetv3<_TKey, _Transaction, _TInnerCompess>,
-class _TLeafNode = BPTreeLeafNodeSetv3<_TKey,  _Transaction, _TLeafCompess>,
-class _TBTreeNode = BPTreeNodeSetv3<_TKey, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode>
+class _TInnerCompess = BPInnerNodeSimpleCompressor<_TKey>,
+class _TLeafCompess = BPLeafNodeSetSimpleCompressor<_TKey>,
+class _TInnerNode = BPTreeInnerNodeSet<_TKey, _Transaction, _TInnerCompess>,
+class _TLeafNode = BPTreeLeafNodeSet<_TKey,  _Transaction, _TLeafCompess>,
+class _TBTreeNode = BPTreeNodeSet<_TKey, _Transaction, _TInnerCompess, _TLeafCompess, _TInnerNode, _TLeafNode>
 >
-class TBPlusTreeSetV3
+class TBPlusTreeSet
 */
 
 /*
 template <class _TKey, class _TComp, class _Transaction, class _TInnerCompess, class _TLeafCompess,
 class _TInnerNode, class _TLeafNode, class _TBTreeNode>
-class TBPSetIteratorV3
+class TBPSetIterator
 */
 typedef embDB::comp<int64> TComparator;
-typedef embDB::BPInnerNodeSimpleCompressorV3<int64> TInnerCompess;
-typedef embDB::BPLeafNodeSetSimpleCompressorV3<int64> TLeafCompess;
+typedef embDB::BPInnerNodeSimpleCompressor<int64> TInnerCompess;
+typedef embDB::BPLeafNodeSetSimpleCompressor<int64> TLeafCompess;
 
 
 //typedef BPInnerNodeSimpleCompressor<int64> TInnerCompess;
 //typedef BPLeafNodeSetSimpleCompressor<int64> TLeafCompess;
 
-typedef embDB::BPTreeInnerNodeSetv3<int64, embDB::IDBTransaction, TInnerCompess> TInnerNode;
-typedef embDB::BPTreeLeafNodeSetv3<int64, embDB::IDBTransaction, TLeafCompess> TLeafNode;
+typedef embDB::BPTreeInnerNodeSet<int64, embDB::IDBTransaction, TInnerCompess> TInnerNode;
+typedef embDB::BPTreeLeafNodeSet<int64, embDB::IDBTransaction, TLeafCompess> TLeafNode;
 
-typedef embDB::BPTreeNodeSetv3<int64, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode> TBTreeNode;
+typedef embDB::BPTreeNodeSet<int64, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode> TBTreeNode;
 
 
 
-typedef embDB::TBPSetV3<int64, TComparator, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode, TBTreeNode> TBPSet64;
-typedef embDB::TBPSetInfoTreeV3<int64, TBTreeNode, TBPSet64> TBSetInfo;
+typedef embDB::TBPSet<int64, TComparator, embDB::IDBTransaction, TInnerCompess, TLeafCompess, TInnerNode, TLeafNode, TBTreeNode> TBPSet64;
+typedef embDB::TBPSetInfoTree<int64, TBTreeNode, TBPSet64> TBSetInfo;
 
 
 

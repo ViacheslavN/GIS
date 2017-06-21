@@ -3,7 +3,6 @@
 #include "CommonLibrary/FixedBitStream.h"
 #include <map>
 #include "../MathUtils.h"
-#include "BPVector.h"
 #include "SignCompressor.h"
 #include "DoublePartCompress.h"
 #include "CompressDoubleDiff.h"

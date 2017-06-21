@@ -1,6 +1,6 @@
 #ifndef _EMBEDDED_DATABASE_B_MULTI_INDEX_BP_TREE_H_
 #define _EMBEDDED_DATABASE_B_MULTI_INDEX_BP_TREE_H_
-#include "../../../BTreePlus/BPSetv3.h"
+#include "../../../BTreePlus/BPSet.h"
 #include "MultiIndexBase.h"
 //#include "BPMultiInnerIndexNodeCompressor.h"
 //#include "BPMultiIndexLeafNodeCompressor.h"
@@ -215,7 +215,7 @@ namespace embDB
 		typedef _TBaseComp  TBaseComp;
 		typedef _TKeyComp  TKeyComp;
 
-		typedef embDB::TBPSetV3<TIndexTuple, TBaseComp, 
+		typedef embDB::TBPSet<TIndexTuple, TBaseComp, 
 			embDB::IDBTransaction, TInnerCompressor, TLeafCompressor> TBTree;
 		typedef typename TBTree::TInnerCompressorParams TInnerCompressorParams;
 		typedef typename TBTree::TLeafCompressorParams TLeafCompressorParams;

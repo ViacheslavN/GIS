@@ -3,8 +3,8 @@
 
 
 #include "UserCryptoManager.h"
-#include "RandomGenerator.h"
-#include "PBKDF2.h"
+#include "../Crypto/RandomGenerator.h"
+#include "../Crypto/PBKDF2.h"
 #include "storage/storage.h"
 
 #ifdef _USE_CRYPTOPP_LIB_

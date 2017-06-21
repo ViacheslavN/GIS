@@ -6,7 +6,7 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "utils/streams/WriteStreamPage.h"
 #include "utils/streams/ReadStreamPage.h"
-#include "DBConfig.h"
+
 namespace embDB
 {
 

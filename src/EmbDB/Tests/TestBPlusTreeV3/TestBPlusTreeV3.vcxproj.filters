@@ -27,7 +27,7 @@
     <ClInclude Include="BPInnerNodeSimpleCompressor.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="BPLeafNodeSetSimpleCompressorV3.h">
+    <ClInclude Include="BPLeafNodeSetSimpleCompressor.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

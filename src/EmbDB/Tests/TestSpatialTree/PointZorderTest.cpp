@@ -4,7 +4,6 @@
 #include "../../EmbDB/Transactions.h"
 #include "../../EmbDB/DirectTransactions.h"
 #include "../../EmbDB/SpatialPointQuery.h"
-#include "../../EmbDB/BPVector.h"
 #include "CommonLibrary/String.h"
 #include "CommonLibrary/DebugTime.h"
 #include <iostream>

@@ -10,7 +10,7 @@
 #endif
 #include "StorageInfo.h"
 #include "../utils/alloc/MemPageCache.h"
-#include "../PageCipher.h"
+#include "../Crypto/PageCipher.h"
 #include "../utils/CacheLRU.h"
 #include "../utils/CacheLRU_2Q.h"
 #include <iostream>

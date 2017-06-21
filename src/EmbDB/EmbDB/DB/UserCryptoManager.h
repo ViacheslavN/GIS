@@ -1,7 +1,7 @@
 #ifndef _EMBEDDED_USER_CRYPTO_MANAGER_H_
 #define _EMBEDDED_USER_CRYPTO_MANAGER_H_
 
- #include "PageCipher.h"
+ #include "../Crypto/PageCipher.h"
 namespace embDB
 {
 	class CDatabase;

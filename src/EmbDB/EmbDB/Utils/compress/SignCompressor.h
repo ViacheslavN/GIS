@@ -5,7 +5,7 @@
 #include "CommonLibrary/PodVector.h"
 #include "CommonLibrary/algorithm.h"
 #include "CommonLibrary/FixedMemoryStream.h"
-#include "NumLenCompress.h"
+#include "CommonLibrary/FixedBitStream.h"
 namespace embDB
 {
 

@@ -7,8 +7,8 @@
 #include "transactions/DirectTran/DirectTransactions.h"
 #include "DBTranManager.h"
 #include "GlobalParams.h"
-#include "RandomGenerator.h"
-#include "PBKDF2.h"
+#include "Crypto/RandomGenerator.h"
+#include "Crypto/PBKDF2.h"
 
 #ifdef _USE_CRYPTOPP_LIB_
 	#include "Crypto/CryptoPP/AES128.h"

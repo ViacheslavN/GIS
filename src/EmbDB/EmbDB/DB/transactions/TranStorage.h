@@ -6,7 +6,7 @@
 #include "../../storage/FilePage.h"
 #include "CommonLibrary/alloc_t.h"
 #include "TranPerfCounter.h"
-#include "../../PageCipher.h"
+#include "../../Crypto/PageCipher.h"
 #include <memory>
 namespace embDB
 {

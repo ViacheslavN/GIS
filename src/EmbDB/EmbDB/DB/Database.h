@@ -4,7 +4,6 @@
 
 #include "Schema.h"
 #include "CommonLibrary/String.h"
-#include "DBConfig.h"
 #include "embDBInternal.h"
 
 #include "UserCryptoManager.h"

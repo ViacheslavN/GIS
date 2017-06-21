@@ -1,11 +1,11 @@
 #ifndef _EMBEDDED_DATABASE_B_PLUS_V2_TREE_FIXED_STRING_H_
 #define _EMBEDDED_DATABASE_B_PLUS_V2_TREE_FIXED_STRING_H_
 
-#include  "../../../BTreePlus/BPMapv3.h"
+#include  "../../../BTreePlus/BPMap.h"
 #include "../../BaseFieldEncoders.h"
 #include "utils/alloc/PageAlloc.h"
 
-#include "utils/compress/SignedNumLenDiffCompress.h"
+ 
 #include "FixedStringCompressor.h"
 #include "FixedStringBPLeafNode.h"
 namespace embDB
@@ -13,17 +13,17 @@ namespace embDB
  
  	
 template<class _TKey, class _Transaction>
-class TBPFixedString : public TBPMapV3<_TKey, CommonLib::CString, comp<_TKey>, _Transaction, 
+class TBPFixedString : public TBPMap<_TKey, CommonLib::CString, comp<_TKey>, _Transaction, 
 		TInnerNodeLinkDiffComp,	 TBPFixedStringLeafCompressor<_TKey, _Transaction> , 
-		 BPTreeInnerNodeSetv3<_TKey, _Transaction, TInnerNodeLinkDiffComp >,
+		 BPTreeInnerNodeSet<_TKey, _Transaction, TInnerNodeLinkDiffComp >,
 		 TFixedStringLeafNode<_TKey, _Transaction>	>
 {
 public:
 
-	typedef TBPMapV3<_TKey, CommonLib::CString, comp<_TKey>, _Transaction,
+	typedef TBPMap<_TKey, CommonLib::CString, comp<_TKey>, _Transaction,
 		TInnerNodeLinkDiffComp,
 		TBPFixedStringLeafCompressor<_TKey, _Transaction>, 	
-		BPTreeInnerNodeSetv3<_TKey, _Transaction, TInnerNodeLinkDiffComp >,
+		BPTreeInnerNodeSet<_TKey, _Transaction, TInnerNodeLinkDiffComp >,
 		TFixedStringLeafNode<_TKey, _Transaction> > TBase;
 
 	typedef typename TBase::TKey TKey; 

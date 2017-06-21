@@ -5,7 +5,6 @@
 #include "CommonLibrary/alloc_t.h"
 #include "CommonLibrary/FixedMemoryStream.h"
 #include "CommonLibrary/Variant.h"
-#include "BPVector.h"
 
 namespace embDB
 {
@@ -42,7 +41,7 @@ namespace embDB
 		void clear();
 		//CommonLib::CVariant* createVariant(uint16 nType);
 	private:
-		TBPVector<CommonLib::CVariant> m_vecVariants;
+		std::vector<CommonLib::CVariant> m_vecVariants;
 		CommonLib::alloc_t *m_pAlloc;
 
 	};

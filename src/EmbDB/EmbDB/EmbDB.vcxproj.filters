@@ -49,42 +49,6 @@
     <Filter Include="DB\BPTrees">
       <UniqueIdentifier>{6bc92130-c22f-4075-b6e5-80493240829f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\BPTrees\memorytree">
-      <UniqueIdentifier>{bdb39542-bd41-48f0-a773-8e29d54efdd7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\memorytree\map">
-      <UniqueIdentifier>{dfe11e94-90be-4a80-948e-81f20665fbab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\memorytree\RBTree">
-      <UniqueIdentifier>{10ed0b50-9632-43c3-84cf-b747c2a1313d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\memorytree\set">
-      <UniqueIdentifier>{a3e45df3-f9e9-4f92-92da-ffe985c75f46}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreePlus">
-      <UniqueIdentifier>{ad9757b9-ead5-4f0d-8492-b4a23d2588c9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreePlus\Compressors">
-      <UniqueIdentifier>{aad74ec8-5f24-435c-b534-dbc15e77a61a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreePlus\Compressors\OIDNodeCompressor">
-      <UniqueIdentifier>{e04b9b25-6546-43cd-b1c9-fb3c0ce7866c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreePlus\BTreePlusReadOnly">
-      <UniqueIdentifier>{ee471c2d-7a54-4249-b1ab-d8dceb11fc0c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreePlus\BPMap">
-      <UniqueIdentifier>{faa6c4a7-1950-45de-94eb-1d879b7db149}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreePlus\BPMap\ReadOnly">
-      <UniqueIdentifier>{ea8bcb71-58ad-4e03-9e7a-adc43fa2f449}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreePlus\BPSet">
-      <UniqueIdentifier>{1459df5d-e111-4a4e-932a-8657d2bb3cc5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreePlus\BPSet\ReadOnly">
-      <UniqueIdentifier>{df547d88-9aaf-4a78-86ac-76f4358f826e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB\BPTrees\spatial">
       <UniqueIdentifier>{3869a2d5-b645-4f3e-a1b8-8d299fb98a42}</UniqueIdentifier>
     </Filter>
@@ -100,30 +64,6 @@
     <Filter Include="DB\BPTrees\spatial\Grid">
       <UniqueIdentifier>{0f0cd422-4470-469b-8a94-1d66c37525f9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\BPTrees\BtreePlusv2">
-      <UniqueIdentifier>{7aa10ecb-a136-4875-8429-8ab5167ab512}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BtreePlusv2\BPSetv2">
-      <UniqueIdentifier>{032d539d-b5cc-4373-9741-e111a5dcd217}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BtreePlusv2\Compressors">
-      <UniqueIdentifier>{26678ef3-0e17-4d24-825d-760da2efba78}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BtreePlusv2\BPSetMapv2">
-      <UniqueIdentifier>{f5c58f29-749d-48b2-b6da-57b4c86229a2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreeNotUse">
-      <UniqueIdentifier>{439ef40f-5679-40f1-99d2-89988716242c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreeNotUse\BTreeNodeLoader">
-      <UniqueIdentifier>{b5175144-d1d5-4d60-9d95-d5eaaa1c8011}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreeNotUse\BTreeNodeLoader\Compressors">
-      <UniqueIdentifier>{946574d6-d7ba-4c78-97ea-3c6d28e90e3b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreeNotUse\BtreeReadOnly">
-      <UniqueIdentifier>{b956d9ef-3293-41e6-905f-153d9d2395b5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB\Statistics">
       <UniqueIdentifier>{7fccf5ab-64b0-424f-b3de-80d04da6abe2}</UniqueIdentifier>
     </Filter>
@@ -132,9 +72,6 @@
     </Filter>
     <Filter Include="Crypto">
       <UniqueIdentifier>{874a85fe-0a8c-45f7-b307-87b60ff208e3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\Compress">
-      <UniqueIdentifier>{f4ef3e23-0e89-465d-b967-eccf7545448c}</UniqueIdentifier>
     </Filter>
     <Filter Include="DB\SQL">
       <UniqueIdentifier>{743b6d1b-87df-4ccd-92d7-c20e07f94960}</UniqueIdentifier>
@@ -169,9 +106,6 @@
     <Filter Include="DB\Table">
       <UniqueIdentifier>{8e35fad5-4a97-4f20-93b7-810c27bd7cbc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\Fields\compress">
-      <UniqueIdentifier>{bbd38a03-aabd-4438-89db-283f84891ca8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="utils\compress">
       <UniqueIdentifier>{046c345b-17e3-41f1-98fb-47665bf81d58}</UniqueIdentifier>
     </Filter>
@@ -192,9 +126,6 @@
     </Filter>
     <Filter Include="DB\Fields\string\fixedStringField\compress\BWT_DC">
       <UniqueIdentifier>{1b070496-43b8-41f4-b209-44aaa2f71537}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BtreePlusv2\key">
-      <UniqueIdentifier>{99a5b559-b781-4fa5-982f-0a3f3fa5191f}</UniqueIdentifier>
     </Filter>
     <Filter Include="DB\transactions\Cursors\SelectOpCursor">
       <UniqueIdentifier>{d50dfcca-64fc-4ae2-8644-09144bd70606}</UniqueIdentifier>
@@ -229,15 +160,6 @@
     <Filter Include="DB\Fields\Statistic">
       <UniqueIdentifier>{3230f4fd-5978-491d-b61d-e229a35c9f20}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DB\BPTrees\BTreePlusv3">
-      <UniqueIdentifier>{d34237d0-6a12-4965-9e11-e3e557efe342}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreePlusv3\BPSetv3">
-      <UniqueIdentifier>{785e0bc4-7628-4827-ad37-2c50171cc212}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DB\BPTrees\BTreePlusv3\BPMapv3">
-      <UniqueIdentifier>{1c0f31e0-eaca-4577-aa2e-d1426a02be25}</UniqueIdentifier>
-    </Filter>
     <Filter Include="utils\compress\NumLen">
       <UniqueIdentifier>{50e6d9c6-f897-49f0-b4fb-e8445bc17902}</UniqueIdentifier>
     </Filter>
@@ -268,6 +190,12 @@
     <Filter Include="DB\Index\spatial\rectangle">
       <UniqueIdentifier>{1da75630-edf6-4989-8598-e5b9a30065a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\BPTrees\BPMapv3">
+      <UniqueIdentifier>{1c0f31e0-eaca-4577-aa2e-d1426a02be25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\BPTrees\BPSetv3">
+      <UniqueIdentifier>{785e0bc4-7628-4827-ad37-2c50171cc212}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -282,230 +210,8 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseRBTree.h">
-      <Filter>DB\BPTrees\memorytree\RBTree</Filter>
-    </ClInclude>
-    <ClInclude Include="RBSet.h">
-      <Filter>DB\BPTrees\memorytree\set</Filter>
-    </ClInclude>
-    <ClInclude Include="RBMuitiSet.h">
-      <Filter>DB\BPTrees\memorytree\set</Filter>
-    </ClInclude>
-    <ClInclude Include="RBMap.h">
-      <Filter>DB\BPTrees\memorytree\map</Filter>
-    </ClInclude>
-    <ClInclude Include="RBSimpleMuitiSetIterator.h">
-      <Filter>DB\BPTrees\memorytree\set</Filter>
-    </ClInclude>
-    <ClInclude Include="RBMuitiSetIteratorImp.h">
-      <Filter>DB\BPTrees\memorytree\set</Filter>
-    </ClInclude>
-    <ClInclude Include="RBSetIteratorImp.h">
-      <Filter>DB\BPTrees\memorytree\set</Filter>
-    </ClInclude>
-    <ClInclude Include="MapIteratorImp.h">
-      <Filter>DB\BPTrees\memorytree\map</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseRBMultiTree.h">
-      <Filter>DB\BPTrees\memorytree\RBTree</Filter>
-    </ClInclude>
-    <ClInclude Include="Key.h">
-      <Filter>DB\BPTrees\BtreePlusv2\key</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeLoader.h">
-      <Filter>DB\BPTrees\BTreeNotUse\BTreeNodeLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="Compressors.h">
-      <Filter>DB\BPTrees\BTreeNotUse\BTreeNodeLoader\Compressors</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleCompessor.h">
-      <Filter>DB\BPTrees\BTreeNotUse\BTreeNodeLoader\Compressors</Filter>
-    </ClInclude>
-    <ClInclude Include="BTreeNodeRO.h">
-      <Filter>DB\BPTrees\BTreeNotUse\BtreeReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseBTreeRO.h">
-      <Filter>DB\BPTrees\BTreeNotUse\BtreeReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BPCompressors.h">
-      <Filter>DB\BPTrees\BTreePlus\Compressors</Filter>
-    </ClInclude>
-    <ClInclude Include="BPSimpleCompessor.h">
-      <Filter>DB\BPTrees\BTreePlus\Compressors</Filter>
-    </ClInclude>
-    <ClInclude Include="BTBaseNode.h">
-      <Filter>DB\BPTrees\BTreePlus</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeLeafNode.h">
-      <Filter>DB\BPTrees\BTreePlus</Filter>
-    </ClInclude>
-    <ClInclude Include="BPLeafNodeSimpleCompressor.h">
-      <Filter>DB\BPTrees\BTreePlus\Compressors</Filter>
-    </ClInclude>
-    <ClInclude Include="BPInnerNodeSimpleCompressor.h">
-      <Filter>DB\BPTrees\BTreePlus\Compressors</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeInnerNode.h">
-      <Filter>DB\BPTrees\BTreePlus</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseBPTreeRO.h">
-      <Filter>DB\BPTrees\BTreePlus\BTreePlusReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BPNodeRO.h">
-      <Filter>DB\BPTrees\BTreePlus\BTreePlusReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BPIterator.h">
-      <Filter>DB\BPTrees\BTreePlus</Filter>
-    </ClInclude>
-    <ClInclude Include="BPIteratorRO.h">
-      <Filter>DB\BPTrees\BTreePlus\BTreePlusReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BTVector.h">
-      <Filter>DB\BPTrees\BTreePlus\BTreePlusReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeStatistics.h">
-      <Filter>DB\BPTrees\BTreePlus</Filter>
-    </ClInclude>
-    <ClInclude Include="BPInneOIDNodeCompressor.h">
-      <Filter>DB\BPTrees\BTreePlus\Compressors\OIDNodeCompressor</Filter>
-    </ClInclude>
-    <ClInclude Include="HuffmanOIDComp.h">
-      <Filter>DB\BPTrees\BTreePlus\Compressors\OIDNodeCompressor</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTree.h">
-      <Filter>DB\BPTrees\BTreePlus</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>DB\BPTrees\BTreePlus\Compressors</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeLeafFixedStringNode.h">
-      <Filter>DB\BPTrees\BTreePlus</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseBPMap.h">
-      <Filter>DB\BPTrees\BTreePlus\BPMap</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseBPSet.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeNodeSet.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeLeafNodeSet.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet</Filter>
-    </ClInclude>
-    <ClInclude Include="BPLeafNodeSetSimpleCompressor.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet</Filter>
-    </ClInclude>
-    <ClInclude Include="BPInnerNodeSetSimpleCompressor.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeInnerNodeSet.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet</Filter>
-    </ClInclude>
-    <ClInclude Include="BPIteratorSet.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeNode.h">
-      <Filter>DB\BPTrees\BTreePlus</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeNodeMap.h">
-      <Filter>DB\BPTrees\BTreePlus\BPMap</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeLeafNodeMap.h">
-      <Filter>DB\BPTrees\BTreePlus\BPMap</Filter>
-    </ClInclude>
-    <ClInclude Include="BPLeafNodeMapSimpleCompressor.h">
-      <Filter>DB\BPTrees\BTreePlus\BPMap</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseBPTree.h">
-      <Filter>DB\BPTrees\BTreePlus</Filter>
-    </ClInclude>
-    <ClInclude Include="BPIteratorMap.h">
-      <Filter>DB\BPTrees\BTreePlus\BPMap</Filter>
-    </ClInclude>
-    <ClInclude Include="BPSetTraits.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet</Filter>
-    </ClInclude>
-    <ClInclude Include="BPMapTraits.h">
-      <Filter>DB\BPTrees\BTreePlus\BPMap</Filter>
-    </ClInclude>
-    <ClInclude Include="BPSetROTraits.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet\ReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BPSetNodeRO.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet\ReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BPLeafNodeROSetSimpleCompressor.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet\ReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BPInnerNodeSetROSimpleCompressor.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet\ReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BPSetIteratorRO.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet\ReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseBPTreeSetRO.h">
-      <Filter>DB\BPTrees\BTreePlus\BPSet\ReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseBPMapRO.h">
-      <Filter>DB\BPTrees\BTreePlus\BPMap\ReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BPMapNodeRO.h">
-      <Filter>DB\BPTrees\BTreePlus\BPMap\ReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BPLeafNodeMapROSimpleCompressor.h">
-      <Filter>DB\BPTrees\BTreePlus\BPMap\ReadOnly</Filter>
-    </ClInclude>
-    <ClInclude Include="BPMapIteratorRO.h">
-      <Filter>DB\BPTrees\BTreePlus\BPMap\ReadOnly</Filter>
-    </ClInclude>
     <ClInclude Include="SpatialKey.h">
       <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="CompressorParams.h">
-      <Filter>DB\BPTrees\BTreePlus\Compressors</Filter>
-    </ClInclude>
-    <ClInclude Include="SpatialOIDField.h">
-      <Filter>DB\Fields</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseBPSetv2.h">
-      <Filter>DB\BPTrees\BtreePlusv2\BPSetv2</Filter>
-    </ClInclude>
-    <ClInclude Include="BPVector.h">
-      <Filter>DB\BPTrees\BtreePlusv2</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeInnerNodeSetv2.h">
-      <Filter>DB\BPTrees\BtreePlusv2\BPSetv2</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeLeafNodeSetv2.h">
-      <Filter>DB\BPTrees\BtreePlusv2\BPSetv2</Filter>
-    </ClInclude>
-    <ClInclude Include="BPInnerNodeSimpleCompressorV2.h">
-      <Filter>DB\BPTrees\BtreePlusv2\Compressors</Filter>
-    </ClInclude>
-    <ClInclude Include="BPLeafNodeSetSimpleCompressorV2.h">
-      <Filter>DB\BPTrees\BtreePlusv2\Compressors</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeNodeSetV2.h">
-      <Filter>DB\BPTrees\BtreePlusv2\BPSetv2</Filter>
-    </ClInclude>
-    <ClInclude Include="BPIteratorSetV2.h">
-      <Filter>DB\BPTrees\BtreePlusv2\BPSetv2</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeNodeMapV2.h">
-      <Filter>DB\BPTrees\BtreePlusv2\BPSetMapv2</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeLeafNodeMapv2.h">
-      <Filter>DB\BPTrees\BtreePlusv2\BPSetMapv2</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseBPMapv2.h">
-      <Filter>DB\BPTrees\BtreePlusv2\BPSetMapv2</Filter>
-    </ClInclude>
-    <ClInclude Include="BPIteratorMapV2.h">
-      <Filter>DB\BPTrees\BtreePlusv2\BPSetMapv2</Filter>
-    </ClInclude>
-    <ClInclude Include="BPLeafNodeMapSimpleCompressorV2.h">
-      <Filter>DB\BPTrees\BtreePlusv2\Compressors</Filter>
     </ClInclude>
     <ClInclude Include="DBFieldInfo.h">
       <Filter>DB\Fields</Filter>
@@ -518,9 +224,6 @@
     </ClInclude>
     <ClInclude Include="Statement.h">
       <Filter>DB\SQL</Filter>
-    </ClInclude>
-    <ClInclude Include="BPVectorNoPod.h">
-      <Filter>DB\BPTrees\BtreePlusv2</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
@@ -591,14 +294,8 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OIDCompress.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LinkCompress.h">
-      <Filter>DB\Fields\compress</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
@@ -657,24 +354,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseInnerNodeCompress.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseLeafNodeComp.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="EmptyValueDIffCompress.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="EmptyValueCompress.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseInnerNodeDIffCompress.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseLeafNodeCompDiff.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
@@ -693,9 +372,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
-    <ClInclude Include="UnsignedIntegerNumLenComp.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -707,18 +383,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseInnerNodeDIffCompress2.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseValueDiffCompressor.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="LinkDiffCompress.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseLeafNodeCompDiff2.h">
-      <Filter>DB\Fields\compress</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -792,9 +456,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseValueCompressor.h">
-      <Filter>DB\Fields\compress</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -837,20 +498,11 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PageCipher.h">
-      <Filter>Crypto</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PBKDF2.h">
-      <Filter>Crypto\CryptoAlg</Filter>
-    </ClInclude>
-    <ClInclude Include="BlockClipher.h">
-      <Filter>Crypto</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -891,9 +543,6 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Crypto\pbkdf2.h">
-      <Filter>Crypto\CryptoAlg\Hash</Filter>
-    </ClInclude>
     <ClInclude Include="Crypto\HMAC.h">
       <Filter>Crypto\CryptoAlg\Hash</Filter>
     </ClInclude>
@@ -914,9 +563,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RandomGenerator.h">
-      <Filter>Crypto</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1152,42 +798,6 @@
     <ClInclude Include="Utils\compress\CompressUtils.h">
       <Filter>utils\compress</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\compress\IntegerDiffCompress.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\compress\IntegerDiffCompressTest.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\compress\NumLenCompress.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\compress\NumLenCompressor2.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\compress\NumLenDiffCompress.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\compress\NumLenDiffCompressZOrder.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\compress\SignCompressor.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\compress\SignCompressor2.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\compress\SignedNumLenDiffCompress.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\compress\SignedNumLenDiffCompressor2.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\compress\UnsignedIntegerNumLenComp.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\compress\UnsignedNumLenDiffCompressor2.h">
-      <Filter>utils\compress</Filter>
-    </ClInclude>
     <ClInclude Include="Utils\alloc\PageAlloc.h">
       <Filter>utils\alloc</Filter>
     </ClInclude>
@@ -1253,60 +863,6 @@
     </ClInclude>
     <ClInclude Include="storage\StorageInfo.h">
       <Filter>storage</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\EmptyEncoder.h">
-      <Filter>DB\BPTrees\BTreePlusv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BaseBPSet3Delete.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BaseBPSet3Insert.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BaseBPSet3Search.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BaseBPSetv3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPInnerNodeSimpleCompressorV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BaseNodeCompressor.h">
-      <Filter>DB\BPTrees\BTreePlusv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPIteratorSetV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPSetv3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPSetInfoTreeV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPMapv3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPIteratorMapV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPLeafNodeMapSimpleCompressorV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPLeafNodeSetSimpleCompressorV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPTreeInnerNodeSetV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeMapV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPTreeNodeMapV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPMapv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPTreeNodeSetV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
     </ClInclude>
     <ClInclude Include="DB\transactions\Cursors\InsertCursor\InsertCursor.h">
       <Filter>DB\transactions\Cursors\InsertCursor</Filter>
@@ -1415,12 +971,6 @@
     </ClInclude>
     <ClInclude Include="Utils\compress\NumLen\SignedNumLenEncoder.h">
       <Filter>utils\compress\NumLen</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BaseDIffEncoder.h">
-      <Filter>DB\BPTrees\BTreePlusv3</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BaseEncoder.h">
-      <Filter>DB\BPTrees\BTreePlusv3</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1572,9 +1122,6 @@
     <ClInclude Include="DB\Indexs\UniqueIndex\UniqueIndex.h">
       <Filter>DB\Index\UniqueIndex</Filter>
     </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BaseLeafNodeSetCompressor.h">
-      <Filter>DB\BPTrees\BTreePlusv3</Filter>
-    </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1583,9 +1130,6 @@
     </ClInclude>
     <ClInclude Include="DB\Fields\BaseFieldEncoders.h">
       <Filter>DB\Fields</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeSetV3.h">
-      <Filter>DB\BPTrees\BTreePlusv3\BPSetv3</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1659,16 +1203,106 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BPTreeStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedStringLeafCompressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\SignCompressor.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\compress\SignCompressor2.h">
+      <Filter>utils\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseDIffEncoder.h">
+      <Filter>DB\BPTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseEncoder.h">
+      <Filter>DB\BPTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseLeafNodeSetCompressor.h">
+      <Filter>DB\BPTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseNodeCompressor.h">
+      <Filter>DB\BPTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\EmptyEncoder.h">
+      <Filter>DB\BPTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseBPSetDelete.h">
+      <Filter>DB\BPTrees\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseBPSetInsert.h">
+      <Filter>DB\BPTrees\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseBPSetSearch.h">
+      <Filter>DB\BPTrees\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPIteratorSet.h">
+      <Filter>DB\BPTrees\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPInnerNodeSimpleCompressor.h">
+      <Filter>DB\BPTrees\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPLeafNodeSetSimpleCompressor.h">
+      <Filter>DB\BPTrees\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPSetInfoTree.h">
+      <Filter>DB\BPTrees\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPSet.h">
+      <Filter>DB\BPTrees\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPTreeInnerNodeSet.h">
+      <Filter>DB\BPTrees\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeSet.h">
+      <Filter>DB\BPTrees\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPTreeNodeSet.h">
+      <Filter>DB\BPTrees\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPIteratorMap.h">
+      <Filter>DB\BPTrees\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPLeafNodeMapSimpleCompressor.h">
+      <Filter>DB\BPTrees\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPTreeLeafNodeMap.h">
+      <Filter>DB\BPTrees\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPTreeNodeMap.h">
+      <Filter>DB\BPTrees\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\btbasenode.h">
+      <Filter>DB\BPTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BaseBPSet.h">
+      <Filter>DB\BPTrees\BPSetv3</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\BTreePlus\BPMap.h">
+      <Filter>DB\BPTrees\BPMapv3</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\BlockClipher.h">
+      <Filter>Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\PageCipher.h">
+      <Filter>Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\RandomGenerator.h">
+      <Filter>Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\pbkdf2.h">
+      <Filter>Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypto\pbkdf2Impl.h">
+      <Filter>Crypto\CryptoAlg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseRBTree.cpp">
-      <Filter>DB\BPTrees\memorytree\RBTree</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseRBMultiTree.cpp">
-      <Filter>DB\BPTrees\memorytree\RBTree</Filter>
     </ClCompile>
     <ClCompile Include="Statement.cpp">
       <Filter>DB\SQL</Filter>
@@ -1681,21 +1315,6 @@
     </ClCompile>
     <ClCompile Include="Row.cpp">
       <Filter>SDK</Filter>
-    </ClCompile>
-    <ClCompile Include="OIDCompress.cpp">
-      <Filter>DB\Fields\compress</Filter>
-    </ClCompile>
-    <ClCompile Include="LinkCompress.cpp">
-      <Filter>DB\Fields\compress</Filter>
-    </ClCompile>
-    <ClCompile Include="BPTreeStatistics.cpp">
-      <Filter>DB\BPTrees\BtreePlusv2</Filter>
-    </ClCompile>
-    <ClCompile Include="PageCipher.cpp">
-      <Filter>Crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="PBKDF2.cpp">
-      <Filter>Crypto\CryptoAlg</Filter>
     </ClCompile>
     <ClCompile Include="Crypto\BaseHash.cpp">
       <Filter>Crypto\CryptoAlg\Hash</Filter>
@@ -1711,9 +1330,6 @@
     </ClCompile>
     <ClCompile Include="Crypto\CryptoPP\AESBaseCryptoPP.cpp">
       <Filter>Crypto\Cryptopp</Filter>
-    </ClCompile>
-    <ClCompile Include="RandomGenerator.cpp">
-      <Filter>Crypto</Filter>
     </ClCompile>
     <ClCompile Include="ConsolLog.cpp">
       <Filter>DB\Logs\ConsolLog</Filter>
@@ -1840,6 +1456,15 @@
     </ClCompile>
     <ClCompile Include="DB\BTreePlus\spatial\Rect\SpatialRectQuery.cpp">
       <Filter>DB\BPTrees\spatial\Z-Order\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="Crypto\PageCipher.cpp">
+      <Filter>Crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="Crypto\PBKDF2.cpp">
+      <Filter>Crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="Crypto\RandomGenerator.cpp">
+      <Filter>Crypto</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

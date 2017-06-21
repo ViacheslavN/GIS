@@ -2,7 +2,7 @@
 #include "SimpleSearchCursor.h"
 #include "../../../../FieldSet.h"
 #include "../../../../Row.h"
-#include "../../../../BaseRBTree.h"
+#include "../../../BTreePlus/BaseBPSet.h"
 namespace embDB
 {
 	SimpleSearchCursor::SimpleSearchCursor(IIndexIterator* pIndexIterator,  IDBTransaction* pTran, ITable* pTable, 
@@ -75,7 +75,7 @@ namespace embDB
 
 		if(m_vecOIDs.size())
 		{
-			embDB::comp<uint64> comp;
+			comp<uint64> comp;
 			m_vecOIDs.quick_sort(comp);
 		}
 	}
