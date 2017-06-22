@@ -194,12 +194,14 @@ namespace embDB
 			}
 			virtual bool remove (int64 nOID, IFieldIterator **pRetIter) 
 			{
-				if(pRetIter)
+
+				if (m_pIndex.get())
 				{
-					return m_tree.remove(nOID);
+					return removeWithIndex(nOID);
 				}
 				else
 					return m_tree.remove(nOID);
+ 
 			}
 			virtual bool insert (int64 nOID, CommonLib::CVariant* pVariant, IFieldIterator* pFromIter = NULL, IFieldIterator **pRetIter = NULL)
 			{

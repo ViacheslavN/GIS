@@ -278,6 +278,8 @@ namespace embDB
 						m_BitsLensFreq[i] = 0;
 						continue;
 					}
+
+					m_nDiffsLen += 1;
 					switch (m_nTypeFreq)
 					{
 					case ectByte:

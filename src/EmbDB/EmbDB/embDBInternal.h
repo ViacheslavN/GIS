@@ -658,13 +658,7 @@ namespace embDB
 		//	virtual bool insert(IRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
 		//	virtual bool insert(INameRecordset *pRecordSet, IDBTransactions *Tran = NULL) = 0;
 
-		virtual IFieldPtr createField(const  SFieldProp& sFP, ITransaction *pTran ) = 0;
-		virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits,  ITransaction *pTran, bool bCreateIndex = true, uint32 nPageSize = 8192) = 0;
-		virtual bool deleteField(IField* pField) = 0;
-		virtual bool createIndex(const CommonLib::CString& sName, SIndexProp& ip, ITransaction *pTran) = 0;
-		virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip) = 0;
-		virtual bool createStatistic(const CommonLib::CString& sName, const SStatisticInfo& ip, ITransaction *pTran) = 0;
-		virtual bool UpdateStatistic(const CommonLib::CString& sName, ITransaction *pTran) = 0;
+	
 
 
 		virtual int64 GetNextOID() = 0;

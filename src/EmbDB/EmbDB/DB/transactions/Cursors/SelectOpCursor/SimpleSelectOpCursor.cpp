@@ -8,9 +8,6 @@ namespace embDB
 {
 
 
-
-
-
 	SimpleSelectOpCursor::IndexSearchHolder::IndexSearchHolder (const CommonLib::CVariant& value, OpType opType, IndexFiled* pIndex) :
 		ISearhHolder(value, opType), m_bEnd(false)
 	{
@@ -267,7 +264,11 @@ namespace embDB
 
 		if(nNum < (int32)m_vecFields.size())
 		{
-			const SField& field = m_vecFields[nNum];
+			SField& field = m_vecFields[nNum];
+
+			if(!field.m_pFieldIterator.get())
+				field.m_pValueField->find(m_nCurrROWID, field.m_pFieldIterator, field.m_pFieldIterator.get());
+
 			if(!field.m_pFieldIterator->isNull())
 				return field.m_pFieldIterator->getVal(pValue);
 
