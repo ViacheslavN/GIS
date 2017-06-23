@@ -161,6 +161,7 @@
     </ClCompile>
     <ClCompile Include="TestFields.cpp" />
     <ClCompile Include="TestIntegerFields.cpp" />
+    <ClCompile Include="TestStringField.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -60,6 +60,7 @@ namespace embDB
 				return pValueField;
 			}
 
+			
 
 			virtual IInsertCursorPtr createInsertCursor(const wchar_t *pszTable, IFieldSet *pFileds = 0)
 			{
@@ -297,9 +298,12 @@ namespace embDB
 		IDBStoragePtr m_pDBStorage;
 		ISchemaPtr m_pSchema;
 		typedef CommonLib::CHash2Key<CommonLib::CString, CommonLib::CString> TValueFieldKey;
+
 		typedef std::map<TValueFieldKey, IValueFieldPtr> TMapValueField;
+
 		typedef std::set<IDBTablePtr>  TChangeTable;
 		TMapValueField m_mapValueField;
+
 		TChangeTable m_setChangeTable;
 		ILoggerPtr m_pLogger;
 		bool m_bError;

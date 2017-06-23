@@ -15,10 +15,10 @@ namespace embDB
 				pStatistic = new TFieldStatisticByteHolder(pDB->getCommonAlloc(), si, pDB->getCheckCRC());
 				break;
 			case dtUInteger16:
-				pStatistic = new TFieldStatisticInt16Holder(pDB->getCommonAlloc(), si, pDB->getCheckCRC());
+				pStatistic = new TFieldStatisticUint16Holder(pDB->getCommonAlloc(), si, pDB->getCheckCRC());
 				break;
 			case dtInteger16:
-				pStatistic = new TFieldStatisticUint16Holder(pDB->getCommonAlloc(), si, pDB->getCheckCRC());
+				pStatistic = new TFieldStatisticInt16Holder (pDB->getCommonAlloc(), si, pDB->getCheckCRC());
 				break;
 			case dtInteger32:
 				pStatistic = new TFieldStatisticInt32Holder(pDB->getCommonAlloc(), si, pDB->getCheckCRC());

@@ -12,7 +12,8 @@ namespace embDB
 			CZlibCompressor();
 			~CZlibCompressor();
 
-
+			void BeginEncode(CommonLib::CWriteMemoryStream *pDst);
+			void EndEncode(CommonLib::CWriteMemoryStream *pDst);
 			uint32 compress(const byte* pBuf, uint32 nSize, CommonLib::CWriteMemoryStream *pDst);
 			uint32 compress(const sFixedStringVal* pStrings, uint32 nCount, CommonLib::CWriteMemoryStream *pDst);
 
@@ -27,6 +28,7 @@ namespace embDB
 		const static size_t BUFSIZE = 128 * 1024;
 		byte temp_buffer[BUFSIZE];
 		z_stream m_strm;
+		z_stream m_encode_strm;
 	};
 }
 // deflateInit(&strm, Z_BEST_COMPRESSION);

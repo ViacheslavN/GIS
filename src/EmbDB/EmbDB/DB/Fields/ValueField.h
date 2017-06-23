@@ -174,15 +174,18 @@ namespace embDB
 				//var.setVal<FType>(it.value());
 
 				m_ConvertTypeToVar.convert(&var, it.value());
+				if(m_pIndex.get())
+					m_pIndex->remove(&var);
+				if (m_pUniqueCheck.get())
+					m_pUniqueCheck->remove(&var);
 
-				m_pIndex->remove(&var);
 				m_tree.remove(it);
 				return true;
 			}
 			virtual bool remove(int64 nOID)
 			{
 		 
-				if(m_pIndex.get())
+				if(m_pIndex.get() || m_pUniqueCheck.get())
 				{
 					return removeWithIndex(nOID);
 				}
@@ -195,7 +198,7 @@ namespace embDB
 			virtual bool remove (int64 nOID, IFieldIterator **pRetIter) 
 			{
 
-				if (m_pIndex.get())
+				if (m_pIndex.get() || m_pUniqueCheck.get())
 				{
 					return removeWithIndex(nOID);
 				}
@@ -244,6 +247,8 @@ namespace embDB
 			{
 				if(m_pIndex.get())
 					m_pIndex->commit();
+				if (m_pUniqueCheck.get())
+					m_pUniqueCheck->commit();
 				return m_tree.commit();
 			}
 			IFieldIteratorPtr find(int64 nOID,  IFieldIterator* pFromIter = NULL)

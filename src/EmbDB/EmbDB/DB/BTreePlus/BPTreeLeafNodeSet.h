@@ -191,10 +191,13 @@ namespace embDB
 
 
 		template<class TVector>
-		void SplitInVec(TVector& src, TVector& dst, uint32 nBegin, uint32 nCount)
+		void SplitInVec(TVector& src, TVector& dst,  uint32 nBegin, uint32 nCount)
 		{
 			//dst.copy(src, 0, nBegin, nCount);
-			dst.insert(dst.begin(), std::next(src.begin(), nBegin), std::next(src.begin(), nBegin + nCount));
+			//dst.insert(dst.begin(), std::next(src.begin(), nBegin), std::next(src.begin(), nBegin + nCount));
+
+			std::move(std::next(src.begin(), nBegin), std::next(src.begin(), nBegin + nCount), std::inserter(dst, dst.begin()));
+	
 		}
 
 		template<class TVector, class TVecVal>

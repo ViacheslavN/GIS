@@ -215,6 +215,13 @@ namespace embDB
 			uint32 nKeySize = stream.readIntu32();
 			uint32 nCountSize = stream.readIntu32();
 
+			Type key = 0;
+			int64 nNum = 0;
+
+			stream.read(key);
+			stream.read(nNum);
+
+			m_mapValues.insert(std::make_pair(key, nNum));
 
 			keyStream.resize(nKeySize);
 			countStream.resize(nCountSize);
@@ -222,8 +229,6 @@ namespace embDB
 			stream.read(keyStream.buffer(), nKeySize);
 			stream.read(countStream.buffer(), nCountSize);
 
-			Type key = 0;
-			int64 nNum = 0;
 
 			Type diffKey = 0;
 			int64 diffNum = 0;
@@ -231,7 +236,7 @@ namespace embDB
 			m_NumLenKey.BeginDecoding(&keyStream);
 			m_NumLenCount.BeginDecoding(&countStream);
 
-			for (uint32 i = 0; i < nCount; ++i )
+			for (uint32 i = 1; i < nCount; ++i )
 			{
 			
 				m_NumLenKey.decodeSymbol(diffKey);

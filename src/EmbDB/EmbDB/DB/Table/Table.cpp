@@ -534,7 +534,7 @@ namespace embDB
 		 
 		return getField(sFP.m_sFieldName);
 	}
-		IFieldPtr CTable::createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias,  CommonLib::eShapeType shapeType,
+	IFieldPtr CTable::createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias,  CommonLib::eShapeType shapeType,
 		const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, ITransaction *pTran, bool bCreateIndex, uint32 nPageSize)
 	{
 
@@ -567,9 +567,6 @@ namespace embDB
 
 		}
 		 
-
-	
-
 		double dOffsetX = 0., dOffsetY = 0.;
 		byte nScaleX = 1, nScaleY = 1;
 		if(extent.xMin < 0)
@@ -934,8 +931,8 @@ namespace embDB
 			return false;
 
 		IDBFieldHolder* pFieldHolder = (IDBFieldHolder*)pField.get();
-
-		IValueFieldPtr pValueField = pFieldHolder->getValueField(pDBTran.get(), m_pDBStorage.get());
+	 
+		IValueFieldPtr pValueField = pDBTran->GetField(this->getName().cwstr(), pFieldHolder->getName().cwstr());
 		IFieldStatisticPtr pStatistic = pStatHolder->getFieldStatistic(pDBTran.get(), m_pDBStorage.get());
 
 		if (!pField.get() || !pStatistic.get())
@@ -987,8 +984,8 @@ namespace embDB
 
 	bool CTable::BuildIndex(IDBIndexHolder* pIndexHolder, IDBFieldHolder *pFieldHolder, IDBTransaction* pTran)
 	{
-		IValueFieldPtr pField = pFieldHolder->getValueField(pTran,  m_pDBStorage.get());
-		IndexFiledPtr pIndex =	pIndexHolder->getIndex(pTran, m_pDBStorage.get());
+		IValueFieldPtr pField = pTran->GetField(this->getName().cwstr(), pFieldHolder->getName().cwstr());
+		IndexFiledPtr pIndex = pField->GetIndex();
 
 		 if(!pField.get() || !pIndex.get())
 			 return false;
@@ -1004,7 +1001,7 @@ namespace embDB
 				return false;
 		}
 
-		pIndex->commit();
+		//pIndex->commit();
 		return true;
 	}
 

@@ -86,7 +86,8 @@ void BPSETBASE_DECLARATION::CheckLeafNode(TBTreeNode *pNode, bool bPreSave)
 		pCheckNode = pParentNode;
 
 	}
-
+	if (bPreSave)
+		pNode->PreSave(m_pTransaction);
 }
 
 

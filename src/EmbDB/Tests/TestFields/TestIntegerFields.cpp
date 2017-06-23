@@ -23,6 +23,10 @@ void AddField(const wchar_t *pszFieldName, embDB::eDataTypes type, embDB::ITable
 
 
 	pTable->createIndex(pszFieldName, ip, pTran);
+	embDB::SStatisticInfo si;
+	si.m_Statistic = embDB::stFullStatistic;
+
+	pTable->createStatistic(pszFieldName, si, pTran);
 }
 
 void CreateIntegerDB()
@@ -94,7 +98,7 @@ void InsertField(embDB::ITable* pTable, const wchar_t *pszFieldName, embDB::ICon
 		}
 	}
 
-
+	pTable->UpdateStatistic(pszFieldName, pTran.get());
 	pTran->commit();
 	pConnect->closeTransaction(pTran.get());
 }
@@ -253,6 +257,7 @@ void RemoveField(embDB::ITable* pTable, const wchar_t *pszFieldName, embDB::ICon
 			std::cout << n << "  " << (n * 100) / nCount << " %" << '\r';
 		}
 	}
+	pTable->UpdateStatistic(pszFieldName, pTran.get());
 	pTran->commit();
 	pConnect->closeTransaction(pTran.get());
 }

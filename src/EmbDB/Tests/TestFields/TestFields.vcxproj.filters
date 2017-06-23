@@ -19,6 +19,9 @@
     <Filter Include="TestFields\TestIntegerFields">
       <UniqueIdentifier>{21027a38-2e1f-45de-b0d0-8b0463a1aa3b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TestFields\TestStingFields">
+      <UniqueIdentifier>{e1152ed5-d135-4759-96c4-2afd644d2e9f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -43,6 +46,9 @@
     </ClCompile>
     <ClCompile Include="TestIntegerFields.cpp">
       <Filter>TestFields\TestIntegerFields</Filter>
+    </ClCompile>
+    <ClCompile Include="TestStringField.cpp">
+      <Filter>TestFields\TestStingFields</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

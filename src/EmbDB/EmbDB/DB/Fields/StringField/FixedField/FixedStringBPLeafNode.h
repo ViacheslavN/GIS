@@ -57,14 +57,18 @@ namespace embDB
 		int SplitIn(TFixedStringLeafNode *pNode, TKey* pSplitKey)
 		{
 			TCompressor& pNewNodeComp = pNode->m_Compressor;
-			int nSplitIndex = this->m_Compressor.GetSplitIndex(pNode->m_ValueMemSet);
+			int nSplitIndex = this->m_Compressor.GetSplitIndex(this->m_ValueMemSet);
 			assert(nSplitIndex != 0);
 			uint32 nSize = this->m_ValueMemSet.size();
 			
 			this->SplitInVec(this->m_ValueMemSet, pNode->m_ValueMemSet, nSplitIndex, nSize - nSplitIndex);
 			this->SplitInVec(this->m_KeyMemSet, pNode->m_KeyMemSet, nSplitIndex, nSize - nSplitIndex);
 			//this->m_Compressor.SplitIn(nSplitIndex, nSize, pNewNodeComp);
-		
+
+			this->m_ValueMemSet.resize(nSplitIndex);
+			this->m_KeyMemSet.resize(nSplitIndex);
+
+
 			*pSplitKey = pNode->m_KeyMemSet[0];
 
 			this->m_Compressor.recalc(m_KeyMemSet, m_ValueMemSet);

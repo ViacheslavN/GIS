@@ -4,9 +4,11 @@
 #include "stdafx.h"
 
 void TestIntegerField();
+void TestStringField();
 int main()
 {
-	TestIntegerField();
+	TestStringField();
+	//TestIntegerField();
     return 0;
 }
 

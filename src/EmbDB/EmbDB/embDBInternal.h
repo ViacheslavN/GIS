@@ -399,6 +399,7 @@ namespace embDB
 			virtual bool IsExsist(const CommonLib::CVariant* pVar) = 0;
 			virtual bool remove(const CommonLib::CVariant* pVar) = 0;
 			virtual bool insert(const CommonLib::CVariant* pVar) = 0;
+			virtual bool commit() = 0;
 	};
 
 	struct IValueField: public CommonLib::AutoRefCounter
@@ -737,7 +738,6 @@ namespace embDB
 		virtual void wait() = 0;
 
 		virtual IValueFieldPtr GetField(const wchar_t* pszTableName, const wchar_t* pszFieldName) = 0;
-
 
 		virtual void SetLogger(ILogger *pLogger) = 0;
 

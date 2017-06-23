@@ -278,6 +278,7 @@ namespace embDB
 			if(pBloc->m_nCount != 0 &&  pBloc->m_bDirty)
 			{
 				embDB::CZlibCompressor compressor;
+				compressor.BeginEncode(&pBloc->m_compressBlocStream);
 				pBloc->m_compressBlocStream.seek(0, CommonLib::soFromBegin);
 
 				for (size_t i = 0; i < pBloc->m_nCount; ++i)
@@ -304,7 +305,7 @@ namespace embDB
 					
 					compressor.compress(&vecAlloc[0], nSize, &pBloc->m_compressBlocStream);
 				}
-
+				compressor.EndEncode(&pBloc->m_compressBlocStream);
 				//compressor.compress(&vecValues[0] + pBloc->m_nBeginIndex,pBloc->m_nCount,  &pBloc->m_compressBlocStream);
 				pBloc->m_nCompressSize = pBloc->m_compressBlocStream.pos();
 			    pBloc->m_bDirty = false;
@@ -633,7 +634,7 @@ namespace embDB
 					if(nSumSize >= nFreePage)
 						return (uint32)i;
 				}
-				
+				return vevStrings.size() - 1;
 			}
 			
 			nFreePage -= m_lenCompressor.GetCompressSize();
@@ -769,7 +770,7 @@ namespace embDB
 		
 			for (size_t i = 0, sz = m_vecStringBloc.size(); i < sz; ++i)
 			{
-					CompressBlock(m_vecStringBloc[i], vecStrings);
+				CompressBlock(m_vecStringBloc[i], vecStrings);
 			}
 		}
 
