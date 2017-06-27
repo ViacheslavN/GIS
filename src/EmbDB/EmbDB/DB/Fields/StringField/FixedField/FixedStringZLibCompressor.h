@@ -71,7 +71,7 @@ namespace embDB
 		{
 			AddLen(nSize, nIndex, string, vecValues);
 			AddString(nIndex, string, vecValues);
-			m_nRowSize += string.length();
+			m_nRowSize += GetStringLen(string);
 		}
 
 		void AddLen(uint32 nSize,  int nIndex, const CommonLib::CString& string, const TValueMemSet& vecValues)
@@ -80,25 +80,25 @@ namespace embDB
 			{
 				if(nIndex == 0)
 				{
-					AddDiffSymbol(vecValues[nIndex + 1].length() - string.length());
+					AddDiffSymbol(GetStringLen(vecValues[nIndex + 1]) - GetStringLen(string));
 				}
 				else
 				{
 					const CommonLib::CString& sPrev =  vecValues[nIndex - 1];
 					if(nIndex == nSize - 1)
 					{
-						AddDiffSymbol(string.length() - sPrev.length());
+						AddDiffSymbol(GetStringLen(string)- GetStringLen(sPrev));
 					}
 					else
 					{
 						const CommonLib::CString& sNext =  vecValues[nIndex + 1];
-						int32 nOldLen = sNext.length() - sPrev.length();
+						int32 nOldLen = GetStringLen(sNext) - GetStringLen(sPrev);
 
 						RemoveDiffSymbol(nOldLen);
 
 
-						AddDiffSymbol(string.length() - sPrev.length());
-						AddDiffSymbol(sNext.length() - string.length());
+						AddDiffSymbol(GetStringLen(string) - GetStringLen(sPrev));
+						AddDiffSymbol(GetStringLen(sNext) - GetStringLen(string));
 					}
 				}
 			}
@@ -112,7 +112,7 @@ namespace embDB
 			//m_pAlloc->free(nValue.m_pBuf);
 			RemoveLen(nSize, nIndex, sString, vecValues);
 			RemoveString(nIndex, sString);
-			m_nRowSize -= sString.length();
+			m_nRowSize -= GetStringLen(sString);
 		}
 
 		void UpdateSymbol(uint32 nIndex, CommonLib::CString& newString, const CommonLib::CString& OldValue, const TValueMemSet& vecValues)
@@ -127,7 +127,7 @@ namespace embDB
 			{
 				if(nIndex == 0)
 				{
-					RemoveDiffSymbol(vecValues[nIndex + 1].length() - string.length());
+					RemoveDiffSymbol(GetStringLen(vecValues[nIndex + 1]) - GetStringLen(string));
 				}
 				else
 				{
@@ -135,20 +135,20 @@ namespace embDB
 					if(nIndex == vecValues.size() - 1)
 					{
 
-						RemoveDiffSymbol(string.length() - vecValues[nIndex - 1].length());
+						RemoveDiffSymbol(GetStringLen(string) - GetStringLen(vecValues[nIndex - 1]));
 					}
 					else
 					{
 						const CommonLib::CString& sPrev =  vecValues[nIndex - 1];
 
 						const CommonLib::CString& sNext =  vecValues[nIndex + 1];
-						int32 nNewSymbol = sNext.length() - sPrev.length();
+						int32 nNewSymbol = GetStringLen(sNext) - GetStringLen(sPrev);
 
 						AddDiffSymbol(nNewSymbol);
 
 
-						RemoveDiffSymbol(string.length() - sPrev.length());
-						RemoveDiffSymbol(sNext.length() - string.length());
+						RemoveDiffSymbol(GetStringLen(string) - GetStringLen(sPrev));
+						RemoveDiffSymbol(GetStringLen(sNext) - GetStringLen(string));
 					}
 				}
 			}
@@ -202,7 +202,7 @@ namespace embDB
 			else
 			{
 				pCurrBloc->m_nCount += 1;
-				pCurrBloc->m_nRowSize += string.length();		
+				pCurrBloc->m_nRowSize += GetStringLen(string);
 				pCurrBloc->m_bDirty = true;
 				if(pCurrBloc->m_nRowSize > m_nPageSize * m_nMaxRowCoeff)
 				{
@@ -241,7 +241,7 @@ namespace embDB
 				CompressBlock(pBloc, vecValues);
 				pNewBloc->m_nBeginIndex = pBloc->m_nBeginIndex + pBloc->m_nCount;
 				pNewBloc->m_nCount += 1;
-				pNewBloc->m_nRowSize += string.length();		
+				pNewBloc->m_nRowSize += GetStringLen(string);
 				
 			}
 			else
@@ -250,7 +250,7 @@ namespace embDB
 				uint32 nRowSize = pBloc->m_nRowSize;
 				for (uint32 nSplitIndex = pBloc->m_nBeginIndex + pBloc->m_nCount - 1; nSplitIndex >= pBloc->m_nBeginIndex; --nSplitIndex )
 				{
-					nRowSize -= vecValues[nSplitIndex].length();
+					nRowSize -= GetStringLen(vecValues[nSplitIndex]);
 					if(nRowSize < m_nPageSize)
 						break;
 				}
@@ -303,7 +303,7 @@ namespace embDB
 						string.exportToUTF8((char*)&vecAlloc[0], nSize);
 					}
 					
-					compressor.compress(&vecAlloc[0], nSize, &pBloc->m_compressBlocStream);
+					compressor.compress(&vecAlloc[0], nSize - 1, &pBloc->m_compressBlocStream);
 				}
 				compressor.EndEncode(&pBloc->m_compressBlocStream);
 				//compressor.compress(&vecValues[0] + pBloc->m_nBeginIndex,pBloc->m_nCount,  &pBloc->m_compressBlocStream);
@@ -339,10 +339,10 @@ namespace embDB
 			pCurrBloc = m_vecStringBloc[nBlocIDx];
 			assert(pCurrBloc->m_nCount > 0);
 			assert(pCurrBloc->m_nRowSize > 0);
-			assert(pCurrBloc->m_nRowSize >= string.length());
+			assert(pCurrBloc->m_nRowSize >= GetStringLen(string));
 
 			pCurrBloc->m_bDirty = true;
-			pCurrBloc->m_nRowSize -= string.length();
+			pCurrBloc->m_nRowSize -= GetStringLen(string);
 			pCurrBloc->m_nCount--;
 			m_nStrings--;
 
@@ -459,22 +459,34 @@ namespace embDB
 			
 			return nSize;
 		}
+		bool BeginEncoding(const TValueMemSet& vecValues)
+		{
 
+			for (size_t i = 0, sz = m_vecStringBloc.size(); i < sz; ++i)
+			{
+				sStringBloc *pBloc = m_vecStringBloc[i];
+				if(pBloc->m_bDirty);
+					CompressBlock(pBloc, vecValues);
+
+			}
+			
+			return true;
+		}
 		bool encode(const TValueMemSet& vecValues, CommonLib::IWriteStream* pStream)
 		{			
 					 
 			uint32 nBeginPos = pStream->pos();
 
 			pStream->write(uint16(0));
-			pStream->write(uint16(vecValues[0].length()));
+			pStream->write(uint16(GetStringLen(vecValues[0])));
 
 			if (!m_lenCompressor.BeginEncoding(pStream))
 				return false;
 			
 			for (size_t i = 1; i < vecValues.size(); ++i)
 			{
-				int32 nLen1 = (int32)vecValues[i].length();
-				int32 nLen2 = (int32)vecValues[i -1].length();
+				int32 nLen1 = GetStringLen(vecValues[i]);
+				int32 nLen2 = GetStringLen(vecValues[i -1]);
 				if (!m_lenCompressor.encodeSymbol(nLen1 - nLen2))
 					return false;
 			}
@@ -490,7 +502,7 @@ namespace embDB
 			{				
 				sStringBloc *pBloc = m_vecStringBloc[i];
 				assert(!pBloc->m_bDirty);
-				pStream->write((uint16)pBloc->m_compressBlocStream.pos());
+			 	pStream->write((uint16)pBloc->m_compressBlocStream.pos());
 				pStream->write(pBloc->m_compressBlocStream.buffer(), pBloc->m_compressBlocStream.pos());
 
 			}
@@ -569,11 +581,11 @@ namespace embDB
 				if (vecAlloc.size() < nLen + 1) //TO DO use alloc
 					vecAlloc.resize(nLen + 1);
 
-				pCurrBloc->m_nRowSize += (nLen - 1);
+				pCurrBloc->m_nRowSize += nLen;
 			 
-				bNewBloc = !compressor.decompressSymbol(&vecAlloc[0], nLen - 1);
+				bNewBloc = !compressor.decompressSymbol(&vecAlloc[0], nLen);
 
-				vecAlloc[nLen - 1] = '\0';
+				vecAlloc[nLen] = '\0';
 
 				if (m_StringCoding == embDB::scASCII)
 					string.loadFromASCII((const char*)&vecAlloc[0]);
@@ -630,7 +642,7 @@ namespace embDB
 
 				for (size_t i = 0, sz = vevStrings.size(); i< sz; ++i)
 				{
-					nSumSize += vevStrings[i].length();
+					nSumSize += GetStringLen(vevStrings[i]);
 					if(nSumSize >= nFreePage)
 						return (uint32)i;
 				}
@@ -687,7 +699,7 @@ namespace embDB
 			pBloc->m_nRowSize = 0;
 			for(size_t i = 0; i < pBloc->m_nCount; ++i)
 			{
-				pBloc->m_nRowSize += vecStrings[i].length();
+				pBloc->m_nRowSize += GetStringLen(vecStrings[i]);
 			}
 		}
 
@@ -777,6 +789,11 @@ namespace embDB
 		int GetStringBloc() const
 		{
 			return m_vecStringBloc.size();
+		}
+
+		uint32 GetStringLen(const CommonLib::CString& sString) const
+		{
+			return m_StringCoding == scASCII ? sString.length() : sString.calcUTF8Length();
 		}
  	protected:
 		uint32 m_nStrings;

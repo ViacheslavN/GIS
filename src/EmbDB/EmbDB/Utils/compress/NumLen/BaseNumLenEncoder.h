@@ -85,17 +85,20 @@ namespace embDB
 						m_dBitRowSize -= nOldCount* mathUtils::Log2((double)(m_nCount - 1) / nOldCount);
 
 					m_dBitRowSize += (m_nCount - nNewCount) * mathUtils::Log2((double)m_nCount / (m_nCount - 1));
-
+				/*	if (m_dBitRowSize < 0)
+					{
+						int dd = 0;
+						dd++;
+					}*/
 				}
 
-				/*	double dBitRowSize = CalcRowBitSize();
+				/*double dBitRowSize = CalcRowBitSize<uint32>(m_BitsLensFreq, _nMaxBitsLens + 1, m_nDiffsLen, m_nCount);
 				if(fabs(m_dBitRowSize - dBitRowSize) > 0.00000001)
 				{
 					int dd = 0;
 					dd++;
 				}*/
 
-	 
 			}
 
 
@@ -306,6 +309,8 @@ namespace embDB
 					m_FreqPrev[i + 1] = m_BitsLensFreq[i] + nPrevF;
 					nPrevF = m_FreqPrev[i + 1];
 				}
+
+				m_dBitRowSize = CalcRowBitSize<uint32>(m_BitsLensFreq, _nMaxBitsLens + 1, m_nDiffsLen, m_nCount);
 
 			}
 

@@ -31,6 +31,14 @@ namespace embDB
 		{}
 
 
+		template<typename _Transactions  >
+		bool  init(TCompressorParams *pParams, _Transactions *pTran)
+		{
+
+			return true;
+		}
+
+
 		virtual void Write(const TValue& value, CommonLib::IWriteStream *pStream) = 0;
 		virtual void Read(TValue& value, CommonLib::IReadStream *pStream) = 0;
 		virtual uint32 GetValueSize() const = 0;
@@ -114,6 +122,11 @@ namespace embDB
 		uint32 GetCompressSize() const
 		{
 			return m_encoder.GetCompressSize() + GetValueSize();
+		}
+
+		bool BeginEncoding(const TValueMemSet& vecValues)
+		{
+			return true;
 		}
 
 		bool encode(const TValueMemSet& vecValues, CommonLib::IWriteStream *pStream)

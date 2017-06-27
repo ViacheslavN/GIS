@@ -128,7 +128,10 @@ namespace embDB
 			else if (m_StringCoding == embDB::scUTF8)
 				string.m_string.loadFromUTF8((char*)&bufForUff8[0]);
 		}
-
+		bool BeginEncoding(const TValueMemSet& vecValues)
+		{
+			return true;
+		}
 		bool encode(const TValueMemSet& vecValues, CommonLib::IWriteStream *pStream)
 		{
 			assert(m_nCount == vecValues.size());

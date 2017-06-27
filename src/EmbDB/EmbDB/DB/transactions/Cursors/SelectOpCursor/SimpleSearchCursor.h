@@ -34,7 +34,7 @@ namespace embDB
 		IDBTablePtr		  m_pTable;
 		IFieldSetPtr	  m_pFieldSet;
 		IFieldsPtr		  m_pFields;
-		typedef CommonLib::TPodVector<int64> TVecOids;
+		typedef std::vector<int64> TVecOids;
 		TVecOids m_vecOIDs;
 		uint32 m_nCurrObj;
 		uint32 m_nCacheCount;

@@ -21,6 +21,15 @@ namespace embDB
 
 		}
 
+
+		template<typename _Transactions  >
+		bool  init(_TCompressorParams *pParams, _Transactions *pTran)
+		{
+
+			return true;
+		}
+
+
 		void AddSymbol(uint32 nSize, int nIndex, const TValue& value, const TValueMemSet& vecValues)
 		{
 			m_nCount++;
@@ -40,7 +49,10 @@ namespace embDB
 		{
 			return m_nCount * sizeof(TValue);
 		}
-
+		bool BeginEncoding(const TValueMemSet& vecValues)
+		{
+			return true;
+		}
 		bool encode(const TValueMemSet& vecValues, CommonLib::IWriteStream *pStream)
 		{
 			assert(m_nCount == vecValues.size());

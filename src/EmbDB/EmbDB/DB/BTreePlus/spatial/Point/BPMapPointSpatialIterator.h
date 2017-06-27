@@ -1,6 +1,5 @@
 #ifndef _EMBEDDED_DATABASE_B_PLUS_TREE_SPATIAL_POINT_ITERATOR_MAP_H_
 #define _EMBEDDED_DATABASE_B_PLUS_TREE_SPATIAL_POINT_ITERATOR_MAP_H_
-//#include "PointSpatialBPMaTraits.h"
 #include "CommonLibrary/SpatialKey.h"
 #include "../../../../utils/simple_stack.h"
 
@@ -91,8 +90,8 @@ namespace embDB
 		{}
 
 
-		TBPTSpatialPointIteratorMap(TBTree *pTree, TBTreeNode *pCurNode, int32 nIndex, 
-			TPointKey& zMin, TPointKey& zMax, TRect& QueryRect) : 
+		TBPTSpatialPointIteratorMap(TBTree *pTree, TBTreeNodePtr pCurNode, int32 nIndex,
+			TPointKey& zMin, TPointKey& zMax, TRect& QueryRect) :
 		m_pTree(pTree), m_zMin(zMin), m_zMax(zMax), m_QueryRect(QueryRect), m_nIndex(nIndex)
 		{		
 			m_nReq = 0;
@@ -188,7 +187,7 @@ namespace embDB
 				if(zNextVal.IsInRect(m_QueryRect))
 				{
 					m_nIndex = 0;
-					m_pCurNode  = m_pTree->getNode(nAddr, false, false, true); 
+					m_pCurNode  = m_pTree->getNode(nAddr); 
 					SetNode(m_pCurNode.get());
 					return true;
 						
@@ -239,21 +238,21 @@ namespace embDB
 					return false;
 				}
 
-				TBTreeNodePtr pParentNode = m_pTree->getNode(m_pCurNode->parentAddr(), false, false, true);
+				TBTreeNodePtr pParentNode = m_pTree->getNode(m_pCurNode->parentAddr());
 				if((m_pCurNode->foundIndex()  == -1 || (m_pCurNode->foundIndex() + 1) < (uint32)pParentNode->count()))
 				{
 					int nIndex = m_pCurNode->foundIndex()  == -1 ? 0 : m_pCurNode->foundIndex() + 1;
-					TBTreeNodePtr pNextNode = m_pTree->getNode(pParentNode->link(nIndex), false, false, true);
+					TBTreeNodePtr pNextNode = m_pTree->getNode(pParentNode->link(nIndex));
 
 					TPointKey& zNextVal = pParentNode->key(nIndex);
 
-					pNextNode->setParent(pParentNode.get(), nIndex);
+					pNextNode->setParent(pParentNode, nIndex);
 					if(!findNext(zNextVal, pNextNode->addr()))
 						return false;
 				}
 				else
 				{ 
-					TBTreeNodePtr pNextNode = m_pTree->getNode(m_pCurNode->next(), false, false, true);
+					TBTreeNodePtr pNextNode = m_pTree->getNode(m_pCurNode->next());
 					if(!pNextNode.get())
 						return false;
 					m_pTree->SetParentNext(m_pCurNode.get(), pNextNode.get());
@@ -270,7 +269,6 @@ namespace embDB
 			if(!m_pCurNode.get())
 				return false;
 		
-			m_pTree->ClearChache();
 			m_nIndex++;
 			return CheckIndex();
 		}

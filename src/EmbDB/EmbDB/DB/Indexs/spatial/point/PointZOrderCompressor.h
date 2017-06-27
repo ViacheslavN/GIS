@@ -57,6 +57,11 @@ namespace embDB
 
 				zOrder.setZOrder(x, y);
 			}
+
+			uint32 count() const
+			{
+				return this->m_PointEncoder.count() / 2;
+			}
  
 	};
 

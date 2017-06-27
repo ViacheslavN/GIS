@@ -105,6 +105,31 @@ namespace embDB
 
 		  typedef typename 	TSpatialTree::TLeafCompressorParams TLeafCompressorParams;
 		  typedef typename 	TSpatialTree::TInnerCompressorParams TInnerCompressorParams;
+
+		  static const int32 __max_buffers_for_insert_ = 100000;
+
+		  struct IndexPair
+		  {
+
+			  IndexPair(const TZCoordType& spObj, __int64 nRowID) : m_spObj(spObj), m_nRowID(nRowID)
+			  {}
+
+			  TZCoordType m_spObj;
+			  __int64 m_nRowID;
+		  };
+
+		  struct  SPred
+		  {
+			  bool operator() (const IndexPair& _left, const IndexPair& _right) const
+			  {
+				  return _left.m_spObj < _right.m_spObj;
+			  }
+		  };
+
+		  typedef std::vector<IndexPair> TVecBuffer;
+
+
+
  		  virtual bool save()
 		  {
 			 return true;// return m_tree.saveBTreeInfo();
@@ -190,6 +215,10 @@ namespace embDB
 		  virtual void GetSpatialObj(TSpatialObj& zVal, const CommonLib::CVariant* pValue) = 0;
 		  virtual bool insert(const CommonLib::CVariant* pValue, uint64 nOID)
 		  {
+
+			  InsertInBuffer(pValue, nOID);
+			  return true;
+			  /*
 			  if(!pValue)
 				  return false;
 			  if(!pValue->isType<TSpatialObj>())
@@ -197,17 +226,28 @@ namespace embDB
 
 			  TSpatialObj zVal;
 			  pValue->getVal(zVal);
-			 return m_tree.insert(zVal, nOID);
+			 return m_tree.insert(zVal, nOID);*/
 
 		  }
+
+
+
 		  virtual bool commit()
 		  {
+			  InsertFromBuffer();
 			  return m_tree.commit();
 		  }
 
 
 		  virtual bool insert (const CommonLib::CVariant* pIndexKey, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		  {
+
+			  if (!pFromIter && !pRetIter)
+			  {
+				  InsertInBuffer(pIndexKey, nOID);
+				  return true;
+			  }
+
 
 			  iterator *pFromIterator = NULL;
 			  iterator RetIterator;
@@ -232,6 +272,39 @@ namespace embDB
 			  }
 			  return bRet;
 		  }
+
+		  void InsertInBuffer(const CommonLib::CVariant* pValue, uint64 nOID)
+		  {
+			  if (!pValue)
+				  return;
+			  TSpatialObj rect;
+			  GetSpatialObj(rect, pValue);
+
+			   
+ 
+			  m_vecBuffer.push_back(IndexPair(TZCoordType(rect), nOID));
+
+			  if (m_vecBuffer.size() > __max_buffers_for_insert_)
+			  {
+				  InsertFromBuffer();
+			  }
+		  }
+
+		  void InsertFromBuffer()
+		  {
+			  if (m_vecBuffer.empty())
+				  return;
+
+			  std::sort(m_vecBuffer.begin(), m_vecBuffer.end(), SPred());
+			  for (size_t i = 0; i < m_vecBuffer.size(); ++i)
+			  {
+				  m_tree.insert(m_vecBuffer[i].m_spObj, m_vecBuffer[i].m_nRowID);
+			  }
+
+			  m_vecBuffer.clear();
+		  }
+
+
 		  virtual bool update (const CommonLib::CVariant* pOldIndexKey, CommonLib::CVariant* pNewIndexKey, int64 nOID, IIndexIterator* pFromIter = NULL, IIndexIterator** pRetIter = NULL)
 		  {
 			  //FType val;
@@ -249,6 +322,8 @@ namespace embDB
 			  assert(pIter);
 			  TIndexIterator *pSpIter = (TIndexIterator*)pIter;
 			  iterator& it = pSpIter->m_ParentIt;
+
+			  InsertFromBuffer();
 
 			   m_tree.remove(it);
 			   return true;
@@ -294,6 +369,9 @@ namespace embDB
 
 		  bool remove (const CommonLib::CVariant* pIndexKey)
 		  {
+
+			  InsertFromBuffer();
+
 			  TSpatialObj val;
 			   
 			  pIndexKey->getVal(val);
@@ -303,6 +381,9 @@ namespace embDB
 		 
 
 	protected:
+
+		TVecBuffer m_vecBuffer;
+
 		IDBTransaction* m_pDBTransactions;
 		TSpatialTree m_tree;
 		int64 m_nBTreeRootPage;

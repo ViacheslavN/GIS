@@ -105,6 +105,10 @@ namespace embDB
 			return TSubBase::insert(key, val/*,  pFromIterator, pRetItertor*/ ); 
 		}
 
+		bool insert(const TPointKey& key, const TValue& val, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
+		{
+			return  TSubBase::insert(key, val/*,  pFromIterator, pRetItertor*/);
+		}
 
 	};
 

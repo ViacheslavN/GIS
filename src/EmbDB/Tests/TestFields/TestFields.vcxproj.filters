@@ -22,6 +22,9 @@
     <Filter Include="TestFields\TestStingFields">
       <UniqueIdentifier>{e1152ed5-d135-4759-96c4-2afd644d2e9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TestFields\TestSpatialField">
+      <UniqueIdentifier>{7b062cfb-3c33-4c43-9ce6-9ed2ae81aa1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -36,6 +39,9 @@
     <ClInclude Include="CommonDatabase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestSpatial.h">
+      <Filter>TestFields\TestSpatialField</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -49,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="TestStringField.cpp">
       <Filter>TestFields\TestStingFields</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSpatial.cpp">
+      <Filter>TestFields\TestSpatialField</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

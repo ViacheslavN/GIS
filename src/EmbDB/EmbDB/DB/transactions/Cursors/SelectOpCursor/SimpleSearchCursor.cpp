@@ -75,8 +75,7 @@ namespace embDB
 
 		if(m_vecOIDs.size())
 		{
-			comp<uint64> comp;
-			m_vecOIDs.quick_sort(comp);
+			std::sort(m_vecOIDs.begin(), m_vecOIDs.end());
 		}
 	}
 	IFieldSetPtr SimpleSearchCursor::GetFieldSet() const

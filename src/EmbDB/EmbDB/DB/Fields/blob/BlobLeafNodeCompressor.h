@@ -22,7 +22,7 @@ namespace embDB
 		
 
 		BlobCompressor(uint32 nPageSize, CommonLib::alloc_t* pAlloc, TCompParams *pParams = nullptr) : m_pAlloc(pAlloc), m_pLeafCompParams(pParams),
-			m_nPageSize(nPageSize), m_nBlobDataSize(0), m_nCount(0), m_nMaxPageLen(0), m_pTransaction(NULL)
+			m_nPageSize(nPageSize), m_nBlobDataSize(0), m_nCount(0), m_nMaxBlobSize(0), m_pTransaction(NULL)
 		{}
 
 
@@ -32,13 +32,14 @@ namespace embDB
 			m_pLeafCompParams = pParams;
 			assert(m_pLeafCompParams);
 			m_pTransaction = pTran;
+			m_nMaxBlobSize = m_pLeafCompParams->GetMaxPageBlobSize();
 			return true;
 		}
 		int GetBlobSize(const sBlobVal& blob) const 
 		{
 
 			uint32 nSize = sizeof(uint32);
-			if(blob.m_nSize < m_nMaxPageLen)
+			if(blob.m_nSize < m_nMaxBlobSize)
 			{
 				nSize += (blob.m_nSize);
 			}
@@ -74,6 +75,10 @@ namespace embDB
 		{
 			return m_nBlobDataSize;
 		}
+		bool BeginEncoding(const TValueMemSet& vecValues)
+		{
+			return true;
+		}
 		bool encode(const TValueMemSet& vecValues, CommonLib::IWriteStream* pStream)
 		{	
 			assert(m_nCount == vecValues.size());
@@ -87,7 +92,7 @@ namespace embDB
 				uint32 nBeginPos = blob.m_nBeginPos;
 
 				pStream->write(blob.m_nSize);
-				if(blob.m_nSize < m_nMaxPageLen)
+				if(blob.m_nSize < m_nMaxBlobSize)
 				{					
 					pStream->write(blob.m_blob.buffer(), blob.m_nSize);
 				}
@@ -123,16 +128,18 @@ namespace embDB
 		bool decode(uint32 nSize, TValueMemSet& vecValues, CommonLib::FxMemoryReadStream *pStream)
 		{
 			m_nCount = nSize;
+
+			vecValues.resize(nSize);
 			for (uint32 nIndex = 0; nIndex < nSize; ++nIndex)
 			{
 			 
 
-				sBlobVal blob;
+				sBlobVal& blob = vecValues[i];
 				blob.m_bChange = false;
 
 				blob.m_nSize = pStream->readIntu32();
 				m_nBlobDataSize += sizeof(uint32);
-				if(blob.m_nSize  < m_nMaxPageLen)
+				if(blob.m_nSize  < m_nMaxBlobSize)
 				{
 			 
 					blob.m_blob.resize(blob.m_nSize);
@@ -151,7 +158,6 @@ namespace embDB
 					pReadStream->read(blob.m_blob.buffer(), blob.m_nSize);
 
 				}
-				vecValues.push_back(blob);
 			}
 			return true;
 		}
@@ -166,7 +172,7 @@ namespace embDB
 
 		uint32 m_nBlobDataSize;
 		uint32 m_nCount;
-		uint32 m_nMaxPageLen;
+		uint32 m_nMaxBlobSize;
 
 		CommonLib::alloc_t* m_pAlloc;
 		TCompParams *m_pLeafCompParams;

@@ -40,9 +40,12 @@ namespace embDB
  
 		uint32 GetCompressSize() const
 		{
-			return m_encoder.GetCompressSize();
+			return m_encoder.GetCompressSize(bSave);
 		}
-
+		bool BeginEncoding(const TValueMemSet& vecValues)
+		{
+			return true;
+		}
 		bool encode(const TValueMemSet& vecValues, CommonLib::IWriteStream *pStream)
 		{
 			assert(m_encoder.count() == vecValues.size())

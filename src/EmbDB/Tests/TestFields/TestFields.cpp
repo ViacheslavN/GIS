@@ -5,10 +5,13 @@
 
 void TestIntegerField();
 void TestStringField();
+void testDBFromShape();
 int main()
 {
-	TestStringField();
+	//TestStringField();
 	//TestIntegerField();
+
+	testDBFromShape();
     return 0;
 }
 

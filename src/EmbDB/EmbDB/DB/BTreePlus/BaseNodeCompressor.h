@@ -40,6 +40,9 @@ namespace embDB
 			template<typename _Transactions  >
 			bool  init(TCompressorParams *pParams, _Transactions *pTran)
 			{
+
+				m_KeyEncoder.init(pParams, pTran);
+				m_ValueEncoder.init(pParams, pTran);
 				return true;
 			}
 
@@ -80,6 +83,11 @@ namespace embDB
 
 				CommonLib::FxMemoryWriteStream ValueStream;
 				CommonLib::FxMemoryWriteStream KeyStream;
+
+				if (!m_KeyEncoder.BeginEncoding(vecKeys))
+					return false;
+				if (!m_ValueEncoder.BeginEncoding(vecValues))
+					return false;
 
 				uint32 nKeySize = m_KeyEncoder.GetCompressSize();
 				uint32 nValueSize = m_ValueEncoder.GetCompressSize();

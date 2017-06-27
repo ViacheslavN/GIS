@@ -210,6 +210,7 @@ class CString
     mutable string_buffer* m_pBuffer;
     alloc_t* m_pAlloc;
 	simple_alloc_t m_alloc;
+	mutable int m_nUTF8Length;
 };
 
 }

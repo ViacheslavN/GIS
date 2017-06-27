@@ -67,6 +67,11 @@ namespace embDB
 				this->m_PointEncoder.decodeSymbol(yMax);
 				zOrder.setZOrder(xMin, yMin, xMax, yMax);
 			}
+
+			uint32 count() const
+			{
+				return this->m_PointEncoder.count() / 4;
+			}
 	};
 
 

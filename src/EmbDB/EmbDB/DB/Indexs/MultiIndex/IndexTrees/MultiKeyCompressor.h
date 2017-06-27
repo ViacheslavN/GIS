@@ -29,6 +29,13 @@ namespace embDB
 
 		}
 
+		template<typename _Transactions  >
+		bool  init(CompressorParamsBaseImp *pParams, _Transactions *pTran)
+		{
+
+			return true;
+		}
+
 		void AddSymbol(uint32 nSize,  int nIndex, const TIndex& nValue, const TLeafMemSet& vecValues)
 		{
 
@@ -117,7 +124,10 @@ namespace embDB
 			return m_NumLenKeyCompressor.GetCompressSize() + m_RowIDCompressor.GetCompressSize() 
 				+ 2 * sizeof(uint32) + sizeof(TIndex);
 		}
-
+		bool BeginEncoding(const TLeafMemSet& vecValues)
+		{
+			return true;
+		}
 		bool encode( const TLeafMemSet& vecValues, CommonLib::IWriteStream *pStream)
 		{
 

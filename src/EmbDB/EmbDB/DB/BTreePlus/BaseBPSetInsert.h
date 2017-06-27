@@ -55,8 +55,6 @@ std::shared_ptr<_TBTreeNode> BPSETBASE_DECLARATION::findLeafNodeForInsert(const 
 BPSETBASE_TEMPLATE_PARAMS
 void BPSETBASE_DECLARATION::CheckLeafNode(TBTreeNode *pNode, bool bPreSave)
 {
-
-
 	if (bPreSave)
 		pNode->PreSave(m_pTransaction);
 

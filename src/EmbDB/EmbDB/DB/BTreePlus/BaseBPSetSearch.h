@@ -216,7 +216,7 @@ TIterator BPSETBASE_DECLARATION::lower_bound(const TComparator& comp, const TKey
 		if (pNode->isLeaf())
 		{
 			int nLeafIndex = pNode->leaf_lower_bound(comp, key);
-			if (nLeafIndex != -1)
+			if (nLeafIndex != -1 && nLeafIndex < pNode->count())
 				return TIterator(this, pNode, nLeafIndex);
 			else if (nIndex < (pParent->count() - 1))
 			{

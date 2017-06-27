@@ -121,7 +121,8 @@ namespace embDB
 			stream.write(m_bIsLeaf);
 			//stream.write(m_bMulti);
 			assert(m_pBaseNode);
-			m_pBaseNode->Save(stream);
+			if (!m_pBaseNode->Save(stream))
+				return false;
 
 			if (m_bCheckCRC32)
 				header.writeCRC32(stream);

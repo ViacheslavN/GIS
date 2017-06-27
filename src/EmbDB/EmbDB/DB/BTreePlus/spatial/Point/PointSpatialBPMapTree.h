@@ -64,7 +64,7 @@ namespace embDB
 
 		bool insert(const TPointKey& key, const TValue& val, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)
 		{
-			return TBase::insert(key, val, pFromIterator, pRetItertor); 
+			return TBase::insert(key, val/*, pFromIterator, pRetItertor*/); 
 		}
 
 		void setExtent(const TRect& extent)

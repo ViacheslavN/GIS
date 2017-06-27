@@ -71,7 +71,7 @@ void InsertStringData()
 		var = str;
 		pRow->set(var, 0);
 		pCursor->insert(pRow.get());
-		
+		n++;
 	}
 
 	pTran->commit();

@@ -89,7 +89,10 @@ namespace embDB
 
 			auto it = std::upper_bound(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), key, comp);
 			if (it == m_innerKeyMemSet.end())
-				return -1;
+			{
+				nIndex = m_innerKeyMemSet.size() - 1;
+				return m_innerLinkMemSet[nIndex];
+			}
 			if (it == m_innerKeyMemSet.begin()) //меньше всех ключей
 			{
 				nIndex = -1;

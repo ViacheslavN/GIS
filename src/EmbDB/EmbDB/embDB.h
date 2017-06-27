@@ -87,7 +87,7 @@ namespace embDB
 		itUnique,
 		itMultiRegular,
 		itSpatial,
-		itFreeText,
+		itText,
 		itRouting
 	};
 	enum SpatialQueryMode
@@ -286,6 +286,24 @@ namespace embDB
 		{
 
 		}
+	};
+
+
+	enum eTypeTextIndex
+	{
+		eTTI_Direct,
+		eTTI_NGramm
+
+	};
+
+	struct STextIndexProp : public SIndexProp
+	{
+
+		eTypeTextIndex m_TextIndexType;
+		uint32 m_nNmin;
+		uint32 m_nNmax;
+		STextIndexProp() : m_TextIndexType(eTTI_NGramm), m_nNmin(4), m_nNmax(4)
+		{}
 	};
  
 

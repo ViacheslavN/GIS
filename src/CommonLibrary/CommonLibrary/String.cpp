@@ -31,6 +31,7 @@ namespace CommonLib
 CString::CString(alloc_t* pAlloc)
   : m_pBuffer(NULL)
   , m_pAlloc(pAlloc)
+  , m_nUTF8Length(-1)
 {
 	if(!m_pAlloc)
 		m_pAlloc = &m_alloc;
@@ -39,6 +40,7 @@ CString::CString(alloc_t* pAlloc)
 CString::CString(const char *_str, int count, alloc_t* pAlloc)
   : m_pBuffer(NULL)
   , m_pAlloc(pAlloc)
+  , m_nUTF8Length(-1)
 {
 	if(!m_pAlloc)
 		m_pAlloc = &m_alloc;
@@ -56,6 +58,7 @@ CString::CString(const char *_str, int count, alloc_t* pAlloc)
 CString::CString(const wchar_t *_str, int count, alloc_t* pAlloc)
   : m_pBuffer(NULL)
   , m_pAlloc(pAlloc)
+  , m_nUTF8Length(-1)
 {
 	if(!m_pAlloc)
 		m_pAlloc = &m_alloc;
@@ -73,6 +76,7 @@ CString::CString(const wchar_t *_str, int count, alloc_t* pAlloc)
 CString::CString(const BSTR _str, alloc_t* pAlloc)
   : m_pBuffer(NULL)
   , m_pAlloc(pAlloc)
+  , m_nUTF8Length(-1)
 {
 	if(!m_pAlloc)
 		m_pAlloc = &m_alloc;
@@ -83,7 +87,7 @@ CString::CString(const BSTR _str, alloc_t* pAlloc)
 #endif
 
 CString::CString(const CString& _str)
-  : m_pBuffer(NULL), m_pAlloc(NULL)
+  : m_pBuffer(NULL), m_pAlloc(NULL), m_nUTF8Length(-1)
 {
 	if(_str.m_pAlloc != &_str.m_alloc)
 		m_pAlloc = _str.m_pAlloc;
@@ -121,7 +125,7 @@ CString& CString::operator =(const char *_str)
 
   m_pBuffer->safeRelease();
   m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, _str);
-
+  m_nUTF8Length = -1;
   return *this;
 }
 
@@ -132,7 +136,7 @@ CString& CString::operator =(const wchar_t *_str)
 
   m_pBuffer->safeRelease();
   m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, _str);
-
+  m_nUTF8Length = -1;
   return *this;
 }
 
@@ -145,8 +149,6 @@ CString& CString::operator =(const CString& _str)
 
   if(m_pBuffer == _str.m_pBuffer)
     return *this;
-
- 
 
   if(m_pBuffer == NULL && _str.isEmpty())
     return *this;
@@ -170,6 +172,7 @@ CString& CString::operator =(const CString& _str)
   {
     m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, _str.cwstr());
   }
+  m_nUTF8Length = _str.m_nUTF8Length;
   return *this;
 }
 
@@ -239,7 +242,7 @@ wchar_t* CString::wstr()
 
   wchar_t* res = const_cast<wchar_t*>(cwstr());
   m_pBuffer->enableSharing(false);
-
+  m_nUTF8Length = -1;
   return res;
 }
 
@@ -265,6 +268,7 @@ const wchar_t& CString::operator [](uint32 _index) const
 wchar_t& CString::operator [](uint32 _index)
 {
   assert (_index < capacity ());
+  m_nUTF8Length = -1;
   return *(wstr() + _index);
 }
 
@@ -786,7 +790,7 @@ CString& CString::upper()
 
   if(m_pBuffer != NULL)
     m_pBuffer->enableSharing(share);
-
+  m_nUTF8Length = -1;
   return *this;
 }
 
@@ -798,7 +802,7 @@ CString& CString::lower()
 
   if(m_pBuffer != NULL)
     m_pBuffer->enableSharing(share);
-
+  m_nUTF8Length = -1;
   return *this;
 }
 
@@ -811,7 +815,7 @@ CString& CString::reverse()
 
   if(m_pBuffer != NULL)
     m_pBuffer->enableSharing(share);
-
+  m_nUTF8Length = -1;
   return *this;
 }
 #endif
@@ -848,7 +852,7 @@ uint32 CString::replace(wchar_t _chFind, wchar_t _chReplace)
 
   for(wchar_t* p = wcschr(wstr(), _chFind); p != NULL; p = wcschr(p, _chFind), ++nCount)
     *p = _chReplace;
-
+  m_nUTF8Length = -1;
   return nCount;
 }
 
@@ -896,7 +900,7 @@ uint32 CString::replace(const CString& _strFind, const CString& _strReplace)
 
   if(m_pBuffer != NULL)
     m_pBuffer->enableSharing(share);
-
+  m_nUTF8Length = -1;
   return nCount;
 }
 
@@ -913,7 +917,7 @@ CString& CString::operator +=(wchar_t _chr)
 
   if(m_pBuffer != NULL)
     m_pBuffer->enableSharing(share);
-
+  m_nUTF8Length = -1;
   return *this;
 }
 
@@ -943,7 +947,7 @@ CString& CString::operator +=(const wchar_t* _str)
 
   if(m_pBuffer != NULL)
     m_pBuffer->enableSharing(share);
-
+  m_nUTF8Length = -1;
   return *this;
 
 //  return (*this) += str_t(_str);
@@ -1037,6 +1041,7 @@ CString& CString::format(const char* _format, ...)
   *this = buffer;
   
   //delete[] buffer;
+  m_nUTF8Length = -1;
   return *this;
 }
 
@@ -1060,6 +1065,7 @@ CString& CString::format(const wchar_t* _format, ...)
 		_format, args);
   *this = buffer;
   //delete[] buffer;
+  m_nUTF8Length = -1;
   return *this;
 }
 
@@ -1077,6 +1083,7 @@ CString& CString::format_c(const wchar_t* _format, ...)
   out_str_stream_buf f2(wstr(), f1.charCount + 1);
   len = __vosnprintf (f2, _format, args);
   //*this = f.str ().c_str ();
+  m_nUTF8Length = -1;
   return *this;
 }
 
@@ -1093,7 +1100,7 @@ CString& CString::loadString(unsigned int _id, HINSTANCE _instance)
     *this = buffer;
   else
     clear();
-
+  m_nUTF8Length = -1;
   return *this;
 }
 #endif
@@ -1151,6 +1158,7 @@ CString& CString::trimLeft()
   pstr[len] = L'\0';
 
   m_pBuffer->flush ();
+  m_nUTF8Length = -1;
   return *this;
 }
 
@@ -1174,6 +1182,7 @@ CString& CString::trimRight()
   pstr[len - nafter] = L'\0';
 
   m_pBuffer->flush ();
+  m_nUTF8Length = -1;
   return *this;
 }
 #endif 
@@ -1204,6 +1213,7 @@ CString& CString::trimAll()
   pstr[len] = L'\0';
 
   m_pBuffer->flush ();
+  m_nUTF8Length = -1;
   return *this;
 }
  
@@ -1274,6 +1284,8 @@ int CString::loadFromUTF8 (const char *utf)
   wchar_t *ldst = wstr ();
   int ret = dest_mbsnrtowcs (ldst, psrc, srcByteCount, dstByteCount);
   wstr ()[dstCharCount] = 0;
+
+  m_nUTF8Length = -1;
   return srcByteCount;
 }
 
@@ -1281,7 +1293,7 @@ int CString::exportToUTF8 (char *utf, uint32 maxbuf) const
 {
   assert (maxbuf > 0);
   const wchar_t *tmp = cwstr ();
-  int len = (int)dest_wcsmblen (tmp);
+  int len = calcUTF8Length();
   if (len >= maxbuf)
     len = maxbuf - 1;
   wchar_t **ptr = (wchar_t **)&tmp;
@@ -1293,8 +1305,12 @@ int CString::exportToUTF8 (char *utf, uint32 maxbuf) const
 int 
 CString::calcUTF8Length (void) const
 {
+	if (m_nUTF8Length != -1)
+		return m_nUTF8Length;
   const wchar_t *tmp = cwstr ();
-  return (int)dest_wcsmblen (tmp);
+  m_nUTF8Length = (int)dest_wcsmblen(tmp);
+
+  return m_nUTF8Length;
 }
 
 int CString::loadFromASCII(const char *pBuf, uint32 nSize)
@@ -1306,7 +1322,7 @@ int CString::loadFromASCII(const char *pBuf, uint32 nSize)
 
 	m_pBuffer->safeRelease();
 	m_pBuffer = string_buffer::make(m_pAlloc != &m_alloc ? m_pAlloc : NULL, pBuf, nSize);
-
+	m_nUTF8Length = -1;
 	return m_pBuffer->length();
 }
 }

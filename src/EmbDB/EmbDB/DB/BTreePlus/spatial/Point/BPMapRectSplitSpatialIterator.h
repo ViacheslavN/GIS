@@ -206,52 +206,42 @@ namespace embDB
 					m_nIndex == -1;
 					return false;
 				}
+ 
 
-			/*	if(m_nIndex == (int32)m_pCurLeafNode->count())
+				while(true)
 				{
-					if(m_pCurNode->next() == -1)
+					//TSubQuery nPrev = m_CurrentSpatialQuery;
+					m_CurrentSpatialQuery = m_Queries.top();
+					m_Queries.pop();
+
+					TPointKey zPageLast = m_pCurLeafNode->key(m_pCurLeafNode->count() - 1);
+					if (zPageLast < m_CurrentSpatialQuery.m_zMin)
 					{
-						m_nIndex = -1;
-						return false;
+						if (m_pCurNode->next() == -1)
+							return false;
+
+						if (!findNext(false))
+							return false;
+						break;
 					}
 
-					if(!findNext(true))
-						return false;
-
-				}			
-				else*/
-				{
-
-					//TPointKey& zVal = m_pCurNode->key(m_nIndex - 1);
-
-					//TO DO Check next page to current query
-
-					while(true)
+					int32 nIndex = m_pCurNode->leaf_lower_bound(m_pTree->getComp(), m_CurrentSpatialQuery.m_zMin);
+					if(nIndex != -1)
 					{
-						//TSubQuery nPrev = m_CurrentSpatialQuery;
-						m_CurrentSpatialQuery = m_Queries.top();
- 
-						int32 nIndex = m_pCurNode->leaf_lower_bound(m_pTree->getComp(), m_CurrentSpatialQuery.m_zMin);
-						if(nIndex != -1)
+						CreateSubQuery();
+						if(m_nIndex <= nIndex)
 						{
-							CreateSubQuery();
-							if(m_nIndex <= nIndex)
-							{
-								m_nIndex = nIndex;
-								break;
-							}
-						}
-						else
-						{
-							if(!findNext(false))
-								return false;
+							m_nIndex = nIndex;
 							break;
 						}
 					}
-					
-
+					else
+					{
+						if(!findNext(false))
+							return false;
+						break;
+					}
 				}
-
 			}
 		}
 
@@ -284,18 +274,6 @@ namespace embDB
 					}
 
 				}
-
-
-				/*if(m_pCurLeafNode->m_nNext != it.m_pCurNode->addr())
-				{
-					int dd =0;
-					dd++;
-				}
-				if(it.m_nIndex != 0)
-				{
-					int dd = 0;
-					dd++;
-				}*/
 
 				m_pCurNode = it.m_pCurNode;
 				m_pCurLeafNode = &m_pCurNode->m_LeafNode;
@@ -364,16 +342,17 @@ namespace embDB
 				return;
 			}
 			TPointKey zPageLast = m_pCurLeafNode->key(m_pCurLeafNode->count() - 1);
-						
 			while (zPageLast < m_CurrentSpatialQuery.m_zMax)
 			{
+				//assert(m_CurrentSpatialQuery.m_nBits >= 0);
 
-		
-				
-				assert(m_CurrentSpatialQuery.m_nBits >= 0);
+				if (m_CurrentSpatialQuery.m_zMin == m_CurrentSpatialQuery.m_zMax)
+				{
+					break;
+				}
+
 				while (m_CurrentSpatialQuery.m_zMin.getBit (m_CurrentSpatialQuery.m_nBits) == m_CurrentSpatialQuery.m_zMax.getBit (m_CurrentSpatialQuery.m_nBits))
 				{
-					
 					m_CurrentSpatialQuery.m_nBits--;
 					assert(m_CurrentSpatialQuery.m_nBits >= 0);
 				}
@@ -384,8 +363,6 @@ namespace embDB
 				nNexSubQuery.m_zMin.clearLowBits (m_CurrentSpatialQuery.m_nBits);
 		
 				m_CurrentSpatialQuery.m_zMax.setLowBits(m_CurrentSpatialQuery.m_nBits);
-
-
 				nNexSubQuery.m_nBits = --m_CurrentSpatialQuery.m_nBits;
 				//nNexSubQuery.m_ID = ++m_ID;
 			/*	if(nNexSubQuery.m_zMin < m_CurrentSpatialQuery.m_zMax)
@@ -415,7 +392,7 @@ namespace embDB
 
 		typedef SubQuery<TPointKey> TSubQuery;
 		TSubQuery m_CurrentSpatialQuery;
-		typedef TSimpleStack<TSubQuery> TSpatialQueries;
+		typedef std::stack<TSubQuery> TSpatialQueries;
 		TSpatialQueries m_Queries;
 		TRect m_QueryRect;
 
