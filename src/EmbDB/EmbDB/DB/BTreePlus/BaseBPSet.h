@@ -484,7 +484,7 @@ namespace embDB
 
 		/*insert*/
 		TBTreeNodePtr findLeafNodeForInsert(const TKey& key);
-		bool insert(const TKey& key);
+		bool insert(TKey& key);
 		void CheckLeafNode(TBTreeNode* pNode, bool bPreSave);
 		void TransformRootToInner();
 		void SplitRootInnerNode();

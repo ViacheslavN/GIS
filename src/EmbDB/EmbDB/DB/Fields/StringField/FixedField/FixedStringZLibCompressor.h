@@ -550,6 +550,8 @@ namespace embDB
 			sStringBloc *pCurrBloc = NULL;
 
 			std::vector<byte> vecAlloc;
+
+			vecValues.resize(nSize);
 			for (uint32 i = 0; i < nSize; ++i)
 			{
 		
@@ -575,7 +577,7 @@ namespace embDB
 					compressor.BeginDecode(pCurrBloc->m_compressBlocStream.buffer(), pCurrBloc->m_compressBlocStream.pos());
 				}
 
-				CommonLib::CString string;
+				CommonLib::CString& string = vecValues[i];
 
 
 				if (vecAlloc.size() < nLen + 1) //TO DO use alloc
@@ -593,7 +595,7 @@ namespace embDB
 					string.loadFromUTF8((const char*)&vecAlloc[0]);
 					
 	
-				vecValues.push_back(string);
+			//	vecValues.push_back(string);
 				m_nStrings++;
 			}
 			if(pCurrBloc)

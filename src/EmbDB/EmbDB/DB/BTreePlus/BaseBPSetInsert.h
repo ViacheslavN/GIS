@@ -2,7 +2,7 @@
  
 
 BPSETBASE_TEMPLATE_PARAMS
-bool BPSETBASE_DECLARATION::insert(const TKey& key)
+bool BPSETBASE_DECLARATION::insert(TKey& key)
 {
 	TBTreeNodePtr pNode = findLeafNodeForInsert(key);
 	if (!pNode.get())

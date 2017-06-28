@@ -16,17 +16,42 @@ namespace CommonLib
 
 		resize(nSize);
 	}
-	CBlob::CBlob(const CBlob& blob)
+	CBlob::CBlob(const CBlob& blob) : m_bAttach(false) , m_nCapacity(0), m_nSize(0), m_pBuffer(nullptr)
 	{
 		if(blob.m_pAlloc != &blob.m_alloc)
 			m_pAlloc = blob.m_pAlloc;
 		else
 			m_pAlloc = &m_alloc;
 
-		m_bAttach = true;
+		/*m_bAttach = true;
+		m_pBuffer = blob.m_pBuffer;
+		m_nSize = blob.m_nSize;
+		m_nCapacity = blob.m_nCapacity;*/
+
+		copy(blob.buffer(), blob.size());
+	}
+
+
+	CBlob::CBlob( CBlob&& blob) 
+	{
+		if (blob.m_pAlloc != &blob.m_alloc)
+			m_pAlloc = blob.m_pAlloc;
+		else
+			m_pAlloc = &m_alloc;
+
+
 		m_pBuffer = blob.m_pBuffer;
 		m_nSize = blob.m_nSize;
 		m_nCapacity = blob.m_nCapacity;
+
+		m_bAttach = blob.m_bAttach;
+		if (!m_bAttach)
+		{
+			blob.m_pBuffer = nullptr;
+			blob.m_nSize = 0;
+			blob.m_nCapacity = 0;
+		}
+
 	}
 
 	CBlob::CBlob(byte* pBuf, uint32 nSize, bool bAttach, alloc_t *pAlloc) : 
@@ -52,15 +77,34 @@ namespace CommonLib
 			m_pAlloc = blob.m_pAlloc;
 		else
 			m_pAlloc = &m_alloc;
+		m_bAttach = false;
+		copy(blob.buffer(), blob.size());
+		return *this;
+	}
 
-		m_bAttach = true;
+	CBlob& CBlob::operator = (CBlob&& blob)
+	{
+		clear(true);
+
+		if (blob.m_pAlloc != &blob.m_alloc)
+			m_pAlloc = blob.m_pAlloc;
+		else
+			m_pAlloc = &m_alloc;
+
 		m_pBuffer = blob.m_pBuffer;
 		m_nSize = blob.m_nSize;
 		m_nCapacity = blob.m_nCapacity;
 
+		m_bAttach = blob.m_bAttach;
+		if (!m_bAttach)
+		{
+			blob.m_pBuffer = nullptr;
+			blob.m_nSize = 0;
+			blob.m_nCapacity = 0;
+		}
 		return *this;
 	}
-
+	
 	CBlob::~CBlob()
 	{
 		clear(true);

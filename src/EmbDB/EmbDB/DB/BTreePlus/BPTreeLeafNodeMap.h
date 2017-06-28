@@ -44,7 +44,7 @@ namespace embDB
 			return this->m_Compressor.Load(this->m_KeyMemSet, this->m_ValueMemSet, stream);
 		}
 		template<class TComp>
-		int insert(TComp& comp, const TKey& key, const TValue& value, int nInsertInIndex = -1)
+		int insert(TComp& comp,const TKey& key, const TValue& value, int nInsertInIndex = -1)
 		{
 			int32 nIndex = 0;
 			bool bRet = this->insertImp(comp, key, nIndex, nInsertInIndex);
@@ -52,7 +52,7 @@ namespace embDB
 				return -1;
 
 			this->m_ValueMemSet.insert( std::next(this->m_ValueMemSet.begin(), nIndex), value);
-			if (!this->m_Compressor.insert(nIndex, key, value, this->m_KeyMemSet, this->m_ValueMemSet))
+			if (!this->m_Compressor.insert(nIndex, this->m_KeyMemSet[nIndex], this->m_ValueMemSet[nIndex], this->m_KeyMemSet, this->m_ValueMemSet))
 				return -1;
 			return nIndex;
 		}

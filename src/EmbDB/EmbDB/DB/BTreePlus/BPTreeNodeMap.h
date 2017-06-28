@@ -44,7 +44,7 @@ namespace embDB
 		~BPTreeNodeMap()
 		{}
 		template<class TComp>
-		int insertInLeaf(TComp& comp, const TKey& key, const TValue& val, int nInsertInIndex = -1)
+		int insertInLeaf(TComp& comp,  const TKey& key, const TValue& val, int nInsertInIndex = -1)
 		{
 			assert(this->m_bIsLeaf);
 			return this->m_LeafNode.insert(comp, key, val, nInsertInIndex);

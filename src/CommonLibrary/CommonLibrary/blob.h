@@ -13,8 +13,10 @@ namespace CommonLib
 		CBlob(alloc_t *pAlloc = NULL);
 		CBlob(uint32 nSize, alloc_t *pAlloc = NULL);
 		CBlob(const CBlob& blob);
+		CBlob(CBlob&& blob);
 		CBlob(byte* pBuf, uint32 nSize, bool bAttach = true, alloc_t *pAlloc = NULL);
 		CBlob& operator = (const CBlob& blob);
+		CBlob& operator = (CBlob&& blob);
 		~CBlob();
 
 

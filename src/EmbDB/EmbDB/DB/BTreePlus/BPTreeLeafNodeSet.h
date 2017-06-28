@@ -105,7 +105,7 @@ namespace embDB
 			int32 nIndex = 0;
 			if (!insertImp(comp, key, nIndex, nInsertLeafIndex))
 				return -1;
-			if (!m_Compressor.insert(nIndex, key, m_KeyMemSet))
+			if (!m_Compressor.insert(nIndex, m_KeyMemSet[nIndex], m_KeyMemSet))
 				return -1;
 			return nIndex;
 		}

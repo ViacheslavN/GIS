@@ -132,11 +132,8 @@ namespace embDB
 			vecValues.resize(nSize);
 			for (uint32 nIndex = 0; nIndex < nSize; ++nIndex)
 			{
-			 
-
-				sBlobVal& blob = vecValues[i];
+				sBlobVal& blob = vecValues[nIndex];
 				blob.m_bChange = false;
-
 				blob.m_nSize = pStream->readIntu32();
 				m_nBlobDataSize += sizeof(uint32);
 				if(blob.m_nSize  < m_nMaxBlobSize)
