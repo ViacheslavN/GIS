@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'MapView.ui'
 **
-** Created by: Qt User Interface Compiler version 5.5.1
+** Created by: Qt User Interface Compiler version 5.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -35,7 +35,7 @@ public:
 
     void retranslateUi(QWidget *MapView)
     {
-        MapView->setWindowTitle(QApplication::translate("MapView", "MapView", 0));
+        MapView->setWindowTitle(QApplication::translate("MapView", "MapView", Q_NULLPTR));
     } // retranslateUi
 
 };

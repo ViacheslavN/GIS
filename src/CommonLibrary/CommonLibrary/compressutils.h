@@ -4,6 +4,14 @@
 namespace CommonLib
 {
 
+	template<class _TType>
+	struct TDefSign { typedef _TType TSignType; };
+
+	template<> struct TDefSign< byte > { typedef char TSignType; };
+	template<> struct TDefSign< uint16 > { typedef int16 TSignType; };
+	template<> struct TDefSign< uint32 > { typedef int32 TSignType; };
+	template<> struct TDefSign< uint64 > { typedef int64 TSignType; };
+
 	enum eCompressDataType
 	{
 		dtType8 =  0,

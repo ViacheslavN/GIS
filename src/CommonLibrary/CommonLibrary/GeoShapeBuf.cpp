@@ -189,24 +189,11 @@ namespace CommonLib
 		}
 	}
 
-	CGeoShapeBuf::CGeoShapeBuf(alloc_t *pAlloc) : m_pAlloc(pAlloc), m_pBuffer(0), m_nBufSize(0), m_bAttach(false)
+	CGeoShapeBuf::CGeoShapeBuf(alloc_t *pAlloc) : m_blob(pAlloc)
 	{
-		if(!m_pAlloc)
-			m_pAlloc = &m_alloc;
 	}
-	CGeoShapeBuf::CGeoShapeBuf(const CGeoShapeBuf& geoShp) : m_pBuffer(NULL)
-	{
-		m_pAlloc = geoShp.m_pAlloc;
-		m_nBufSize = geoShp.m_nBufSize;
-		m_bAttach = geoShp.m_bAttach;
-		if(m_bAttach)
-			m_pBuffer = geoShp.m_pBuffer;
-		else if(geoShp.m_pBuffer && m_nBufSize != 0)
-		{
-			m_pBuffer = (byte*)m_pAlloc->alloc(m_nBufSize);
-			memcpy(m_pBuffer, geoShp.m_pBuffer, m_nBufSize);
-		}
-	}
+	CGeoShapeBuf::CGeoShapeBuf(const CGeoShapeBuf& geoShp) : m_blob(geoShp.m_blob)
+	{}
 
 	CGeoShapeBuf& CGeoShapeBuf::operator=(const CGeoShapeBuf& shp)
 	{

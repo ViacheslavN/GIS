@@ -64,6 +64,9 @@
     <Filter Include="SpatialData\ShapeCompressor2">
       <UniqueIdentifier>{fc732f6c-7b32-414b-8d91-453213e0d049}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SpatialData\StreamCompressor">
+      <UniqueIdentifier>{93e4d94b-dba6-4d8d-8fe9-b11b6818f783}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -306,6 +309,27 @@
     <ClInclude Include="PointCompressor.h">
       <Filter>SpatialData\ShapeCompressor2</Filter>
     </ClInclude>
+    <ClInclude Include="PartEncoder.h">
+      <Filter>SpatialData\StreamCompressor</Filter>
+    </ClInclude>
+    <ClInclude Include="PointEncoder.h">
+      <Filter>SpatialData\StreamCompressor</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamShapeEncoder.h">
+      <Filter>SpatialData\StreamCompressor</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseNumLenEncoder.h">
+      <Filter>compress</Filter>
+    </ClInclude>
+    <ClInclude Include="SignedNumLenEncoder.h">
+      <Filter>compress</Filter>
+    </ClInclude>
+    <ClInclude Include="UnsignedNumLenEncoder.h">
+      <Filter>compress</Filter>
+    </ClInclude>
+    <ClInclude Include="BitUtils.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -421,6 +445,15 @@
     </ClCompile>
     <ClCompile Include="PointCompressor.cpp">
       <Filter>SpatialData\ShapeCompressor2</Filter>
+    </ClCompile>
+    <ClCompile Include="PartEncoder.cpp">
+      <Filter>SpatialData\StreamCompressor</Filter>
+    </ClCompile>
+    <ClCompile Include="PointEncoder.cpp">
+      <Filter>SpatialData\StreamCompressor</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamShapeEncoder.cpp">
+      <Filter>SpatialData\StreamCompressor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

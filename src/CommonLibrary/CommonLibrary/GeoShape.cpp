@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "GeoShape.h"
 #include "stream.h"
-#include "ShapeCompressor.h"
 #include "ShapeCompressor2.h"
 namespace CommonLib
 {

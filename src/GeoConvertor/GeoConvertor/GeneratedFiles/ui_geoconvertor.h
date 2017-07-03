@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'geoconvertor.ui'
 **
-** Created by: Qt User Interface Compiler version 5.5.1
+** Created by: Qt User Interface Compiler version 5.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -96,13 +96,13 @@ public:
 
     void retranslateUi(QMainWindow *GeoConvertorClass)
     {
-        GeoConvertorClass->setWindowTitle(QApplication::translate("GeoConvertorClass", "GeoConvertor", 0));
-        actionNew->setText(QApplication::translate("GeoConvertorClass", "New", 0));
-        actionOpen_project->setText(QApplication::translate("GeoConvertorClass", "Open project", 0));
-        actionSave_project->setText(QApplication::translate("GeoConvertorClass", "Save project", 0));
-        actionSave_project_as->setText(QApplication::translate("GeoConvertorClass", "Save project as", 0));
-        menuFile->setTitle(QApplication::translate("GeoConvertorClass", "File", 0));
-        toolBar->setWindowTitle(QApplication::translate("GeoConvertorClass", "toolBar", 0));
+        GeoConvertorClass->setWindowTitle(QApplication::translate("GeoConvertorClass", "GeoConvertor", Q_NULLPTR));
+        actionNew->setText(QApplication::translate("GeoConvertorClass", "New", Q_NULLPTR));
+        actionOpen_project->setText(QApplication::translate("GeoConvertorClass", "Open project", Q_NULLPTR));
+        actionSave_project->setText(QApplication::translate("GeoConvertorClass", "Save project", Q_NULLPTR));
+        actionSave_project_as->setText(QApplication::translate("GeoConvertorClass", "Save project as", Q_NULLPTR));
+        menuFile->setTitle(QApplication::translate("GeoConvertorClass", "File", Q_NULLPTR));
+        toolBar->setWindowTitle(QApplication::translate("GeoConvertorClass", "toolBar", Q_NULLPTR));
     } // retranslateUi
 
 };

@@ -1,7 +1,7 @@
 #ifndef _LIB_COMMON_GEO_SHAPE_BUF_H_
 #define _LIB_COMMON_GEO_SHAPE_BUF_H_
 #include "IGeoShape.h"
- 
+#include "blob.h"
 namespace CommonLib
 {
 	
@@ -15,6 +15,18 @@ namespace CommonLib
 
 			 CGeoShapeBuf&     operator=(const CGeoShapeBuf& shp);
 
+
+			 bool IsSuccinct() const;
+			 bool decode() const;
+			 bool InnerEncode() const;
+
+			 bool BeginReadSuccinct() const;
+			 void EndReadSuccinct() const;
+			 GisXYPoint nextPoint();
+			 uint32 nextPart();
+
+
+			
 
 			virtual eShapeType type() const; 
 	
@@ -75,11 +87,16 @@ namespace CommonLib
 		private:
 			
 		private:
-			simple_alloc_t m_alloc;
-			alloc_t *m_pAlloc;
-			byte* m_pBuffer;
-			uint32 m_nBufSize;
+
+			CBlob m_blob;
 			bool m_bAttach;
+
+			bool m_bIsSuccinct;
+
+			struct SuccinctContext
+			{
+				std::vector<uint32> m_vecParts;
+			};
 
 			struct sShapeParams
 			{
