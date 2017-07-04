@@ -64,7 +64,7 @@ namespace DatasetLite
 		virtual bool commit() = 0;
 
  		static IShapeFileIndexPtr open(const CommonLib::CString& sDbName, int32 nShapeType);
-		static IShapeFileIndexPtr create(const CommonLib::CString& sDbName, size_t nPageSize,
+		static IShapeFileIndexPtr create(const CommonLib::CString& sDbName, uint32 nPageSize,
 			const CommonLib::CString& sShapeFileName, GisEngine::GisCommon::Units units = GisEngine::GisCommon::UnitsUnknown, 
 			double dOffsetX = 0, double dOffsetY = 0, byte nScaleX = 0, byte nScaleY = 0, CommonLib::bbox bbox = CommonLib::bbox());
 

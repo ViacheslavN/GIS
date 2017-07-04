@@ -2,7 +2,7 @@
 #include "BaseNumLenEncoder.h"
 #include "ArithmeticCoder.h"
 #include "SignCompressor.h"
-namespace embDB
+namespace CommonLib
 {
 
 	template<class _TValue, class _TEncoder, class _TDecoder, class  uint32 _nMaxBitsLens>
@@ -16,7 +16,7 @@ namespace embDB
 		typedef typename TDefSign<TValue>::TSignType TSignValue;
 
 
-		SignedNumLenEncoder(uint32 nPageSize, CommonLib::alloc_t* pAlloc = nullptr) : TBase(nPageSize, pAlloc)
+		SignedNumLenEncoder(CommonLib::alloc_t* pAlloc = nullptr) : TBase( pAlloc)
 		{}
 
 

@@ -330,6 +330,9 @@
     <ClInclude Include="BitUtils.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="SignEncoder.h">
+      <Filter>SpatialData\StreamCompressor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

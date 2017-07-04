@@ -257,7 +257,7 @@ namespace embDB
 			if (m_mapValues.size() == 0)
 				return;
 
- 			uint32 nRowSize = GetRowSize(m_mapValues.size());
+ 			uint32 nRowSize = GetRowSize((uint32)m_mapValues.size());
 			if (nRowSize < (m_nPageSize - GetHeaderSize()))
 			{
 				WriteRowData(pStream);

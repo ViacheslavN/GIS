@@ -66,15 +66,9 @@ namespace embDB
 	{
 
 		IDBStoragePtr pDBStorage = m_pDB->getDBStorage();
- 
- 
-
-
-	
 
 		CRandomGenerator::GetRandomValues(m_szSalt, ___nSALT_SIZE);
 		CRandomGenerator::GetRandomValues(m_szSaltIV, ___nSALT_SIZE);
-
 
 
 		CommonLib::CString sPWD = pszPassword;
@@ -86,8 +80,6 @@ namespace embDB
 		sPWD.exportToUTF8((char*)&vecUtf8PWD[0], nUtf8Len);
 
 		m_nOffset = CalcOffset(&vecUtf8PWD[0], nUtf8Len, m_szSalt, ___nSALT_SIZE);
-
-
 
 		m_PageChiper.reset( new CPageCipher( m_qryptoAlg));
 		m_pCheckPageChiper.reset(new CPageCipher(m_qryptoAlg));

@@ -51,10 +51,10 @@ namespace CommonLib
 			void create(uint32 nSize);
 			virtual bool create(eShapeType shapeType);
 			virtual bool  create(eShapeType shapeType, uint32 npoints, uint32 nparts = 1, uint32 ncurves = 0, uint32 mpatchSpecificSize = 0);
-			void create(unsigned char* pBuf, uint32 nSize, eShapeType shapeType, uint32 npoints, uint32 nparts = 1, uint32 ncurves = 0);
-			void import(const unsigned char* extBuf, uint32 extBufSize);
-			void attach(unsigned char* extBuf, uint32 extBufSize);
-			unsigned char* detach();
+			void create(byte* pBuf, uint32 nSize, eShapeType shapeType, uint32 npoints, uint32 nparts = 1, uint32 ncurves = 0);
+			void import(const byte* extBuf, uint32 extBufSize);
+			void attach(byte* extBuf, uint32 extBufSize);
+			byte* detach();
 			bool validate();
 			void setNull(eShapeType shapeType = shape_type_null);
 
@@ -74,23 +74,22 @@ namespace CommonLib
 			static void initShapeBufferBuffer(unsigned char* buf, eShapeType shapeType, uint32 npoints, uint32 nparts, uint32 ncurves);
 			static uint32 calcSize(eShapeType shapeType, uint32 npoints = 1, uint32 nparts = 1, uint32 ncurves = 0, uint32 mpatchSpecificSize = 0);
 
-			static uint32      pointCount(const unsigned char* buf);
-			static uint32      pointCount(const unsigned char* buf, eShapeType general_type);
-			static uint32      partCount(const unsigned char* buf);
-			static uint32      partCount(const unsigned char* buf, eShapeType general_type);
-			static eShapeType  type(const unsigned char* buf);
+			static uint32      pointCount(const byte* buf);
+			static uint32      pointCount(const byte* buf, eShapeType general_type);
+			static uint32      partCount(const byte* buf);
+			static uint32      partCount(const byte* buf, eShapeType general_type);
+			static eShapeType  type(const byte* buf);
 			static eShapeType  generalType(const unsigned char* buf);
 			
-			static const GisXYPoint* getXYs(const unsigned char* buf);
-			static const GisXYPoint* getXYs(const unsigned char* buf, eShapeType  general_type, uint32 partCount);
+			static const GisXYPoint* getXYs(const byte* buf);
+			static const GisXYPoint* getXYs(const byte* buf, eShapeType  general_type, uint32 partCount);
 
 		private:
 			
 		private:
 
 			CBlob m_blob;
-			bool m_bAttach;
-
+	
 			bool m_bIsSuccinct;
 
 			struct SuccinctContext
@@ -103,7 +102,7 @@ namespace CommonLib
 
 				sShapeParams();
 
-				void set(const unsigned char* pBuffer);
+				void set(const byte* pBuffer);
 				void reset();
 
 

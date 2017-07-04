@@ -68,7 +68,7 @@ namespace embDB
 			return -1;
 		int64 nRowID = m_pTable->GetNextOID();
 
-		for (uint32 i = 0, sz = m_vecInsertFields.size(); i < sz; ++i)
+		for (uint32 i = 0, sz = (uint32)m_vecInsertFields.size(); i < sz; ++i)
 		{
 			CommonLib::CVariant *pValue = pRow->value(i);
 			IValueFieldPtr pValueField = m_vecInsertFields[i];

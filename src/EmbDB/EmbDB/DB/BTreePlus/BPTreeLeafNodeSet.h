@@ -81,7 +81,7 @@ namespace embDB
 					if (m_bMulti)
 					{
 						auto it = std::upper_bound(m_KeyMemSet.begin(), m_KeyMemSet.end(), key, comp);
-						nIndex = std::distance(m_KeyMemSet.begin(), it);
+						nIndex = (int32)std::distance(m_KeyMemSet.begin(), it);
 						m_KeyMemSet.insert(it, key);
 					}
 					else
@@ -92,7 +92,7 @@ namespace embDB
 							//TO DO logs
 							return false;
 						}
-						nIndex = std::distance(m_KeyMemSet.begin(), it);
+						nIndex = (int32)std::distance(m_KeyMemSet.begin(), it);
 						m_KeyMemSet.insert(it, key);
 					}
 				}
@@ -115,13 +115,13 @@ namespace embDB
 		uint32 upper_bound(TComp& comp, const TKey& key)
 		{
 			auto it = std::upper_bound(m_KeyMemSet.begin(), m_KeyMemSet.end(), key, comp);
-			return std::distance(m_KeyMemSet.begin(), it);
+			return (uint32)std::distance(m_KeyMemSet.begin(), it);
 		}
 		template<class TComp>
 		uint32 lower_bound(TComp& comp, const TKey& key)
 		{
 			auto it = std::lower_bound(m_KeyMemSet.begin(), m_KeyMemSet.end(), key, comp);
-			return std::distance(m_KeyMemSet.begin(), it);
+			return (uint32)std::distance(m_KeyMemSet.begin(), it);
 		}
 		template<class TComp>
 		int32 binary_search(TComp& comp, const TKey& key)
@@ -131,7 +131,7 @@ namespace embDB
 				return -1;
 
 			if (comp.EQ(*it, key))
-				return std::distance(m_KeyMemSet.begin(), it);
+				return (int32)std::distance(m_KeyMemSet.begin(), it);
 
 			return -1;
 		}
@@ -177,8 +177,8 @@ namespace embDB
 		template<class TVector, class TVecVal>
 		int SplitInVec(TVector& src, TVector& dst, TVecVal* pSplitVal, int32 _nBegin = -1, int32 _nEnd = -1)
 		{
-			uint32 nBegin = _nBegin == -1 ? src.size() / 2 : _nBegin;
-			uint32 nEnd = _nEnd == -1 ? src.size() : _nEnd;
+			uint32 nBegin = _nBegin == -1 ? (uint32)src.size() / 2 : _nBegin;
+			uint32 nEnd = _nEnd == -1 ? (uint32)src.size() : _nEnd;
 
 			std::move(std::next(src.begin(), nBegin), std::next(src.begin(), nEnd), std::inserter(dst, dst.begin()));
 			src.resize(src.size() - (nEnd - nBegin));
@@ -203,7 +203,7 @@ namespace embDB
 		template<class TVector, class TVecVal>
 		int SplitOne(TVector& src, TVector& dst, TVecVal* pSplitVal)
 		{
-			uint32 nSize = src.size() - 1;
+			uint32 nSize = (uint32)src.size() - 1;
 			dst.push_back(src[nSize]);
 			src.resize(nSize);
 			if (pSplitVal)
@@ -219,7 +219,7 @@ namespace embDB
 
 			if (m_bMinSplit)
 			{
-				m_Compressor.remove(m_KeyMemSet.size() - 1, m_KeyMemSet.back(), m_KeyMemSet);
+				m_Compressor.remove((uint32)m_KeyMemSet.size() - 1, m_KeyMemSet.back(), m_KeyMemSet);
 				int nSplitIndex = SplitOne(m_KeyMemSet, newNodeMemSet, pSplitKey);
 
 				NewNodeComp.insert(0, newNodeMemSet[0], newNodeMemSet);
@@ -243,13 +243,13 @@ namespace embDB
 			TCompressor& pRightNodeComp = pRightNode->m_Compressor;
 
 
-			uint32 nSize = m_KeyMemSet.size() / 2;
+			uint32 nSize = (uint32)m_KeyMemSet.size() / 2;
 
 			if (pSplitKey)
 				*pSplitKey = m_KeyMemSet[nSize];
 
 			SplitInVec(m_KeyMemSet, leftNodeMemSet, 0, nSize);
-			SplitInVec(m_KeyMemSet, rightNodeMemSet, nSize, m_KeyMemSet.size() - nSize);
+			SplitInVec(m_KeyMemSet, rightNodeMemSet, nSize, (uint32)m_KeyMemSet.size() - nSize);
 
 			pleftNodeComp.recalc(leftNodeMemSet);
 			pRightNodeComp.recalc(rightNodeMemSet);
@@ -259,7 +259,7 @@ namespace embDB
 
 		uint32 count() const
 		{
-			return m_KeyMemSet.size();
+			return (uint32)m_KeyMemSet.size();
 		}
 		uint32 tupleSize() const
 		{
@@ -280,7 +280,7 @@ namespace embDB
 			if (bLeft)
 			{
 				if (nCheckIndex)
-					*nCheckIndex += srcVec.size();
+					*nCheckIndex += (int)srcVec.size();
 
 				srcVec.reserve(srcVec.size() + dstVec.size());
 				std::move(dstVec.begin(), dstVec.end(), std::inserter(srcVec, srcVec.end()));
@@ -311,11 +311,11 @@ namespace embDB
 		bool AlignmentOfVec(TVector& dstVec, TVector& srcVec, bool bFromLeft, int *nCheckIndex = 0)
 		{
 
-			int nCnt = ((dstVec.size() + srcVec.size())) / 2 - dstVec.size();
+			int32 nCnt = int32(((dstVec.size() + srcVec.size())) / 2 - dstVec.size());
 			if (nCnt <= 0)
 				return false; //оставим все при своих
 
-			uint32 newSize = srcVec.size() - nCnt;
+			uint32 newSize = (uint32)srcVec.size() - nCnt;
 			dstVec.reserve(dstVec.size() + nCnt);
 			if (bFromLeft)
 			{

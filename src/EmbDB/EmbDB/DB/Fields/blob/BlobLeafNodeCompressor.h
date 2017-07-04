@@ -63,8 +63,8 @@ namespace embDB
 		}
 		void UpdateSymbol(uint32 nIndex, sBlobVal& newBlob, const sBlobVal& OldBlob, const TValueMemSet& vecValues)
 		{
-			RemoveSymbol(vecValues.size(), nIndex, OldBlob, vecValues);
-			AddSymbol(vecValues.size(), nIndex, newBlob, vecValues);
+			RemoveSymbol((uint32)vecValues.size(), nIndex, OldBlob, vecValues);
+			AddSymbol((uint32)vecValues.size(), nIndex, newBlob, vecValues);
 		}
 
 		virtual ~BlobCompressor()
@@ -83,7 +83,7 @@ namespace embDB
 		{	
 			assert(m_nCount == vecValues.size());
 
-			for (uint32 i = 0, sz = vecValues.size(); i < sz; ++i )
+			for (uint32 i = 0, sz = (uint32)vecValues.size(); i < sz; ++i )
 			{
 		
 				const sBlobVal& blob = vecValues[i];

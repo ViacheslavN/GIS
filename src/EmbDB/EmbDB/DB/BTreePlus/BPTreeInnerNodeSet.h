@@ -90,7 +90,7 @@ namespace embDB
 			auto it = std::upper_bound(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), key, comp);
 			if (it == m_innerKeyMemSet.end())
 			{
-				nIndex = m_innerKeyMemSet.size() - 1;
+				nIndex = (int32)m_innerKeyMemSet.size() - 1;
 				return m_innerLinkMemSet[nIndex];
 			}
 			if (it == m_innerKeyMemSet.begin()) //меньше всех ключей
@@ -99,7 +99,7 @@ namespace embDB
 				return m_nLess;
 			}
 			--it;
-			nIndex = std::distance(m_innerKeyMemSet.begin(), it);
+			nIndex = (int32)std::distance(m_innerKeyMemSet.begin(), it);
 			return m_innerLinkMemSet[nIndex];
 		}
 
@@ -139,7 +139,7 @@ namespace embDB
 				nIndex = -1;
 				return m_nLess;
 			}
-			nIndex = std::distance(m_innerKeyMemSet.begin(), it);
+			nIndex = (int32)std::distance(m_innerKeyMemSet.begin(), it);
 			return m_innerLinkMemSet[nIndex];
 		}
 		template<class TComp>
@@ -148,11 +148,11 @@ namespace embDB
 			auto it = std::lower_bound(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), key, comp);
 			if (it == m_innerKeyMemSet.end())
 			{
-				nIndex = m_innerKeyMemSet.size() - 1;
+				nIndex = (int32)m_innerKeyMemSet.size() - 1;
 				return  m_innerLinkMemSet[nIndex];
 			}
 
-			nIndex = std::distance(m_innerKeyMemSet.begin(), it);
+			nIndex = (int32)std::distance(m_innerKeyMemSet.begin(), it);
 			if (comp.EQ(key, m_innerKeyMemSet[nIndex]))
 				return m_innerLinkMemSet[nIndex];
 
@@ -182,7 +182,7 @@ namespace embDB
 				if (m_bMulti)
 				{
 					auto it = std::upper_bound(m_innerKeyMemSet.begin(), m_innerKeyMemSet.end(), key, comp);
-					nIndex = std::distance(m_innerKeyMemSet.begin(), it);
+					nIndex = (int32)std::distance(m_innerKeyMemSet.begin(), it);
 					m_innerKeyMemSet.insert(it, key);
 				}
 				else
@@ -191,7 +191,7 @@ namespace embDB
 					if (it != m_innerKeyMemSet.end() && comp.EQ(key, (*it)))
 						return false;
 
-					nIndex = std::distance(m_innerKeyMemSet.begin(), it);
+					nIndex = (int32)std::distance(m_innerKeyMemSet.begin(), it);
 					m_innerKeyMemSet.insert(it, key);
 					
 				}
@@ -249,8 +249,8 @@ namespace embDB
 			{
 
 				//uint32 nNewSize = m_innerKeyMemSet.size() - 2;
-				uint32 nLessIndex = m_innerKeyMemSet.size() - 2;
-				uint32 nSplitIndex = m_innerKeyMemSet.size() - 1;
+				uint32 nLessIndex = (uint32)m_innerKeyMemSet.size() - 2;
+				uint32 nSplitIndex = (uint32)m_innerKeyMemSet.size() - 1;
 
 
 
@@ -282,7 +282,7 @@ namespace embDB
 					m_innerKeyMemSet.resize(nLessIndex);
 					m_innerLinkMemSet.resize(nLessIndex);
 
-					pNewNodeComp.insert(newNodeKeySet.size() - 1, newNodeKeySet.back(), newNodeLinkSet.back(), newNodeKeySet, newNodeLinkSet);
+					pNewNodeComp.insert((uint32)newNodeKeySet.size() - 1, newNodeKeySet.back(), newNodeLinkSet.back(), newNodeKeySet, newNodeLinkSet);
 
 					--nLessIndex;
 				}
@@ -300,7 +300,7 @@ namespace embDB
 			}
 			else
 			{
-				uint32 nSize = m_innerKeyMemSet.size() / 2;
+				uint32 nSize = (uint32)m_innerKeyMemSet.size() / 2;
 
 
 				std::move(std::next(m_innerKeyMemSet.begin(),  nSize + 1), m_innerKeyMemSet.end(), std::inserter(newNodeKeySet, newNodeKeySet.begin()));
@@ -343,7 +343,7 @@ namespace embDB
 			//int nSize = m_innerKeyMemSet.size() / 2;
 
 
-			uint32 nSize = m_bMinSplit ? this->m_innerKeyMemSet.size() - 2 : this->m_innerKeyMemSet.size() / 2;
+			uint32 nSize = m_bMinSplit ? (uint32)this->m_innerKeyMemSet.size() - 2 : (uint32)this->m_innerKeyMemSet.size() / 2;
 
 			std::move(m_innerKeyMemSet.begin(), m_innerKeyMemSet.begin() + nSize, std::inserter(LeftKeySet, LeftKeySet.begin()));
 			std::move(m_innerLinkMemSet.begin(), m_innerLinkMemSet.begin() + nSize, std::inserter(LeftLinkSet, LeftLinkSet.begin()));
@@ -370,7 +370,7 @@ namespace embDB
 		}
 		uint32 count() const
 		{
-			return m_innerLinkMemSet.size();
+			return (uint32)m_innerLinkMemSet.size();
 		}
 		TLink link(int32 nIndex)
 		{
@@ -453,17 +453,17 @@ namespace embDB
 		}
 		bool AlignmentOf(BPTreeInnerNodeSet* pNode, const TKey& LessMin, bool bLeft)
 		{
-			int nCnt = ((m_innerKeyMemSet.size() + pNode->m_innerKeyMemSet.size())) / 2 - m_innerKeyMemSet.size();
+			int nCnt = int(((m_innerKeyMemSet.size() + pNode->m_innerKeyMemSet.size())) / 2 - m_innerKeyMemSet.size());
 	 
 			if (nCnt < 1 && !m_innerKeyMemSet.empty())
 				return false;  
 			
-			uint32 newSize = pNode->m_innerLinkMemSet.size() - nCnt;
+			uint32 newSize = (uint32)pNode->m_innerLinkMemSet.size() - nCnt;
 
 			if (bLeft)
 			{
 
-				uint32 oldSize = m_innerKeyMemSet.size();
+				uint32 oldSize = (uint32)m_innerKeyMemSet.size();
 
 
 				m_innerKeyMemSet.reserve(m_innerKeyMemSet.size() + nCnt + 1); //1 for less elem

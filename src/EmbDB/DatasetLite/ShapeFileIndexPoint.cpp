@@ -3,42 +3,47 @@
 #include "SpatialTree.h"
 #include "ShapeFileIndexPoint.h"
 
-#include "../EmbDB/PointSpatialBPMapTree.h"
+#include "../EmbDB/DB/BTreePlus/spatial/Point/PointSpatialBPMapTree.h"
 #include "CommonLibrary/SpatialKey.h"
-#include "../EmbDB/SpatialPointQuery.h"
-#include "../EmbDB/Transactions.h"
-#include "../EmbDB/DirectTransactions.h"
-#include "../EmbDB/RectSpatialBPMapTree.h"
-#include "../EmbDB/SpatialRectQuery.h"
-#include "../EmbDB/storage.h"
-#include "../EmbDB/BaseInnerNodeDIffCompress.h"
-#include "../EmbDB/BaseLeafNodeCompDiff.h"
-#include "../EmbDB/PointZOrderCompressor.h"
-#include "../EmbDB/RectZOrderCompressor.h"
-#include "../EmbDB/TBaseSpatialCompressor.h"
-#include "../EmbDB/UnsignedIntegerNumLenComp.h"
+#include "../EmbDB/DB/BTreePlus/spatial/Point/SpatialPointQuery.h"
+#include "../EmbDB/DB/transactions/Transactions.h"
+#include "../EmbDB/DB/transactions/DirectTran/DirectTransactions.h"
+#include "../EmbDB/DB/BTreePlus/spatial/Rect/RectSpatialBPMapTree.h"
+#include "../EmbDB/DB/BTreePlus/spatial/Rect/SpatialRectQuery.h"
+#include "../EmbDB/storage/storage.h"
+ 
 
-typedef embDB::TBaseSpatialCompress<embDB::ZOrderPoint2DU16, embDB::TPointZOrderCompressor<embDB::ZOrderPoint2DU16, uint16, 16> > TPointSpatialCompress16;
-typedef embDB::TBaseSpatialCompress<embDB::ZOrderPoint2DU32, embDB::TPointZOrderCompressor<embDB::ZOrderPoint2DU32, uint32, 32> > TPointSpatialCompress32;
-typedef embDB::TBaseSpatialCompress<embDB::ZOrderPoint2DU64, embDB::TPointZOrderCompressor<embDB::ZOrderPoint2DU64, uint64, 64> > TPointSpatialCompress64;
+#include "../EmbDB/DB/BTreePlus/BaseNodeCompressor.h"
+#include "../EmbDB/Utils/compress/NumLen/SignedNumLenEncoder.h"
+#include "../EmbDB/Utils/compress/NumLen/UnsignedNumLenEncoder.h"
+#include "../EmbDB/DB/Indexs/spatial/ZOrderCompressBase.h"
+#include "../EmbDB/DB/Fields//BaseFieldEncoders.h"
 
-typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderPoint2DU16, TPointSpatialCompress16 > TPoint16InnerCompress;
-typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU16, uint32, embDB::IDBTransaction, TPointSpatialCompress16  , embDB::TUnsignedNumLenNodeCompressor<uint32, 32> > TPoint16LeafCompress;
-
-
-typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderPoint2DU32, TPointSpatialCompress32 > TPoint32InnerCompress;
-typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU32, uint32, embDB::IDBTransaction, TPointSpatialCompress32  , embDB::TUnsignedNumLenNodeCompressor<uint32, 32> > TPoint32LeafCompress;
-
-
-typedef embDB::TBPBaseInnerNodeDiffCompressor<embDB::ZOrderPoint2DU64, TPointSpatialCompress64 > TPoint64InnerCompress;
-typedef embDB::TBaseLeafNodeDiffComp<embDB::ZOrderPoint2DU64, uint32, embDB::IDBTransaction, TPointSpatialCompress64  , embDB::TUnsignedNumLenNodeCompressor<uint32, 32> > TPoint64LeafCompress;
-
-typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU16, uint32,	embDB::ZPointComp<embDB::ZOrderPoint2DU16>, embDB::IDBTransaction, TPoint16InnerCompress, TPoint16LeafCompress> TBPMapPoint16;	
-typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU32, uint32,	embDB::ZPointComp<embDB::ZOrderPoint2DU32>, embDB::IDBTransaction, TPoint32InnerCompress, TPoint32LeafCompress> TBPMapPoint32;
-typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU64, uint32,	embDB::ZPointComp64, embDB::IDBTransaction, TPoint64InnerCompress, TPoint64LeafCompress> TBPMapPoint64;
 
 namespace DatasetLite
 {
+
+	typedef embDB::TValueDiffEncoder<int32, int32, embDB::SignedNumLenEncoder32> TIndexOIDEncoder;
+	typedef embDB::TValueDiffEncoder<int64, int64, embDB::SignedNumLenEncoder64> TLinkEncoder;
+
+	typedef embDB::TBasePointCompressor<embDB::ZOrderPoint2DU16, uint16, embDB::TPointZOrderCompressor<embDB::ZOrderPoint2DU16, uint16, 16> > TPointSpatialEncoder16;
+	typedef embDB::TBasePointCompressor<embDB::ZOrderPoint2DU32, uint32, embDB::TPointZOrderCompressor<embDB::ZOrderPoint2DU32, uint32, 32> > TPointSpatialEncoder32;
+	typedef embDB::TBasePointCompressor<embDB::ZOrderPoint2DU64, uint64, embDB::TPointZOrderCompressor<embDB::ZOrderPoint2DU64, uint64, 64> > TPointSpatialEncoder64;
+	
+	typedef embDB::TBaseNodeCompressor<embDB::ZOrderPoint2DU16, int32, embDB::IDBTransaction, TPointSpatialEncoder16, TIndexOIDEncoder> TPointNodeCompressor16;
+	typedef embDB::TBaseNodeCompressor<embDB::ZOrderPoint2DU32, int32, embDB::IDBTransaction, TPointSpatialEncoder32, TIndexOIDEncoder> TPointNodeCompressor32;
+	typedef embDB::TBaseNodeCompressor<embDB::ZOrderPoint2DU64, int32, embDB::IDBTransaction, TPointSpatialEncoder64, TIndexOIDEncoder> TPointNodeCompressor64;
+
+
+	typedef embDB::TBaseNodeCompressor<embDB::ZOrderPoint2DU16, int64, embDB::IDBTransaction, TPointSpatialEncoder16, TLinkEncoder> TPointInnerNodeCompressor16;
+	typedef embDB::TBaseNodeCompressor<embDB::ZOrderPoint2DU32, int64, embDB::IDBTransaction, TPointSpatialEncoder32, TLinkEncoder> TPointInnerNodeCompressor32;
+	typedef embDB::TBaseNodeCompressor<embDB::ZOrderPoint2DU64, int64, embDB::IDBTransaction, TPointSpatialEncoder64, TLinkEncoder> TPointInnerNodeCompressor64;
+
+	typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU16, int32, embDB::ZPointComp<embDB::ZOrderPoint2DU16>, embDB::IDBTransaction, TPointInnerNodeCompressor16, TPointNodeCompressor16> TBPMapPoint16;
+	typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU32, int32, embDB::ZPointComp<embDB::ZOrderPoint2DU32>, embDB::IDBTransaction, TPointInnerNodeCompressor32, TPointNodeCompressor32> TBPMapPoint32;
+	typedef embDB::TBPPointSpatialMap<embDB::ZOrderPoint2DU64, int32, embDB::ZPointComp64, embDB::IDBTransaction, TPointInnerNodeCompressor64, TPointNodeCompressor64> TBPMapPoint64;
+
+
 
 	template<class TCoord, class TSPTree, int TreeType>
 	class TStatialTreePoint : public IStatialTree

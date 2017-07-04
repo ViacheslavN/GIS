@@ -35,7 +35,7 @@ namespace CommonLib
 			m_nCurrBit = 0;
 			m_nMaxSize = nMaxSize;
 #ifdef _DEBUG
-			m_nBitsWrite = 0.;
+			m_nBitsWrite = 0;
 #endif
 
 		}

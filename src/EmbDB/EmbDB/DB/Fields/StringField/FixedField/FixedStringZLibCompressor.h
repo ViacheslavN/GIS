@@ -117,8 +117,8 @@ namespace embDB
 
 		void UpdateSymbol(uint32 nIndex, CommonLib::CString& newString, const CommonLib::CString& OldValue, const TValueMemSet& vecValues)
 		{
-			RemoveSymbol(vecValues.size(), nIndex, OldValue, vecValues);
-			AddSymbol(vecValues.size(), nIndex, newString, vecValues);
+			RemoveSymbol((uint32)vecValues.size(), nIndex, OldValue, vecValues);
+			AddSymbol((uint32)vecValues.size(), nIndex, newString, vecValues);
 		}
 
 		void RemoveLen(uint32 nSize,  int nIndex, const CommonLib::CString& string, const TValueMemSet& vecValues)
@@ -284,7 +284,7 @@ namespace embDB
 				for (size_t i = 0; i < pBloc->m_nCount; ++i)
 				{
 					const CommonLib::CString& string = vecValues[i + pBloc->m_nBeginIndex];
-					size_t nSize = 0;
+					uint32 nSize = 0;
 
 					if (m_StringCoding == embDB::scASCII)
 					{
@@ -465,7 +465,7 @@ namespace embDB
 			for (size_t i = 0, sz = m_vecStringBloc.size(); i < sz; ++i)
 			{
 				sStringBloc *pBloc = m_vecStringBloc[i];
-				if(pBloc->m_bDirty);
+				if(pBloc->m_bDirty)
 					CompressBlock(pBloc, vecValues);
 
 			}
@@ -648,7 +648,7 @@ namespace embDB
 					if(nSumSize >= nFreePage)
 						return (uint32)i;
 				}
-				return vevStrings.size() - 1;
+				return (uint32)vevStrings.size() - 1;
 			}
 			
 			nFreePage -= m_lenCompressor.GetCompressSize();
@@ -775,7 +775,7 @@ namespace embDB
 
 				clear();
 
-				for (uint32 i = 0, sz = vecStrings.size(); i < sz; ++i)
+				for (uint32 i = 0, sz = (uint32)vecStrings.size(); i < sz; ++i)
 				{
 					AddSymbol(i + 1, i, vecStrings[i], vecStrings);
 				}
@@ -790,7 +790,7 @@ namespace embDB
 
 		int GetStringBloc() const
 		{
-			return m_vecStringBloc.size();
+			return (int32)m_vecStringBloc.size();
 		}
 
 		uint32 GetStringLen(const CommonLib::CString& sString) const

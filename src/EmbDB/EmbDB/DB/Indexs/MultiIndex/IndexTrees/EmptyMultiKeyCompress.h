@@ -56,7 +56,7 @@ namespace embDB
 		{
 			assert(m_nCount == vecValues.size());
 
-			for (uint32 i = 0, sz = vecValues.size(); i < sz; ++i)
+			for (uint32 i = 0, sz = (uint32)vecValues.size(); i < sz; ++i)
 			{
 				pStream->write(vecValues[i].m_key);
 				pStream->write(vecValues[i].m_nRowID);

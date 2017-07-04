@@ -200,41 +200,16 @@ namespace CommonLib
 		if(this == &shp)
 			return *this;
 
-		if(m_bAttach)
-		{
-			m_pBuffer = shp.m_pBuffer;
-			m_nBufSize = shp.m_nBufSize;
-			m_params.set(m_pBuffer);
-			return *this;
-		}
-
-		if(m_pBuffer)
-			m_pAlloc->free(m_pBuffer);
-		m_pBuffer = NULL;
-		m_nBufSize = shp.m_nBufSize;
+		m_blob = shp.m_blob;
 		m_params.reset();
-
-		if(m_nBufSize)
-			m_pBuffer = (byte*)m_pAlloc->alloc(m_nBufSize);
-
-		memcpy(m_pBuffer, shp.m_pBuffer, m_nBufSize);
-		m_params.set(m_pBuffer);
-
-		return *this;
-
+			 
+		m_params.set(m_blob.buffer());
 	 
 		return *this;
 	}
 
 	CGeoShapeBuf::~CGeoShapeBuf()
-	{
-		if(!m_bAttach && m_pBuffer)
-		{
-			m_pAlloc->free(m_pBuffer);
-			m_pBuffer = NULL;
-		}
-		
-	}
+	{}
 
 
 	eShapeType CGeoShapeBuf::type() const
@@ -242,32 +217,32 @@ namespace CommonLib
 		if(m_params.m_bIsValid)
 			return m_params.m_type;
 
-		if (m_pBuffer == NULL)
+		if (m_blob.empty())
 			return shape_type_null;
-		return type(m_pBuffer);
+		return type(m_blob.buffer());
 	}
 
-	eShapeType CGeoShapeBuf::type(const unsigned char* buf)
+	eShapeType CGeoShapeBuf::type(const byte* buf)
 	{
 		if(buf == 0)
 			return shape_type_null;
 		return *reinterpret_cast<const eShapeType*>(buf);
 	}
-	eShapeType CGeoShapeBuf::generalType(const unsigned char* buf)
+	eShapeType CGeoShapeBuf::generalType(const byte* buf)
 	{
 		eShapeType shapeType = type(buf);
 		return GetGeneralType(shapeType);
 	}
 	uint32  CGeoShapeBuf::size() const
 	{
-		return m_nBufSize;
+		return m_blob.size();
 	}
 
 	uint32  CGeoShapeBuf::getPartCount() const
 	{
 		if(m_params.m_bIsValid)
 			return m_params.m_nPartCount;
-		return partCount(m_pBuffer);
+		return partCount(m_blob.buffer());
 	}
 	uint32  CGeoShapeBuf::getPartSize(uint32 idx) const
 	{
@@ -293,7 +268,7 @@ namespace CommonLib
 		case shape_type_general_polyline:
 		case shape_type_general_polygon:
 			{
-				const unsigned char* buf = m_pBuffer;
+				const unsigned char* buf = m_blob.buffer();
 				buf += 4 + 8 * 4 + 4 + 4;
 				return reinterpret_cast<const uint32*>(buf);
 			}
@@ -311,7 +286,7 @@ namespace CommonLib
 		case shape_type_general_polyline:
 		case shape_type_general_polygon:
 			{
-				unsigned char* buf = m_pBuffer;
+				unsigned char* buf = m_blob.buffer();
 				buf += 4 + 8 * 4 + 4 + 4;
 				return reinterpret_cast<uint32*>(buf);
 			}
@@ -324,43 +299,29 @@ namespace CommonLib
 	{
 		if(m_params.m_bIsValid)
 			return const_cast<GisXYPoint*>(m_params.m_pPoints);
-		return const_cast<GisXYPoint*>(getXYs(m_pBuffer));
+		return const_cast<GisXYPoint*>(getXYs(m_blob.buffer()));
 	}
 	const GisXYPoint* CGeoShapeBuf::getPoints() const
 	{
 		if(m_params.m_bIsValid)
 			return m_params.m_pPoints;
-		return getXYs(m_pBuffer);
+		return getXYs(m_blob.buffer());
 	}
 	uint32 CGeoShapeBuf::getPointCnt() const
 	{
 		if(m_params.m_bIsValid)
 			return m_params.m_nPointCount;
-		return pointCount(m_pBuffer);
+		return pointCount(m_blob.buffer());
 	}
 
 	void CGeoShapeBuf::create(uint32 nSize)
 	{
-		if(!m_bAttach && m_pBuffer)
-			m_pAlloc->free(m_pBuffer);
-
-		m_bAttach = false;
-		m_nBufSize = nSize;
-		if(m_nBufSize)
-			m_pBuffer = (byte*)m_pAlloc->alloc(m_nBufSize);
+		m_blob.reserve(nSize);
 		m_params.reset();
 	}
 	bool CGeoShapeBuf::create(eShapeType shapeType)
 	{
-		if(m_bAttach && m_pBuffer)
-		{
-			create(m_pBuffer, m_nBufSize, shapeType, 0);
-		}
-		else
-		{
-
-			create(shapeType, 0);
-		}
+		create(shapeType, 0);
 		return true;
 		
 	}
@@ -372,70 +333,52 @@ namespace CommonLib
 
 	bool CGeoShapeBuf::create(eShapeType shapeType, uint32 npoints, uint32 nparts, uint32 ncurves, uint32 mpatchSpecificSize)
 	{
-		if(m_pBuffer)
-			m_pAlloc->free(m_pBuffer);
+		
 
-		m_bAttach = false;
-		m_nBufSize = calcSize(shapeType, npoints, nparts, ncurves,mpatchSpecificSize);
-		if(m_nBufSize)
+		uint32  nBufSize  = calcSize(shapeType, npoints, nparts, ncurves,mpatchSpecificSize);
+		if(nBufSize)
 		{
-			m_pBuffer = (byte*)m_pAlloc->alloc(m_nBufSize);
-			if(m_pBuffer)
-				initShapeBufferBuffer(m_pBuffer, shapeType, npoints, nparts, ncurves);
+			m_blob.resize(nBufSize);
+			initShapeBufferBuffer(m_blob.buffer(), shapeType, npoints, nparts, ncurves);
 		}
-		m_params.set(m_pBuffer);
+		m_params.set(m_blob.buffer());
 		return true;
 	}
 
-	void CGeoShapeBuf::import(const unsigned char* extBuf, uint32 extBufSize)
+	void CGeoShapeBuf::import(const byte* extBuf, uint32 extBufSize)
 	{
-		if(m_bAttach)
-			detach();
-		if(!m_bAttach && m_pBuffer)
-			m_pAlloc->free(m_pBuffer);
 
-		m_pBuffer = (byte*)m_pAlloc->alloc(extBufSize);
-		m_nBufSize = extBufSize;
-		 memcpy(m_pBuffer, extBuf, extBufSize);
-		m_params.set(m_pBuffer);
+		m_blob.copy(extBuf, extBufSize);
+		m_params.set(m_blob.buffer());
 	}
 
-	void CGeoShapeBuf::attach(unsigned char* extBuf, uint32 extBufSize)
+	void CGeoShapeBuf::attach(byte* extBuf, uint32 extBufSize)
 	{
-		if(m_bAttach)
-			detach();
-		if(!m_bAttach && m_pBuffer)
-			m_pAlloc->free(m_pBuffer);
-		m_pBuffer = extBuf;
-		m_nBufSize = extBufSize;
-		m_params.set(m_pBuffer);
+		m_blob.attach(extBuf, extBufSize);
+		m_params.set(m_blob.buffer());
 	}
 
 	unsigned char* CGeoShapeBuf::detach()
 	{
-		if(!m_bAttach)
-			return NULL;
-		m_bAttach = false;
-		unsigned char* buf = m_pBuffer;
-		m_pBuffer = NULL;
+		
 		m_params.reset();
-		return buf;
+		return m_blob.deattach();
 	}
 
 	uint32 CGeoShapeBuf::pointCount() const
 	{
 		if(m_params.m_bIsValid)
 			return m_params.m_nPointCount;
-		return pointCount(m_pBuffer);
+		return pointCount(m_blob.buffer());
 	}
 
-	uint32 CGeoShapeBuf::pointCount(const unsigned char* buf)
+	uint32 CGeoShapeBuf::pointCount(const byte* buf)
 	{
 		eShapeType genType = generalType(buf);
 		return pointCount(buf, genType);
 	}
 
-	uint32 CGeoShapeBuf::pointCount(const unsigned char* buf, eShapeType general_type)
+	uint32 CGeoShapeBuf::pointCount(const byte* buf, eShapeType general_type)
 	{
 		eShapeType genType = general_type;
 		long flag_has_parts = 1;
@@ -524,7 +467,7 @@ namespace CommonLib
 		m_pPoints = NULL;
 	}
 
-	void CGeoShapeBuf::sShapeParams::set(const unsigned char* buf)
+	void CGeoShapeBuf::sShapeParams::set(const byte* buf)
 	{
 		m_bIsValid = true;
  		// shape type

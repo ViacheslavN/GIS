@@ -52,7 +52,7 @@ namespace embDB
 			WriteHeader(pStream);
 			m_nPos = 0;
 			double dRowBitsLen = GetCodeBitSize();
-			uint32 nByteSize = (dRowBitsLen + 7) / 8;
+			uint32 nByteSize = (uint32)((dRowBitsLen + 7) / 8);
 			uint32 nBitSize = (m_nLenBitSize + 7) / 8;
 			uint32 nSignSize = m_signEncode.GetCompressSize();
 
@@ -70,7 +70,7 @@ namespace embDB
 			m_signEncode.EncodeSign(symbol > 0 ? false : true, m_nPos);
 			symbol = abs(symbol);
 			if (symbol < 2)
-				nBitLen = symbol;
+				nBitLen = (uint32)symbol;
 			else  nBitLen = BitsUtils::log2(symbol) + 1;
 
 			assert(m_BitsLensFreq[nBitLen] != 0);
@@ -95,7 +95,7 @@ namespace embDB
 			ReadHeader(pStream);
 			double dRowBitsLen = GetCodeBitSize();
 
-			uint32 nByteSize = (dRowBitsLen + 7) / 8;
+			uint32 nByteSize = uint32((dRowBitsLen + 7) / 8);
 			uint32 nBitSize = (m_nLenBitSize + 7) / 8;
 
 			m_bitRStream.attach(pStream, pStream->pos(), nBitSize, true);

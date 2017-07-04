@@ -203,7 +203,7 @@ namespace embDB
 
 				if(m_Queries.empty())
 				{
-					m_nIndex == -1;
+					m_nIndex = -1;
 					return false;
 				}
  

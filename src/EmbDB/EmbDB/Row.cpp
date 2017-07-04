@@ -40,7 +40,7 @@ namespace embDB
 	}
 	 int32 CRow::count() const
 	 {
-		 return m_vecValues.size();
+		 return (int32)m_vecValues.size();
 	 }
 	 CommonLib::CVariant* CRow::value(int32 nNum)
 	 {

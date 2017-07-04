@@ -52,8 +52,8 @@ namespace DatasetLite
 		typedef TShapeCursorBase<TIterator, TZOrderVal> TBase;
 		typedef typename TBase::TPointType TPointType;
 		
-		TShapeCursorRect(TIterator& iterator, double dOffsetX, double dOffsetY, double dScaleX, double dScaleY) :
-			TBase(iterator, dOffsetX, dOffsetY, dScaleX, dScaleY)
+		TShapeCursorRect(TIterator& iterator, double dOffsetX, double dOffsetY, byte nScaleX, byte nScaleY) :
+			TBase(iterator, dOffsetX, dOffsetY, nScaleX, nScaleY)
 			{}
 
 		
@@ -81,8 +81,8 @@ namespace DatasetLite
 		typedef TShapeCursorBase<TIterator, TZOrderVal> TBase;
 		typedef typename TBase::TPointType TPointType;
 
-		TShapeCursorPoint(TIterator& iterator, double dOffsetX, double dOffsetY, double dScaleX, double dScaleY) :
-		TBase(iterator, dOffsetX, dOffsetY, dScaleX, dScaleY)
+		TShapeCursorPoint(TIterator& iterator, double dOffsetX, double dOffsetY, byte nScaleX, byte nScaleY) :
+		TBase(iterator, dOffsetX, dOffsetY, nScaleX, nScaleY)
 		{}
 
 

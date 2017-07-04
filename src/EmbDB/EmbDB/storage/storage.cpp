@@ -391,25 +391,27 @@ namespace embDB
 	bool CStorage::WriteRowData(const byte* pData, uint32 nSize, int64 nPos)
 	{
 		CommonLib::ILockObject::scoped_lock lock(m_pCommonLockObj);
-		if(nPos == -1)
-			nPos = m_pFile.getFilePos();
-		bool bRet = m_pFile.setFilePos64(nPos, CommonLib::soFromBegin);
-		assert(bRet);
-		if(!bRet)
-			return false;
-
+		if (nPos != -1)
+		{
+			bool bRet = m_pFile.setFilePos64(nPos, CommonLib::soFromBegin);
+			assert(bRet);
+			if (!bRet)
+				return false;
+		}
+		
 		uint32 nCnt = m_pFile.writeFile((void*)pData, nSize);
 		return nCnt == nSize;
 	}
 	bool CStorage::ReadRowData(const byte* pData, uint32 nSize, int64 nPos)
 	{
 		CommonLib::ILockObject::scoped_lock lock(m_pCommonLockObj);
-		if(nPos == -1)
-			nPos = m_pFile.getFilePos();
-		bool bRet = m_pFile.setFilePos64(nPos, CommonLib::soFromBegin);
-		assert(bRet);
-		if(!bRet)
-			return false;
+		if (nPos != -1)
+		{
+			bool bRet = m_pFile.setFilePos64(nPos, CommonLib::soFromBegin);
+			assert(bRet);
+			if (!bRet)
+				return false;
+		}
 
 		uint32 nCnt = m_pFile.readFile((void*)pData, nSize);
 		return nCnt == nSize;

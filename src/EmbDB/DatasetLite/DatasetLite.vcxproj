@@ -22,6 +22,7 @@
     <ProjectGuid>{1B28886F-D31F-4ED0-A2B6-8CED3976CDED}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DatasetLite</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'" Label="Configuration">
@@ -113,7 +114,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">
     <OutDir>$(SolutionDir)Output\</OutDir>
-    <IntDir>$(SolutionDir)Obj\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)Obj\DatasetLite\$(Configuration)\</IntDir>
     <TargetName>LibDatasetLite64_ds</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">

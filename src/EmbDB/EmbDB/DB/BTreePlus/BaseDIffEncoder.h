@@ -115,8 +115,8 @@ namespace embDB
 
 		void UpdateSymbol(uint32 nIndex, TValue& newValue, const TValue& OldValue, const TValueMemSet& vecValues)
 		{
-			RemoveSymbol(vecValues.size(), nIndex, OldValue, vecValues);
-			AddSymbol(vecValues.size(), nIndex, newValue, vecValues);
+			RemoveSymbol((uint32)vecValues.size(), nIndex, OldValue, vecValues);
+			AddSymbol((uint32)vecValues.size(), nIndex, newValue, vecValues);
 		}
 
 		uint32 GetCompressSize() const

@@ -160,7 +160,7 @@ namespace embDB
 			if (!m_RowIDCompressor.BeginEncoding(&RowIDStreams))
 				return false;
 
-			for (uint32 i = 1, sz = vecValues.size(); i < sz; ++i)
+			for (uint32 i = 1, sz = (uint32)vecValues.size(); i < sz; ++i)
 			{
 
 				TKey diffKey = vecValues[i].m_key - vecValues[i -1].m_key;

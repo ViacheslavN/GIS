@@ -215,10 +215,10 @@ TIterator BPSETBASE_DECLARATION::lower_bound(const TComparator& comp, const TKey
 		pNode->setParent(pParent, nIndex);
 		if (pNode->isLeaf())
 		{
-			int nLeafIndex = pNode->leaf_lower_bound(comp, key);
-			if (nLeafIndex != -1 && nLeafIndex < pNode->count())
+			int32 nLeafIndex = pNode->leaf_lower_bound(comp, key);
+			if (nLeafIndex != -1 && nLeafIndex < (int32)pNode->count())
 				return TIterator(this, pNode, nLeafIndex);
-			else if (nIndex < (pParent->count() - 1))
+			else if (nIndex < ((int32)pParent->count() - 1))
 			{
 				TBTreeNodePtr pNode = getNode(pParent->link(nIndex + 1));
 				pNode->setParent(pParent, nIndex + 1);

@@ -4,7 +4,7 @@
 #include "MathUtils.h"
 #include "BitUtils.h"
 #include "CompressUtils.h"
-
+ 
 namespace CommonLib
 {
 	template<class _TValue,  uint32 _nMaxBitsLens>
@@ -13,16 +13,10 @@ namespace CommonLib
 	public:
 		typedef _TValue TValue;
 
-		TBaseNumLenEncoder(uint32 nPageSize, CommonLib::alloc_t* pAlloc = nullptr) : m_nError(100), m_bOnlineCalcSize(false), m_nTypeFreq(dtType8)
+		TBaseNumLenEncoder(CommonLib::alloc_t* pAlloc = nullptr) : m_nError(100), m_bOnlineCalcSize(false), m_nTypeFreq(dtType8)
 
 		{
 			clear();
-
-			if (pCompParams)
-			{
-				m_nError = pCompParams->m_nErrorCalc;
-				m_bOnlineCalcSize = pCompParams->m_bCalcOnlineSize;
-			}
 
 		}
 

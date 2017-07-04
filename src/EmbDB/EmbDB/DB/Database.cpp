@@ -383,8 +383,8 @@ namespace embDB
 	void CDatabase::CreateNoise(int64 nSize)
 	{
 		std::vector<byte> vecRandomData(nSize);
-		CRandomGenerator::GetRandomValues(&vecRandomData[0], nSize);
-		m_pStorage->WriteRowData(&vecRandomData[0], nSize);
+		CRandomGenerator::GetRandomValues(&vecRandomData[0], (uint32)nSize);
+		m_pStorage->WriteRowData(&vecRandomData[0], (uint32)nSize);
 	}
 
 	IConnectionPtr CDatabase::connect(const wchar_t* pszUser, const wchar_t* pszPassword)

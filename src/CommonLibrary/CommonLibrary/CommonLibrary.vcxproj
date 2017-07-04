@@ -510,6 +510,7 @@
     <ClInclude Include="ShapeCompressor2.h" />
     <ClInclude Include="SignCompressor.h" />
     <ClInclude Include="SignedNumLenEncoder.h" />
+    <ClInclude Include="SignEncoder.h" />
     <ClInclude Include="SpatialKey.h" />
     <ClInclude Include="sprintf.h" />
     <ClInclude Include="SignCompressor2.h" />

@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #include "ShapeFileIndex.h"
-#include "../EmbDB/PointSpatialBPMapTree.h"
+//#include "../EmbDB/DB/BTreePlus/spatial/Point/PointSpatialBPMapTree.h"
 #include "CommonLibrary/SpatialKey.h"
-#include "../EmbDB/SpatialPointQuery.h"
-#include "../EmbDB/Transactions.h"
-#include "../EmbDB/DirectTransactions.h"
-#include "../EmbDB/RectSpatialBPMapTree.h"
-#include "../EmbDB/SpatialRectQuery.h"
-#include "../EmbDB/storage.h"
+//#include "../EmbDB/DB/BTreePlus/spatial/Point/SpatialPointQuery.h"
+#include "../EmbDB/DB/transactions/Transactions.h"
+#include "../EmbDB/DB/transactions/DirectTran/DirectTransactions.h"
+//#include "../EmbDB/DB/BTreePlus/spatial/Rect/RectSpatialBPMapTree.h"
+//#include "../EmbDB/DB/BTreePlus/spatial/Rect/SpatialRectQuery.h"
+#include "../EmbDB/storage/storage.h"
 #include "../GisEngine/GisGeometry/SpatialReferenceProj4.h"
 #include "ShapeFileIndexRect.h"
 #include "ShapeFileIndexPoint.h"
@@ -81,7 +81,7 @@ namespace DatasetLite
 		return  isPoint ? embDB::stPoint64 : embDB::stRect64;
 	}
 
-	IShapeFileIndexPtr IShapeFileIndex::create(const CommonLib::CString& sDbName, size_t nPageSize,
+	IShapeFileIndexPtr IShapeFileIndex::create(const CommonLib::CString& sDbName, uint32 nPageSize,
 		const CommonLib::CString& sShapeFileName, GisEngine::GisCommon::Units units , 
 		double dOffsetX, double dOffsetY, byte nScaleX, byte nScaleY, CommonLib::bbox bbox)
 	{ 

@@ -59,7 +59,7 @@ namespace embDB
 			TCompressor& pNewNodeComp = pNode->m_Compressor;
 			int nSplitIndex = this->m_Compressor.GetSplitIndex(this->m_ValueMemSet);
 			assert(nSplitIndex != 0);
-			uint32 nSize = this->m_ValueMemSet.size();
+			uint32 nSize = (uint32)this->m_ValueMemSet.size();
 			
 			this->SplitInVec(this->m_ValueMemSet, pNode->m_ValueMemSet, nSplitIndex, nSize - nSplitIndex);
 			this->SplitInVec(this->m_KeyMemSet, pNode->m_KeyMemSet, nSplitIndex, nSize - nSplitIndex);

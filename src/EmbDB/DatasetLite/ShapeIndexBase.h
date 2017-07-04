@@ -3,7 +3,7 @@
 #include "SpatialDataset.h"
 #include "ShapeCursor.h"
 #include "SpatialTree.h"
-#include "../EmbDB/storage.h"
+#include "../EmbDB/storage/storage.h"
 #include "../GisEngine/GisGeometry/SpatialReferenceProj4.h"
 namespace DatasetLite
 {

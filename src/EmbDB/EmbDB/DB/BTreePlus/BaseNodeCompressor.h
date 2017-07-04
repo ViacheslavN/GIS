@@ -116,7 +116,7 @@ namespace embDB
 			virtual bool add(const TKeyMemSet& vecKeys, const TValueMemSet& vecValues)
 			{
 
-				for (uint32 i = 0, sz = vecKeys.size(); i < sz; ++i)
+				for (uint32 i = 0, sz = (uint32)vecKeys.size(); i < sz; ++i)
 				{	 
 					m_KeyEncoder.AddSymbol(m_nCount, m_nCount + i, vecKeys[i], vecKeys);
 					m_ValueEncoder.AddSymbol(m_nCount, m_nCount + i, vecValues[i], vecValues);
@@ -127,7 +127,7 @@ namespace embDB
 			virtual bool recalc(const TKeyMemSet& vecKeys, const TValueMemSet& vecValues)
 			{
 				clear();
-				for (uint32 i = 0, sz = vecKeys.size(); i < sz; ++i)
+				for (uint32 i = 0, sz = (uint32)vecKeys.size(); i < sz; ++i)
 				{
 					m_nCount += 1;
 					m_KeyEncoder.AddSymbol(m_nCount, i, vecKeys[i], vecKeys);
@@ -194,7 +194,7 @@ namespace embDB
 			{
 				m_nCount = 0;
 				m_KeyEncoder.clear();
-				for (uint32 i = 0, sz = vecKeys.size(); i < sz; ++i)
+				for (uint32 i = 0, sz = (int32)vecKeys.size(); i < sz; ++i)
 				{
 					m_nCount++;
 					m_KeyEncoder.AddSymbol(m_nCount, i, vecKeys[i], vecKeys);

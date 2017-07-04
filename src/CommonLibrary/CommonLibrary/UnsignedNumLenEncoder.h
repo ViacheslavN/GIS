@@ -1,10 +1,13 @@
 #pragma once
+
 #include "BaseNumLenEncoder.h"
 #include "ArithmeticCoder.h"
-namespace embDB
+#include "FixedBitStream.h"
+
+namespace CommonLib
 {
 	template<class _TValue, class _TEncoder, class _TDecoder,  uint32 _nMaxBitsLens>
-	class UnsignedNumLenEncoder : public TBaseNumLenEncoder<_TValue,  _nMaxBitsLens>
+	class TUnsignedNumLenEncoder : public TBaseNumLenEncoder<_TValue,  _nMaxBitsLens>
 	{
 	public:
 		typedef TBaseNumLenEncoder<_TValue, _nMaxBitsLens> TBase;
@@ -12,7 +15,7 @@ namespace embDB
 		typedef typename _TEncoder TEncoder;
 		typedef typename _TDecoder TDecoder;
 
-		UnsignedNumLenEncoder(uint32 nPageSize, CommonLib::alloc_t* pAlloc = nullptr) : TBase(nPageSize, pAlloc, pCompParams)
+		TUnsignedNumLenEncoder(CommonLib::alloc_t* pAlloc = nullptr) : TBase(pAlloc)
 		{}
 
 		bool BeginEncoding(CommonLib::IWriteStream *pStream)
@@ -105,8 +108,8 @@ namespace embDB
 		}
 	private:
 
-		CommonLib::FxBitWriteStream m_bitWStream;
-		CommonLib::FxBitReadStream m_bitRStream;
+		FxBitWriteStream m_bitWStream;
+		FxBitReadStream m_bitRStream;
 		TEncoder m_Encoder;
 		TDecoder m_Decoder;
 	};

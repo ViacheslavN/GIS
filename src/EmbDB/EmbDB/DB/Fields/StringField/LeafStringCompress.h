@@ -140,7 +140,7 @@ namespace embDB
 
 			CommonLib::CBlob bufForUff8;
 
-			for (uint32 i = 0, sz = vecValues.size(); i < sz; ++i)
+			for (uint32 i = 0, sz = (uint32)vecValues.size(); i < sz; ++i)
 			{
 				const sStringVal& string = vecValues[i];
 				int64 nPage = string.m_nPage;

@@ -43,7 +43,7 @@ namespace embDB
 			{
 				uint32 nBitLen = 0;
 				if (symbol < 2)
-					nBitLen = symbol;
+					nBitLen = (uint32)symbol;
 				else
 				{
 					nBitLen = BitsUtils::log2(symbol);
@@ -106,7 +106,7 @@ namespace embDB
 			{
 				uint16 nBitLen = 0;
 				if (symbol < 2)
-					nBitLen = symbol;
+					nBitLen = (uint16)symbol;
 				else
 				{
 					nBitLen = BitsUtils::log2(symbol);
@@ -188,7 +188,7 @@ namespace embDB
 			uint32 GetCompressSize() const
 			{
 				double dRowBitsLen = GetCodeBitSize();
-				uint32 nByteSize = (dRowBitsLen + 7) / 8;
+				uint32 nByteSize = uint32((dRowBitsLen + 7) / 8);
 				
 				return nByteSize + 1 + (_nMaxBitsLens + 1 + 7) / 8 + GetLenForDiffLen(m_nTypeFreq, m_nDiffsLen) + (m_nLenBitSize + 7) / 8; //Type comp (rang or ac) + 4 +
 

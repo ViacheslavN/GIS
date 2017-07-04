@@ -62,7 +62,7 @@ namespace embDB
 
 			//new (m_pAlloc->alloc(cnt * sizeof(T))) TTreeNode(key, val);
 
-			return reinterpret_cast<pointer>(m_pAlloc->alloc(cnt * sizeof(T)));
+			return reinterpret_cast<pointer>(m_pAlloc->alloc((uint32)(cnt * sizeof(T))));
 		}
 		inline void deallocate(pointer p, size_type) {
 			//::operator delete(p);

@@ -57,13 +57,13 @@ namespace embDB
 			return nIndex;
 		}
 
-		int SplitIn(BPTreeLeafNodeMap *pNode, TKey* pSplitKey, int nSplitIndex = -1)
+		int SplitIn(BPTreeLeafNodeMap *pNode, TKey* pSplitKey, int32 nSplitIndex = -1)
 		{
 			TCompressor& pNewNodeComp = pNode->m_Compressor;
 			if (this->m_bMinSplit)
 			{
 				if(nSplitIndex == -1)
-					nSplitIndex = this->m_KeyMemSet.size() - 1;
+					nSplitIndex = (int32)this->m_KeyMemSet.size() - 1;
 
 				while (true)
 				{
@@ -76,7 +76,7 @@ namespace embDB
 					this->m_KeyMemSet.resize(nSplitIndex);
 					this->m_ValueMemSet.resize(nSplitIndex);
 
-					pNewNodeComp.insert(pNode->m_KeyMemSet.size() - 1, pNode->m_KeyMemSet.back(), pNode->m_ValueMemSet.back(), pNode->m_KeyMemSet, pNode->m_ValueMemSet);
+					pNewNodeComp.insert((uint32)pNode->m_KeyMemSet.size() - 1, pNode->m_KeyMemSet.back(), pNode->m_ValueMemSet.back(), pNode->m_KeyMemSet, pNode->m_ValueMemSet);
 
 
 					if (!this->isNeedSplit())
@@ -93,8 +93,8 @@ namespace embDB
 			{
 				if (nSplitIndex != -1)
 				{
-					this->SplitInVec(this->m_KeyMemSet, pNode->m_KeyMemSet, pSplitKey, nSplitIndex, this->m_KeyMemSet.size() - nSplitIndex);
-					this->SplitInVec(this->m_ValueMemSet, pNode->m_ValueMemSet, (TValue*)NULL, nSplitIndex, this->m_ValueMemSet.size() - nSplitIndex);
+					this->SplitInVec(this->m_KeyMemSet, pNode->m_KeyMemSet, pSplitKey, nSplitIndex, (int32)this->m_KeyMemSet.size() - nSplitIndex);
+					this->SplitInVec(this->m_ValueMemSet, pNode->m_ValueMemSet, (TValue*)NULL, nSplitIndex, (int32)this->m_ValueMemSet.size() - nSplitIndex);
 				}
 				else
 				{
@@ -127,16 +127,16 @@ namespace embDB
 			if (nSplitIndex != -1)
 				nSize = nSplitIndex;
 			else
-				nSize = m_bMinSplit? this->m_KeyMemSet.size() - 1 : this->m_KeyMemSet.size() / 2;
+				nSize = m_bMinSplit? (uint32)this->m_KeyMemSet.size() - 1 : (uint32)this->m_KeyMemSet.size() / 2;
 
 			if (pSplitKey)
 				*pSplitKey = this->m_KeyMemSet[nSize];
 
 			this->SplitInVec(this->m_KeyMemSet, leftNodeMemSet, 0, nSize);
-			this->SplitInVec(this->m_KeyMemSet, rightNodeMemSet, nSize, this->m_KeyMemSet.size() - nSize);
+			this->SplitInVec(this->m_KeyMemSet, rightNodeMemSet, nSize, int32(this->m_KeyMemSet.size() - nSize));
 
 			this->SplitInVec(this->m_ValueMemSet, leftValueMemSet, 0, nSize);
-			this->SplitInVec(this->m_ValueMemSet, rightValueMemSet, nSize, this->m_ValueMemSet.size() - nSize);
+			this->SplitInVec(this->m_ValueMemSet, rightValueMemSet, nSize, int32(this->m_ValueMemSet.size() - nSize));
 
 			pleftNodeComp.recalc(leftNodeMemSet, leftValueMemSet);
 			pRightNodeComp.recalc(rightNodeMemSet, rightValueMemSet);
