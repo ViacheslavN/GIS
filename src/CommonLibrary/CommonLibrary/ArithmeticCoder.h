@@ -40,6 +40,8 @@ namespace CommonLib
 
 		}
 
+
+
 		void SetStream(IWriteStream* pStream)
 		{
 			m_pStream = pStream;

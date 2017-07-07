@@ -3,7 +3,7 @@
 #include "BaseNumLenEncoder.h"
 #include "ArithmeticCoder.h"
 #include "FixedBitStream.h"
-
+#include "FixedMemoryStream.h"
 namespace CommonLib
 {
 	template<class _TValue, class _TEncoder, class _TDecoder,  uint32 _nMaxBitsLens>
@@ -104,14 +104,19 @@ namespace CommonLib
 
 		void Reset()
 		{
-
+			m_bitRStream.seek(0, soFromBegin);
+			m_ReadStream.seek(0, soFromBegin);
+			m_Decoder.Reset(&m_pReadStream);
+			m_Decoder.StartDecode();
 		}
 	private:
 
 		FxBitWriteStream m_bitWStream;
 		FxBitReadStream m_bitRStream;
+		CommonLib::FxMemoryReadStream m_ReadStream;
 		TEncoder m_Encoder;
 		TDecoder m_Decoder;
+		uint32 
 	};
 
 }

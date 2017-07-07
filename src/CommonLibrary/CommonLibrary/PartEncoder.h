@@ -13,11 +13,12 @@ namespace CommonLib
 			CPartEncoder(CommonLib::alloc_t *pAlloc = nullptr);
 			~CPartEncoder();
 
+			static const uint32 __no_compress_parts = 10;
 
 			void clear();
 			void Reset();
 
-			uint32 InitDecode(CommonLib::IReadStream *pStream);
+			void InitDecode(CommonLib::IReadStream *pStream);
 
 			uint32 getPartCnt() const;
 			uint32 GetNextPart() const;
@@ -35,10 +36,13 @@ namespace CommonLib
 			bool m_bCompressPart;
 
 			uint32 m_nPartCnt;
+			uint32 m_nNextPart;
  
 			typedef TUnsignedNumLenEncoder<uint32, TACEncoder64, TACDecoder64, 32> TUnsignedNumLenEncoderU32;
 			TUnsignedNumLenEncoderU32 m_NumLen;
 			FxMemoryReadStream m_ReadStream;
+
+			uint32 m_Parts[__no_compress_parts];
 
 		};
 	}

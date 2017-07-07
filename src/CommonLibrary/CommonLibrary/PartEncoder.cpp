@@ -12,7 +12,7 @@ namespace CommonLib
 	{
 		CPartEncoder::CPartEncoder(CommonLib::alloc_t *pAlloc) : m_NumLen(pAlloc)
 		{
-
+			clear();
 		}
 		CPartEncoder::~CPartEncoder()
 		{
@@ -23,20 +23,45 @@ namespace CommonLib
 		void CPartEncoder::clear()
 		{
 			m_NumLen.clear();
+			m_bNullPart = false;
+			m_bCompressPart = false;
+			m_nPartCnt = 0;
+			m_nDataType = dtType64;
+			memset(m_Parts, 0, sizeof(m_Parts));
+			m_nNextPart = 0;
 		}
 		void CPartEncoder::Reset()
 		{
-
+			m_nNextPart = 0;
+			if (m_bCompressPart)
+				m_NumLen.Reset();
 		}
 
-		uint32 CPartEncoder::InitDecode(CommonLib::IReadStream *pStream)
+		void CPartEncoder::InitDecode(CommonLib::IReadStream *pStream)
 		{
 			ReadFlag(pStream);
+			if (m_bNullPart)
+				return;
+
+			if (!m_bCompressPart)
+			{
+				m_nPartCnt = ReadValue<uint32>(m_nDataType, pStream);
+			 	for (uint32 i = 1; i < m_nPartCnt; ++i)
+				{
+					m_Parts[i] = (uint32)ReadValue<uint32>(m_nDataType, pStream) + m_Parts[i - 1];
+				}
+
+				return;
+			}
+
+			uint32 nCompSize = pStream->readIntu32();
+
+			
 		}
 
 		uint32 CPartEncoder::getPartCnt() const
 		{
-
+			
 		}
 		uint32 CPartEncoder::GetNextPart() const
 		{
@@ -57,7 +82,7 @@ namespace CommonLib
 			{
 				m_bNullPart = true;
 			}
-			else if (nPartCount == 0 || nPartCount < 10)
+			else if (nPartCount == 0 || nPartCount < __no_compress_parts)
 			{
 				m_nDataType = GetCompressType(nPartCount);
 				for (uint32 i = 1; i < nPartCount; i++)
@@ -101,7 +126,7 @@ namespace CommonLib
 		void CPartEncoder::EncodePart(const uint32 *pParts, uint32 nPartCount, CommonLib::IWriteStream* pStream)
 		{
 			m_NumLen.clear();
-			m_NumLen.BeginEncoding(pStream);
+			
 
 			for (uint32 i = 2; i < nPartCount; ++i)
 			{
@@ -110,25 +135,18 @@ namespace CommonLib
 
 				m_NumLen.AddSymbol(nDiff);
 			}
-
-			m_NumLen.WriteHeader(pStream);
 			pStream->write((uint32)pParts[1]);
-			uint32 nBitLen = m_NumLen.GetBitsLen();
-			uint32 nByteSize = (nBitLen + 7) / 8;
-			CommonLib::FxBitWriteStream bitStream;
-			bitStream.attach(pStream, pStream->pos(), nByteSize);
-			pStream->seek(nByteSize, soFromCurrent);
-
-
+			m_NumLen.BeginEncoding(pStream);
+			
+		 
 			for (uint32 i = 2; i < nPartCount; ++i)
 			{
 				assert(pParts[i] >= pParts[i - 1]);
 				uint32 nDiff = pParts[i] - pParts[i - 1];
 
-				m_NumLen.EncodeSymbol(nDiff, &bitStream);
+				m_NumLen.encodeSymbol(nDiff);
 			}
-
-			m_NumLen.EncodeFinish();
+			m_NumLen.FinishEncoding(pStream);
 		}
 		void CPartEncoder::WriteFlag(uint32 nFlagPos, CommonLib::IWriteStream* pStream)
 		{
