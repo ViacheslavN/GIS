@@ -4,6 +4,7 @@
 #include "ArithmeticCoder.h"
 #include "FixedBitStream.h"
 #include "FixedMemoryStream.h"
+#include "algorithm.h"
 namespace CommonLib
 {
 	template<class _TValue, class _TEncoder, class _TDecoder,  uint32 _nMaxBitsLens>
@@ -59,8 +60,10 @@ namespace CommonLib
 		}
 
 
-		void BeginDecoding(CommonLib::IReadStream *pStream)
+		void BeginDecoding(CommonLib::IReadStream *pStream, uint32 nSize)
 		{
+			uint32 nBeginPos = pStream->pos();
+
 			ReadHeader(pStream);
 			double dRowBitsLen = GetCodeBitSize();
 
@@ -68,7 +71,10 @@ namespace CommonLib
 			uint32 nBitSize = (m_nLenBitSize + 7) / 8;
 
 			m_bitRStream.attach(pStream, pStream->pos(), nBitSize, true);
-			m_Decoder.Reset(pStream);
+
+			uint32 nEncodeSize = pStream->pos() - nBeginPos;
+			m_ReadStream.attach(pStream, pStream->pos(), nSize - nEncodeSize, true);
+			m_Decoder.Reset(&m_ReadStream);
 			m_Decoder.StartDecode();
 
 		}
@@ -76,7 +82,7 @@ namespace CommonLib
 		{
 			symbol = 0;
 			uint32 freq = (uint32)m_Decoder.GetFreq(m_nCount);
-			int32 nBitLen = CommonLib::upper_bound(m_FreqPrev, _nMaxBitsLens + 1, freq);
+			int32 nBitLen = upper_bound(m_FreqPrev, _nMaxBitsLens + 1, freq);
 			if (nBitLen != 0)
 				nBitLen--;
 
@@ -106,7 +112,7 @@ namespace CommonLib
 		{
 			m_bitRStream.seek(0, soFromBegin);
 			m_ReadStream.seek(0, soFromBegin);
-			m_Decoder.Reset(&m_pReadStream);
+			m_Decoder.Reset(&m_ReadStream);
 			m_Decoder.StartDecode();
 		}
 	private:
@@ -116,7 +122,6 @@ namespace CommonLib
 		CommonLib::FxMemoryReadStream m_ReadStream;
 		TEncoder m_Encoder;
 		TDecoder m_Decoder;
-		uint32 
 	};
 
 }

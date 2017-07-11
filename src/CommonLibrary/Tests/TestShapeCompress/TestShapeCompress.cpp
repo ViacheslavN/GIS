@@ -4,14 +4,14 @@
 #include "stdafx.h"
 void TestCompressPart();
 void TestSignCompress();
-
+void TestEncodePart();
 
 int _tmain(int argc, _TCHAR* argv[])
 {
  
-	 
+	TestEncodePart();
 	//TestCompressPart();
-	TestSignCompress();
+	//TestSignCompress();
 	return 0;
 }
 

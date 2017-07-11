@@ -4,9 +4,38 @@
 #include "..\..\CommonLibrary\MemoryStream.h"
 
 #include "..\..\CommonLibrary\PartEncoder.h"
-void TestCompressPart()
+
+
+void TestPart(CommonLib::Private::CPartEncoder& partCmp, CommonLib::IReadStream *pSteram)
 {
-	CommonLib::CPartCompressor partCmp;
+	partCmp.clear();
+	partCmp.InitDecode(pSteram);
+	uint32 nCnt = 0;
+	uint32 nPart = 0;
+	{
+		nCnt = partCmp.getPartCnt();
+		for (int i = 0; i < nCnt; ++i)
+		{
+			nPart = partCmp.GetNextPart();
+		}
+
+		partCmp.Reset();
+
+		nCnt = partCmp.getPartCnt();
+		for (int i = 0; i < nCnt; ++i)
+		{
+			nPart = partCmp.GetNextPart();
+		}
+	}
+}
+
+
+
+void TestEncodePart()
+{
+	CommonLib::Private::CPartEncoder partCmp;
+
+
 	CommonLib::CReadMemoryStream readStream;
 	CommonLib::CWriteMemoryStream writeStream;
 	CommonLib::CWriteMemoryStream writeStreamCache;
@@ -28,38 +57,39 @@ void TestCompressPart()
 	nullPartShape.getParts()[0] = 100;
 
 	noCompressPartShape.create(CommonLib::shape_type_polygon, 1, 9);
-	for (uint32 i =0, sz = noCompressPartShape.getPartCount();i < sz ; ++i)
+	for (uint32 i = 0, sz = noCompressPartShape.getPartCount(); i < sz; ++i)
 	{
 		noCompressPartShape.getParts()[i] = i;
 	}
 
 	CompressPartShape.create(CommonLib::shape_type_polygon, 10000, 100);
-	 
-	for (uint32 i =0, sz = CompressPartShape.getPartCount(); i < sz ;++i)
+
+	for (uint32 i = 0, sz = CompressPartShape.getPartCount(); i < sz; ++i)
 	{
 		CompressPartShape.getParts()[i] = i * 10 + i;
 	}
 
 	writeStreamCache.resize(100000);
-	partCmp.compress(&nullPartShape, &writeStreamCache);
+	partCmp.Encode(nullPartShape.getParts(), nullPartShape.getPartCount(), &writeStreamCache);
 	writeStream.write(writeStreamCache.buffer(), writeStreamCache.pos());
 
 	writeStreamCache.seek(0, CommonLib::soFromBegin);
 	partCmp.clear();
-	partCmp.compress(&noCompressPartShape, &writeStreamCache);
+	partCmp.Encode(noCompressPartShape.getParts(), noCompressPartShape.getPartCount(), &writeStreamCache);
 	writeStream.write(writeStreamCache.buffer(), writeStreamCache.pos());
 
 	writeStreamCache.seek(0, CommonLib::soFromBegin);
 	partCmp.clear();
-	partCmp.compress(&CompressPartShape, &writeStreamCache);
+	partCmp.Encode(CompressPartShape.getParts(), CompressPartShape.getPartCount(), &writeStreamCache);
 	writeStream.write(writeStreamCache.buffer(), writeStreamCache.pos());
 
 
 	readStream.attachBuffer(writeStream.buffer(), writeStream.pos());
 
-	partCmp.decompress(&nullPartShapeDecom, &readStream);
-	partCmp.decompress(&noCompressPartShapeDecom, &readStream);
-	partCmp.decompress(&CompressPartShapeDecom, &readStream);
+
+	TestPart(partCmp, &readStream);
+	TestPart(partCmp, &readStream);
+	TestPart(partCmp, &readStream);
 
 	int dd = 0;
 	dd++;

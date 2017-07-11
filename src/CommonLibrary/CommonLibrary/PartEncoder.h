@@ -7,6 +7,11 @@ namespace CommonLib
 {
 	namespace Private
 	{
+
+
+#define BIT_OFFSET_PARTS_NULL 3
+#define BIT_OFFSET_PARTS_COMPRESS 4
+
 		class CPartEncoder
 		{
 		public:
@@ -30,19 +35,40 @@ namespace CommonLib
 			void EncodePart(const uint32 *pParts, uint32 nPartCount, CommonLib::IWriteStream* pStream);
 			void WriteFlag(uint32 nFlagPos, CommonLib::IWriteStream* pStream);
 			void ReadFlag(CommonLib::IReadStream* pStream);
-		private:
-			eCompressDataType m_nDataType;
-			bool m_bNullPart;
-			bool m_bCompressPart;
 
+			eCompressDataType GetDataType() const{return (eCompressDataType)(m_bFlag & 3); }
+			bool IsNullPart() const {return ((m_bFlag >> BIT_OFFSET_PARTS_NULL) & 1) ? true : false;}
+			bool IsCompressPart() const {return  ((m_bFlag >> BIT_OFFSET_PARTS_COMPRESS) & 1) ? true : false;	}
+
+
+			void SetNullPart(bool bNull) 
+			{
+				if(bNull)
+					m_bFlag |= (((uint32)1) << BIT_OFFSET_PARTS_NULL);
+				else
+					m_bFlag &= ~(((uint32)1) << BIT_OFFSET_PARTS_NULL);
+			}
+			void SetCompressPart(bool bCompress)
+			{
+				if(bCompress)
+					m_bFlag |= (((uint32)1) << BIT_OFFSET_PARTS_COMPRESS);
+				else
+					m_bFlag &= ~(((uint32)1) << BIT_OFFSET_PARTS_COMPRESS);
+			}
+			void SetDataType(eCompressDataType type)
+			{
+				m_bFlag |= (type & 3);
+			}
+		private:
+			mutable uint32 m_nPos;
 			uint32 m_nPartCnt;
-			uint32 m_nNextPart;
+			uint32 m_nBeginPart;
+			mutable uint32 m_nNextDivPart;
  
 			typedef TUnsignedNumLenEncoder<uint32, TACEncoder64, TACDecoder64, 32> TUnsignedNumLenEncoderU32;
-			TUnsignedNumLenEncoderU32 m_NumLen;
+			mutable TUnsignedNumLenEncoderU32 m_NumLen;
 			FxMemoryReadStream m_ReadStream;
-
-			uint32 m_Parts[__no_compress_parts];
+			byte m_bFlag;
 
 		};
 	}

@@ -3,8 +3,6 @@
 
 
 
-#define BIT_OFFSET_PARTS_NULL 3
-#define BIT_OFFSET_PARTS_COMPRESS 4
 
 namespace CommonLib
 {
@@ -23,49 +21,81 @@ namespace CommonLib
 		void CPartEncoder::clear()
 		{
 			m_NumLen.clear();
-			m_bNullPart = false;
-			m_bCompressPart = false;
 			m_nPartCnt = 0;
-			m_nDataType = dtType64;
-			memset(m_Parts, 0, sizeof(m_Parts));
-			m_nNextPart = 0;
+			m_bFlag = 0;
+			m_nNextDivPart = 0;
+			m_nBeginPart = 0;
+			m_nPos = 0;
 		}
 		void CPartEncoder::Reset()
 		{
-			m_nNextPart = 0;
-			if (m_bCompressPart)
+			m_nPos = 0;
+			if (IsCompressPart())
+			{
 				m_NumLen.Reset();
+				m_nNextDivPart = m_nBeginPart;
+			}
+			else
+				m_ReadStream.seek(0, soFromBegin);
 		}
 
 		void CPartEncoder::InitDecode(CommonLib::IReadStream *pStream)
 		{
-			ReadFlag(pStream);
-			if (m_bNullPart)
+			if (m_bFlag != 0)
 				return;
 
-			if (!m_bCompressPart)
-			{
-				m_nPartCnt = ReadValue<uint32>(m_nDataType, pStream);
-			 	for (uint32 i = 1; i < m_nPartCnt; ++i)
-				{
-					m_Parts[i] = (uint32)ReadValue<uint32>(m_nDataType, pStream) + m_Parts[i - 1];
-				}
+ 
 
+			ReadFlag(pStream);
+			if (IsNullPart())
+				return;
+
+			if (!IsCompressPart())
+			{
+				m_nPartCnt = pStream->readByte();
+				uint32 nSize = GetSizeTypeValue(GetDataType()) *(m_nPartCnt - 1);
+				m_ReadStream.attach(pStream, pStream->pos(), nSize, true);
 				return;
 			}
-
-			uint32 nCompSize = pStream->readIntu32();
-
+				
 			
+			uint32 nCompSize = pStream->readIntu32();
+			m_nBeginPart = pStream->readInt32();
+			m_nNextDivPart = m_nBeginPart;
+			m_NumLen.BeginDecoding(pStream, nCompSize - sizeof(uint32));
+			m_nPartCnt = m_NumLen.count() + 1;
 		}
 
 		uint32 CPartEncoder::getPartCnt() const
 		{
-			
+			return m_nPartCnt;
 		}
 		uint32 CPartEncoder::GetNextPart() const
 		{
+			if (IsNullPart())
+				return 0;
 
+			if (m_nPos == 0)
+			{
+				m_nPos += 1;
+				return 0;
+			}
+
+			if (!IsCompressPart())
+			{
+				m_nNextDivPart += ReadValue<uint32>(GetDataType(), (CommonLib::IReadStream*)&m_ReadStream);
+				return m_nNextDivPart;
+			}					 
+			if (m_nPos == 1)
+			{
+				m_nPos += 1;
+				return m_nNextDivPart;
+			}
+
+	 		m_nNextDivPart += m_NumLen.decodeSymbol();
+			m_nPos += 1;
+			return m_nNextDivPart;
+		
 		}
 
 
@@ -74,40 +104,41 @@ namespace CommonLib
 		{
 			clear();
 
-			byte nFlag = 0;
 			uint32 nPosFlag = pStream->pos();
-			pStream->write(nFlag);
+			pStream->write(m_bFlag);
 
 			if (nPartCount == 1)
 			{
-				m_bNullPart = true;
+				SetNullPart(true);
 			}
 			else if (nPartCount == 0 || nPartCount < __no_compress_parts)
 			{
-				m_nDataType = GetCompressType(nPartCount);
+				eCompressDataType nDataType = GetCompressType(nPartCount);
 				for (uint32 i = 1; i < nPartCount; i++)
 				{
 					uint32 nPart = pParts[i] - pParts[i - 1];
 					eCompressDataType type = GetCompressType(nPart);
-					if (m_nDataType < type)
+					if (nDataType < type)
 					{
-						m_nDataType = type;
-						if (m_nDataType == dtType32)
+						nDataType = type;
+						if (nDataType == dtType32)
 						{
 							break;
 						}
 					}
 				}
-				m_bCompressPart = false;
-				WriteValue(nPartCount, m_nDataType, pStream);
+				pStream->write((byte)nPartCount);
 				for (uint32 i = 1; i < nPartCount; i++)
 				{
-					WriteValue(pParts[i] - pParts[i - 1], m_nDataType, pStream);
+					WriteValue(pParts[i] - pParts[i - 1], nDataType, pStream);
 				}
+
+				SetCompressPart(false);
+				SetDataType(nDataType);
 			}
 			else
 			{
-				m_bCompressPart = true;
+				SetCompressPart(true);
 				uint32 nSizePos = pStream->pos();
 				pStream->write(uint32(0));
 				uint32 nBeginPos = pStream->pos();
@@ -152,25 +183,15 @@ namespace CommonLib
 		{
 			uint32 nEndPos = pStream->pos();
 			pStream->seek(nFlagPos, soFromBegin);
-
-			byte nFlag = (byte)m_nDataType;
-			if (m_bNullPart)
-				nFlag |= (((uint32)1) << BIT_OFFSET_PARTS_NULL);
-			else if (m_bCompressPart)
-				nFlag |= (((uint32)1) << BIT_OFFSET_PARTS_COMPRESS);
-
-
-			pStream->write(nFlag);
+			pStream->write(m_bFlag);
 			pStream->seek(nEndPos, soFromBegin);
 
 
 		}
 		void CPartEncoder::ReadFlag(CommonLib::IReadStream* pStream)
 		{
-			byte nFlag = pStream->readByte();
-			m_nDataType = (eCompressDataType)(nFlag & 3);
-			m_bNullPart = ((nFlag >> BIT_OFFSET_PARTS_NULL) & 1) ? true : false;
-			m_bCompressPart = ((nFlag >> BIT_OFFSET_PARTS_COMPRESS) & 1) ? true : false;
+			m_bFlag = pStream->readByte();
+		 
 		}
 
 	}

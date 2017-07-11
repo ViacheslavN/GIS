@@ -20,6 +20,27 @@ namespace CommonLib
 		dtType64 = 3
 	};
 
+
+	template<class TValue>
+	double CalcRowBitSize(const TValue *pFreq, uint32 nFreqCount, uint32 nDiffsLen, uint32 nCount)
+	{
+		double dBitRowSize = 0;
+		if (nDiffsLen > 1)
+		{
+			for (uint32 i = 0; i < nFreqCount; ++i)
+			{
+				if (pFreq[i] == 0)
+					continue;
+				double dFreq = pFreq[i];
+				double dLog2 = mathUtils::Log2((double)nCount / dFreq);
+				dBitRowSize += (dFreq* dLog2);
+
+			}
+		}
+
+		return dBitRowSize;
+	}
+
 	template<class TValue>
 	eCompressDataType GetCompressType(TValue nValue)
 	{

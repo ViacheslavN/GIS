@@ -44,5 +44,8 @@
     <ClCompile Include="TestShpComp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PartEncoder.cpp">
+      <Filter>TestCompressPart</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

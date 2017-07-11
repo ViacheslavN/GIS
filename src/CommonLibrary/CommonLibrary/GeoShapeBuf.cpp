@@ -246,6 +246,9 @@ namespace CommonLib
 	}
 	uint32  CGeoShapeBuf::getPartSize(uint32 idx) const
 	{
+		if (IsSuccinct())
+			return 0;
+
 		uint32 nparts = getPartCount();
 
 		if(nparts == 0 || idx >= nparts)
@@ -260,6 +263,9 @@ namespace CommonLib
 	}
 	const uint32*  CGeoShapeBuf::getParts() const 
 	{
+		if (IsSuccinct())
+			return nullptr;
+
 		eShapeType genType = generalType();
 
 		switch(genType)
@@ -274,10 +280,13 @@ namespace CommonLib
 			}
 		}
 
-		return NULL;
+		return nullptr;
 	}
 	uint32*  CGeoShapeBuf::getParts()
 	{
+		if (IsSuccinct())
+			return nullptr;
+
 		eShapeType genType = generalType();
 
 		switch(genType)
@@ -292,17 +301,23 @@ namespace CommonLib
 			}
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	GisXYPoint* CGeoShapeBuf::getPoints()
 	{
+		if (IsSuccinct())
+			return nullptr;
+
 		if(m_params.m_bIsValid)
 			return const_cast<GisXYPoint*>(m_params.m_pPoints);
 		return const_cast<GisXYPoint*>(getXYs(m_blob.buffer()));
 	}
 	const GisXYPoint* CGeoShapeBuf::getPoints() const
 	{
+		if (IsSuccinct())
+			return nullptr;
+
 		if(m_params.m_bIsValid)
 			return m_params.m_pPoints;
 		return getXYs(m_blob.buffer());
