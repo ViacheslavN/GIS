@@ -2,13 +2,26 @@
 #define _LIB_COMMON_GEO_SHAPE_BUF_H_
 #include "IGeoShape.h"
 #include "blob.h"
+#include "StreamShapeEncoder.h"
+
 namespace CommonLib
 {
 	
  
 	class CGeoShapeBuf 
 	{
+
+	
+
 		public:
+
+			enum eFlags
+			{
+				eNoSuccinct = 0,
+				eSuccinct = 1
+
+			};
+
 			CGeoShapeBuf(alloc_t *pAlloc = NULL);
 			CGeoShapeBuf(const CGeoShapeBuf& geoShp);
 			~CGeoShapeBuf();
@@ -16,11 +29,11 @@ namespace CommonLib
 			 CGeoShapeBuf&     operator=(const CGeoShapeBuf& shp);
 
 
-			 bool IsSuccinct() const;
-			 bool decode() const;
-			 bool InnerEncode() const;
+			 bool IsSuccinct() const { return m_bIsSuccinct; }
+			 void decode();
+			 void InnerEncode(CWriteMemoryStream *pCacheStream = nullptr);
 
-			 bool BeginReadSuccinct() const;
+			 void BeginReadSuccinct() const;
 			 void EndReadSuccinct() const;
 			 GisXYPoint nextPoint();
 			 uint32 nextPart();
@@ -84,18 +97,20 @@ namespace CommonLib
 			static const GisXYPoint* getXYs(const byte* buf);
 			static const GisXYPoint* getXYs(const byte* buf, eShapeType  general_type, uint32 partCount);
 
+			void calcBB();
+	
+			bbox getBB() const;
 		private:
-			
+
+			void WriteEncodeHeader(CommonLib::IWriteStream *pStream);
+
 		private:
+			static const uint32 __minimum_point_ = 10;
 
 			CBlob m_blob;
-	
+			Private::CStreamShapeEncoder m_Encoder;
 			bool m_bIsSuccinct;
-
-			struct SuccinctContext
-			{
-				std::vector<uint32> m_vecParts;
-			};
+ 
 
 			struct sShapeParams
 			{

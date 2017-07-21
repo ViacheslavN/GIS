@@ -14,8 +14,8 @@ namespace CommonLib
 		enum eCompressType
 		{
 			ONE_SIGN = 0,
-			COMPRESS_POS = 1,
-			NO_COMPRESS = 2
+			WRITE_POS = 1,
+			BIT_POS = 2
 		};
 
 		TSignEncoder()
@@ -29,7 +29,7 @@ namespace CommonLib
 		{
 			m_nSigns[0] = 0;
 			m_nSigns[1] = 0;
-			m_compreesType = NO_COMPRESS;
+			m_compreesType = BIT_POS;
 			m_DataType = dtType64;
 			m_bSign = false;
 			m_nVecPos.clear();
@@ -38,8 +38,36 @@ namespace CommonLib
 
 		void Reset()
 		{
-			m_bitReadStream.seek(0, soFromBegin);
+			if(m_compreesType == BIT_POS)
+				m_bitReadStream.seek(0, soFromBegin);
 		}
+
+		bool GetNextSign(uint32 nPos)
+		{
+			bool bSign = false;
+			switch (m_compreesType)
+			{
+				case ONE_SIGN:
+					bSign = m_bSign;
+					break;
+				case WRITE_POS:
+				{
+
+					int nIndex = CommonLib::binary_search(m_nVecPos.begin(), m_nVecPos.size(), nPos);
+					bSign = nIndex != -1 ? m_bSign : !m_bSign;
+					break;
+				}
+				case BIT_POS:
+					bSign = m_bitReadStream.readBit();
+					break;
+				default:
+					assert(false);
+					break;
+			}
+
+			return bSign;
+		}
+
 
 		void AddSymbol(bool bSign)
 		{
@@ -92,13 +120,13 @@ namespace CommonLib
 
 				if (nByteSize < nBytePosCodeSize)
 				{
-					m_compreesType = NO_COMPRESS;
+					m_compreesType = BIT_POS;
 					pStream->write((byte)m_compreesType);
 					m_bitWriteStream.attach(pStream, pStream->pos(), nByteSize - 1, true);
 				}
 				else
 				{
-					m_compreesType = COMPRESS_POS;
+					m_compreesType = WRITE_POS;
 					nFlag = m_compreesType;
 					m_bSign = false;
 					if (m_nSigns[1] == nMinCount)
@@ -119,7 +147,7 @@ namespace CommonLib
 		{
 			switch (m_compreesType)
 			{
-			case COMPRESS_POS:
+			case WRITE_POS:
 			{
 				if (bSign == m_bSign)
 				{
@@ -127,14 +155,11 @@ namespace CommonLib
 				}
 				break;
 			}
-			case NO_COMPRESS:
+			case BIT_POS:
 				m_bitWriteStream.writeBit(bSign);
 				break;
 			}
 		}
-
-
-
 
 		void BeginDecoding(CommonLib::IReadStream *pStream, uint32 nCount)
 		{
@@ -144,7 +169,7 @@ namespace CommonLib
 			{
 				m_bSign = nFlag & (1 << 2) ? true : false;
 			}
-			else if (m_compreesType == COMPRESS_POS)
+			else if (m_compreesType == WRITE_POS)
 			{
 
 				m_bSign = nFlag & (1 << 2) ? true : false;
@@ -159,13 +184,11 @@ namespace CommonLib
 				}
 
 			}
-			else if (m_compreesType == NO_COMPRESS)
+			else if (m_compreesType == BIT_POS)
 			{
 				m_bitReadStream.attach(pStream, pStream->pos(), (nCount + 7) / 8);
 				pStream->seek((nCount + 7) / 8, CommonLib::soFromCurrent);
 			}
-
-
 
 		}
 
@@ -177,14 +200,14 @@ namespace CommonLib
 			case ONE_SIGN:
 				bSign = m_bSign;
 				break;
-			case COMPRESS_POS:
+			case WRITE_POS:
 			{
 
 				int nIndex = CommonLib::binary_search(m_nVecPos.begin(), m_nVecPos.size(), nPos);
 				bSign = nIndex != -1 ? m_bSign : !m_bSign;
 				break;
 			}
-			case NO_COMPRESS:
+			case BIT_POS:
 				bSign = m_bitReadStream.readBit();
 				break;
 			default:
@@ -200,8 +223,10 @@ namespace CommonLib
 		uint32 m_nSigns[2];
 		eCompressType m_compreesType;
 		CommonLib::FxMemoryWriteStream m_WriteStream;
-		CommonLib::FxBitReadStream m_bitReadStream;
 		CommonLib::FxBitWriteStream m_bitWriteStream;
+		
+		CommonLib::FxBitReadStream m_bitReadStream;
+		CommonLib::FxMemoryReadStream m_ReadStream;
 		eCompressDataType m_DataType;
 		bool m_bSign;
 

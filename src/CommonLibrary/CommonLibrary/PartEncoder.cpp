@@ -25,11 +25,9 @@ namespace CommonLib
 			m_bFlag = 0;
 			m_nNextDivPart = 0;
 			m_nBeginPart = 0;
-			m_nPos = 0;
 		}
 		void CPartEncoder::Reset()
 		{
-			m_nPos = 0;
 			if (IsCompressPart())
 			{
 				m_NumLen.Reset();
@@ -70,32 +68,25 @@ namespace CommonLib
 		{
 			return m_nPartCnt;
 		}
-		uint32 CPartEncoder::GetNextPart() const
+		uint32 CPartEncoder::GetNextPart(uint32 nPos) const
 		{
 			if (IsNullPart())
 				return 0;
 
-			if (m_nPos == 0)
-			{
-				m_nPos += 1;
+			if (nPos == 0)
 				return 0;
-			}
 
 			if (!IsCompressPart())
 			{
 				m_nNextDivPart += ReadValue<uint32>(GetDataType(), (CommonLib::IReadStream*)&m_ReadStream);
 				return m_nNextDivPart;
 			}					 
-			if (m_nPos == 1)
-			{
-				m_nPos += 1;
+			if (nPos == 1)
 				return m_nNextDivPart;
-			}
+	
 
 	 		m_nNextDivPart += m_NumLen.decodeSymbol();
-			m_nPos += 1;
 			return m_nNextDivPart;
-		
 		}
 
 

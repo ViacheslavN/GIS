@@ -51,8 +51,8 @@ namespace CommonLib
 
 	uint32 CGeoShapeBuf::calcSize(eShapeType shapeType, uint32 npoints, uint32 nparts, uint32 ncurves, uint32 mpatchSpecificSize)
 	{
-		 uint32 nSize = 0;
-		 uint32 size = 0;
+	 
+		 uint32 size =1; //flag
 		 eShapeType genType;
 		 bool has_z;
 		 bool has_m;
@@ -64,7 +64,7 @@ namespace CommonLib
 		 uint32 flag_curve = has_curve ? 1 : 0;
 		 uint32 flag_id = has_id ? 1 : 0;
 
-		 size += 4; // type
+		 size += 2; // type
 		 if(shapeType != shape_type_null)
 		 {
 			 switch(genType)
@@ -101,9 +101,12 @@ namespace CommonLib
 
 		getTypeParams(shapeType, &genType, &has_z, &has_m, &has_curve, &has_id);
 
+		*buf = (byte)(eNoSuccinct);
+		buf += 1;
+
 		// Type
-		*reinterpret_cast<long*>(buf) = shapeType;
-		buf += 4;
+		*reinterpret_cast<short*>(buf) = shapeType;
+		buf += 2;
 		if(shapeType == shape_type_null || genType == shape_type_null)
 			return;
 
@@ -119,7 +122,9 @@ namespace CommonLib
 		*dbuf++ = 0.;
 		*dbuf++ = 0.;
 		*dbuf++ = 0.;
-		buf += 8 * 4;
+
+		if(has_z || has_m)
+			buf += 8 * 4;
 
 		// part count
 		if(genType != shape_type_general_multipoint)
@@ -189,10 +194,10 @@ namespace CommonLib
 		}
 	}
 
-	CGeoShapeBuf::CGeoShapeBuf(alloc_t *pAlloc) : m_blob(pAlloc)
+	CGeoShapeBuf::CGeoShapeBuf(alloc_t *pAlloc) : m_blob(pAlloc), m_bIsSuccinct(false)
 	{
 	}
-	CGeoShapeBuf::CGeoShapeBuf(const CGeoShapeBuf& geoShp) : m_blob(geoShp.m_blob)
+	CGeoShapeBuf::CGeoShapeBuf(const CGeoShapeBuf& geoShp) : m_blob(geoShp.m_blob), m_bIsSuccinct(false)
 	{}
 
 	CGeoShapeBuf& CGeoShapeBuf::operator=(const CGeoShapeBuf& shp)
@@ -226,7 +231,7 @@ namespace CommonLib
 	{
 		if(buf == 0)
 			return shape_type_null;
-		return *reinterpret_cast<const eShapeType*>(buf);
+		return(eShapeType)(*reinterpret_cast<const short*>(buf + 1));
 	}
 	eShapeType CGeoShapeBuf::generalType(const byte* buf)
 	{
@@ -275,7 +280,7 @@ namespace CommonLib
 		case shape_type_general_polygon:
 			{
 				const unsigned char* buf = m_blob.buffer();
-				buf += 4 + 8 * 4 + 4 + 4;
+				buf +=1 + 4 + 8 * 4 + 4 + 4;
 				return reinterpret_cast<const uint32*>(buf);
 			}
 		}
@@ -296,7 +301,7 @@ namespace CommonLib
 		case shape_type_general_polygon:
 			{
 				unsigned char* buf = m_blob.buffer();
-				buf += 4 + 8 * 4 + 4 + 4;
+				buf += 1 + 4 + 8 * 4 + 4 + 4;
 				return reinterpret_cast<uint32*>(buf);
 			}
 		}
@@ -408,7 +413,7 @@ namespace CommonLib
 		case shape_type_general_polygon:
 		case shape_type_general_multipatch:
 			{
-				return *reinterpret_cast<const uint32*>(buf + 4 + 8 * 4 + 4 * flag_has_parts);
+				return *reinterpret_cast<const uint32*>(buf + 1 + 4 + 8 * 4 + 4 * flag_has_parts);
 			}
 		}
 
@@ -427,6 +432,7 @@ namespace CommonLib
 		eShapeType genType = general_type;
 		uint32 nparts = partCount;
 
+		buf += 1;
 		switch(genType)
 		{
 		case shape_type_general_point:
@@ -474,6 +480,7 @@ namespace CommonLib
 
 	void CGeoShapeBuf::sShapeParams::reset()
 	{
+		
 		m_bIsValid = false;
 		m_type = shape_type_null;
 		m_general_type = shape_type_null;
@@ -493,5 +500,41 @@ namespace CommonLib
 		m_pPoints = CGeoShapeBuf::getXYs(buf, m_general_type, m_nPartCount);
 	}
 
+	void CGeoShapeBuf::InnerEncode(CWriteMemoryStream *pCacheStream)
+	{
+		if (m_bIsSuccinct || getPointCnt() < __minimum_point_)
+			return;
+
+
+		CWriteMemoryStream stream;
+		CommonLib::CWriteMemoryStream *pStream = &stream;
+		if (pCacheStream)
+			pStream = pCacheStream;
+
+		pStream->resize(size()*2);
+		pStream->seek(0, soFromBegin);
+
+		WriteEncodeHeader(pStream);
+
+
+	}
  
+	void CGeoShapeBuf::WriteEncodeHeader(CommonLib::IWriteStream *pStream)
+	{
+		
+		eShapeType shType = type();
+		eShapeType genType = generalType();
+
+		pStream->write((byte)eSuccinct);
+		pStream->write((short)shType);
+
+		if (genType == shape_type_general_polyline || genType == shape_type_polygon)
+		{
+			if (m_bbox.type == bbox_type_invalid)
+				calcBB();
+		}
+
+
+	
+	}
 }

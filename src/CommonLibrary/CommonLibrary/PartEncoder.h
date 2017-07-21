@@ -26,7 +26,7 @@ namespace CommonLib
 			void InitDecode(CommonLib::IReadStream *pStream);
 
 			uint32 getPartCnt() const;
-			uint32 GetNextPart() const;
+			uint32 GetNextPart(uint32 nPos) const;
 
 
 
@@ -60,7 +60,6 @@ namespace CommonLib
 				m_bFlag |= (type & 3);
 			}
 		private:
-			mutable uint32 m_nPos;
 			uint32 m_nPartCnt;
 			uint32 m_nBeginPart;
 			mutable uint32 m_nNextDivPart;
