@@ -39,7 +39,7 @@ namespace GisEngine
 			//	pFieldSet = m_pFieldSet;
 			{
 				//for (int i = 0; i < pFieldSet->GetCount(); ++i)
-				for (size_t i = 0, sz = m_vecTypes.size(); i < sz; ++i)
+				for (int i = 0, sz = (int)m_vecTypes.size(); i < sz; ++i)
 				
 				{
 					

@@ -36,7 +36,7 @@ namespace CommonLib
 			m_XPrev = m_X;
 			m_YPrev = m_Y;
 		}
-		void CPointEncoder::encode(const GisXYPoint* pPts, uint32 nCnts, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream)
+		void CPointEncoder::encode(const GisXYPoint* pPts, uint32 nCnts, shape_compress_params *pParams, CommonLib::IWriteStream *pStream)
 		{
 			clear();
 			calc(pPts, nCnts, pParams);
@@ -54,7 +54,7 @@ namespace CommonLib
 
 		}
 
-		void CPointEncoder::calc(const GisXYPoint* pPoints, uint32 nCnts, CGeoShape::compress_params *pParams)
+		void CPointEncoder::calc(const GisXYPoint* pPoints, uint32 nCnts, shape_compress_params *pParams)
 		{
 
 			double dScaleX = 1 / pow(10., pParams->m_nScaleX);
@@ -81,7 +81,7 @@ namespace CommonLib
 				yPrev = Y;
 			}
 		}
-		void CPointEncoder::compressImpl(const GisXYPoint* pPoints, uint32 nCount, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream)
+		void CPointEncoder::compressImpl(const GisXYPoint* pPoints, uint32 nCount, shape_compress_params *pParams, CommonLib::IWriteStream *pStream)
 		{
 
 			double dScaleX = 1 / pow(10., pParams->m_nScaleX);
@@ -152,7 +152,7 @@ namespace CommonLib
 		}
 
 
-		void CPointEncoder::InitDecode(CommonLib::IReadStream *pStream, CGeoShape::compress_params *pParams)
+		void CPointEncoder::InitDecode(CommonLib::IReadStream *pStream, shape_compress_params *pParams)
 		{
 			uint32 nBeginPos = pStream->pos();
 
@@ -173,16 +173,20 @@ namespace CommonLib
 
 		uint32 CPointEncoder::getPointCnts() const
 		{
-			return m_Points.count() + 1;
+			return m_Points.count()/2 + 1;
 		}
-		GisXYPoint CPointEncoder::GetNextPoint(uint32 nPos, CGeoShape::compress_params *pParams) const
+		GisXYPoint CPointEncoder::GetNextPoint(uint32 nPos, shape_compress_params *pParams) const
 		{
 			GisXYPoint pt;
+
+			double dScaleX = 1 / pow(10., pParams->m_nScaleX); //TO DO
+			double dScaleY = 1 / pow(10., pParams->m_nScaleY);
+
 			if (nPos == 0)
 			{
 
-				pt.x = ((double)m_X *pParams->m_nScaleX) - pParams->m_dOffsetX;
-				pt.y = ((double)m_Y *pParams->m_nScaleY) - pParams->m_dOffsetY;
+				pt.x = ((double)m_X *dScaleX) - pParams->m_dOffsetX;
+				pt.y = ((double)m_Y *dScaleX) - pParams->m_dOffsetY;
 			}
 			else
 			{
@@ -202,8 +206,8 @@ namespace CommonLib
 				else
 					m_YPrev = m_YPrev + yDiff;
 
-				pt.x = ((double)m_XPrev *pParams->m_nScaleX) - pParams->m_dOffsetX;
-				pt.y = ((double)m_YPrev *pParams->m_nScaleY) - pParams->m_dOffsetY;
+				pt.x = ((double)m_XPrev *dScaleX) - pParams->m_dOffsetX;
+				pt.y = ((double)m_YPrev *dScaleX) - pParams->m_dOffsetY;
 			}
 			return pt;
 		}

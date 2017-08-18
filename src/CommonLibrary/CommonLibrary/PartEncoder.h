@@ -24,6 +24,7 @@ namespace CommonLib
 			void Reset();
 
 			void InitDecode(CommonLib::IReadStream *pStream);
+ 
 
 			uint32 getPartCnt() const;
 			uint32 GetNextPart(uint32 nPos) const;

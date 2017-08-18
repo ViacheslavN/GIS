@@ -5,6 +5,7 @@
 #include "MemoryStream.h"
 #include "blob.h"
 #include "IGeoShape.h"
+ 
 
 
 
@@ -35,15 +36,16 @@ namespace CommonLib
 
 			void clear();
 
-			bool Encode(const CGeoShapeBuf* pShape, IWriteStream *pStream, CGeoShape::compress_params *pParams);
+			bool Encode(const CGeoShapeBuf* pShape, IWriteStream *pStream, shape_compress_params *pParams);
 
-			bool BeginDecode(const CBlob& blob);
+			bool BeginDecode(IReadStream *pStream, shape_compress_params *pParams);
+			void ResetDecode(shape_compress_params *pParams);
 
 			uint32 cntParts() const;
 			uint32 cntPoints() const;
 
 			uint32 GetNextPart(int nIdx);
-			GisXYPoint GetNextPoint(int nIdx, CGeoShape::compress_params *pParams);
+			GisXYPoint GetNextPoint(int nIdx, shape_compress_params *pParams);
 
 
 		private:
@@ -52,8 +54,6 @@ namespace CommonLib
 
 			CommonLib::alloc_t* m_pAlloc;
 			CommonLib::simple_alloc_t m_alloc;
-			bool m_bInit;
-			byte m_Flag;
 			CPointEncoder m_PointEncoder;
 #ifdef _PART_ENCODER_
 			CPartEncoder  m_PartEncoder;

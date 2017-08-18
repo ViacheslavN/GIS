@@ -41,12 +41,13 @@ namespace CommonLib
 		{
 			if (m_bFlag != 0)
 				return;
-
- 
-
+			
 			ReadFlag(pStream);
 			if (IsNullPart())
+			{
+				m_nPartCnt = 1;
 				return;
+			}
 
 			if (!IsCompressPart())
 			{

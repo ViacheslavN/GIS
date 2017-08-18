@@ -2,7 +2,7 @@
 #include "UnsignedNumLenEncoder.h"
 #include "SignEncoder.h"
 #include "MemoryStream.h"
-#include "GeoShape.h"
+#include "IGeoShape.h"
 
 namespace CommonLib
 {
@@ -18,18 +18,18 @@ namespace CommonLib
 
 			void clear();
 
-			void encode(const  GisXYPoint* pPts, uint32 nCnts, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
+			void encode(const  GisXYPoint* pPts, uint32 nCnts, shape_compress_params *pParams, CommonLib::IWriteStream *pStream);
 			void Reset();
-			void InitDecode(CommonLib::IReadStream *pStream, CGeoShape::compress_params *pParams);
+			void InitDecode(CommonLib::IReadStream *pStream, shape_compress_params *pParams);
 
 			uint32 getPointCnts() const;
-			GisXYPoint GetNextPoint(uint32 nPos, CGeoShape::compress_params *pParams) const;
+			GisXYPoint GetNextPoint(uint32 nPos, shape_compress_params *pParams) const;
 
 
 		private:
 			
-			void calc(const  GisXYPoint* pPts, uint32 nCnts, CGeoShape::compress_params *pParams);
-			void compressImpl(const  GisXYPoint* pPts, uint32 nCnts, CGeoShape::compress_params *pParams, CommonLib::IWriteStream *pStream);
+			void calc(const  GisXYPoint* pPts, uint32 nCnts, shape_compress_params *pParams);
+			void compressImpl(const  GisXYPoint* pPts, uint32 nCnts, shape_compress_params *pParams, CommonLib::IWriteStream *pStream);
 
 
 			void PreAddCoord(uint32 nPos, uint64 prev, uint64 next, TSignEncoder& signCpmrpessor);

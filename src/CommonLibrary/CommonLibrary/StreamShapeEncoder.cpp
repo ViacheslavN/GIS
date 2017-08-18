@@ -6,7 +6,7 @@ namespace CommonLib
 {
 	namespace Private
 	{
-		CStreamShapeEncoder::CStreamShapeEncoder(CommonLib::alloc_t* pAlloc) : m_bInit(false), m_pAlloc(pAlloc), m_Flag(0)
+		CStreamShapeEncoder::CStreamShapeEncoder(CommonLib::alloc_t* pAlloc) : m_pAlloc(pAlloc)
 #ifndef _PART_ENCODER_
 			,m_nPartCnt(0)
 #endif
@@ -27,10 +27,9 @@ namespace CommonLib
 #else
 			m_nPartCnt = 0;
 #endif
-			m_bInit = false;
 		}
 
-		bool CStreamShapeEncoder::Encode(const CGeoShapeBuf* pShape, IWriteStream *pStream, CGeoShape::compress_params *pParams)
+		bool CStreamShapeEncoder::Encode(const CGeoShapeBuf* pShape, IWriteStream *pStream, shape_compress_params *pParams)
 		{
 			assert(pShape != nullptr);
 			clear();
@@ -39,7 +38,7 @@ namespace CommonLib
 			m_PartEncoder.Encode(pShape->getParts(), pShape->getPartCount(), pStream);
 #else
 			 stream.write(pShape->getPartCount());
-			 for (uint32 i = 0, sz = pShape->getPartCount(); i < sz; ++i)
+			 for (uint32 i = 1, sz = pShape->getPartCount(); i < sz; ++i)
 			 {
 				 stream.write(pShape->getParts()[i]);
 			 }
@@ -49,13 +48,19 @@ namespace CommonLib
 			return true;
 		} 
 
-		bool CStreamShapeEncoder::BeginDecode(const CBlob& blob)
+		bool CStreamShapeEncoder::BeginDecode(IReadStream *pStream, shape_compress_params *pParams)
 		{
-			if (m_bInit)
-				return true;
 
-			m_bInit = true;
+			m_PartEncoder.InitDecode(pStream);
+			m_PointEncoder.InitDecode(pStream, pParams);
 			return true;
+		}
+
+		void CStreamShapeEncoder::ResetDecode(shape_compress_params *pParams)
+		{
+			m_PartEncoder.Reset();
+			m_PointEncoder.Reset();
+
 		}
 
 		uint32 CStreamShapeEncoder::cntParts() const
@@ -79,7 +84,7 @@ namespace CommonLib
 			return m_nPartCnt;
 #endif
 		}
-		GisXYPoint CStreamShapeEncoder::GetNextPoint(int nIdx, CGeoShape::compress_params *pParams)
+		GisXYPoint CStreamShapeEncoder::GetNextPoint(int nIdx, shape_compress_params *pParams)
 		{
 			return m_PointEncoder.GetNextPoint(nIdx, pParams);
 		}

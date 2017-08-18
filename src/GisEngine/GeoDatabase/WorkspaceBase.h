@@ -83,7 +83,7 @@ namespace GisEngine
 			virtual void AddDataset(IDataset *pDataset)
 			{
 		 		m_vecDatasets.push_back(IDatasetPtr(pDataset));
-				m_DataSetMap[pDataset->GetDatasetName()] = m_vecDatasets.size() - 1;
+				m_DataSetMap[pDataset->GetDatasetName()] = int(m_vecDatasets.size() - 1);
 				
 			}
 

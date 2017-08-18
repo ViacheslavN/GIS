@@ -1,7 +1,8 @@
-#ifndef _LIB_COMMON_GEO_SHAPE_BUF_H_
-#define _LIB_COMMON_GEO_SHAPE_BUF_H_
+#pragma  once
+
 #include "IGeoShape.h"
 #include "blob.h"
+#include "compressutils.h"
 #include "StreamShapeEncoder.h"
 
 namespace CommonLib
@@ -21,6 +22,16 @@ namespace CommonLib
 				eSuccinct = 1
 
 			};
+			enum ePramsFlags
+			{
+				eExternParams = 0,
+				eInnerParams = 1
+
+			};
+
+
+
+	
 
 			CGeoShapeBuf(alloc_t *pAlloc = NULL);
 			CGeoShapeBuf(const CGeoShapeBuf& geoShp);
@@ -29,23 +40,25 @@ namespace CommonLib
 			 CGeoShapeBuf&     operator=(const CGeoShapeBuf& shp);
 
 
-			 bool IsSuccinct() const { return m_bIsSuccinct; }
+			 bool IsSuccinct() const;
 			 void decode();
-			 void InnerEncode(CWriteMemoryStream *pCacheStream = nullptr);
+			 void InnerEncode(CWriteMemoryStream *pCacheStream = nullptr, shape_compress_params *pCompParams = nullptr);
 
-			 void BeginReadSuccinct() const;
+			 bool BeginReadSuccinct(shape_compress_params *pCompParams = nullptr) const;
 			 void EndReadSuccinct() const;
-			 GisXYPoint nextPoint();
-			 uint32 nextPart();
+			 uint32 nextPart(uint32 nIdx) const;
 
-
+			 GisXYPoint nextPoint(uint32 nIdx);
+		
+			 void  WriteCompParams(IWriteStream *pStream, eShapeType shType, shape_compress_params& comp_params);
+			 void  ReadCompParams(IReadStream *pStream, eShapeType shType, shape_compress_params& comp_params) const;
 			
 
 			virtual eShapeType type() const; 
 	
 
 			virtual uint32  getPartCount() const;
-			virtual uint32  getPartSize(uint32 idx) const;
+			virtual uint32  getPart(uint32 idx) const;
 			virtual const uint32*  getParts() const ;
 			virtual uint32*  getParts();
 
@@ -72,7 +85,7 @@ namespace CommonLib
 			void setNull(eShapeType shapeType = shape_type_null);
 
 
-			static void getTypeParams(eShapeType shapeType, eShapeType* pGenType, bool* has_z, bool* has_m, bool* has_curve, bool* has_id);
+			static void getTypeParams(eShapeType shapeType, eShapeType* pGenType, bool* has_z = nullptr, bool* has_m = nullptr, bool* has_curve = nullptr, bool* has_id = nullptr);
 
 
 			uint32  size() const;
@@ -99,18 +112,26 @@ namespace CommonLib
 
 			void calcBB();
 	
+			double *getBBoxVals();
+			const double *getBBoxVals() const;
 			bbox getBB() const;
+
+
+
 		private:
 
-			void WriteEncodeHeader(CommonLib::IWriteStream *pStream);
+			double *getBBoxVals(eShapeType shapeType);
+			const double *getBBoxVals(eShapeType shapeType) const;
 
+			void WriteEncodeHeader(CommonLib::IWriteStream *pStream, shape_compress_params *pCompParams);
+ 
 		private:
 			static const uint32 __minimum_point_ = 10;
 
-			CBlob m_blob;
-			Private::CStreamShapeEncoder m_Encoder;
-			bool m_bIsSuccinct;
- 
+			mutable CBlob m_blob;
+			mutable Private::CStreamShapeEncoder m_Encoder;
+			mutable shape_compress_params m_comp_params;
+			mutable bool m_bInitSuccinct;
 
 			struct sShapeParams
 			{
@@ -133,4 +154,4 @@ namespace CommonLib
 			
 	};
 }
-#endif
+ 

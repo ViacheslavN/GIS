@@ -268,6 +268,23 @@ namespace CommonLib
 		return nDiffsLen;
 	}
 
+
+	struct shape_compress_params
+	{
+
+		shape_compress_params() : m_PointType(dtType64), m_dOffsetX(0), m_dOffsetY(0), m_nScaleX(8), m_nScaleY(8)
+		{
+
+		}
+
+		eCompressDataType m_PointType;
+		double m_dOffsetX;
+		double m_dOffsetY;
+		byte m_nScaleX;
+		byte m_nScaleY;
+	};
+
+
 }
 
 #endif
