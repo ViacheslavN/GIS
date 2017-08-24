@@ -27,19 +27,20 @@ namespace CommonLib
  
 
 			uint32 getPartCnt() const;
-			uint32 GetNextPart(uint32 nPos) const;
+			uint32 GetNextPart(uint32 nPos, uint32 nPointCnt) const;
 
 
 
 			void Encode(const uint32 *pParts, uint32 nCnt, CommonLib::IWriteStream *pStream);
+			bool IsNullPart() const { return ((m_bFlag >> BIT_OFFSET_PARTS_NULL) & 1) ? true : false; }
+			bool IsCompressPart() const { return  ((m_bFlag >> BIT_OFFSET_PARTS_COMPRESS) & 1) ? true : false; }
 		private:
 			void EncodePart(const uint32 *pParts, uint32 nPartCount, CommonLib::IWriteStream* pStream);
 			void WriteFlag(uint32 nFlagPos, CommonLib::IWriteStream* pStream);
 			void ReadFlag(CommonLib::IReadStream* pStream);
 
 			eCompressDataType GetDataType() const{return (eCompressDataType)(m_bFlag & 3); }
-			bool IsNullPart() const {return ((m_bFlag >> BIT_OFFSET_PARTS_NULL) & 1) ? true : false;}
-			bool IsCompressPart() const {return  ((m_bFlag >> BIT_OFFSET_PARTS_COMPRESS) & 1) ? true : false;	}
+
 
 
 			void SetNullPart(bool bNull) 

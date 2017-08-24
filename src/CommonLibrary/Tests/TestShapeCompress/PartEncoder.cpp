@@ -16,7 +16,7 @@ void TestPart(CommonLib::Private::CPartEncoder& partCmp, CommonLib::IReadStream 
 		nCnt = partCmp.getPartCnt();
 		for (int i = 0; i < nCnt; ++i)
 		{
-			nPart = partCmp.GetNextPart(i);
+			nPart = partCmp.GetNextPart(i, 100);
 		}
 
 		partCmp.Reset();
@@ -24,7 +24,7 @@ void TestPart(CommonLib::Private::CPartEncoder& partCmp, CommonLib::IReadStream 
 		nCnt = partCmp.getPartCnt();
 		for (int i = 0; i < nCnt; ++i)
 		{
-			nPart = partCmp.GetNextPart(i);
+			nPart = partCmp.GetNextPart(i, 100);
 		}
 	}
 }

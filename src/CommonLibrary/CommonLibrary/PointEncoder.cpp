@@ -136,7 +136,7 @@ namespace CommonLib
 		void CPointEncoder::CompreessCoord(uint32 nPos, uint64 prev, uint64 next, 
 			TSignEncoder &signCpmrpessor)
 		{
-			uint32 nDiff = 0;
+			uint64 nDiff = 0;
 			if (prev < next)
 			{
 				nDiff = next - prev;
@@ -158,8 +158,8 @@ namespace CommonLib
 
 			uint32 nSize = pStream->readIntu32();
 			uint32 nCount = pStream->readIntu32();
-			m_SignX.BeginDecoding(pStream, nCount);
-			m_SignY.BeginDecoding(pStream, nCount);
+			m_SignX.BeginDecoding(pStream, nCount - 1);
+			m_SignY.BeginDecoding(pStream, nCount - 1);
 
 			m_X = pStream->readIntu64();
 			m_Y = pStream->readIntu64();
@@ -187,6 +187,9 @@ namespace CommonLib
 
 				pt.x = ((double)m_X *dScaleX) - pParams->m_dOffsetX;
 				pt.y = ((double)m_Y *dScaleX) - pParams->m_dOffsetY;
+
+				m_XPrev = m_X;
+				m_YPrev = m_Y;
 			}
 			else
 			{

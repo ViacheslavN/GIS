@@ -79,7 +79,7 @@ namespace CommonLib
 		uint32 CStreamShapeEncoder::GetNextPart(int nIdx)
 		{
 #ifdef _PART_ENCODER_
-			return m_PartEncoder.GetNextPart(nIdx);
+			return m_PartEncoder.GetNextPart(nIdx, m_PointEncoder.getPointCnts());
 #else
 			return m_nPartCnt;
 #endif

@@ -62,32 +62,34 @@ namespace CommonLib
 			m_nBeginPart = pStream->readInt32();
 			m_nNextDivPart = m_nBeginPart;
 			m_NumLen.BeginDecoding(pStream, nCompSize - sizeof(uint32));
-			m_nPartCnt = m_NumLen.count() + 1;
+			m_nPartCnt = m_NumLen.count() + 1 + 1;
 		}
 
 		uint32 CPartEncoder::getPartCnt() const
 		{
 			return m_nPartCnt;
 		}
-		uint32 CPartEncoder::GetNextPart(uint32 nPos) const
+		uint32 CPartEncoder::GetNextPart(uint32 nPos, uint32 nPointCnt) const
 		{
 			if (IsNullPart())
-				return 0;
+				return nPointCnt;
 
-			if (nPos == 0)
-				return 0;
+			if (nPos == m_nPartCnt - 1)
+				return nPointCnt - m_nNextDivPart;
 
 			if (!IsCompressPart())
 			{
-				m_nNextDivPart += ReadValue<uint32>(GetDataType(), (CommonLib::IReadStream*)&m_ReadStream);
-				return m_nNextDivPart;
+				uint32 nPart = ReadValue<uint32>(GetDataType(), (CommonLib::IReadStream*)&m_ReadStream);
+				m_nNextDivPart += nPart;
+				return nPart;
 			}					 
-			if (nPos == 1)
+			if (nPos == 0)
 				return m_nNextDivPart;
 	
 
-	 		m_nNextDivPart += m_NumLen.decodeSymbol();
-			return m_nNextDivPart;
+			uint32 nPart = m_NumLen.decodeSymbol();
+			m_nNextDivPart += nPart;
+			return nPart;
 		}
 
 

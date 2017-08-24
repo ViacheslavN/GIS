@@ -48,7 +48,7 @@ bool CompareShape(CommonLib::CGeoShapeBuf* pShp1, CommonLib::CGeoShape* pShp2, u
 		for (uint32 i = 0; i < pShp1->getPartCount(); ++i)
 		{
 			uint32 nPart1 = pShp1->nextPart(i);
-			uint32 nPart2 = pShp1->getPart(i);
+			uint32 nPart2 = pShp2->getPart(i);
 			if (nPart1 != nPart2)
 				return false;
 		}

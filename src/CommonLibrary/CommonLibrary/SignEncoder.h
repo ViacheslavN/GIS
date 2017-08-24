@@ -186,8 +186,8 @@ namespace CommonLib
 			}
 			else if (m_compreesType == BIT_POS)
 			{
-				m_bitReadStream.attach(pStream, pStream->pos(), (nCount + 7) / 8);
-				pStream->seek((nCount + 7) / 8, CommonLib::soFromCurrent);
+				m_bitReadStream.attach(pStream, pStream->pos(), (nCount + 7) / 8, true);
+		
 			}
 
 		}
