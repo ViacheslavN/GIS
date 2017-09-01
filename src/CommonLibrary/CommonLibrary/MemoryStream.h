@@ -58,7 +58,7 @@ namespace CommonLib
 
 		virtual void writeStream(IStream *pStream, int32 nPos = -1, int32 nSize = -1);
 	private:
-		
+		bool  resize_with_capacity(uint32 nSize);
 	};
 
 }

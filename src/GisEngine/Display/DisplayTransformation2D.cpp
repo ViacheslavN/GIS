@@ -359,10 +359,11 @@ namespace GisEngine
 			GPoint* buffer = &m_vecAlloc[0]; 
 			int* parts = &m_vecPart[0];
 
+	 
 			const GisXYPoint* points = geom.getPoints();
-			if(geom.GetGeneralType() == CommonLib::shape_type_general_point || geom.GetGeneralType() == CommonLib::shape_type_general_multipoint)
+			if(geom.generalType() == CommonLib::shape_type_general_point || geom.generalType() == CommonLib::shape_type_general_multipoint)
 			{
-				int newCount = MapToDeviceOpt(geom.getPoints(), buffer, (int)geom.getPointCnt(), geom.GetGeneralType());
+				int newCount = MapToDeviceOpt(geom.getPoints(), buffer, (int)geom.getPointCnt(), geom.generalType());
 				*pOut = buffer;
 				parts[0] = newCount;
 				*count = 1;
@@ -372,7 +373,7 @@ namespace GisEngine
 			int nCount = 0;
 			for(size_t part = 0, offset = 0, buf_offset = 0, partCount = geom.getPartCount(); part < partCount; part++)
 			{
-				int newCount = MapToDeviceOpt(points + offset, buffer + buf_offset, (int)geom.getPart(part), geom.GetGeneralType());
+				int newCount = MapToDeviceOpt(points + offset, buffer + buf_offset, (int)geom.getPart(part), geom.generalType());
 				nCount += newCount;
 				offset += geom.getPart(part);
 				parts[part] = newCount;
@@ -391,9 +392,9 @@ namespace GisEngine
 #else
 				rect.Inflate(GUnits(rect.width() * 0.1), GUnits(rect.height() * 0.1));
 #endif
-				if(geom.GetGeneralType() == CommonLib::shape_type_general_polyline)
+				if(geom.generalType() == CommonLib::shape_type_general_polyline)
 					m_pClipper->clipLine(rect, &buffer, &parts, &partCount);
-				else if(geom.GetGeneralType() == CommonLib::shape_type_general_polygon)
+				else if(geom.generalType() == CommonLib::shape_type_general_polygon)
 					m_pClipper->clipPolygon(rect, &buffer, &parts, &partCount);
 			}
 

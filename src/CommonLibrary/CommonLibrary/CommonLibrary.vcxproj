@@ -453,7 +453,6 @@
     <ClInclude Include="alloc_t.h" />
     <ClInclude Include="ArithmeticCoder.h" />
     <ClInclude Include="AutoPtr.h" />
-    <ClInclude Include="BackTableZPoint16Bit.h" />
     <ClInclude Include="BaseACCoder.h" />
     <ClInclude Include="BaseNumLenEncoder.h" />
     <ClInclude Include="BitsMap.h" />
@@ -479,13 +478,26 @@
     <ClInclude Include="general.h" />
     <ClInclude Include="GeneralTypes.h" />
     <ClInclude Include="GeoPoint.h" />
-    <ClInclude Include="GeoShapeBuf.h" />
+    <ClInclude Include="GeoShape.h" />
+    <ClInclude Include="GeoShapeBuf.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_shared|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_shared|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_shared|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_shared|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="guid.h" />
     <ClInclude Include="HashKey.h" />
     <ClInclude Include="IGeoShape.h" />
     <ClInclude Include="Interlocked.h" />
     <ClInclude Include="IRefCnt.h" />
-    <ClInclude Include="IXYComressor.h" />
     <ClInclude Include="LockObject.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="MathUtils.h" />
@@ -494,26 +506,29 @@
     <ClInclude Include="Mutex.h" />
     <ClInclude Include="Nocopy.h" />
     <ClInclude Include="FixedBitStream.h" />
-    <ClInclude Include="GeoShape.h" />
-    <ClInclude Include="NumLenCompressor.h" />
-    <ClInclude Include="NumLenCompressor2.h" />
-    <ClInclude Include="NumLenCompressorDynamic.h" />
-    <ClInclude Include="NumLenPointCompress.h" />
-    <ClInclude Include="PartCompressor.h" />
-    <ClInclude Include="PartCompressor2.h" />
+    <ClInclude Include="GeoShapeOld.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_shared|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_shared|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_shared|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_shared|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="PartEncoder.h" />
     <ClInclude Include="PodVector.h" />
-    <ClInclude Include="PointCompressor.h" />
     <ClInclude Include="PointEncoder.h" />
     <ClInclude Include="RangeCoder.h" />
-    <ClInclude Include="ShapeCompressor.h" />
-    <ClInclude Include="ShapeCompressor2.h" />
     <ClInclude Include="SignCompressor.h" />
     <ClInclude Include="SignedNumLenEncoder.h" />
     <ClInclude Include="SignEncoder.h" />
     <ClInclude Include="SpatialKey.h" />
     <ClInclude Include="sprintf.h" />
-    <ClInclude Include="SignCompressor2.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stl_alloc.h" />
     <ClInclude Include="stream.h" />
@@ -529,10 +544,6 @@
     <ClInclude Include="VartTypeList.h" />
     <ClInclude Include="WaitForGraph.h" />
     <ClInclude Include="WriteBitStream.h" />
-    <ClInclude Include="XYCompressZOrderDiff.h" />
-    <ClInclude Include="PointZOrder.h" />
-    <ClInclude Include="XYCompressDiff.h" />
-    <ClInclude Include="XYCompressDiff2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="alloc_t.cpp" />
@@ -564,7 +575,34 @@
     <ClCompile Include="FixedBitStream.cpp" />
     <ClCompile Include="FixedMemoryStream.cpp" />
     <ClCompile Include="GeoShape.cpp" />
-    <ClCompile Include="GeoShapeBuf.cpp" />
+    <ClCompile Include="GeoShapeOld.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_shared|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_shared|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_shared|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_shared|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeoShapeBuf.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_shared|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_shared|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_shared|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_shared|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release_static|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="guit.cpp" />
     <ClCompile Include="IGeoShape.cpp" />
     <ClCompile Include="Interlocked.cpp" />
@@ -573,13 +611,8 @@
       <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='debug_static|x64'">EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <ClCompile Include="multibyte.cpp" />
-    <ClCompile Include="PartCompressor2.cpp" />
     <ClCompile Include="PartEncoder.cpp" />
-    <ClCompile Include="PointCompressor.cpp" />
     <ClCompile Include="PointEncoder.cpp" />
-    <ClCompile Include="PointZOrder.cpp" />
-    <ClCompile Include="ShapeCompressor.cpp" />
-    <ClCompile Include="ShapeCompressor2.cpp" />
     <ClCompile Include="sprintf.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

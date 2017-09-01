@@ -103,7 +103,7 @@ namespace GisEngine
 		}
 		void  CTextSymbol::DrawGeometryEx(IDisplay* pDisplay, const GPoint* points, const int* polyCounts, size_t polyCount)
 		{
-			if(m_pGeom && m_pGeom->GetGeneralType() == CommonLib::shape_type_general_polyline)
+			if(m_pGeom && m_pGeom->generalType() == CommonLib::shape_type_general_polyline)
 			{
 				double tmp = m_Font.getOrientation();
 				m_Font.setOrientation(0);
@@ -112,7 +112,7 @@ namespace GisEngine
 			}
 			else
 			{
-				if(m_pGeom && m_pGeom->GetGeneralType() == CommonLib::shape_type_polygon)
+				if(m_pGeom && m_pGeom->generalType() == CommonLib::shape_type_polygon)
 				{
 					GisXYPoint pt;
 					PolygonCenterPoint(m_pGeom, &pt);

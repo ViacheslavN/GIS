@@ -64,8 +64,10 @@ namespace GisEngine
 						if(pShape.get())
 						{
 						 
-							pShape->compress(&m_WriteShapeStream, &m_comp_params);
-							m_pStmt->ColumnBindBlob(i + 1, m_WriteShapeStream.buffer(), m_WriteShapeStream.pos());
+							//pShape->compress(&m_WriteShapeStream, &m_comp_params);
+							if (!pShape->IsSuccinct())
+								pShape->InnerEncode(&m_WriteShapeStream, &m_comp_params);
+							m_pStmt->ColumnBindBlob(i + 1, pShape->buffer(), pShape->size());
 							m_WriteShapeStream.seek(0, CommonLib::soFromBegin);
 						}
 						

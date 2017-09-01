@@ -94,9 +94,9 @@ namespace GisEngine
 			return pEnvelope;
 		}
 
-		CommonLib::CGeoShape::compress_params CEnvelope::GetCompressParams() const
+		CommonLib::shape_compress_params CEnvelope::GetCompressParams() const
 		{
-			CommonLib::CGeoShape::compress_params params;
+			CommonLib::shape_compress_params params;
 
 			if(m_box.type == CommonLib::bbox_type_invalid || m_box.type == CommonLib::bbox_type_null ||
 				!m_pSpatialRef.get())

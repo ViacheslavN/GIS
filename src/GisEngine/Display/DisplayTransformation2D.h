@@ -85,6 +85,9 @@ namespace GisEngine
 				virtual void SetOnVisibleBoundsChanged(OnVisibleBoundsChanged* pFunck, bool bAdd);
 
 			private:
+				 
+
+
 				void SetClientRect(const GRect &arg);
 				void UpdateScaleRatio();
 				double CalcMapUnitPerInch();

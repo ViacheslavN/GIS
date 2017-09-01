@@ -150,7 +150,7 @@ namespace GisEngine
 					int bytes = sqlite3_column_bytes (m_pStmt, col);
 					pBlob->copy((byte*) sqlite3_column_blob (m_pStmt, col), bytes);
 				}
-				void ColumnShape (int col,CommonLib::CGeoShape *pShape, CommonLib::CGeoShape::compress_params *pParams)
+				void ColumnShape (int col,CommonLib::CGeoShape *pShape)
 				{
 					int bytes = sqlite3_column_bytes (m_pStmt, col);
 					if(bytes == 0)
@@ -159,9 +159,9 @@ namespace GisEngine
 						return;
 					}
 		
-					CommonLib::FxMemoryReadStream stream;
+					CommonLib::FxMemoryReadStream stream; // TO DO set shared buffer
 					stream.attachBuffer((byte*)sqlite3_column_blob(m_pStmt, col), bytes);
-					pShape->decompress(&stream, pParams);
+					pShape->read(&stream);
 				}
 
 

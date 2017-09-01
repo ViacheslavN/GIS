@@ -62,7 +62,7 @@ namespace embDB
 			ShapeFieldCompressorParams *pShapeParams = TBase::GetLeafCompressorParams();
 			assert(pShapeParams);
 
-			CommonLib::CGeoShape::compress_params shp_params;
+			CommonLib::shape_compress_params shp_params;
 
 			shp_params.m_dOffsetX = pShapeParams->GetOffsetX();
 			shp_params.m_dOffsetY = pShapeParams->GetOffsetY();
@@ -70,7 +70,7 @@ namespace embDB
 			shp_params.m_nScaleY = pShapeParams->GetScaleY();
 			shp_params.m_PointType = SpatialDataToCompressData(pShapeParams->GetCoordType());
 
-			shape->compress(&stream, &shp_params);
+			shape->InnerEncode(&stream, &shp_params);
 
 			sValue.m_nPage = -1;
 			sValue.m_nBeginPos = 0;
@@ -108,8 +108,11 @@ namespace embDB
 				pReadStream->read(m_CacheBlob.buffer(), blobVal.m_nSize);
 				stream.attachBuffer(m_CacheBlob.buffer(), m_CacheBlob.size());
 			}*/
+		
+
 			stream.attachBuffer(const_cast<byte*>(blobVal.m_blob.buffer()), blobVal.m_blob.size());
-			CommonLib::CGeoShape::compress_params shp_params;
+			shape->read(&stream);
+			/*CommonLib::shape_compress_params shp_params;
 			ShapeFieldCompressorParams *pShapeParams = TBase::GetLeafCompressorParams();
 			assert(pShapeParams);
 
@@ -119,7 +122,7 @@ namespace embDB
 			shp_params.m_nScaleY = pShapeParams->GetScaleY();
 			shp_params.m_PointType = SpatialDataToCompressData(pShapeParams->GetCoordType());
 
-			shape->decompress(&stream, &shp_params);
+			shape->InnerEncode(&stream, &shp_params);*/
 		}
 
 		bool insert(int64 nValue, const CommonLib::IGeoShapePtr& shape, iterator* pFromIterator = NULL, iterator*pRetItertor = NULL)

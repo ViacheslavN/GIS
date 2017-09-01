@@ -126,7 +126,7 @@ namespace GisEngine
 
 			virtual IEnvelopePtr				  clone() const = 0; 
 
-			virtual CommonLib::CGeoShape::compress_params GetCompressParams() const = 0;
+			virtual CommonLib::shape_compress_params GetCompressParams() const = 0;
 		};
 
  

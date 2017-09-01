@@ -52,18 +52,6 @@
     <Filter Include="compress">
       <UniqueIdentifier>{7653650c-6e10-42d0-add4-b2aff5a3dbac}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SpatialData\shapeCompressor">
-      <UniqueIdentifier>{96b22ca1-ff81-4307-861a-96f8b16d3c34}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SpatialData\shapeCompressor\pointcompress">
-      <UniqueIdentifier>{cb5ef8d8-cef3-4981-b3a9-5481224a2a13}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SpatialData\shapeCompressor\dynamic">
-      <UniqueIdentifier>{035c5060-360d-4be9-8567-d5bfd3aa73d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SpatialData\ShapeCompressor2">
-      <UniqueIdentifier>{fc732f6c-7b32-414b-8d91-453213e0d049}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SpatialData\StreamCompressor">
       <UniqueIdentifier>{93e4d94b-dba6-4d8d-8fe9-b11b6818f783}</UniqueIdentifier>
     </Filter>
@@ -174,9 +162,6 @@
     <ClInclude Include="stl_alloc.h">
       <Filter>alloc</Filter>
     </ClInclude>
-    <ClInclude Include="GeoShape.h">
-      <Filter>SpatialData</Filter>
-    </ClInclude>
     <ClInclude Include="PodVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -237,29 +222,11 @@
     <ClInclude Include="BaseACCoder.h">
       <Filter>compress</Filter>
     </ClInclude>
-    <ClInclude Include="ShapeCompressor.h">
-      <Filter>SpatialData\shapeCompressor</Filter>
-    </ClInclude>
-    <ClInclude Include="NumLenCompressor.h">
-      <Filter>SpatialData\shapeCompressor</Filter>
-    </ClInclude>
     <ClInclude Include="compressutils.h">
       <Filter>compress</Filter>
     </ClInclude>
-    <ClInclude Include="PartCompressor.h">
-      <Filter>SpatialData\shapeCompressor</Filter>
-    </ClInclude>
     <ClInclude Include="MathUtils.h">
       <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="PointZOrder.h">
-      <Filter>SpatialData\shapeCompressor\pointcompress</Filter>
-    </ClInclude>
-    <ClInclude Include="BackTableZPoint16Bit.h">
-      <Filter>SpatialData\shapeCompressor\pointcompress</Filter>
-    </ClInclude>
-    <ClInclude Include="NumLenCompressorDynamic.h">
-      <Filter>SpatialData\shapeCompressor\dynamic</Filter>
     </ClInclude>
     <ClInclude Include="GeoShapeBuf.h">
       <Filter>SpatialData</Filter>
@@ -270,21 +237,6 @@
     <ClInclude Include="SignCompressor.h">
       <Filter>compress</Filter>
     </ClInclude>
-    <ClInclude Include="NumLenPointCompress.h">
-      <Filter>SpatialData\shapeCompressor</Filter>
-    </ClInclude>
-    <ClInclude Include="XYCompressZOrderDiff.h">
-      <Filter>SpatialData\shapeCompressor</Filter>
-    </ClInclude>
-    <ClInclude Include="XYCompressDiff.h">
-      <Filter>SpatialData\shapeCompressor</Filter>
-    </ClInclude>
-    <ClInclude Include="XYCompressDiff2.h">
-      <Filter>SpatialData\shapeCompressor</Filter>
-    </ClInclude>
-    <ClInclude Include="IXYComressor.h">
-      <Filter>SpatialData\shapeCompressor</Filter>
-    </ClInclude>
     <ClInclude Include="LockObject.h">
       <Filter>thread</Filter>
     </ClInclude>
@@ -293,21 +245,6 @@
     </ClInclude>
     <ClInclude Include="BitsVector.h">
       <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="ShapeCompressor2.h">
-      <Filter>SpatialData\ShapeCompressor2</Filter>
-    </ClInclude>
-    <ClInclude Include="PartCompressor2.h">
-      <Filter>SpatialData\ShapeCompressor2</Filter>
-    </ClInclude>
-    <ClInclude Include="NumLenCompressor2.h">
-      <Filter>SpatialData\ShapeCompressor2</Filter>
-    </ClInclude>
-    <ClInclude Include="SignCompressor2.h">
-      <Filter>SpatialData\ShapeCompressor2</Filter>
-    </ClInclude>
-    <ClInclude Include="PointCompressor.h">
-      <Filter>SpatialData\ShapeCompressor2</Filter>
     </ClInclude>
     <ClInclude Include="PartEncoder.h">
       <Filter>SpatialData\StreamCompressor</Filter>
@@ -332,6 +269,12 @@
     </ClInclude>
     <ClInclude Include="SignEncoder.h">
       <Filter>SpatialData\StreamCompressor</Filter>
+    </ClInclude>
+    <ClInclude Include="GeoShapeOld.h">
+      <Filter>SpatialData</Filter>
+    </ClInclude>
+    <ClInclude Include="GeoShape.h">
+      <Filter>SpatialData</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -386,9 +329,6 @@
     <ClCompile Include="IGeoShape.cpp">
       <Filter>SpatialData</Filter>
     </ClCompile>
-    <ClCompile Include="GeoShape.cpp">
-      <Filter>SpatialData</Filter>
-    </ClCompile>
     <ClCompile Include="File.cpp">
       <Filter>file</Filter>
     </ClCompile>
@@ -425,12 +365,6 @@
     <ClCompile Include="FilePosix.cpp">
       <Filter>file</Filter>
     </ClCompile>
-    <ClCompile Include="ShapeCompressor.cpp">
-      <Filter>SpatialData\shapeCompressor</Filter>
-    </ClCompile>
-    <ClCompile Include="PointZOrder.cpp">
-      <Filter>SpatialData\shapeCompressor\pointcompress</Filter>
-    </ClCompile>
     <ClCompile Include="GeoShapeBuf.cpp">
       <Filter>SpatialData</Filter>
     </ClCompile>
@@ -440,15 +374,6 @@
     <ClCompile Include="BitsVector.cpp">
       <Filter>utils</Filter>
     </ClCompile>
-    <ClCompile Include="ShapeCompressor2.cpp">
-      <Filter>SpatialData\ShapeCompressor2</Filter>
-    </ClCompile>
-    <ClCompile Include="PartCompressor2.cpp">
-      <Filter>SpatialData\ShapeCompressor2</Filter>
-    </ClCompile>
-    <ClCompile Include="PointCompressor.cpp">
-      <Filter>SpatialData\ShapeCompressor2</Filter>
-    </ClCompile>
     <ClCompile Include="PartEncoder.cpp">
       <Filter>SpatialData\StreamCompressor</Filter>
     </ClCompile>
@@ -457,6 +382,12 @@
     </ClCompile>
     <ClCompile Include="StreamShapeEncoder.cpp">
       <Filter>SpatialData\StreamCompressor</Filter>
+    </ClCompile>
+    <ClCompile Include="GeoShapeOld.cpp">
+      <Filter>SpatialData</Filter>
+    </ClCompile>
+    <ClCompile Include="GeoShape.cpp">
+      <Filter>SpatialData</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -213,6 +213,9 @@ namespace GisEngine
 			if (!pj)
 				return false;
 
+			if (pShape->IsSuccinct())
+				pShape->InnerDecode();
+
 			if(pj_is_latlong((PJ*)m_prjHandle) && !pj_is_latlong((PJ*)pj))
 				((CSpatialReferenceProj4*)destSpatRef)->PreTransform(pShape);
 
@@ -354,14 +357,15 @@ namespace GisEngine
 					
 
 					pShape->create(pShape->type(), newPoints.size(), newPartsStarts.size());
-					pShape->setPoints((double*)&newPoints[0]);
+	 
+					memcpy(pShape->getPoints(), &newPoints[0], newPoints.size() * 2* sizeof(double));
 					if(!newPartsStarts.empty())
 						memcpy(pShape->getParts(), &newPartsStarts[0], newPartsStarts.size() * sizeof(long));
 					if(pZs)
-						pShape->setZs(&newZs[0]);
+						memcpy(pShape->getZs(), &newZs[0], newZs.size() *  sizeof(double));
 				}
-
 				pShape->calcBB();
+				pShape->InnerEncode();
 				return true;
 			}
 

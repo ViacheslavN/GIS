@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "StreamShapeEncoder.h"
-#include "GeoShapeBuf.h"
+#include "GeoShape.h"
 
 namespace CommonLib
 {
@@ -29,7 +29,7 @@ namespace CommonLib
 #endif
 		}
 
-		bool CStreamShapeEncoder::Encode(const CGeoShapeBuf* pShape, IWriteStream *pStream, shape_compress_params *pParams)
+		bool CStreamShapeEncoder::Encode(const CGeoShape* pShape, IWriteStream *pStream, shape_compress_params *pParams)
 		{
 			assert(pShape != nullptr);
 			clear();

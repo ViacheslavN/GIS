@@ -41,7 +41,7 @@ namespace GisEngine
 					bool m_bInit;
 					CommonLib::CString m_sErrorMessage;
 					CommonLib::CWriteMemoryStream m_WriteShapeStream;
-					CommonLib::CGeoShape::compress_params m_comp_params;
+					CommonLib::shape_compress_params m_comp_params;
 			};
 	}
 }

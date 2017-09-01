@@ -1,5 +1,4 @@
-#ifndef _EMBEDDED_DATABASE_SIGN_COMPRESSOR_H_
-#define _EMBEDDED_DATABASE_SIGN_COMPRESSOR_H_
+#pragma once
 #include "CommonLibrary/WriteBitStream.h"
 #include "CompressUtils.h"
 #include "CommonLibrary/PodVector.h"
@@ -220,4 +219,3 @@ namespace embDB
 	};
 }
 
-#endif

@@ -9,8 +9,7 @@
 #include "CommonLibrary/WriteBitStream.h"
 #include "CommonLibrary/compressutils.h"
 #include "CommonLibrary/FixedBitStream.h"
-#include "CommonLibrary/ShapeCompressor2.h"
-#include "CommonLibrary/GeoShapeBuf.h"
+
 
 double inline Round(double dValue, unsigned int uiScale = 0)
 {
@@ -29,7 +28,7 @@ bool inline IsEqual(double dVal1, double dVal2)
 {								 
 	return fabs(dVal1 - dVal2) < 0.01;
 }
-bool CompareShape(CommonLib::CGeoShapeBuf* pShp1, CommonLib::CGeoShape* pShp2, uint32 nScale = 2)
+bool CompareShape(CommonLib::CGeoShape* pShp1, CommonLib::CGeoShape* pShp2, uint32 nScale = 2)
 {
 	if(pShp1->type() != pShp2->type())
 		return false;
@@ -165,46 +164,7 @@ void getMaxShapeScale(uint32 &x, uint32& y, CommonLib::CGeoShape* pShp)
 std::string polylineEncode(CommonLib::GisXYPoint* pPoint, int32 nPointCnt, double dOffsetX, double dOffsetY, double dScale);
 
 
-bool CompareShape1(CommonLib::CGeoShapeBuf* pShp1, CommonLib::CGeoShape* pShp2)
-{
 
-	if (pShp1->type() != pShp2->type())
-		return false;
-
-
-	if (pShp1->getPartCount() != pShp2->getPartCount())
-		return false;
-
-
-	for (uint32 i = 0; i < pShp1->getPartCount(); ++i)
-	{
-		uint32 nPart1 = pShp1->getPart(i);
-		uint32 nPart2 = pShp2->getPart(i);
-		if (nPart1 != nPart2)
-			return false;
-	}
-
-
-	if (pShp1->getPointCnt() != pShp2->getPointCnt())
-		return false;
-
-
-	CommonLib::GisXYPoint* pPt1 = pShp1->getPoints();
-	CommonLib::GisXYPoint* pPt2 = pShp2->getPoints();
-
-	for (uint32 i = 0; i < pShp1->getPointCnt(); ++i)
-	{
-		CommonLib::GisXYPoint pt1 = pShp1->getPoints()[i];
-		CommonLib::GisXYPoint pt2 = pShp2->getPoints()[i];
-
-	 
-
-		if (pt1.x != pt2.x || pt1.y != pt2.y)
-			return false;
-	}
-
-	return true;
-}
 
 
 void CompressShape()
@@ -244,7 +204,7 @@ void CompressShape()
 	CommonLib::CWriteMemoryStream writeStream;
 	CommonLib::CWriteMemoryStream compressStream;
 	CommonLib::CWriteMemoryStream compressStreamTmp;
-	CommonLib::CGeoShape::compress_params params;
+	CommonLib::shape_compress_params params;
 	params.m_PointType = CommonLib::dtType32;
 	params.m_nScaleX = 7;
 	params.m_nScaleY = 7;
@@ -274,7 +234,7 @@ void CompressShape()
 	CommonLib::CGeoShape shape;
 
 	CommonLib::FxMemoryReadStream readCompressStream;
-	CommonLib::ShapeCompressor2 compressShape2;
+
 
 
 	int ii = 0;
@@ -284,7 +244,7 @@ void CompressShape()
 	int nSize = 0;
 	while(pCursor->NextRow(&pRow))
 	{
-		CommonLib::CGeoShapeBuf shapeBuf;
+		CommonLib::CGeoShape shapeBuf;
 
 	 compressStreamTmp.seek(0, CommonLib::soFromBegin);
 	  GisEngine::GeoDatabase::IFeature *pFeature = (GisEngine::GeoDatabase::IFeature*)pRow.get();
@@ -319,7 +279,7 @@ void CompressShape()
 
 	shapeBuf.InnerEncode();
 
-	CommonLib::CGeoShapeBuf shapeBuf2 = shapeBuf;
+	CommonLib::CGeoShape shapeBuf2 = shapeBuf;
 
 	if (!CompareShape(&shapeBuf2, pShape.get()))
 	{
@@ -327,8 +287,30 @@ void CompressShape()
 		dd++;
 	}
 
-	 pShape->compress(&compressStreamTmp, &params, &compressShape2);
-	 compressStream.write(compressStreamTmp.buffer(), compressStreamTmp.pos());
+
+	if (!CompareShape(&shapeBuf2, pShape.get()))
+	{
+		int dd = 0;
+		dd++;
+	}
+
+	shapeBuf2.InnerDecode();
+
+	if (!CompareShape(&shapeBuf2, pShape.get()))
+	{
+		int dd = 0;
+		dd++;
+	}
+
+	shapeBuf2.InnerEncode();
+	CommonLib::CGeoShape shapeBuf3 = shapeBuf2;
+	if (!CompareShape(&shapeBuf3, pShape.get()))
+	{
+		int dd = 0;
+		dd++;
+	}
+	
+	 compressStream.write(shapeBuf2.buffer(), shapeBuf2.size());
 	 int compSize = compressStreamTmp.pos();
 	 if(nSize < compSize)
 		 nSize = compSize;
@@ -340,7 +322,7 @@ void CompressShape()
 	 }
 	 readCompressStream.attachBuffer(compressStreamTmp.buffer(), compressStreamTmp.pos());
 
-	 shape.decompress(&readCompressStream, &params, &compressShape2);
+	// shape.decompress(&readCompressStream, &params, &compressShape2);
 	
 	/* if(!CompareShape(pShape.get(), &shape))
 	 {

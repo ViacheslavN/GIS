@@ -134,7 +134,7 @@ namespace GisEngine
 
 				uint32* parts = result.getParts();
 				CommonLib::patch_type* partTypes = result.getPartsTypes();
-				if ( obj->nParts != 0 )
+				if ( obj->nParts != 0 && parts)
 				{
 					for(i = 0; i < obj->nParts; ++i, ++parts, partTypes += partTypes ? 1 : 0)
 					{

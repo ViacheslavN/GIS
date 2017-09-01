@@ -29,7 +29,7 @@ namespace GisEngine
 			virtual void Expand(IEnvelope* envelope);
 			virtual bool Intersect(IEnvelope* envelope);
 			virtual void Project(ISpatialReference* spatRef);
-			virtual CommonLib::CGeoShape::compress_params GetCompressParams() const;
+			virtual CommonLib::shape_compress_params GetCompressParams() const;
 
 			virtual IEnvelopePtr	clone() const; 
 		private:

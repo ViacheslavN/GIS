@@ -31,7 +31,7 @@ namespace GisEngine
 			SQLiteUtils::CSQLiteResultSetPtr	  m_pStmt;
 			int m_nRecordCount;
 			bool m_bInvalidCursor;
-			CommonLib::CGeoShape::compress_params m_comp_params;
+			CommonLib::shape_compress_params m_comp_params;
 		 
 		};
 	}

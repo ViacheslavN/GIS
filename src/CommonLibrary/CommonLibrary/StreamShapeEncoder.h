@@ -18,7 +18,7 @@
 namespace CommonLib
 {
 
-	class CGeoShapeBuf;
+	class CGeoShape;
 	namespace Private
 	{
 
@@ -36,7 +36,7 @@ namespace CommonLib
 
 			void clear();
 
-			bool Encode(const CGeoShapeBuf* pShape, IWriteStream *pStream, shape_compress_params *pParams);
+			bool Encode(const CGeoShape* pShape, IWriteStream *pStream, shape_compress_params *pParams);
 
 			bool BeginDecode(IReadStream *pStream, shape_compress_params *pParams);
 			void ResetDecode(shape_compress_params *pParams);
