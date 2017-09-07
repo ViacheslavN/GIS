@@ -1,7 +1,7 @@
 #ifndef LEGEND_H
 #define LEGEND_H
 
-#include <QWidget>
+#include <QtWidgets/QWidget>
 //#include "ui_legend.h"
 
 class CLegendView : public QWidget

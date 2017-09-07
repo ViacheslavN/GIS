@@ -472,7 +472,7 @@ namespace CommonLib
 					return nullptr;
 
  
-				pBuf += 1 + 2 + 8 * 4 + 4; //flag type bbox part cnt
+				pBuf += 1 + 2 + 8 * 4 + 4 + 4; //flag, type, bbox, part cnt, point cnt
 				return reinterpret_cast<const uint32*>(pBuf);
 			}
 		}
@@ -481,8 +481,6 @@ namespace CommonLib
 	}
 	uint32*  CGeoShape::getParts(byte *pBuf)
 	{
-		if (IsSuccinct())
-			return nullptr;
 
 		eShapeType genType = generalType();
 
@@ -497,7 +495,7 @@ namespace CommonLib
 					return nullptr;
 
 	 
-				pBuf += 1 + 2 + 8 * 4 + 4; //flag type bbox part cnt
+				pBuf += 1 + 2 + 8 * 4 + 4 + 4; //flag type bbox part cnt, point cnt
 				return reinterpret_cast<uint32*>(pBuf);
 			}
 		}
@@ -697,7 +695,7 @@ namespace CommonLib
 			buf += 8 * 4 + 4 + 4 + (4 + 4) * nparts; //bbox, part cnt, point cnt, parts, type parts,
 			break;
 		default:
-			return NULL;
+			return nullptr;
 		}
 
 		return reinterpret_cast<const GisXYPoint*>(buf);
@@ -731,7 +729,7 @@ namespace CommonLib
 			buf += 8 * 4 + 4 + 4 + (4 + 4) * nparts; //bbox, part cnt, point cnt, parts, type parts,
 			break;
 		default:
-			return NULL;
+			return nullptr;
 		}
 
 		return reinterpret_cast<GisXYPoint*>(buf);
@@ -1063,10 +1061,12 @@ namespace CommonLib
 		GisXYPoint *pPoint = getXYs(blob.buffer());
 		if (pParts)
 		{
-			for (uint32 i = 0, sz = nPart; i < sz; ++i)
+			pParts[0] = 0;
+			
+
+			for (uint32 i = 0; i < nPart - 1; ++i)
 			{
-				*pParts = nextPart(i);
-				pParts += 1;
+				pParts[i + 1] = pParts[i] + nextPart(i);
 			}
 		}
 	

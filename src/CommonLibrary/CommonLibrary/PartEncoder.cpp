@@ -34,7 +34,10 @@ namespace CommonLib
 				m_nNextDivPart = m_nBeginPart;
 			}
 			else
+			{
 				m_ReadStream.seek(0, soFromBegin);
+				m_nNextDivPart = 0;
+			}
 		}
 
 		void CPartEncoder::InitDecode(CommonLib::IReadStream *pStream)

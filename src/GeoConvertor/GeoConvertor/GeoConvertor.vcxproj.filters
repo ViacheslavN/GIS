@@ -46,27 +46,18 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{26743f47-c3a6-44d4-b98c-bc8dd09a95a7}</UniqueIdentifier>
+      <UniqueIdentifier>{9f570cbd-b2e1-4b3f-aa2d-ab3d77660ed1}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{81fa8f33-f6f7-4966-82bd-7b6e8fd793f3}</UniqueIdentifier>
+      <UniqueIdentifier>{5bd0be64-72af-4949-a68b-d0efbf3f5aca}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
-    </Filter>
-    <Filter Include="map">
-      <UniqueIdentifier>{43646e7d-41c3-4cdc-91f0-3f61db1b97bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Legend">
-      <UniqueIdentifier>{6f57ee7d-6f6b-40d9-943b-e3f381959694}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="geoconvertor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="geoconvertor_plugin_import.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
@@ -82,16 +73,10 @@
       <Filter>Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="Application.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_MapView.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_MapView.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="MapView.cpp">
-      <Filter>map</Filter>
+    <ClCompile Include="legend.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_legend.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -99,25 +84,42 @@
     <ClCompile Include="GeneratedFiles\Release\moc_legend.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="legend.cpp">
-      <Filter>Legend</Filter>
+    <ClCompile Include="MapView.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_MapView.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_MapView.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="MapView.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="geoconvertor.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="legend.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
     <CustomBuild Include="MapView.h">
-      <Filter>map</Filter>
+      <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="legend.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="legend.h">
-      <Filter>Legend</Filter>
+    <CustomBuild Include="MapView.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="D:\test\GIS\src\GeoConvertor\GeoConvertor\geoconvertor_plugin_import.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <CustomBuild Include="debug\moc_predefs.h.cbt">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="release\moc_predefs.h.cbt">
+      <Filter>Generated Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -134,14 +136,31 @@
     <ClInclude Include="GeneratedFiles\ui_geoconvertor.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="Application.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="GeneratedFiles\ui_legend.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_MapView.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_legend.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="images\copy.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\cut.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\new.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\open.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\paste.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\save.png">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,3 +1,4 @@
+
 #include "MapView.h"
  #include <QPainter>
 CMapView::CMapView(QWidget *parent)

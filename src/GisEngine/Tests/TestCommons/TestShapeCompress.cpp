@@ -88,7 +88,7 @@ bool CompareShape(CommonLib::CGeoShape* pShp1, CommonLib::CGeoShape* pShp2, uint
 		for (uint32 i = 0; i < pShp1->getPartCount(); ++i)
 		{
 			uint32 nPart1 = pShp1->getPart(i);
-			uint32 nPart2 = pShp1->getPart(i);
+			uint32 nPart2 = pShp2->getPart(i);
 			if (nPart1 != nPart2)
 				return false;
 		}
@@ -253,7 +253,7 @@ void CompressShape()
 
 	 uint32 scaleX, scaleY;
 	 getMaxShapeScale(scaleX, scaleY, pShape.get());
-	if(ii == 529)
+	if(ii == 2)
 	 {
 
 		// std::string sStr = polylineEncode(pShape->getPoints(), pShape->getPointCnt(), params.m_dOffsetX, params.m_dOffsetY, params.m_dScaleX);

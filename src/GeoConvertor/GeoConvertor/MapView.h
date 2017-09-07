@@ -1,7 +1,7 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
-#include <QWidget>
+#include <QtWidgets/QWidget>
 #include "ui_MapView.h"
 
 class CMapView : public QFrame

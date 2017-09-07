@@ -15,53 +15,119 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QSplitter>
 #include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTabWidget>
 #include <QtWidgets/QToolBar>
+#include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
 
-class Ui_EmbDBStudioClass
+class Ui_EmbDBStudio
 {
 public:
-    QMenuBar *menuBar;
-    QToolBar *mainToolBar;
+    QAction *actionOpen_database;
+    QAction *actionNew_database;
     QWidget *centralWidget;
+    QSplitter *splitter;
+    QTreeWidget *treeWidget;
+    QTabWidget *tabWidget;
+    QWidget *tabShema;
+    QWidget *tabData;
+    QMenuBar *menuBar;
+    QMenu *menuFile;
+    QToolBar *mainToolBar;
     QStatusBar *statusBar;
+    QToolBar *toolBar;
 
-    void setupUi(QMainWindow *EmbDBStudioClass)
+    void setupUi(QMainWindow *EmbDBStudio)
     {
-        if (EmbDBStudioClass->objectName().isEmpty())
-            EmbDBStudioClass->setObjectName(QStringLiteral("EmbDBStudioClass"));
-        EmbDBStudioClass->resize(600, 400);
-        menuBar = new QMenuBar(EmbDBStudioClass);
-        menuBar->setObjectName(QStringLiteral("menuBar"));
-        EmbDBStudioClass->setMenuBar(menuBar);
-        mainToolBar = new QToolBar(EmbDBStudioClass);
-        mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
-        EmbDBStudioClass->addToolBar(mainToolBar);
-        centralWidget = new QWidget(EmbDBStudioClass);
+        if (EmbDBStudio->objectName().isEmpty())
+            EmbDBStudio->setObjectName(QStringLiteral("EmbDBStudio"));
+        EmbDBStudio->resize(990, 637);
+        actionOpen_database = new QAction(EmbDBStudio);
+        actionOpen_database->setObjectName(QStringLiteral("actionOpen_database"));
+        actionNew_database = new QAction(EmbDBStudio);
+        actionNew_database->setObjectName(QStringLiteral("actionNew_database"));
+        centralWidget = new QWidget(EmbDBStudio);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        EmbDBStudioClass->setCentralWidget(centralWidget);
-        statusBar = new QStatusBar(EmbDBStudioClass);
+        splitter = new QSplitter(centralWidget);
+        splitter->setObjectName(QStringLiteral("splitter"));
+        splitter->setGeometry(QRect(20, 0, 951, 561));
+        splitter->setOrientation(Qt::Horizontal);
+        treeWidget = new QTreeWidget(splitter);
+        QTreeWidgetItem *__qtreewidgetitem = new QTreeWidgetItem();
+        __qtreewidgetitem->setText(0, QStringLiteral("1"));
+        treeWidget->setHeaderItem(__qtreewidgetitem);
+        treeWidget->setObjectName(QStringLiteral("treeWidget"));
+        QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(treeWidget->sizePolicy().hasHeightForWidth());
+        treeWidget->setSizePolicy(sizePolicy);
+        splitter->addWidget(treeWidget);
+        tabWidget = new QTabWidget(splitter);
+        tabWidget->setObjectName(QStringLiteral("tabWidget"));
+        QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy1.setHorizontalStretch(1);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(tabWidget->sizePolicy().hasHeightForWidth());
+        tabWidget->setSizePolicy(sizePolicy1);
+        tabShema = new QWidget();
+        tabShema->setObjectName(QStringLiteral("tabShema"));
+        tabWidget->addTab(tabShema, QString());
+        tabData = new QWidget();
+        tabData->setObjectName(QStringLiteral("tabData"));
+        tabWidget->addTab(tabData, QString());
+        splitter->addWidget(tabWidget);
+        EmbDBStudio->setCentralWidget(centralWidget);
+        menuBar = new QMenuBar(EmbDBStudio);
+        menuBar->setObjectName(QStringLiteral("menuBar"));
+        menuBar->setGeometry(QRect(0, 0, 990, 21));
+        menuFile = new QMenu(menuBar);
+        menuFile->setObjectName(QStringLiteral("menuFile"));
+        EmbDBStudio->setMenuBar(menuBar);
+        mainToolBar = new QToolBar(EmbDBStudio);
+        mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
+        EmbDBStudio->addToolBar(Qt::TopToolBarArea, mainToolBar);
+        statusBar = new QStatusBar(EmbDBStudio);
         statusBar->setObjectName(QStringLiteral("statusBar"));
-        EmbDBStudioClass->setStatusBar(statusBar);
+        EmbDBStudio->setStatusBar(statusBar);
+        toolBar = new QToolBar(EmbDBStudio);
+        toolBar->setObjectName(QStringLiteral("toolBar"));
+        EmbDBStudio->addToolBar(Qt::TopToolBarArea, toolBar);
 
-        retranslateUi(EmbDBStudioClass);
+        menuBar->addAction(menuFile->menuAction());
+        menuFile->addAction(actionOpen_database);
+        menuFile->addAction(actionNew_database);
 
-        QMetaObject::connectSlotsByName(EmbDBStudioClass);
+        retranslateUi(EmbDBStudio);
+        QObject::connect(actionOpen_database, SIGNAL(triggered()), EmbDBStudio, SLOT(OpenDatabase()));
+
+        tabWidget->setCurrentIndex(0);
+
+
+        QMetaObject::connectSlotsByName(EmbDBStudio);
     } // setupUi
 
-    void retranslateUi(QMainWindow *EmbDBStudioClass)
+    void retranslateUi(QMainWindow *EmbDBStudio)
     {
-        EmbDBStudioClass->setWindowTitle(QApplication::translate("EmbDBStudioClass", "EmbDBStudio", Q_NULLPTR));
+        EmbDBStudio->setWindowTitle(QApplication::translate("EmbDBStudio", "EmbDBStudio", Q_NULLPTR));
+        actionOpen_database->setText(QApplication::translate("EmbDBStudio", "Open database", Q_NULLPTR));
+        actionNew_database->setText(QApplication::translate("EmbDBStudio", "New database", Q_NULLPTR));
+        tabWidget->setTabText(tabWidget->indexOf(tabShema), QApplication::translate("EmbDBStudio", "Shema", Q_NULLPTR));
+        tabWidget->setTabText(tabWidget->indexOf(tabData), QApplication::translate("EmbDBStudio", "Data", Q_NULLPTR));
+        menuFile->setTitle(QApplication::translate("EmbDBStudio", "File", Q_NULLPTR));
+        toolBar->setWindowTitle(QApplication::translate("EmbDBStudio", "toolBar", Q_NULLPTR));
     } // retranslateUi
 
 };
 
 namespace Ui {
-    class EmbDBStudioClass: public Ui_EmbDBStudioClass {};
+    class EmbDBStudio: public Ui_EmbDBStudio {};
 } // namespace Ui
 
 QT_END_NAMESPACE

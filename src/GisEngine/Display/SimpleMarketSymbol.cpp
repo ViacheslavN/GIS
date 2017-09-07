@@ -81,7 +81,7 @@ namespace GisEngine
 			 stream.write(m_dOutlineSize);
 			 m_OutlineColor.save(&stream);
 			 
-		
+			 return true;
 		}
 		bool CSimpleMarketSymbol::load(CommonLib::IReadStream* pReadStream)
 		{
