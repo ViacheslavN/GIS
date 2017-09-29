@@ -760,6 +760,21 @@ namespace embDB
 		virtual ~IDBDatabase(){}
 	 
 	};
+
+	struct IDBWALStorage : public IFilePage, public CommonLib::AutoRefCounter
+	{
+	public:
+		IDBWALStorage() {}
+		virtual ~IDBWALStorage() {};
+
+		virtual void MoveAllPage() = 0;
+		virtual IDBStoragePtr GetMainStorage() = 0;
+
+		virtual bool open(const wchar_t* pszName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways) = 0;
+		virtual bool close() = 0;
+
+
+	};
 }
 
 #endif

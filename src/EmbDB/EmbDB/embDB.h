@@ -665,7 +665,7 @@ namespace embDB
 
 	
 		
-		static IDatabasePtr CreateDatabase(eLogMode logMode = lmUndefined, const wchar_t* pszLogFile = NULL);
+		static IDatabasePtr CreateDatabase(eLogMode logMode = lmUndefined, const wchar_t* pszLogFile = NULL, DBTranlogMode TranLogMode = eTranExclusiveLog);
 	};
 
 

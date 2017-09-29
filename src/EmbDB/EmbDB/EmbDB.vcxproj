@@ -594,6 +594,7 @@
     <ClInclude Include="DB\transactions\Transactions.h" />
     <ClInclude Include="DB\transactions\TranStorage.h" />
     <ClInclude Include="DB\transactions\TranUndoPageManager.h" />
+    <ClInclude Include="DB\transactions\WAL\WALTransaction.h" />
     <ClInclude Include="DB\UserCryptoManager.h" />
     <ClInclude Include="embDB.h" />
     <ClInclude Include="embDBInternal.h" />
@@ -612,6 +613,7 @@
     <ClInclude Include="storage\FreePageManage.h" />
     <ClInclude Include="storage\storage.h" />
     <ClInclude Include="storage\StorageInfo.h" />
+    <ClInclude Include="storage\WAL\WALStorage.h" />
     <ClInclude Include="StreamPageIngo.h" />
     <ClInclude Include="Utils\alloc\MemPageCache.h" />
     <ClInclude Include="Utils\alloc\PageAlloc.h" />
@@ -688,6 +690,7 @@
     <ClCompile Include="DB\transactions\Transactions.cpp" />
     <ClCompile Include="DB\transactions\TranStorage.cpp" />
     <ClCompile Include="DB\transactions\TranUndoPageManager.cpp" />
+    <ClCompile Include="DB\transactions\WAL\WALTransaction.cpp" />
     <ClCompile Include="DB\UserCryptoManager.cpp" />
     <ClCompile Include="Fields.cpp" />
     <ClCompile Include="FieldSet.cpp" />
@@ -698,6 +701,7 @@
     <ClCompile Include="storage\FreePageManage.cpp" />
     <ClCompile Include="storage\storage.cpp" />
     <ClCompile Include="storage\StorageInfo.cpp" />
+    <ClCompile Include="storage\WAL\WALStorage.cpp" />
     <ClCompile Include="Utils\alloc\MemPageCache.cpp" />
     <ClCompile Include="Utils\alloc\PageAlloc.cpp" />
     <ClCompile Include="Utils\BitMap.cpp" />

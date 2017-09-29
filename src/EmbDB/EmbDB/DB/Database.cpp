@@ -24,7 +24,7 @@
 namespace embDB
 {
 
-	IDatabasePtr IDatabase::CreateDatabase(eLogMode logMode, const wchar_t* pszLogFile)
+	IDatabasePtr IDatabase::CreateDatabase(eLogMode logMode, const wchar_t* pszLogFile, DBTranlogMode TranLogMode)
 	{
 		return IDatabasePtr(new CDatabase(logMode , pszLogFile));
 	}

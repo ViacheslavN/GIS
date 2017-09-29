@@ -196,6 +196,12 @@
     <Filter Include="DB\BPTrees\BPSetv3">
       <UniqueIdentifier>{785e0bc4-7628-4827-ad37-2c50171cc212}</UniqueIdentifier>
     </Filter>
+    <Filter Include="storage\WAL">
+      <UniqueIdentifier>{51eba502-69fe-4ac1-9937-f9f4030e9cb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\transactions\WAL">
+      <UniqueIdentifier>{0798cc59-b4b9-4386-95c3-5c633c27a509}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -224,9 +230,6 @@
     </ClInclude>
     <ClInclude Include="Statement.h">
       <Filter>DB\SQL</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
@@ -320,9 +323,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeStatistics.h">
-      <Filter>DB\BPTrees\BtreePlusv2</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -1299,6 +1299,12 @@
     <ClInclude Include="Crypto\pbkdf2Impl.h">
       <Filter>Crypto\CryptoAlg</Filter>
     </ClInclude>
+    <ClInclude Include="storage\WAL\WALStorage.h">
+      <Filter>storage\WAL</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\WAL\WALTransaction.h">
+      <Filter>DB\transactions\WAL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1465,6 +1471,12 @@
     </ClCompile>
     <ClCompile Include="Crypto\RandomGenerator.cpp">
       <Filter>Crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="storage\WAL\WALStorage.cpp">
+      <Filter>storage\WAL</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\WAL\WALTransaction.cpp">
+      <Filter>DB\transactions\WAL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
