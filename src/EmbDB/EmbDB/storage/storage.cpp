@@ -348,15 +348,18 @@ namespace embDB
 	bool CStorage::saveFilePage(CFilePage* pPage, uint32 nDataSize,  bool bChandgeInCache)
 	{
 		CommonLib::ILockObject::scoped_lock lock(m_pCommonLockObj);
+
+		int64 nAddr = pPage->getRealAddr() != -1 ? pPage->getRealAddr() : pPage->getAddr();
+
 		if(bChandgeInCache)
 		{
-			FilePagePtr pCachePage = m_Chache.GetElem(pPage->getAddr());
+			FilePagePtr pCachePage = m_Chache.GetElem(nAddr);
 			if(pCachePage.get())
 			{
 				pCachePage->copyFrom(pPage);
 			}
 		}
-		uint64 nFileAddr = pPage->getAddr() * m_nBasePageSize;
+		uint64 nFileAddr = nAddr* m_nBasePageSize;
 		bool bRet = m_pFile.setFilePos64(m_nOffset + nFileAddr, CommonLib::soFromBegin);
 		assert(bRet);
 		if(!bRet)
@@ -420,7 +423,9 @@ namespace embDB
 	{
 		CommonLib::ILockObject::scoped_lock lock(m_pCommonLockObj);
  
-		uint64 nFileAddr = pPage->getAddr() * m_nBasePageSize;
+		int64 nAddr = pPage->getRealAddr() != -1 ? pPage->getRealAddr() : pPage->getAddr();
+
+		uint64 nFileAddr = nAddr * m_nBasePageSize;
 		bool bRet = m_pFile.setFilePos64(m_nOffset + nFileAddr, CommonLib::soFromBegin);
 		assert(bRet);
 		if(!bRet)
@@ -438,10 +443,10 @@ namespace embDB
 			nCnt = m_pFile.writeFile((void*)pPage->getRowData(),  (uint32)pPage->getPageSize() );
  
 		assert(nCnt != 0);
-		if(m_nLastAddr < pPage->getAddr())
+		if(m_nLastAddr < nAddr)
 		{
 			assert(0);
-			m_nLastAddr =  pPage->getAddr() + 1;
+			m_nLastAddr = nAddr + 1;
 		}
 		if(m_nCalcFileSize < (nFileAddr + pPage->getPageSize()))
 		{

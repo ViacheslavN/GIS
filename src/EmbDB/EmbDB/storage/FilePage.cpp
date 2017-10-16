@@ -12,6 +12,7 @@ CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, uint32 nSize, int64 nAddr) :
 	,m_bCheck(false)
 	,m_bIsNeedEncrypt(true)
 	,m_bIgnoreOffset(false)
+	,m_nRealAddr(-1)
 {
 	m_pData =  (byte*)m_pAlloc->alloc(sizeof(byte) * m_nSize);
 
@@ -25,6 +26,7 @@ CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, uint32 nSize, in
 	,m_bCheck(false)
 	,m_bIsNeedEncrypt(true)
 	,m_bIgnoreOffset(false)
+	, m_nRealAddr(-1)
 {
 	m_pData =  (byte*)m_pAlloc->alloc(sizeof(byte) * m_nSize);
 	memcpy(m_pData, pData, nSize);
@@ -39,6 +41,7 @@ CFilePage::CFilePage(CommonLib::alloc_t *m_pAlloc, byte *pData, uint32 nSize, in
 	,m_bCheck(false)
 	,m_bIsNeedEncrypt(true)
 	,m_bIgnoreOffset(false)
+	, m_nRealAddr(-1)
 {
 	m_pData =  pData;
 
@@ -60,6 +63,10 @@ uint32 CFilePage::getPageSize() const
 int64 CFilePage::getAddr() const
 {
 	return m_nAddr;
+}
+int64 CFilePage::getRealAddr() const
+{
+	return m_nRealAddr;
 }
 bool CFilePage::IsFree()
 {
@@ -85,6 +92,10 @@ bool CFilePage::copyFrom(CFilePage *pPage)
 void CFilePage::setAddr(int64 nAddr)
 {
 	m_nAddr = nAddr;
+}
+void CFilePage::setRealAddr(int64 nAddr)
+{
+	m_nRealAddr = nAddr;
 }
 
 bool CFilePage::isValid() const

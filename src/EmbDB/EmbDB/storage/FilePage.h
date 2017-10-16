@@ -135,9 +135,11 @@ public:
 	byte* getRowData() const;
 	uint32 getPageSize() const;
 	int64 getAddr() const;
+	int64 getRealAddr() const;
 	uint32 getFlags() const;
 	void setFlag(uint32 nFlag, bool bSet);
 	void setAddr(int64 nAddr);
+	void setRealAddr(int64 nAddr);
 	bool IsFree();
 	bool copyFrom(CFilePage *pPage);
 	bool isValid() const;
@@ -157,6 +159,7 @@ protected:
 	byte *m_pData;
 	uint32 m_nSize;
 	int64 m_nAddr;
+	int64 m_nRealAddr; //for WAL
 	CommonLib::alloc_t *m_pAlloc;
 	uint32 m_nFlags;
 	bool m_bValid;

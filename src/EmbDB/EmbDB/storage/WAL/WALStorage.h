@@ -13,6 +13,19 @@ namespace embDB
 	class CWALStorage : public IDBWALStorage
 	{
 		public:
+			struct STranPageInfo
+			{
+				int64 m_nLogTranAddr;
+				int64 m_nDBAddr;
+				uint32 m_nSize;
+
+
+				STranPageInfo() : m_nLogTranAddr(-1), m_nDBAddr(-1), m_nSize(0)
+				{}
+			};
+
+
+		public:
 			CWALStorage(CommonLib::alloc_t *pAlloc, int32 nCacheSize = 1000, bool bCheckCRC = true);
 			~CWALStorage();
 
@@ -40,6 +53,11 @@ namespace embDB
 			typedef std::map<int64, std::pair<int64, uint32> > TPageAddrs;
 			TPageAddrs m_PageAddrs;
 			CPageCipher *m_pPageChiper;
+
+			typedef std::vector<STranPageInfo> TTranPage;
+			typedef std::map<int64, TTranPage> TTransactions;
+
+			TTransactions m_Transactions;
 
 
 		

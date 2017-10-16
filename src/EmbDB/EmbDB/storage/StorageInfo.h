@@ -24,6 +24,8 @@ namespace embDB
 		CommonLib::CString m_sTranName;
 		int64 m_nBeginSize;
 
+		int64 m_nCheckPoint;
+
 	};
 }
 
