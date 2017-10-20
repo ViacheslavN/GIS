@@ -1,9 +1,11 @@
 #pragma once
 #include "embDBInternal.h"
+#include "../../../Utils/streams/WriteStreamPage.h"
+#include "../../../Utils/streams/ReadStreamPage.h"
 namespace embDB
 {
-	class WriteStreamPage;
-	class ReadStreamPage;
+//	class WriteStreamPage;
+//	class ReadStreamPage;
 
 
 

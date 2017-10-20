@@ -16,12 +16,21 @@ namespace embDB
 		typedef ITransactionBase<IDBTransaction> TBase;
 
 
-		CWALTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionDataType nTranType, const CommonLib::CString& sFileName,
-			IDBStorage* pDBStorage, int64 nID = -1, uint32 nTranCache = 10000, CPageCipher *pPageCiher = nullptr);
+		struct STranPage
+		{
+ 			int64 m_nDBAddr;
+			uint32 m_nSize;
+
+
+			STranPage(int64 nDBAdd, uint32 nSize) :  m_nDBAddr(nDBAdd), m_nSize(nSize)
+			{}
+		};
+
 
 		CWALTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,
-			eTransactionDataType nTranType, const CommonLib::CString& sFileName, IDBConnection* pConnection, int64 nID = -1, uint32 nTranCache = 10000, CPageCipher *pPageCiher = nullptr);
+			eTransactionDataType nTranType, IDBWALStorage* pDBStorage,   uint32 nTranCache = 10000, CPageCipher *pPageCiher = nullptr, bool bMultiThread = true);
+
+		CWALTransaction(CommonLib::alloc_t* pAlloc, eRestoreType nRestoreType,	eTransactionDataType nTranType,  IDBConnection* pConnection,   uint32 nTranCache = 10000, CPageCipher *pPageCiher = nullptr,bool bMultiThread = true);
 	
 		~CWALTransaction();
 
@@ -41,12 +50,12 @@ namespace embDB
 		virtual IUpdateCursorPtr createUpdateCursor() { return  IUpdateCursorPtr(); }
 
 
-		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true);
+		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize = 0, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true);
 		virtual void dropFilePage(FilePagePtr pPage);
 		virtual void dropFilePage(int64 nAddr, uint32 nSize);
-		virtual FilePagePtr getNewPage(uint32 nSize, bool bWrite = false);
-		virtual bool saveFilePage(FilePagePtr pPage, uint32 nSize = 0, bool bChandgeInCache = false);
-		virtual bool saveFilePage(CFilePage* pPage, uint32 nDataSize = 0, bool ChandgeInCache = false);
+		virtual FilePagePtr getNewPage(uint32 nSize = 0, bool bWrite = false, bool bAddInCache = true);
+		virtual bool saveFilePage(FilePagePtr pPage,  bool bChandgeInCache = false);
+		virtual bool saveFilePage(CFilePage* pPage, bool ChandgeInCache = false);
 
 
 
@@ -62,6 +71,7 @@ namespace embDB
 		virtual const CommonLib::CString& getFileTranName() const { return m_sFileName; }
 		virtual bool isCompleted() const { return true; }
 		virtual void setDBStorage(IDBStorage *pStorage) { m_pDBStorage = pStorage; }
+		virtual void setWALStorage(IDBWALStorage *pStorage);
 		virtual void wait() {}
 		virtual void stop() {}
 
@@ -82,7 +92,11 @@ namespace embDB
 
 		virtual eDBTransationType getDBTransationType() const { return m_TranType; }
 	private:
+		uint32 GetRowPageInfoSize() const;
+		void SaveFilePageInTranLog(CFilePage *pPage);
+	private:
 		IDBStorage* m_pDBStorage;
+		IDBWALStoragePtr m_pWALStorage;
  
 
 		CommonLib::CString m_sFileName;
@@ -92,6 +106,27 @@ namespace embDB
 		eDBTransationType m_TranType;
 
 
+		struct TPageFreeChecker
+		{
+			bool IsFree(FilePagePtr& pObj)
+			{
+				return  pObj->isRemovable(1);
+			}
+		};
+
+		typedef TCacheLRU_2Q<int64, FilePagePtr, TPageFreeChecker> TPageCache;
+		TPageCache m_Cache;
+
+		bool m_bMultiThread;
+		uint32 m_nTranCache;
+
+		typedef std::map<int64, STranPage> TTranPages;
+		TTranPages m_TranPages;
+		bool m_bOneSize;
+		uint32 m_nPageSize;
+		eTransactionDataType m_nTranType;
+
+		std::map<int64, int64> m_ConvertAddr;
 	};
 }
  

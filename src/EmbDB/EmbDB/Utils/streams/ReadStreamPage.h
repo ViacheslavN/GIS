@@ -6,18 +6,18 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 namespace embDB
 {
-
-	class ReadStreamPage : public CommonLib::TMemoryStreamBase<CommonLib::IReadStreamBase>, public CommonLib::AutoRefCounter
+	template<class _TStorage>	
+	class TReadStreamPage : public CommonLib::TMemoryStreamBase<CommonLib::IReadStreamBase>, public CommonLib::AutoRefCounter
 	{
 	public:
-		ReadStreamPage(IFilePage* pTran, uint32 nPageSize, bool bCheckCRC, uint16 nObjectPage = 0, uint16 nSubObjectPage = 0) :
+		TReadStreamPage(_TStorage* pTran, uint32 nPageSize, bool bCheckCRC, uint16 nObjectPage = 0, uint16 nSubObjectPage = 0) :
 		  m_pTran(pTran), m_nPageHeader(-1), m_nEndPage(-1), m_nEndPos(0), m_nPageSize(nPageSize), 
 			  m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage), m_bCheckCRC(bCheckCRC)
 		  {									  
 			
 
 		  }
-		  ~ReadStreamPage()
+		  ~TReadStreamPage()
 		  {
 
 		  }
@@ -234,7 +234,7 @@ namespace embDB
 
 	public:
 		FilePagePtr m_pPage;
-		IFilePage* m_pTran;
+		_TStorage* m_pTran;
 		uint32 m_nBeginPos;
 		int64 m_nPageHeader;
 		int64 m_nEndPage;
@@ -246,6 +246,8 @@ namespace embDB
 		bool m_bCheckCRC;
  
 	};
+
+	typedef TReadStreamPage<IFilePage> ReadStreamPage;
 	COMMON_LIB_REFPTR_TYPEDEF(ReadStreamPage);
 }
 

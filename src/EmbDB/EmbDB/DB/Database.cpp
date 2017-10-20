@@ -26,12 +26,12 @@ namespace embDB
 
 	IDatabasePtr IDatabase::CreateDatabase(eLogMode logMode, const wchar_t* pszLogFile, DBTranlogMode TranLogMode)
 	{
-		return IDatabasePtr(new CDatabase(logMode , pszLogFile));
+		return IDatabasePtr(new CDatabase(logMode , pszLogFile, TranLogMode));
 	}
 	
 
-	CDatabase::CDatabase(eLogMode logMode, const wchar_t* pszLogName) :  m_bOpen(false), m_bLoad(false), m_UserCryptoManager(this), m_nLogLevel(0),
-		m_TranMode(eTMMultiTransactions), m_LogMode(logMode), m_sFileLogPath(pszLogName)
+	CDatabase::CDatabase(eLogMode logMode, const wchar_t* pszLogName, DBTranlogMode TranLogMode) :  m_bOpen(false), m_bLoad(false), m_UserCryptoManager(this), m_nLogLevel(0),
+		m_TranMode(eTMMultiTransactions), m_LogMode(logMode), m_sFileLogPath(pszLogName) , m_TranLogMode(TranLogMode)
 	{
 		m_pAlloc.reset(new CommonLib::simple_alloc_t());
 		m_pStorage = (IDBStorage*)new CStorage(m_pAlloc.get());

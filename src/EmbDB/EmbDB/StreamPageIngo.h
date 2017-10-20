@@ -15,7 +15,7 @@ namespace embDB
 	{
 	public:
 
-			CStreamPageInfo(bool bCheckCRC, uint32 nSizePage = 1024*1024) : m_nSizePage(nSizePage), m_nRootPage(-1), m_nBeginStream(-1), m_nEndStream(-1), 
+			CStreamPageInfo(bool bCheckCRC, uint32 nSizePage = PAGE_SIZE_8K) : m_nSizePage(nSizePage), m_nRootPage(-1), m_nBeginStream(-1), m_nEndStream(-1),
 				m_nPos(0), m_bCheckCRC(bCheckCRC)
 			{
 

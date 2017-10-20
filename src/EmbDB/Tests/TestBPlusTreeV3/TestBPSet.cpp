@@ -526,7 +526,7 @@ void testBPTreeSetImpl(int64 nCount, uint32 nTranCache, size_t nPageSize, int32 
 
 void TestBPSetPlusTree()
 {
-	int64 nCount = 100000000;
+	int64 nCount = 100000;
 	size_t nPageSize = 8192;
 	uint32 nTranCache = 10;
 

@@ -40,7 +40,36 @@ namespace embDB
 			return CommonLib::FileSystem::deleteFile(m_sTranName.cwstr());
 		return true;
 	}
-	int64 CTranStorage::saveFilePage(CFilePage* pPage, int64 nAddr )
+
+	bool CTranStorage::saveFilePage(CFilePage* pPage, uint32 nDataSize)
+	{
+		uint32 nSize = pPage->getPageSize();
+		if (nSize%m_nPageSize != 0)
+			return false;
+		uint32 nCnt = nSize / m_nPageSize;
+
+		bool bRet = m_pFile.setFilePos64(pPage->getAddr() * m_nPageSize, CommonLib::soFromBegin);
+		assert(bRet);
+		uint32 nWCnt = 0;
+		if (m_pPageChiper && pPage->isNeedEncrypt())
+		{
+			m_BufForChiper.reserve(pPage->getPageSize());
+			m_pPageChiper->encrypt(pPage, m_BufForChiper.buffer(), pPage->getPageSize());
+			nWCnt = m_pFile.writeFile((void*)m_BufForChiper.buffer(), pPage->getPageSize());
+		}
+		else
+			nWCnt = m_pFile.writeFile((void*)pPage->getRowData(), pPage->getPageSize());
+		assert(nWCnt != 0);
+		m_pCounter->WriteTranPage();
+		return true;
+
+	}
+	bool CTranStorage::saveFilePage(FilePagePtr pPage, uint32 nDataSize)
+	{
+		return saveFilePage(pPage.get(), nDataSize);
+	}
+
+	int64 CTranStorage::saveFilePageWithRetAddr(CFilePage* pPage, int64 nAddr )
 	{
 		uint32 nSize = pPage->getPageSize();
 		if(nSize%m_nPageSize != 0)

@@ -10,7 +10,7 @@ namespace embDB
 		,m_pStorage(pStorage)
 		,m_pAlloc(pAlloc)
 		,m_ListFreeMaps(-1, 0, STORAGE_PAGE, STORAGE_LIST_FREEMAP_PAGE, bCheckCRC)
-		, m_nPageSize(8192)
+		, m_nPageSize(PAGE_SIZE_8K)
 		, m_bCheckCRC(bCheckCRC)
  
 	{
@@ -358,7 +358,7 @@ namespace embDB
 	bool CFreePageManager::saveForUndoState(IDBTransaction *pTran)
 	{
 
-		TMapFreeMaps::iterator it =  m_FreeMaps.begin();
+	/*	TMapFreeMaps::iterator it =  m_FreeMaps.begin();
 		TMapFreeMaps::iterator end =  m_FreeMaps.end();
 		pTran->addUndoPage(m_pStorage->getFilePage(m_nFreeMapLists, m_nPageSize));
 		for (; it != end; ++it)
@@ -366,7 +366,7 @@ namespace embDB
 			FileFreeMap* pFreeMap = it->second;
 			pTran->addUndoPage(m_pStorage->getFilePage(pFreeMap->m_nAddr, m_nPageSize));
 
-		}
+		}*/
 		return true;
 	}
 	bool CFreePageManager::undo(IDBTransaction *pTran, int64 nPageBegin)

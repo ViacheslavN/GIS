@@ -28,16 +28,16 @@ namespace embDB
 			bool bMultiThread = true);
 		~CStorage();
 
-		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true);
+		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true);
 
 		virtual bool dropFilePage(FilePagePtr pPage);
 		virtual  bool dropFilePage(int64 nAddr);
-		virtual  FilePagePtr getNewPage(uint32 nSize, bool bWrite = false);
-		virtual  bool saveFilePage(CFilePage* pPage, uint32 nDataSize = 0,  bool bChandgeInCache = false);
-		virtual  bool saveFilePage(FilePagePtr pPage, uint32 nDataSize = 0,  bool bChandgeInCache = false);
+		virtual  FilePagePtr getNewPage(uint32 nSize = 0, bool bWrite = false, bool bAddInCache = true);
+		virtual  bool saveFilePage(CFilePage* pPage,  bool bChandgeInCache = false);
+		virtual  bool saveFilePage(FilePagePtr pPage, bool bChandgeInCache = false);
 		virtual bool saveNewPage(FilePagePtr pPage);
-		virtual int64 getNewPageAddr(uint32 nSize/*, uint32* nType = NULL*/);
-		//virtual FilePagePtr createPage(int64 nAddr);
+		virtual int64 getNewPageAddr(uint32 nSize = 0);
+
 		virtual bool commit();
 		virtual bool removeFromFreePage(int64 nAddr);
 

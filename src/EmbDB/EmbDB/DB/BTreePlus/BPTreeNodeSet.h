@@ -127,7 +127,7 @@ namespace embDB
 			if (m_bCheckCRC32)
 				header.writeCRC32(stream);
 			//	pFilePage->setCheck(true);
-			pTransactions->saveFilePage(pFilePage, stream.pos(), true);
+			pTransactions->saveFilePage(pFilePage, true);
 
 			//pFilePage->setFlag(eFP_CHANGE, false);
 			return true;

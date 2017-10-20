@@ -245,7 +245,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, 
 
 		}
 
-		pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), pTran.get(), true, 8192 );
+		pDBTable->createShapeField(sFileName.wstr(), L"", SHPTypeToGeometryType(shapeType, NULL, NULL), bounds, GetGeometryUnits(units), pTran.get(), true, PAGE_SIZE_8K);
 		pTran->commit();
 
 		db.close();

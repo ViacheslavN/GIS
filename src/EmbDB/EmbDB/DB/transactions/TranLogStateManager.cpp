@@ -20,7 +20,7 @@ namespace embDB
 		m_nPageAddr = nPageAddr;
 		if(bRead)
 		{
-			FilePagePtr pPage = m_pStorage->getFilePage(m_nPageAddr, COMMON_PAGE_SIZE);
+			FilePagePtr pPage = m_pStorage->getFilePage(m_nPageAddr, PAGE_SIZE_8K);
 			assert(pPage.get());
 			if(!pPage.get())
 				return false;
@@ -34,7 +34,7 @@ namespace embDB
 	}
 	bool CTranLogStateManager::save()
 	{
-		FilePagePtr pPage = m_pStorage->getFilePage(m_nPageAddr, COMMON_PAGE_SIZE, false);
+		FilePagePtr pPage = m_pStorage->getFilePage(m_nPageAddr, PAGE_SIZE_8K, false);
 		assert(pPage.get());
 		if(!pPage.get())
 			return false;
@@ -42,7 +42,7 @@ namespace embDB
 		stream.attachBuffer(pPage->getRowData(), pPage->getPageSize());
 		stream.write(m_nState);
 		stream.write(m_nDbSize);
-		m_pStorage->saveFilePage(pPage.get(), pPage->getAddr());
+		m_pStorage->saveFilePageWithRetAddr(pPage.get(), pPage->getAddr());
 		return true;
 	}
 	bool  CTranLogStateManager::setState(eTransactionsState eTS)

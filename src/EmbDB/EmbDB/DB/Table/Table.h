@@ -58,7 +58,7 @@ namespace embDB
 			
 			virtual IFieldPtr createField(const SFieldProp& sFP, ITransaction *pTran);
 			virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, 
-					const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, ITransaction *pTran, bool bCreateIndex = true, uint32 nPageSize = 8192);
+					const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, ITransaction *pTran, bool bCreateIndex = true, uint32 nPageSize = PAGE_SIZE_8K);
 			virtual bool createIndex(const CommonLib::CString& sFieldName, SIndexProp& ip, ITransaction *pTran);
 			virtual bool createStatistic(const CommonLib::CString& sFieldName, const SStatisticInfo& si, ITransaction *pTran);
 			virtual bool UpdateStatistic(const CommonLib::CString& sName, ITransaction *pTran);

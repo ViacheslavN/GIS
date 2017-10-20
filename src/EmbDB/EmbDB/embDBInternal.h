@@ -5,11 +5,6 @@
 #include "storage/FilePage.h"
 
 
-#define MIN_PAGE_SIZE			256
-#define HEADER_DB_PAGE_SIZE		512
-#define COMMON_PAGE_SIZE		8192
-#define PAGE_SIZE_65K			65536
-#define MAX_PAGE_SIZE			1048576
 
 namespace embDB
 {
@@ -33,7 +28,7 @@ namespace embDB
 			,m_nOffsetX(0)
 			,m_nOffsetY(0)
 			,m_nLenField(0)
-			,m_nBPTreeNodePageSize(COMMON_PAGE_SIZE)
+			,m_nBPTreeNodePageSize(PAGE_SIZE_8K)
 			,m_nCoordType(scuUnknown)
 			,m_nScaleX(1)
 			,m_nScaleY(1)
@@ -231,6 +226,10 @@ namespace embDB
 	struct IFieldStatistic;
 	struct IFieldStatisticHolder;
 	struct IUniqueCheck;
+	struct IDBWALStorage;
+	struct IDBTranManager;
+	 
+	 
 
 	COMMON_LIB_REFPTR_TYPEDEF(IFieldIterator); 
 	COMMON_LIB_REFPTR_TYPEDEF(IIndexPageIterator); 
@@ -249,6 +248,8 @@ namespace embDB
 	COMMON_LIB_REFPTR_TYPEDEF(IFieldStatistic);
 	COMMON_LIB_REFPTR_TYPEDEF(IFieldStatisticHolder);
 	COMMON_LIB_REFPTR_TYPEDEF(IUniqueCheck);
+	COMMON_LIB_REFPTR_TYPEDEF(IDBWALStorage);
+	COMMON_LIB_REFPTR_TYPEDEF(IDBTranManager);
 
 	struct IFieldIterator : public CommonLib::AutoRefCounter
 	{
@@ -565,10 +566,10 @@ namespace embDB
 			IFilePage(){}
 			virtual ~IFilePage(){}
 
-			virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true) = 0;
-			virtual FilePagePtr getNewPage(uint32 nSize, bool bWrite = false) = 0;
-			virtual bool saveFilePage(CFilePage* pPage, uint32 nDataSize = 0,  bool ChandgeInCache = false) = 0;
-			virtual bool saveFilePage(FilePagePtr pPage, uint32 nDataSize = 0,  bool ChandgeInCache = false) = 0;
+			virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize = 0, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true) = 0;
+			virtual FilePagePtr getNewPage(uint32 nSize = 0, bool bWrite = false, bool bAddInCache = true) = 0;
+			virtual bool saveFilePage(CFilePage* pPage,  bool ChangeInCache = false) = 0;
+			virtual bool saveFilePage(FilePagePtr pPage, bool ChangeInCache = false) = 0;
 
 	};
 
@@ -583,8 +584,8 @@ namespace embDB
 
  
 		virtual bool saveNewPage(FilePagePtr pPage) = 0;
-		virtual int64 getNewPageAddr(uint32 nSize) = 0;
-		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true) = 0;
+		virtual int64 getNewPageAddr(uint32 nSize = 0) = 0;
+ 
  
 
 		
@@ -714,14 +715,14 @@ namespace embDB
 
 
 		virtual void dropFilePage(FilePagePtr pPage) = 0;
-		virtual void dropFilePage(int64 nAddr, uint32 nSize) = 0;
+		virtual void dropFilePage(int64 nAddr, uint32 nSize = 0) = 0;
 		//virtual uint32 getPageSize() const = 0;
 
 
 		virtual FilePagePtr getTranNewPage(uint32 nSize = 0)= 0;
-		virtual FilePagePtr getTranFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true) = 0;
+		virtual FilePagePtr getTranFilePage(int64 nAddr, uint32 nSize = 0, bool bRead = true, bool bNeedDecrypt = true) = 0;
 		virtual void saveTranFilePage(FilePagePtr pPage,  uint32 nSize = 0,  bool bChandgeInCache = false) = 0;
-		virtual void addUndoPage(FilePagePtr pPage, bool bReadFromDB = false) = 0;
+ 
 
 		virtual void addInnerTransactions(IDBTransaction *pTran) = 0;
 
@@ -741,6 +742,14 @@ namespace embDB
 
 		virtual void SetLogger(ILogger *pLogger) = 0;
 
+	};
+
+	struct IDBWALTransaction : public IDBTransaction
+	{
+		IDBWALTransaction() {}
+		virtual ~IDBWALTransaction() {}
+
+		virtual void setWALStorage(IDBWALStorage *pStorage) = 0;
 	};
 
 	struct IDBConnection : public IConnection
@@ -769,12 +778,32 @@ namespace embDB
 
 		virtual void MoveAllPage() = 0;
 		virtual IDBStoragePtr GetMainStorage() = 0;
+		virtual IDBStoragePtr GetTranLogStorage() = 0;
 
 		virtual bool open(const wchar_t* pszName, bool bReadOnle, bool bNew, bool bCreate, bool bOpenAlways) = 0;
 		virtual bool close() = 0;
 
+		virtual bool commit(IDBWALTransaction *pTran) = 0;
+
+		virtual FilePagePtr getNewTranLogPage(uint32 nSize, bool bWrite = false, bool bAddCache = false) = 0;
+		virtual FilePagePtr getTranLogPage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true) = 0;
+		virtual int64 getNewTranLogPageAddr(uint32 nSize) = 0;
+	};
+
+
+	struct IDBTranManager : public CommonLib::AutoRefCounter
+	{
+		IDBTranManager() {}
+		virtual ~IDBTranManager() {}
+ 
+		
+		virtual ITransactionPtr CreateTransaction(eTransactionDataType trType, IDBConnection *pConn, eDBTransationType trDbType) = 0;
+		virtual bool releaseTransaction(ITransaction* pTran) = 0;
+		virtual bool close() = 0;
 
 	};
+
+
 }
 
 #endif

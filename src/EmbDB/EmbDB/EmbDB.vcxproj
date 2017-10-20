@@ -527,6 +527,7 @@
     <ClInclude Include="DB\Database.h" />
     <ClInclude Include="DB\DBStateManager.h" />
     <ClInclude Include="DB\DBTranManager.h" />
+    <ClInclude Include="DB\DBTranWalManager.h" />
     <ClInclude Include="DB\Fields\BaseFieldEncoders.h" />
     <ClInclude Include="DB\Fields\blob\BlobCompressorParams.h" />
     <ClInclude Include="DB\Fields\blob\BlobField.h" />
@@ -593,7 +594,6 @@
     <ClInclude Include="DB\transactions\TransactionCache.h" />
     <ClInclude Include="DB\transactions\Transactions.h" />
     <ClInclude Include="DB\transactions\TranStorage.h" />
-    <ClInclude Include="DB\transactions\TranUndoPageManager.h" />
     <ClInclude Include="DB\transactions\WAL\WALTransaction.h" />
     <ClInclude Include="DB\UserCryptoManager.h" />
     <ClInclude Include="embDB.h" />
@@ -668,6 +668,7 @@
     <ClCompile Include="DB\Database.cpp" />
     <ClCompile Include="DB\DBStateManager.cpp" />
     <ClCompile Include="DB\DBTranManager.cpp" />
+    <ClCompile Include="DB\DBTranWalManager.cpp" />
     <ClCompile Include="DB\Fields\Statistics\ValueFieldStatistic.cpp" />
     <ClCompile Include="DB\Fields\ValueField.cpp" />
     <ClCompile Include="DB\GlobalParams.cpp" />
@@ -689,7 +690,6 @@
     <ClCompile Include="DB\transactions\TransactionCache.cpp" />
     <ClCompile Include="DB\transactions\Transactions.cpp" />
     <ClCompile Include="DB\transactions\TranStorage.cpp" />
-    <ClCompile Include="DB\transactions\TranUndoPageManager.cpp" />
     <ClCompile Include="DB\transactions\WAL\WALTransaction.cpp" />
     <ClCompile Include="DB\UserCryptoManager.cpp" />
     <ClCompile Include="Fields.cpp" />

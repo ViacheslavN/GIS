@@ -4,6 +4,12 @@
 namespace embDB
 {
 
+	CWALStorage::CWALStorage(CommonLib::alloc_t *pAlloc, int32 nCacheSize, bool bCheckCRC, bool bMultiThread) 
+		: m_bMultiThread(false)
+	{
+
+	}
+
 	FilePagePtr CWALStorage::getFilePage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt)
 	{
 		stopCopy();
@@ -20,20 +26,19 @@ namespace embDB
 			{
 				pPage->setAddr(nAddr);
 				pPage->setRealAddr(it->second.first);
+				pPage->setFlag(eFP_FROM_LOG_TRAN, true);
 			}
-
+			
 			return pPage;
 		}
 	}
+		
 
-	bool CWALStorage::saveFilePage(CFilePage* pPage, uint32 nDataSize = 0, bool ChandgeInCache )
+	bool CWALStorage::saveFilePage(CFilePage* pPage,  bool ChandgeInCache )
 	{
-		stopCopy();
-
-		// TO DO Lock
-
-		if(pPage->getRealAddr() != -1)		
-			return m_pDBLogStorage->saveFilePage(pPage, nDataSize, ChandgeInCache);
+		 
+		assert(pPage->getRealAddr() != -1);
+		return m_pDBLogStorage->saveFilePage(pPage, ChandgeInCache);
 		
 	}
 
@@ -41,7 +46,7 @@ namespace embDB
 	{
 		int64 nAddr = m_pDBStorage->getNewPageAddr(nSize);
 		FilePagePtr pFilePage = m_pDBLogStorage->getNewPage(nSize, bWrite);
-		pFilePage->setFlag(eFP_NEW, true);
+		pFilePage->setFlag(eFP_NEW|eFP_NEW_TRAN_LOG, true);
 
 		int64 nRealSize = pFilePage->getAddr();
 		pFilePage->setAddr(nAddr);
@@ -51,7 +56,18 @@ namespace embDB
 
 	}
 
-
+	FilePagePtr CWALStorage::getNewTranLogPage(uint32 nSize, bool bWrite, bool bAddCache)
+	{
+		return m_pDBLogStorage->getNewPage(nSize, bWrite, bAddCache);
+	}
+	FilePagePtr CWALStorage::getTranLogPage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt )
+	{
+		return m_pDBLogStorage->getFilePage(nAddr, nSize, bRead, bNeedDecrypt);
+	}
+	int64 CWALStorage::getNewTranLogPageAddr(uint32 nSize)
+	{
+		return m_pDBLogStorage->getNewPageAddr(nSize);
+	}
 
 	void CWALStorage::stopCopy()
 	{
@@ -94,5 +110,25 @@ namespace embDB
 	bool IsCopy()
 	{
 		return false;
+	}
+
+	bool CWALStorage::intit(IDBStorage *pDBStorage, IDBStorage *pTranLogStorage)
+	{
+		m_pDBStorage = pDBStorage;
+		m_pDBLogStorage = pTranLogStorage;
+ 
+
+
+		return true;
+	}
+
+
+	bool CWALStorage::commit(IDBWALTransaction *pTran)
+	{
+		//Lock
+
+		//pTran->
+
+		return true;
 	}
 }

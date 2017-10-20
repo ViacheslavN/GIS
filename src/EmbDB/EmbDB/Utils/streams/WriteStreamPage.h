@@ -6,17 +6,18 @@
 #include "CommonLibrary/FixedMemoryStream.h"
 namespace embDB
 {
-	class WriteStreamPage : public CommonLib::TMemoryStreamBase<CommonLib::IWriteStreamBase>, public CommonLib::AutoRefCounter
+	template<class _TStorage>
+	class TWriteStreamPage : public CommonLib::TMemoryStreamBase<CommonLib::IWriteStreamBase>, public CommonLib::AutoRefCounter
 	{
 	public:
-		WriteStreamPage(IDBTransaction* pTran, uint32 nPageSize, bool bCheckCRC, uint16 nObjectPage = 0, uint16 nSubObjectPage = 0) :
+		TWriteStreamPage(_TStorage* pTran, uint32 nPageSize, bool bCheckCRC, uint16 nObjectPage = 0, uint16 nSubObjectPage = 0) :
 		  m_pTran(pTran), m_nPageHeader(-1), m_nBeginPos(0), m_nPageSize(nPageSize), 
 			  m_nObjectPage(nObjectPage), m_nSubObjectPage(nSubObjectPage), m_bCheckCRC(bCheckCRC), m_nNextPage(-1), m_bOpenNew(true)
 		  {
 			
 
 		  }
-		  ~WriteStreamPage()
+		  ~TWriteStreamPage()
 		  {
 
 		  }
@@ -257,7 +258,7 @@ namespace embDB
 		  }
 	public:
 		FilePagePtr m_pPage;
-		embDB::IDBTransaction* m_pTran;
+		_TStorage* m_pTran;
 		uint32 m_nBeginPos;
 		int64 m_nPageHeader;
 		uint32 m_nPageSize;
@@ -269,7 +270,7 @@ namespace embDB
 		 bool m_bOpenNew;
  
 	};
-
+	typedef TWriteStreamPage<IDBTransaction> WriteStreamPage;
 
 	COMMON_LIB_REFPTR_TYPEDEF(WriteStreamPage);
 }

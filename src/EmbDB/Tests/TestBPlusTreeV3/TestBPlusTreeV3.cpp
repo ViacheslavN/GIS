@@ -7,9 +7,9 @@ void TestBPSetPlusTree();
 void TestBPMapPlusTree();
 int main()
 {
-	//TestBPSetPlusTree();
+	TestBPSetPlusTree();
 
-	TestBPMapPlusTree();
+	//TestBPMapPlusTree();
     return 0;
 }
 

@@ -39,7 +39,7 @@ namespace embDB
 		if(nSize != 0)
 		{
 
-			FilePagePtr pInfoPage (m_Storage.getFilePage(0, 8192)); //TO DO fix
+			FilePagePtr pInfoPage (m_Storage.getFilePage(0, PAGE_SIZE_8K)); //TO DO fix
 			if(!pInfoPage.get())
 				return false;
 			if(!LoadHeader(pInfoPage.get()))
@@ -59,8 +59,8 @@ namespace embDB
 		}
 		else
 		{
-			FilePagePtr pInfoPage(m_Storage.getNewPage(8192));
-			int64 nBPRoot = m_Storage.getNewPageAddr(8192);
+			FilePagePtr pInfoPage(m_Storage.getNewPage(PAGE_SIZE_8K));
+			int64 nBPRoot = m_Storage.getNewPageAddr(PAGE_SIZE_8K);
 			m_Info.nRootPageTree = nBPRoot;
 			SaveHeader(pInfoPage.get());
 			//m_pBPtree.reset(new TBTreePlus(nBPRoot, &m_Storage, m_pAlloc, 50));

@@ -15,10 +15,13 @@ namespace embDB
 
 		eFP_NEW = 1,
 		eFP_CHANGE = 2,
-		eFP_EMPTY = 4,
+		eFP_EMPTY = 4,  
 		eFP_REMOVE = 8,
 		eFP_FROM_FREE_PAGES = 16,
-		eFP_INNER_TRAN_PAGE = 32
+		eFP_INNER_TRAN_PAGE = 32,
+		eFP_FROM_LOG_TRAN = 64, // A page from another completed transaction, but not yet copied to the repository
+		eFP_NEW_TRAN_LOG = 128,
+		eFP_CHANGE_FROM_IN_LOG = 256
 	};
 
 struct sFilePageHeader

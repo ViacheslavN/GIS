@@ -101,13 +101,13 @@ namespace embDB
 	class CDatabase : public IDBDatabase
 	{
 		public:
-			CDatabase(eLogMode logMode = lmUndefined, const wchar_t* pszLogName = NULL);
+			CDatabase(eLogMode logMode = lmUndefined, const wchar_t* pszLogName = NULL, DBTranlogMode TranLogMode = eTranExclusiveLog);
 			~CDatabase();
 			virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL);
 			virtual bool create(const wchar_t* pszDbName,  DBTransactionMode mode = eTMMultiTransactions,
 				const wchar_t* pszWorkingPath = NULL,  const wchar_t* pszPassword = NULL, const SDBParams *Params = NULL) ;
 			virtual bool create(const wchar_t* pszDbName,const wchar_t* pszAdmUser, const wchar_t* pszPassword , DBTransactionMode mode = eTMMultiTransactions, 
-				const wchar_t* pszWorkingPath = NULL, const SDBParams *Params = NULL);
+				const wchar_t* pszWorkingPath = NULL, const SDBParams *Params = NULL );
 			
 
 			virtual IConnectionPtr connect(const wchar_t* pszUser= NULL, const wchar_t* pszPassword = NULL);
@@ -168,6 +168,8 @@ namespace embDB
 
 			typedef std::set<IConnectionPtr> TConnections;
 			TConnections m_Connections;
+
+			DBTranlogMode m_TranLogMode;
 
 		//	typedef RBMap<CommonLib::CString, CStorage*> TTableStorages;
 		//	TTableStorages m_TableStorages;

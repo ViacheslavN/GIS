@@ -232,15 +232,6 @@
       <Filter>DB\SQL</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
@@ -324,19 +315,10 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BPTreeStatistics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BPTreeStatistics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
@@ -900,16 +882,10 @@
     <ClInclude Include="DB\transactions\TransactionBase.h">
       <Filter>DB\transactions</Filter>
     </ClInclude>
-    <ClInclude Include="DB\transactions\TransactionCache.h">
-      <Filter>DB\transactions</Filter>
-    </ClInclude>
     <ClInclude Include="DB\transactions\Transactions.h">
       <Filter>DB\transactions</Filter>
     </ClInclude>
     <ClInclude Include="DB\transactions\TranStorage.h">
-      <Filter>DB\transactions</Filter>
-    </ClInclude>
-    <ClInclude Include="DB\transactions\TranUndoPageManager.h">
       <Filter>DB\transactions</Filter>
     </ClInclude>
     <ClInclude Include="DB\Connection.h">
@@ -1305,6 +1281,12 @@
     <ClInclude Include="DB\transactions\WAL\WALTransaction.h">
       <Filter>DB\transactions\WAL</Filter>
     </ClInclude>
+    <ClInclude Include="DB\DBTranWalManager.h">
+      <Filter>DB\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\TransactionCache.h">
+      <Filter>DB\transactions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1403,16 +1385,10 @@
     <ClCompile Include="DB\transactions\TranRedoPageManager.cpp">
       <Filter>DB\transactions</Filter>
     </ClCompile>
-    <ClCompile Include="DB\transactions\TransactionCache.cpp">
-      <Filter>DB\transactions</Filter>
-    </ClCompile>
     <ClCompile Include="DB\transactions\Transactions.cpp">
       <Filter>DB\transactions</Filter>
     </ClCompile>
     <ClCompile Include="DB\transactions\TranStorage.cpp">
-      <Filter>DB\transactions</Filter>
-    </ClCompile>
-    <ClCompile Include="DB\transactions\TranUndoPageManager.cpp">
       <Filter>DB\transactions</Filter>
     </ClCompile>
     <ClCompile Include="DB\Connection.cpp">
@@ -1477,6 +1453,12 @@
     </ClCompile>
     <ClCompile Include="DB\transactions\WAL\WALTransaction.cpp">
       <Filter>DB\transactions\WAL</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\DBTranWalManager.cpp">
+      <Filter>DB\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\TransactionCache.cpp">
+      <Filter>DB\transactions</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

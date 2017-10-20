@@ -123,7 +123,7 @@ namespace embDB
 	*/
 
  
-	class CDBTranManager
+	class CDBTranManager : public IDBTranManager
 	{
 	public:
 		struct sTranManagerHeader
@@ -143,9 +143,9 @@ namespace embDB
 		CDBTranManager(CommonLib::alloc_t *pAlloc, CDatabase *pDB);
 		~CDBTranManager();
 		bool open(const CommonLib::CString &sFileName, const CommonLib::CString& sWorkingPath, ILogger *pLogger);
-		bool close();
-		ITransactionPtr CreateTransaction(eTransactionDataType trType, IDBConnection *pConn, eDBTransationType trDbType);
-		bool releaseTransaction(ITransaction* pTran);
+		virtual bool close();
+		virtual ITransactionPtr CreateTransaction(eTransactionDataType trType, IDBConnection *pConn, eDBTransationType trDbType);
+		virtual bool releaseTransaction(ITransaction* pTran);
 		void SetPageCipher(CPageCipher* pPageCliper);
 	private:
 		bool SaveHeader(CFilePage *pPage);

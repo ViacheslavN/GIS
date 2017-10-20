@@ -7,6 +7,22 @@
 #include "CommonLibrary/IRefCnt.h"
 #include "CommonLibrary/Variant.h"
 #include "CommonLibrary/BoundaryBox.h"
+
+/*
+#define MIN_PAGE_SIZE			256
+#define HEADER_DB_PAGE_SIZE		512
+#define PAGE_SIZE_8K			8192
+#define PAGE_SIZE_65K			65536
+#define PAGE_SIZE_100K			1048576
+*/
+
+
+#define MIN_PAGE_SIZE			8192
+#define HEADER_DB_PAGE_SIZE		8192
+#define PAGE_SIZE_8K			8192
+#define PAGE_SIZE_65K			8192
+#define PAGE_SIZE_100K			8192
+
 namespace embDB
 {
 	enum eDataTypes
@@ -248,7 +264,7 @@ namespace embDB
 	{
 
 		SStatisticInfo() : m_Statistic(stNotUseStatisic), m_UpdateStat(usManualUpdateStat),
-			m_nPageSize(8192)
+			m_nPageSize(PAGE_SIZE_8K)
 		{
 
 		}
@@ -273,7 +289,7 @@ namespace embDB
 		sFieldPropExt m_FieldPropExt;
 
 		SFieldProp() : m_nLenField(0), m_dataType(dtUnknown), m_dScale(0), m_nPrecision(0),
-			m_bNotNull(false), m_bUNIQUE(false), m_bCounter(false), m_nPageSize(8192)
+			m_bNotNull(false), m_bUNIQUE(false), m_bCounter(false), m_nPageSize(PAGE_SIZE_8K)
 		{}
 	};
 
@@ -282,7 +298,7 @@ namespace embDB
 		indexTypes m_indexType;
 		uint32 m_nNodePageSize;
 		sFieldPropExt m_FieldPropExt;
-		SIndexProp() : m_indexType(itUnknown), m_nNodePageSize(8192)
+		SIndexProp() : m_indexType(itUnknown), m_nNodePageSize(PAGE_SIZE_8K)
 		{
 
 		}
@@ -521,7 +537,7 @@ namespace embDB
 
 
 		virtual IFieldPtr createField(const  SFieldProp& sFP, ITransaction *pTran) = 0;
-		virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, ITransaction *pTran, bool bCreateIndex = true, uint32 nPageSize = 8192) = 0;
+		virtual IFieldPtr createShapeField(const wchar_t *pszFieldName, const wchar_t* pszAlias, CommonLib::eShapeType shapeType, const CommonLib::bbox& extent, eSpatialCoordinatesUnits CoordUnits, ITransaction *pTran, bool bCreateIndex = true, uint32 nPageSize = PAGE_SIZE_8K) = 0;
 		virtual bool deleteField(IField* pField) = 0;
 		virtual bool createIndex(const CommonLib::CString& sName, SIndexProp& ip, ITransaction *pTran) = 0;
 		virtual bool createCompositeIndex(std::vector<CommonLib::CString>& vecFields, SIndexProp& ip) = 0;
@@ -644,7 +660,7 @@ namespace embDB
 		virtual bool open(const wchar_t* pszName, DBTransactionMode mode = eTMMultiTransactions, const wchar_t* pszWorkingPath = NULL)  = 0;
 
 		virtual bool create(const wchar_t* pszDbName,DBTransactionMode mode = eTMMultiTransactions, 
-			const wchar_t* pszWorkingPath = NULL,  const wchar_t* pszPassword = NULL, const SDBParams *Params = NULL)  = 0;
+			const wchar_t* pszWorkingPath = NULL,  const wchar_t* pszPassword = NULL, const SDBParams *Params = NULL )  = 0;
 		
 		virtual bool create(const wchar_t* pszDbName,const wchar_t* pszAdmUser, const wchar_t* pszPassword , DBTransactionMode mode = eTMMultiTransactions, 
 			const wchar_t* pszWorkingPath = NULL, const SDBParams *Params = NULL)  = 0;

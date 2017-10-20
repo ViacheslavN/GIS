@@ -17,7 +17,7 @@ namespace embDB
 			CPageCipher* pPageCrypto = nullptr);
 		~CTranStorage();
 		bool open(const CommonLib::CString& sTranName, /*uint32 nPageSize,*/ bool bNew);
-		int64 saveFilePage(CFilePage* pPage, int64 nAddr = -1); //если nAddr = -1, то возвращаеться новый адрес
+		int64 saveFilePageWithRetAddr(CFilePage* pPage, int64 nAddr = -1); //если nAddr = -1, то возвращаеться новый адрес
 		FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bDecrypt = true);
 		FilePagePtr getNewPage(uint32 nSize);
 		int64 getNewPageAddr(uint32 nSize);
@@ -25,6 +25,9 @@ namespace embDB
 		uint32 getPageSize(){return m_nPageSize;}
 		bool Flush();
 		void error(const CommonLib::CString& sError){}
+
+		bool saveFilePage(CFilePage* pPage, uint32 nDataSize = 0);
+		bool saveFilePage(FilePagePtr pPage, uint32 nDataSize = 0);
 
 	private:
 		CommonLib::CFile m_pFile;
