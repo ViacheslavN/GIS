@@ -28,9 +28,9 @@ namespace embDB
 	{
 
 	}
-	FilePagePtr CDirectTransaction::getFilePage(int64 nAddr, uint32 nSize , bool bRead, bool bNeedDecrypt, bool bAddInCache )
+	FilePagePtr CDirectTransaction::getFilePage(int64 nAddr, uint32 nSize , bool bRead, bool bNeedDecrypt, bool bAddInCache, bool bForChanghe)
 	{
-		return  m_pDBStorage->getFilePage(nAddr, nSize, bRead, bNeedDecrypt, bAddInCache);
+		return  m_pDBStorage->getFilePage(nAddr, nSize, bRead, bNeedDecrypt, bAddInCache, bForChanghe);
 		/*if(!pFilePage)
 			return NULL;
 		if(pFilePage->getFlags() & eFP_FROM_FREE_PAGES)

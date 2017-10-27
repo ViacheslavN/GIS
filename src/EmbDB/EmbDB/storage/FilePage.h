@@ -21,7 +21,8 @@ namespace embDB
 		eFP_INNER_TRAN_PAGE = 32,
 		eFP_FROM_LOG_TRAN = 64, // A page from another completed transaction, but not yet copied to the repository
 		eFP_NEW_TRAN_LOG = 128,
-		eFP_CHANGE_FROM_IN_LOG = 256
+		eFP_CHANGE_FROM_IN_LOG = 256,
+		eFP_COPY_FROM_STORAGE= 512
 	};
 
 struct sFilePageHeader

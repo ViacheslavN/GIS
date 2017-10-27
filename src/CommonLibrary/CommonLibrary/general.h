@@ -46,6 +46,14 @@
 #include <iostream>
 #include <stack>
 #include "GeneralTypes.h"
+#include <iostream>
+#include <string>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
+#include<shared_mutex>
+
 #define  _CHECK_MEM
 
 

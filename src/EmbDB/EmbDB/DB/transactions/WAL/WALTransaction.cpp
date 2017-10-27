@@ -24,10 +24,10 @@ namespace embDB
 	{
 
 	}
-	FilePagePtr CWALTransaction::getFilePage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt, bool bAddInCache)
+	FilePagePtr CWALTransaction::getFilePage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt, bool bAddInCache, bool bForChange)
 	{
 		if(!m_bMultiThread || m_nTranType == eTT_SELECT)
-			return  m_pWALStorage->getFilePage(nAddr, nSize, bRead, bNeedDecrypt, bAddInCache);
+			return  m_pWALStorage->getFilePage(nAddr, nSize, bRead, bNeedDecrypt, bAddInCache, bForChange);
 
 		
 		

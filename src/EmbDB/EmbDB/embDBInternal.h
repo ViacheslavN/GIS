@@ -8,9 +8,25 @@
 
 namespace embDB
 {
+	enum  eWaitObjectType
+	{
+		wotTransaction = 1,
+		wotTable = 2,
+		wotStorage = 3,
+		wotFilePage = 4,
+		wotField = 5,
+		wotIndex = 6
+	};
 
-	
-	
+	enum  eLockType
+	{
+		wlNoLock = 0,
+		wltReadLock = 1,
+		wltWriteLock = 2,
+		wltExclusiveLock = 3
+	};
+
+
 	struct sFieldInfo
 	{
 		sFieldInfo() : 
@@ -566,7 +582,8 @@ namespace embDB
 			IFilePage(){}
 			virtual ~IFilePage(){}
 
-			virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize = 0, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true) = 0;
+			virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize = 0, bool bRead = true,
+				bool bNeedDecrypt = true, bool bAddInCache = true, bool bForChanghe = true) = 0;
 			virtual FilePagePtr getNewPage(uint32 nSize = 0, bool bWrite = false, bool bAddInCache = true) = 0;
 			virtual bool saveFilePage(CFilePage* pPage,  bool ChangeInCache = false) = 0;
 			virtual bool saveFilePage(FilePagePtr pPage, bool ChangeInCache = false) = 0;
@@ -803,6 +820,14 @@ namespace embDB
 
 	};
 
+	struct  IWaitForGraph
+	{
+		IWaitForGraph(){}
+		virtual ~IWaitForGraph(){}
+		virtual bool TryToLockObject(eWaitObjectType type, int64 nObjecID, int64 nTranID, eLockType lockType) = 0;
+		virtual bool LockObject(eWaitObjectType type, int64 nObjecID, int64 nTranID, eLockType lockType) = 0;
+		virtual bool FreeObject(eWaitObjectType type, int64 nObjecID, int64 nTranID, eLockType lockType) = 0;
+	};
 
 }
 

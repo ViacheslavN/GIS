@@ -119,7 +119,7 @@ namespace embDB
 				m_pTransaction->error(L"BTREE: Error Load  BTreeInfoPage: -1");
 				return false;
 			}
-			FilePagePtr pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo, MIN_PAGE_SIZE);
+			FilePagePtr pPage = m_pTransaction->getFilePage(m_nPageBTreeInfo, MIN_PAGE_SIZE, true, true, true, false);
 			if (!pPage.get())
 			{
 				m_pTransaction->error(L"BTREE: Error load BTreeInfoPage: %I64d", (int64)m_nPageBTreeInfo);
@@ -447,7 +447,7 @@ namespace embDB
 			TBTreeNodePtr pBNode = m_Cache.GetElem(nAddr, bNotMove);
 			if (!pBNode.get())
 			{
-				FilePagePtr pFilePage = m_pTransaction->getFilePage(nAddr, m_nNodesPageSize);
+				FilePagePtr pFilePage = m_pTransaction->getFilePage(nAddr, m_nNodesPageSize, true, true, true, false);
 				assert(pFilePage.get());
 				if (!pFilePage.get())
 				{

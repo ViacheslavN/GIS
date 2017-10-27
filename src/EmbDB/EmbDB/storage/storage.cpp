@@ -138,7 +138,7 @@ namespace embDB
 			return m_pFile.getFileSize();
 		return -1;
 	}
-	FilePagePtr CStorage::getFilePage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt, bool bAddInCache )
+	FilePagePtr CStorage::getFilePage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt, bool bAddInCache, bool bForChanghe)
 	{
 		CommonLib::ILockObject::scoped_lock lock(m_pCommonLockObj);
 		FilePagePtr pPage = m_Chache.GetElem(nAddr);

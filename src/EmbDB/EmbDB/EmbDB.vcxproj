@@ -585,11 +585,12 @@
     <ClInclude Include="DB\transactions\Cursors\SelectOpCursor\SimpleSelectOpCursor.h" />
     <ClInclude Include="DB\transactions\DirectTran\DirectTransactions.h" />
     <ClInclude Include="DB\transactions\DirectTran\DirectTranUndoManager.h" />
+    <ClInclude Include="DB\transactions\Loks\LockDBObject.h" />
+    <ClInclude Include="DB\transactions\Loks\WaitForGraph.h" />
     <ClInclude Include="DB\transactions\TranLogger.h" />
     <ClInclude Include="DB\transactions\TranLogManager.h" />
     <ClInclude Include="DB\transactions\TranLogStateManager.h" />
     <ClInclude Include="DB\transactions\TranPerfCounter.h" />
-    <ClInclude Include="DB\transactions\TranRedoPageManager.h" />
     <ClInclude Include="DB\transactions\TransactionBase.h" />
     <ClInclude Include="DB\transactions\TransactionCache.h" />
     <ClInclude Include="DB\transactions\Transactions.h" />
@@ -684,9 +685,10 @@
     <ClCompile Include="DB\transactions\Cursors\SelectOpCursor\SimpleSelectOpCursor.cpp" />
     <ClCompile Include="DB\transactions\DirectTran\DirectTransactions.cpp" />
     <ClCompile Include="DB\transactions\DirectTran\DirectTranUndoManager.cpp" />
+    <ClCompile Include="DB\transactions\Loks\LockDBObject.cpp" />
+    <ClCompile Include="DB\transactions\Loks\WaitForGraph.cpp" />
     <ClCompile Include="DB\transactions\TranLogStateManager.cpp" />
     <ClCompile Include="DB\transactions\TranPerfCounter.cpp" />
-    <ClCompile Include="DB\transactions\TranRedoPageManager.cpp" />
     <ClCompile Include="DB\transactions\TransactionCache.cpp" />
     <ClCompile Include="DB\transactions\Transactions.cpp" />
     <ClCompile Include="DB\transactions\TranStorage.cpp" />

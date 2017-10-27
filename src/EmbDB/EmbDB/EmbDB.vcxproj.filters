@@ -202,6 +202,9 @@
     <Filter Include="DB\transactions\WAL">
       <UniqueIdentifier>{0798cc59-b4b9-4386-95c3-5c633c27a509}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB\transactions\Loks">
+      <UniqueIdentifier>{7e39a763-23f6-4c8a-aec5-7abb09292120}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -230,15 +233,6 @@
     </ClInclude>
     <ClInclude Include="Statement.h">
       <Filter>DB\SQL</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
@@ -324,13 +318,7 @@
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BPTreeStatistics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
@@ -338,9 +326,6 @@
     </ClInclude>
     <ClInclude Include="FixedStringLeafCompressor.h">
       <Filter>DB\Fields\string\fixedStringField</Filter>
-    </ClInclude>
-    <ClInclude Include="BPTreeStatistics.h">
-      <Filter>DB\BPTrees\BtreePlusv2</Filter>
     </ClInclude>
     <ClInclude Include="BPTreeStatistics.h">
       <Filter>Header Files</Filter>
@@ -876,9 +861,6 @@
     <ClInclude Include="DB\transactions\TranPerfCounter.h">
       <Filter>DB\transactions</Filter>
     </ClInclude>
-    <ClInclude Include="DB\transactions\TranRedoPageManager.h">
-      <Filter>DB\transactions</Filter>
-    </ClInclude>
     <ClInclude Include="DB\transactions\TransactionBase.h">
       <Filter>DB\transactions</Filter>
     </ClInclude>
@@ -1287,6 +1269,12 @@
     <ClInclude Include="DB\transactions\TransactionCache.h">
       <Filter>DB\transactions</Filter>
     </ClInclude>
+    <ClInclude Include="DB\transactions\Loks\WaitForGraph.h">
+      <Filter>DB\transactions\Loks</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\transactions\Loks\LockDBObject.h">
+      <Filter>DB\transactions\Loks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1382,9 +1370,6 @@
     <ClCompile Include="DB\transactions\TranPerfCounter.cpp">
       <Filter>DB\transactions</Filter>
     </ClCompile>
-    <ClCompile Include="DB\transactions\TranRedoPageManager.cpp">
-      <Filter>DB\transactions</Filter>
-    </ClCompile>
     <ClCompile Include="DB\transactions\Transactions.cpp">
       <Filter>DB\transactions</Filter>
     </ClCompile>
@@ -1459,6 +1444,12 @@
     </ClCompile>
     <ClCompile Include="DB\transactions\TransactionCache.cpp">
       <Filter>DB\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\Loks\WaitForGraph.cpp">
+      <Filter>DB\transactions\Loks</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\transactions\Loks\LockDBObject.cpp">
+      <Filter>DB\transactions\Loks</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

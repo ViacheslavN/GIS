@@ -79,7 +79,7 @@ namespace embDB
 				}
 
 			}
-			FilePagePtr pFilePage = pTransactions->getFilePage(m_nPageAddr, m_nPageSize);
+			FilePagePtr pFilePage = pTransactions->getFilePage(m_nPageAddr, m_nPageSize, true, true, true, false);
 			assert(pFilePage.get());
 			if (!pFilePage.get())
 				return false;
@@ -95,7 +95,7 @@ namespace embDB
 
 			FilePagePtr pFilePage(NULL);
 			if (m_nPageAddr != -1)
-				pFilePage = pTransactions->getFilePage(m_nPageAddr, m_nPageSize, false);
+				pFilePage = pTransactions->getFilePage(m_nPageAddr, m_nPageSize, false, true, true, true);
 			else
 				pFilePage = pTransactions->getNewPage(m_nPageSize);
 

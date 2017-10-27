@@ -10,7 +10,7 @@ namespace embDB
 
 	}
 
-	FilePagePtr CWALStorage::getFilePage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt)
+	FilePagePtr CWALStorage::getFilePage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt, bool bForChanghe)
 	{
 		stopCopy();
 
@@ -20,12 +20,11 @@ namespace embDB
 			return m_pDBStorage->getFilePage(nAddr, nSize, bRead, bNeedDecrypt);
 		else
 		{
-			assert(it->second.second == nSize);
-			auto pPage = m_pDBLogStorage->getFilePage(it->second.first, nSize, bRead, bNeedDecrypt);
+			auto pPage = m_pDBLogStorage->getFilePage(it->second, nSize, bRead, bNeedDecrypt);
 			if (pPage.get())
 			{
 				pPage->setAddr(nAddr);
-				pPage->setRealAddr(it->second.first);
+				pPage->setRealAddr(it->second);
 				pPage->setFlag(eFP_FROM_LOG_TRAN, true);
 			}
 			
@@ -93,9 +92,9 @@ namespace embDB
 				if (!IsCopy())
 					break;
 
-				auto pPage = m_pDBLogStorage->getFilePage(it->first, it->second.second, true, false);
-				pPage->setAddr(it->second.first);
-				m_pDBStorage->saveFilePage(pPage, it->second.second);
+				auto pPage = m_pDBLogStorage->getFilePage(it->first, true, false);
+				pPage->setAddr(it->second);
+				m_pDBStorage->saveFilePage(pPage, it->second);
 				it = m_PageAddrs.erase(it);
 				bNeedSave = true;
 			}

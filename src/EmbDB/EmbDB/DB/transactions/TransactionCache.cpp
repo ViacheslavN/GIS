@@ -14,11 +14,14 @@ namespace embDB
 		{
 			FilePagePtr pRemPage = m_Chache.remove_back();
 			assert(pRemPage.get());
-			TPages::iterator it = m_pages.find(pRemPage->getAddr());
-			assert(it != m_pages.end());
-			sFileTranPageInfo& pi = it->second;
-			if(pi.m_nFlags & (eFP_CHANGE | eFP_NEW | eFP_CHANGE_FROM_IN_LOG))
+			
+			if(pRemPage->getFlags() & (eFP_CHANGE | eFP_NEW | eFP_CHANGE_FROM_IN_LOG))
 			{
+				TPages::iterator it = m_pages.find(pRemPage->getAddr());
+				assert(it != m_pages.end());
+				sFileTranPageInfo& pi = it->second;
+				pi.m_nFlags = pRemPage->getFlags();
+
 				int64 nRet = m_pFileStorage->saveFilePageWithRetAddr(pRemPage.get(), pi.m_nFileAddr);
 				pi.m_nFlags &= ~eFP_CHANGE_FROM_IN_LOG;
 
@@ -27,36 +30,15 @@ namespace embDB
 					pi.m_nFileAddr = nRet;
 					assert(pi.m_nFileAddr != -1);
 				}
-
-				/*if(m_pTransaction->getRestoreType() == rtUndo)
-				{
-					if(!pi.m_bOrignSave)
-					{
-						if( !(pi.m_nFlags & eFP_NEW) && (pi.m_nFlags & eFP_CHANGE))
-						{
-							m_pTransaction->addUndoPage(pRemPage->getAddr(), pRemPage->getPageSize());
-						}
-						pi.m_bOrignSave = true;
-					}
-				}
-				else if(m_pTransaction->getRestoreType() == rtRedo)
-				{
-					pi.m_bRedoSave = true;
-				}*/
-				
-			
+	
 			}
-			//delete pRemPage;
+
 		}
 	}
 	void CTransactionCache::savePage(CFilePage *pPage)
 	{
-		TPages::iterator it = m_pages.find(pPage->getAddr());
-		assert(it != m_pages.end());
-		sFileTranPageInfo& pi = it->second;
-		pi.m_nFlags |= (eFP_CHANGE | eFP_CHANGE_FROM_IN_LOG);
-		pPage->setFlag(eFP_CHANGE, true);
-		 
+		assert((pPage->getFlags() & (eFP_COPY_FROM_STORAGE | eFP_NEW)) != 0);
+		pPage->setFlag(eFP_CHANGE | eFP_CHANGE_FROM_IN_LOG, true);
 	}
 	
 	 bool CTransactionCache::savePageForUndo(CTransaction *pTran, IDBStorage *pStorage, int64 nRootPage)
@@ -68,9 +50,25 @@ namespace embDB
 		 for(;it != it_end; ++it)
 		 {
 			 auto& pi = it->second;
+			 FilePagePtr pPage = m_Chache.GetElem(it->first, true);
 
-			 bool bNew = (pi.m_nFlags & eFP_NEW) != 0;
-			 bool bChange = (pi.m_nFlags & eFP_CHANGE) != 0;
+			 bool bNew = false;
+			 bool bChange = false;
+
+			 if (pPage.get())
+			 {
+				 bNew = (pPage->getFlags() & eFP_NEW) != 0;
+				 bChange = (pPage->getFlags() & eFP_CHANGE) != 0;
+
+				 pi.m_nFlags = pPage->getFlags();
+			 }
+			 else
+			 {
+				 bNew = (pi.m_nFlags & eFP_NEW) != 0;
+				 bChange = (pi.m_nFlags & eFP_CHANGE) != 0;
+
+				
+			 }
 		
 			 if(!bNew && bChange)
 			 {			
@@ -81,7 +79,6 @@ namespace embDB
  			 }
 			
 		 }
-
 	 
 		 TWriteStreamPage<CTranStorage> writeStream(m_pFileStorage, PAGE_SIZE_65K, false);
 		 if (!writeStream.open(nRootPage, 0, false))
@@ -93,9 +90,15 @@ namespace embDB
 		 for (; it != it_end; ++it)
 		 {
 			 auto& pi = it->second;
-			 writeStream.write(pi.m_nSaveOrignAddr);
-			// writeStream.write(pi.m_nPageSize);
-			 writeStream.write(it->first);
+			 bool bNew = (pi.m_nFlags & eFP_NEW) != 0;
+			 bool bChange = (pi.m_nFlags & eFP_CHANGE) != 0;
+
+			 if (!bNew && bChange)
+			 {
+				 writeStream.write(pi.m_nSaveOrignAddr);
+				 writeStream.write(it->first);
+			 }
+
 		 }
 		 writeStream.Save();
 	 
@@ -110,9 +113,23 @@ namespace embDB
 		 for(;it != it_end; ++it)
 		 {
 			 sFileTranPageInfo& pi = it->second;
+			 FilePagePtr pPage = m_Chache.GetElem(it->first, true);
 
-			 bool bNew = (pi.m_nFlags & eFP_NEW) != 0;
-			 bool bChange = (pi.m_nFlags & eFP_CHANGE) != 0;
+			 bool bNew = false;
+			 bool bChange = false;
+
+			 if (pPage.get())
+			 {
+				 bNew = (pPage->getFlags() & eFP_NEW) != 0;
+				 bChange = (pPage->getFlags() & eFP_CHANGE) != 0;
+
+				 pi.m_nFlags = pPage->getFlags();
+			 }
+			 else
+			 {
+				 bNew = (pi.m_nFlags & eFP_NEW) != 0;
+				 bChange = (pi.m_nFlags & eFP_CHANGE) != 0;
+			 }
 
 		 	 if(bNew || bChange)
 			 {
@@ -134,8 +151,33 @@ namespace embDB
 					 }
 				 }
 			 }
-				 
 		 }
+
+
+		 TWriteStreamPage<CTranStorage> writeStream(m_pFileStorage, PAGE_SIZE_65K, false);
+		 if (!writeStream.open(nRootPage, 0, false))
+			 return false;
+
+		 writeStream.write(nCount);
+
+		 it = m_pages.begin();
+		 for (; it != it_end; ++it)
+		 {
+			 auto& pi = it->second;
+
+			 bool bNew = (pi.m_nFlags & eFP_NEW) != 0;
+			 bool bChange = (pi.m_nFlags & eFP_CHANGE) != 0;
+			 if (bNew || bChange)
+			 {
+				 writeStream.write(it->first);
+				 writeStream.write(pi.m_nFileAddr);
+				
+			 }
+
+		 }
+		 writeStream.Save();
+
+
 		 return true;
 	 }
 	void CTransactionCache::saveChange(IDBStorage *pStorage)
@@ -143,18 +185,20 @@ namespace embDB
 
 		TPages::iterator it = m_pages.begin();
 		TPages::iterator it_end = m_pages.end();
-		int64 nCount = 0;
+ 
 		for(;it != it_end; ++it)
 		{
-			++nCount;
+ 
+			FilePagePtr pPage = m_Chache.GetElem(it->first, true);
+
 			sFileTranPageInfo& pi = it->second;
+
 			bool bNew = (pi.m_nFlags & eFP_NEW) != 0;
 			bool bChange = (pi.m_nFlags & eFP_CHANGE) != 0;
-
 			
+						
 			if(bNew || bChange)
 			{
-				FilePagePtr pPage = m_Chache.GetElem(it->first, true);
 				if(!pPage.get())
 				{
 					assert(pi.m_nFileAddr != -1);
@@ -165,7 +209,8 @@ namespace embDB
 					pPage->setAddr(it->first);
 					//pPage->setNeedEncrypt(pi.m_bNeedCrypt);
 				}
-
+				pStorage->saveFilePage(pPage, true);
+				/*
 				bool bNew = (pPage->getFlags() & eFP_NEW) != 0;
 				bool bChange = (pPage->getFlags() & eFP_CHANGE) != 0;
 				if(bNew || bChange)
@@ -176,7 +221,7 @@ namespace embDB
 					else
 						m_pCounter->WriteDBPage();
 
-				}
+				}*/
 			
 			}
 		
@@ -187,33 +232,38 @@ namespace embDB
 	
 	void  CTransactionCache::AddPage(int64 nAddr, int64 nTranAddr, CFilePage* pPage, bool bAddBack)
 	{
-
 		m_pages.insert(std::make_pair(nAddr, sFileTranPageInfo(nTranAddr, pPage->getFlags()/*, pPage->getPageSize(), pPage->isNeedEncrypt()*/)));
 		CheckCache();
 		m_Chache.AddElem(nAddr, FilePagePtr(pPage));
 	}
 
- 
-	FilePagePtr  CTransactionCache::GetPage(int64 nAddr, bool bNotMove, bool bRead, uint32 nSize)
+	CTransactionCache::sFileTranPageInfo *CTransactionCache::GetPageInfo(int64 nAddr)
 	{
-		FilePagePtr pPage = m_Chache.GetElem(nAddr);
-		if(pPage.get())
-			return pPage;
 		TPages::iterator it = m_pages.find(nAddr);
-		if(it == m_pages.end())
-			return FilePagePtr();
+		if (it != m_pages.end())
+			return &it->second;
+		return nullptr;
+	}
 
-		sFileTranPageInfo& PageInfo = it->second;
-		if(PageInfo.m_nFileAddr == -1)
+	FilePagePtr CTransactionCache::GetPageFromCache(int64 nAddr, bool bNotMove)
+	{
+		return m_Chache.GetElem(nAddr, bNotMove);
+	}
+	FilePagePtr  CTransactionCache::ReadPage(int64 nAddr, sFileTranPageInfo* pPageInfo, uint32 nSize, bool bRead , bool bNeedDecrypt )
+	{
+		/*TPages::iterator it = m_pages.find(nAddr);
+		if (it == m_pages.end())
 		{
-			FilePagePtr pPage (new CFilePage(m_pAlloc, nSize, -1));
-			m_Chache.AddElem(nAddr, pPage);
-			return pPage;
-		}
-		pPage = m_pFileStorage->getFilePage(PageInfo.m_nFileAddr, nSize, bRead, false);
+			return FilePagePtr();
+		}*/
+
+		//sFileTranPageInfo& PageInfo = it->second;
+		assert(pPageInfo->m_nFileAddr != -1);
+	
+		FilePagePtr pPage = m_pFileStorage->getFilePage(pPageInfo->m_nFileAddr, nSize, bRead, bNeedDecrypt);
 		assert(pPage);
 		pPage->setAddr(nAddr);
-		pPage->setFlag(PageInfo.m_nFlags, true);
+		pPage->setFlag(pPageInfo->m_nFlags, true);
 		CheckCache();
 		m_Chache.AddElem(nAddr, pPage);
 		return pPage;
@@ -236,6 +286,7 @@ namespace embDB
 		return PageInfo.m_nFlags;
 	}
 
+	
 	bool CTransactionCache::undo(IDBStorage* pDBStorage, int64 nRootPage)
 	{
 		TReadStreamPage<CTranStorage> readStream(m_pFileStorage, PAGE_SIZE_65K, false);
@@ -253,6 +304,36 @@ namespace embDB
 			//nSize = readStream.readIntu32();
 			nTranAddr = readStream.readInt64();
 
+
+			FilePagePtr pFilePage = m_pFileStorage->getFilePage(nTranAddr, true);
+			if (!pFilePage.get())
+			{
+				m_pTransaction->error(L"TRAN: Can't get page from Tran");
+				return false;
+			}
+			pFilePage->setAddr(nDBAddr);
+			pDBStorage->saveFilePage(pFilePage);
+
+		}
+
+		return true;
+	}
+
+	bool CTransactionCache::redo(IDBStorage* pDBStorage, int64 nRootPage)
+	{
+		TReadStreamPage<CTranStorage> readStream(m_pFileStorage, PAGE_SIZE_65K, false);
+		if (!readStream.open(nRootPage, 0))
+			return false;
+
+		int64 nDBAddr = -1, nTranAddr = -1;
+		uint32 nPageSize = 0;
+		uint32 nSize = readStream.readIntu32();
+
+		for (size_t i = 0; i < nSize; ++i)
+		{
+
+			nDBAddr = readStream.readInt64();
+			nTranAddr = readStream.readInt64();
 
 			FilePagePtr pFilePage = m_pFileStorage->getFilePage(nTranAddr, true);
 			if (!pFilePage.get())

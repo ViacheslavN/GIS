@@ -32,7 +32,8 @@ namespace embDB
 			int64 m_nSaveOrignAddr;// for undo
 		};
 
-		CTransactionCache(CommonLib::alloc_t* pAlloc, CTranStorage *pStorage, CTransaction *pTransaction, CTranPerfCounter *pCounter, uint32 nTranCache) : 
+		CTransactionCache(CommonLib::alloc_t* pAlloc, CTranStorage *pStorage, 
+			CTransaction *pTransaction, CTranPerfCounter *pCounter, uint32 nTranCache) : 
 			    m_pFileStorage(pStorage)
 			  , m_nMaxPageBuf(nTranCache)
 			  , m_Chache(pAlloc, FilePagePtr(nullptr))
@@ -46,7 +47,10 @@ namespace embDB
 		  }
 		  void AddPage(int64 nAddr, int64 nTranAddr, CFilePage* pPage, bool bAddBack = false);
 		  void DropPage(int64 nAddr, CFilePage* pAddPage) {  }
-		  FilePagePtr GetPage(int64 nAddr, bool bNotMove = false, bool bRead = true, uint32 nSize = 0);
+		  FilePagePtr ReadPage(int64 nAddr, sFileTranPageInfo* pPageInfo, uint32 nSize = 0, bool bRead = true,  bool bNeedDecrypt = true);
+		  FilePagePtr GetPageFromCache(int64 nAddr, bool bNotMove = false);
+		  sFileTranPageInfo *GetPageInfo(int64 nAddr);
+
 		
 		  void saveChange(IDBStorage *pStorage);
 		  void CheckCache();
@@ -57,7 +61,9 @@ namespace embDB
 
 		  uint32 GetPageFlags(int64 nAddr);
 
+
 		  bool undo(IDBStorage* pDBStorage, int64 nRootPage);
+		  bool redo(IDBStorage* pDBStorage, int64 nRootPage);
 	public:
 		struct TPageFreeChecker
 		{

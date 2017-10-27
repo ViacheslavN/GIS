@@ -5,7 +5,6 @@
 #include "TransactionCache.h"
 #include "TranStorage.h"
 #include <vector>
- #include "TranRedoPageManager.h"
 #include "TranLogStateManager.h"
 #include "TranPerfCounter.h"
 #include "TransactionBase.h"
@@ -85,7 +84,7 @@ namespace embDB
 		bool close();
 		
 
-		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize = 0, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true);
+		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize = 0, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true, bool bForChanghe = true);
 		virtual void dropFilePage(FilePagePtr pPage);
 		virtual void dropFilePage(int64 nAddr, uint32 nSize);
 		virtual FilePagePtr getNewPage(uint32 nSize = 0, bool bWrite = false, bool bAddInCache = true);
@@ -130,9 +129,7 @@ namespace embDB
 
 		virtual eDBTransationType getDBTransationType() const {return eTTFullTransaction;}
 	private:
-		bool SaveDBPage(CFilePage* pPage);
-		bool SaveDBPage(int64 nAddr);
-		bool commit_undo();
+ 		bool commit_undo();
 		bool commit_redo();
 		bool restore_undo(bool bForce = false);
 		bool restore_redo(bool bForce = false);
@@ -146,8 +143,6 @@ namespace embDB
 		typedef  std::vector<IDBTransaction*> TInnerTransactions;
 		CTranStorage m_TranStorage;
 		CTransactionCache m_PageChache;
- 
-		CTranRedoPageManager m_TranRedoManager;
 		CTranLogStateManager m_LogStateManager;
  
 		sTransactionHeader m_Header;

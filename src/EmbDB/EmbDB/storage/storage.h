@@ -28,7 +28,7 @@ namespace embDB
 			bool bMultiThread = true);
 		~CStorage();
 
-		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true);
+		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true, bool bForChanghe = true);
 
 		virtual bool dropFilePage(FilePagePtr pPage);
 		virtual  bool dropFilePage(int64 nAddr);

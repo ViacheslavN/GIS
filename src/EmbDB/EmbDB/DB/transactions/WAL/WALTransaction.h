@@ -50,7 +50,7 @@ namespace embDB
 		virtual IUpdateCursorPtr createUpdateCursor() { return  IUpdateCursorPtr(); }
 
 
-		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize = 0, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true);
+		virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize = 0, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true, bool bForChange= true);
 		virtual void dropFilePage(FilePagePtr pPage);
 		virtual void dropFilePage(int64 nAddr, uint32 nSize);
 		virtual FilePagePtr getNewPage(uint32 nSize = 0, bool bWrite = false, bool bAddInCache = true);

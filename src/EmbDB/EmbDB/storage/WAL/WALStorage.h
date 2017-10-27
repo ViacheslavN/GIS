@@ -29,7 +29,7 @@ namespace embDB
 			CWALStorage(CommonLib::alloc_t *pAlloc, int32 nCacheSize = 1000, bool bCheckCRC = true, bool bMultiThread = true);
 			~CWALStorage();
 
-			virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize = 0, bool bRead = true, bool bNeedDecrypt = true);
+			virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize = 0, bool bRead = true, bool bNeedDecrypt = true, bool bForChanghe = true);
 			virtual FilePagePtr getNewPage(uint32 nSize = 0, bool bWrite = false);
 			virtual bool saveFilePage(CFilePage* pPage,  bool ChandgeInCache = false);
 			virtual bool saveFilePage(FilePagePtr pPage,  bool ChandgeInCache = false);
@@ -59,7 +59,7 @@ namespace embDB
 			CommonLib::CFile m_IndexTranFile;
 
 
-			typedef std::map<int64, std::pair<int64, uint32> > TPageAddrs;
+			typedef std::map<int64, int64> TPageAddrs;
 			TPageAddrs m_PageAddrs;
 			CPageCipher *m_pPageChiper;
 

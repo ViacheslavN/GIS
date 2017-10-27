@@ -68,6 +68,9 @@ namespace embDB
 				if(!pTable.get())
 					return IInsertCursorPtr();				 
 
+				IDBTable *pDBTable = (IDBTable *)pTable.get();
+
+				pDBTable->lockWrite(); //TO DO Add to wait graf
 
 				CInsertCursor * pInsertCursor = new CInsertCursor(this, pTable.get(), pFileds);
 				if(!pInsertCursor->init())

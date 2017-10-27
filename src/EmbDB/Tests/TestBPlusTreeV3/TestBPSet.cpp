@@ -2,7 +2,7 @@
 #include "CommonLibrary/general.h"
 #include "Commonlibrary/alloc_t.h"
 
-
+#include "../../EmbDB/storage/storage.h"
 
 #include "../../EmbDB/DB/BTreePlus/BPSet.h"
 #include "../../EmbDB/DB/BTreePlus/BPSetInfoTree.h"
@@ -169,8 +169,8 @@ void insertINBTreeSet(uint32 nPageSize, int32 nCacheBPTreeSize, int64 nStart, in
 	double tranCom = 0;
 	TBtree tree(nTreeRootPage, pTran, pAlloc, nCacheBPTreeSize, nPageSize, false, bCheckCRC);
 	tree.loadBTreeInfo();
-	if (nStart < nEndStart)
-		tree.SetMinSplit(true);
+	//if (nStart < nEndStart)
+	//	tree.SetMinSplit(true);
  
 	time.start();
 	int64 n = 0;
@@ -225,6 +225,7 @@ void insertINBTreeSet(uint32 nPageSize, int32 nCacheBPTreeSize, int64 nStart, in
 	std::cout << "Insert end key start: " << nStart << " key end: " << nEndStart << " Total time: " << (tmInsert + treeCom + tranCom) <<
 		" time insert: " << tmInsert << " time tree commit: " << treeCom << " Tran commit: " << tranCom << std::endl;
  
+	pTran->OutDebugInfo();
 
 }
 
