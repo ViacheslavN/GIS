@@ -3,7 +3,7 @@
 #include "Commonlibrary/alloc_t.h"
 
 
-
+#include "../../EmbDB/storage/storage.h"
 #include "../../EmbDB/DB/BTreePlus/BPMap.h"
 #include "../../EmbDB/DB/BTreePlus/BPLeafNodeMapSimpleCompressor.h"
 #include "../../EmbDB/DB/BTreePlus/BPSetInfoTree.h"

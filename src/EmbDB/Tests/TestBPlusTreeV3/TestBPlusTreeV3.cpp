@@ -5,9 +5,11 @@
 
 void TestBPSetPlusTree();
 void TestBPMapPlusTree();
+void TestPageStream();
 int main()
 {
-	TestBPSetPlusTree();
+	TestPageStream();
+	//TestBPSetPlusTree();
 
 	//TestBPMapPlusTree();
     return 0;

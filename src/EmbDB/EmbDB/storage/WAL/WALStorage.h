@@ -29,7 +29,7 @@ namespace embDB
 			CWALStorage(CommonLib::alloc_t *pAlloc, int32 nCacheSize = 1000, bool bCheckCRC = true, bool bMultiThread = true);
 			~CWALStorage();
 
-			virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize = 0, bool bRead = true, bool bNeedDecrypt = true, bool bForChanghe = true);
+			virtual FilePagePtr getFilePage(int64 nAddr, uint32 nSize = 0, bool bRead = true, bool bNeedDecrypt = true,  bool bForChanghe = true);
 			virtual FilePagePtr getNewPage(uint32 nSize = 0, bool bWrite = false);
 			virtual bool saveFilePage(CFilePage* pPage,  bool ChandgeInCache = false);
 			virtual bool saveFilePage(FilePagePtr pPage,  bool ChandgeInCache = false);
@@ -46,8 +46,8 @@ namespace embDB
 			bool intit(IDBStorage *pDBStorage, IDBStorage *pTranLogStorage);
 
 			virtual FilePagePtr getNewTranLogPage(uint32 nSize, bool bWrite = false, bool bAddCache = false);
-			virtual FilePagePtr getTranLogPage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true);
-			virtual int64 getNewTranLogPageAddr(uint32 nSize);
+			virtual FilePagePtr getTranLogPage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true);
+			virtual int64 getNewTranLogPageAddr(uint32 nSize = 0);
 		private:
 
 			void stopCopy();

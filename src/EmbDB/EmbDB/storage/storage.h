@@ -33,8 +33,8 @@ namespace embDB
 		virtual bool dropFilePage(FilePagePtr pPage);
 		virtual  bool dropFilePage(int64 nAddr);
 		virtual  FilePagePtr getNewPage(uint32 nSize = 0, bool bWrite = false, bool bAddInCache = true);
-		virtual  bool saveFilePage(CFilePage* pPage,  bool bChandgeInCache = false);
-		virtual  bool saveFilePage(FilePagePtr pPage, bool bChandgeInCache = false);
+		virtual  bool saveFilePage(CFilePage* pPage,  bool bChangeInCache = false);
+		virtual  bool saveFilePage(FilePagePtr pPage, bool bChangeInCache = false);
 		virtual bool saveNewPage(FilePagePtr pPage);
 		virtual int64 getNewPageAddr(uint32 nSize = 0);
 

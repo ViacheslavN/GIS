@@ -16,13 +16,14 @@ namespace embDB
 		typedef ITransactionBase<IDBTransaction> TBase;
 
 
-		struct STranPage
+		struct STranPageInfo
 		{
- 			int64 m_nDBAddr;
-			uint32 m_nSize;
+ 			int64 m_nLogTranAddr;
+			uint32 m_nFlags;
+			int64 m_nConverAddr; //Pages has been changed by previous transaction and haven't saved in storage yet
 
 
-			STranPage(int64 nDBAdd, uint32 nSize) :  m_nDBAddr(nDBAdd), m_nSize(nSize)
+			STranPageInfo(int64 nDBAdd, uint32 nFlag ) :  m_nLogTranAddr(nDBAdd), m_nFlags(nFlag), m_nConverAddr(-1)
 			{}
 		};
 
@@ -92,8 +93,7 @@ namespace embDB
 
 		virtual eDBTransationType getDBTransationType() const { return m_TranType; }
 	private:
-		uint32 GetRowPageInfoSize() const;
-		void SaveFilePageInTranLog(CFilePage *pPage);
+	 	void SaveFilePageInTranLog(CFilePage *pPage);
 	private:
 		IDBStorage* m_pDBStorage;
 		IDBWALStoragePtr m_pWALStorage;
@@ -120,10 +120,9 @@ namespace embDB
 		bool m_bMultiThread;
 		uint32 m_nTranCache;
 
-		typedef std::map<int64, STranPage> TTranPages;
+		typedef std::map<int64, STranPageInfo> TTranPages;
 		TTranPages m_TranPages;
-		bool m_bOneSize;
-		uint32 m_nPageSize;
+ 
 		eTransactionDataType m_nTranType;
 
 		std::map<int64, int64> m_ConvertAddr;

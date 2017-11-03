@@ -13,18 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="TestFields">
-      <UniqueIdentifier>{db0e510b-358c-47e1-b0da-c7ff1c5305cf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TestFields\TestIntegerFields">
-      <UniqueIdentifier>{21027a38-2e1f-45de-b0d0-8b0463a1aa3b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TestFields\TestStingFields">
-      <UniqueIdentifier>{e1152ed5-d135-4759-96c4-2afd644d2e9f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TestFields\TestSpatialField">
-      <UniqueIdentifier>{7b062cfb-3c33-4c43-9ce6-9ed2ae81aa1f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -36,30 +24,18 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CommonDatabase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestSpatial.h">
-      <Filter>TestFields\TestSpatialField</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestFields.cpp">
+    <ClCompile Include="MultiThreadTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestIntegerFields.cpp">
-      <Filter>TestFields\TestIntegerFields</Filter>
+    <ClCompile Include="TestLockObject.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestStringField.cpp">
-      <Filter>TestFields\TestStingFields</Filter>
-    </ClCompile>
-    <ClCompile Include="TestSpatial.cpp">
-      <Filter>TestFields\TestSpatialField</Filter>
-    </ClCompile>
-    <ClCompile Include="TestPageStream.cpp">
+    <ClCompile Include="TestWaitForGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

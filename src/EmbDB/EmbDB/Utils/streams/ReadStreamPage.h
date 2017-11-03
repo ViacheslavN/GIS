@@ -34,26 +34,16 @@ namespace embDB
 			  assert(m_nBeginPos < m_pPage->getPageSize());
 
 			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
-
-			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
+			  sFilePageHeader header(m_stream, m_pPage->getPageSize(), m_bCheckCRC);
+			  if(!header.isValid())
 			  {
-				  sFilePageHeader header(m_stream, m_pPage->getPageSize(), m_bCheckCRC);
-				  if(/*!m_pPage->isCheck() &&*/ !header.isValid())
-				  {
-					  //TO DO Logs
-					  return false;
-				  }
-				  if(header.m_nObjectPageType != m_nObjectPage || header.m_nSubObjectPageType != m_nSubObjectPage)
-				  {
-					  //TO DO Logs
-					  return false;
-				  }
-
-				//  m_pPage->setCheck(true);
+				  return false;
 			  }
-
-
-
+			  if(header.m_nObjectPageType != m_nObjectPage || header.m_nSubObjectPageType != m_nSubObjectPage)
+			  {
+				  //TO DO Logs
+				  return false;
+			  }
 			  m_stream.seek(m_nBeginPos, CommonLib::soFromCurrent);
 			  return true;
 		  }
@@ -71,45 +61,29 @@ namespace embDB
 			  
 			  assert(m_nBeginPos < m_pPage->getPageSize());
 			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
-
-			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
+			  sFilePageHeader header(m_stream, m_pPage->getPageSize(), m_bCheckCRC);
+			  if(!header.isValid())
 			  {
-				  sFilePageHeader header(m_stream, m_pPage->getPageSize(), m_bCheckCRC);
-				  if(!header.isValid())
-				  {
-					  //TO DO Logs
-					  return false;
-				  }
-				  if(header.m_nObjectPageType != m_nObjectPage || header.m_nSubObjectPageType != m_nSubObjectPage)
-				  {
-					  //TO DO Logs
-					  return false;
-				  }
-
-				//  m_pPage->setCheck(true);
-
-				  if(m_nBeginPos != 0)
-					 m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
+				  //TO DO Logs
+				  return false;
 			  }
-			  else
-				  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
-
-			
-
-
-			 
+			  if(header.m_nObjectPageType != m_nObjectPage || header.m_nSubObjectPageType != m_nSubObjectPage)
+			  {
+				  //TO DO Logs
+				  return false;
+			  }
+			  if(m_nBeginPos != 0)
+				 m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
 				return true;
-
 		  }
 
 		  virtual void read_bytes(byte* buffer, uint32 size)
 		  {
-
 			
 			  uint32 nPos = 0;
 			  while(size)
 			  {
-				    uint32 nFreeSize = m_stream.size() - m_stream.pos();
+				    uint32 nFreeSize = m_stream.size() - m_stream.pos() - sizeof(int64);;
 					if(nFreeSize >= size)
 					{
 						m_stream.read_bytes(buffer + nPos, size);
@@ -117,30 +91,25 @@ namespace embDB
 					}
 					else
 					{
-						uint32 nReadSize = nFreeSize - sizeof(int64);
-						if(nReadSize)
+						uint32 nReadSize = nFreeSize;
+						if (nReadSize)
 						{
 							m_stream.read_bytes(buffer + nPos, nReadSize);
 							size -= nReadSize;
 							nPos += nReadSize;
-
-							int64 nNextPage = m_stream.readInt64();
-							if(!NextPage(nNextPage))
-								return; //TO DO Log
 						}
+						int64 nNextPage = m_stream.readInt64();
+						if(!NextPage(nNextPage))
+							return; //TO DO Log
 					}
-
-			  }
-			
-			 
-
+				}
 		  }
 		  virtual void read_inverse(byte* buffer, uint32 size)
 		  {
 			  uint32 nPos = 0;
 			  while(size)
 			  {
-				  uint32 nFreeSize = m_stream.size() - m_stream.pos();
+				  uint32 nFreeSize = m_stream.size() - m_stream.pos() - sizeof(int64);;
 				  if(nFreeSize >= size)
 				  {
 					  m_stream.read_inverse(buffer + nPos, size);
@@ -148,7 +117,7 @@ namespace embDB
 				  }
 				  else
 				  {
-					  uint32 nReadSize = nFreeSize - sizeof(int64);
+					  uint32 nReadSize = nFreeSize;
 					  if(nReadSize)
 					  {
 						  m_stream.read_inverse(buffer + nPos, nReadSize);
@@ -203,32 +172,21 @@ namespace embDB
 		  {
 			  if(nNextPage == -1)
 				  return false; // TO DO Log
-
 			 m_pPage = m_pTran->getFilePage(nNextPage, m_nPageSize, true);
 			  if(!m_pPage.get())
 				  return false;  // TO DO Log
-
 			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
-
-			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
+			  sFilePageHeader header(m_stream, m_pPage->getPageSize(), m_bCheckCRC);
+			  if (!header.isValid())
 			  {
-				  sFilePageHeader header(m_stream, m_pPage->getPageSize(), m_bCheckCRC);
-				  if(!header.isValid())
-				  {
-					  //TO DO Logs
-					  return false;
-				  }
-				  if(header.m_nObjectPageType != m_nObjectPage || header.m_nSubObjectPageType != m_nSubObjectPage)
-				  {
-					  //TO DO Logs
-					  return false;
-				  }
-
-				//  m_pPage->setCheck(true);
+				  //TO DO Logs
+				  return false;
 			  }
-
-
-
+			  if (header.m_nObjectPageType != m_nObjectPage || header.m_nSubObjectPageType != m_nSubObjectPage)
+			  {
+				  //TO DO Logs
+				  return false;
+			  }
 			return true;
 		  }
 

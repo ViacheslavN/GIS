@@ -144,8 +144,8 @@ namespace embDB
 		FilePagePtr pPage = m_Chache.GetElem(nAddr);
 		if (pPage.get())
 		{
-			//if (!bAddInCache)
-			//	m_Chache.remove(nAddr);
+			if (!bAddInCache)
+				m_Chache.remove(nAddr);
 			return pPage;
 		}
 

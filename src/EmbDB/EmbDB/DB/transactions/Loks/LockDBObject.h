@@ -13,11 +13,12 @@ namespace embDB
 		~CLockDBObject();
 
 		virtual void Lock(eLockType type);
+		virtual void ChangeLock(eLockType typeFrom, eLockType typeTo);
 		virtual void UnLock(eLockType type);
 		virtual bool IsTypeLock(eLockType type);
 		virtual bool TryToLock(eLockType type);
 
- 
+		virtual uint32 GetCountOfWaiting(eLockType type);
 
 	private:
 		void LockForRead();
@@ -27,6 +28,10 @@ namespace embDB
 		void UnLockForRead();
 		void UnLockForWrite();
 		void UnLockForExclusive();
+
+
+		void FromWriteToExclusive();
+		void AddCountOfWaiting(eLockType type, bool bAdd);
 	private:
 
 		enum eFlag
@@ -43,5 +48,11 @@ namespace embDB
 		uint32 m_nFlag;
 		std::condition_variable m_condition;
 
+
+		std::shared_mutex m_shmutex;
+
+		uint32 m_nWaitingReaders;
+		uint32 m_nWaitingWriters;
+		uint32 m_nWaitingExclusive;
 	};
 }

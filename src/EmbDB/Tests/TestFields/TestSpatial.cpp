@@ -343,7 +343,7 @@ void ImportShapeFile(const wchar_t* pszDBName, const wchar_t* pszShapeFileName, 
 						pCacheObject = ShapeLib::SHPReadObject(shp.file, row);
 						SHPObjectToGeometry(pCacheObject, shape);
 
-						nShapeRowSize += shape.getRowSize();
+					//	nShapeRowSize += shape.getRowSize();
 						//CommonLib::MemoryStream steram;
 						// shape.write(&steram);
 						//nShapeRowSize += steram.pos();

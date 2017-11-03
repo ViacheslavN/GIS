@@ -27,6 +27,14 @@ namespace embDB
 	};
 
 
+
+	enum  eWaitRes
+	{
+		wrObjectCaptured = 0,
+		wrWaitingObject = 1,
+		wrDeadLock = 2
+	};
+
 	struct sFieldInfo
 	{
 		sFieldInfo() : 
@@ -803,8 +811,8 @@ namespace embDB
 		virtual bool commit(IDBWALTransaction *pTran) = 0;
 
 		virtual FilePagePtr getNewTranLogPage(uint32 nSize, bool bWrite = false, bool bAddCache = false) = 0;
-		virtual FilePagePtr getTranLogPage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true) = 0;
-		virtual int64 getNewTranLogPageAddr(uint32 nSize) = 0;
+		virtual FilePagePtr getTranLogPage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true) = 0;
+		virtual int64 getNewTranLogPageAddr(uint32 nSize = 0) = 0;
 	};
 
 
@@ -824,7 +832,7 @@ namespace embDB
 	{
 		IWaitForGraph(){}
 		virtual ~IWaitForGraph(){}
-		virtual bool TryToLockObject(eWaitObjectType type, int64 nObjecID, int64 nTranID, eLockType lockType) = 0;
+		virtual eWaitRes TryToLockObject(eWaitObjectType type, int64 nObjecID, int64 nTranID, eLockType lockType) = 0;
 		virtual bool LockObject(eWaitObjectType type, int64 nObjecID, int64 nTranID, eLockType lockType) = 0;
 		virtual bool FreeObject(eWaitObjectType type, int64 nObjecID, int64 nTranID, eLockType lockType) = 0;
 	};

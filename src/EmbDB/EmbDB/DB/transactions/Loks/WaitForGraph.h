@@ -13,7 +13,7 @@ namespace embDB
 			CWaitForGraph();
 			~CWaitForGraph();
 
-			virtual bool TryToLockObject(eWaitObjectType type, int64 nObjecID, int64 nTranID, eLockType lockType);
+			virtual eWaitRes TryToLockObject(eWaitObjectType type, int64 nObjecID, int64 nTranID, eLockType lockType);
 			virtual bool LockObject(eWaitObjectType type, int64 nObjecID, int64 nTranID, eLockType lockType);
 			virtual bool FreeObject(eWaitObjectType type, int64 nObjecID, int64 nTranID, eLockType lockType);
 		private:
@@ -24,43 +24,43 @@ namespace embDB
 				 
 				std::map<int64, eLockType> m_setTranOwners;
 				eWaitObjectType type;
-				SResVertex()
+				uint32 m_nCountWaiting;
+				SResVertex(): m_nCountWaiting(0)
 				{}
+			};
+
+			struct SWatingInfo
+			{
+				eLockType m_type;
+				SResVertex* m_pResObj;
+				uint32 mDate;
+				uint32 m_nTime;
 			};
 
 			struct STranVertex
 			{		 
-
+				uint32 m_nOwnResources;
 				std::vector<std::pair<eLockType, SResVertex*> > m_WaitVertex;
-				STranVertex()
+				STranVertex() : m_nOwnResources(0)
 				{}
 			};
 
 
-			struct SVertex
-			{
-				eWaitObjectType m_type;
-				std::list<SVertex*> m_vertex;
-
-				SVertex(eWaitObjectType type) : m_type(type)
-				{}
-			};
-
-			typedef std::map<std::pair<int32, int64>, SVertex*> TMapVertex;
+		 
+ 
 
 			typedef std::map<int64, STranVertex*> TMapTranVertex;
 			typedef std::map<std::pair<int32, int64>, SResVertex*> TMapResVertex;
 
 	private:
-		bool TryToLockObject(int64 nObjecID, int64 nTranID, STranVertex *pVertexTran, SResVertex *pVertexResObj, eLockType lockType);
+		eWaitRes TryToLockObject(int64 nObjecID, int64 nTranID, STranVertex *pVertexTran, SResVertex *pVertexResObj, eLockType lockType);
 		bool CanBeLocked(eLockType lockType, eLockType lockOwnerType) const;
 	private:
-		CommonLib::CSLockObject m_Lock;
-		TMapVertex m_Graf;
+		std::mutex m_mutex;
+ 
 
 		TMapTranVertex m_Transactions;
 		TMapResVertex m_Resources;
-
-	};
+ 	};
 }
 

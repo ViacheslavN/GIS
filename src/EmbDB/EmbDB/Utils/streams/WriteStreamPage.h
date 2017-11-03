@@ -33,14 +33,10 @@ namespace embDB
 			  assert(m_nBeginPos < m_pPage->getPageSize());
 
 			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
-			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
-			  {
-				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, pPage->getPageSize(), m_bCheckCRC);
-				  if(m_nBeginPos != 0)
-					  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
-			  }
-			  else
+			  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, pPage->getPageSize(), m_bCheckCRC);
+			  if(m_nBeginPos != 0)
 				  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
+
 
 			  if(!m_bOpenNew)
 				 ReadNextPageAddr();
@@ -62,27 +58,18 @@ namespace embDB
 			  {
 				  m_nPageHeader = nPageHeader;
 				  m_nBeginPos = nBeginPos;
-				  m_pPage = m_pTran->getFilePage(m_nPageHeader,  m_nPageSize, false);
+				  m_pPage = m_pTran->getFilePage(m_nPageHeader,  m_nPageSize, bReopen);
 				  if(!m_pPage.get())
 					  return false; //TO DO Log;
 			  }
-
-			
-
 			
 			  assert(m_nBeginPos < m_pPage->getPageSize());
 			 
 			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
-			  if(m_nObjectPage !=0 && m_nSubObjectPage != 0)
-			  {
-				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize(), m_bCheckCRC);
-				  if(m_nBeginPos != 0)
-					  m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
-			  }
-			  else
-				   m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
-
-
+			  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize(), m_bCheckCRC);
+			  if(m_nBeginPos != 0)
+					m_stream.seek(m_nBeginPos, CommonLib::soFromBegin);
+	
 			  if (!m_bOpenNew)
 				  ReadNextPageAddr();
 			  return true;
@@ -98,11 +85,6 @@ namespace embDB
 			  while(size)
 			  {
 				  int32 nFreeSize = m_stream.size() - m_stream.pos() - sizeof(int64);
-				  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
-				  {
-					  nFreeSize -= sFilePageHeader::size(m_bCheckCRC);  
-				  }
-
 				  if((int32)size <= nFreeSize)
 				  {
 					  m_stream.write_bytes(buffer + nPos, size);
@@ -110,25 +92,26 @@ namespace embDB
 				  }
 				  else
 				  {
-					 /* if(nFreeSize < sizeof(int64))
-					  { 
-						  NextPage();
-						  continue;
-					  }*/
-					  uint32 nWriteSize = nFreeSize;
-			   
 
+					  uint32 nWriteSize = nFreeSize;
 					  m_stream.write_bytes(buffer + nPos, nWriteSize);
-					  FilePagePtr pPage = m_nNextPage != -1 ? m_pTran->getNewPage(m_nPageSize) : m_pTran->getNewPage(m_nPageSize);
+					  FilePagePtr pPage = m_nNextPage != -1 ? m_pTran->getFilePage(m_nNextPage, m_nPageSize, true) : m_pTran->getNewPage(m_nPageSize);
 					  if(!pPage.get())
 					  {
 						 return; //TO DO Log
 					  }
 					  m_stream.write(pPage->getAddr());
+					  if (m_bCheckCRC)
+					  {
+						  sFilePageHeader header(m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize(), m_bCheckCRC);
+						  header.writeCRC32(m_stream);
+					  }
 					  m_pTran->saveFilePage(m_pPage);
 
 					  m_pPage = pPage;
 					  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
+					  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize(), m_bCheckCRC);
+
 					  size -= nWriteSize;
 					  nPos += nWriteSize;
 
@@ -149,11 +132,6 @@ namespace embDB
 			  while (size)
 			  {
 				  int32 nFreeSize = m_stream.size() - m_stream.pos() - sizeof(int64);
-				  if (m_nObjectPage != 0 && m_nSubObjectPage != 0)
-				  {
-					  nFreeSize -= sFilePageHeader::size(m_bCheckCRC);
-				  }
-
 				  if ((int32)size <= nFreeSize)
 				  {
 					  m_stream.write_inverse(buffer + nPos, size);
@@ -161,25 +139,29 @@ namespace embDB
 				  }
 				  else
 				  {
-					  /* if(nFreeSize < sizeof(int64))
-					  {
-					  NextPage();
-					  continue;
-					  }*/
+					
 					  uint32 nWriteSize = nFreeSize;
 
 
 					  m_stream.write_inverse(buffer + nPos, nWriteSize);
-					  FilePagePtr pPage = m_nNextPage != -1 ? m_pTran->getNewPage(m_nPageSize) : m_pTran->getNewPage(m_nPageSize);
+					  FilePagePtr pPage = m_nNextPage != -1 ? m_pTran->getFilePage(m_nNextPage, m_nPageSize, true) : m_pTran->getNewPage(m_nPageSize);
 					  if (!pPage.get())
 					  {
 						  return; //TO DO Log
 					  }
+				
 					  m_stream.write(pPage->getAddr());
+					  if (m_bCheckCRC)
+					  {
+						  sFilePageHeader header(m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize(), m_bCheckCRC);
+						  header.writeCRC32(m_stream);
+					  }
+
 					  m_pTran->saveFilePage(m_pPage);
 
 					  m_pPage = pPage;
 					  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
+					  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize(), m_bCheckCRC);
 					  size -= nWriteSize;
 					  nPos += nWriteSize;
 
@@ -193,43 +175,20 @@ namespace embDB
 			 }
 
 		  }
-
-
-		  void NextPage()
-		  {
-			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
-			  {
-				  sFilePageHeader header(m_nObjectPage, m_nSubObjectPage, m_nPageSize, m_bCheckCRC);
-				  header.writeCRC32(m_stream);
-			
-			  }
-
-			  m_pTran->saveFilePage(m_pPage);
-			  FilePagePtr pPage = m_pTran->getNewPage(m_nPageSize);
-			  if(!pPage.get())
-			  {
-				  return; //TO DO Log
-			  }
-			  m_pPage = pPage;
-			  m_stream.attachBuffer(m_pPage->getRowData(), m_pPage->getPageSize());
-			  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
-			  {
-				  sFilePageHeader header(m_stream, m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize(), m_bCheckCRC);
-			  }
-		  }
- 
 		  void Save()
 		  {
 			  if(m_pPage.get())
 			  {
-				  if(m_nObjectPage != 0 && m_nSubObjectPage != 0)
-				  {
-					  sFilePageHeader header(m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize(), m_bCheckCRC);
-					  header.writeCRC32(m_stream);
-
-				  }
+				 sFilePageHeader header(m_nObjectPage, m_nSubObjectPage, m_pPage->getPageSize(), m_bCheckCRC);
+				 uint32 nPos = m_stream.pos();
 				  m_stream.seek(-int32(sizeof(int64)), CommonLib::soFromEnd);
 				  m_stream.write(m_nNextPage);
+				  m_stream.seek(nPos, CommonLib::soFromBegin);
+				  header.write(m_stream);
+				  if(m_bCheckCRC)
+					  header.writeCRC32(m_stream);
+
+
 				  m_pTran->saveFilePage(m_pPage);
 			  }
 		  }

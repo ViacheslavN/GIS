@@ -34,11 +34,9 @@ namespace embDB
 		
 
 	bool CWALStorage::saveFilePage(CFilePage* pPage,  bool ChandgeInCache )
-	{
-		 
+	{		 
 		assert(pPage->getRealAddr() != -1);
 		return m_pDBLogStorage->saveFilePage(pPage, ChandgeInCache);
-		
 	}
 
 	FilePagePtr CWALStorage::getNewPage(uint32 nSize, bool bWrite )
@@ -59,9 +57,9 @@ namespace embDB
 	{
 		return m_pDBLogStorage->getNewPage(nSize, bWrite, bAddCache);
 	}
-	FilePagePtr CWALStorage::getTranLogPage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt )
+	FilePagePtr CWALStorage::getTranLogPage(int64 nAddr, uint32 nSize, bool bRead, bool bNeedDecrypt, bool bAddCache)
 	{
-		return m_pDBLogStorage->getFilePage(nAddr, nSize, bRead, bNeedDecrypt);
+		return m_pDBLogStorage->getFilePage(nAddr, nSize, bRead, bNeedDecrypt, bAddCache);
 	}
 	int64 CWALStorage::getNewTranLogPageAddr(uint32 nSize)
 	{
