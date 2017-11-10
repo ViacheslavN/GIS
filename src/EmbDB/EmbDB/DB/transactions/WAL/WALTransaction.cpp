@@ -172,6 +172,12 @@ namespace embDB
 		writeStream.Save();
  
 		m_pWALStorage->lock();
+		for (auto it = m_TranPages.begin(); it != m_TranPages.end(); ++it)
+		{
+			auto& nPageInfo = it->second;
+			m_pWALStorage->addPageToCheckPoint(nCheckPointAddr, it->first, nPageInfo.m_nConverAddr != -1 ? nPageInfo.m_nConverAddr : nPageInfo.m_nLogTranAddr);
+ 
+		}
 
 
 

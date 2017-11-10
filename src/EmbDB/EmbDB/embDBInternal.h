@@ -795,6 +795,21 @@ namespace embDB
 	 
 	};
 
+
+
+	struct SCheckPointPageInfo
+	{
+		int64 m_nLogTranAddr;
+		int64 m_nDBAddr;
+		SCheckPointPageInfo() : m_nLogTranAddr(-1), m_nDBAddr(-1)
+		{}
+	};
+
+
+	typedef std::vector<SCheckPointPageInfo> TCheckPointPages;
+	typedef std::map<int64, TCheckPointPages> TCheckPoints;
+
+
 	struct IDBWALStorage : public IFilePage, public CommonLib::AutoRefCounter
 	{
 	public:
@@ -813,6 +828,11 @@ namespace embDB
 		virtual FilePagePtr getNewTranLogPage(uint32 nSize, bool bWrite = false, bool bAddCache = false) = 0;
 		virtual FilePagePtr getTranLogPage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true) = 0;
 		virtual int64 getNewTranLogPageAddr(uint32 nSize = 0) = 0;
+
+
+		virtual TCheckPointPages& getCheckPoint(int64 nAddr) = 0;
+		virtual  void UpdateCheckPoint(int64 nAddr) = 0
+
 	};
 
 
