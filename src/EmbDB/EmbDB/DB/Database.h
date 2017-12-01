@@ -5,8 +5,8 @@
 #include "Schema.h"
 #include "CommonLibrary/String.h"
 #include "../embDBInternal.h"
-
 #include "UserCryptoManager.h"
+#include <set>
 namespace embDB
 {
 	class CFilePage;

@@ -213,7 +213,8 @@ namespace GisEngine
 			if (!pj)
 				return false;
 
-			if (pShape->IsSuccinct())
+			bool bSuccinct = pShape->IsSuccinct();
+			if (bSuccinct)
 				pShape->InnerDecode();
 
 			if(pj_is_latlong((PJ*)m_prjHandle) && !pj_is_latlong((PJ*)pj))
@@ -365,7 +366,8 @@ namespace GisEngine
 						memcpy(pShape->getZs(), &newZs[0], newZs.size() *  sizeof(double));
 				}
 				pShape->calcBB();
-				pShape->InnerEncode();
+				if(bSuccinct)
+					pShape->InnerEncode();
 				return true;
 			}
 

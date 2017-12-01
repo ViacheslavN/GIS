@@ -149,16 +149,13 @@ namespace embDB
 			return pPage;
 		}
 
-
 	/*	if((nSize % m_nBasePageSize) != 0 )
 			return FilePagePtr();
 		if(nSize == 0)
 			nSize = m_nBasePageSize;
 
 		uint32 nCount = nSize/m_nBasePageSize;*/
-
-
-		
+				
 		pPage = new CFilePage(m_pAlloc, m_nBasePageSize/*nSize*/, nAddr);
 		if(bRead)
 		{

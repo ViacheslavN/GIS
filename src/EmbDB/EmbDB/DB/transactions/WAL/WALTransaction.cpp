@@ -170,18 +170,20 @@ namespace embDB
 		}
 
 		writeStream.Save();
+
+		//m_pWALStorage->flushTranLog();
  
-		m_pWALStorage->lock();
+		//m_pWALStorage->lock();
+		auto & CheckPointPage = m_pWALStorage->getCheckPoint(nCheckPointAddr);
+
 		for (auto it = m_TranPages.begin(); it != m_TranPages.end(); ++it)
 		{
 			auto& nPageInfo = it->second;
-			m_pWALStorage->addPageToCheckPoint(nCheckPointAddr, it->first, nPageInfo.m_nConverAddr != -1 ? nPageInfo.m_nConverAddr : nPageInfo.m_nLogTranAddr);
- 
+			CheckPointPage.push_back(SCheckPointPageInfo(it->first, nPageInfo.m_nConverAddr != -1 ? nPageInfo.m_nConverAddr : nPageInfo.m_nLogTranAddr));
 		}
+		m_pWALStorage->UpdateCheckPoint(nCheckPointAddr);
 
-
-
-		m_pWALStorage->unlock();
+	//	m_pWALStorage->unlock();
 		
 		return true;
 	}

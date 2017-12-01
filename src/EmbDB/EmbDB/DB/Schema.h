@@ -3,7 +3,6 @@
 #include "stdafx.h"
 #include "CommonLibrary/String.h"
 #include "CommonLibrary/stream.h"
-#include "../utils/PageVector.h"
 #include "../embDBInternal.h"
 #include <map>
  
@@ -65,15 +64,17 @@ namespace embDB
 
 			bool LoadSchema();
 			bool saveHead(IDBTransaction *Tran);
-			bool readTablePage(CommonLib::IReadStream* pStream);
+	 
 		
+			bool LoadTablesAddr();
+			bool SaveTablesAddr(IDBTransaction *Tran);
 		
 		private:
 			IDBStorage* m_pStorage;
 			typedef std::map<CommonLib::CString, ITablePtr> TTablesByName;
 			typedef std::map<int64, ITablePtr> TTablesByID;
 			typedef std::vector<ITablePtr> TTables;
-			typedef TPageVector<int64> TTablePages;
+			typedef std::vector<int64> TTablePages;
 
 			TTablesByName m_TablesByName;
 			TTablesByID	  m_TablesByID;
@@ -82,7 +83,7 @@ namespace embDB
 			int64 m_nAddr;
 			int64 m_nTablesPage;
 			CDatabase* m_pDB;
-			TTablePages m_nTablesAddr;
+			TTablePages m_vecTablesAddr;
 			uint32 m_nPageSize;
 			//int64 m_nLastTableID;
 

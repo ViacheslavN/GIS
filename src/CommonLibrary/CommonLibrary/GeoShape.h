@@ -180,7 +180,10 @@ namespace CommonLib
 
 		byte* buffer() { return m_blob.buffer(); }
 		const byte* buffer() const { return m_blob.buffer(); }
- 
+		void SetCompParams(const shape_compress_params &compParams) 
+		{
+			m_comp_params = compParams;
+		}
 
 	private:
 

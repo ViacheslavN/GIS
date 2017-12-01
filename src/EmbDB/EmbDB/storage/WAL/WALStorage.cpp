@@ -109,12 +109,22 @@ namespace embDB
 		return false;
 	}
 
-	bool CWALStorage::intit(IDBStorage *pDBStorage, IDBStorage *pTranLogStorage)
+	bool CWALStorage::intit(IDBStorage *pDBStorage, IDBStorage *pTranLogStorage, bool bNew)
 	{
 		m_pDBStorage = pDBStorage;
 		m_pDBLogStorage = pTranLogStorage;
  
+		m_pCheckPointStream.reset(new TCheckPointStream(m_pDBLogStorage.get(), PAGE_SIZE_8K, true, 0, 0));
 
+		if (bNew)
+		{
+
+		}
+		else
+		{
+
+
+		}
 
 		return true;
 	}
@@ -127,5 +137,16 @@ namespace embDB
 		//pTran->
 
 		return true;
+	}
+
+	void CWALStorage::SetOffset(uint32 nLogTranOffset, uint32 nDBFileOffset)
+	{
+		m_pDBLogStorage->SetOffset(nLogTranOffset);
+		m_pDBStorage->SetOffset(nDBFileOffset);
+	}
+
+	void CWALStorage::UpdateCheckPoint(int64 nAddr)
+	{
+		m_pCheckPointStream->write(nAddr);
 	}
 }

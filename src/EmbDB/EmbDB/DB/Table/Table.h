@@ -134,7 +134,11 @@ namespace embDB
 
 			typedef std::map<CommonLib::CString, IFieldStatisticHolderPtr> FieldStatisticByName;
 
-			typedef TPageVector<int64> TFieldPages;
+			typedef std::vector<int64> TFieldPages;
+
+			bool LoadAddrs(TFieldPages& vecAddrs, int64 nBeginPage, IFilePage *pTran);
+			bool SaveAddrs(const TFieldPages& vecAddrs, int64 nBeginPage, IFilePage *pTran, bool bNew);
+		private:
   
 
 			TIndexByName m_IndexByName;
@@ -149,9 +153,9 @@ namespace embDB
 			IDBStoragePtr m_pDBStorage;
 			CommonLib::CString m_sTableName;
 			CDatabase* m_pDB;
-			TFieldPages m_nFieldsAddr;
-			TFieldPages m_nIndexAddr;
-			TFieldPages m_nStatisticsAddr;
+			TFieldPages m_vecFieldsAddr;
+			TFieldPages m_vecIndexAddr;
+			TFieldPages m_vecStatisticsAddr;
 
 			typedef TCounter<int64> TOIDCounter;
 			TOIDCounter m_OIDCounter;

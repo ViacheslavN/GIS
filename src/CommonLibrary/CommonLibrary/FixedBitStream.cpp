@@ -30,6 +30,7 @@ namespace CommonLib
 		if(!TBase::attach(pStream, nPos, nSize, bSeek))
 			return false;
 		m_pBuffer[0] = 0;
+		m_nCurrBit = 0;
 		return true;
 	}
 

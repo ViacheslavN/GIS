@@ -4,11 +4,12 @@
 #include "Database.h"
 #include "Table/Table.h"
 #include "storage/storage.h"
+#include "Utils/streams/WriteStreamPage.h"
+#include "Utils/streams/ReadStreamPage.h"
 namespace embDB
 {
 	CSchema::CSchema(CDatabase *pDB) : m_pDB(pDB), m_pStorage(NULL), 
-		m_nAddr(-1), m_nTablesPage(-1), 
-		m_nTablesAddr(-1, 0, SCHEMA_PAGE, SCHEMA_TABLE_LIST_PAGE, pDB->getCheckCRC()), m_nPageSize(MIN_PAGE_SIZE)
+		m_nAddr(-1), m_nTablesPage(-1), m_nPageSize(MIN_PAGE_SIZE)
 	{
 
 	}
@@ -57,13 +58,9 @@ namespace embDB
 		m_TablesByID.insert(std::make_pair(pTable->getAddr(), pTablePtr));
 		m_vecTables.push_back(pTablePtr);
 		 
-		if(!m_nTablesAddr.push(nPageAddr, pDBTran.get()))
-		{
-			 
-			return false;
-		}
-	 
-		return true;
+		m_vecTablesAddr.push_back(nPageAddr);
+		return SaveTablesAddr(pDBTran.get());
+		 
 	}
 	
 	bool CSchema::LoadSchema()
@@ -94,14 +91,14 @@ namespace embDB
 		m_nTablesPage = stream.readInt64(); 
 		if(m_nTablesPage == -1)
 			return true;
-		m_nTablesAddr.setFirstPage(m_nTablesPage);
-		m_nTablesAddr.setPageSize(nTableListPageSize/*m_pStorage->getPageSize()*/);
-		m_nTablesAddr.load(m_pStorage);
-		TTablePages::iterator it = m_nTablesAddr.begin();
-		while(!it.isNull())
+
+		if (!LoadTablesAddr())
+			return false;
+
+		for (size_t i = 0; i < m_vecTablesAddr.size(); ++i)
 		{
-			CTable* pTable = new CTable(m_pDB, it.value());
-			if(!pTable->load())
+			CTable* pTable = new CTable(m_pDB, m_vecTablesAddr[i]);
+			if (!pTable->load())
 			{
 				delete pTable;
 				return false;
@@ -109,37 +106,10 @@ namespace embDB
 			m_TablesByName.insert(std::make_pair(pTable->getName(), ITablePtr(pTable)));
 			m_TablesByID.insert(std::make_pair(pTable->getAddr(), ITablePtr(pTable)));
 			m_vecTables.push_back(ITablePtr(pTable));
-			it.next();
-		}
-
-		/*ListDBPage<CStorage> listDB(m_pStorage, DB_SCHEMA_TABLE_SYMBOL);
-		if(!listDB.load(&stream, m_nTablesPage))
-			return false;
-		if(!readTablePage(&stream))
-			return false;
-		while(listDB.next(&stream))
-		{
-			if(!readTablePage(&stream))
-				return false;
-		}*/
-		return true;
-	}
-	bool CSchema::readTablePage(CommonLib::IReadStream* pStream)
-	{
-		uint32 nSize = pStream->readInt32();
-		if(nSize == 0)
-			return true;
-		//int nPageSize = m_pStorage->getPageSize();
-		//if(nSize > (nPageSize/sizeof(int64)) - 2)
-		//	return false;
-
-		for(uint32 i = 0; i < nSize; ++i)
-		{
-			int64 nPageAddr = pStream->readInt64();
-			
 		}
 		return true;
 	}
+
 	bool CSchema::saveHead(IDBTransaction *pTran)
 	{
 		FilePagePtr pPage(pTran ? pTran->getFilePage(m_nAddr, m_nPageSize) : m_pStorage->getFilePage(m_nAddr, m_nPageSize));
@@ -154,39 +124,15 @@ namespace embDB
 		stream.write((int64)-1); //prev
 		stream.write(m_nTablesPage); //TablePage
 		header.writeCRC32(stream);
-		if(pTran)
-		{
-			pPage->setFlag(eFP_CHANGE, true);
-			pTran->saveFilePage(pPage);
-			m_nTablesAddr.save(pTran);
-		}
-		else		
-		{
-			m_nTablesAddr.save(m_pStorage);
-			m_pStorage->saveFilePage(pPage);
-		}
-		return true;
+		
+		return SaveTablesAddr(pTran);
 	}
 	bool CSchema::save(IDBTransaction *pTran)
 	{
 		if(!pTran && !m_pStorage)
 			return false;
-
-		if(m_nTablesPage == -1)
-		{
-			FilePagePtr pPage (pTran ?  pTran->getNewPage(m_nPageSize) : m_pStorage->getNewPage(m_nPageSize));
-			if(!pPage.get())
-				return false;
-			 m_nTablesPage = pPage->getAddr();
-			 m_nTablesAddr.setFirstPage(m_nTablesPage);
-			 m_nTablesAddr.setPageSize(pPage->getPageSize());
-			if(!saveHead(pTran))
-				return false;
-		}
-		if(pTran)
-			return m_nTablesAddr.save(pTran);
-		else
-			return m_nTablesAddr.save(m_pStorage);
+ 
+		return saveHead(pTran);
 	}
 
 	bool CSchema::dropTable(ITable *pTable, ITransaction *pTran)
@@ -199,8 +145,9 @@ namespace embDB
 
 		TTables::iterator it = std::find(m_vecTables.begin(), m_vecTables.end(), ITablePtr(pTable));
 		assert(it == m_vecTables.end());
-		if(it == m_vecTables.end())
+		if (it == m_vecTables.end())
 			return false;
+		 
 	 
 
 	    CTable *pDBTable = (CTable*)pTable;
@@ -212,13 +159,17 @@ namespace embDB
 			pDBTran->error(L""); //TO DO Error msg
 			return false;
 		}
-		if(!m_nTablesAddr.remove(pDBTable->getAddr(), pDBTran))
-			return false;
+ 
+		
+		auto it_addr = std::find(m_vecTablesAddr.begin(), m_vecTablesAddr.end(), pDBTable->getAddr());
+		m_vecTablesAddr.erase(it_addr);
+		
 
 		m_TablesByName.erase(pDBTable->getName());
 		m_TablesByID.erase(pDBTable->getAddr());
 		m_vecTables.erase(it);
 
+		SaveTablesAddr(pDBTran);
  
 		return true;
 	}
@@ -264,6 +215,45 @@ namespace embDB
 		return ITablePtr();
 	}
 
+
+	bool CSchema::LoadTablesAddr()
+	{
+		ReadStreamPage stream(m_pStorage, PAGE_SIZE_8K, true, 0, 0);
+		if (!stream.open(m_nTablesPage, 0))
+			return false;
+		uint32 nTable = stream.readIntu32();
+		for (uint32 i = 0; i < nTable; ++i)
+			m_vecTablesAddr.push_back(stream.readIntu64());
+
+		return true;
+
+	}
+	bool CSchema::SaveTablesAddr(IDBTransaction *pTran)
+	{
+		WriteStreamPage stream(pTran ? (IFilePage*)pTran : (IFilePage*)m_pStorage, true, 0, 0);
+		 
+		if (m_nTablesPage == -1)
+		{
+			auto pPage = m_pStorage->getNewPage();
+			if (pPage.get())
+				return false;
+
+			m_nTablesPage = pPage->getAddr();
+			stream.open(pPage, 0, false);
+		}
+		else
+		{
+			if (!stream.open(m_nTablesPage, 0, true))
+				return false;
+		}
+
+		stream.write(uint32(m_vecTablesAddr.size()));
+
+		for (size_t i = 0; i < m_vecTablesAddr.size(); ++i)
+			stream.write(m_vecTablesAddr[i]);
+		stream.Save();
+		return true;
+	}
  
 
 }

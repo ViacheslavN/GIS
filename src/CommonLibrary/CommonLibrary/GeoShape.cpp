@@ -615,13 +615,20 @@ namespace CommonLib
 	{
 
 		m_blob.copy(extBuf, extBufSize);
-		m_params.set(m_blob.buffer());
+		if (!IsSuccinct())
+			m_params.set(m_blob.buffer());
+		else
+			m_params.reset();
 	}
 
 	void CGeoShape::attach(byte* extBuf, uint32 extBufSize)
 	{
 		m_blob.attach(extBuf, extBufSize);
-		m_params.set(m_blob.buffer());
+		if (!IsSuccinct())
+			m_params.set(m_blob.buffer());
+		else
+			m_params.reset();
+		
 	}
 
 	unsigned char* CGeoShape::detach()

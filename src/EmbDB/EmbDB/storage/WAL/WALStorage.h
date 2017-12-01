@@ -7,11 +7,24 @@
 #include "../../Crypto/PageCipher.h"
 #include "../../utils/CacheLRU.h"
 #include "../../utils/CacheLRU_2Q.h"
+
+#include "Utils/streams/WriteStreamPage.h"
+#include "Utils/streams/ReadStreamPage.h"
+
 namespace embDB
 {
 
 	class CWALStorage : public IDBWALStorage
 	{
+
+		struct SHeader
+		{
+			SHeader() : m_nCheckPointList(-1)
+			{}
+
+			int64 m_nCheckPointList;
+		};
+
 		public:
 		 
 
@@ -33,7 +46,7 @@ namespace embDB
 			virtual bool commit(IDBWALTransaction *pTran);
 
 			void setPageChiper(CPageCipher *pCipher) { m_pPageChiper = pCipher; }
-			bool intit(IDBStorage *pDBStorage, IDBStorage *pTranLogStorage);
+			bool intit(IDBStorage *pDBStorage, IDBStorage *pTranLogStorage, bool bNew);
 
 			virtual FilePagePtr getNewTranLogPage(uint32 nSize, bool bWrite = false, bool bAddCache = false);
 			virtual FilePagePtr getTranLogPage(int64 nAddr, uint32 nSize, bool bRead = true, bool bNeedDecrypt = true, bool bAddInCache = true);
@@ -44,6 +57,8 @@ namespace embDB
 			virtual TCheckPointPages& getCheckPoint(int64 nAddr);
 			virtual  void UpdateCheckPoint(int64 nAddr);
 
+			void SetOffset(uint32 nLogTranOffset, uint32 nDBFileOffset);
+
 		private:
 
 			void stopCopy();
@@ -52,7 +67,7 @@ namespace embDB
 		private:
 			IDBStoragePtr m_pDBStorage;
 			IDBStoragePtr m_pDBLogStorage;
-			CommonLib::CFile m_IndexTranFile;
+ 
 
 
 			typedef std::map<int64, int64> TPageAddrs;
@@ -61,7 +76,8 @@ namespace embDB
 			 
 			TCheckPoints m_CheckPoints;
 			bool m_bMultiThread;
-
+			typedef TWriteStreamPage<IFilePage> TCheckPointStream;
+			std::unique_ptr<TCheckPointStream> m_pCheckPointStream;
 
 		
 	};

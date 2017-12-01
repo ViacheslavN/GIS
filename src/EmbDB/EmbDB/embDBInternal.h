@@ -801,7 +801,7 @@ namespace embDB
 	{
 		int64 m_nLogTranAddr;
 		int64 m_nDBAddr;
-		SCheckPointPageInfo() : m_nLogTranAddr(-1), m_nDBAddr(-1)
+		SCheckPointPageInfo(__int64 nLogTranAdd = -1, __int64 nDBAddr = -1) : m_nLogTranAddr(nLogTranAdd), m_nDBAddr(nDBAddr)
 		{}
 	};
 
@@ -831,7 +831,7 @@ namespace embDB
 
 
 		virtual TCheckPointPages& getCheckPoint(int64 nAddr) = 0;
-		virtual  void UpdateCheckPoint(int64 nAddr) = 0
+		virtual  void UpdateCheckPoint(int64 nAddr) = 0;
 
 	};
 

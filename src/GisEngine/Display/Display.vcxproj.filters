@@ -157,6 +157,12 @@
     <ClInclude Include="SimpleMarketSymbol.h">
       <Filter>symbols</Filter>
     </ClInclude>
+    <ClInclude Include="ClipPolygon.h">
+      <Filter>Clip</Filter>
+    </ClInclude>
+    <ClInclude Include="EdgeClipper.h">
+      <Filter>Clip</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -230,6 +236,12 @@
     </ClCompile>
     <ClCompile Include="SimpleMarketSymbol.cpp">
       <Filter>symbols</Filter>
+    </ClCompile>
+    <ClCompile Include="ClipPolygon.cpp">
+      <Filter>Clip</Filter>
+    </ClCompile>
+    <ClCompile Include="EdgeClipper.cpp">
+      <Filter>Clip</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

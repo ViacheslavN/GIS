@@ -20,24 +20,19 @@
 #include "utils/streams/WriteStreamPage.h"
 #include "../Fields/Statistics/ValueFieldStatisticHolder.h"
 #include "CreateStatistic.h"
-
+#include "Utils/streams/WriteStreamPage.h"
+#include "Utils/streams/ReadStreamPage.h"
 namespace embDB
 {
 	CTable::CTable(CDatabase* pDB, int64 nPageAddr) : m_pDB(pDB), 
 		m_nTablePage(nPageAddr), 
 		m_nFieldsPage(-1),
 		m_nIndexsPage(-1),
-		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE, pDB->getCheckCRC()),
-		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE, pDB->getCheckCRC()),
-		m_nStatisticsAddr(-1, 0, TABLE_PAGE, TABLE_STATISTICS_LIST_PAGE, pDB->getCheckCRC()),
 		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE, pDB->getCheckCRC()),
 		m_nStatisticsPage(-1)
 
 	{
 		m_pDBStorage = pDB->getDBStorage();
-		m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
-		m_nIndexAddr.setPageSize(MIN_PAGE_SIZE);
-		m_nStatisticsAddr.setPageSize(MIN_PAGE_SIZE);
 		m_pFields = new CFields();
 		//m_pIndexs = new CFields();
 	}
@@ -47,16 +42,10 @@ namespace embDB
 		m_sTableName(sTableName),
 		m_nFieldsPage(-1),
 		m_nIndexsPage(-1),
-		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE, pDB->getCheckCRC()),
-		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE, pDB->getCheckCRC()),
-		m_nStatisticsAddr(-1, 0, TABLE_PAGE, TABLE_STATISTICS_LIST_PAGE, pDB->getCheckCRC()),
 		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE, pDB->getCheckCRC()),
 		m_nStatisticsPage(-1)
 	{
 		m_pDBStorage = pDB->getDBStorage();
-		m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
-		m_nIndexAddr.setPageSize(MIN_PAGE_SIZE);
-		m_nStatisticsAddr.setPageSize(MIN_PAGE_SIZE);
 		m_pFields = new CFields();
 		//m_pIndexs = new CFields();
 	}
@@ -66,16 +55,10 @@ namespace embDB
 		m_sTableName(sTableName),
 		m_nFieldsPage(-1),
 		m_nIndexsPage(-1),
-		m_nFieldsAddr(-1, 0, TABLE_PAGE, TABLE_FIELD_LIST_PAGE, pDB->getCheckCRC()),
-		m_nIndexAddr(-1, 0, TABLE_PAGE, TABLE_INDEX_LIST_PAGE, pDB->getCheckCRC()),
-		m_nStatisticsAddr(-1, 0, TABLE_PAGE, TABLE_STATISTICS_LIST_PAGE, pDB->getCheckCRC()),
 		m_OIDCounter(TABLE_PAGE, TABLE_OID_COUNTER_PAGE, MIN_PAGE_SIZE, pDB->getCheckCRC()),
 		m_nStatisticsPage(-1)
 	{
 		m_pDBStorage = pDB->getDBStorage();
-		m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
-		m_nIndexAddr.setPageSize(MIN_PAGE_SIZE);
-		m_nStatisticsAddr.setPageSize(MIN_PAGE_SIZE);
 		m_pFields = new CFields();
 		//m_pIndexs = new CFields();
 	}
@@ -146,48 +129,31 @@ namespace embDB
 		if(m_nFieldsPage == -1)
 			return true;
 		{
-			m_nFieldsAddr.setFirstPage(m_nFieldsPage);
-			m_nFieldsAddr.setPageSize(MIN_PAGE_SIZE);
-			m_nFieldsAddr.load(m_pDBStorage.get());
-			TFieldPages::iterator it = m_nFieldsAddr.begin();
-			while(!it.isNull())
+			
+			LoadAddrs(m_vecFieldsAddr, m_nFieldsPage, m_pDBStorage.get());
+			for (size_t i = 0, sz = m_vecFieldsAddr.size(); i < sz; ++i)
 			{
-				if(!ReadField(it.value()))
-					return false;
-				it.next();
+				ReadField(m_vecFieldsAddr[i]);
 			}
-
 		}
 		
 		if (m_nIndexsPage != -1)
 		{
-			m_nIndexAddr.setFirstPage(m_nIndexsPage);
-			m_nIndexAddr.setPageSize(MIN_PAGE_SIZE);
-			m_nIndexAddr.load(m_pDBStorage.get());
-			TFieldPages::iterator it = m_nIndexAddr.begin();
-			while (!it.isNull())
+			LoadAddrs(m_vecIndexAddr, m_nIndexsPage, m_pDBStorage.get());
+			for (size_t i = 0, sz = m_vecIndexAddr.size(); i < sz; ++i)
 			{
-				if (!ReadIndex(it.value()))
-					return false;
-				it.next();
+				ReadIndex(m_vecIndexAddr[i]);
 			}
-		}
-		 
+		}	 
 
 		if(m_nStatisticsPage != -1)
 		{
-			m_nStatisticsAddr.setFirstPage(m_nStatisticsPage);
-			m_nStatisticsAddr.setPageSize(MIN_PAGE_SIZE);
-			m_nStatisticsAddr.load(m_pDBStorage.get());
-			TFieldPages::iterator it = m_nStatisticsAddr.begin();
-			while (!it.isNull())
+			LoadAddrs(m_vecStatisticsAddr, m_nStatisticsPage, m_pDBStorage.get());
+			for (size_t i = 0, sz = m_vecStatisticsAddr.size(); i < sz; ++i)
 			{
-				if (!ReadStatistic(it.value()))
-					return false;
-				it.next();
+				ReadStatistic(m_vecStatisticsAddr[i]);
 			}
-		}
-		
+		}		
 		return true;
 	}
 	bool CTable::save(IDBTransaction *pTran)
@@ -218,8 +184,7 @@ namespace embDB
 			if(!pPage.get())
 				return false;
 			m_nFieldsPage = pPage->getAddr();
-			m_nFieldsAddr.setFirstPage(m_nFieldsPage);
-
+			SaveAddrs(m_vecFieldsAddr, m_nFieldsPage, pTran, true);
 		}
 
 		if(m_nIndexsPage == -1)
@@ -228,8 +193,7 @@ namespace embDB
 			if(!pPage.get())
 				return false;
 			m_nIndexsPage = pPage->getAddr();
-			m_nIndexAddr.setFirstPage(m_nIndexsPage);
-
+			SaveAddrs(m_vecIndexAddr, m_nIndexsPage, pTran, true);
 		}
 		if (m_nStatisticsPage == -1)
 		{
@@ -237,7 +201,7 @@ namespace embDB
 			if (!pPage.get())
 				return false;
 			m_nStatisticsPage = pPage->getAddr();
-			m_nStatisticsAddr.setFirstPage(m_nStatisticsPage);
+			SaveAddrs(m_vecStatisticsAddr, m_nStatisticsPage, pTran, true);
 
 		}
 		stream.write(m_nFieldsPage);
@@ -246,14 +210,13 @@ namespace embDB
 		stream.write(m_OIDCounter.GetPage());
 		header.writeCRC32(stream);
 		pTran->saveFilePage(pFPage);
-		return m_nFieldsAddr.save(pTran) && m_nIndexAddr.save(pTran);
+		return  true;
 		
 	}
 	int64 CTable::getAddr()
 	{
 		return m_nTablePage;
-	}
-	 
+	}	 
 	
 
 	
@@ -401,37 +364,10 @@ namespace embDB
 			pTran->error(L""); //TO DO add  message
 			return false;
 		}
-		if(!m_nFieldsAddr.remove(pDBField->GetPageAddr(), pTran))
-		{
-			pDBField->unlock();
-			pTran->error(L""); //TO DO add  message
-			return false;
-		}
-
-		IDBIndexHolderPtr pIndexHolder = pDBField->getIndexIndexHolder();
-	/*	if(pIndexHolder.get())
-		{
-
-			if(!m_nIndexAddr.remove(pIndexHolder->getFieldInfoType()->m_nFIPage, pTran))
-			{
-				pDBField->unlock();
-				pTran->error(L""); //TO DO add  message
-				return false;
-			}
-			int nIdx = m_pIndexs->FindField(pIndexHolder->getName());
-			if(nIdx != -1)
-			{
-				m_pIndexs->RemoveField(nIdx);
-			}
-		}*/
+		m_vecFieldsAddr.erase(std::find(m_vecFieldsAddr.begin(), m_vecFieldsAddr.end(), pDBField->GetPageAddr()));
+		SaveAddrs(m_vecFieldsAddr, m_nFieldsPage, pTran, false);
+			
 		m_pFields->RemoveField(nIndex);
-		//m_FieldByName.erase(pField->getFieldInfoType()->m_sFieldName);
-		//m_FieldByID.erase(pField->getFieldInfoType()->m_nFIPage);
-
-
-		//delete pField;
-		
-
 		return false;
 	}
 
@@ -515,8 +451,8 @@ namespace embDB
 			{
 				return IFieldPtr(); // TO DO Error
 			}
-
-			if(!m_nFieldsAddr.push(pFieldInfoPage->getAddr(), pDBTran.get()))
+			m_vecFieldsAddr.push_back(pFieldInfoPage->getAddr());
+			if(!SaveAddrs(m_vecFieldsAddr, m_nFieldsPage, pDBTran.get(), false))
 				return IFieldPtr(); // TO DO Error
 
 			stream.Save();
@@ -651,8 +587,8 @@ namespace embDB
 			{
 				return IFieldPtr(); // TO DO Error
 			}
-
-			if(!m_nFieldsAddr.push(pFieldInfoPage->getAddr(), pDBTran.get()))
+			m_vecFieldsAddr.push_back(pFieldInfoPage->getAddr());
+			if(!SaveAddrs(m_vecFieldsAddr, m_nFieldsPage, pDBTran.get(), false))
 				return IFieldPtr(); // TO DO Error
 
 			stream.Save();
@@ -724,7 +660,10 @@ namespace embDB
 
 			pFieldHolder->setIndexHolder(pIndex.get());
 			m_IndexByName.insert(std::make_pair(sFieldName, pIndex));
-			m_nIndexAddr.push(pFieldInfoPage->getAddr(), pDBTran.get());
+			m_vecIndexAddr.push_back(pFieldInfoPage->getAddr());
+			if (!SaveAddrs(m_vecIndexAddr, m_nIndexsPage, pDBTran.get(), false))
+				return false; // TO DO Error
+			 
 		}
 
 
@@ -857,7 +796,9 @@ namespace embDB
 
 			pFieldHolder->setFieldStatisticHolder(pStatistic.get());
 			m_FieldStatisticByName.insert(std::make_pair(sFieldName, pStatistic));
-			m_nStatisticsAddr.push(pStatisticdInfoPage->getAddr(), pDBTran.get());
+			m_vecStatisticsAddr.push_back(pStatisticdInfoPage->getAddr());
+			if (!SaveAddrs(m_vecStatisticsAddr, m_nStatisticsPage, pDBTran.get(), false))
+				return false; // TO DO Error
 		}
 
 		return true;
@@ -1013,6 +954,34 @@ namespace embDB
 			return  isPoint ? stPoint32 : stRect32;
 
 		return  isPoint ? stPoint64 : stRect64;
+	}
+
+
+
+	bool CTable::LoadAddrs(TFieldPages& vecAddrs, int64 nBeginPage, IFilePage *pTran)
+	{
+		ReadStreamPage stream(pTran, PAGE_SIZE_8K, true, 0, 0);
+		if (!stream.open(nBeginPage, 0))
+			return false;
+
+		uint32 nSize = stream.readIntu32();
+		for (uint32 i = 0; i < nSize; ++i)
+		{
+			vecAddrs.push_back(stream.readIntu32());
+		}
+		return true;
+	}
+	bool CTable::SaveAddrs(const TFieldPages& vecAddrs, int64 nBeginPage, IFilePage *pTran, bool bNew)
+	{
+		WriteStreamPage stream(pTran, PAGE_SIZE_8K, true, 0, 0);
+		if (!stream.open(nBeginPage, 0, !bNew))
+			return false;
+		stream.write((uint32)vecAddrs.size());
+		for (size_t i= 0, sz = vecAddrs.size(); i < sz; ++i)
+		{
+			stream.write(vecAddrs[i]);
+		}
+
 	}
 
 

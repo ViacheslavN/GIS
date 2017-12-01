@@ -49,6 +49,8 @@ namespace GisEngine
 				virtual void MapToDevice(const CommonLib::CGeoShape& geom, GPoint **pOut, int** partCounts, int* count);
 				virtual void MapToDevice(const GisBoundingBox& mapBox, GRect& rect);
 				virtual int MapToDeviceOpt(const GisXYPoint *pIn, GPoint *pOut, int nPoints, CommonLib::eShapeType);
+				virtual void MapToDeviceOpt(const GisXYPoint pIn, GPoint& pOut);
+			 
  
 
 				virtual void DeviceToMap(const GPoint *pIn,  GisXYPoint *pOut, int nPoints);

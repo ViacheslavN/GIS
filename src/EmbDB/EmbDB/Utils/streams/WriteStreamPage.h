@@ -229,7 +229,7 @@ namespace embDB
 		 bool m_bOpenNew;
  
 	};
-	typedef TWriteStreamPage<IDBTransaction> WriteStreamPage;
+	typedef TWriteStreamPage<IFilePage> WriteStreamPage;
 
 	COMMON_LIB_REFPTR_TYPEDEF(WriteStreamPage);
 }

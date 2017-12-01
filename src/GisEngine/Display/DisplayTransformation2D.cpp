@@ -344,43 +344,150 @@ namespace GisEngine
 			 return static_cast<int>(pOut - pOutOrig);
 
 		}
-		void CDisplayTransformation2D::MapToDevice(const CommonLib::CGeoShape& geom, GPoint **pOut, int** partCounts, int* count)
+		void CDisplayTransformation2D::MapToDeviceOpt(const GisXYPoint ptIn, GPoint& ptOut)
 		{
+			/*/GPoint *pOut = pOutOrig;
+			int lag;
+			if (type == CommonLib::shape_type_general_point || type == CommonLib::shape_type_general_multipoint)
+				lag = std::min<int>(nPts, 0);
+			else if (type == CommonLib::shape_type_general_polyline)
+				lag = std::min<int>(nPts, 2);
+			else
+				lag = std::min<int>(nPts, 4);
 
+			bool first = true;
+			GUnits xd_prev = 0, yd_prev = 0;
+			for (; nPts > 0; ++pIn, --nPts)
+			{*/
+
+				double xm = ptIn.x - m_AnchorMap[0];
+				double ym = ptIn.y - m_AnchorMap[1];
+#ifdef _FLOAT_GUNITS_
+				GUnits xd = static_cast<GUnits>((xm * m_MatrixMap2Dev[0][0] + ym * m_MatrixMap2Dev[0][1]));
+				GUnits yd = static_cast<GUnits>((xm * m_MatrixMap2Dev[1][0] + ym * m_MatrixMap2Dev[1][1]));
+#else
+				GUnits xd = static_cast<GUnits>(floor(xm * m_MatrixMap2Dev[0][0] + ym * m_MatrixMap2Dev[0][1] + 0.5));
+				GUnits yd = static_cast<GUnits>(floor(xm * m_MatrixMap2Dev[1][0] + ym * m_MatrixMap2Dev[1][1] + 0.5));
+#endif
+
+				rasterize3D(xd, yd);
+				xd += m_AnchorDev[0];
+				yd += m_AnchorDev[1];
+
+				ptOut.x = xd;
+				ptOut.y = yd;
+
+			/*	if (first || (xd != xd_prev) || (yd != yd_prev))
+				{
+					pOut->x = xd;
+					pOut->y = yd;
+					++pOut;
+					--lag;
+					first = false;
+					xd_prev = xd;
+					yd_prev = yd;
+				}
+			}
+			for (; lag > 0; --lag, ++pOut)
+			{
+				assert(!first);
+				pOut->x = xd_prev;
+				pOut->y = yd_prev;
+			}
+			return static_cast<int>(pOut - pOutOrig);*/
+		}
+
+
+		void CDisplayTransformation2D::MapToDevice(const CommonLib::CGeoShape& geom, GPoint **pOut, int** partCounts, int* count)
+		{			
+
+			uint32 nPartSize = 0;
+			uint32 nPointCnt = 0;
+			if (geom.IsSuccinct())
+			{
+				geom.BeginReadSuccinct();
+			}
+			nPartSize = (int)geom.getPartCount();
+			nPointCnt = (int)geom.getPointCnt();
 			//TO DO alloc
-			int nPartSize= (geom.getPartCount() > 0 ? geom.getPartCount() : 1);
+			int nPartSize= (nPartSize > 0 ? nPartSize : 1);
 
-			if(m_vecAlloc.size() < geom.getPointCnt())
-				m_vecAlloc.resize(geom.getPointCnt());
+			if(m_vecAlloc.size() < nPointCnt)
+				m_vecAlloc.resize(nPointCnt);
 
 			if(m_vecPart.size() < nPartSize )
 				m_vecPart.resize(nPartSize);
 
 			GPoint* buffer = &m_vecAlloc[0]; 
 			int* parts = &m_vecPart[0];
+			int partCount = 0;
+			if (geom.IsSuccinct())
+			{
 
+				for (size_t part = 0, offset = 0, buf_offset = 0; part < partCount; part++)
+				{
+					GPoint ptPoint;
+					int nPartPoints = geom.nextPart(part);
+					int newCount = 0;
+					for (uint32 i = 0; i < nPartPoints; ++i)
+					{
+						 MapToDeviceOpt(geom.nextPoint(i + offset), ptPoint);
+					}
+
+
+					offset += nPartPoints;
+					parts[part] = newCount;
+					buf_offset += newCount;
+
+				}
+
+		
+				if (geom.generalType() == CommonLib::shape_type_general_point || geom.generalType() == CommonLib::shape_type_general_multipoint)
+				{
+					for (uint32 i = 0; i < nPointCnt; ++i)
+					{
+						int newCount = MapToDeviceOpt(&geom.nextPoint(i), buffer + i, 1, geom.generalType());
+						parts[0] = newCount;
+						*count += 1;
+					}
+					*pOut = buffer;
+					*partCounts = parts;
+					*count = partCount;
+				
+					return;
+				}
+				
+
+				 
+			}
+			else
+			{
+				const GisXYPoint* points = geom.getPoints();
+				if (geom.generalType() == CommonLib::shape_type_general_point || geom.generalType() == CommonLib::shape_type_general_multipoint)
+				{
+					int newCount = MapToDeviceOpt(geom.getPoints(), buffer, (int)geom.getPointCnt(), geom.generalType());
+					*pOut = buffer;
+					parts[0] = newCount;
+					*count = 1;
+					*partCounts = parts;
+					return;
+				}
+				int nCount = 0;
+				for (size_t part = 0, offset = 0, buf_offset = 0, partCount = geom.getPartCount(); part < partCount; part++)
+				{
+					int newCount = MapToDeviceOpt(points + offset, buffer + buf_offset, (int)geom.getPart(part), geom.generalType());
+					nCount += newCount;
+					offset += geom.getPart(part);
+					parts[part] = newCount;
+					buf_offset += newCount;
+				}
+
+				partCount = (int)geom.getPartCount();
+			}
 	 
-			const GisXYPoint* points = geom.getPoints();
-			if(geom.generalType() == CommonLib::shape_type_general_point || geom.generalType() == CommonLib::shape_type_general_multipoint)
-			{
-				int newCount = MapToDeviceOpt(geom.getPoints(), buffer, (int)geom.getPointCnt(), geom.generalType());
-				*pOut = buffer;
-				parts[0] = newCount;
-				*count = 1;
-				*partCounts = parts;
-				return;
-			}
-			int nCount = 0;
-			for(size_t part = 0, offset = 0, buf_offset = 0, partCount = geom.getPartCount(); part < partCount; part++)
-			{
-				int newCount = MapToDeviceOpt(points + offset, buffer + buf_offset, (int)geom.getPart(part), geom.generalType());
-				nCount += newCount;
-				offset += geom.getPart(part);
-				parts[part] = newCount;
-				buf_offset += newCount;
-			}
+		
 
-			int partCount = (int)geom.getPartCount();
+			
 
 	
 
