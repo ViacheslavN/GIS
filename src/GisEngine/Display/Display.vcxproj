@@ -488,7 +488,6 @@
     <ClInclude Include="Display.h" />
     <ClInclude Include="DisplayTransformation2D.h" />
     <ClInclude Include="DisplayUtils.h" />
-    <ClInclude Include="EdgeClipper.h" />
     <ClInclude Include="MarkerSymbolBase.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="SimpleMarketSymbol.h" />
@@ -528,7 +527,6 @@
     <ClCompile Include="ClipPolygon.cpp" />
     <ClCompile Include="DisplayTransformation2D.cpp" />
     <ClCompile Include="DisplayUtils.cpp" />
-    <ClCompile Include="EdgeClipper.cpp" />
     <ClCompile Include="LoaderSymbols.cpp" />
     <ClCompile Include="RectClipper.cpp" />
     <ClCompile Include="Color.cpp" />

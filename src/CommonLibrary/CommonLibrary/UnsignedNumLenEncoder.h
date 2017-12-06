@@ -115,6 +115,16 @@ namespace CommonLib
 			m_Decoder.Reset(&m_ReadStream);
 			m_Decoder.StartDecode();
 		}
+		void clear()
+		{
+			TBase::clear();
+			if(m_bitRStream.size() != 0)
+				m_bitRStream.seek(0, soFromBegin);
+			if (m_ReadStream.size() != 0)
+				m_ReadStream.seek(0, soFromBegin);
+			m_Decoder.Reset(nullptr);
+
+		}
 	private:
 
 		FxBitWriteStream m_bitWStream;

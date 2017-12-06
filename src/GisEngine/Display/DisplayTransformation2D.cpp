@@ -344,7 +344,7 @@ namespace GisEngine
 			 return static_cast<int>(pOut - pOutOrig);
 
 		}
-		void CDisplayTransformation2D::MapToDeviceOpt(const GisXYPoint ptIn, GPoint& ptOut)
+		void CDisplayTransformation2D::MapToDevicePoint(const GisXYPoint& ptIn, GPoint& ptOut)
 		{
 			/*/GPoint *pOut = pOutOrig;
 			int lag;
@@ -410,47 +410,78 @@ namespace GisEngine
 			nPartSize = (int)geom.getPartCount();
 			nPointCnt = (int)geom.getPointCnt();
 			//TO DO alloc
-			int nPartSize= (nPartSize > 0 ? nPartSize : 1);
+			 nPartSize= (nPartSize > 0 ? nPartSize : 1);
 
 			if(m_vecAlloc.size() < nPointCnt)
 				m_vecAlloc.resize(nPointCnt);
 
 			if(m_vecPart.size() < nPartSize )
 				m_vecPart.resize(nPartSize);
+ 
 
-			GPoint* buffer = &m_vecAlloc[0]; 
-			int* parts = &m_vecPart[0];
 			int partCount = 0;
+
+			GPoint* buffer = &m_vecAlloc[0];
+			int* parts = &m_vecPart[0];
+			m_clipPolygon.Init(m_devClipRect, &m_vecAlloc);
 			if (geom.IsSuccinct())
 			{
-
-				for (size_t part = 0, offset = 0, buf_offset = 0; part < partCount; part++)
+				GisXYPoint pt;
+				m_vecAlloc.clear();
+				m_vecPart.clear();
+				if (geom.generalType() == CommonLib::shape_type_general_polygon)
 				{
-					GPoint ptPoint;
-					int nPartPoints = geom.nextPart(part);
-					int newCount = 0;
-					for (uint32 i = 0; i < nPartPoints; ++i)
+					for (size_t part = 0, offset = 0, buf_offset = 0; part < nPartSize; part++)
 					{
-						 MapToDeviceOpt(geom.nextPoint(i + offset), ptPoint);
+						GPoint ptPoint;
+						int nPartPoints = geom.nextPart(part);
+						int newCount = m_vecAlloc.size();
+
+						for (uint32 i = 0; i < nPartPoints; ++i)
+						{
+							geom.nextPoint(i + offset, pt);
+							MapToDevicePoint(pt, ptPoint);
+							m_clipPolygon.AddVertex(ptPoint);
+
+						}
+
+						m_clipPolygon.EndPolygon();
+						newCount = m_vecAlloc.size() - newCount;
+
+						offset += nPartPoints;
+						if (newCount != 0)
+						{
+							m_vecPart.push_back(newCount);
+							buf_offset += newCount;
+							partCount += 1;
+						}
+
+
 					}
 
+					//GPoint* buffer = &m_vecAlloc[0];
+					if (!m_vecAlloc.empty())
+						*pOut = &m_vecAlloc[0];
+					else
+						pOut = nullptr;
+					if (!m_vecPart.empty())
+						*partCounts = &m_vecPart[0];
+					else
+						partCounts = nullptr;
 
-					offset += nPartPoints;
-					parts[part] = newCount;
-					buf_offset += newCount;
-
+					*count = partCount;
+					return;
 				}
-
 		
 				if (geom.generalType() == CommonLib::shape_type_general_point || geom.generalType() == CommonLib::shape_type_general_multipoint)
 				{
 					for (uint32 i = 0; i < nPointCnt; ++i)
 					{
-						int newCount = MapToDeviceOpt(&geom.nextPoint(i), buffer + i, 1, geom.generalType());
-						parts[0] = newCount;
-						*count += 1;
+					//	int newCount = MapToDeviceOpt(&geom.nextPoint(i), &m_vecAlloc[0] + i, 1, geom.generalType());
+					//	parts[0] = newCount;
+					//	*count += 1;
 					}
-					*pOut = buffer;
+					*pOut = &m_vecAlloc[0];
 					*partCounts = parts;
 					*count = partCount;
 				
@@ -462,6 +493,8 @@ namespace GisEngine
 			}
 			else
 			{
+
+
 				const GisXYPoint* points = geom.getPoints();
 				if (geom.generalType() == CommonLib::shape_type_general_point || geom.generalType() == CommonLib::shape_type_general_multipoint)
 				{

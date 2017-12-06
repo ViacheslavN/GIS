@@ -24,7 +24,7 @@ namespace CommonLib
 
 			uint32 getPointCnts() const;
 			GisXYPoint GetNextPoint(uint32 nPos, shape_compress_params *pParams) const;
-
+			bool GetNextPoint(GisXYPoint& pt, uint32 nPos, shape_compress_params *pParams) const;
 
 		private:
 			

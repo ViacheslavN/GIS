@@ -94,7 +94,8 @@ namespace CommonLib
 		void EndReadSuccinct() const;
 		uint32 nextPart(uint32 nIdx) const;
 
-		GisXYPoint nextPoint(uint32 nIdx);
+		GisXYPoint nextPoint(uint32 nIdx) const;
+		bool nextPoint(uint32 nIdx, GisXYPoint& pt) const;
 
 		void  WriteCompParams(IWriteStream *pStream, eShapeType shType, shape_compress_params& comp_params);
 		void  ReadCompParams(IReadStream *pStream, eShapeType shType, shape_compress_params& comp_params) const;

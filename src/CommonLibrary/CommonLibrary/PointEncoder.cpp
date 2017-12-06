@@ -166,10 +166,7 @@ namespace CommonLib
 
 			uint32 nEncodeSize = pStream->pos() - nBeginPos;
 			m_Points.BeginDecoding(pStream, nSize - nEncodeSize);
-		}
-
-		
-	
+		}	
 
 		uint32 CPointEncoder::getPointCnts() const
 		{
@@ -178,6 +175,12 @@ namespace CommonLib
 		GisXYPoint CPointEncoder::GetNextPoint(uint32 nPos, shape_compress_params *pParams) const
 		{
 			GisXYPoint pt;
+			GetNextPoint(pt, nPos, pParams);
+			return pt;
+		}
+
+		bool CPointEncoder::GetNextPoint(GisXYPoint& pt, uint32 nPos, shape_compress_params *pParams) const
+		{
 
 			double dScaleX = 1 / pow(10., pParams->m_nScaleX); //TO DO
 			double dScaleY = 1 / pow(10., pParams->m_nScaleY);
@@ -212,7 +215,7 @@ namespace CommonLib
 				pt.x = ((double)m_XPrev *dScaleX) - pParams->m_dOffsetX;
 				pt.y = ((double)m_YPrev *dScaleX) - pParams->m_dOffsetY;
 			}
-			return pt;
+			return true;
 		}
 	}
 }

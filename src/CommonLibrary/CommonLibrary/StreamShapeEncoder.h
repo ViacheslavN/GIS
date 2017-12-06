@@ -44,9 +44,9 @@ namespace CommonLib
 			uint32 cntParts() const;
 			uint32 cntPoints() const;
 
-			uint32 GetNextPart(int nIdx);
-			GisXYPoint GetNextPoint(int nIdx, shape_compress_params *pParams);
-
+			uint32 GetNextPart(int nIdx) const;
+			GisXYPoint GetNextPoint(int nIdx, shape_compress_params *pParams) const;
+			bool GetNextPoint(GisXYPoint& pt,int nIdx, shape_compress_params *pParams) const;
 
 		private:
 

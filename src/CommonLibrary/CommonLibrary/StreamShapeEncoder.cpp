@@ -76,7 +76,7 @@ namespace CommonLib
 			return m_PointEncoder.getPointCnts();
 		}
 
-		uint32 CStreamShapeEncoder::GetNextPart(int nIdx)
+		uint32 CStreamShapeEncoder::GetNextPart(int nIdx) const
 		{
 #ifdef _PART_ENCODER_
 			return m_PartEncoder.GetNextPart(nIdx, m_PointEncoder.getPointCnts());
@@ -84,9 +84,13 @@ namespace CommonLib
 			return m_nPartCnt;
 #endif
 		}
-		GisXYPoint CStreamShapeEncoder::GetNextPoint(int nIdx, shape_compress_params *pParams)
+		GisXYPoint CStreamShapeEncoder::GetNextPoint(int nIdx, shape_compress_params *pParams) const
 		{
 			return m_PointEncoder.GetNextPoint(nIdx, pParams);
+		}
+		bool CStreamShapeEncoder::GetNextPoint(GisXYPoint& pt, int nIdx, shape_compress_params *pParams) const
+		{
+			return m_PointEncoder.GetNextPoint(pt, nIdx, pParams);
 		}
 	}
 }

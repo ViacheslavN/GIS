@@ -1,6 +1,7 @@
 #ifndef GIS_ENGINE_DISPLAY_TRANSFORMATION_2D_H_
 #define GIS_ENGINE_DISPLAY_TRANSFORMATION_2D_H_
 #include "Display.h"
+#include "ClipPolygon.h"
 namespace GisEngine
 {
 	namespace Display
@@ -49,7 +50,7 @@ namespace GisEngine
 				virtual void MapToDevice(const CommonLib::CGeoShape& geom, GPoint **pOut, int** partCounts, int* count);
 				virtual void MapToDevice(const GisBoundingBox& mapBox, GRect& rect);
 				virtual int MapToDeviceOpt(const GisXYPoint *pIn, GPoint *pOut, int nPoints, CommonLib::eShapeType);
-				virtual void MapToDeviceOpt(const GisXYPoint pIn, GPoint& pOut);
+				virtual void MapToDevicePoint(const GisXYPoint& pIn, GPoint& pOut);
 			 
  
 
@@ -138,6 +139,8 @@ namespace GisEngine
 				std::vector<int> m_vecPart;
 
 				IClipPtr m_pClipper;
+
+				ClipPolygon m_clipPolygon;
 
 		};
 	}

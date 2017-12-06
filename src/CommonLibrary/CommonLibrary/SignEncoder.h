@@ -33,6 +33,8 @@ namespace CommonLib
 			m_DataType = dtType64;
 			m_bSign = false;
 			m_nVecPos.clear();
+			if(m_bitReadStream.size() != 0)
+				m_bitReadStream.seek(0, soFromBegin);
 		}
 
 

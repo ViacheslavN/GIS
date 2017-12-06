@@ -618,7 +618,11 @@ namespace CommonLib
 		if (!IsSuccinct())
 			m_params.set(m_blob.buffer());
 		else
+		{
 			m_params.reset();
+			m_Encoder.clear();
+			m_bInitSuccinct = false;
+		}
 	}
 
 	void CGeoShape::attach(byte* extBuf, uint32 extBufSize)
@@ -943,7 +947,20 @@ namespace CommonLib
 
 	bbox CGeoShape::getBB() const
 	{
-		return bbox();
+		bbox bb;
+		
+		auto xy_bounds = getBBoxVals(generalType());
+		if (!xy_bounds)
+			return bb;
+ 
+		bb.type = CommonLib::bbox_type_normal;
+		bb.xMin = *xy_bounds;
+		bb.yMin = *(xy_bounds + 1);
+		bb.xMax = *(xy_bounds + 2);
+		bb.yMax = *(xy_bounds + 3);
+
+		return bb;
+ 
 	}
 
 	double *CGeoShape::getBBoxVals()
@@ -1130,13 +1147,15 @@ namespace CommonLib
 		stream.attachBuffer(m_blob.buffer(), m_blob.size());
 		stream.seek(nPos, soFromBegin);
 
-		if ((bInnerParam && pCompParams) || (!bInnerParam && !pCompParams))
-			return false; //TO DO
+	//	if ((bInnerParam && pCompParams) || (!bInnerParam && !pCompParams))
+	//		return false; //TO DO
 
 		if (bInnerParam)
 			ReadCompParams(&stream, type(), m_comp_params);
+		else if (pCompParams)
+			m_comp_params = *pCompParams;
 
-		m_Encoder.BeginDecode(&stream, pCompParams);
+		m_Encoder.BeginDecode(&stream, &m_comp_params);
 
 		m_bInitSuccinct = true;
 
@@ -1156,11 +1175,19 @@ namespace CommonLib
 		return m_Encoder.GetNextPart(nIdx);
 	}
 
-	GisXYPoint CGeoShape::nextPoint(uint32 nIdx)
+	GisXYPoint CGeoShape::nextPoint(uint32 nIdx) const
 	{
 		if (!IsSuccinct())
 			return GisXYPoint();
 
 		return m_Encoder.GetNextPoint(nIdx, &m_comp_params);
+	}
+
+	bool CGeoShape::nextPoint(uint32 nIdx, GisXYPoint& pt) const
+	{
+		if (!IsSuccinct())
+			return false();
+
+		return m_Encoder.GetNextPoint(pt, nIdx, &m_comp_params);
 	}
 }

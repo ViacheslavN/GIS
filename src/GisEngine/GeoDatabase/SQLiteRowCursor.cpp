@@ -163,6 +163,7 @@ namespace GisEngine
 					{
 						m_pCacheShape = new CommonLib::CGeoShape();
 						feature->SetShape(m_pCacheShape.get());
+						m_pCacheShape->SetCompParams(m_comp_params);
 					}
 				}
 			}
@@ -196,7 +197,7 @@ namespace GisEngine
 					case dtGeometry:
 						{
 							m_pStmt->ColumnShape(fi.m_nRowIndex, m_pCacheShape.get());
-							m_pCacheShape->SetCompParams(m_comp_params);
+
 						}
 						break;
 					case dtUInteger8:

@@ -16,6 +16,8 @@ namespace GisEngine
 			bool    operator!=(const GPoint&) const;
 			const GPoint &operator+=(const GPoint &);
 			const GPoint &operator-=(const GPoint &);
+			GPoint operator+(const GPoint& p) const; 
+			GPoint operator-(const GPoint& p) const;
 		public:
 			GUnits x, y;
 		};

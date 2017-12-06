@@ -31,5 +31,13 @@ namespace GisEngine
 			y -= gp.y;
 			return *this;
 		}
+		GPoint GPoint::operator+(const GPoint& p) const
+		{ 
+			return GPoint(x + p.x, y + p.y);
+		}
+		GPoint GPoint::operator-(const GPoint& p) const
+		{ 
+			return GPoint(x - p.x, y - p.y);
+		}
 	}
 }
