@@ -160,6 +160,12 @@
     <ClInclude Include="ClipPolygon.h">
       <Filter>Clip</Filter>
     </ClInclude>
+    <ClInclude Include="PointsBuffer.h">
+      <Filter>Clip</Filter>
+    </ClInclude>
+    <ClInclude Include="ClipLine.h">
+      <Filter>Clip</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -235,6 +241,12 @@
       <Filter>symbols</Filter>
     </ClCompile>
     <ClCompile Include="ClipPolygon.cpp">
+      <Filter>Clip</Filter>
+    </ClCompile>
+    <ClCompile Include="PointsBuffer.cpp">
+      <Filter>Clip</Filter>
+    </ClCompile>
+    <ClCompile Include="ClipLine.cpp">
       <Filter>Clip</Filter>
     </ClCompile>
   </ItemGroup>

@@ -24,7 +24,7 @@ namespace GisEngine
 
 		}
 
-		void ClipPolygon::Init(GRect clipBox, TPointsVector *pVector)
+		void ClipPolygon::Init(GRect clipBox, TVecPoints *pDest)
 		{
 
 			Clear();
@@ -36,7 +36,7 @@ namespace GisEngine
 			m_stageLeft.SetPoint(m_clipBox.xMin);
 			m_stageRight.SetPoint(m_clipBox.xMax);
  
-			m_stageOut.SetDestination(pVector);
+			m_stageOut.SetDestination(pDest);
 		}
 
 		void ClipPolygon::Clear()
@@ -56,6 +56,7 @@ namespace GisEngine
 		void ClipPolygon::EndPolygon()
 		{
 			m_stageRight.Finalize();
+ 
 		}
 	}
 }

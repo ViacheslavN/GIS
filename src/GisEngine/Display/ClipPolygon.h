@@ -5,14 +5,14 @@ namespace GisEngine
 {
 	namespace Display
 	{
-		typedef std::vector<GPoint> TPointsVector;
+		typedef std::vector<GPoint> TVecPoints;
 		class ClipPolygon
 		{
 			public:
 				ClipPolygon();
 				~ClipPolygon();
 
-				void Init(GRect clipBox, TPointsVector *pVector);
+				void Init(GRect clipBox, TVecPoints *pPoints);
 				void AddVertex(const GPoint& pt);
 				void EndPolygon();
 			private:
@@ -76,12 +76,23 @@ namespace GisEngine
 				class OutputStage
 				{
 				public:
-					OutputStage() : m_pDest(0) {}
-					void SetDestination(TPointsVector * pDest) { m_pDest = pDest; }
-					void HandleVertex(const GPoint& pnt) { m_pDest->push_back(pnt); }	// Append the vertex to the output container.
-					void Finalize() {}		// Do nothing.
+					OutputStage() : m_pDest(0){}
+					void SetDestination(TVecPoints * pDest)
+					{ 
+						m_pDest = pDest;
+					}
+					void HandleVertex(const GPoint& pnt) 
+					{ 
+
+						m_pDest->push_back(pnt);
+					}	// Append the vertex to the output container.
+					void Finalize() 
+					{
+						
+					}		// Do nothing.
+
 				private:
-					TPointsVector * m_pDest;
+					TVecPoints * m_pDest;
 				};
 
 
@@ -92,7 +103,10 @@ namespace GisEngine
 				{
 				public:
 					BoundaryHor(GUnits y = 0) : m_Y(y) {}
-					bool IsInside(const GPoint& pnt) const { return Comp()(pnt.y, m_Y); }	// return true if pnt.Y is at the inside of the boundary
+					bool IsInside(const GPoint& pnt) const 
+					{
+						return Comp()(pnt.y, m_Y);
+					}	// return true if pnt.Y is at the inside of the boundary
 					GPoint Intersect(const GPoint& p0, const GPoint& p1) const			// return intersection point of line p0...p1 with boundary
 					{																	// assumes p0...p1 is not strictly horizontal
 
@@ -115,7 +129,10 @@ namespace GisEngine
 				{
 				public:
 					BoundaryVert(GUnits x = 0) : m_X(x) {}
-					bool IsInside(const GPoint& pnt) const { return Comp()(pnt.x, m_X); }
+					bool IsInside(const GPoint& pnt) const
+					{
+						return Comp()(pnt.x, m_X); 
+					}
 					GPoint Intersect(const GPoint& p0, const GPoint& p1) const		// assumes p0...p1 is not strictly vertical
 					{
 

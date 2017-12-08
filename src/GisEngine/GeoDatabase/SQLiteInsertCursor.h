@@ -20,6 +20,8 @@ namespace GisEngine
 				private:
 					void init();
 					void close();
+					bool InsertSpatialIndex(const CommonLib::bbox& bb, int64 nRowID, eDataTypes type);
+					bool InsertMultiPointSpatialIndex(CommonLib::IGeoShapePtr& pShape, int64 nRowID, eDataTypes type);
 				private:
 
 					/*struct SFieldInfo
@@ -42,6 +44,7 @@ namespace GisEngine
 					CommonLib::CString m_sErrorMessage;
 					CommonLib::CWriteMemoryStream m_WriteShapeStream;
 					CommonLib::shape_compress_params m_comp_params;
+					CommonLib::eShapeType m_ShapeType;
 			};
 	}
 }

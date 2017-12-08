@@ -483,12 +483,14 @@
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Brush.h" />
     <ClInclude Include="Clip.h" />
+    <ClInclude Include="ClipLine.h" />
     <ClInclude Include="ClipRectAlloc.h" />
     <ClInclude Include="ClipPolygon.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="DisplayTransformation2D.h" />
     <ClInclude Include="DisplayUtils.h" />
     <ClInclude Include="MarkerSymbolBase.h" />
+    <ClInclude Include="PointsBuffer.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="SimpleMarketSymbol.h" />
     <ClInclude Include="SymbolFillBase.h" />
@@ -523,11 +525,13 @@
   <ItemGroup>
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Brush.cpp" />
+    <ClCompile Include="ClipLine.cpp" />
     <ClCompile Include="ClipRectAlloc.cpp" />
     <ClCompile Include="ClipPolygon.cpp" />
     <ClCompile Include="DisplayTransformation2D.cpp" />
     <ClCompile Include="DisplayUtils.cpp" />
     <ClCompile Include="LoaderSymbols.cpp" />
+    <ClCompile Include="PointsBuffer.cpp" />
     <ClCompile Include="RectClipper.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="conv_offset.cpp" />

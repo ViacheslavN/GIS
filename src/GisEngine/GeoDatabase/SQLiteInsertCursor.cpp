@@ -12,7 +12,7 @@ namespace GisEngine
 	namespace GeoDatabase
 	{
 		SQLiteInsertCursor::SQLiteInsertCursor(ITable* pTable, IFieldSet *pFileds, SQLiteUtils::CSQLiteDB *pDB) :
-			TBase(pTable, pFileds), m_pDB(pDB), m_bValidCursor(true), m_bInit(false)
+			TBase(pTable, pFileds), m_pDB(pDB), m_bValidCursor(true), m_bInit(false), m_ShapeType(CommonLib::shape_type_null)
 		{
 			assert(m_pDB);
 
@@ -109,51 +109,119 @@ namespace GisEngine
 				if(nOID == -1)
 					nOID = nLastRowID;
 
-				if(pOIDField.get() && pOIDField->GetType() == dtOid32)
-					m_pStmtSpatial->ColumnBindInt(1,  (int32)nOID);
-				else
-					m_pStmtSpatial->ColumnBindInt64(1,  nOID);
-				if(m_pStmtSpatial->IsError())
-				{
-					//TO DO error
-					m_bValidCursor = false;
-					return -1;
-
-				}
-
 				CommonLib::IGeoShapePtr pShape = pFeature->GetShape();
-				const CommonLib::bbox& bb = pShape->getBB();
-
-				m_pStmtSpatial->ColumnBindDouble(2, bb.xMin);
-				m_pStmtSpatial->ColumnBindDouble(3, bb.xMax);
-				m_pStmtSpatial->ColumnBindDouble(4, bb.yMin);
-				m_pStmtSpatial->ColumnBindDouble(5, bb.yMax);
-
-				if(m_pStmtSpatial->IsError())
+				CommonLib::bbox bb;
+				if (m_ShapeType == CommonLib::shape_type_general_multipoint)
 				{
-					//TO DO error
-					m_bValidCursor = false;
-					return -1;
-
+					if (!InsertMultiPointSpatialIndex(pShape, nOID, pOIDField->GetType()))
+						return -1;
 				}
-
-				m_pStmtSpatial->StepNext();
-
-				//if(m_pStmt)
-				//	sqlite3_finalize(m_pStmt);
-				if(m_pStmtSpatial->IsError())
+				else
 				{
-					//TO DO error
-					m_bValidCursor = false;
-					return -1;
+					if (m_ShapeType == CommonLib::shape_type_general_polygon || m_ShapeType == CommonLib::shape_type_general_polyline)
+					{
+						bb = pShape->getBB();
+					}
+					else if (m_ShapeType == CommonLib::shape_type_general_point)
+					{
+						auto *pXY = pShape->getPoints();
+
+						bb.xMax = pXY->x;
+						bb.xMin = pXY->x;
+						bb.yMax = pXY->y;
+						bb.yMin = pXY->y;
+					}
+
+					if (!InsertSpatialIndex(bb, nOID, pOIDField->GetType()))
+						return -1;
 				}
-
-				m_pStmtSpatial->reset();
-
 			}
 			pRow->SetRowID(nLastRowID);
 			return nLastRowID;
 		}
+		bool  SQLiteInsertCursor::InsertSpatialIndex(const CommonLib::bbox& bb, int64 nOID, eDataTypes type)
+		{
+			if (type == dtOid32)
+				m_pStmtSpatial->ColumnBindInt(1, (int32)nOID);
+			else
+				m_pStmtSpatial->ColumnBindInt64(1, nOID);
+			if (m_pStmtSpatial->IsError())
+			{
+				//TO DO error
+				m_bValidCursor = false;
+				return -1;
+
+			}		
+
+			m_pStmtSpatial->ColumnBindDouble(2, bb.xMin);
+			m_pStmtSpatial->ColumnBindDouble(3, bb.xMax);
+			m_pStmtSpatial->ColumnBindDouble(4, bb.yMin);
+			m_pStmtSpatial->ColumnBindDouble(5, bb.yMax);
+
+			if (m_pStmtSpatial->IsError())
+			{
+				//TO DO error
+				m_bValidCursor = false;
+				return -1;
+
+			}
+
+			m_pStmtSpatial->StepNext();
+
+			//if(m_pStmt)
+			//	sqlite3_finalize(m_pStmt);
+			if (m_pStmtSpatial->IsError())
+			{
+				//TO DO error
+				m_bValidCursor = false;
+				return false;
+			}
+
+			m_pStmtSpatial->reset();
+			return true;
+		}
+		bool  SQLiteInsertCursor::InsertMultiPointSpatialIndex(CommonLib::IGeoShapePtr& pShape, int64 nOID, eDataTypes type)
+		{
+			CommonLib::bbox bb;
+			if (pShape->IsSuccinct())
+			{
+				pShape->BeginReadSuccinct();
+				uint32 nCount = pShape->getPointCnt();
+				for (uint32 i = 0; i < nCount; ++i)
+				{
+					GisXYPoint pt;
+					pShape->nextPoint(i, pt);
+
+					bb.xMax = pt.x;
+					bb.xMin = pt.x;
+					bb.yMax = pt.y;
+					bb.yMin = pt.y;
+
+					if (!InsertSpatialIndex(bb, nOID, type))
+						return false;
+				}
+			}
+			else
+			{
+				uint32 nCount = pShape->getPointCnt();
+				auto pXYs = pShape->getPoints();
+				GisXYPoint pt;
+				for (uint32 i = 0; i < nCount; ++i)
+				{
+					bb.xMax = pXYs[i].x;
+					bb.xMin = pXYs[i].x;
+					bb.yMax = pXYs[i].y;
+					bb.yMin = pXYs[i].y;
+
+					if (!InsertSpatialIndex(bb, nOID, type))
+						return false;
+				}
+			}
+			
+			return true;
+		}
+
+
 		void SQLiteInsertCursor::close()
 		{
 		 
@@ -230,6 +298,7 @@ namespace GisEngine
 							
 				GisGeometry::IEnvelopePtr pEnvelope =  pFC->GetExtent();
 				m_comp_params = pEnvelope->GetCompressParams();
+				m_ShapeType = CommonLib::CGeoShape::GetGeneralType(pFC->GetGeometryType());
 				
 			}
 			

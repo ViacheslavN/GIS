@@ -135,8 +135,8 @@ namespace GisEngine
 				CommonLib::Event1<IDisplayTransformation*>         OnUnitsChangedEvent;
 				CommonLib::Event1<IDisplayTransformation*>         OnVisibleBoundsChangedEvent;
 
-				std::vector<GPoint> m_vecAlloc; //to do set alloc
-				std::vector<int> m_vecPart;
+				std::vector<GPoint> m_vecPoints; //to do set alloc
+				std::vector<int> m_vecParts;
 
 				IClipPtr m_pClipper;
 

@@ -10,7 +10,7 @@ namespace CommonLib
 		return shapeType <= shape_type_multipatch  && shapeType >= shape_type_null;
 	}
 
-	eShapeType GetGeneralType(eShapeType _general_type)
+	eShapeType CGeoShape::GetGeneralType(eShapeType _general_type)
 	{
 		eShapeType shapeType = _general_type;
 

@@ -143,7 +143,7 @@ namespace CommonLib
 
 
 		static void getTypeParams(eShapeType shapeType, eShapeType* pGenType, bool* has_z = nullptr, bool* has_m = nullptr, bool* has_curve = nullptr, bool* has_id = nullptr);
-
+		static eShapeType GetGeneralType(eShapeType type);
 
 		uint32  size() const;
 		eShapeType generalType() const;
