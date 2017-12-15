@@ -12,9 +12,12 @@ namespace GisEngine
 				ClipPolygon();
 				~ClipPolygon();
 
-				void Init(GRect clipBox, TVecPoints *pPoints);
-				void AddVertex(const GPoint& pt);
-				void EndPolygon();
+				void SetClipBox(const GRect& clipBox);
+				void SetPointDst(TVecPoints *pPoints);
+
+				void BeginPolygon();
+				void AddVertex(const GPoint& pt, bool bAllPointInBox);
+				void EndPolygon(bool bAllPointInBox);
 			private:
 				void Clear();
 
@@ -64,7 +67,11 @@ namespace GisEngine
 						m_NextStage.Finalize();			// Delegate to the next stage.
 						m_bFirst = true;
  					}
-
+					void BeginPolygon()
+					{
+						m_NextStage.BeginPolygon();
+						m_bFirst = true;
+					}
 					 
 					Stage& m_NextStage;			// the next stage
 					bool m_bFirst;				// true if no vertices have been handled
@@ -76,23 +83,80 @@ namespace GisEngine
 				class OutputStage
 				{
 				public:
-					OutputStage() : m_pDest(0){}
+					OutputStage() : m_pDest(0), m_dS(0.){}
 					void SetDestination(TVecPoints * pDest)
 					{ 
 						m_pDest = pDest;
 					}
+					void AddVertex(const GPoint& pnt)
+					{
+						m_pDest->push_back(pnt);
+					}
 					void HandleVertex(const GPoint& pnt) 
 					{ 
 
+						if (m_nBeginPolygonPos != m_pDest->size())
+						{
+							auto& ptLast = (*m_pDest)[m_pDest->size() - 1];
+							m_dS += (pnt.y + ptLast.y) * (pnt.x - ptLast.x);
+						}
+
 						m_pDest->push_back(pnt);
+						
+
+
 					}	// Append the vertex to the output container.
 					void Finalize() 
 					{
 						
 					}		// Do nothing.
 
+
+					bool isClockwise()
+					{
+						return m_dS >= 0;
+					}
+
+					void BeginPolygon()
+					{
+						m_nBeginPolygonPos = m_pDest->size();
+					}
+
+					void CheckOut(bool bisInClockwise)
+					{
+					
+						uint32 nEndPos = m_pDest->size();
+						if (m_nBeginPolygonPos != nEndPos)
+						{
+							auto &ptFirst = (*m_pDest)[m_nBeginPolygonPos];
+							auto &ptLast = (*m_pDest)[nEndPos - 1];
+
+							if (ptLast != ptFirst)
+							{
+								m_dS += (ptFirst.y + ptLast.y) * (ptFirst.x - ptLast.x);
+							}
+
+							bool bisOutClockwise = isClockwise();
+							if (bisInClockwise != bisOutClockwise)
+							{
+								uint32 nSize = nEndPos - m_nBeginPolygonPos;
+								for (int i = 0; i < nSize / 2; i++)
+								{
+									GPoint tmp = (*m_pDest)[m_nBeginPolygonPos + i];
+									(*m_pDest)[i] = (*m_pDest)[nEndPos - 1 - i];
+									(*m_pDest)[i - 1] = tmp;
+								}
+							}
+						}						
+
+					
+						m_dS = 0.;
+					}
+
 				private:
 					TVecPoints * m_pDest;
+					double m_dS;
+					uint32 m_nBeginPolygonPos;
 				};
 
 
@@ -151,11 +215,7 @@ namespace GisEngine
 				};
 
 			private:
-				GRect m_clipBox;
-				GPoint *m_pOut ;
-				uint32 m_nMaxCnt;
-				uint32 *m_pPart ;
-				uint32 m_nMaxPart;
+ 
 
 				// These typedefs define the four boundaries. In keeping up with the GDI/GDI+ interpretation of
 				// rectangles, we include the left and top boundaries, but not the right and bottom boundaries.
@@ -179,6 +239,10 @@ namespace GisEngine
 				ClipLeft m_stageLeft;
 				ClipTop m_stageTop;
 				ClipRight m_stageRight;
+
+				double m_dS;
+				GPoint m_nPrev;
+				bool m_bFirst;
 
 		};
 

@@ -114,7 +114,7 @@ namespace GisEngine
 				m_pDispTran->SetDeviceClipRect(wnd_rect);
 				m_pDispTran->SetDeviceRect(wnd_rect);
 
-				m_pDispTran->SetClipper(m_Clipper.get());
+			//	m_pDispTran->SetClipper(m_Clipper.get());
 
 
 				m_pDispCalcTran = (Display::IDisplayTransformation*)new Display::CDisplayTransformation2D(m_dDpi, m_pMap->GetMapUnits(), wnd_rect);
@@ -123,7 +123,7 @@ namespace GisEngine
 				m_pDispCalcTran->SetDeviceClipRect(wnd_rect);
 				m_pDispCalcTran->SetDeviceRect(wnd_rect);
 
-				m_pDispCalcTran->SetClipper(m_Clipper.get());
+			//	m_pDispCalcTran->SetClipper(m_Clipper.get());
 			}
 			else
 			{

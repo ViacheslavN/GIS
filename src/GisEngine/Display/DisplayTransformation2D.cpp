@@ -29,6 +29,9 @@ namespace GisEngine
 			SetClientRect(dev_rect);
 
 			SetAngle3D(20);
+
+			m_clipPolygon.SetPointDst(&m_vecPoints);
+			m_ClipLine.SetPointDst(&m_vecPoints, &m_vecParts);
 			
 		}
 		CDisplayTransformation2D::~CDisplayTransformation2D()
@@ -167,6 +170,8 @@ namespace GisEngine
 		void CDisplayTransformation2D::SetDeviceClipRect(const GRect& devRect)
 		{
 			m_devClipRect = devRect;
+			m_clipPolygon.SetClipBox(m_devClipRect);
+			m_ClipLine.SetClipBox(m_devClipRect);
 		}
 		const GRect& CDisplayTransformation2D::GetDeviceClipRect() const 
 		{
@@ -401,105 +406,208 @@ namespace GisEngine
 		void CDisplayTransformation2D::MapToDevice(const CommonLib::CGeoShape& geom, GPoint **pOut, int** partCounts, int* count)
 		{		
 
+			GisBoundingBox bb = geom.getBB();
+			GRect gBB;
+			MapToDevice(bb, gBB);
+			bool bAllPointInBox = m_devClipRect.isInRect(gBB);
+			if (!bAllPointInBox)
+			{
+				if (!m_devClipRect.isIntersect(gBB))
+				{
+					*partCounts = nullptr;
+					*pOut = nullptr;
+					*count = 0;
+
+					return;
+				}
+			}
 
 			if (geom.IsSuccinct())
 			{
 				geom.BeginReadSuccinct();
 			}
+
 			uint32 nInPartSize = (int)geom.getPartCount();
 			uint32 nInPointCnt = (int)geom.getPointCnt();
-		
+
 			nInPartSize = (nInPartSize > 0 ? nInPartSize : 1);
 
-			 //TO DO alloc
+			//TO DO alloc
+			m_vecPoints.clear();
+			m_vecParts.clear();
+
+			GisXYPoint pt;
+			GPoint ptPoint;
+			GPoint ptPrev;
+
+			if (geom.generalType() == CommonLib::shape_type_general_polygon)
+			{
+
+				for (size_t part = 0, offset = 0; part < nInPartSize; part++)
+				{
+					int nPartPoints = geom.nextPart(part);
+					uint32 nNewCount = m_vecPoints.size();
+					int nClipPoint = 0;
+					bool bPointInRect = false;
+
+					m_clipPolygon.BeginPolygon();
+					for (uint32 i = 0; i < nPartPoints; ++i)
+					{
+						geom.nextPoint(i + offset, pt);
+						MapToDevicePoint(pt, ptPoint);
+
+						if (i != 0 && ptPrev == ptPoint)
+							continue;
+
+						if (!bPointInRect)
+							bPointInRect = m_devClipRect.pointInRect(ptPoint);
+
+						nClipPoint += 1;
+						m_clipPolygon.AddVertex(ptPoint, bAllPointInBox);
+						ptPrev = ptPoint;
+					}
+
+
+					if (!bPointInRect)
+					{
+
+						*partCounts = nullptr;
+						*pOut = nullptr;
+						*count = 0;
+
+						return;
+					}
+
+					if (nClipPoint < 4)
+					{
+						for (int i = 0; i < nClipPoint; ++i)
+						{
+							m_clipPolygon.AddVertex(ptPrev, bAllPointInBox);
+						}
+
+					}
+					m_clipPolygon.EndPolygon(bAllPointInBox);
+					nNewCount = m_vecPoints.size() - nNewCount;
+					offset += nPartPoints;
+					if (nNewCount != 0)
+					{
+						m_vecParts.push_back(nNewCount);
+					}
+				}
+
+				if (!m_vecPoints.empty())
+					*pOut = &m_vecPoints[0];
+				else
+					*pOut = nullptr;
+
+				if (!m_vecPoints.empty())
+					*partCounts = &m_vecParts[0];
+				else
+					*partCounts = nullptr;
+
+				*count = m_vecParts.size();
+				return;
+			}
+
+			if (geom.generalType() == CommonLib::shape_type_general_polyline)
+			{
+ 
+				for (size_t part = 0, offset = 0; part < nInPartSize; part++)
+				{
+					int nPartPoints = geom.nextPart(part);
+					int nClipPoint = 0;
+					m_ClipLine.BeginLine(bAllPointInBox);
+					for (uint32 i = 0; i < nPartPoints; ++i)
+					{
+						geom.nextPoint(i + offset, pt);
+						MapToDevicePoint(pt, ptPoint);
+
+						if (i != 0 && ptPrev == ptPoint)
+							continue;
+
+						nClipPoint += 1;
+						m_ClipLine.AddVertex(ptPoint, bAllPointInBox);
+						ptPrev = ptPoint;
+					}
+
+					if (nClipPoint < 2)
+					{
+						for (int i = 0; i < nClipPoint; ++i)
+						{
+							m_ClipLine.AddVertex(ptPrev, bAllPointInBox);
+						}
+
+					}
+					m_ClipLine.EndLine(bAllPointInBox);
+				
+				}
+
+				if (!m_vecPoints.empty())
+					*pOut = &m_vecPoints[0];
+				else
+					*pOut = nullptr;
+
+				if (!m_vecPoints.empty())
+					*partCounts = &m_vecParts[0];
+				else
+					*partCounts = nullptr;
+
+				*count = m_vecParts.size();
+				return;
+			}
+
+			if (geom.generalType() == CommonLib::shape_type_general_point || geom.generalType() == CommonLib::shape_type_general_multipoint)
+			{
+				for (uint32 i = 0; i < nInPointCnt; ++i)
+				{
+					for (uint32 i = 0; i < nInPointCnt; ++i)
+					{
+						geom.nextPoint(i, pt);
+						MapToDevicePoint(pt, ptPoint);
+						if (m_devClipRect.pointInRect(ptPoint))
+						{
+							m_vecPoints.push_back(ptPoint);
+						}
+					}
+
+				}
+				m_vecParts[0] = m_vecPoints.size();
+
+				*pOut = &m_vecPoints[0];
+				*partCounts = &m_vecParts[0];
+				*count = 1;
+
+
+			}
+
+
+		
+		}
+			 
+	/*	void CDisplayTransformation2D::MapToDeviceNotSuccinct(const CommonLib::CGeoShape& geom, GPoint **pOut, int** partCounts, int* count)
+		{
+			uint32 nInPartSize = (int)geom.getPartCount();
+			uint32 nInPointCnt = (int)geom.getPointCnt();
+
+			nInPartSize = (nInPartSize > 0 ? nInPartSize : 1);
+
+			//TO DO alloc
 			m_vecPoints.clear();
 			m_vecParts.clear();
 			int nOutPartCount = 0;
 
-			m_clipPolygon.Init(m_devClipRect, &m_vecPoints);
-			if (geom.IsSuccinct())
-			{
-				GisXYPoint pt;
-				GPoint ptPoint;
-				GPoint ptPrev;
-				if (geom.generalType() == CommonLib::shape_type_general_polygon)
-				{
-					for (size_t part = 0, offset = 0; part < nInPartSize; part++)
-					{
-						
-						int nPartPoints = geom.nextPart(part);
-						uint32 nNewCount = m_vecPoints.size();
-						int nClipPoint = 0;
-						for (uint32 i = 0; i < nPartPoints; ++i)
-						{
-							geom.nextPoint(i + offset, pt);
-							MapToDevicePoint(pt, ptPoint);
-
-							if(i != 0 && ptPrev == ptPoint)
-								continue;
-
-							nClipPoint += 1;
-							m_clipPolygon.AddVertex(ptPoint);
-							ptPrev = ptPoint;
-						}
-
-						if (nClipPoint < 4)
-						{
-							for (int i = 0; i < nClipPoint; ++i)
-							{
-								m_clipPolygon.AddVertex(ptPrev);
-							}
-						
-						}
-
-						m_clipPolygon.EndPolygon();
-
-						nNewCount = m_vecPoints.size() - nNewCount;
-						offset += nPartPoints;
-						if (nNewCount != 0)
-						{
-							m_vecParts.push_back(nNewCount);
-							nOutPartCount += 1;
-						}
-
-
-					}
-
-					if (!m_vecPoints.empty())
-						*pOut = &m_vecPoints[0];
-					else
-						*pOut = nullptr;
-
-					if (!m_vecPoints.empty())
-						*partCounts = &m_vecParts[0];
-					else
-						*partCounts = nullptr;
-
-					*count = nOutPartCount;
-					return;
-				}
-		
-				if (geom.generalType() == CommonLib::shape_type_general_point || geom.generalType() == CommonLib::shape_type_general_multipoint)
-				{
-					for (uint32 i = 0; i < nInPointCnt; ++i)
-					{
-					//	int newCount = MapToDeviceOpt(&geom.nextPoint(i), &m_vecAlloc[0] + i, 1, geom.generalType());
-					//	parts[0] = newCount;
-					//	*count += 1;
-					}
-					*pOut = &m_vecPoints[0];
-					*partCounts = &m_vecParts[0];
-					*count = nOutPartCount;
-				
-					return;
-				}
+			auto pPoints =geom.getPoints();
+			auto pParts = geom.getParts();
 				
 
-				 
-			}
-		/*	else
-			{
+			if (m_vecPoints.size() < nInPointCnt)
+				m_vecPoints.resize(nInPointCnt);
 
+			if (m_vecParts.size() < nInPartSize)
+				m_vecParts.resize(nInPointCnt);
+
+			int *parts = &m_vecParts[0];
+			GPoint *buffer = &m_vecPoints[0];
 
 				const GisXYPoint* points = geom.getPoints();
 				if (geom.generalType() == CommonLib::shape_type_general_point || geom.generalType() == CommonLib::shape_type_general_multipoint)
@@ -521,35 +629,28 @@ namespace GisEngine
 					buf_offset += newCount;
 				}
 
-				partCount = (int)geom.getPartCount();
-			}
-	 
-		
+				int partCount = (int)geom.getPartCount();
 
-			
 
-	
-
-			if(m_pClipper.get())
-			{
-				GRect rect = m_devClipRect;
+				if (m_pClipper.get())
+				{
+					GRect rect = m_devClipRect;
 #ifdef _FLOAT_GUNITS_
-				rect.inflate(ceill(GUnits(rect.width() * 0.1)), ceill(GUnits(rect.height() * 0.1)));
+					rect.inflate(ceill(GUnits(rect.width() * 0.1)), ceill(GUnits(rect.height() * 0.1)));
 #else
-				rect.Inflate(GUnits(rect.width() * 0.1), GUnits(rect.height() * 0.1));
+					rect.Inflate(GUnits(rect.width() * 0.1), GUnits(rect.height() * 0.1));
 #endif
-				if(geom.generalType() == CommonLib::shape_type_general_polyline)
-					m_pClipper->clipLine(rect, &buffer, &parts, &partCount);
-				else if(geom.generalType() == CommonLib::shape_type_general_polygon)
-					m_pClipper->clipPolygon(rect, &buffer, &parts, &partCount);
-			}
+					if (geom.generalType() == CommonLib::shape_type_general_polyline)
+						m_pClipper->clipLine(rect, &buffer, &parts, &partCount);
+					else if (geom.generalType() == CommonLib::shape_type_general_polygon)
+						m_pClipper->clipPolygon(rect, &buffer, &parts, &partCount);
+				}
 
-			*pOut = buffer;
-			*partCounts = parts;
-			*count = partCount;*/
-		}
+				*pOut = buffer;
+				*partCounts = parts;
+				*count = partCount;			
 
-
+		}*/
 		void CDisplayTransformation2D::DeviceToMap(const GPoint *pIn, GisXYPoint *pOut, int nPoints )
 		{
 
@@ -762,14 +863,14 @@ namespace GisEngine
 			m_bClipExists = false;
 		}
 
-		void CDisplayTransformation2D::SetClipper(IClip *pClip)
+		/*void CDisplayTransformation2D::SetClipper(IClip *pClip)
 		{
 			m_pClipper = pClip;
 		}
 		IClipPtr CDisplayTransformation2D::GetClipper() const
 		{
 			return m_pClipper;
-		}
+		}*/
 
 		void CDisplayTransformation2D::SetOnDeviceFrameChanged(OnDeviceFrameChanged* pFunck, bool bAdd)
 		{

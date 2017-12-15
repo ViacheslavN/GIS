@@ -169,8 +169,8 @@ namespace GisEngine
 			virtual bool  ClipExists() = 0;
 			virtual void  RemoveClip() = 0;
 
-			virtual void SetClipper(IClip *pClip) = 0;
-			virtual IClipPtr GetClipper() const = 0;
+		//	virtual void SetClipper(IClip *pClip) = 0;
+		//	virtual IClipPtr GetClipper() const = 0;
 
 			virtual void SetOnDeviceFrameChanged(OnDeviceFrameChanged* pFunck, bool bAdd) = 0;
 			virtual void SetOnResolutionChanged(OnResolutionChanged* pFunck, bool bAdd) = 0;

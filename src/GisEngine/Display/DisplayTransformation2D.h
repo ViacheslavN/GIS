@@ -2,6 +2,7 @@
 #define GIS_ENGINE_DISPLAY_TRANSFORMATION_2D_H_
 #include "Display.h"
 #include "ClipPolygon.h"
+#include "ClipLine.h"
 namespace GisEngine
 {
 	namespace Display
@@ -77,8 +78,8 @@ namespace GisEngine
 				virtual bool  ClipExists();
 				virtual void  RemoveClip();
 
-				virtual void SetClipper(IClip *pCLip);
-				virtual IClipPtr GetClipper() const;
+			//	virtual void SetClipper(IClip *pCLip);
+			//	virtual IClipPtr GetClipper() const;
 
 
 				virtual void SetOnDeviceFrameChanged(OnDeviceFrameChanged* pFunck, bool bAdd);
@@ -89,7 +90,9 @@ namespace GisEngine
 
 			private:
 				 
-
+		 
+ 
+				//void MapToDeviceNotSuccinct(const CommonLib::CGeoShape& geom, GPoint **pOut, int** partCounts, int* count);
 
 				void SetClientRect(const GRect &arg);
 				void UpdateScaleRatio();
@@ -138,9 +141,10 @@ namespace GisEngine
 				std::vector<GPoint> m_vecPoints; //to do set alloc
 				std::vector<int> m_vecParts;
 
-				IClipPtr m_pClipper;
+			//	IClipPtr m_pClipper;
 
 				ClipPolygon m_clipPolygon;
+				ClipLine    m_ClipLine;
 
 		};
 	}

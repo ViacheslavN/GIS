@@ -1170,7 +1170,7 @@ namespace CommonLib
 	uint32 CGeoShape::nextPart(uint32 nIdx) const
 	{
 		if (!IsSuccinct())
-			return 0;
+			return getPart(nIdx);
 
 		return m_Encoder.GetNextPart(nIdx);
 	}
@@ -1178,7 +1178,7 @@ namespace CommonLib
 	GisXYPoint CGeoShape::nextPoint(uint32 nIdx) const
 	{
 		if (!IsSuccinct())
-			return GisXYPoint();
+			return getPoints()[nIdx];
 
 		return m_Encoder.GetNextPoint(nIdx, &m_comp_params);
 	}
@@ -1186,7 +1186,10 @@ namespace CommonLib
 	bool CGeoShape::nextPoint(uint32 nIdx, GisXYPoint& pt) const
 	{
 		if (!IsSuccinct())
-			return false();
+		{
+			pt = getPoints()[nIdx];
+			return true;
+		}
 
 		return m_Encoder.GetNextPoint(pt, nIdx, &m_comp_params);
 	}
