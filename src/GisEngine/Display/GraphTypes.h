@@ -44,8 +44,19 @@ namespace GisEngine
 		{
 			JoinTypeMiter     = 0,
 			JoinTypeRound     = 1,
-			JoinTypeBevel     = 2
+			JoinTypeBevel     = 2,
+			JoinTypeMiterRevert = 4,
+			JoinTypeMiterRound = 8
 		};
+
+		enum eInnerJoinType
+		{
+			InnerJoinTypeMiter = 0,
+			InnerJoinTypeRound = 1,
+			InnerJoinTypeBevel = 2,
+			InnerJoinTypeJag = 4
+		};
+
 
 		enum eBrushType
 		{

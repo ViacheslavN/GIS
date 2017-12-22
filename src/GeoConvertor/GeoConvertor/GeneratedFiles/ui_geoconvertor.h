@@ -33,6 +33,7 @@ public:
     QSplitter *splitter;
     QMenuBar *menuBar;
     QMenu *menuFile;
+    QMenu *menuHelp;
     QStatusBar *statusBar;
     QToolBar *toolBar;
 
@@ -40,7 +41,7 @@ public:
     {
         if (GeoConvertorClass->objectName().isEmpty())
             GeoConvertorClass->setObjectName(QStringLiteral("GeoConvertorClass"));
-        GeoConvertorClass->resize(678, 505);
+        GeoConvertorClass->resize(953, 541);
         actionNew = new QAction(GeoConvertorClass);
         actionNew->setObjectName(QStringLiteral("actionNew"));
         QIcon icon;
@@ -61,14 +62,15 @@ public:
         actionSave_project_as->setIcon(icon2);
         splitter = new QSplitter(GeoConvertorClass);
         splitter->setObjectName(QStringLiteral("splitter"));
-        splitter->setGeometry(QRect(0, 0, 671, 471));
         splitter->setOrientation(Qt::Horizontal);
         GeoConvertorClass->setCentralWidget(splitter);
         menuBar = new QMenuBar(GeoConvertorClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 678, 21));
+        menuBar->setGeometry(QRect(0, 0, 953, 21));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
+        menuHelp = new QMenu(menuBar);
+        menuHelp->setObjectName(QStringLiteral("menuHelp"));
         GeoConvertorClass->setMenuBar(menuBar);
         statusBar = new QStatusBar(GeoConvertorClass);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -78,6 +80,7 @@ public:
         GeoConvertorClass->addToolBar(Qt::TopToolBarArea, toolBar);
 
         menuBar->addAction(menuFile->menuAction());
+        menuBar->addAction(menuHelp->menuAction());
         menuFile->addAction(actionNew);
         menuFile->addAction(actionOpen_project);
         menuFile->addAction(actionSave_project);
@@ -102,6 +105,7 @@ public:
         actionSave_project->setText(QApplication::translate("GeoConvertorClass", "Save project", Q_NULLPTR));
         actionSave_project_as->setText(QApplication::translate("GeoConvertorClass", "Save project as", Q_NULLPTR));
         menuFile->setTitle(QApplication::translate("GeoConvertorClass", "File", Q_NULLPTR));
+        menuHelp->setTitle(QApplication::translate("GeoConvertorClass", "Help", Q_NULLPTR));
         toolBar->setWindowTitle(QApplication::translate("GeoConvertorClass", "toolBar", Q_NULLPTR));
     } // retranslateUi
 

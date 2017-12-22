@@ -14,7 +14,6 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHeaderView>
-#include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -22,19 +21,12 @@ QT_BEGIN_NAMESPACE
 class Ui_legend
 {
 public:
-    QTreeWidget *treeWidget;
 
     void setupUi(QWidget *legend)
     {
         if (legend->objectName().isEmpty())
             legend->setObjectName(QStringLiteral("legend"));
-        legend->resize(400, 300);
-        treeWidget = new QTreeWidget(legend);
-        QTreeWidgetItem *__qtreewidgetitem = new QTreeWidgetItem();
-        __qtreewidgetitem->setText(0, QStringLiteral("1"));
-        treeWidget->setHeaderItem(__qtreewidgetitem);
-        treeWidget->setObjectName(QStringLiteral("treeWidget"));
-        treeWidget->setGeometry(QRect(0, 0, 401, 301));
+        legend->resize(510, 641);
 
         retranslateUi(legend);
 

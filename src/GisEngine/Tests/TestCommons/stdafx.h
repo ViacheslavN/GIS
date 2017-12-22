@@ -18,5 +18,9 @@
 #include "../../GisGeometry/GisGeometryLib.h"
 #include "../../EmbDB/EmbDB/embDBLib.h"
 #include "../../EmbDB/DatasetLite/DatasetLiteLib.h"
+#include "../../Display/Displaylib_lib.h"
+#include "../../Display/GraphTypes.h"
+#include "../../Display/Point.h"
 #include "zlib/zlib_lib.h"
+#include "../../agg/agglib_lib.h"
 // TODO: reference additional headers your program requires here

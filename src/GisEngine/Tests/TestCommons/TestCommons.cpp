@@ -12,6 +12,9 @@ void TestSQLiteWks();
 void TestEmbDBWks();
 void TestTableWks();
 void CompressShape();
+void GenLine();
+
+
 class ITest : public CommonLib::AutoRefCounter
 {
 public:
@@ -32,13 +35,13 @@ typedef std::map<ITestPtr, int> TtestMap;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-
+	GenLine();
 
 //	char utf8Buf[256];
 	// CommonLib::CString str = "string";
 
 //	 str.exportToUTF8(utf8Buf, 255);
-	CompressShape();
+//	CompressShape();
 //	TestTableWks();
 	//testLoadXML1();
 	//return 1;
