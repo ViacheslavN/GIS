@@ -73,7 +73,7 @@ namespace GisEngine
 				set(rc.xMin, rc.yMin, rc.xMax, rc.yMax);
 			}
 			else
-				set(std::min(xMin, rc.xMin),std::min(yMin, rc.yMin), std::max(xMax, rc.xMax),std::max(yMax, rc.yMax));
+				set(min(xMin, rc.xMin),min(yMin, rc.yMin), max(xMax, rc.xMax),max(yMax, rc.yMax));
 		}
 		void GRect::expandRect(const GPoint &p)
 		{
@@ -82,7 +82,7 @@ namespace GisEngine
 				set(p.x, p.y, p.x, p.y);
 			}
 			else
-				set(std::min(xMin, p.x), std::min(yMin, p.y), std::max(xMax, p.x), std::max(yMax, p.y));
+				set(min(xMin, p.x), min(yMin, p.y), max(xMax, p.x), max(yMax, p.y));
 		}
 		GRect& GRect::intersect(const GRect &rc)
 		{
@@ -95,10 +95,10 @@ namespace GisEngine
 				return *this;
 			}
 
-			xMin= std::max(xMin, rc.xMin);
-			yMin = std::max(yMin, rc.yMin);
-			xMax = std::min(xMax, rc.xMax);
-			yMax = std::min(yMax, rc.yMax);
+			xMin= max(xMin, rc.xMin);
+			yMin = max(yMin, rc.yMin);
+			xMax = min(xMax, rc.xMax);
+			yMax = min(yMax, rc.yMax);
 			return *this;
 		}
 		bool GRect::isIntersect(const GRect &rc) const

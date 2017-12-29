@@ -26,7 +26,7 @@ namespace GisEngine
 			~CLineGenerator();
 
 
-			void CreateLine(std::vector<GPoint>& vecLine);
+			void GenerateLine(std::vector<GPoint>& vecLine);
 			
 			void SetWidth(double dWidth);
 

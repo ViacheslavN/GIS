@@ -106,17 +106,12 @@ namespace GisEngine
 			::DeleteDC(m_dc);
 #endif
 		}
-#ifndef ANDROID
-		HDC  CGraphicsAgg::GetDC()
-		{
-			return m_dc;
-		}
-#endif
+
 		 eDeviceType  CGraphicsAgg::GetDeviceType() const
 		 {
 			   return DeviceTypeDisplay;
 		 }
-		 void   CGraphicsAgg::StartDrawing()
+		 void   CGraphicsAgg::StartDrawing(IDisplayTransformation *pDT)
 		 {
 			 RemoveClip();
 		 }

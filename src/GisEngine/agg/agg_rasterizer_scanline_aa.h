@@ -399,8 +399,10 @@ namespace agg
     template<class Clip> 
     void rasterizer_scanline_aa<Clip>::move_to_d(double x, double y) 
     { 
-        if(m_outline.sorted()) reset();
-        if(m_auto_close) close_polygon();
+        if(m_outline.sorted())
+			reset();
+        if(m_auto_close) 
+			close_polygon();
         m_clipper.move_to(m_start_x = conv_type::upscale(x), 
                           m_start_y = conv_type::upscale(y)); 
         m_status = status_move_to;

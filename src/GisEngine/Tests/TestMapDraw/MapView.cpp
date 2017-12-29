@@ -20,6 +20,7 @@
 #include "../../Cartography/Map.h"
 #include "../../GisFramework/MapDrawer.h"
 #include "../../Display/GraphicsWinGDI.h"
+#include "../../Display/GraphicsOpenGLWin.h"
 #include "../../Common/GisEngineCommon.h"
 #include "../../Common/XMLDoc.h"
 #include "CommonLibrary/FileStream.h"

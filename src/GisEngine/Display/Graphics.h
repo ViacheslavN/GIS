@@ -15,6 +15,7 @@ namespace GisEngine
 {
 	namespace Display
 	{
+		class IDisplayTransformation;
 
 		class IGraphics : public CommonLib::AutoRefCounter
 		{
@@ -23,7 +24,7 @@ namespace GisEngine
 				virtual ~IGraphics(){}
 
 				virtual eDeviceType  GetDeviceType() const = 0;
-				virtual void        StartDrawing() = 0;
+				virtual void        StartDrawing(IDisplayTransformation *pDT = nullptr) = 0;
 				virtual void        EndDrawing() = 0;
 				virtual GRect       GetClipRect() const = 0;
 				virtual void        SetClipRect(const GRect& rect) = 0;
@@ -82,6 +83,10 @@ namespace GisEngine
  
 				virtual void Lock() = 0;
 				virtual void UnLock() = 0;
+
+#ifdef _WIN32
+				virtual HDC GetDC() const = 0;
+#endif
 
 
 		};

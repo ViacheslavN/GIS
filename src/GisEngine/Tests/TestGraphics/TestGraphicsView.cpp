@@ -24,37 +24,64 @@ BOOL CTestGraphicsView::PreTranslateMessage(MSG* pMsg)
 LRESULT CTestGraphicsView::OnPaint(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
 	CPaintDC dc(m_hWnd);
+
+
+	GisEngine::Display::GRect OutRect;
+	GisEngine::Display::GPoint OutPoint;
+	OutRect.set(0, 0, m_pGraphicsOpenGLWin->GetWidth(), m_pGraphicsOpenGLWin->GetHeight());
+
+
+		OutPoint.x = 0;
+		OutPoint.y = 0;
+
+
+	GisEngine::Display::CGraphicsWinGDI graphics(dc);
+	graphics.Copy(m_pGraphicsOpenGLWin.get(), OutPoint, OutRect);
+
+	return 0;
+
+
+
+
 	/*GisEngine::Display::CPen pen;
 	pen.setWidth(10);
 	pen.setColor(GisEngine::Display::Color(0, 255, 0, 255));
 	pen.setCapType(GisEngine::Display::CapTypeRound);
 	pen.setJoinType(GisEngine::Display::JoinTypeRound);
 	pen.setPenType(GisEngine::Display::PenTypeDashDotDot);*/
-	if(m_pGraphicsAgg.get())
+/*	m_pGraphicsOpenGLWin->StartDrawing();
+	m_pGraphicsOpenGLWin->Erase(GisEngine::Display::Color(134,125,123,255));
+ 
+
+	m_pGraphicsOpenGLWin->EndDrawing();*/
+	if(m_pGraphicsOpenGLWin.get())
 	{
 		//m_pGraphicsAgg->Erase(GisEngine::Display::Color(255, 0, 0, 255));
 		//m_pGraphicsAgg->DrawLineSeg(&pen, 0, 0, 200, 200);
 
 
 
-		 ::BitBlt(dc.m_hDC, 0, 0, m_pGraphicsAgg->GetWidth(), m_pGraphicsAgg->GetHeight(), m_pGraphicsAgg->GetDC(), 0, 0, SRCCOPY);
+		// ::BitBlt(dc.m_hDC, 0, 0, m_pGraphicsAgg->GetWidth(), m_pGraphicsAgg->GetHeight(), m_pGraphicsAgg->GetDC(), 0, 0, SRCCOPY);
+		 
 
-
-		/*BITMAPINFO bmi;
+		BITMAPINFO bmi;
 		::memset(&bmi, 0, sizeof(bmi));
 		bmi.bmiHeader.biBitCount = 32;
 		bmi.bmiHeader.biCompression = BI_RGB;
-		bmi.bmiHeader.biHeight = (int)m_pGraphicsAgg->GetSurface().height();
+		bmi.bmiHeader.biHeight = (int)m_pGraphicsOpenGLWin->GetSurface().height();
 		bmi.bmiHeader.biPlanes = 1;
 		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		bmi.bmiHeader.biWidth = m_pGraphicsAgg->GetSurface().width();
+		bmi.bmiHeader.biWidth = m_pGraphicsOpenGLWin->GetSurface().width();
 		::StretchDIBits(
-			dc.m_hDC,           
-			0, 0, m_pGraphicsAgg->GetWidth(), m_pGraphicsAgg->GetHeight(),
-			0, 0,  m_pGraphicsAgg->GetWidth(), m_pGraphicsAgg->GetHeight(),
-			m_pGraphicsAgg->GetSurface().bits(),
-			&bmi,  
-			DIB_RGB_COLORS, SRCCOPY) ;*/
+			dc.m_hDC,
+			0, 0, m_pGraphicsOpenGLWin->GetWidth(), m_pGraphicsOpenGLWin->GetHeight(),
+			0, 0, m_pGraphicsOpenGLWin->GetWidth(), m_pGraphicsOpenGLWin->GetHeight(),
+			m_pGraphicsOpenGLWin->GetSurface().bits(),
+			&bmi,
+			DIB_RGB_COLORS, SRCCOPY);
+
+
+
 	}
 	
 
@@ -71,6 +98,8 @@ LRESULT  CTestGraphicsView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 		return 0;
 
 	m_pGraphicsAgg.reset(new GisEngine::Display::CGraphicsAgg(nWidth, nHeight, true));
+	m_pGraphicsOpenGLWin.reset(new GisEngine::Display::CGraphicsOpenGLWin(GetDC(), nWidth, nHeight));
+
 	return 0;
 }
 
@@ -80,6 +109,55 @@ LRESULT  CTestGraphicsView::OnWireRender(WORD /*wNotifyCode*/, WORD /*wID*/, HWN
 
 	if(!m_pGraphicsAgg.get())
 		return 0;
+
+	{
+
+		GisEngine::Display::CBrush brush;
+		GisEngine::Display::CPen Pen;
+		brush.setColor(GisEngine::Display::Color(255, 0, 0, 255));
+		brush.setBgColor(GisEngine::Display::Color(0, 255, 0, 255));
+
+		Pen.setColor(GisEngine::Display::Color(0, 255, 0, 255));
+
+		std::vector<GisEngine::Display::GPoint> vecPoint;
+
+		std::vector<int> vecCounts;
+ 
+
+ 
+
+		vecPoint.push_back(GisEngine::Display::GPoint(100, 100));
+		vecPoint.push_back(GisEngine::Display::GPoint(200, 300));
+		vecPoint.push_back(GisEngine::Display::GPoint(400, 250));
+		vecPoint.push_back(GisEngine::Display::GPoint(500, 600));
+		vecPoint.push_back(GisEngine::Display::GPoint(550, 20));
+		vecPoint.push_back(GisEngine::Display::GPoint(100, 100));
+		vecCounts.push_back(vecPoint.size());
+		
+
+	/*	vecPoint.push_back(GisEngine::Display::GPoint(100, 100));
+		vecPoint.push_back(GisEngine::Display::GPoint(100, 300));
+		vecPoint.push_back(GisEngine::Display::GPoint(200, 300));
+		vecPoint.push_back(GisEngine::Display::GPoint(200, 100));
+		vecPoint.push_back(GisEngine::Display::GPoint(100, 100));
+
+		vecCounts.push_back(vecPoint.size());*/
+
+		//m_pGraphicsAgg->DrawPolyPolygon(nullptr, &brush, &vecPoint[0], &vecCounts[0], vecCounts.size());
+
+		m_pGraphicsOpenGLWin->StartDrawing();
+
+		m_pGraphicsOpenGLWin->Erase(GisEngine::Display::Color::Black);
+
+		m_pGraphicsOpenGLWin->DrawPolyPolygon(nullptr, &brush, &vecPoint[0], &vecCounts[0], vecCounts.size());
+		m_pGraphicsOpenGLWin->DrawLine(&Pen, &vecPoint[0], vecCounts[0]);
+		m_pGraphicsOpenGLWin->EndDrawing();
+			//m_pGraphicsAgg->DrawPolygon(nullptr, &brush, &vecPoint[0], vecPoint.size());
+
+	}
+	Invalidate(FALSE);
+	return 0;
+
 
 	Model model("d:\\work\\MyProject\\obj\\african_head\\african_head.obj");
 

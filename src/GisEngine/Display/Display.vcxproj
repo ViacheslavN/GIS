@@ -489,6 +489,10 @@
     <ClInclude Include="Display.h" />
     <ClInclude Include="DisplayTransformation2D.h" />
     <ClInclude Include="DisplayUtils.h" />
+    <ClInclude Include="DrawPolygon.h" />
+    <ClInclude Include="GraphicsOpenGL.h" />
+    <ClInclude Include="GraphicsOpenGLWin.h" />
+    <ClInclude Include="LineGenerator.h" />
     <ClInclude Include="MarkerSymbolBase.h" />
     <ClInclude Include="PointsBuffer.h" />
     <ClInclude Include="Screen.h" />
@@ -519,6 +523,7 @@
     <ClInclude Include="SymbolBase.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextSymbol.h" />
+    <ClInclude Include="triangulate.h" />
     <ClInclude Include="Vector3d.h" />
     <ClInclude Include="VertexSrc.h" />
   </ItemGroup>
@@ -530,6 +535,10 @@
     <ClCompile Include="ClipPolygon.cpp" />
     <ClCompile Include="DisplayTransformation2D.cpp" />
     <ClCompile Include="DisplayUtils.cpp" />
+    <ClCompile Include="DrawPolygon.cpp" />
+    <ClCompile Include="GraphicsOpenGL.cpp" />
+    <ClCompile Include="GraphicsOpenGLWin.cpp" />
+    <ClCompile Include="LineGenerator.cpp" />
     <ClCompile Include="LoaderSymbols.cpp" />
     <ClCompile Include="PointsBuffer.cpp" />
     <ClCompile Include="RectClipper.cpp" />
@@ -562,6 +571,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TextSymbol.cpp" />
+    <ClCompile Include="triangulate.cpp" />
     <ClCompile Include="VertexSrc.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,6 +1,6 @@
-#ifndef GIS_ENGINE_DISPLAY_POINT_H_
-#define GIS_ENGINE_DISPLAY_POINT_H_
+#pragma once
 #include "GraphTypes.h"
+
 namespace GisEngine
 {
 	namespace Display
@@ -21,6 +21,17 @@ namespace GisEngine
 		public:
 			GUnits x, y;
 		};
+
+		typedef std::vector<GPoint> TVecPoints;
+
+		inline double calc_distance(const GPoint& pt0, const GPoint& pt1)
+		{
+			return calc_distance(pt0.x, pt0.y, pt1.x, pt1.y);
+		}
+
+		inline double cross_product(const GPoint& pt1, const GPoint& pt2, const GPoint& pt3)
+		{
+			return (pt3.x - pt2.x) * (pt2.y - pt1.y) - (pt3.y - pt2.y) * (pt2.x - pt1.x);
+		}
 	}
 }
-#endif

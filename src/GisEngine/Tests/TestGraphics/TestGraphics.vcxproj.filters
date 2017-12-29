@@ -45,6 +45,9 @@
     <ClCompile Include="3DDrawFunc.cpp">
       <Filter>3DTestLib</Filter>
     </ClCompile>
+    <ClCompile Include="aa_float.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

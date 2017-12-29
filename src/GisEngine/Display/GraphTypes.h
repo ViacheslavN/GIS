@@ -1,5 +1,4 @@
-#ifndef GIS_ENGINE_DISPLAY_GRAPHICS_TYPES_H_
-#define GIS_ENGINE_DISPLAY_GRAPHICS_TYPES_H_
+#pragma once
 
 #include "DisplayMath.h"
 #define _FLOAT_GUNITS_
@@ -125,5 +124,3 @@ namespace GisEngine
 
 	}
 }
-
-#endif

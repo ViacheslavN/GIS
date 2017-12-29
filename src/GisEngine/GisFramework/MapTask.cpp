@@ -46,6 +46,7 @@ namespace GisEngine
 			screen_->SetTransformation(pTransformation_.get());
 			screen_->StartDrawing(pGraphics_.get());
 			pMap_->PartialDraw(draw_phase_, screen_.get(), &trackCancel_);
+			screen_->FinishDrawing();
 			bDrawing_ = false;
 			if(trackCancel_.Continue())
 				pDrawer_->OnFinishedDrawMapTask(this);

@@ -166,6 +166,21 @@
     <ClInclude Include="ClipLine.h">
       <Filter>Clip</Filter>
     </ClInclude>
+    <ClInclude Include="LineGenerator.h">
+      <Filter>GraphicsOpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsOpenGL.h">
+      <Filter>GraphicsOpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsOpenGLWin.h">
+      <Filter>GraphicsOpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="triangulate.h">
+      <Filter>GraphicsOpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawPolygon.h">
+      <Filter>GraphicsOpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -248,6 +263,21 @@
     </ClCompile>
     <ClCompile Include="ClipLine.cpp">
       <Filter>Clip</Filter>
+    </ClCompile>
+    <ClCompile Include="LineGenerator.cpp">
+      <Filter>GraphicsOpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsOpenGL.cpp">
+      <Filter>GraphicsOpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsOpenGLWin.cpp">
+      <Filter>GraphicsOpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="triangulate.cpp">
+      <Filter>GraphicsOpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawPolygon.cpp">
+      <Filter>GraphicsOpenGL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

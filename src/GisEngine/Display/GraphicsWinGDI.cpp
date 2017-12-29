@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GraphicsWinGDI.h"
+#include "GraphicsOpenGLWin.h"
 //#include "GraphicsAgg.h"
 namespace GisEngine
 {
@@ -77,7 +78,7 @@ namespace GisEngine
 			 }
 			 return DeviceTypeDisplay;
 		 }
-		 void        CGraphicsWinGDI::StartDrawing()
+		 void  CGraphicsWinGDI::StartDrawing(IDisplayTransformation *pDT)
 		 {
 			 m_pSelectedPen = 0;
 			 m_pSelectedBrush = 0;

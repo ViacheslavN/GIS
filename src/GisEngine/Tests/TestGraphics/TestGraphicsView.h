@@ -5,6 +5,8 @@
 #pragma once
 #include "../../Display/GraphTypes.h"
 #include "../../Display/GraphicsAgg.h"
+#include "../../Display/GraphicsOpenGLWin.h"
+#include "../../Display/GraphicsWinGDI.h"
 #include <vector>
 class CTestGraphicsView : public CWindowImpl<CTestGraphicsView>
 {
@@ -33,4 +35,5 @@ public:
 	//void OnWireRender();
 private:
 	std::auto_ptr<GisEngine::Display::CGraphicsAgg> m_pGraphicsAgg;
+	std::auto_ptr<GisEngine::Display::CGraphicsOpenGLWin> m_pGraphicsOpenGLWin;
 };

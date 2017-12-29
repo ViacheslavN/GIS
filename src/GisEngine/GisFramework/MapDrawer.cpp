@@ -3,6 +3,7 @@
 #include "Display/RectClipper.h"
 #include "Display/DisplayTransformation2D.h"
 #include "Display/GraphicsAgg.h"
+#include "Display/GraphicsOpenGLWin.h"
 #include "MapTask.h"
 namespace GisEngine
 {
@@ -134,9 +135,13 @@ namespace GisEngine
 				m_pDispCalcTran->SetDeviceRect(wnd_rect);
 
 			}
-			m_pMapGraphics = new Display::CGraphicsAgg(m_nWidht, m_nHeight, false);
+			/*m_pMapGraphics = new Display::CGraphicsAgg(m_nWidht, m_nHeight, false);
 			m_pLabelGraphics = new Display::CGraphicsAgg(m_nWidht, m_nHeight, false);
-			m_pOutGraphics = new Display::CGraphicsAgg(m_nWidht, m_nHeight, false);
+			m_pOutGraphics = new Display::CGraphicsAgg(m_nWidht, m_nHeight, false);*/
+
+			m_pMapGraphics = new Display::CGraphicsOpenGLWin(0, m_nWidht, m_nHeight);
+			m_pLabelGraphics = new Display::CGraphicsOpenGLWin(0, m_nWidht, m_nHeight);
+			m_pOutGraphics = new Display::CGraphicsOpenGLWin(0, m_nWidht, m_nHeight);
 
 			m_mapTask.Init(m_pMap.get(),  m_pDispTran.get(), (Cartography::eDrawPhase)((int)Cartography::DrawPhaseGeography|(int)Cartography::DrawPhaseSelection), m_pMapGraphics.get() );
 		}
@@ -189,6 +194,8 @@ namespace GisEngine
 					m_pOutGraphics->Copy(m_pMapGraphics.get(), Display::GPoint(0, 0),  Display::GRect(0, 0, (Display::GUnits)m_nHeight, (Display::GUnits)m_nHeight), false);
 				}
 				pGraphics->Copy(m_pOutGraphics.get(), OutPoint, OutRect, false);
+
+				
 			}
 		}
 		void CMapDrawer::Redraw(Display::IGraphics* pGraphics)

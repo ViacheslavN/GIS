@@ -57,7 +57,7 @@ namespace GisEngine
 				~CGraphicsAgg();
 
 				virtual eDeviceType  GetDeviceType() const;
-				virtual void        StartDrawing();
+				virtual void        StartDrawing(IDisplayTransformation *pDT = nullptr);
 				virtual void        EndDrawing();
 				virtual GRect       GetClipRect() const ;
 				virtual void        SetClipRect(const GRect& rect);
@@ -116,8 +116,9 @@ namespace GisEngine
 
 				virtual void Lock();
 				virtual void UnLock();
-#ifndef ANDROID
-				HDC GetDC();
+
+#ifdef _WIN32
+				virtual HDC GetDC() const { return m_dc; }
 #endif
 			private:
 #ifdef ANDROID

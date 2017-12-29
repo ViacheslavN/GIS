@@ -5,7 +5,7 @@ namespace GisEngine
 {
 	namespace Display
 	{
-		typedef std::vector<GPoint> TVecPoints;
+		
 		class ClipPolygon
 		{
 			public:
