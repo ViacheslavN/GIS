@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QTTestGraphicsClass</class>
+ <widget class="QMainWindow" name="QTTestGraphicsClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>968</width>
+    <height>728</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>QTTestGraphics</string>
+  </property>
+  <widget class="QWidget" name="centralWidget"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>968</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menufile">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionLine"/>
+    <addaction name="actionPolygon"/>
+   </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionSave"/>
+    <addaction name="actionOPen"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menufile"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="AGG_OpenGL"/>
+   <addaction name="actionLine_Polygon"/>
+   <addaction name="actionDraw"/>
+   <addaction name="actionClear"/>
+   <addaction name="actionAdd_Part"/>
+   <addaction name="actionRedraw"/>
+   <addaction name="separator"/>
+  </widget>
+  <action name="AGG_OpenGL">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="QTTestGraphics.qrc">
+     <normaloff>:/QTTestGraphics/images/agg.png</normaloff>
+     <normalon>:/QTTestGraphics/images/opengl.png</normalon>
+     <disabledoff>:/QTTestGraphics/images/agg.png</disabledoff>
+     <disabledon>:/QTTestGraphics/images/opengl.png</disabledon>
+     <activeoff>:/QTTestGraphics/images/opengl.png</activeoff>
+     <activeon>:/QTTestGraphics/images/agg.png</activeon>
+     <selectedoff>:/QTTestGraphics/images/agg.png</selectedoff>
+     <selectedon>:/QTTestGraphics/images/opengl.png</selectedon>:/QTTestGraphics/images/agg.png</iconset>
+   </property>
+   <property name="text">
+    <string>AGG/OpenGL</string>
+   </property>
+   <property name="toolTip">
+    <string>AGG/OpenGL</string>
+   </property>
+  </action>
+  <action name="actionRedraw">
+   <property name="icon">
+    <iconset resource="QTTestGraphics.qrc">
+     <normaloff>:/QTTestGraphics/images/redraw.png</normaloff>:/QTTestGraphics/images/redraw.png</iconset>
+   </property>
+   <property name="text">
+    <string>Redraw</string>
+   </property>
+  </action>
+  <action name="actionLine_Polygon">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <selectedoff>:/QTTestGraphics/images/polygon.png</selectedoff>
+     <selectedon>:/QTTestGraphics/images/line.png</selectedon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Line/Polygon</string>
+   </property>
+   <property name="toolTip">
+    <string>Line/Polygon</string>
+   </property>
+  </action>
+  <action name="actionLine">
+   <property name="text">
+    <string>Line</string>
+   </property>
+  </action>
+  <action name="actionPolygon">
+   <property name="text">
+    <string>Polygon</string>
+   </property>
+  </action>
+  <action name="actionDraw">
+   <property name="icon">
+    <iconset>
+     <activeon>:/QTTestGraphics/images/Draw.png</activeon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Draw</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="icon">
+    <iconset resource="QTTestGraphics.qrc">
+     <normaloff>:/QTTestGraphics/images/Clear.png</normaloff>:/QTTestGraphics/images/Clear.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear</string>
+   </property>
+  </action>
+  <action name="actionAdd_Part">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <activeon>:/QTTestGraphics/images/addPart.png</activeon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Add Part</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionOPen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="QTTestGraphics.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionAdd_Part</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>QTTestGraphicsClass</receiver>
+   <slot>AddPart(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>483</x>
+     <y>363</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionClear</sender>
+   <signal>triggered()</signal>
+   <receiver>QTTestGraphicsClass</receiver>
+   <slot>Clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>483</x>
+     <y>363</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLine_Polygon</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QTTestGraphicsClass</receiver>
+   <slot>DrawLine(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>483</x>
+     <y>363</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>AGG_OpenGL</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QTTestGraphicsClass</receiver>
+   <slot>AggOpenGL(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>483</x>
+     <y>363</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>Clear()</slot>
+  <slot>AddPart(bool)</slot>
+  <slot>AggOpenGL(bool)</slot>
+  <slot>Redraw()</slot>
+  <slot>DrawLine(bool)</slot>
+ </slots>
+</ui>

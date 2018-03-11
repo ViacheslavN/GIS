@@ -178,9 +178,6 @@
     <ClInclude Include="triangulate.h">
       <Filter>GraphicsOpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="DrawPolygon.h">
-      <Filter>GraphicsOpenGL</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -274,9 +271,6 @@
       <Filter>GraphicsOpenGL</Filter>
     </ClCompile>
     <ClCompile Include="triangulate.cpp">
-      <Filter>GraphicsOpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="DrawPolygon.cpp">
       <Filter>GraphicsOpenGL</Filter>
     </ClCompile>
   </ItemGroup>

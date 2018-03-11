@@ -1,0 +1,14 @@
+#pragma once
+#include <math.h>
+#include "../../agg/agglib_lib.h"
+#include "../../Display/Displaylib_lib.h"
+#include "../../Display/Display.h"
+#include "../../GeoDatabase/GeoDatabaseLib.h"
+#include "../../Common/GisCommonLib.h"
+#include "../../GisGeometry/GisGeometryLib.h"
+#include "../../../CommonLibrary/CommonLibrary/CommonLib_lib.h"
+#include "../../ThirdParty/ShapeLib/shape_lib.h"
+#include "../../Cartography/CartographyLib.h"
+#include "../../GisFramework/GisFrameworkLib.h"
+#include "../../EmbDB/EmbDB/embDBLib.h"
+#include "../../EmbDB/DatasetLite/DatasetLiteLib.h"

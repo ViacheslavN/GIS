@@ -8,7 +8,7 @@ namespace GisEngine
 	{
 		CGraphicsOpenGL::CGraphicsOpenGL(int width, int height) : m_nWidth(width), m_nHeight(height)
 		{
-			m_DrawPolygon.Init(m_nWidth, m_nHeight);
+//			m_DrawPolygon.Init(m_nWidth, m_nHeight);
 		}
 	
 
@@ -130,14 +130,14 @@ namespace GisEngine
 		{
 			::glColor4f((GLfloat)(pBbrush->GetColor().GetR() / 255.0), (GLfloat)(pBbrush->GetColor().GetG() / 255.0), (GLfloat)(pBbrush->GetColor().GetB() / 255.0), (GLfloat)(pBbrush->GetColor().GetA() / 255.0));
 			
-			m_DrawPolygon.DrawPolygon(pPoints, nNumPoints);
+		//	m_DrawPolygon.DrawPolygon(pPoints, nNumPoints);
 
 
 		}
 		void CGraphicsOpenGL::DrawPolyPolygon(const CPen* pPen, const CBrush*  pBbrush, const GPoint* lpPoints, const int *lpPolyCounts, int nCount)
 		{
 			::glColor4f((GLfloat)(pBbrush->GetColor().GetR() / 255.0), (GLfloat)(pBbrush->GetColor().GetG() / 255.0), (GLfloat)(pBbrush->GetColor().GetB() / 255.0), (GLfloat)(pBbrush->GetColor().GetA() / 255.0));
-			m_DrawPolygon.DrawPolyPolygon(lpPoints, lpPolyCounts, nCount);
+		//	m_DrawPolygon.DrawPolyPolygon(lpPoints, lpPolyCounts, nCount);
 		
 		}
 

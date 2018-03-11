@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "DisplayTransformation2D.h"
 #include "Matrix4.h"
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/transform.hpp>
+#include "glm/gtc/matrix_transform.hpp"
+
 namespace GisEngine
 {
 	namespace Display
@@ -201,8 +206,8 @@ namespace GisEngine
 				break;
 			case DisplayTransformationPreserveCenterExtent:
 				{
-					GUnits bound_size_min = min(bound.width(), bound.height());
-					GUnits client_size_min = min(m_ClientRect.width(), m_ClientRect.height());
+					GUnits bound_size_min = std::min(bound.width(), bound.height());
+					GUnits client_size_min = std::min(m_ClientRect.width(), m_ClientRect.height());
 					assert(bound_size_min > 0);
 					if (!bound_size_min || !client_size_min || (bound_size_min == client_size_min))
 					{ 
@@ -448,7 +453,7 @@ namespace GisEngine
 					int nPartPoints = geom.nextPart(part);
 					uint32 nNewCount = m_vecPoints.size();
 					int nClipPoint = 0;
-					bool bPointInRect = false;
+				//	bool bPointInRect = false;
 
 					m_clipPolygon.BeginPolygon();
 					for (uint32 i = 0; i < nPartPoints; ++i)
@@ -459,8 +464,8 @@ namespace GisEngine
 						if (i != 0 && ptPrev == ptPoint)
 							continue;
 
-						if (!bPointInRect)
-							bPointInRect = m_devClipRect.pointInRect(ptPoint);
+					/*	if (!bPointInRect)
+							bPointInRect = m_devClipRect.pointInRect(ptPoint);*/
 
 						nClipPoint += 1;
 						m_clipPolygon.AddVertex(ptPoint, bAllPointInBox);
@@ -468,7 +473,7 @@ namespace GisEngine
 					}
 
 
-					if (!bPointInRect)
+				/*	if (!bPointInRect)
 					{
 
 						*partCounts = nullptr;
@@ -476,7 +481,7 @@ namespace GisEngine
 						*count = 0;
 
 						return;
-					}
+					}*/
 
 					if (nClipPoint < 4)
 					{
@@ -663,6 +668,7 @@ namespace GisEngine
 				unrasterize3D(xd, yd);
 				pOut->x = xd * m_MatrixDev2Map[0][0] + yd * m_MatrixDev2Map[0][1] + shift_map_x;
 				pOut->y = xd * m_MatrixDev2Map[1][0] + yd * m_MatrixDev2Map[1][1] + shift_map_y;
+
 			}
 		}
 
@@ -701,10 +707,10 @@ namespace GisEngine
 			rect.set(pts[0].x, pts[0].y, pts[0].x, pts[0].y);
 			for (int i = 1; i < 4; ++i)
 			{
-				rect.xMin = min( rect.xMin, pts[i].x );
-				rect.xMax = max( rect.xMax, pts[i].x );
-				rect.yMin = min( rect.yMin, pts[i].y );
-				rect.yMax = max( rect.yMax, pts[i].y );
+				rect.xMin = std::min( rect.xMin, pts[i].x );
+				rect.xMax = std::max( rect.xMax, pts[i].x );
+				rect.yMin = std::min( rect.yMin, pts[i].y );
+				rect.yMax = std::max( rect.yMax, pts[i].y );
 			}
 		}
 
@@ -723,10 +729,10 @@ namespace GisEngine
 			mapBox.yMin = mapBox.yMax = mapXY[0].y;
 			for (int i = 1; i < 4; ++i)
 			{
-				mapBox.xMin = min(mapBox.xMin, mapXY[i].x);
-				mapBox.yMin = min(mapBox.yMin, mapXY[i].y);
-				mapBox.xMax = max(mapBox.xMax, mapXY[i].x);
-				mapBox.yMax = max(mapBox.yMax, mapXY[i].y);
+				mapBox.xMin = std::min(mapBox.xMin, mapXY[i].x);
+				mapBox.yMin = std::min(mapBox.yMin, mapXY[i].y);
+				mapBox.xMax = std::max(mapBox.xMax, mapXY[i].x);
+				mapBox.yMax = std::max(mapBox.yMax, mapXY[i].y);
 			}
 			mapBox.type = CommonLib::bbox_type_normal;
 		}
@@ -763,7 +769,8 @@ namespace GisEngine
 
 		void CDisplayTransformation2D::UpdateScaleRatio()
 		{
-			m_dScaleRatio = m_dCurScale * CalcMapUnitPerInch() / m_dResolution;
+			double dMapUnitPerInch = CalcMapUnitPerInch();
+			m_dScaleRatio = m_dCurScale * dMapUnitPerInch / m_dResolution;
 			SetMatrix();
 		}
 
@@ -775,7 +782,8 @@ namespace GisEngine
 		void CDisplayTransformation2D::SetMatrix()
 		{
 			memset( m_MatrixMap2Dev, 0, sizeof(m_MatrixMap2Dev));
-			memset(m_MatrixDev2Map, 0, sizeof(m_MatrixDev2Map));
+			memset(m_MatrixDev2Map, 0, sizeof(m_MatrixDev2Map)); 
+ 
 
 			double S = (m_dScaleRatio != 0)? (1.0 / m_dScaleRatio) : (1.0);
 
@@ -797,11 +805,14 @@ namespace GisEngine
 			m_MatrixMap2Dev[1][1] = d11;
 			m_MatrixMap2Dev[0][1] = d10;
 			m_MatrixMap2Dev[1][0] = d01;
+ 
+
 
 			m_MatrixDev2Map[1][1] = d00 / grDet;
 			m_MatrixDev2Map[0][0] = d11 / grDet;
 			m_MatrixDev2Map[1][0] = -d10 / grDet;
 			m_MatrixDev2Map[0][1] = -d01 / grDet;
+
 
 			UpdateFittedBounds();
 		}

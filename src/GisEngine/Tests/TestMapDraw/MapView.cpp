@@ -32,7 +32,7 @@ public:
 	virtual void Cancel(){}
 	virtual bool Continue(){return true;}
 };
-CMapView::CMapView() : m_bLbDown(false)
+CMapView::CMapView() : m_bLbDown(false), m_bPan(false)
 {
 
 	
@@ -134,13 +134,21 @@ LRESULT CMapView::OnMouseDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 	m_bLbDown = true;
 	return 0;
 }
+LRESULT CMapView::OnMouseMove(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+	if (m_bLbDown)
+		m_bPan = true;
+
+	return 0;
+}
+
 
 LRESULT CMapView::OnMouseUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	if(!m_pMap.get())
 		return 0;
 
-	if(m_bLbDown)
+	if(m_bLbDown && !m_bPan)
 	{
 		GisEngine::Display::GPoint pt;
 		GisXYPoint mapPt;
@@ -161,6 +169,31 @@ LRESULT CMapView::OnMouseUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 
 		m_pMap->SelectFeatures(bbox, true);
 
+	}
+
+	if (m_bPan)
+	{
+
+ 
+
+		int x = m_LbDwnPt.x - LOWORD(lParam);
+		int y = m_LbDwnPt.y - HIWORD(lParam);
+
+		GisEngine::Display::IDisplayTransformationPtr pDisplayTransformation = m_pMapDrawer->GetCalcTransformation();
+
+		double dMapX = pDisplayTransformation->DeviceToMapMeasure(x);
+		double dMapY = pDisplayTransformation->DeviceToMapMeasure(y);
+
+		CommonLib::GisXYPoint mapPos = pDisplayTransformation->GetMapPos();
+
+		mapPos.x += dMapX;
+		mapPos.y -= dMapY;
+
+		pDisplayTransformation->SetMapPos(mapPos, pDisplayTransformation->GetScale());
+		redraw();
+
+
+		m_bPan = false;
 	}
 	
 	

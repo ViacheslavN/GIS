@@ -280,7 +280,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB/;../../ThirdParty/jpeg/;../../ThirdParty/PNG;../../ThirdParty/freetype/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB/;../../ThirdParty/jpeg/;../../ThirdParty/PNG;../../ThirdParty/freetype/include;../../ThirdParty/glm;d:\work\MyProject\GIS\src\ThirdParty\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -330,7 +330,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB/;../../ThirdParty/jpeg/;../../ThirdParty/PNG;../../ThirdParty/freetype/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../../CommonLibrary;../../ThirdParty/ZLIB/;../../ThirdParty/jpeg/;../../ThirdParty/PNG;../../ThirdParty/freetype/include;../../ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -489,7 +489,6 @@
     <ClInclude Include="Display.h" />
     <ClInclude Include="DisplayTransformation2D.h" />
     <ClInclude Include="DisplayUtils.h" />
-    <ClInclude Include="DrawPolygon.h" />
     <ClInclude Include="GraphicsOpenGL.h" />
     <ClInclude Include="GraphicsOpenGLWin.h" />
     <ClInclude Include="LineGenerator.h" />
@@ -535,7 +534,6 @@
     <ClCompile Include="ClipPolygon.cpp" />
     <ClCompile Include="DisplayTransformation2D.cpp" />
     <ClCompile Include="DisplayUtils.cpp" />
-    <ClCompile Include="DrawPolygon.cpp" />
     <ClCompile Include="GraphicsOpenGL.cpp" />
     <ClCompile Include="GraphicsOpenGLWin.cpp" />
     <ClCompile Include="LineGenerator.cpp" />

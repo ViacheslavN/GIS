@@ -9,7 +9,7 @@ namespace GisEngine
 		class CGraphicsOpenGLWin : public CGraphicsOpenGL
 		{
 		public:
-			CGraphicsOpenGLWin(HDC hDC, int width, int height);
+			CGraphicsOpenGLWin(HDC hDC, int width, int height, bool flipY = false);
 			~CGraphicsOpenGLWin();
 
 			virtual void        StartDrawing(IDisplayTransformation *pDT = nullptr);
@@ -33,6 +33,8 @@ namespace GisEngine
 
 			HBITMAP m_oldBitmap;
 			CBitmap m_surface;
+
+			bool m_bFlipY;
 
 		};
 	}

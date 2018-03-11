@@ -135,13 +135,13 @@ namespace GisEngine
 				m_pDispCalcTran->SetDeviceRect(wnd_rect);
 
 			}
-			/*m_pMapGraphics = new Display::CGraphicsAgg(m_nWidht, m_nHeight, false);
+			m_pMapGraphics = new Display::CGraphicsAgg(m_nWidht, m_nHeight, false);
 			m_pLabelGraphics = new Display::CGraphicsAgg(m_nWidht, m_nHeight, false);
-			m_pOutGraphics = new Display::CGraphicsAgg(m_nWidht, m_nHeight, false);*/
+			m_pOutGraphics = new Display::CGraphicsAgg(m_nWidht, m_nHeight, false);
 
-			m_pMapGraphics = new Display::CGraphicsOpenGLWin(0, m_nWidht, m_nHeight);
+			/*m_pMapGraphics = new Display::CGraphicsOpenGLWin(0, m_nWidht, m_nHeight);
 			m_pLabelGraphics = new Display::CGraphicsOpenGLWin(0, m_nWidht, m_nHeight);
-			m_pOutGraphics = new Display::CGraphicsOpenGLWin(0, m_nWidht, m_nHeight);
+			m_pOutGraphics = new Display::CGraphicsOpenGLWin(0, m_nWidht, m_nHeight);*/
 
 			m_mapTask.Init(m_pMap.get(),  m_pDispTran.get(), (Cartography::eDrawPhase)((int)Cartography::DrawPhaseGeography|(int)Cartography::DrawPhaseSelection), m_pMapGraphics.get() );
 		}

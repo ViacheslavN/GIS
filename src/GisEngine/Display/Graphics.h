@@ -15,7 +15,7 @@ namespace GisEngine
 {
 	namespace Display
 	{
-		class IDisplayTransformation;
+		struct IDisplayTransformation;
 
 		class IGraphics : public CommonLib::AutoRefCounter
 		{

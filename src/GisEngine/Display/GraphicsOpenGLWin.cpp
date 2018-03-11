@@ -7,8 +7,8 @@ namespace GisEngine
 	{
 
 
-		CGraphicsOpenGLWin::CGraphicsOpenGLWin(HDC hDC, int width, int height) : CGraphicsOpenGL(width, height),
-			/*m_hDC(0),*/  m_bIsReleaseDC(false), m_hMemDC(0)
+		CGraphicsOpenGLWin::CGraphicsOpenGLWin(HDC hDC, int width, int height, bool flipY) : CGraphicsOpenGL(width, height),
+			/*m_hDC(0),*/  m_bIsReleaseDC(false), m_hMemDC(0), m_bFlipY(flipY)
 		{
 		
 		/*	if (m_hDC != 0)
@@ -53,6 +53,10 @@ namespace GisEngine
 		}
 		CGraphicsOpenGLWin::~CGraphicsOpenGLWin()
 		{
+
+			wglMakeCurrent(m_hMemDC, NULL);
+			wglDeleteContext(m_hglrc);
+
 			if (m_bIsReleaseDC)
 				::DeleteDC(m_hMemDC);
 		}
@@ -123,7 +127,13 @@ namespace GisEngine
 		{
 			::glMatrixMode(GL_PROJECTION);
 			::glLoadIdentity();
-			::glOrtho(0, m_nWidth, m_nHeight, 0, 0, 1);
+
+			if (m_bFlipY)
+				::glOrtho(0, m_nWidth, 0, m_nHeight, 0, 1);
+			else
+				::glOrtho(0, m_nWidth, m_nHeight, 0, 0, 1);
+
+
 			::glDisable(GL_DEPTH_TEST);
 			::glMatrixMode(GL_MODELVIEW);
 			::glLoadIdentity();
@@ -131,6 +141,9 @@ namespace GisEngine
 			::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			::glColor4f(1.0, 0, 0, 1.0);
 			::glEnable(GL_LINE_SMOOTH);
+
+ 
+
 			//::glBlendFunc(GL_SRC_ALPHA_SATURATE, GL_ONE);
 
 			const GLubyte* str = glGetString(GL_VENDOR);

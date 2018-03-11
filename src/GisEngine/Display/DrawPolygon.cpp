@@ -33,6 +33,8 @@ namespace GisEngine
 			std::fill(m_vecY.begin(), m_vecY.end(), 0);
 
 
+
+
 			int offcet = 0;
 			for (int i = 0; i < nCount; ++i)
 			{
@@ -41,21 +43,17 @@ namespace GisEngine
 				if(nParts < 3)
 					continue;
 
-				bool bClose = lpPoints[offcet] == lpPoints[nParts - 1 + offcet];
 
 				for (int j = 1; j < nParts; ++j)
 				{
-					AddEdge(lpPoints[j - 1 + offcet], lpPoints[j + offcet]);
-				}
 
-				if(!bClose)
-					AddEdge(lpPoints[nParts - 1 + offcet], lpPoints[0]);
+				}		 
 
 				offcet += nParts;
 			}
 
 			SortCell();
-			Draw();
+			Draw(lpPoints);
 
 		}
 
@@ -149,7 +147,7 @@ namespace GisEngine
 }
 		
 		*/
-		void CDrawPolygonOpenGL::AddEdge(const GPoint& pt1, const GPoint& pt2)
+		void CDrawPolygonOpenGL::AddEdge1(const GPoint& pt1, const GPoint& pt2, int idx1, int idx2)
 		{
 
 			int x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
@@ -157,12 +155,12 @@ namespace GisEngine
 			dy = pt2.y - pt1.y;
 			GUnits dVectorProduct = pt1.x*pt2.y - pt2.x*pt1.y;
 			int nDirection = dVectorProduct > 0 ? 1 : -1;
-			if (dy == 0)
+			/*if (dy == 0)
 			{
-				AddCell(pt1.x, pt1.y, nDirection);
-				AddCell(pt2.x, pt2.y, nDirection);
+				AddCell(pt1.x, pt1.y, idx1, idx2);
+				AddCell(pt2.x, pt2.y, idx1, idx2);
 				return;
-			}
+			}*/
 
 			dx1 = fabs(dx);
 			dy1 = fabs(dy);
@@ -185,7 +183,7 @@ namespace GisEngine
 					y = pt2.y;
 					xe = pt1.x;
 				}
-				AddCell(x, y, nDirection);
+				AddCell(x, y, idx1, idx2);
 				for (i = 0; x < xe; i++)
 				{
 					x = x + 1;
@@ -205,7 +203,7 @@ namespace GisEngine
 						}
 						px = px + 2 * (dy1 - dx1);
 					}
-					AddCell(x, y, nDirection);
+					AddCell(x, y, idx1, idx2);
 				}
 			}
 			else
@@ -222,7 +220,7 @@ namespace GisEngine
 					y = pt2.y;
 					ye = pt1.y;
 				}
-				AddCell(x, y, nDirection);
+				AddCell(x, y, idx1, idx2);
 				for (i = 0; y < ye; i++)
 				{
 					y = y + 1;
@@ -242,39 +240,89 @@ namespace GisEngine
 						}
 						py = py + 2 * (dx1 - dy1);
 					}
-					AddCell(x, y, nDirection);
+					AddCell(x, y, idx1, idx2);
 				}
 			}
 		}
 
-		void CDrawPolygonOpenGL::AddEdge1(const GPoint& pt1, const GPoint& pt2)
+		void CDrawPolygonOpenGL::AddEdge(const GPoint& pt1, const GPoint& pt2, int idx1, int idx2)
 		{
 
-			GUnits dVectorProduct = pt1.x*pt2.y - pt2.x*pt1.y;
+		//	GUnits dVectorProduct = pt1.x*pt2.y - pt2.x*pt1.y;
 
-			int nDirection = dVectorProduct > 0 ? 1 : -1;
+		//	int nDirection = dVectorProduct >= 0 ? 1 : -1;
 
 			bool steep = false;
-			int x0 = pt1.x;
-			int y0 = pt1.y;
+			int x1 = pt1.x;
+			int y1 = pt1.y;
 
-			int x1 = pt2.x;
-			int y1 = pt2.y;
-
-
-			int dx = x1 - x0;
-			int dy = y1 - y0;
+			int x2 = pt2.x;
+			int y2 = pt2.y;
 
 
-			if (dy == 0)
+			int dx = abs(x2 - x1);
+			int dy = abs(y2- y1);
+
+
+		/*	if (dy == 0)
 			{
-				AddCell(x0, y0, nDirection);
-				AddCell(x1, y1, nDirection);
+				AddCell(x1, y1, idx1, idx2);
+				AddCell(x2, y2, idx1, idx2);
 				return;
+			}
+			*/
+
+			int sx = x2 >= x1 ? 1 : -1;
+			int sy = y2 >= y1 ? 1 : -1;
+			if (dy <= dx)
+			{
+				int derr = (dy << 1) - dx;
+				int dS = dy << 1;
+				int  dD = (dy - dx) << 1;
+				AddCell(x1, y1, idx1, idx2);
+				for (int x = x1 + sx, y = y1, i = 1; i <= dx; i++, x += sx)
+				{
+
+					if (derr > 0)
+					{
+						derr += dD;
+						y += sy;
+					}
+					else
+					{
+						derr += dS;
+					}
+					AddCell(x, y, idx1, idx2);
+				}
+
+
+			}
+			else
+			{
+				int derr = (dx << 1) - dy;
+				int dS = dx << 1;
+				int  dD = (dx - dy) << 1;
+				AddCell(x1, y1, idx1, idx2);
+
+				for (int x = x1, y = y1 + sy, i = 1; i < dy; ++i, y += sy)
+				{
+					if (derr > 0)
+					{
+
+						derr += dD;
+						x += sx;
+					}
+					else
+					{
+						derr += dS;
+					}
+
+					AddCell(x, y, idx1, idx2);
+				}
 			}
 
 		 
-			if (std::abs(x0 - x1) < std::abs(y0 - y1)) {
+		/*	if (std::abs(x0 - x1) < std::abs(y0 - y1)) {
 				std::swap(x0, y0);
 				std::swap(x1, y1);
 				steep = true;
@@ -306,33 +354,33 @@ namespace GisEngine
 					error2 -= dx * 2;
 				}
 			}
-
+			*/
 
 		}
 
 
-		void CDrawPolygonOpenGL::AddCell(int x, int y, int nDirection)
+		void CDrawPolygonOpenGL::AddCell(int x, int y, int idx1, int idx2)
 		{
 			if (x < 0 || y < 0 || y > m_vecY.size() - 1)
 				return;
 
 			if (m_vecCells.empty())
 			{
-				m_vecCells.push_back(SCell(x, y, nDirection));
+				m_vecCells.push_back(SCell(x, y, idx1, idx2));
 				m_vecY[y] += 1;
 				return;
 			}
 
 			auto& cell = m_vecCells[m_vecCells.size() - 1];
 
-			if (cell.m_x == x && cell.m_y == y)
+		/*	if (cell.m_x == x && cell.m_y == y)
 			{
 				cell.m_nDirection += nDirection;
 				return;
 			}
-
+			*/
 			m_vecY[y] += 1;
-			m_vecCells.emplace_back(SCell(x, y, nDirection));
+			m_vecCells.push_back(SCell(x, y, idx1, idx2));
 		}
 
 		void CDrawPolygonOpenGL::SortCell()
@@ -346,13 +394,107 @@ namespace GisEngine
 			});
 		}
 
-		void CDrawPolygonOpenGL::Draw()
+		void CDrawPolygonOpenGL::Draw(const GPoint* lpPoints)
 		{
+
+
 			if (m_vecCells.empty())
 				return;
 
 			int nCell = 0;
 			int nNumCell = m_vecCells.size();
+			TLines lines;
+
+			int nScanY = m_vecCells[0].m_y;
+
+		/*	while (nCell < nNumCell)
+			{
+
+				auto& cell = m_vecCells[nCell];
+
+
+
+				int nY0 = cell.m_y;
+				int nXnums = m_vecY[nY0];
+
+				if (nXnums == 1)
+				{
+					::glBegin(GL_LINES);
+					::glVertex2f(cell.m_x + 0.5f, cell.m_y + 0.5f);
+					::glVertex2f(cell.m_x + 0.5f, cell.m_y + 0.5f);
+					::glEnd();
+					nCell += 1;
+					continue;
+				}
+
+
+				int nSumLeftRight = 0;
+				lines.clear();
+
+
+
+				for (int i = 0; i < nXnums;)
+				{
+
+					auto& cell0 = m_vecCells[nCell + i];
+					
+					while (i < nXnums)
+					{
+						i += 1;
+						auto& cellX = m_vecCells[nCell + i];
+						if(cellX.m_x != cell0.m_x)
+							break;
+					}
+					
+					auto& cell1 = m_vecCells[nCell + i];
+
+					auto pt1 = lpPoints[cell0.n_idx1];
+					auto pt2 = lpPoints[cell0.n_idx2];
+
+
+					int nLeftRight = (cell1.m_x - pt1.x) * (pt2.y - pt1.y) - (nScanY - pt1.y) * (pt2.x - pt1.x) > 0 ? 1 : -1;
+
+					nSumLeftRight += nLeftRight;
+					if(nSumLeftRight == 0)
+						continue;
+
+					if (lines.empty())
+					{
+						lines.push_back(SLine(cell0.m_x));
+					}
+					else
+					{
+						SLine& sLine = lines.back();
+						if (cell0.m_x == sLine.m_x + 1)
+							sLine.m_len += 1;
+						else
+						{
+							lines.push_back(SLine(cell0.m_x));
+						}
+
+					}
+
+				}
+
+
+				for (size_t l = 0; l < lines.size(); ++l)
+				{
+
+					::glBegin(GL_LINES);
+					::glVertex2f(lines[l].m_x + 0.5f, nScanY + 0.5f);
+					::glVertex2f(lines[l].m_x + lines[l].m_len+ 0.5f, nScanY + 0.5f);
+					::glEnd();
+
+
+				}
+
+				lines.clear();
+				nCell += nXnums;
+			}
+
+
+			return;*/
+
 			while (nCell < nNumCell)
 			{
 				auto& cell = m_vecCells[nCell];
@@ -367,8 +509,33 @@ namespace GisEngine
 				}
 				else
 				{
+					int nSumLeftRight = 0;
+					for (int i = 1; i < nXnums; ++i)
+					{
+						auto& cell1 = m_vecCells[nCell + i];
+						auto& cell0 = m_vecCells[nCell + i - 1];
 
-					TCells drawCells;
+						auto pt1 = lpPoints[cell0.n_idx1];
+						auto pt2 = lpPoints[cell0.n_idx2];
+
+
+						int nLeftRight = (cell1.m_x - pt1.x) * (pt2.y - pt1.y) - (nY0 - pt1.y) * (pt2.x - pt1.x) > 0 ? 1 : -1;
+
+						nSumLeftRight += nLeftRight;
+						if (nSumLeftRight != 0)
+						{
+		
+
+							::glBegin(GL_LINES);
+							::glVertex2f(cell0.m_x + 0.5f, cell0.m_y + 0.5f);
+							::glVertex2f(cell1.m_x + 0.5f, cell1.m_y + 0.5f);
+							::glEnd();
+						}
+
+
+					}
+
+					/*TCells drawCells;
 
 					drawCells.push_back(cell);
 
@@ -383,27 +550,39 @@ namespace GisEngine
 							drawCells.push_back(cell1);
 					}
 
-					int nSum =0;
-					for (int i = drawCells.size(); i > 0; --i)
+					if (drawCells.size() == 1)
 					{
-
-						int nPrev = i - 1 - 1;
-						if(nPrev < 0)
-							break;
-
-						nSum += m_vecCells[nCell + i - 1].m_nDirection;
-						if (nSum != 0)
-						{
-							auto& cell1 = drawCells[i - 1];
-							auto& cell0 = drawCells[nPrev];
-						
-							::glBegin(GL_LINES);
-							::glVertex2f(cell0.m_x + 0.5f, cell0.m_y + 0.5f);
-							::glVertex2f(cell1.m_x + 0.5f, cell1.m_y + 0.5f);
-							::glEnd();
-						}
-
+						::glBegin(GL_LINES);
+						::glVertex2f(drawCells[0].m_x + 0.5f, drawCells[0].m_y + 0.5f);
+						::glVertex2f(drawCells[0].m_x + 0.5f, drawCells[0].m_y + 0.5f);
+						::glEnd();
 					}
+					else
+					{
+						int nSum = 0;
+						for (int i = 1; i < drawCells.size(); ++i)
+						{
+							if (drawCells[i - 1].m_nDirection < -1)
+								drawCells[i - 1].m_nDirection = -1;
+							else if(drawCells[i - 1].m_nDirection > 1)
+								drawCells[i - 1].m_nDirection = 1;
+
+
+							nSum += drawCells[i - 1].m_nDirection;
+							if (nSum != 0)
+							{
+								auto& cell1 = drawCells[i];
+								auto& cell0 = drawCells[i - 1];
+
+								::glBegin(GL_LINES);
+								::glVertex2f(cell0.m_x + 0.5f, cell0.m_y + 0.5f);
+								::glVertex2f(cell1.m_x + 0.5f, cell1.m_y + 0.5f);
+								::glEnd();
+							}
+
+						}
+					}*/
+					
 				}
 				nCell += nXnums;
 			}

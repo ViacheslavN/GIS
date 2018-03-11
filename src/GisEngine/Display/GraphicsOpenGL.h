@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Graphics.h"
-#include "DrawPolygon.h"
 namespace GisEngine
 {
 	namespace Display
@@ -76,7 +75,7 @@ namespace GisEngine
 			GUnits m_nWidth;
 			GUnits m_nHeight;
 			
-			CDrawPolygonOpenGL m_DrawPolygon;
+		//	CDrawPolygonOpenGL m_DrawPolygon;
 		};
 
 	}

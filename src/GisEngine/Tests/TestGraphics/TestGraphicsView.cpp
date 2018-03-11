@@ -143,7 +143,7 @@ LRESULT  CTestGraphicsView::OnWireRender(WORD /*wNotifyCode*/, WORD /*wID*/, HWN
 
 		vecCounts.push_back(vecPoint.size());*/
 
-		//m_pGraphicsAgg->DrawPolyPolygon(nullptr, &brush, &vecPoint[0], &vecCounts[0], vecCounts.size());
+		m_pGraphicsAgg->DrawPolyPolygon(nullptr, &brush, &vecPoint[0], &vecCounts[0], vecCounts.size());
 
 		m_pGraphicsOpenGLWin->StartDrawing();
 

@@ -25,6 +25,7 @@ public:
 		MESSAGE_HANDLER(WM_MOUSEWHEEL,OnMouseWheel)
 		MESSAGE_HANDLER(WM_LBUTTONUP, OnMouseUp)
 		MESSAGE_HANDLER(WM_LBUTTONDOWN, OnMouseDown)
+		MESSAGE_HANDLER(WM_MOUSEMOVE, OnMouseMove)
 	ALT_MSG_MAP( 1 )	//	Forwarded by frame
 		COMMAND_ID_HANDLER(ID_REDRAW_MAP, OnRedrawMap)
 		COMMAND_ID_HANDLER(ID_FULL_ZOOM, OnFullZoom)
@@ -51,6 +52,7 @@ public:
 	LRESULT OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnMouseDown(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+	LRESULT OnMouseMove(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnMouseUp(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnOpenShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnSQLiteShapeFile(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
@@ -79,6 +81,7 @@ private:
 
 	GisEngine::GisFramework::IMapDrawerPtr m_pMapDrawer;
 	bool m_bLbDown;
+	bool m_bPan;
 	GisEngine::Display::GPoint m_LbDwnPt;
 
 

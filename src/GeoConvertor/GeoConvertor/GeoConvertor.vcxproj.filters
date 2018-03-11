@@ -46,12 +46,12 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{9f570cbd-b2e1-4b3f-aa2d-ab3d77660ed1}</UniqueIdentifier>
+      <UniqueIdentifier>{9f3e1c9a-7e18-4104-840d-0735f982e192}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{5bd0be64-72af-4949-a68b-d0efbf3f5aca}</UniqueIdentifier>
+      <UniqueIdentifier>{83896c64-5cb5-4d71-b34e-d54fb0c8f693}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
@@ -72,11 +72,14 @@
     <ClCompile Include="GeneratedFiles\qrc_geoconvertor.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="geoconvertor_plugin_import.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
     <ClCompile Include="Application.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="legend.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_legend.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -85,7 +88,7 @@
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="MapView.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_MapView.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -99,10 +102,10 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="legend.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </CustomBuild>
     <CustomBuild Include="MapView.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </CustomBuild>
     <CustomBuild Include="legend.ui">
       <Filter>Form Files</Filter>
@@ -112,9 +115,6 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="D:\test\GIS\src\GeoConvertor\GeoConvertor\geoconvertor_plugin_import.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>
@@ -128,28 +128,15 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="geoconvertor.qrc">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="GeneratedFiles\ui_geoconvertor.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_legend.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_MapView.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="images\copy.png">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="images\cut.png">
       <Filter>Resource Files</Filter>
     </None>
+    <CustomBuild Include="geoconvertor.qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
     <None Include="images\new.png">
       <Filter>Resource Files</Filter>
     </None>
@@ -162,5 +149,19 @@
     <None Include="images\save.png">
       <Filter>Resource Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_geoconvertor.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_legend.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_MapView.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

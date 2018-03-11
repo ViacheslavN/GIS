@@ -3,6 +3,9 @@
 #include "Display.h"
 #include "ClipPolygon.h"
 #include "ClipLine.h"
+
+
+
 namespace GisEngine
 {
 	namespace Display
@@ -118,6 +121,8 @@ namespace GisEngine
 	
 				double     m_MatrixDev2Map[2][2];
 				double     m_MatrixMap2Dev[2][2];
+ 
+
 
 				GUnits m_AnchorDev[2];
 				double m_AnchorMap[2];

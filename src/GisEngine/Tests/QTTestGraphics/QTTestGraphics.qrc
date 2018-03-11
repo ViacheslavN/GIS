@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/QTTestGraphics">
+        <file>images/redraw.png</file>
+        <file>images/agg.png</file>
+        <file>images/opengl.png</file>
+        <file>images/line.png</file>
+        <file>images/polygon.png</file>
+        <file>images/addPart.png</file>
+        <file>images/Draw.png</file>
+        <file>images/Clear.png</file>
+        <file>images/cap_butt.png</file>
+    </qresource>
+</RCC>
